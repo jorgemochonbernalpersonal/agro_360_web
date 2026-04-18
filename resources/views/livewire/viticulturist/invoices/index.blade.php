@@ -7,90 +7,44 @@
     />
 
     {{-- Stats --}}
-    <div x-data="{
-        open: localStorage.getItem('invoices-stats-open') !== 'false',
-        toggle() {
-            this.open = !this.open;
-            localStorage.setItem('invoices-stats-open', String(this.open));
-        }
-    }">
-        <button
-            @click="toggle()"
-            class="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-widest hover:text-zinc-600 transition-colors mb-3"
-        >
-            <span>Estadísticas</span>
-            <flux:icon icon="chevron-up" class="size-3.5 transition-transform duration-200" ::class="{ 'rotate-180': !open }" />
-        </button>
-        <div
-            x-show="open"
-            x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 -translate-y-1"
-            x-transition:enter-end="opacity-100 translate-y-0"
-            x-transition:leave="transition ease-in duration-150"
-            x-transition:leave-start="opacity-100 translate-y-0"
-            x-transition:leave-end="opacity-0 -translate-y-1"
-        >
-            <div class="grid grid-cols-2 gap-4">
-                <x-agro.stat-card
-                    label="Total facturas"
-                    :value="$stats['total']"
-                    description="'Historial completo'"
-                    icon="document-text"
-                    color="agro"
-                />
-                <x-agro.stat-card
-                    label="Emitidas"
-                    :value="$stats['issued']"
-                    description="'Facturas en firme'"
-                    icon="check-circle"
-                    color="agro"
-                />
-                <x-agro.stat-card
-                    label="Borradores"
-                    :value="$stats['draft']"
-                    description="'Pendientes de emitir'"
-                    icon="pencil-square"
-                    color="orange"
-                />
-                <x-agro.stat-card
-                    label="Pendiente cobro"
-                    :value="number_format($stats['pending_amount'], 2) . ' €'"
-                    description="'Importe sin cobrar'"
-                    icon="banknotes"
-                    color="red"
-                />
-            </div>
-        </div>
-    </div>
+    <x-agro.stats-section key="invoices">
+        <x-agro.stat-card
+            label="Total facturas"
+            :value="$stats['total']"
+            description="'Historial completo'"
+            icon="document-text"
+            color="agro"
+        />
+        <x-agro.stat-card
+            label="Emitidas"
+            :value="$stats['issued']"
+            description="'Facturas en firme'"
+            icon="check-circle"
+            color="agro"
+        />
+        <x-agro.stat-card
+            label="Borradores"
+            :value="$stats['draft']"
+            description="'Pendientes de emitir'"
+            icon="pencil-square"
+            color="orange"
+        />
+        <x-agro.stat-card
+            label="Pendiente cobro"
+            :value="number_format($stats['pending_amount'], 2) . ' €'"
+            description="'Importe sin cobrar'"
+            icon="banknotes"
+            color="red"
+        />
+    </x-agro.stats-section>
     {{-- Toolbar --}}
     <div class="space-y-3">
         <div class="flex items-center gap-3">
 
-            <div class="flex-1 relative">
-                <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                    <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400" />
-                </div>
-                <input
-                    wire:model.live.debounce.300ms="search"
-                    type="text"
-                    placeholder="Buscar por nº factura, albarán o cliente..."
-                    class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
-                />
-            </div>
+            <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar por nº factura, albarán o cliente..." />
 
             @php $filterCount = ($filterStatus ? 1 : 0) + ($filterPaymentStatus ? 1 : 0); @endphp
-            <button
-                x-on:click="$dispatch('open-modal', 'invoice-filters')"
-                class="relative inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors"
-            >
-                <flux:icon icon="adjustments-horizontal" class="size-4 text-zinc-500" />
-                Filtros
-                @if($filterCount > 0)
-                    <span class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-agro-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
-                        {{ $filterCount }}
-                    </span>
-                @endif
-            </button>
+            <x-agro.filter-button modal="invoice-filters" :count="$filterCount" />
 
             <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
@@ -110,33 +64,17 @@
                 <span class="text-xs text-zinc-400">Filtros activos:</span>
 
                 @if($search)
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                        <flux:icon icon="magnifying-glass" class="size-3" />
-                        "{{ $search }}"
-                        <button wire:click="$set('search', '')" class="hover:text-agro-900 ml-0.5">
-                            <flux:icon icon="x-mark" class="size-3" />
-                        </button>
-                    </span>
+                    <x-agro.filter-chip icon="magnifying-glass" :label="'&quot;' . $search . '&quot;'" wireRemove="$set('search', '')" />
                 @endif
 
                 @if($filterStatus)
                     @php $statusLabels = ['draft' => 'Borrador', 'sent' => 'Enviada', 'paid' => 'Pagada', 'cancelled' => 'Cancelada']; @endphp
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                        Estado: {{ $statusLabels[$filterStatus] ?? $filterStatus }}
-                        <button wire:click="$set('filterStatus', '')" class="hover:text-agro-900 ml-0.5">
-                            <flux:icon icon="x-mark" class="size-3" />
-                        </button>
-                    </span>
+                    <x-agro.filter-chip :label="'Estado: ' . ($statusLabels[$filterStatus] ?? $filterStatus)" wireRemove="$set('filterStatus', '')" />
                 @endif
 
                 @if($filterPaymentStatus)
                     @php $payLabels = ['unpaid' => 'Pendiente', 'partial' => 'Parcial', 'paid' => 'Pagado', 'overdue' => 'Vencido']; @endphp
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                        Pago: {{ $payLabels[$filterPaymentStatus] ?? $filterPaymentStatus }}
-                        <button wire:click="$set('filterPaymentStatus', '')" class="hover:text-agro-900 ml-0.5">
-                            <flux:icon icon="x-mark" class="size-3" />
-                        </button>
-                    </span>
+                    <x-agro.filter-chip :label="'Pago: ' . ($payLabels[$filterPaymentStatus] ?? $filterPaymentStatus)" wireRemove="$set('filterPaymentStatus', '')" />
                 @endif
 
                 <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 underline">

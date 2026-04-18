@@ -19,17 +19,7 @@
     <div class="space-y-3">
         <div class="flex items-center gap-3">
 
-            <div class="flex-1 relative">
-                <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                    <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400" />
-                </div>
-                <input
-                    wire:model.live.debounce.300ms="search"
-                    type="text"
-                    placeholder="Buscar por nombre, email o nº colegiado..."
-                    class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
-                />
-            </div>
+            <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar por nombre, email o nº colegiado..." />
 
             <flux:button href="{{ roleRoute('oenologists.create') }}" wire:navigate variant="primary" icon="plus">
                 Nuevo Enólogo
@@ -41,13 +31,7 @@
         @if($search)
             <div class="flex flex-wrap items-center gap-2">
                 <span class="text-xs text-zinc-400">Filtros activos:</span>
-                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    <flux:icon icon="magnifying-glass" class="size-3" />
-                    "{{ $search }}"
-                    <button wire:click="$set('search', '')" class="hover:text-agro-900 ml-0.5">
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip icon="magnifying-glass" :label="'&quot;' . $search . '&quot;'" wireRemove="$set('search', '')" />
                 <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 underline">
                     Limpiar todo
                 </button>

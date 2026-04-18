@@ -14,29 +14,7 @@
     </x-agro.page-header>
 
     {{-- KPIs --}}
-    <div x-data="{
-        open: localStorage.getItem('fermentation-controls-stats-open') !== 'false',
-        toggle() {
-            this.open = !this.open;
-            localStorage.setItem('fermentation-controls-stats-open', String(this.open));
-        }
-    }">
-        <button
-            @click="toggle()"
-            class="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-widest hover:text-zinc-600 transition-colors mb-3"
-        >
-            <span>Estadísticas</span>
-            <flux:icon icon="chevron-up" class="size-3.5 transition-transform duration-200" ::class="{ 'rotate-180': !open }" />
-        </button>
-        <div
-            x-show="open"
-            x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 -translate-y-1"
-            x-transition:enter-end="opacity-100 translate-y-0"
-            x-transition:leave="transition ease-in duration-150"
-            x-transition:leave-start="opacity-100 translate-y-0"
-            x-transition:leave-end="opacity-0 -translate-y-1"
-        >
+    <x-agro.stats-section key="fermentation-controls-stats">
         <div class="grid grid-cols-2 gap-4">
             <x-agro.stat-card
                 label="Total controles"
@@ -63,8 +41,7 @@
                 color="zinc"
             />
         </div>
-        </div>
-    </div>
+    </x-agro.stats-section>
 
     @php
         $filterCount = (int) !empty($wineFilter) + (int) !empty($containerFilter) + (int) !empty($statusFilter);
@@ -72,28 +49,9 @@
 
     {{-- Toolbar --}}
     <div class="flex items-center gap-3">
-        <div class="flex-1 relative">
-            <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400" />
-            </div>
-            <input
-                wire:model.live.debounce.300ms="search"
-                type="text"
-                placeholder="Buscar por vino..."
-                class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
-            />
-        </div>
+        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar por vino..." />
 
-        <button x-on:click="$dispatch('open-modal', 'fermentation-filters')"
-            class="relative inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors">
-            <flux:icon icon="adjustments-horizontal" class="size-4 text-zinc-500" />
-            Filtros
-            @if($filterCount > 0)
-                <span class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-agro-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
-                    {{ $filterCount }}
-                </span>
-            @endif
-        </button>
+        <x-agro.filter-button modal="fermentation-filters" :count="$filterCount" />
     </div>
 
     {{-- Chips de filtros activos --}}
@@ -101,33 +59,15 @@
         <div class="flex flex-wrap items-center gap-2">
             @if($wineFilter)
                 @php $wineLabel = $wines->firstWhere('id', $wineFilter)?->name ?? $wineFilter; @endphp
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    <flux:icon icon="beaker" class="size-3" />
-                    {{ $wineLabel }}
-                    <button wire:click="$set('wineFilter', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip icon="beaker" :label="$wineLabel" wireRemove="$set('wineFilter', '')" />
             @endif
             @if($containerFilter)
                 @php $containerLabel = $containers->firstWhere('id', $containerFilter)?->name ?? $containerFilter; @endphp
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    <flux:icon icon="cube" class="size-3" />
-                    {{ $containerLabel }}
-                    <button wire:click="$set('containerFilter', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip icon="cube" :label="$containerLabel" wireRemove="$set('containerFilter', '')" />
             @endif
             @if($statusFilter)
                 @php $statusLabel = $statusFilter === 'fermenting' ? 'En fermentación' : 'Completada'; @endphp
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    <flux:icon icon="tag" class="size-3" />
-                    {{ $statusLabel }}
-                    <button wire:click="$set('statusFilter', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip icon="tag" :label="$statusLabel" wireRemove="$set('statusFilter', '')" />
             @endif
             <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">
                 Limpiar todo
@@ -136,13 +76,7 @@
     @endif
 
     {{-- Loading skeleton --}}
-    <div wire:loading wire:target="search, wineFilter, statusFilter, containerFilter, clearFilters, nextPage, previousPage">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            @for($i = 0; $i < 6; $i++)
-                <x-agro.skeleton-card />
-            @endfor
-        </div>
-    </div>
+    <x-agro.loading-grid target="search, wineFilter, statusFilter, containerFilter, clearFilters, nextPage, previousPage" />
 
     {{-- Grid de cards --}}
     <div wire:loading.remove wire:target="search, wineFilter, statusFilter, containerFilter, clearFilters, nextPage, previousPage">

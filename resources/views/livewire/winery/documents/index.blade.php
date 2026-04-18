@@ -11,65 +11,92 @@
     </x-slot:actions>
 </x-agro.page-header>
 
-<x-agro.card>
-    <x-agro.filter-bar>
-        <x-agro.filter-input wire:model.live="search" placeholder="Buscar por título, referencia..." />
-        <x-agro.filter-select wire:model.live="typeFilter" placeholder="Todos los tipos">
-            @foreach($types as $key => $label)
-                <option value="{{ $key }}">{{ $label }}</option>
-            @endforeach
-        </x-agro.filter-select>
-    </x-agro.filter-bar>
+<x-agro.filter-bar>
+    <x-agro.filter-input wire:model.live="search" placeholder="Buscar por título, referencia..." />
+    <x-agro.filter-select wire:model.live="typeFilter" placeholder="Todos los tipos">
+        @foreach($types as $key => $label)
+            <option value="{{ $key }}">{{ $label }}</option>
+        @endforeach
+    </x-agro.filter-select>
+</x-agro.filter-bar>
 
-    <x-agro.data-table :headers="['Título', 'Tipo', 'Referencia', 'Fecha emisión', 'Caducidad', 'Acciones']">
-        @forelse($documents as $document)
-            <x-agro.table-row>
-                <x-agro.table-cell>
-                    <div class="font-medium text-zinc-900 dark:text-zinc-100">{{ $document->title }}</div>
-                    @if($document->issuing_authority)
-                        <div class="text-xs text-zinc-500">{{ $document->issuing_authority }}</div>
-                    @endif
-                </x-agro.table-cell>
-                <x-agro.table-cell>
-                    <x-agro.status-badge :label="$document->type_label" color="blue" />
-                </x-agro.table-cell>
-                <x-agro.table-cell>
-                    {{ $document->reference_number ?? '—' }}
-                </x-agro.table-cell>
-                <x-agro.table-cell>
-                    {{ $document->issue_date?->format('d/m/Y') ?? '—' }}
-                </x-agro.table-cell>
-                <x-agro.table-cell>
-                    @if($document->expiry_date)
-                        <span class="inline-flex items-center gap-1">
-                            {{ $document->expiry_date->format('d/m/Y') }}
-                            @if($document->isExpired())
-                                <x-agro.status-badge label="Caducado" color="red" />
-                            @elseif($document->isExpiringSoon())
-                                <x-agro.status-badge label="Próximo" color="amber" />
-                            @endif
-                        </span>
-                    @else
-                        <span class="text-zinc-400">—</span>
-                    @endif
-                </x-agro.table-cell>
-                <x-agro.table-cell align="right">
-                    <div class="flex justify-end gap-2">
-                        <flux:button size="sm" variant="ghost" icon="pencil"
-                            href="{{ roleRoute('documents.edit', $document) }}" wire:navigate />
-                        <flux:button size="sm" variant="ghost" icon="trash"
-                            wire:click="delete({{ $document->id }})"
-                            wire:loading.attr="disabled"
-                            wire:confirm="¿Eliminar este documento?" />
+<x-agro.loading-grid target="search, typeFilter, nextPage, previousPage" />
+
+<div wire:loading.remove wire:target="search, typeFilter, nextPage, previousPage">
+    @if($documents->count() > 0)
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            @foreach($documents as $document)
+                @php $delay = min($loop->index * 50, 300); @endphp
+                <x-agro.card
+                    class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                    style="animation-delay: {{ $delay }}ms;"
+                    wire:key="document-{{ $document->id }}"
+                >
+                    <x-slot:header>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center shrink-0">
+                                <flux:icon icon="folder-open" class="size-5 text-blue-600" />
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-bold text-zinc-900 truncate">{{ $document->title }}</h3>
+                                <p class="text-xs text-zinc-500">{{ $document->issuing_authority ?? '—' }}</p>
+                            </div>
+                            <x-agro.status-badge :label="$document->type_label" color="blue" class="shrink-0" />
+                        </div>
+                    </x-slot:header>
+
+                    <div class="flex-1 space-y-4">
+                        <div class="space-y-2 text-sm">
+                            <div class="flex items-center justify-between">
+                                <span class="text-zinc-400">Referencia</span>
+                                <span class="text-zinc-700 font-medium">{{ $document->reference_number ?? '—' }}</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-zinc-400">Emisión</span>
+                                <span class="text-zinc-700 font-medium">{{ $document->issue_date?->format('d/m/Y') ?? '—' }}</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-zinc-400">Caducidad</span>
+                                <span class="text-zinc-700 font-medium">
+                                    @if($document->expiry_date)
+                                        {{ $document->expiry_date->format('d/m/Y') }}
+                                        @if($document->isExpired())
+                                            <x-agro.status-badge label="Caducado" color="red" />
+                                        @elseif($document->isExpiringSoon())
+                                            <x-agro.status-badge label="Próximo" color="amber" />
+                                        @endif
+                                    @else
+                                        —
+                                    @endif
+                                </span>
+                            </div>
+                        </div>
                     </div>
-                </x-agro.table-cell>
-            </x-agro.table-row>
-        @empty
-            <x-agro.empty-state icon="folder-open" title="Sin documentos registrados"
-                description="Añade licencias, permisos, certificados y otros documentos oficiales de la bodega." />
-        @endforelse
-    </x-agro.data-table>
 
-    {{ $documents->links() }}
-</x-agro.card>
+                    <x-slot:footer>
+                        @php $btnBase = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors'; @endphp
+                        <div class="flex items-center justify-end gap-0.5">
+                            <a href="{{ roleRoute('documents.edit', $document) }}" wire:navigate class="{{ $btnBase }}" title="Editar">
+                                <flux:icon icon="pencil" class="size-4" />
+                            </a>
+                            <button
+                                wire:click="delete({{ $document->id }})"
+                                wire:loading.attr="disabled"
+                                wire:confirm="¿Eliminar este documento?"
+                                class="{{ $btnBase }} hover:!text-red-500 hover:!bg-red-50"
+                                title="Eliminar"
+                            >
+                                <flux:icon icon="trash" class="size-4" />
+                            </button>
+                        </div>
+                    </x-slot:footer>
+                </x-agro.card>
+            @endforeach
+        </div>
+        <div class="mt-6">{{ $documents->links() }}</div>
+    @else
+        <x-agro.empty-state icon="folder-open" title="Sin documentos registrados"
+            description="Añade licencias, permisos, certificados y otros documentos oficiales de la bodega." />
+    @endif
+</div>
 </div>

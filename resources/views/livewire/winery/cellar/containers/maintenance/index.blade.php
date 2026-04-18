@@ -58,116 +58,140 @@
         </x-agro.filter-select>
     </x-agro.filter-bar>
 
-    @if($maintenances->isEmpty())
-        <x-agro.empty-state
-            icon="wrench-screwdriver"
-            title="Sin mantenimientos registrados"
-            description="Programa el primer mantenimiento para este contenedor."
-        >
-            <flux:button variant="primary" icon="plus" href="{{ roleRoute('containers.maintenance.create', $container) }}" wire:navigate>
-                Nuevo mantenimiento
-            </flux:button>
-        </x-agro.empty-state>
-    @else
-        <x-agro.card>
-            <x-agro.data-table :headers="['Tipo', 'Nombre', 'Programado', 'Realizado', 'Próximo', 'Estado', 'Coste', 'Realizado por', 'Acciones']">
+    <x-agro.loading-grid target="statusFilter, typeFilter, nextPage, previousPage" />
+
+    <div wire:loading.remove wire:target="statusFilter, typeFilter, nextPage, previousPage">
+        @if($maintenances->isEmpty())
+            <x-agro.empty-state
+                icon="wrench-screwdriver"
+                title="Sin mantenimientos registrados"
+                description="Programa el primer mantenimiento para este contenedor."
+            >
+                <flux:button variant="primary" icon="plus" href="{{ roleRoute('containers.maintenance.create', $container) }}" wire:navigate>
+                    Nuevo mantenimiento
+                </flux:button>
+            </x-agro.empty-state>
+        @else
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 @foreach($maintenances as $maint)
-                    <x-agro.table-row wire:key="maint-{{ $maint->id }}">
+                    @php $delay = min($loop->index * 50, 300); @endphp
+                    @php
+                        $sc = match($maint->status) {
+                            'scheduled'   => 'amber',
+                            'in_progress' => 'blue',
+                            'in_review'   => 'violet',
+                            'approved'    => 'indigo',
+                            'completed'   => 'agro',
+                            'cancelled'   => 'zinc',
+                            default       => 'zinc'
+                        };
+                        $sl = \App\Models\ContainerMaintenance::STATUSES[$maint->status] ?? $maint->status;
+                    @endphp
+                    <x-agro.card
+                        class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                        style="animation-delay: {{ $delay }}ms;"
+                        wire:key="maint-{{ $maint->id }}"
+                    >
+                        <x-slot:header>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center shrink-0">
+                                    <flux:icon icon="wrench-screwdriver" class="size-5 text-orange-600" />
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="font-bold text-zinc-900 truncate">{{ $maint->maintenance_name }}</h3>
+                                    <p class="text-xs text-zinc-500">{{ \App\Models\ContainerMaintenance::TYPES[$maint->maintenance_type] ?? $maint->maintenance_type }}</p>
+                                </div>
+                                <x-agro.status-badge :color="$sc" :label="$sl" class="shrink-0" />
+                            </div>
+                        </x-slot:header>
 
-                        <x-agro.table-cell>
-                            <span class="text-zinc-700 text-sm">{{ \App\Models\ContainerMaintenance::TYPES[$maint->maintenance_type] ?? $maint->maintenance_type }}</span>
-                        </x-agro.table-cell>
+                        <div class="flex-1 space-y-4">
+                            <div class="grid grid-cols-2 gap-2">
+                                <div class="bg-agro-50 rounded-xl p-3">
+                                    <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Programado</p>
+                                    <p class="text-sm font-bold text-agro-700 leading-none">{{ $maint->scheduled_date->format('d/m/Y') }}</p>
+                                </div>
+                                <div class="bg-agro-50 rounded-xl p-3">
+                                    <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Realizado</p>
+                                    <p class="text-sm font-bold text-agro-700 leading-none">
+                                        @if($maint->performed_date)
+                                            {{ $maint->performed_date->format('d/m/Y') }}
+                                        @else
+                                            —
+                                        @endif
+                                    </p>
+                                </div>
+                            </div>
 
-                        <x-agro.table-cell>
-                            <span class="font-medium text-zinc-900">{{ $maint->maintenance_name }}</span>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-zinc-400">Próximo</span>
+                                    <span class="font-medium {{ $maint->next_maintenance_date && $maint->next_maintenance_date->isPast() ? 'text-red-600' : 'text-zinc-700' }}">
+                                        {{ $maint->next_maintenance_date?->format('d/m/Y') ?? '—' }}
+                                    </span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-zinc-400">Coste</span>
+                                    <span class="text-zinc-700 font-medium">
+                                        @if($maint->cost)
+                                            {{ number_format($maint->cost, 2) }} €
+                                        @else
+                                            —
+                                        @endif
+                                    </span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-zinc-400">Realizado por</span>
+                                    <span class="text-zinc-700 font-medium">{{ $maint->performed_by ?? '—' }}</span>
+                                </div>
+                            </div>
+
                             @if($maint->notes)
-                                <div class="text-xs text-zinc-400 line-clamp-1">{{ $maint->notes }}</div>
+                                <p class="text-xs text-zinc-400 line-clamp-2">{{ $maint->notes }}</p>
                             @endif
-                        </x-agro.table-cell>
+                        </div>
 
-                        <x-agro.table-cell>
-                            <span class="text-zinc-700">{{ $maint->scheduled_date->format('d/m/Y') }}</span>
-                        </x-agro.table-cell>
-
-                        <x-agro.table-cell>
-                            @if($maint->performed_date)
-                                <span class="text-agro-700">{{ $maint->performed_date->format('d/m/Y') }}</span>
-                            @else
-                                <span class="text-zinc-300">—</span>
-                            @endif
-                        </x-agro.table-cell>
-
-                        <x-agro.table-cell>
-                            @if($maint->next_maintenance_date)
-                                <span class="{{ $maint->next_maintenance_date->isPast() ? 'text-red-600 font-medium' : 'text-zinc-600' }}">
-                                    {{ $maint->next_maintenance_date->format('d/m/Y') }}
-                                </span>
-                            @else
-                                <span class="text-zinc-300">—</span>
-                            @endif
-                        </x-agro.table-cell>
-
-                        <x-agro.table-cell>
-                            @php
-                                $sc = match($maint->status) {
-                                    'scheduled'   => 'amber',
-                                    'in_progress' => 'blue',
-                                    'in_review'   => 'violet',
-                                    'approved'    => 'indigo',
-                                    'completed'   => 'agro',
-                                    'cancelled'   => 'zinc',
-                                    default       => 'zinc'
-                                };
-                                $sl = \App\Models\ContainerMaintenance::STATUSES[$maint->status] ?? $maint->status;
-                            @endphp
-                            <x-agro.status-badge :color="$sc" :label="$sl" />
-                        </x-agro.table-cell>
-
-                        <x-agro.table-cell>
-                            @if($maint->cost)
-                                <span class="text-zinc-700">{{ number_format($maint->cost, 2) }} €</span>
-                            @else
-                                <span class="text-zinc-300">—</span>
-                            @endif
-                        </x-agro.table-cell>
-
-                        <x-agro.table-cell>
-                            <span class="text-zinc-600 text-sm">{{ $maint->performed_by ?? '—' }}</span>
-                        </x-agro.table-cell>
-
-                        <x-agro.table-cell align="right">
-                            <div class="flex items-center justify-end gap-1 flex-wrap">
+                        <x-slot:footer>
+                            @php $btnBase = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors'; @endphp
+                            <div class="flex items-center justify-end gap-0.5 flex-wrap">
                                 {{-- Workflow de estados --}}
                                 @if($maint->status === 'scheduled')
-                                    <flux:button wire:click="transition({{ $maint->id }}, 'in_progress')" variant="ghost" size="sm" icon="play" title="Iniciar" />
+                                    <button wire:click="transition({{ $maint->id }}, 'in_progress')" class="{{ $btnBase }}" title="Iniciar">
+                                        <flux:icon icon="play" class="size-4" />
+                                    </button>
                                 @endif
                                 @if(in_array($maint->status, ['scheduled', 'in_progress']))
-                                    <flux:button wire:click="transition({{ $maint->id }}, 'in_review')" variant="ghost" size="sm" icon="eye" title="Enviar a revisión" />
+                                    <button wire:click="transition({{ $maint->id }}, 'in_review')" class="{{ $btnBase }}" title="Enviar a revisión">
+                                        <flux:icon icon="eye" class="size-4" />
+                                    </button>
                                 @endif
                                 @if($maint->status === 'in_review')
-                                    <flux:button wire:click="transition({{ $maint->id }}, 'approved')" variant="ghost" size="sm" icon="hand-thumb-up" title="Aprobar" class="text-agro-600" />
+                                    <button wire:click="transition({{ $maint->id }}, 'approved')" class="{{ $btnBase }} !text-agro-600" title="Aprobar">
+                                        <flux:icon icon="hand-thumb-up" class="size-4" />
+                                    </button>
                                 @endif
                                 @if(in_array($maint->status, ['in_review', 'approved']))
-                                    <flux:button wire:click="transition({{ $maint->id }}, 'completed')" wire:confirm="¿Marcar como completado?" variant="ghost" size="sm" icon="check-circle" title="Completar" />
+                                    <button wire:click="transition({{ $maint->id }}, 'completed')" wire:confirm="¿Marcar como completado?" class="{{ $btnBase }}" title="Completar">
+                                        <flux:icon icon="check-circle" class="size-4" />
+                                    </button>
                                 @endif
                                 @if(!in_array($maint->status, ['completed', 'cancelled']))
-                                    <flux:button wire:click="transition({{ $maint->id }}, 'cancelled')" wire:confirm="¿Cancelar este mantenimiento?" variant="ghost" size="sm" icon="x-circle" title="Cancelar" />
+                                    <button wire:click="transition({{ $maint->id }}, 'cancelled')" wire:confirm="¿Cancelar este mantenimiento?" class="{{ $btnBase }} hover:!text-red-500 hover:!bg-red-50" title="Cancelar">
+                                        <flux:icon icon="x-circle" class="size-4" />
+                                    </button>
                                 @endif
                                 {{-- Editar siempre --}}
-                                <a href="{{ roleRoute('containers.maintenance.edit', [$container, $maint]) }}" title="Editar">
-                                    <button class="inline-flex items-center justify-center w-7 h-7 rounded text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
-                                        <flux:icon icon="pencil" class="size-3.5" />
-                                    </button>
+                                <a href="{{ roleRoute('containers.maintenance.edit', [$container, $maint]) }}" class="{{ $btnBase }}" title="Editar">
+                                    <flux:icon icon="pencil" class="size-4" />
                                 </a>
                             </div>
-                        </x-agro.table-cell>
-
-                    </x-agro.table-row>
+                        </x-slot:footer>
+                    </x-agro.card>
                 @endforeach
-            </x-agro.data-table>
-        </x-agro.card>
+            </div>
 
-        <x-agro.pagination :paginator="$maintenances" />
-    @endif
+            <div class="mt-6"><x-agro.pagination :paginator="$maintenances" /></div>
+        @endif
+    </div>
 
 </div>

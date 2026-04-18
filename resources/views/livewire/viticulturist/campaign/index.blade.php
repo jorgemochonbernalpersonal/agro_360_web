@@ -6,117 +6,36 @@
     />
 
     {{-- Stats --}}
-    <div x-data="{
-        open: localStorage.getItem('campaigns-stats-open') !== 'false',
-        toggle() {
-            this.open = !this.open;
-            localStorage.setItem('campaigns-stats-open', String(this.open));
-        }
-    }">
-        <button
-            @click="toggle()"
-            class="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-widest hover:text-zinc-600 transition-colors mb-3"
-        >
-            <span>Estadísticas</span>
-            <flux:icon icon="chevron-up" class="size-3.5 transition-transform duration-200" ::class="{ 'rotate-180': !open }" />
-        </button>
-        <div
-            x-show="open"
-            x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 -translate-y-1"
-            x-transition:enter-end="opacity-100 translate-y-0"
-            x-transition:leave="transition ease-in duration-150"
-            x-transition:leave-start="opacity-100 translate-y-0"
-            x-transition:leave-end="opacity-0 -translate-y-1"
-        >
-            <div class="grid grid-cols-2 gap-4">
-                <x-agro.stat-card
-                    label="Total campañas"
-                    :value="$stats['total']"
-                    description="'Historial completo'"
-                    icon="calendar-days"
-                    color="agro"
-                />
-                <x-agro.stat-card
-                    label="Activas"
-                    :value="$stats['active']"
-                    description="'Campañas en curso'"
-                    icon="check-circle"
-                    color="agro"
-                />
-                <x-agro.stat-card
-                    label="Inactivas"
-                    :value="$stats['inactive']"
-                    description="$stats['inactive'] > 0 ? 'Campañas cerradas' : 'Todas activas'"
-                    icon="archive-box"
-                    color="zinc"
-                />
-                <x-agro.stat-card
-                    label="Año actual"
-                    :value="(string) now()->year"
-                    description="'Campaña en progreso'"
-                    icon="sun"
-                    color="orange"
-                />
-            </div>
-        </div>
-    </div>
-    {{-- Stats --}}
-    <div x-data="{
-        open: localStorage.getItem('campaigns-stats-open') !== 'false',
-        toggle() {
-            this.open = !this.open;
-            localStorage.setItem('campaigns-stats-open', String(this.open));
-        }
-    }">
-        <button
-            @click="toggle()"
-            class="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-widest hover:text-zinc-600 transition-colors mb-3"
-        >
-            <span>Estadísticas</span>
-            <flux:icon icon="chevron-up" class="size-3.5 transition-transform duration-200" ::class="{ 'rotate-180': !open }" />
-        </button>
-        <div
-            x-show="open"
-            x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 -translate-y-1"
-            x-transition:enter-end="opacity-100 translate-y-0"
-            x-transition:leave="transition ease-in duration-150"
-            x-transition:leave-start="opacity-100 translate-y-0"
-            x-transition:leave-end="opacity-0 -translate-y-1"
-        >
-            <div class="grid grid-cols-2 gap-4">
-                <x-agro.stat-card
-                    label="Total campañas"
-                    :value="$stats['total']"
-                    description="'Historial completo'"
-                    icon="calendar-days"
-                    color="agro"
-                />
-                <x-agro.stat-card
-                    label="Activas"
-                    :value="$stats['active']"
-                    description="'Campañas en curso'"
-                    icon="check-circle"
-                    color="agro"
-                />
-                <x-agro.stat-card
-                    label="Inactivas"
-                    :value="$stats['inactive']"
-                    description="$stats['inactive'] > 0 ? 'Campañas cerradas' : 'Todas activas'"
-                    icon="archive-box"
-                    color="zinc"
-                />
-                <x-agro.stat-card
-                    label="Año actual"
-                    :value="(string) date('Y')"
-                    description="'Campaña en progreso'"
-                    icon="sun"
-                    color="orange"
-                />
-            </div>
-        </div>
-    </div>
+    <x-agro.stats-section key="campaigns">
+        <x-agro.stat-card
+            label="Total campañas"
+            :value="$stats['total']"
+            description="'Historial completo'"
+            icon="calendar-days"
+            color="agro"
+        />
+        <x-agro.stat-card
+            label="Activas"
+            :value="$stats['active']"
+            description="'Campañas en curso'"
+            icon="check-circle"
+            color="agro"
+        />
+        <x-agro.stat-card
+            label="Inactivas"
+            :value="$stats['inactive']"
+            description="$stats['inactive'] > 0 ? 'Campañas cerradas' : 'Todas activas'"
+            icon="archive-box"
+            color="zinc"
+        />
+        <x-agro.stat-card
+            label="Año actual"
+            :value="(string) now()->year"
+            description="'Campaña en progreso'"
+            icon="sun"
+            color="orange"
+        />
+    </x-agro.stats-section>
     {{-- Tabs --}}
     <x-agro.tabs
         :tabs="[
@@ -132,30 +51,9 @@
 
     <div class="flex items-center gap-3">
 
-        <div class="flex-1 relative">
-            <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400" />
-            </div>
-            <input
-                wire:model.live.debounce.300ms="search"
-                type="text"
-                placeholder="Buscar por nombre o descripción..."
-                class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
-            />
-        </div>
+        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar por nombre o descripción..." />
 
-        <button
-            x-on:click="$dispatch('open-modal', 'campaign-filters')"
-            class="relative inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors"
-        >
-            <flux:icon icon="adjustments-horizontal" class="size-4 text-zinc-500" />
-            Filtros
-            @if($filterCount > 0)
-                <span class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-agro-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
-                    {{ $filterCount }}
-                </span>
-            @endif
-        </button>
+        <x-agro.filter-button modal="campaign-filters" :count="$filterCount" />
 
         <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
@@ -171,22 +69,10 @@
     @if($search || $yearFilter)
         <div class="flex flex-wrap items-center gap-2">
             @if($search)
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    <flux:icon icon="magnifying-glass" class="size-3" />
-                    "{{ $search }}"
-                    <button wire:click="$set('search', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip icon="magnifying-glass" :label="'&quot;' . $search . '&quot;'" wireRemove="$set('search', '')" />
             @endif
             @if($yearFilter)
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    <flux:icon icon="calendar" class="size-3" />
-                    Año {{ $yearFilter }}
-                    <button wire:click="$set('yearFilter', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip icon="calendar" :label="'Año ' . $yearFilter" wireRemove="$set('yearFilter', '')" />
             @endif
             <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">
                 Limpiar todo

@@ -29,73 +29,112 @@
         @endif
     </x-agro.filter-bar>
 
-    @if($labelings->count() > 0)
-        <div wire:loading.class="opacity-60 pointer-events-none" wire:target="search, wineFilter, clearFilters">
-            <x-agro.data-table :headers="['Fecha', 'Vino', 'Botellas', 'Lote etiquetas', 'Rango numérico', 'Embotellado', '']">
-                @foreach($labelings as $labeling)
-                    <x-agro.table-row wire:key="labeling-{{ $labeling->id }}">
-                        <x-agro.table-cell>{{ $labeling->labeling_date->format('d/m/Y') }}</x-agro.table-cell>
-                        <x-agro.table-cell>
-                            <span class="font-medium text-zinc-900">{{ $labeling->wine->name }}</span>
-                            @if($labeling->wine->vintage)
-                                <span class="text-xs text-zinc-400 ml-1">{{ $labeling->wine->vintage }}</span>
-                            @endif
-                        </x-agro.table-cell>
-                        <x-agro.table-cell align="right">
-                            <span class="font-semibold text-zinc-900">{{ number_format($labeling->quantity_labeled) }}</span>
-                        </x-agro.table-cell>
-                        <x-agro.table-cell>
-                            @if($labeling->labelBatch)
-                                <a href="{{ roleRoute('label-batches.edit', $labeling->label_batch_id) }}"
-                                    class="text-xs text-violet-600 hover:text-violet-800 underline underline-offset-2">
-                                    {{ $labeling->labelBatch->name }}
-                                </a>
-                            @else
-                                <span class="text-zinc-300">—</span>
-                            @endif
-                        </x-agro.table-cell>
-                        <x-agro.table-cell class="font-mono text-xs">{{ $labeling->label_range ?? '—' }}</x-agro.table-cell>
-                        <x-agro.table-cell>
-                            @if($labeling->bottling)
-                                <a href="{{ roleRoute('bottling.edit', $labeling->wine_bottling_id) }}"
-                                    class="text-xs text-emerald-600 hover:text-emerald-800 underline underline-offset-2">
-                                    {{ $labeling->bottling->bottling_date->format('d/m/Y') }}
-                                </a>
-                            @else
-                                <span class="text-zinc-300">—</span>
-                            @endif
-                        </x-agro.table-cell>
-                        <x-agro.table-cell align="right">
-                            <div class="flex items-center justify-end gap-1">
-                                <x-agro.action-button variant="edit" :href="roleRoute('labeling.edit', $labeling)" />
-                                <x-agro.action-button
-                                    variant="delete"
-                                    wireClick="delete({{ $labeling->id }})"
-                                    wireConfirm="¿Eliminar esta sesión? Se devolverán las etiquetas al lote."
-                                />
-                            </div>
-                        </x-agro.table-cell>
-                    </x-agro.table-row>
-                @endforeach
-            </x-agro.data-table>
-        </div>
+    <x-agro.loading-grid target="search, wineFilter, clearFilters, nextPage, previousPage" />
 
-        <x-agro.pagination :paginator="$labelings" />
-    @else
-        <x-agro.empty-state
-            icon="tag"
-            title="No hay sesiones de etiquetado"
-            :description="$search || $wineFilter ? 'Ninguna sesión coincide con los filtros.' : 'Registra la primera sesión de etiquetado.'"
-        >
-            @if($search || $wineFilter)
-                <x-slot:action>
-                    <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
-                </x-slot:action>
-            @else
-                <x-slot:action>
-                    <flux:button href="{{ roleRoute('labeling.create') }}" variant="primary" icon="plus">Nueva Sesión</flux:button>
-                </x-slot:action>
-            @endif
-        </x-agro.empty-state>
-    @endif
+    <div wire:loading.remove wire:target="search, wineFilter, clearFilters, nextPage, previousPage">
+        @if($labelings->count() > 0)
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                @foreach($labelings as $labeling)
+                    @php $delay = min($loop->index * 50, 300); @endphp
+                    <x-agro.card
+                        class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                        style="animation-delay: {{ $delay }}ms;"
+                        wire:key="labeling-{{ $labeling->id }}"
+                    >
+                        <x-slot:header>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center shrink-0">
+                                    <flux:icon icon="tag" class="size-5 text-violet-600" />
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="font-bold text-zinc-900 truncate">{{ $labeling->wine->name }}</h3>
+                                    <p class="text-xs text-zinc-500">{{ $labeling->labeling_date->format('d/m/Y') }}</p>
+                                </div>
+                                @if($labeling->wine->vintage)
+                                    <flux:badge color="violet" size="sm" class="shrink-0">{{ $labeling->wine->vintage }}</flux:badge>
+                                @endif
+                            </div>
+                        </x-slot:header>
+
+                        <div class="flex-1 space-y-4">
+                            <div class="grid grid-cols-2 gap-2">
+                                <div class="bg-agro-50 rounded-xl p-3">
+                                    <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Botellas</p>
+                                    <p class="text-2xl font-bold text-agro-700 leading-none">{{ number_format($labeling->quantity_labeled) }}</p>
+                                </div>
+                                <div class="bg-agro-50 rounded-xl p-3">
+                                    <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Rango</p>
+                                    <p class="text-sm font-bold text-agro-700 leading-none font-mono">{{ $labeling->label_range ?? '—' }}</p>
+                                </div>
+                            </div>
+
+                            <div class="space-y-2 text-sm">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-zinc-400">Lote</span>
+                                    <span class="text-zinc-700 font-medium">
+                                        @if($labeling->labelBatch)
+                                            <a href="{{ roleRoute('label-batches.edit', $labeling->label_batch_id) }}"
+                                                class="text-violet-600 hover:text-violet-800 underline underline-offset-2">
+                                                {{ $labeling->labelBatch->name }}
+                                            </a>
+                                        @else
+                                            —
+                                        @endif
+                                    </span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-zinc-400">Embotellado</span>
+                                    <span class="text-zinc-700 font-medium">
+                                        @if($labeling->bottling)
+                                            <a href="{{ roleRoute('bottling.edit', $labeling->wine_bottling_id) }}"
+                                                class="text-emerald-600 hover:text-emerald-800 underline underline-offset-2">
+                                                {{ $labeling->bottling->bottling_date->format('d/m/Y') }}
+                                            </a>
+                                        @else
+                                            —
+                                        @endif
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <x-slot:footer>
+                            @php $btnBase = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors'; @endphp
+                            <div class="flex items-center justify-end gap-0.5">
+                                <a href="{{ roleRoute('labeling.edit', $labeling) }}" wire:navigate class="{{ $btnBase }}" title="Editar">
+                                    <flux:icon icon="pencil" class="size-4" />
+                                </a>
+                                <button
+                                    wire:click="delete({{ $labeling->id }})"
+                                    wire:confirm="¿Eliminar esta sesión? Se devolverán las etiquetas al lote."
+                                    class="{{ $btnBase }} hover:!text-red-500 hover:!bg-red-50"
+                                    title="Eliminar"
+                                >
+                                    <flux:icon icon="trash" class="size-4" />
+                                </button>
+                            </div>
+                        </x-slot:footer>
+                    </x-agro.card>
+                @endforeach
+            </div>
+
+            <div class="mt-6"><x-agro.pagination :paginator="$labelings" /></div>
+        @else
+            <x-agro.empty-state
+                icon="tag"
+                title="No hay sesiones de etiquetado"
+                :description="$search || $wineFilter ? 'Ninguna sesión coincide con los filtros.' : 'Registra la primera sesión de etiquetado.'"
+            >
+                @if($search || $wineFilter)
+                    <x-slot:action>
+                        <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
+                    </x-slot:action>
+                @else
+                    <x-slot:action>
+                        <flux:button href="{{ roleRoute('labeling.create') }}" variant="primary" icon="plus">Nueva Sesión</flux:button>
+                    </x-slot:action>
+                @endif
+            </x-agro.empty-state>
+        @endif
+    </div>
 </div>

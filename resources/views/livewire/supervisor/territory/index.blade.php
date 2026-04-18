@@ -6,101 +6,176 @@
     />
 
     {{-- Stats --}}
-    <div x-data="{
-        open: localStorage.getItem('supervisor-territory-stats-open') !== 'false',
-        toggle() {
-            this.open = !this.open;
-            localStorage.setItem('supervisor-territory-stats-open', String(this.open));
-        }
-    }">
-        <button
-            @click="toggle()"
-            class="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-widest hover:text-zinc-600 transition-colors mb-3"
-        >
-            <span>Estadísticas</span>
-            <flux:icon icon="chevron-up" class="size-3.5 transition-transform duration-200" ::class="{ 'rotate-180': !open }" />
-        </button>
-        <div
-            x-show="open"
-            x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 -translate-y-1"
-            x-transition:enter-end="opacity-100 translate-y-0"
-            x-transition:leave="transition ease-in duration-150"
-            x-transition:leave-start="opacity-100 translate-y-0"
-            x-transition:leave-end="opacity-0 -translate-y-1"
-        >
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <x-agro.stat-card label="Parcelas activas" :value="$totalPlots" icon="map" color="blue" />
-            <x-agro.stat-card label="Superficie total (ha)" :value="number_format($totalArea, 2)" icon="square-3-stack-3d" color="agro" />
-            <x-agro.stat-card label="Parcelas ecológicas" :value="$organicPlots" icon="sparkles" color="agro" description="Certificadas ecológico" />
-        </div>
-        </div>
-    </div>
+    <x-agro.stats-section key="supervisor-territory" columns="3">
+        <x-agro.stat-card label="Parcelas activas" :value="$totalPlots" icon="map" color="blue" />
+        <x-agro.stat-card label="Superficie total (ha)" :value="number_format($totalArea, 2)" icon="square-3-stack-3d" color="agro" />
+        <x-agro.stat-card label="Parcelas ecológicas" :value="$organicPlots" icon="sparkles" color="agro" description="Certificadas ecológico" />
+    </x-agro.stats-section>
 
     {{-- Tabs --}}
     <div>
         <x-agro.tabs :tabs="$tabs" :active="$activeTab" wireMethod="setTab" />
 
         @if($activeTab === 'provinces')
-            <x-agro.data-table
-                :headers="['Provincia', 'Parcelas', 'Superficie (ha)', 'Ecológicas', '% del total']"
-                emptyMessage="No hay parcelas registradas."
-            >
-                @foreach($byProvince as $row)
-                    <tr class="hover:bg-zinc-50 transition">
-                        <td class="px-6 py-3 text-sm font-medium text-zinc-800">{{ $row->province_name ?? '—' }}</td>
-                        <td class="px-6 py-3 text-sm text-zinc-500">{{ $row->plot_count }}</td>
-                        <td class="px-6 py-3 text-sm text-zinc-500">{{ number_format($row->total_area, 2) }} ha</td>
-                        <td class="px-6 py-3 text-sm text-zinc-500">{{ $row->organic_count }}</td>
-                        <td class="px-6 py-3 text-sm text-zinc-400">
-                            @if($totalArea > 0)
-                                {{ number_format(($row->total_area / $totalArea) * 100, 1) }}%
-                            @else
-                                —
-                            @endif
-                        </td>
-                    </tr>
-                @endforeach
-            </x-agro.data-table>
+            @if($byProvince->count() > 0)
+                <div
+                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4"
+                    wire:loading.class="opacity-60 pointer-events-none"
+                    wire:target="setTab"
+                >
+                    @foreach($byProvince as $row)
+                        @php $delay = min($loop->index * 50, 300); @endphp
+                        <x-agro.card
+                            class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                            style="animation-delay: {{ $delay }}ms;"
+                            wire:key="prov-{{ $loop->index }}"
+                        >
+                            <x-slot:header>
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center shrink-0">
+                                        <flux:icon icon="map-pin" class="size-5 text-blue-600" />
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <h3 class="font-bold text-zinc-900 truncate">{{ $row->province_name ?? '—' }}</h3>
+                                        <p class="text-xs text-zinc-400">Provincia</p>
+                                    </div>
+                                    @if($totalArea > 0)
+                                        <flux:badge color="blue" size="sm" class="shrink-0">
+                                            {{ number_format(($row->total_area / $totalArea) * 100, 1) }}%
+                                        </flux:badge>
+                                    @endif
+                                </div>
+                            </x-slot:header>
+
+                            <div class="flex-1 space-y-3">
+                                <div class="grid grid-cols-3 gap-2">
+                                    <div class="bg-blue-50 rounded-lg p-2 text-center">
+                                        <p class="text-[9px] text-blue-400 uppercase tracking-wide mb-0.5">Parcelas</p>
+                                        <p class="text-sm font-bold text-blue-700">{{ $row->plot_count }}</p>
+                                    </div>
+                                    <div class="bg-emerald-50 rounded-lg p-2 text-center">
+                                        <p class="text-[9px] text-emerald-400 uppercase tracking-wide mb-0.5">Superficie</p>
+                                        <p class="text-sm font-bold text-emerald-700">
+                                            {{ number_format($row->total_area, 2) }}
+                                            <span class="text-[9px] font-normal text-emerald-400">ha</span>
+                                        </p>
+                                    </div>
+                                    <div class="bg-green-50 rounded-lg p-2 text-center">
+                                        <p class="text-[9px] text-green-400 uppercase tracking-wide mb-0.5">Ecológicas</p>
+                                        <p class="text-sm font-bold text-green-700">{{ $row->organic_count }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </x-agro.card>
+                    @endforeach
+                </div>
+            @else
+                <x-agro.empty-state icon="map-pin" title="Sin datos" description="No hay parcelas registradas." />
+            @endif
 
         @elseif($activeTab === 'varieties')
-            <x-agro.data-table
-                :headers="['Variedad', 'Color', 'Parcelas', 'Superficie plantada (ha)', '% del total']"
-                emptyMessage="No hay plantaciones activas."
-            >
-                @php $totalPlanted = $byVariety->sum('planted_area'); @endphp
-                @foreach($byVariety as $row)
-                    <tr class="hover:bg-zinc-50 transition">
-                        <td class="px-6 py-3 text-sm font-medium text-zinc-800">{{ $row->variety_name }}</td>
-                        <td class="px-6 py-3 text-sm text-zinc-500 capitalize">{{ $row->variety_color ?? '—' }}</td>
-                        <td class="px-6 py-3 text-sm text-zinc-500">{{ $row->plot_count }}</td>
-                        <td class="px-6 py-3 text-sm text-zinc-500">{{ number_format($row->planted_area, 2) }} ha</td>
-                        <td class="px-6 py-3 text-sm text-zinc-400">
-                            @if($totalPlanted > 0)
-                                {{ number_format(($row->planted_area / $totalPlanted) * 100, 1) }}%
-                            @else
-                                —
-                            @endif
-                        </td>
-                    </tr>
-                @endforeach
-            </x-agro.data-table>
+            @php $totalPlanted = $byVariety->sum('planted_area'); @endphp
+            @if($byVariety->count() > 0)
+                <div
+                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4"
+                    wire:loading.class="opacity-60 pointer-events-none"
+                    wire:target="setTab"
+                >
+                    @foreach($byVariety as $row)
+                        @php $delay = min($loop->index * 50, 300); @endphp
+                        <x-agro.card
+                            class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                            style="animation-delay: {{ $delay }}ms;"
+                            wire:key="var-{{ $loop->index }}"
+                        >
+                            <x-slot:header>
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center shrink-0">
+                                        <flux:icon icon="sparkles" class="size-5 text-violet-600" />
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <h3 class="font-bold text-zinc-900 truncate">{{ $row->variety_name }}</h3>
+                                        <p class="text-xs text-zinc-400 capitalize">{{ $row->variety_color ?? '—' }}</p>
+                                    </div>
+                                    @if($totalPlanted > 0)
+                                        <flux:badge color="violet" size="sm" class="shrink-0">
+                                            {{ number_format(($row->planted_area / $totalPlanted) * 100, 1) }}%
+                                        </flux:badge>
+                                    @endif
+                                </div>
+                            </x-slot:header>
+
+                            <div class="flex-1 space-y-3">
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div class="bg-violet-50 rounded-lg p-2 text-center">
+                                        <p class="text-[9px] text-violet-400 uppercase tracking-wide mb-0.5">Parcelas</p>
+                                        <p class="text-sm font-bold text-violet-700">{{ $row->plot_count }}</p>
+                                    </div>
+                                    <div class="bg-emerald-50 rounded-lg p-2 text-center">
+                                        <p class="text-[9px] text-emerald-400 uppercase tracking-wide mb-0.5">Superficie</p>
+                                        <p class="text-sm font-bold text-emerald-700">
+                                            {{ number_format($row->planted_area, 2) }}
+                                            <span class="text-[9px] font-normal text-emerald-400">ha</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </x-agro.card>
+                    @endforeach
+                </div>
+            @else
+                <x-agro.empty-state icon="sparkles" title="Sin plantaciones" description="No hay plantaciones activas." />
+            @endif
 
         @else
-            <x-agro.data-table
-                :headers="['Municipio', 'Parcelas', 'Superficie (ha)']"
-                emptyMessage="No hay municipios con parcelas."
-            >
-                @foreach($byMunicipality as $row)
-                    <tr class="hover:bg-zinc-50 transition">
-                        <td class="px-6 py-3 text-sm font-medium text-zinc-800">{{ $row->municipality_name ?? '—' }}</td>
-                        <td class="px-6 py-3 text-sm text-zinc-500">{{ $row->plot_count }}</td>
-                        <td class="px-6 py-3 text-sm text-zinc-500">{{ number_format($row->total_area, 2) }} ha</td>
-                    </tr>
-                @endforeach
-            </x-agro.data-table>
+            {{-- Municipalities --}}
+            @if($byMunicipality->count() > 0)
+                <div
+                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4"
+                    wire:loading.class="opacity-60 pointer-events-none"
+                    wire:target="setTab"
+                >
+                    @foreach($byMunicipality as $row)
+                        @php $delay = min($loop->index * 50, 300); @endphp
+                        <x-agro.card
+                            class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                            style="animation-delay: {{ $delay }}ms;"
+                            wire:key="mun-{{ $loop->index }}"
+                        >
+                            <x-slot:header>
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
+                                        <flux:icon icon="building-office" class="size-5 text-amber-600" />
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <h3 class="font-bold text-zinc-900 truncate">{{ $row->municipality_name ?? '—' }}</h3>
+                                        <p class="text-xs text-zinc-400">Municipio</p>
+                                    </div>
+                                </div>
+                            </x-slot:header>
+
+                            <div class="flex-1 space-y-3">
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div class="bg-amber-50 rounded-lg p-2 text-center">
+                                        <p class="text-[9px] text-amber-400 uppercase tracking-wide mb-0.5">Parcelas</p>
+                                        <p class="text-sm font-bold text-amber-700">{{ $row->plot_count }}</p>
+                                    </div>
+                                    <div class="bg-emerald-50 rounded-lg p-2 text-center">
+                                        <p class="text-[9px] text-emerald-400 uppercase tracking-wide mb-0.5">Superficie</p>
+                                        <p class="text-sm font-bold text-emerald-700">
+                                            {{ number_format($row->total_area, 2) }}
+                                            <span class="text-[9px] font-normal text-emerald-400">ha</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </x-agro.card>
+                    @endforeach
+                </div>
+            @else
+                <x-agro.empty-state icon="building-office" title="Sin municipios" description="No hay municipios con parcelas." />
+            @endif
         @endif
     </div>
 
 </div>
-

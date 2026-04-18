@@ -12,98 +12,105 @@
         </x-slot:actions>
     </x-agro.page-header>
 
-    <div x-data="{
-        open: localStorage.getItem('pac-declarations-stats-open') !== 'false',
-        toggle() {
-            this.open = !this.open;
-            localStorage.setItem('pac-declarations-stats-open', String(this.open));
-        }
-    }">
-        <button
-            @click="toggle()"
-            class="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-widest hover:text-zinc-600 transition-colors mb-3"
-        >
-            <span>Estadísticas</span>
-            <flux:icon icon="chevron-up" class="size-3.5 transition-transform duration-200" ::class="{ 'rotate-180': !open }" />
-        </button>
-        <div
-            x-show="open"
-            x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 -translate-y-1"
-            x-transition:enter-end="opacity-100 translate-y-0"
-            x-transition:leave="transition ease-in duration-150"
-            x-transition:leave-start="opacity-100 translate-y-0"
-            x-transition:leave-end="opacity-0 -translate-y-1"
-        >
-        <div class="grid grid-cols-2 gap-4">
-            <x-agro.stat-card label="Total" :value="$stats['total']" icon="document-text" color="zinc" />
-            <x-agro.stat-card label="Borradores" :value="$stats['draft']" icon="pencil" color="amber" />
-            <x-agro.stat-card label="Presentadas" :value="$stats['submitted']" icon="paper-airplane" color="blue" />
-            <x-agro.stat-card label="Aprobadas" :value="$stats['approved']" icon="check-circle" color="green" />
-        </div>
-        </div>
-    </div>
+    <x-agro.stats-section key="pac-declarations">
+        <x-agro.stat-card label="Total" :value="$stats['total']" icon="document-text" color="zinc" />
+        <x-agro.stat-card label="Borradores" :value="$stats['draft']" icon="pencil" color="amber" />
+        <x-agro.stat-card label="Presentadas" :value="$stats['submitted']" icon="paper-airplane" color="blue" />
+        <x-agro.stat-card label="Aprobadas" :value="$stats['approved']" icon="check-circle" color="green" />
+    </x-agro.stats-section>
 
-    @if($declarations->isEmpty())
-        <x-agro.empty-state
-            icon="document-text"
-            title="Sin declaraciones PAC"
-            description="Crea tu primera Solicitud Única para declarar tus superficies ante el organismo pagador."
-        >
-            <flux:button variant="primary" icon="plus"
-                href="{{ roleRoute('viticulturist.pac.declarations.create') }}" wire:navigate>
-                Nueva declaración
-            </flux:button>
-        </x-agro.empty-state>
-    @else
-        <x-agro.card>
-            <x-agro.data-table :headers="['Año', 'Parcelas', 'Sup. declarada', 'Sup. admisible', 'Referencia', 'Presentada', 'Estado', '']">
+    <x-agro.loading-grid target="search" />
+    <div wire:loading.remove wire:target="search">
+        @if($declarations->count() > 0)
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 @foreach($declarations as $declaration)
-                    <x-agro.table-row wire:key="decl-{{ $declaration->id }}">
-                        <x-agro.table-cell>
-                            <span class="font-bold text-zinc-900 text-base">{{ $declaration->year }}</span>
-                        </x-agro.table-cell>
-                        <x-agro.table-cell>
-                            {{ $declaration->items_count }}
-                        </x-agro.table-cell>
-                        <x-agro.table-cell>
-                            {{ number_format($declaration->total_declared_area, 2) }} ha
-                        </x-agro.table-cell>
-                        <x-agro.table-cell>
-                            <span class="font-medium text-green-700">{{ number_format($declaration->total_eligible_area, 2) }} ha</span>
-                        </x-agro.table-cell>
-                        <x-agro.table-cell>
-                            <span class="font-mono text-xs text-zinc-500">{{ $declaration->reference_number ?? '—' }}</span>
-                        </x-agro.table-cell>
-                        <x-agro.table-cell>
-                            {{ $declaration->submitted_at?->format('d/m/Y') ?? '—' }}
-                        </x-agro.table-cell>
-                        <x-agro.table-cell>
-                            <x-agro.status-badge :color="$declaration->statusColor()" :label="$declaration->statusLabel()" />
-                        </x-agro.table-cell>
-                        <x-agro.table-cell align="right">
-                            <div class="flex items-center justify-end gap-1">
-                                <flux:button size="sm" variant="ghost" icon="eye"
-                                    href="{{ roleRoute('viticulturist.pac.declarations.show', $declaration) }}"
-                                    wire:navigate />
+                    @php $delay = min($loop->index * 50, 300); @endphp
+                    <x-agro.card
+                        class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                        style="animation-delay: {{ $delay }}ms;"
+                        wire:key="decl-{{ $declaration->id }}"
+                    >
+                        <x-slot:header>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-sky-100 flex items-center justify-center shrink-0">
+                                    <flux:icon icon="document-text" class="size-5 text-sky-600" />
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="font-bold text-zinc-900 truncate">PAC {{ $declaration->year }}</h3>
+                                    <p class="text-xs text-zinc-500 font-mono">{{ $declaration->reference_number ?? 'Sin referencia' }}</p>
+                                </div>
+                                <x-agro.status-badge :color="$declaration->statusColor()" :label="$declaration->statusLabel()" />
+                            </div>
+                        </x-slot:header>
+
+                        <div class="flex-1 space-y-4">
+                            <div class="grid grid-cols-2 gap-2">
+                                <div class="bg-agro-50 rounded-xl p-3">
+                                    <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Declarada</p>
+                                    <p class="text-lg font-bold text-agro-700 leading-none">{{ number_format($declaration->total_declared_area, 2) }}</p>
+                                    <p class="text-[10px] text-agro-400 mt-0.5">ha</p>
+                                </div>
+                                <div class="bg-agro-50 rounded-xl p-3">
+                                    <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Admisible</p>
+                                    <p class="text-lg font-bold text-green-700 leading-none">{{ number_format($declaration->total_eligible_area, 2) }}</p>
+                                    <p class="text-[10px] text-agro-400 mt-0.5">ha</p>
+                                </div>
+                            </div>
+
+                            <div class="space-y-2 text-sm">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-zinc-400">Parcelas</span>
+                                    <span class="text-zinc-700 font-medium">{{ $declaration->items_count }}</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-zinc-400">Presentada</span>
+                                    <span class="text-zinc-700 font-medium">{{ $declaration->submitted_at?->format('d/m/Y') ?? '—' }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <x-slot:footer>
+                            @php $btnBase = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors'; @endphp
+                            <div class="flex items-center justify-end gap-0.5">
+                                <a href="{{ roleRoute('viticulturist.pac.declarations.show', $declaration) }}"
+                                   wire:navigate class="{{ $btnBase }}" title="Ver">
+                                    <flux:icon icon="eye" class="size-4" />
+                                </a>
                                 @if($declaration->isDraft())
-                                    <flux:button size="sm" variant="ghost" icon="pencil"
-                                        href="{{ roleRoute('viticulturist.pac.declarations.edit', $declaration) }}"
-                                        wire:navigate />
-                                    <flux:button size="sm" variant="ghost" icon="paper-airplane"
-                                        wire:click="submit({{ $declaration->id }})"
-                                        wire:confirm="¿Presentar esta declaración? Una vez presentada no podrás editarla." />
-                                    <flux:button size="sm" variant="ghost" icon="trash" class="text-red-500"
-                                        wire:click="delete({{ $declaration->id }})"
-                                        wire:confirm="¿Eliminar esta declaración? Esta acción no se puede deshacer." />
+                                    <a href="{{ roleRoute('viticulturist.pac.declarations.edit', $declaration) }}"
+                                       wire:navigate class="{{ $btnBase }}" title="Editar">
+                                        <flux:icon icon="pencil" class="size-4" />
+                                    </a>
+                                    <button wire:click="submit({{ $declaration->id }})"
+                                        wire:confirm="¿Presentar esta declaración? Una vez presentada no podrás editarla."
+                                        class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                                        title="Presentar">
+                                        <flux:icon icon="paper-airplane" class="size-4" />
+                                    </button>
+                                    <button wire:click="delete({{ $declaration->id }})"
+                                        wire:confirm="¿Eliminar esta declaración? Esta acción no se puede deshacer."
+                                        class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                                        title="Eliminar">
+                                        <flux:icon icon="trash" class="size-4" />
+                                    </button>
                                 @endif
                             </div>
-                        </x-agro.table-cell>
-                    </x-agro.table-row>
+                        </x-slot:footer>
+                    </x-agro.card>
                 @endforeach
-            </x-agro.data-table>
-        </x-agro.card>
-    @endif
+            </div>
+        @else
+            <x-agro.empty-state
+                icon="document-text"
+                title="Sin declaraciones PAC"
+                description="Crea tu primera Solicitud Única para declarar tus superficies ante el organismo pagador."
+            >
+                <flux:button variant="primary" icon="plus"
+                    href="{{ roleRoute('viticulturist.pac.declarations.create') }}" wire:navigate>
+                    Nueva declaración
+                </flux:button>
+            </x-agro.empty-state>
+        @endif
+    </div>
 
 </div>
-

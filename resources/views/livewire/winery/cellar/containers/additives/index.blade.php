@@ -1,4 +1,4 @@
-<div>
+<div class="space-y-6 animate-fade-in">
 <x-agro.page-header
     title="Aditivos — {{ $container->name }}"
     description="Registro de aditivos enológicos aplicados al contenido de este depósito."
@@ -16,40 +16,78 @@
     </x-slot:actions>
 </x-agro.page-header>
 
-<x-agro.card>
-    <x-agro.data-table :headers="['Aditivo', 'Cantidad', 'Fecha', 'Registrado por', 'Acciones']">
-        @forelse($additives as $additive)
-            <x-agro.table-row>
-                <x-agro.table-cell>
-                    <div class="font-medium">{{ $additive->display_name }}</div>
-                    @if($additive->notes)
-                        <div class="text-xs text-zinc-500">{{ Str::limit($additive->notes, 60) }}</div>
-                    @endif
-                </x-agro.table-cell>
-                <x-agro.table-cell>
-                    {{ number_format($additive->quantity, 3) }}
-                    {{ $additive->unitOfMeasurement?->symbol }}
-                </x-agro.table-cell>
-                <x-agro.table-cell>{{ $additive->additive_date->format('d/m/Y') }}</x-agro.table-cell>
-                <x-agro.table-cell>{{ $additive->creator?->name ?? '—' }}</x-agro.table-cell>
-                <x-agro.table-cell align="right">
-                    <div class="flex items-center justify-end gap-1">
-                        <a href="{{ roleRoute('containers.additives.edit', [$container, $additive]) }}" wire:navigate
-                            class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors" title="Editar">
-                            <flux:icon icon="pencil-square" class="size-4" />
-                        </a>
-                        <flux:button size="sm" variant="ghost" icon="trash"
-                            wire:click="delete({{ $additive->id }})"
-                            wire:loading.attr="disabled"
-                            wire:confirm="¿Eliminar este registro de aditivo?" />
+<x-agro.loading-grid target="nextPage, previousPage" />
+
+<div wire:loading.remove wire:target="nextPage, previousPage">
+    @if($additives->count() > 0)
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            @foreach($additives as $additive)
+                @php $delay = min($loop->index * 50, 300); @endphp
+                <x-agro.card
+                    class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                    style="animation-delay: {{ $delay }}ms;"
+                    wire:key="additive-{{ $additive->id }}"
+                >
+                    <x-slot:header>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-teal-100 flex items-center justify-center shrink-0">
+                                <flux:icon icon="beaker" class="size-5 text-teal-600" />
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-bold text-zinc-900 truncate">{{ $additive->display_name }}</h3>
+                                <p class="text-xs text-zinc-500">{{ $additive->additive_date->format('d/m/Y') }}</p>
+                            </div>
+                        </div>
+                    </x-slot:header>
+
+                    <div class="flex-1 space-y-4">
+                        <div class="grid grid-cols-1 gap-2">
+                            <div class="bg-agro-50 rounded-xl p-3">
+                                <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Cantidad</p>
+                                <p class="text-2xl font-bold text-agro-700 leading-none">
+                                    {{ number_format($additive->quantity, 3) }}
+                                    <span class="text-sm font-medium text-agro-400">{{ $additive->unitOfMeasurement?->symbol }}</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2 text-sm">
+                            <div class="flex items-center justify-between">
+                                <span class="text-zinc-400">Registrado por</span>
+                                <span class="text-zinc-700 font-medium">{{ $additive->creator?->name ?? '—' }}</span>
+                            </div>
+                        </div>
+
+                        @if($additive->notes)
+                            <p class="text-xs text-zinc-400 line-clamp-2">{{ Str::limit($additive->notes, 60) }}</p>
+                        @endif
                     </div>
-                </x-agro.table-cell>
-            </x-agro.table-row>
-        @empty
-            <x-agro.empty-state icon="beaker" title="Sin aditivos registrados"
-                description="Registra los aditivos aplicados a este depósito (SO₂, bentonita, etc.)." />
-        @endforelse
-    </x-agro.data-table>
-    {{ $additives->links() }}
-</x-agro.card>
+
+                    <x-slot:footer>
+                        @php $btnBase = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors'; @endphp
+                        <div class="flex items-center justify-end gap-0.5">
+                            <a href="{{ roleRoute('containers.additives.edit', [$container, $additive]) }}" wire:navigate
+                                class="{{ $btnBase }}" title="Editar">
+                                <flux:icon icon="pencil-square" class="size-4" />
+                            </a>
+                            <button
+                                wire:click="delete({{ $additive->id }})"
+                                wire:loading.attr="disabled"
+                                wire:confirm="¿Eliminar este registro de aditivo?"
+                                class="{{ $btnBase }} hover:!text-red-500 hover:!bg-red-50"
+                                title="Eliminar"
+                            >
+                                <flux:icon icon="trash" class="size-4" />
+                            </button>
+                        </div>
+                    </x-slot:footer>
+                </x-agro.card>
+            @endforeach
+        </div>
+        <div class="mt-6">{{ $additives->links() }}</div>
+    @else
+        <x-agro.empty-state icon="beaker" title="Sin aditivos registrados"
+            description="Registra los aditivos aplicados a este depósito (SO₂, bentonita, etc.)." />
+    @endif
+</div>
 </div>

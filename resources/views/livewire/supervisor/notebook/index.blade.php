@@ -32,79 +32,104 @@
         </x-agro.filter-select>
     </x-agro.filter-bar>
 
-    {{-- Tabla --}}
-    <x-agro.data-table
-        :headers="['Viticultor', 'Estado', 'Solicitado', 'Respondido', '']"
-        empty-message="No hay solicitudes de acceso"
-        empty-description="Solicita acceso al cuaderno de campo de tus viticultores"
-        empty-icon="book-open"
-    >
-        @if($requests->count() > 0)
+    {{-- Card Grid --}}
+    @if($requests->count() > 0)
+        @php
+            $statusMap = [
+                'pending'  => ['label' => 'Pendiente',  'color' => 'yellow', 'iconBg' => 'bg-yellow-100', 'iconText' => 'text-yellow-600'],
+                'approved' => ['label' => 'Aprobada',   'color' => 'green',  'iconBg' => 'bg-emerald-100', 'iconText' => 'text-emerald-600'],
+                'rejected' => ['label' => 'Rechazada',  'color' => 'red',    'iconBg' => 'bg-red-100',    'iconText' => 'text-red-600'],
+            ];
+        @endphp
+        <div
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            wire:loading.class="opacity-60 pointer-events-none"
+            wire:target="search, filterStatus"
+        >
             @foreach($requests as $req)
-                <x-agro.table-row>
-                    <x-agro.table-cell>
+                @php
+                    $s = $statusMap[$req->status] ?? ['label' => $req->status, 'color' => 'zinc', 'iconBg' => 'bg-zinc-100', 'iconText' => 'text-zinc-600'];
+                    $delay = min($loop->index * 50, 300);
+                @endphp
+                <x-agro.card
+                    class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                    style="animation-delay: {{ $delay }}ms;"
+                    wire:key="request-{{ $req->id }}"
+                >
+                    <x-slot:header>
                         <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-lg bg-indigo-50 flex items-center justify-center flex-shrink-0">
-                                <flux:icon icon="user" class="size-4 text-indigo-600" />
+                            <div class="w-10 h-10 rounded-xl {{ $s['iconBg'] }} flex items-center justify-center shrink-0">
+                                <flux:icon icon="book-open" class="size-5 {{ $s['iconText'] }}" />
                             </div>
-                            <div>
-                                <p class="text-sm font-semibold text-zinc-900">{{ $req->viticulturist?->name ?? '—' }}</p>
-                                <p class="text-xs text-zinc-400">{{ $req->viticulturist?->email }}</p>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-bold text-zinc-900 truncate">{{ $req->viticulturist?->name ?? '—' }}</h3>
+                                <p class="text-xs text-zinc-400 truncate">{{ $req->viticulturist?->email }}</p>
+                            </div>
+                            <flux:badge :color="$s['color']" size="sm" class="shrink-0">{{ $s['label'] }}</flux:badge>
+                        </div>
+                    </x-slot:header>
+
+                    <div class="flex-1 space-y-3">
+                        {{-- Dates --}}
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="bg-zinc-50 rounded-lg p-2 text-center">
+                                <p class="text-[9px] text-zinc-400 uppercase tracking-wide mb-0.5">Solicitado</p>
+                                <p class="text-sm font-bold text-zinc-700">
+                                    @if($req->requested_at)
+                                        {{ $req->requested_at->format('d/m/Y') }}
+                                    @else
+                                        —
+                                    @endif
+                                </p>
+                                @if($req->requested_at)
+                                    <p class="text-[9px] text-zinc-400">{{ $req->requested_at->diffForHumans() }}</p>
+                                @endif
+                            </div>
+                            <div class="bg-zinc-50 rounded-lg p-2 text-center">
+                                <p class="text-[9px] text-zinc-400 uppercase tracking-wide mb-0.5">Respondido</p>
+                                <p class="text-sm font-bold text-zinc-700">
+                                    @if($req->responded_at)
+                                        {{ $req->responded_at->format('d/m/Y') }}
+                                    @else
+                                        —
+                                    @endif
+                                </p>
+                                @if($req->responded_at)
+                                    <p class="text-[9px] text-zinc-400">{{ $req->responded_at->diffForHumans() }}</p>
+                                @endif
                             </div>
                         </div>
-                    </x-agro.table-cell>
+                    </div>
 
-                    <x-agro.table-cell>
-                        @php
-                            $statusMap = [
-                                'pending'  => ['label' => 'Pendiente',  'color' => 'yellow'],
-                                'approved' => ['label' => 'Aprobada',   'color' => 'green'],
-                                'rejected' => ['label' => 'Rechazada',  'color' => 'red'],
-                            ];
-                            $s = $statusMap[$req->status] ?? ['label' => $req->status, 'color' => null];
-                        @endphp
-                        <flux:badge :color="$s['color']" size="sm">{{ $s['label'] }}</flux:badge>
-                    </x-agro.table-cell>
-
-                    <x-agro.table-cell>
-                        @if($req->requested_at)
-                            <p class="text-sm text-zinc-700">{{ $req->requested_at->format('d/m/Y') }}</p>
-                            <p class="text-xs text-zinc-400">{{ $req->requested_at->diffForHumans() }}</p>
-                        @else
-                            <span class="text-zinc-400">—</span>
-                        @endif
-                    </x-agro.table-cell>
-
-                    <x-agro.table-cell>
-                        @if($req->responded_at)
-                            <p class="text-sm text-zinc-700">{{ $req->responded_at->format('d/m/Y') }}</p>
-                            <p class="text-xs text-zinc-400">{{ $req->responded_at->diffForHumans() }}</p>
-                        @else
-                            <span class="text-xs text-zinc-400">Sin respuesta</span>
-                        @endif
-                    </x-agro.table-cell>
-
-                    <x-agro.table-cell align="right">
-                        @if($req->status !== 'rejected')
-                            <flux:button
-                                variant="ghost"
-                                size="sm"
-                                icon="trash"
-                                class="text-red-400 hover:text-red-600"
-                                wire:click="revokeAccess({{ $req->id }})"
-                                wire:confirm="¿Revocar la solicitud de acceso al cuaderno de {{ $req->viticulturist?->name }}?"
-                                tooltip="Revocar acceso"
-                            />
-                        @endif
-                    </x-agro.table-cell>
-                </x-agro.table-row>
+                    @if($req->status !== 'rejected')
+                        <x-slot:footer>
+                            <div class="flex items-center justify-end">
+                                <flux:button
+                                    variant="ghost"
+                                    size="sm"
+                                    icon="trash"
+                                    class="text-red-400 hover:text-red-600"
+                                    wire:click="revokeAccess({{ $req->id }})"
+                                    wire:confirm="¿Revocar la solicitud de acceso al cuaderno de {{ $req->viticulturist?->name }}?"
+                                    tooltip="Revocar acceso"
+                                />
+                            </div>
+                        </x-slot:footer>
+                    @endif
+                </x-agro.card>
             @endforeach
+        </div>
 
-            <x-slot name="pagination">
-                {{ $requests->links() }}
-            </x-slot>
-        @endif
-    </x-agro.data-table>
+        <div class="mt-2">
+            {{ $requests->links() }}
+        </div>
+    @else
+        <x-agro.empty-state
+            icon="book-open"
+            title="No hay solicitudes de acceso"
+            description="Solicita acceso al cuaderno de campo de tus viticultores."
+        />
+    @endif
 
     {{-- Modal: Nueva solicitud --}}
     <flux:modal wire:model="showRequestModal" class="w-full max-w-lg">

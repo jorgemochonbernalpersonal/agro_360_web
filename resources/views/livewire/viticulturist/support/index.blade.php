@@ -1,4 +1,4 @@
-﻿<div class="space-y-6 animate-fade-in">
+<div class="space-y-6 animate-fade-in">
     <x-agro.page-header
         title="Soporte Técnico"
         description="Reporta bugs, solicita mejoras o haz preguntas"
@@ -11,37 +11,12 @@
     </x-agro.page-header>
 
     {{-- Stats Cards --}}
-    <div x-data="{
-        open: localStorage.getItem('viticulturist-support-stats-open') !== 'false',
-        toggle() {
-            this.open = !this.open;
-            localStorage.setItem('viticulturist-support-stats-open', String(this.open));
-        }
-    }">
-        <button
-            @click="toggle()"
-            class="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-widest hover:text-zinc-600 transition-colors mb-3"
-        >
-            <span>Estadísticas</span>
-            <flux:icon icon="chevron-up" class="size-3.5 transition-transform duration-200" ::class="{ 'rotate-180': !open }" />
-        </button>
-        <div
-            x-show="open"
-            x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 -translate-y-1"
-            x-transition:enter-end="opacity-100 translate-y-0"
-            x-transition:leave="transition ease-in duration-150"
-            x-transition:leave-start="opacity-100 translate-y-0"
-            x-transition:leave-end="opacity-0 -translate-y-1"
-        >
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <x-agro.stat-card label="Total" :value="$stats['total']" icon="ticket" color="agro" />
-            <x-agro.stat-card label="Abiertos" :value="$stats['open']" icon="envelope-open" color="blue" />
-            <x-agro.stat-card label="En Progreso" :value="$stats['in_progress']" icon="arrow-path" color="yellow" />
-            <x-agro.stat-card label="Resueltos" :value="$stats['resolved']" icon="check-circle" color="green" />
-        </div>
-        </div>
-    </div>
+    <x-agro.stats-section key="viticulturist-support" columns="4">
+        <x-agro.stat-card label="Total" :value="$stats['total']" icon="ticket" color="agro" />
+        <x-agro.stat-card label="Abiertos" :value="$stats['open']" icon="envelope-open" color="blue" />
+        <x-agro.stat-card label="En Progreso" :value="$stats['in_progress']" icon="arrow-path" color="yellow" />
+        <x-agro.stat-card label="Resueltos" :value="$stats['resolved']" icon="check-circle" color="green" />
+    </x-agro.stats-section>
 
     {{-- Filtros --}}
     <x-agro.filter-bar>
@@ -65,62 +40,74 @@
         </x-agro.filter-select>
     </x-agro.filter-bar>
 
-    {{-- Tabla de Tickets --}}
-    <x-agro.data-table :headers="['Título', 'Estado', 'Prioridad', 'Tipo', 'Fecha', 'Acciones']" empty-message="No hay tickets que mostrar" empty-description="Comienza creando tu primer ticket de soporte">
+    {{-- Cards de Tickets --}}
+    <x-agro.loading-grid target="search, filterStatus, filterType" />
+    <div wire:loading.remove wire:target="search, filterStatus, filterType">
         @if($tickets->count() > 0)
-            @foreach($tickets as $ticket)
-                <x-agro.table-row wire:click="selectTicket({{ $ticket->id }})" class="cursor-pointer">
-                    <x-agro.table-cell>
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-lg bg-agro-50 flex items-center justify-center">
-                                <flux:icon icon="question-mark-circle" class="size-5 text-agro-600" />
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                @foreach($tickets as $ticket)
+                    @php $delay = min($loop->index * 50, 300); @endphp
+                    <x-agro.card
+                        class="animate-fade-in-up flex flex-col hover:-translate-y-1 cursor-pointer"
+                        style="animation-delay: {{ $delay }}ms;"
+                        wire:key="ticket-{{ $ticket->id }}"
+                        wire:click="selectTicket({{ $ticket->id }})"
+                    >
+                        <x-slot:header>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center shrink-0">
+                                    <flux:icon icon="ticket" class="size-5 text-blue-600" />
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="font-bold text-zinc-900 truncate">{{ $ticket->title }}</h3>
+                                    <p class="text-xs text-zinc-500">{{ $ticket->created_at->diffForHumans() }}</p>
+                                </div>
+                                <flux:badge :color="$ticket->statusColor" size="sm" class="shrink-0">{{ $ticket->getStatusLabel() }}</flux:badge>
                             </div>
-                            <div>
-                                <div class="text-sm font-bold text-zinc-900">{{ $ticket->title }}</div>
-                                <div class="text-xs text-zinc-500 mt-1 line-clamp-1">{{ Str::limit($ticket->description, 80) }}</div>
-                                @if($ticket->comments_count > 0)
-                                    <div class="text-xs text-zinc-400 mt-1 flex items-center gap-1">
-                                        <flux:icon icon="chat-bubble-left" class="size-3" />
-                                        {{ $ticket->comments_count }} {{ $ticket->comments_count === 1 ? 'comentario' : 'comentarios' }}
-                                    </div>
-                                @endif
+                        </x-slot:header>
+
+                        <div class="flex-1 space-y-4">
+                            <p class="text-sm text-zinc-600 line-clamp-2">{{ Str::limit($ticket->description, 100) }}</p>
+
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <flux:badge :color="$ticket->priorityColor" size="sm">{{ $ticket->getPriorityLabel() }}</flux:badge>
+                                <span class="text-xs text-zinc-500">{{ $ticket->getTypeLabel() }}</span>
                             </div>
+
+                            @if($ticket->comments_count > 0)
+                                <div class="flex items-center gap-1 text-xs text-zinc-400">
+                                    <flux:icon icon="chat-bubble-left" class="size-3" />
+                                    {{ $ticket->comments_count }} {{ $ticket->comments_count === 1 ? 'comentario' : 'comentarios' }}
+                                </div>
+                            @endif
                         </div>
-                    </x-agro.table-cell>
-                    <x-agro.table-cell>
-                        <flux:badge :color="$ticket->statusColor" size="sm">{{ $ticket->getStatusLabel() }}</flux:badge>
-                    </x-agro.table-cell>
-                    <x-agro.table-cell>
-                        <flux:badge :color="$ticket->priorityColor" size="sm">{{ $ticket->getPriorityLabel() }}</flux:badge>
-                    </x-agro.table-cell>
-                    <x-agro.table-cell>
-                        <span class="text-sm text-zinc-700">{{ $ticket->getTypeLabel() }}</span>
-                    </x-agro.table-cell>
-                    <x-agro.table-cell>
-                        <span class="text-sm text-zinc-600">{{ $ticket->created_at->diffForHumans() }}</span>
-                    </x-agro.table-cell>
-                    <x-agro.table-cell align="right">
-                        <flux:button
-                            wire:click.stop="selectTicket({{ $ticket->id }})"
-                            variant="ghost"
-                            size="sm"
-                            icon="eye"
-                            title="Ver detalles"
-                        />
-                    </x-agro.table-cell>
-                </x-agro.table-row>
-            @endforeach
-            <x-slot name="pagination">
-                {{ $tickets->links() }}
-            </x-slot>
+
+                        <x-slot:footer>
+                            @php $btnBase = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors'; @endphp
+                            <div class="flex items-center justify-end gap-0.5">
+                                <button wire:click.stop="selectTicket({{ $ticket->id }})" class="{{ $btnBase }}" title="Ver detalles">
+                                    <flux:icon icon="eye" class="size-4" />
+                                </button>
+                            </div>
+                        </x-slot:footer>
+                    </x-agro.card>
+                @endforeach
+            </div>
+            <div class="mt-6">{{ $tickets->links() }}</div>
         @else
-            <x-slot name="emptyAction">
-                <flux:button href="{{ roleRoute('viticulturist.support.create') }}" variant="primary" icon="plus">
-                    Crear mi primer ticket
-                </flux:button>
-            </x-slot>
+            <x-agro.empty-state
+                icon="ticket"
+                title="No hay tickets que mostrar"
+                description="Comienza creando tu primer ticket de soporte"
+            >
+                <x-slot:action>
+                    <flux:button href="{{ roleRoute('viticulturist.support.create') }}" variant="primary" icon="plus">
+                        Crear mi primer ticket
+                    </flux:button>
+                </x-slot:action>
+            </x-agro.empty-state>
         @endif
-    </x-agro.data-table>
+    </div>
 
     {{-- Modal de Detalle del Ticket --}}
         @if($selectedTicket)
@@ -216,4 +203,3 @@
         @endif
     </div>
 </div>
-

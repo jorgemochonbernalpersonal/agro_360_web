@@ -11,60 +11,87 @@
     </x-slot:actions>
 </x-agro.page-header>
 
-<x-agro.card>
-    <x-agro.filter-bar>
-        <x-agro.filter-input wire:model.live="search" placeholder="Buscar por nombre o contacto..." />
-        <x-agro.filter-select wire:model.live="categoryFilter" placeholder="Todas las categorías">
-            @foreach($categories as $key => $label)
-                <option value="{{ $key }}">{{ $label }}</option>
-            @endforeach
-        </x-agro.filter-select>
-    </x-agro.filter-bar>
+<x-agro.filter-bar>
+    <x-agro.filter-input wire:model.live="search" placeholder="Buscar por nombre o contacto..." />
+    <x-agro.filter-select wire:model.live="categoryFilter" placeholder="Todas las categorías">
+        @foreach($categories as $key => $label)
+            <option value="{{ $key }}">{{ $label }}</option>
+        @endforeach
+    </x-agro.filter-select>
+</x-agro.filter-bar>
 
-    <x-agro.data-table :headers="['Nombre', 'Contacto', 'Email', 'Teléfono', 'Categoría', 'Acciones']">
-        @forelse($suppliers as $supplier)
-            <x-agro.table-row>
-                <x-agro.table-cell>
-                    <div class="font-medium text-zinc-900 dark:text-zinc-100">{{ $supplier->name }}</div>
-                    @if($supplier->vat_number)
-                        <div class="text-xs text-zinc-500">{{ $supplier->vat_number }}</div>
-                    @endif
-                </x-agro.table-cell>
-                <x-agro.table-cell>
-                    {{ $supplier->contact_person ?? '—' }}
-                </x-agro.table-cell>
-                <x-agro.table-cell>
-                    @if($supplier->email)
-                        <a href="mailto:{{ $supplier->email }}" class="text-amber-600 hover:underline">
-                            {{ $supplier->email }}
-                        </a>
-                    @else
-                        <span class="text-zinc-400">—</span>
-                    @endif
-                </x-agro.table-cell>
-                <x-agro.table-cell>
-                    {{ $supplier->phone ?? '—' }}
-                </x-agro.table-cell>
-                <x-agro.table-cell>
-                    <x-agro.status-badge :label="$supplier->category_label" color="amber" />
-                </x-agro.table-cell>
-                <x-agro.table-cell align="right">
-                    <div class="flex justify-end gap-2">
-                        <flux:button size="sm" variant="ghost" icon="pencil"
-                            href="{{ roleRoute('suppliers.edit', $supplier) }}" wire:navigate />
-                        <flux:button size="sm" variant="ghost" icon="trash"
-                            wire:click="delete({{ $supplier->id }})"
-                            wire:loading.attr="disabled"
-                            wire:confirm="¿Eliminar este proveedor?" />
+<x-agro.loading-grid target="search, categoryFilter, nextPage, previousPage" />
+
+<div wire:loading.remove wire:target="search, categoryFilter, nextPage, previousPage">
+    @if($suppliers->count() > 0)
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            @foreach($suppliers as $supplier)
+                @php $delay = min($loop->index * 50, 300); @endphp
+                <x-agro.card
+                    class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                    style="animation-delay: {{ $delay }}ms;"
+                    wire:key="supplier-{{ $supplier->id }}"
+                >
+                    <x-slot:header>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
+                                <flux:icon icon="truck" class="size-5 text-amber-600" />
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-bold text-zinc-900 truncate">{{ $supplier->name }}</h3>
+                                <p class="text-xs text-zinc-500">{{ $supplier->vat_number ?? '—' }}</p>
+                            </div>
+                            <x-agro.status-badge :label="$supplier->category_label" color="amber" class="shrink-0" />
+                        </div>
+                    </x-slot:header>
+
+                    <div class="flex-1 space-y-4">
+                        <div class="space-y-2 text-sm">
+                            <div class="flex items-center justify-between">
+                                <span class="text-zinc-400">Contacto</span>
+                                <span class="text-zinc-700 font-medium">{{ $supplier->contact_person ?? '—' }}</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-zinc-400">Email</span>
+                                <span class="text-zinc-700 font-medium truncate ml-2">
+                                    @if($supplier->email)
+                                        <a href="mailto:{{ $supplier->email }}" class="text-amber-600 hover:underline">{{ $supplier->email }}</a>
+                                    @else
+                                        —
+                                    @endif
+                                </span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-zinc-400">Teléfono</span>
+                                <span class="text-zinc-700 font-medium">{{ $supplier->phone ?? '—' }}</span>
+                            </div>
+                        </div>
                     </div>
-                </x-agro.table-cell>
-            </x-agro.table-row>
-        @empty
-            <x-agro.empty-state icon="truck" title="Sin proveedores registrados"
-                description="Añade los proveedores de tu bodega para tenerlos siempre a mano." />
-        @endforelse
-    </x-agro.data-table>
 
-    {{ $suppliers->links() }}
-</x-agro.card>
+                    <x-slot:footer>
+                        @php $btnBase = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors'; @endphp
+                        <div class="flex items-center justify-end gap-0.5">
+                            <a href="{{ roleRoute('suppliers.edit', $supplier) }}" wire:navigate class="{{ $btnBase }}" title="Editar">
+                                <flux:icon icon="pencil" class="size-4" />
+                            </a>
+                            <button
+                                wire:click="delete({{ $supplier->id }})"
+                                wire:loading.attr="disabled"
+                                wire:confirm="¿Eliminar este proveedor?"
+                                class="{{ $btnBase }} hover:!text-red-500 hover:!bg-red-50"
+                                title="Eliminar"
+                            >
+                                <flux:icon icon="trash" class="size-4" />
+                            </button>
+                        </div>
+                    </x-slot:footer>
+                </x-agro.card>
+            @endforeach
+        </div>
+        <div class="mt-6">{{ $suppliers->links() }}</div>
+    @else
+        <x-agro.empty-state icon="truck" title="Sin proveedores registrados"
+            description="Añade los proveedores de tu bodega para tenerlos siempre a mano." />
+    @endif
+</div>
 </div>

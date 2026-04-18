@@ -12,61 +12,38 @@
     </x-agro.page-header>
 
     {{-- Stats --}}
-    <div x-data="{
-        open: localStorage.getItem('commercial-auth-stats-open') !== 'false',
-        toggle() {
-            this.open = !this.open;
-            localStorage.setItem('commercial-auth-stats-open', String(this.open));
-        }
-    }">
-        <button
-            @click="toggle()"
-            class="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-widest hover:text-zinc-600 transition-colors mb-3"
-        >
-            <span>Estadísticas</span>
-            <flux:icon icon="chevron-up" class="size-3.5 transition-transform duration-200" ::class="{ 'rotate-180': !open }" />
-        </button>
-        <div
-            x-show="open"
-            x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 -translate-y-1"
-            x-transition:enter-end="opacity-100 translate-y-0"
-            x-transition:leave="transition ease-in duration-150"
-            x-transition:leave-start="opacity-100 translate-y-0"
-            x-transition:leave-end="opacity-0 -translate-y-1"
-        >
-            <div class="grid grid-cols-2 gap-4">
-                <x-agro.stat-card
-                    label="Total activas"
-                    :value="$stats['total']"
-                    description="'Autorizaciones vigentes'"
-                    icon="shield-check"
-                    color="agro"
-                />
-                <x-agro.stat-card
-                    label="Tipos distintos"
-                    :value="$stats['types']"
-                    description="'Categorías de autorización'"
-                    icon="squares-2x2"
-                    color="blue"
-                />
-                <x-agro.stat-card
-                    label="Próximas a vencer"
-                    :value="$stats['expiring']"
-                    description="'En los próximos 60 días'"
-                    icon="exclamation-triangle"
-                    color="orange"
-                />
-                <x-agro.stat-card
-                    label="Vencidas"
-                    :value="$stats['expired']"
-                    description="$stats['expired'] > 0 ? 'Requieren renovación' : 'Todas vigentes'"
-                    icon="x-circle"
-                    color="red"
-                />
-            </div>
+    <x-agro.stats-section key="commercial-auth">
+        <div class="grid grid-cols-2 gap-4">
+            <x-agro.stat-card
+                label="Total activas"
+                :value="$stats['total']"
+                description="'Autorizaciones vigentes'"
+                icon="shield-check"
+                color="agro"
+            />
+            <x-agro.stat-card
+                label="Tipos distintos"
+                :value="$stats['types']"
+                description="'Categorías de autorización'"
+                icon="squares-2x2"
+                color="blue"
+            />
+            <x-agro.stat-card
+                label="Próximas a vencer"
+                :value="$stats['expiring']"
+                description="'En los próximos 60 días'"
+                icon="exclamation-triangle"
+                color="orange"
+            />
+            <x-agro.stat-card
+                label="Vencidas"
+                :value="$stats['expired']"
+                description="$stats['expired'] > 0 ? 'Requieren renovación' : 'Todas vigentes'"
+                icon="x-circle"
+                color="red"
+            />
         </div>
-    </div>
+    </x-agro.stats-section>
         @if($expiring > 0)
         <flux:callout variant="warning" icon="exclamation-triangle">
             Tienes <strong>{{ $expiring }}</strong> {{ $expiring === 1 ? 'autorización que vence' : 'autorizaciones que vencen' }} en los próximos 60 días. Revisa y renuévalas a tiempo.
@@ -82,8 +59,85 @@
         </x-agro.filter-select>
     </x-agro.filter-bar>
 
-    <x-agro.card>
-        @if($entries->isEmpty())
+    <x-agro.loading-grid target="filterType" />
+    <div wire:loading.remove wire:target="filterType">
+        @if($entries->count() > 0)
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                @foreach($entries as $entry)
+                    @php
+                        $delay = min($loop->index * 50, 300);
+                        $statusColor = $entry->isExpired() ? 'red' : ($entry->isExpiringSoon() ? 'amber' : 'green');
+                        $statusLabel = $entry->isExpired() ? 'Vencida' : ($entry->isExpiringSoon() ? 'Por vencer' : 'Vigente');
+                    @endphp
+                    <x-agro.card
+                        class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                        style="animation-delay: {{ $delay }}ms;"
+                        wire:key="entry-{{ $entry->id }}"
+                    >
+                        <x-slot:header>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center shrink-0">
+                                    <flux:icon icon="shield-check" class="size-5 text-indigo-600" />
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="font-bold text-zinc-900 truncate">{{ $entry->authorization_type_label }}</h3>
+                                    <p class="text-xs text-zinc-500 truncate">{{ $entry->authorization_code ?? 'Sin código' }}</p>
+                                </div>
+                                <flux:badge color="{{ $statusColor }}" size="sm" class="shrink-0">{{ $statusLabel }}</flux:badge>
+                            </div>
+                        </x-slot:header>
+
+                        <div class="flex-1 space-y-4">
+                            <div class="grid grid-cols-2 gap-2">
+                                <div class="bg-agro-50 rounded-xl p-3">
+                                    <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Emisión</p>
+                                    <p class="text-sm font-bold text-agro-700 leading-none">{{ $entry->issue_date->format('d/m/Y') }}</p>
+                                </div>
+                                <div class="bg-agro-50 rounded-xl p-3">
+                                    <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Caducidad</p>
+                                    <p class="text-sm font-bold leading-none {{ $entry->isExpired() ? 'text-red-600' : ($entry->isExpiringSoon() ? 'text-amber-600' : 'text-agro-700') }}">
+                                        {{ $entry->expiry_date?->format('d/m/Y') ?? 'Indefinida' }}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="space-y-2 text-sm">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-zinc-400">Organismo</span>
+                                    <span class="text-zinc-700 font-medium truncate ml-2">{{ $entry->issuing_body ?? '—' }}</span>
+                                </div>
+                                @if($entry->description)
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-zinc-400">Descripción</span>
+                                        <span class="text-zinc-700 font-medium truncate ml-2">{{ Str::limit($entry->description, 30) }}</span>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+
+                        <x-slot:footer>
+                            @php $btnBase = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors'; @endphp
+                            <div class="flex items-center justify-end gap-0.5">
+                                <a href="{{ roleRoute('viticulturist.commercial-authorizations.edit', $entry) }}"
+                                   class="{{ $btnBase }}" title="Editar">
+                                    <flux:icon icon="pencil-square" class="size-4" />
+                                </a>
+                                <button
+                                    wire:click="deactivate({{ $entry->id }})"
+                                    wire:confirm="¿Archivar esta autorización?"
+                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-amber-600 hover:bg-amber-50 transition-colors"
+                                    title="Archivar">
+                                    <flux:icon icon="archive-box" class="size-4" />
+                                </button>
+                            </div>
+                        </x-slot:footer>
+                    </x-agro.card>
+                @endforeach
+            </div>
+            @if($entries->hasPages())
+                <div class="mt-6">{{ $entries->links() }}</div>
+            @endif
+        @else
             <x-agro.empty-state
                 icon="shield-check"
                 title="Sin autorizaciones registradas"
@@ -95,60 +149,7 @@
                     </flux:button>
                 </x-slot:action>
             </x-agro.empty-state>
-        @else
-            <x-agro.data-table :headers="['Tipo', 'Código / Expediente', 'Organismo', 'Emisión', 'Caducidad', 'Estado', 'Acciones']">
-                @foreach($entries as $entry)
-                    <x-agro.table-row>
-                        <x-agro.table-cell>
-                            <x-agro.status-badge :status="$entry->authorization_type" :label="$entry->authorization_type_label" />
-                            @if($entry->description)
-                                <span class="text-zinc-400 text-xs block">{{ $entry->description }}</span>
-                            @endif
-                        </x-agro.table-cell>
-                        <x-agro.table-cell class="font-mono text-sm">{{ $entry->authorization_code ?? '-' }}</x-agro.table-cell>
-                        <x-agro.table-cell>{{ $entry->issuing_body ?? '-' }}</x-agro.table-cell>
-                        <x-agro.table-cell>{{ $entry->issue_date->format('d/m/Y') }}</x-agro.table-cell>
-                        <x-agro.table-cell>
-                            @if($entry->expiry_date)
-                                <span class="{{ $entry->isExpired() ? 'text-red-600 font-semibold' : ($entry->isExpiringSoon() ? 'text-amber-600 font-medium' : 'text-zinc-600') }}">
-                                    {{ $entry->expiry_date->format('d/m/Y') }}
-                                </span>
-                            @else
-                                <span class="text-zinc-400">Indefinida</span>
-                            @endif
-                        </x-agro.table-cell>
-                        <x-agro.table-cell>
-                            @if($entry->isExpired())
-                                <x-agro.status-badge label="Vencida" type="danger" />
-                            @elseif($entry->isExpiringSoon())
-                                <x-agro.status-badge label="Por vencer" type="warning" />
-                            @else
-                                <x-agro.status-badge label="Vigente" type="success" />
-                            @endif
-                        </x-agro.table-cell>
-                        <x-agro.table-cell align="right">
-                            <div class="flex items-center justify-end gap-1">
-                                <a href="{{ roleRoute('viticulturist.commercial-authorizations.edit', $entry) }}"
-                                   class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors"
-                                   title="Editar">
-                                    <flux:icon icon="pencil-square" class="size-4" />
-                                </a>
-                                <button
-                                    wire:click="deactivate({{ $entry->id }})"
-                                    wire:confirm="¿Archivar esta autorización?"
-                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-amber-600 hover:bg-amber-50 transition-colors"
-                                    title="Archivar">
-                                    <flux:icon icon="archive-box" class="size-4" />
-                                </button>
-                            </div>
-                        </x-agro.table-cell>
-                    </x-agro.table-row>
-                @endforeach
-            </x-agro.data-table>
-            @if($entries->hasPages())
-                <div class="mt-4">{{ $entries->links() }}</div>
-            @endif
         @endif
-    </x-agro.card>
+    </div>
 
 </div>

@@ -47,22 +47,10 @@
         <div class="flex flex-wrap items-center gap-2">
             @if($filterCampaign)
                 @php $camp = $campaigns->firstWhere('id', $filterCampaign); @endphp
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    <flux:icon icon="calendar-days" class="size-3" />
-                    {{ $camp?->name ?? $filterCampaign }}
-                    <button wire:click="$set('filterCampaign', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip icon="calendar-days" :label="$camp?->name ?? $filterCampaign" wireRemove="$set('filterCampaign', '')" />
             @endif
             @if($filterEnergyType)
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    <flux:icon icon="bolt" class="size-3" />
-                    {{ $energyTypes[$filterEnergyType] ?? $filterEnergyType }}
-                    <button wire:click="$set('filterEnergyType', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip icon="bolt" :label="$energyTypes[$filterEnergyType] ?? $filterEnergyType" wireRemove="$set('filterEnergyType', '')" />
             @endif
         </div>
     @endif

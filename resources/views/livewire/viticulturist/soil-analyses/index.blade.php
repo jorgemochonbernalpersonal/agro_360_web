@@ -14,59 +14,34 @@
     </x-agro.page-header>
 
     {{-- Stats (colapsables) --}}
-    <div x-data="{
-        open: localStorage.getItem('soil-analyses-stats-open') !== 'false',
-        toggle() {
-            this.open = !this.open;
-            localStorage.setItem('soil-analyses-stats-open', String(this.open));
-        }
-    }">
-        <button
-            @click="toggle()"
-            class="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-widest hover:text-zinc-600 transition-colors mb-3"
-        >
-            <span>Estadísticas</span>
-            <flux:icon icon="chevron-up" class="size-3.5 transition-transform duration-200" ::class="{ 'rotate-180': !open }" />
-        </button>
-        <div
-            x-show="open"
-            x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 -translate-y-1"
-            x-transition:enter-end="opacity-100 translate-y-0"
-            x-transition:leave="transition ease-in duration-150"
-            x-transition:leave-start="opacity-100 translate-y-0"
-            x-transition:leave-end="opacity-0 -translate-y-1"
-        >
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <x-agro.stat-card
-                    label="Total análisis"
-                    :value="$stats['total']"
-                    icon="beaker"
-                    color="agro"
-                />
-                <x-agro.stat-card
-                    label="Parcelas analizadas"
-                    :value="$stats['plots_analyzed']"
-                    icon="map"
-                    color="blue"
-                />
-                <x-agro.stat-card
-                    label="pH medio"
-                    :value="$stats['avg_ph'] ?: '—'"
-                    :description="$stats['avg_ph_label']"
-                    icon="scale"
-                    :color="$stats['avg_ph_color']"
-                />
-                <x-agro.stat-card
-                    label="MO media"
-                    :value="$stats['avg_organic_matter'] ? $stats['avg_organic_matter'] . '%' : '—'"
-                    description="Materia orgánica"
-                    icon="sparkles"
-                    color="amber"
-                />
-            </div>
-        </div>
-    </div>
+    <x-agro.stats-section key="soil-analyses" columns="4">
+        <x-agro.stat-card
+            label="Total análisis"
+            :value="$stats['total']"
+            icon="beaker"
+            color="agro"
+        />
+        <x-agro.stat-card
+            label="Parcelas analizadas"
+            :value="$stats['plots_analyzed']"
+            icon="map"
+            color="blue"
+        />
+        <x-agro.stat-card
+            label="pH medio"
+            :value="$stats['avg_ph'] ?: '—'"
+            :description="$stats['avg_ph_label']"
+            icon="scale"
+            :color="$stats['avg_ph_color']"
+        />
+        <x-agro.stat-card
+            label="MO media"
+            :value="$stats['avg_organic_matter'] ? $stats['avg_organic_matter'] . '%' : '—'"
+            description="Materia orgánica"
+            icon="sparkles"
+            color="amber"
+        />
+    </x-agro.stats-section>
 
     {{-- Toolbar --}}
     @php
@@ -75,31 +50,10 @@
     <div class="flex items-center gap-3">
 
         {{-- Search --}}
-        <div class="flex-1 relative">
-            <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400" />
-            </div>
-            <input
-                wire:model.live.debounce.300ms="search"
-                type="text"
-                placeholder="Buscar por laboratorio o notas..."
-                class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
-            />
-        </div>
+        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar por laboratorio o notas..." />
 
         {{-- Filtros --}}
-        <button
-            x-on:click="$dispatch('open-modal', 'soil-analyses-filters')"
-            class="relative inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors"
-        >
-            <flux:icon icon="adjustments-horizontal" class="size-4 text-zinc-500" />
-            Filtros
-            @if ($filterCount > 0)
-                <span class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-agro-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
-                    {{ $filterCount }}
-                </span>
-            @endif
-        </button>
+        <x-agro.filter-button modal="soil-analyses-filters" :count="$filterCount" />
 
         {{-- Separador --}}
         <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
@@ -115,40 +69,13 @@
     @if ($filterPlot || $filterCampaign || $filterTexture)
         <div class="flex flex-wrap items-center gap-2">
             @if ($filterPlot)
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    <flux:icon icon="map" class="size-3" />
-                    {{ $plots->firstWhere('id', (int) $filterPlot)?->name ?? $filterPlot }}
-                    <button
-                        wire:click="$set('filterPlot', '')"
-                        class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors"
-                    >
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip icon="map" :label="$plots->firstWhere('id', (int) $filterPlot)?->name ?? $filterPlot" wireRemove="$set('filterPlot', '')" />
             @endif
             @if ($filterCampaign)
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    <flux:icon icon="calendar" class="size-3" />
-                    {{ $campaigns->firstWhere('id', (int) $filterCampaign)?->name ?? $filterCampaign }}
-                    <button
-                        wire:click="$set('filterCampaign', '')"
-                        class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors"
-                    >
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip icon="calendar" :label="$campaigns->firstWhere('id', (int) $filterCampaign)?->name ?? $filterCampaign" wireRemove="$set('filterCampaign', '')" />
             @endif
             @if ($filterTexture)
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    <flux:icon icon="beaker" class="size-3" />
-                    {{ $textureClasses[$filterTexture] ?? $filterTexture }}
-                    <button
-                        wire:click="$set('filterTexture', '')"
-                        class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors"
-                    >
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip icon="beaker" :label="$textureClasses[$filterTexture] ?? $filterTexture" wireRemove="$set('filterTexture', '')" />
             @endif
             <button
                 wire:click="clearFilters"
@@ -160,16 +87,7 @@
     @endif
 
     {{-- Skeleton durante carga --}}
-    <div
-        wire:loading
-        wire:target="search, filterPlot, filterCampaign, filterTexture, nextPage, previousPage, gotoPage"
-    >
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            @for ($i = 0; $i < 8; $i++)
-                <x-agro.skeleton-card />
-            @endfor
-        </div>
-    </div>
+    <x-agro.loading-grid target="search, filterPlot, filterCampaign, filterTexture, nextPage, previousPage, gotoPage" />
 
     {{-- Grid de cards --}}
     <div

@@ -93,90 +93,118 @@
         </x-agro.card>
     @endif
 
-    {{-- Tabla --}}
-    @if($payments->isEmpty())
-        <x-agro.empty-state
-            icon="banknotes"
-            title="Sin pagos en {{ $filterYear }}"
-            description="Registra los pagos recibidos del organismo pagador."
-        >
-            <flux:button variant="primary" icon="plus" wire:click="openCreate">
-                Registrar pago
-            </flux:button>
-        </x-agro.empty-state>
-    @else
-        <x-agro.card>
-            <x-agro.data-table :headers="['Fecha', 'Tipo de ayuda', 'Importe', 'Referencia', 'Declaración', '']">
+    {{-- Cards --}}
+    <x-agro.loading-grid target="yearFilter" />
+    <div wire:loading.remove wire:target="yearFilter">
+        @if($payments->count() > 0)
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 @foreach($payments as $payment)
-                    <x-agro.table-row wire:key="pay-{{ $payment->id }}">
-                        <x-agro.table-cell>
-                            {{ $payment->payment_date->format('d/m/Y') }}
-                        </x-agro.table-cell>
-                        <x-agro.table-cell>
-                            <span class="font-medium text-zinc-900">{{ $payment->typeLabel() }}</span>
-                        </x-agro.table-cell>
-                        <x-agro.table-cell>
-                            <span class="font-bold text-green-700 font-mono">{{ number_format($payment->amount, 2) }} €</span>
-                        </x-agro.table-cell>
-                        <x-agro.table-cell>
-                            <span class="font-mono text-xs text-zinc-500">{{ $payment->reference ?? '—' }}</span>
-                        </x-agro.table-cell>
-                        <x-agro.table-cell>
-                            @if($payment->declaration)
-                                <span class="text-sm text-zinc-600">PAC {{ $payment->declaration->year }}</span>
-                            @else
-                                <span class="text-zinc-400">—</span>
-                            @endif
-                        </x-agro.table-cell>
-                        <x-agro.table-cell align="right">
-                            <div class="flex items-center justify-end gap-1">
-                                <flux:button size="sm" variant="ghost" icon="pencil"
-                                    wire:click="openEdit({{ $payment->id }})" />
-                                <flux:button size="sm" variant="ghost" icon="trash" class="text-red-500"
-                                    wire:click="delete({{ $payment->id }})"
-                                    wire:confirm="¿Eliminar este pago?" />
+                    @php $delay = min($loop->index * 50, 300); @endphp
+                    <x-agro.card
+                        class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                        style="animation-delay: {{ $delay }}ms;"
+                        wire:key="pay-{{ $payment->id }}"
+                    >
+                        <x-slot:header>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center shrink-0">
+                                    <flux:icon icon="banknotes" class="size-5 text-green-600" />
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="font-bold text-zinc-900 truncate">{{ $payment->typeLabel() }}</h3>
+                                    <p class="text-xs text-zinc-500">{{ $payment->payment_date->format('d/m/Y') }}</p>
+                                </div>
                             </div>
-                        </x-agro.table-cell>
-                    </x-agro.table-row>
+                        </x-slot:header>
+
+                        <div class="flex-1 space-y-4">
+                            <div class="bg-agro-50 rounded-xl p-3 text-center">
+                                <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Importe</p>
+                                <p class="text-2xl font-bold text-green-700 leading-none font-mono">{{ number_format($payment->amount, 2) }} €</p>
+                            </div>
+
+                            <div class="space-y-2 text-sm">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-zinc-400">Referencia</span>
+                                    <span class="text-zinc-700 font-medium font-mono text-xs">{{ $payment->reference ?? '—' }}</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-zinc-400">Declaración</span>
+                                    <span class="text-zinc-700 font-medium">
+                                        @if($payment->declaration)
+                                            PAC {{ $payment->declaration->year }}
+                                        @else
+                                            —
+                                        @endif
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <x-slot:footer>
+                            @php $btnBase = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors'; @endphp
+                            <div class="flex items-center justify-end gap-0.5">
+                                <button wire:click="openEdit({{ $payment->id }})" class="{{ $btnBase }}" title="Editar">
+                                    <flux:icon icon="pencil" class="size-4" />
+                                </button>
+                                <button wire:click="delete({{ $payment->id }})"
+                                    wire:confirm="¿Eliminar este pago?"
+                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                                    title="Eliminar">
+                                    <flux:icon icon="trash" class="size-4" />
+                                </button>
+                            </div>
+                        </x-slot:footer>
+                    </x-agro.card>
                 @endforeach
-            </x-agro.data-table>
+            </div>
 
             {{-- Total --}}
-            <div class="border-t border-zinc-200 mt-2 pt-3 px-4 pb-2 flex justify-end">
+            <div class="mt-4 flex justify-end">
                 <span class="text-sm font-medium text-zinc-500">
                     Total {{ $filterYear }}:
                     <span class="text-green-700 font-bold font-mono ml-2">{{ number_format($stats['total_year'], 2) }} €</span>
                 </span>
             </div>
-        </x-agro.card>
 
-        {{-- Desglose por tipo --}}
-        @if($stats['by_type']->count() > 1)
-            <x-agro.card>
-                <x-slot:header>
-                    <div class="flex items-center gap-2">
-                        <flux:icon icon="chart-pie" class="size-4 text-agro-600" />
-                        <span class="font-semibold text-zinc-900 text-sm">Desglose por tipo — {{ $filterYear }}</span>
-                    </div>
-                </x-slot:header>
-                <div class="space-y-2">
-                    @foreach($stats['by_type'] as $type => $total)
-                        @php
-                            $pct = $stats['total_year'] > 0 ? round($total / $stats['total_year'] * 100) : 0;
-                        @endphp
-                        <div>
-                            <div class="flex justify-between text-xs mb-1">
-                                <span class="text-zinc-700">{{ $paymentTypes[$type] ?? $type }}</span>
-                                <span class="font-medium text-zinc-900">{{ number_format($total, 2) }} € ({{ $pct }}%)</span>
-                            </div>
-                            <div class="w-full bg-zinc-100 rounded-full h-1.5">
-                                <div class="bg-agro-500 h-1.5 rounded-full" style="width: {{ $pct }}%"></div>
-                            </div>
+            {{-- Desglose por tipo --}}
+            @if($stats['by_type']->count() > 1)
+                <x-agro.card>
+                    <x-slot:header>
+                        <div class="flex items-center gap-2">
+                            <flux:icon icon="chart-pie" class="size-4 text-agro-600" />
+                            <span class="font-semibold text-zinc-900 text-sm">Desglose por tipo — {{ $filterYear }}</span>
                         </div>
-                    @endforeach
-                </div>
-            </x-agro.card>
+                    </x-slot:header>
+                    <div class="space-y-2">
+                        @foreach($stats['by_type'] as $type => $total)
+                            @php
+                                $pct = $stats['total_year'] > 0 ? round($total / $stats['total_year'] * 100) : 0;
+                            @endphp
+                            <div>
+                                <div class="flex justify-between text-xs mb-1">
+                                    <span class="text-zinc-700">{{ $paymentTypes[$type] ?? $type }}</span>
+                                    <span class="font-medium text-zinc-900">{{ number_format($total, 2) }} € ({{ $pct }}%)</span>
+                                </div>
+                                <div class="w-full bg-zinc-100 rounded-full h-1.5">
+                                    <div class="bg-agro-500 h-1.5 rounded-full" style="width: {{ $pct }}%"></div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </x-agro.card>
+            @endif
+        @else
+            <x-agro.empty-state
+                icon="banknotes"
+                title="Sin pagos en {{ $filterYear }}"
+                description="Registra los pagos recibidos del organismo pagador."
+            >
+                <flux:button variant="primary" icon="plus" wire:click="openCreate">
+                    Registrar pago
+                </flux:button>
+            </x-agro.empty-state>
         @endif
-    @endif
+    </div>
 
 </div>

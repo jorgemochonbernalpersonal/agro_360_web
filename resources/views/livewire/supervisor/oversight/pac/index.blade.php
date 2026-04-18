@@ -38,69 +38,84 @@
         </div>
     </x-agro.card>
 
-    {{-- Tabla por viticultor --}}
-    <x-agro.card>
-        <x-slot name="header">
-            <span class="font-medium text-zinc-700">Estado PAC por viticultor</span>
-        </x-slot>
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-                <thead>
-                    <tr class="border-b border-zinc-100">
-                        <th class="px-4 py-2 text-left text-xs font-medium text-zinc-400 uppercase tracking-wide">Viticultor</th>
-                        <th class="px-4 py-2 text-right text-xs font-medium text-zinc-400 uppercase tracking-wide">Parcelas</th>
-                        <th class="px-4 py-2 text-right text-xs font-medium text-zinc-400 uppercase tracking-wide">Área total</th>
-                        <th class="px-4 py-2 text-right text-xs font-medium text-zinc-400 uppercase tracking-wide">Área elegible</th>
-                        <th class="px-4 py-2 text-center text-xs font-medium text-zinc-400 uppercase tracking-wide">Sin PAC</th>
-                        <th class="px-4 py-2 text-center text-xs font-medium text-zinc-400 uppercase tracking-wide">Bloqueadas</th>
-                        <th class="px-4 py-2 text-center text-xs font-medium text-zinc-400 uppercase tracking-wide">Cobertura</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-zinc-50">
-                    @forelse($viticulturists as $vit)
-                        @php
-                            $row  = $pacByVit[$vit->id] ?? null;
-                            $vtot = $row?->total_plots ?? 0;
-                            $vmis = $row?->missing_pac ?? 0;
-                            $vpct = $vtot > 0 ? round((($vtot - $vmis) / $vtot) * 100) : 0;
-                        @endphp
-                        <tr class="hover:bg-zinc-50 transition">
-                            <td class="px-4 py-3 font-medium text-zinc-800">{{ $vit->name }}</td>
-                            <td class="px-4 py-3 text-right text-zinc-600">{{ $vtot }}</td>
-                            <td class="px-4 py-3 text-right text-zinc-600">{{ number_format($row?->total_area ?? 0, 2) }} ha</td>
-                            <td class="px-4 py-3 text-right text-zinc-600">{{ number_format($row?->eligible_area ?? 0, 2) }} ha</td>
-                            <td class="px-4 py-3 text-center">
-                                @if($vmis > 0)
-                                    <span class="text-amber-600 font-medium">{{ $vmis }}</span>
-                                @else
-                                    <span class="text-zinc-300">—</span>
-                                @endif
-                            </td>
-                            <td class="px-4 py-3 text-center">
-                                @if(($row?->locked_plots ?? 0) > 0)
-                                    <span class="text-blue-600 font-medium">{{ $row->locked_plots }}</span>
-                                @else
-                                    <span class="text-zinc-300">—</span>
-                                @endif
-                            </td>
-                            <td class="px-4 py-3 text-center">
-                                <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium
+    {{-- Card grid: Estado PAC por viticultor --}}
+    <div>
+        <h2 class="text-sm font-semibold text-zinc-700 mb-3">Estado PAC por viticultor</h2>
+
+        @if(count($viticulturists) > 0)
+            <div
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                wire:loading.class="opacity-60 pointer-events-none"
+            >
+                @foreach($viticulturists as $vit)
+                    @php
+                        $row  = $pacByVit[$vit->id] ?? null;
+                        $vtot = $row?->total_plots ?? 0;
+                        $vmis = $row?->missing_pac ?? 0;
+                        $vpct = $vtot > 0 ? round((($vtot - $vmis) / $vtot) * 100) : 0;
+                        $delay = min($loop->index * 50, 300);
+                    @endphp
+                    <x-agro.card
+                        class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                        style="animation-delay: {{ $delay }}ms;"
+                        wire:key="pac-vit-{{ $vit->id }}"
+                    >
+                        <x-slot:header>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center shrink-0">
+                                    <flux:icon icon="user" class="size-5 text-emerald-600" />
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="font-bold text-zinc-900 truncate">{{ $vit->name }}</h3>
+                                    <p class="text-xs text-zinc-400">{{ $vtot }} parcelas</p>
+                                </div>
+                                <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium shrink-0
                                     {{ $vpct >= 90 ? 'bg-emerald-50 text-emerald-700' : ($vpct >= 60 ? 'bg-amber-50 text-amber-700' : 'bg-red-50 text-red-700') }}">
                                     {{ $vpct }}%
                                 </span>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="7" class="px-4 py-8 text-center text-zinc-400">Sin viticultores</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-    </x-agro.card>
+                            </div>
+                        </x-slot:header>
 
-    {{-- Filtros + Tabla de parcelas --}}
+                        <div class="flex-1 space-y-3">
+                            <div class="grid grid-cols-3 gap-2">
+                                <div class="bg-blue-50 rounded-lg p-2 text-center">
+                                    <p class="text-[9px] text-blue-400 uppercase tracking-wide mb-0.5">Área</p>
+                                    <p class="text-sm font-bold text-blue-700">
+                                        {{ number_format($row?->total_area ?? 0, 2) }}
+                                        <span class="text-[9px] font-normal text-blue-400">ha</span>
+                                    </p>
+                                </div>
+                                <div class="bg-emerald-50 rounded-lg p-2 text-center">
+                                    <p class="text-[9px] text-emerald-400 uppercase tracking-wide mb-0.5">Elegible</p>
+                                    <p class="text-sm font-bold text-emerald-700">
+                                        {{ number_format($row?->eligible_area ?? 0, 2) }}
+                                        <span class="text-[9px] font-normal text-emerald-400">ha</span>
+                                    </p>
+                                </div>
+                                <div class="bg-zinc-50 rounded-lg p-2 text-center">
+                                    <p class="text-[9px] text-zinc-400 uppercase tracking-wide mb-0.5">Sin PAC</p>
+                                    <p class="text-sm font-bold {{ $vmis > 0 ? 'text-amber-600' : 'text-zinc-400' }}">
+                                        {{ $vmis }}
+                                    </p>
+                                </div>
+                            </div>
+
+                            @if(($row?->locked_plots ?? 0) > 0)
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-zinc-400">Bloqueadas</span>
+                                    <span class="text-blue-600 font-medium">{{ $row->locked_plots }}</span>
+                                </div>
+                            @endif
+                        </div>
+                    </x-agro.card>
+                @endforeach
+            </div>
+        @else
+            <x-agro.empty-state icon="users" title="Sin viticultores" description="No hay viticultores adscritos." />
+        @endif
+    </div>
+
+    {{-- Filtros + Parcelas --}}
     <x-agro.filter-bar>
         <x-agro.filter-select wire:model.live="filterVit" label="Viticultor">
             <option value="">Todos</option>
@@ -121,52 +136,89 @@
         </button>
     </x-agro.filter-bar>
 
-    <x-agro.data-table
-        :headers="['Parcela', 'Viticultor', 'Municipio', 'Área (ha)', 'Elegible (ha)', 'Coef.', 'Estado']"
-        emptyMessage="No hay parcelas con los filtros seleccionados."
-    >
-        @foreach($plots as $plot)
-            <tr class="hover:bg-zinc-50 transition">
-                <td class="px-6 py-3">
-                    <div class="text-sm font-medium text-zinc-800">{{ $plot->name }}</div>
-                    @if($plot->code_parcel)
-                        <div class="text-xs text-zinc-400">{{ $plot->code_parcel }}</div>
-                    @endif
-                </td>
-                <td class="px-6 py-3 text-sm text-zinc-600">{{ $plot->viticulturist?->name ?? '—' }}</td>
-                <td class="px-6 py-3 text-sm text-zinc-500">{{ $plot->municipality?->name ?? '—' }}</td>
-                <td class="px-6 py-3 text-sm text-zinc-700">{{ number_format($plot->area, 2) }}</td>
-                <td class="px-6 py-3 text-sm">
-                    @if($plot->pac_eligible_area)
-                        {{ number_format($plot->pac_eligible_area, 2) }}
-                    @else
-                        <span class="text-amber-500 text-xs font-medium">Sin datos</span>
-                    @endif
-                </td>
-                <td class="px-6 py-3 text-sm text-zinc-500">
-                    {{ $plot->eligibility_coefficient ? number_format($plot->eligibility_coefficient, 4) : '—' }}
-                </td>
-                <td class="px-6 py-3">
-                    @if($plot->is_locked)
-                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-blue-50 text-blue-700 border border-blue-200">
-                            <flux:icon icon="lock-closed" class="size-3" /> Bloqueada
-                        </span>
-                    @elseif(!$plot->pac_eligible_area)
-                        <span class="inline-flex px-2 py-0.5 rounded-full text-xs bg-amber-50 text-amber-700 border border-amber-200">
-                            Pendiente PAC
-                        </span>
-                    @else
-                        <span class="inline-flex px-2 py-0.5 rounded-full text-xs bg-emerald-50 text-emerald-700 border border-emerald-200">
-                            OK
-                        </span>
-                    @endif
-                </td>
-            </tr>
-        @endforeach
+    {{-- Parcelas Card Grid --}}
+    @if($plots->count() > 0)
+        <div
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            wire:loading.class="opacity-60 pointer-events-none"
+            wire:target="filterVit, filterStatus, clearFilters"
+        >
+            @foreach($plots as $plot)
+                @php
+                    $delay = min($loop->index * 50, 300);
+                @endphp
+                <x-agro.card
+                    class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                    style="animation-delay: {{ $delay }}ms;"
+                    wire:key="pac-plot-{{ $plot->id }}"
+                >
+                    <x-slot:header>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-teal-100 flex items-center justify-center shrink-0">
+                                <flux:icon icon="map" class="size-5 text-teal-600" />
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-bold text-zinc-900 truncate">{{ $plot->name }}</h3>
+                                @if($plot->code_parcel)
+                                    <p class="text-xs text-zinc-400">{{ $plot->code_parcel }}</p>
+                                @endif
+                            </div>
+                            @if($plot->is_locked)
+                                <flux:badge color="blue" size="sm" class="shrink-0">Bloqueada</flux:badge>
+                            @elseif(!$plot->pac_eligible_area)
+                                <flux:badge color="yellow" size="sm" class="shrink-0">Pendiente</flux:badge>
+                            @else
+                                <flux:badge color="green" size="sm" class="shrink-0">OK</flux:badge>
+                            @endif
+                        </div>
+                    </x-slot:header>
 
-        <x-slot name="pagination">
+                    <div class="flex-1 space-y-3">
+                        <div class="grid grid-cols-3 gap-2">
+                            <div class="bg-zinc-50 rounded-lg p-2 text-center">
+                                <p class="text-[9px] text-zinc-400 uppercase tracking-wide mb-0.5">Área</p>
+                                <p class="text-sm font-bold text-zinc-700">{{ number_format($plot->area, 2) }}</p>
+                            </div>
+                            <div class="bg-emerald-50 rounded-lg p-2 text-center">
+                                <p class="text-[9px] text-emerald-400 uppercase tracking-wide mb-0.5">Elegible</p>
+                                <p class="text-sm font-bold text-emerald-700">
+                                    @if($plot->pac_eligible_area)
+                                        {{ number_format($plot->pac_eligible_area, 2) }}
+                                    @else
+                                        <span class="text-amber-500 text-xs">—</span>
+                                    @endif
+                                </p>
+                            </div>
+                            <div class="bg-blue-50 rounded-lg p-2 text-center">
+                                <p class="text-[9px] text-blue-400 uppercase tracking-wide mb-0.5">Coef.</p>
+                                <p class="text-sm font-bold text-blue-700">
+                                    {{ $plot->eligibility_coefficient ? number_format($plot->eligibility_coefficient, 4) : '—' }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-zinc-400">Viticultor</span>
+                            <span class="text-zinc-700 font-medium truncate ml-2">{{ $plot->viticulturist?->name ?? '—' }}</span>
+                        </div>
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-zinc-400">Municipio</span>
+                            <span class="text-zinc-600 truncate ml-2">{{ $plot->municipality?->name ?? '—' }}</span>
+                        </div>
+                    </div>
+                </x-agro.card>
+            @endforeach
+        </div>
+
+        <div class="mt-2">
             {{ $plots->links() }}
-        </x-slot>
-    </x-agro.data-table>
+        </div>
+    @else
+        <x-agro.empty-state
+            icon="map"
+            title="Sin parcelas"
+            description="No hay parcelas con los filtros seleccionados."
+        />
+    @endif
 
 </div>

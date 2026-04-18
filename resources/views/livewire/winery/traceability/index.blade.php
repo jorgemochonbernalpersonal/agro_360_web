@@ -23,65 +23,94 @@
         @endif
     </x-agro.filter-bar>
 
-    @if($wines->count() > 0)
-        <div wire:loading.class="opacity-60 pointer-events-none" wire:target="search, vintageFilter, statusFilter, resetFilters">
-            <x-agro.data-table :headers="['Vino', 'Añada', 'Estado', 'Orígenes', 'Procesos', 'Embotellados', '']">
+    <x-agro.loading-grid target="search, vintageFilter, statusFilter, resetFilters, nextPage, previousPage" />
+
+    <div wire:loading.remove wire:target="search, vintageFilter, statusFilter, resetFilters, nextPage, previousPage">
+        @if($wines->count() > 0)
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 @foreach($wines as $wine)
-                    <x-agro.table-row wire:key="wine-{{ $wine->id }}">
-                        <x-agro.table-cell>
-                            <p class="font-medium text-zinc-900">{{ $wine->name }}</p>
-                            @if($wine->internal_code)
-                                <p class="text-xs text-zinc-400">{{ $wine->internal_code }}</p>
-                            @endif
-                        </x-agro.table-cell>
-                        <x-agro.table-cell>{{ $wine->vintage ?? '—' }}</x-agro.table-cell>
-                        <x-agro.table-cell>
-                            <x-agro.status-badge
-                                :label="$wine->status_label"
-                                :type="match($wine->status) {
-                                    'in_progress' => 'info',
-                                    'aged'        => 'warning',
-                                    'bottled'     => 'success',
-                                    'sold'        => 'gray',
-                                    default       => 'gray',
-                                }"
-                            />
-                        </x-agro.table-cell>
-                        <x-agro.table-cell align="center">{{ $wine->wineHarvests->count() }}</x-agro.table-cell>
-                        <x-agro.table-cell align="center">{{ $wine->processDetails->count() }}</x-agro.table-cell>
-                        <x-agro.table-cell align="center">{{ $wine->bottlings->count() }}</x-agro.table-cell>
-                        <x-agro.table-cell align="right">
-                            <div class="flex items-center justify-end gap-1">
-                                <flux:button size="sm" variant="ghost" icon="eye"
-                                    href="{{ roleRoute('wines.show', $wine) }}" wire:navigate>
-                                    Ver vino
-                                </flux:button>
+                    @php $delay = min($loop->index * 50, 300); @endphp
+                    <x-agro.card
+                        class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                        style="animation-delay: {{ $delay }}ms;"
+                        wire:key="wine-{{ $wine->id }}"
+                    >
+                        <x-slot:header>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center shrink-0">
+                                    <flux:icon icon="magnifying-glass-circle" class="size-5 text-purple-600" />
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="font-bold text-zinc-900 truncate">{{ $wine->name }}</h3>
+                                    <p class="text-xs text-zinc-500">{{ $wine->internal_code ?? '—' }}</p>
+                                </div>
+                                @php
+                                    $badgeColor = match($wine->status) {
+                                        'in_progress' => 'blue',
+                                        'aged'        => 'amber',
+                                        'bottled'     => 'green',
+                                        'sold'        => 'zinc',
+                                        default       => 'zinc',
+                                    };
+                                @endphp
+                                <flux:badge color="{{ $badgeColor }}" size="sm" class="shrink-0">{{ $wine->status_label }}</flux:badge>
+                            </div>
+                        </x-slot:header>
+
+                        <div class="flex-1 space-y-4">
+                            <div class="grid grid-cols-2 gap-2">
+                                <div class="bg-agro-50 rounded-xl p-3">
+                                    <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Añada</p>
+                                    <p class="text-2xl font-bold text-agro-700 leading-none">{{ $wine->vintage ?? '—' }}</p>
+                                </div>
+                                <div class="bg-agro-50 rounded-xl p-3">
+                                    <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Orígenes</p>
+                                    <p class="text-2xl font-bold text-agro-700 leading-none">{{ $wine->wineHarvests->count() }}</p>
+                                </div>
+                            </div>
+
+                            <div class="space-y-2 text-sm">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-zinc-400">Procesos</span>
+                                    <span class="text-zinc-700 font-medium">{{ $wine->processDetails->count() }}</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-zinc-400">Embotellados</span>
+                                    <span class="text-zinc-700 font-medium">{{ $wine->bottlings->count() }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <x-slot:footer>
+                            @php $btnBase = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors'; @endphp
+                            <div class="flex items-center justify-end gap-0.5">
+                                <a href="{{ roleRoute('wines.show', $wine) }}" wire:navigate class="{{ $btnBase }}" title="Ver vino">
+                                    <flux:icon icon="eye" class="size-4" />
+                                </a>
                                 @if($wine->trace_token)
-                                    <flux:button size="sm" variant="ghost" icon="arrow-down-tray"
-                                        href="{{ roleRoute('wines.traceability-pdf', $wine) }}"
-                                        target="_blank">
-                                        PDF
-                                    </flux:button>
+                                    <a href="{{ roleRoute('wines.traceability-pdf', $wine) }}" target="_blank" class="{{ $btnBase }}" title="Descargar PDF">
+                                        <flux:icon icon="arrow-down-tray" class="size-4" />
+                                    </a>
                                 @endif
                             </div>
-                        </x-agro.table-cell>
-                    </x-agro.table-row>
+                        </x-slot:footer>
+                    </x-agro.card>
                 @endforeach
-            </x-agro.data-table>
-        </div>
+            </div>
 
-        <x-agro.pagination :paginator="$wines" />
-    @else
-        <x-agro.empty-state
-            icon="magnifying-glass-circle"
-            title="No se encontraron vinos"
-            :description="$search || $vintageFilter || $statusFilter ? 'Ningún vino coincide con los filtros actuales.' : 'Cuando registres vinos aparecerán aquí con su trazabilidad completa.'"
-        >
-            @if($search || $vintageFilter || $statusFilter)
-                <x-slot:action>
-                    <flux:button wire:click="resetFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
-                </x-slot:action>
-            @endif
-        </x-agro.empty-state>
-    @endif
+            <div class="mt-6"><x-agro.pagination :paginator="$wines" /></div>
+        @else
+            <x-agro.empty-state
+                icon="magnifying-glass-circle"
+                title="No se encontraron vinos"
+                :description="$search || $vintageFilter || $statusFilter ? 'Ningún vino coincide con los filtros actuales.' : 'Cuando registres vinos aparecerán aquí con su trazabilidad completa.'"
+            >
+                @if($search || $vintageFilter || $statusFilter)
+                    <x-slot:action>
+                        <flux:button wire:click="resetFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
+                    </x-slot:action>
+                @endif
+            </x-agro.empty-state>
+        @endif
+    </div>
 </div>

@@ -80,23 +80,11 @@
         <div class="flex flex-wrap items-center gap-2">
             @if($campaignFilter)
                 @php $campLabel = $campaigns->firstWhere('id', $campaignFilter)?->year ?? $campaignFilter; @endphp
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    <flux:icon icon="calendar" class="size-3" />
-                    Añada: {{ $campLabel }}
-                    <button wire:click="$set('campaignFilter', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip icon="calendar" :label="'Añada: ' . $campLabel" wireRemove="$set('campaignFilter', '')" />
             @endif
             @if($viticulturistFilter)
                 @php $viticLabel = $linkedViticulturists->firstWhere('id', $viticulturistFilter)?->name ?? $viticulturistFilter; @endphp
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    <flux:icon icon="user" class="size-3" />
-                    {{ $viticLabel }}
-                    <button wire:click="$set('viticulturistFilter', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip icon="user" :label="$viticLabel" wireRemove="$set('viticulturistFilter', '')" />
             @endif
             <button wire:click="$set('campaignFilter', ''); $set('viticulturistFilter', '')"
                 class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">
@@ -106,11 +94,7 @@
     @endif
 
     {{-- Skeleton --}}
-    <div wire:loading wire:target="campaignFilter, viticulturistFilter">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            @for($i = 0; $i < 6; $i++) <x-agro.skeleton-card /> @endfor
-        </div>
-    </div>
+    <x-agro.loading-grid target="campaignFilter, viticulturistFilter" :count="6" />
 
     <div wire:loading.remove wire:target="campaignFilter, viticulturistFilter">
 

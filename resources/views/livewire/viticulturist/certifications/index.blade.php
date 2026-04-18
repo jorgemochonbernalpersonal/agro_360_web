@@ -14,59 +14,36 @@
     </x-agro.page-header>
 
     {{-- Stats (colapsables) --}}
-    <div x-data="{
-        open: localStorage.getItem('certifications-stats-open') !== 'false',
-        toggle() {
-            this.open = !this.open;
-            localStorage.setItem('certifications-stats-open', String(this.open));
-        }
-    }">
-        <button
-            @click="toggle()"
-            class="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-widest hover:text-zinc-600 transition-colors mb-3"
-        >
-            <span>Estadísticas</span>
-            <flux:icon icon="chevron-up" class="size-3.5 transition-transform duration-200" ::class="{ 'rotate-180': !open }" />
-        </button>
-        <div
-            x-show="open"
-            x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 -translate-y-1"
-            x-transition:enter-end="opacity-100 translate-y-0"
-            x-transition:leave="transition ease-in duration-150"
-            x-transition:leave-start="opacity-100 translate-y-0"
-            x-transition:leave-end="opacity-0 -translate-y-1"
-        >
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <x-agro.stat-card
-                    label="Certificaciones vigentes"
-                    :value="$stats['active']"
-                    icon="shield-check"
-                    color="agro"
-                />
-                <x-agro.stat-card
-                    label="Próximas a vencer"
-                    :value="$stats['expiring_soon']"
-                    description="En los próximos 60 días"
-                    icon="clock"
-                    color="amber"
-                />
-                <x-agro.stat-card
-                    label="Vencidas"
-                    :value="$stats['expired']"
-                    description="Requieren renovación"
-                    icon="x-circle"
-                    color="red"
-                />
-                <x-agro.stat-card
-                    label="Archivadas"
-                    :value="$stats['archived']"
-                    icon="archive-box"
-                    color="zinc"
-                />
-            </div>
+    <x-agro.stats-section key="certifications">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <x-agro.stat-card
+                label="Certificaciones vigentes"
+                :value="$stats['active']"
+                icon="shield-check"
+                color="agro"
+            />
+            <x-agro.stat-card
+                label="Próximas a vencer"
+                :value="$stats['expiring_soon']"
+                description="En los próximos 60 días"
+                icon="clock"
+                color="amber"
+            />
+            <x-agro.stat-card
+                label="Vencidas"
+                :value="$stats['expired']"
+                description="Requieren renovación"
+                icon="x-circle"
+                color="red"
+            />
+            <x-agro.stat-card
+                label="Archivadas"
+                :value="$stats['archived']"
+                icon="archive-box"
+                color="zinc"
+            />
         </div>
-    </div>
+    </x-agro.stats-section>
 
     {{-- Tabs --}}
     <x-agro.tabs :tabs="[
@@ -81,31 +58,10 @@
     <div class="flex items-center gap-3">
 
         {{-- Search --}}
-        <div class="flex-1 relative">
-            <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400" />
-            </div>
-            <input
-                wire:model.live.debounce.300ms="search"
-                type="text"
-                placeholder="Buscar por organismo, número o alcance..."
-                class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
-            />
-        </div>
+        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar por organismo, número o alcance..." />
 
         {{-- Filtros --}}
-        <button
-            x-on:click="$dispatch('open-modal', 'certifications-filters')"
-            class="relative inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors"
-        >
-            <flux:icon icon="adjustments-horizontal" class="size-4 text-zinc-500" />
-            Filtros
-            @if ($filterCount > 0)
-                <span class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-agro-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
-                    {{ $filterCount }}
-                </span>
-            @endif
-        </button>
+        <x-agro.filter-button modal="certifications-filters" :count="$filterCount" />
 
         {{-- Separador --}}
         <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
@@ -120,16 +76,7 @@
     {{-- Chip de filtro activo --}}
     @if ($filterCertificationType)
         <div class="flex flex-wrap items-center gap-2">
-            <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                <flux:icon icon="shield-check" class="size-3" />
-                {{ $certificationTypes[$filterCertificationType] ?? $filterCertificationType }}
-                <button
-                    wire:click="$set('filterCertificationType', '')"
-                    class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors"
-                >
-                    <flux:icon icon="x-mark" class="size-3" />
-                </button>
-            </span>
+            <x-agro.filter-chip icon="shield-check" :label="$certificationTypes[$filterCertificationType] ?? $filterCertificationType" wireRemove="$set('filterCertificationType', '')" />
             <button
                 wire:click="$set('filterCertificationType', '')"
                 class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors"
@@ -140,16 +87,7 @@
     @endif
 
     {{-- Skeleton durante carga --}}
-    <div
-        wire:loading
-        wire:target="switchTab, search, filterCertificationType, nextPage, previousPage, gotoPage"
-    >
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            @for ($i = 0; $i < 8; $i++)
-                <x-agro.skeleton-card />
-            @endfor
-        </div>
-    </div>
+    <x-agro.loading-grid target="switchTab, search, filterCertificationType, nextPage, previousPage, gotoPage" />
 
     {{-- Grid de cards --}}
     <div

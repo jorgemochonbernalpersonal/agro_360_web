@@ -7,51 +7,26 @@
     />
 
     {{-- KPIs --}}
-    <div x-data="{
-        open: localStorage.getItem('field-activities-stats-open') !== 'false',
-        toggle() {
-            this.open = !this.open;
-            localStorage.setItem('field-activities-stats-open', String(this.open));
-        }
-    }">
-        <button
-            @click="toggle()"
-            class="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-widest hover:text-zinc-600 transition-colors mb-3"
-        >
-            <span>Estadísticas</span>
-            <flux:icon icon="chevron-up" class="size-3.5 transition-transform duration-200" ::class="{ 'rotate-180': !open }" />
-        </button>
-        <div
-            x-show="open"
-            x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 -translate-y-1"
-            x-transition:enter-end="opacity-100 translate-y-0"
-            x-transition:leave="transition ease-in duration-150"
-            x-transition:leave-start="opacity-100 translate-y-0"
-            x-transition:leave-end="opacity-0 -translate-y-1"
-        >
-        <div class="grid grid-cols-2 lg:grid-cols-3 gap-4">
-            <x-agro.stat-card
-                label="Total actividades"
-                :value="$stats['total']"
-                icon="clipboard-document-list"
-                color="zinc"
-            />
-            <x-agro.stat-card
-                label="Vendimias"
-                :value="$stats['harvest']"
-                icon="sparkles"
-                color="agro"
-            />
-            <x-agro.stat-card
-                label="Fitosanitarios"
-                :value="$stats['phyto']"
-                icon="beaker"
-                color="amber"
-            />
-        </div>
-        </div>
-    </div>
+    <x-agro.stats-section key="field-activities" :columns="3">
+        <x-agro.stat-card
+            label="Total actividades"
+            :value="$stats['total']"
+            icon="clipboard-document-list"
+            color="zinc"
+        />
+        <x-agro.stat-card
+            label="Vendimias"
+            :value="$stats['harvest']"
+            icon="sparkles"
+            color="agro"
+        />
+        <x-agro.stat-card
+            label="Fitosanitarios"
+            :value="$stats['phyto']"
+            icon="beaker"
+            color="amber"
+        />
+    </x-agro.stats-section>
 
     {{-- Cuaderno access warning --}}
     @if($withoutCuadernoAccess->isNotEmpty())
@@ -77,16 +52,7 @@
 
     {{-- Toolbar --}}
     <div class="flex items-center gap-3">
-        <button x-on:click="$dispatch('open-modal', 'field-activities-filters')"
-            class="relative inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors">
-            <flux:icon icon="adjustments-horizontal" class="size-4 text-zinc-500" />
-            Filtros
-            @if($filterCount > 0)
-                <span class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-agro-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
-                    {{ $filterCount }}
-                </span>
-            @endif
-        </button>
+        <x-agro.filter-button modal="field-activities-filters" :count="$filterCount" />
 
         <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
@@ -100,43 +66,19 @@
         <div class="flex flex-wrap items-center gap-2">
             @if($viticulturistFilter)
                 @php $viticLabel = $linkedViticulturists->firstWhere('id', $viticulturistFilter)?->name ?? $viticulturistFilter; @endphp
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    <flux:icon icon="user" class="size-3" />
-                    {{ $viticLabel }}
-                    <button wire:click="$set('viticulturistFilter', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip icon="user" :label="$viticLabel" wireRemove="$set('viticulturistFilter', '')" />
             @endif
             @if($activityTypeFilter)
                 @php $typeLabel = $activityTypes[$activityTypeFilter] ?? $activityTypeFilter; @endphp
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    <flux:icon icon="tag" class="size-3" />
-                    {{ $typeLabel }}
-                    <button wire:click="$set('activityTypeFilter', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip icon="tag" :label="$typeLabel" wireRemove="$set('activityTypeFilter', '')" />
             @endif
             @if($campaignFilter)
                 @php $campLabel = $campaigns->firstWhere('id', $campaignFilter)?->year ?? $campaignFilter; @endphp
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    <flux:icon icon="calendar" class="size-3" />
-                    Campaña: {{ $campLabel }}
-                    <button wire:click="$set('campaignFilter', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip icon="calendar" :label="'Campaña: ' . $campLabel" wireRemove="$set('campaignFilter', '')" />
             @endif
             @if($plotFilter)
                 @php $plotLabel = $plots->firstWhere('id', $plotFilter)?->name ?? $plotFilter; @endphp
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    <flux:icon icon="map" class="size-3" />
-                    {{ $plotLabel }}
-                    <button wire:click="$set('plotFilter', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip icon="map" :label="$plotLabel" wireRemove="$set('plotFilter', '')" />
             @endif
             <button wire:click="$set('viticulturistFilter', ''); $set('activityTypeFilter', ''); $set('campaignFilter', ''); $set('plotFilter', '')"
                 class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">
@@ -146,13 +88,7 @@
     @endif
 
     {{-- Loading skeleton --}}
-    <div wire:loading wire:target="viticulturistFilter, activityTypeFilter, campaignFilter, plotFilter, gotoPage, previousPage, nextPage">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            @for($i = 0; $i < 6; $i++)
-                <x-agro.skeleton-card />
-            @endfor
-        </div>
-    </div>
+    <x-agro.loading-grid target="viticulturistFilter, activityTypeFilter, campaignFilter, plotFilter, gotoPage, previousPage, nextPage" :count="6" :cols="3" />
 
     {{-- Grid de cards --}}
     <div wire:loading.remove wire:target="viticulturistFilter, activityTypeFilter, campaignFilter, plotFilter, gotoPage, previousPage, nextPage">

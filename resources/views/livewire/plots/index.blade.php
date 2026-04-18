@@ -7,62 +7,36 @@
     />
 
     {{-- Stats (colapsables) --}}
-    <div x-data="{
-        open: localStorage.getItem('plots-stats-open') !== 'false',
-        toggle() {
-            this.open = !this.open;
-            localStorage.setItem('plots-stats-open', String(this.open));
-        }
-    }">
-        <button
-            @click="toggle()"
-            class="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-widest hover:text-zinc-600 transition-colors mb-3"
-        >
-            <span>Estadísticas</span>
-            <flux:icon icon="chevron-up" class="size-3.5 transition-transform duration-200" ::class="{ 'rotate-180': !open }" />
-        </button>
-
-        <div
-            x-show="open"
-            x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 -translate-y-1"
-            x-transition:enter-end="opacity-100 translate-y-0"
-            x-transition:leave="transition ease-in duration-150"
-            x-transition:leave-start="opacity-100 translate-y-0"
-            x-transition:leave-end="opacity-0 -translate-y-1"
-        >
-            <div class="grid grid-cols-2 gap-4">
-                <x-agro.stat-card
-                    label="Total parcelas"
-                    :value="$stats['total']"
-                    :description="$stats['active'] . ' activas · ' . $stats['inactive'] . ' inactivas'"
-                    icon="map-pin"
-                    color="agro"
-                />
-                <x-agro.stat-card
-                    label="Superficie total"
-                    :value="number_format($stats['total_area'], 2) . ' ha'"
-                    description="Área declarada"
-                    icon="square-2-stack"
-                    color="blue"
-                />
-                <x-agro.stat-card
-                    label="Con SIGPAC"
-                    :value="$stats['with_sigpac']"
-                    :description="($stats['total'] - $stats['with_sigpac']) . ' sin código'"
-                    icon="rectangle-group"
-                    color="orange"
-                />
-                <x-agro.stat-card
-                    label="Inactivas"
-                    :value="$stats['inactive']"
-                    :description="$stats['inactive'] > 0 ? 'Archivadas' : 'Todas activas'"
-                    icon="archive-box"
-                    color="zinc"
-                />
-            </div>
-        </div>
-    </div>
+    <x-agro.stats-section key="plots">
+        <x-agro.stat-card
+            label="Total parcelas"
+            :value="$stats['total']"
+            :description="$stats['active'] . ' activas · ' . $stats['inactive'] . ' inactivas'"
+            icon="map-pin"
+            color="agro"
+        />
+        <x-agro.stat-card
+            label="Superficie total"
+            :value="number_format($stats['total_area'], 2) . ' ha'"
+            description="Área declarada"
+            icon="square-2-stack"
+            color="blue"
+        />
+        <x-agro.stat-card
+            label="Con SIGPAC"
+            :value="$stats['with_sigpac']"
+            :description="($stats['total'] - $stats['with_sigpac']) . ' sin código'"
+            icon="rectangle-group"
+            color="orange"
+        />
+        <x-agro.stat-card
+            label="Inactivas"
+            :value="$stats['inactive']"
+            :description="$stats['inactive'] > 0 ? 'Archivadas' : 'Todas activas'"
+            icon="archive-box"
+            color="zinc"
+        />
+    </x-agro.stats-section>
 
     {{-- Tabs: Activas / Inactivas --}}
     <x-agro.tabs :tabs="[
@@ -81,31 +55,10 @@
     <div class="flex items-center gap-3">
 
         {{-- Search --}}
-        <div class="flex-1 relative">
-            <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400" />
-            </div>
-            <input
-                wire:model.live.debounce.300ms="search"
-                type="text"
-                placeholder="Buscar parcela por nombre..."
-                class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
-            />
-        </div>
+        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar parcela por nombre..." />
 
         {{-- Filtros --}}
-        <button
-            x-on:click="$dispatch('open-modal', 'plot-filters')"
-            class="relative inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors"
-        >
-            <flux:icon icon="adjustments-horizontal" class="size-4 text-zinc-500" />
-            Filtros
-            @if ($filterCount > 0)
-                <span class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-agro-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
-                    {{ $filterCount }}
-                </span>
-            @endif
-        </button>
+        <x-agro.filter-button modal="plot-filters" :count="$filterCount" />
 
         {{-- Toggle vista lista / mapa --}}
         <div class="flex items-center gap-0.5 bg-zinc-100 rounded-xl p-0.5">
@@ -146,40 +99,25 @@
     @if ($filterAutonomousCommunity || $filterProvince || $filterMunicipality)
         <div class="flex flex-wrap items-center gap-2">
             @if ($filterAutonomousCommunity)
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    <flux:icon icon="building-library" class="size-3" />
-                    {{ $this->autonomousCommunities[$filterAutonomousCommunity] ?? '' }}
-                    <button
-                        wire:click="$set('filterAutonomousCommunity', ''); $set('filterProvince', ''); $set('filterMunicipality', '')"
-                        class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors"
-                    >
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip
+                    icon="building-library"
+                    :label="$this->autonomousCommunities[$filterAutonomousCommunity] ?? ''"
+                    wireRemove="$set('filterAutonomousCommunity', ''); $set('filterProvince', ''); $set('filterMunicipality', '')"
+                />
             @endif
             @if ($filterProvince)
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    <flux:icon icon="map-pin" class="size-3" />
-                    {{ $this->provinces[$filterProvince] ?? '' }}
-                    <button
-                        wire:click="$set('filterProvince', ''); $set('filterMunicipality', '')"
-                        class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors"
-                    >
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip
+                    icon="map-pin"
+                    :label="$this->provinces[$filterProvince] ?? ''"
+                    wireRemove="$set('filterProvince', ''); $set('filterMunicipality', '')"
+                />
             @endif
             @if ($filterMunicipality)
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    <flux:icon icon="home" class="size-3" />
-                    {{ $this->municipalities[$filterMunicipality] ?? '' }}
-                    <button
-                        wire:click="$set('filterMunicipality', '')"
-                        class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors"
-                    >
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip
+                    icon="home"
+                    :label="$this->municipalities[$filterMunicipality] ?? ''"
+                    wireRemove="$set('filterMunicipality', '')"
+                />
             @endif
             <button
                 wire:click="$set('filterAutonomousCommunity', ''); $set('filterProvince', ''); $set('filterMunicipality', '')"
@@ -234,16 +172,7 @@
 
     {{-- Grid de Parcelas —— skeleton durante carga --}}
     @if ($viewMode === 'list')
-    <div
-        wire:loading
-        wire:target="switchTab, search, filterAutonomousCommunity, filterProvince, filterMunicipality, nextPage, previousPage, gotoPage, toggleViewMode"
-    >
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            @for ($i = 0; $i < 8; $i++)
-                <x-agro.skeleton-card />
-            @endfor
-        </div>
-    </div>
+        <x-agro.loading-grid target="switchTab, search, filterAutonomousCommunity, filterProvince, filterMunicipality, nextPage, previousPage, gotoPage, toggleViewMode" />
     @endif
 
     {{-- Mapa de Parcelas --}}

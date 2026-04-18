@@ -6,83 +6,148 @@
     />
 
     {{-- Stats --}}
-    <div x-data="{
-        open: localStorage.getItem('supervisor-finance-stats-open') !== 'false',
-        toggle() {
-            this.open = !this.open;
-            localStorage.setItem('supervisor-finance-stats-open', String(this.open));
-        }
-    }">
-        <button
-            @click="toggle()"
-            class="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-widest hover:text-zinc-600 transition-colors mb-3"
-        >
-            <span>Estadísticas</span>
-            <flux:icon icon="chevron-up" class="size-3.5 transition-transform duration-200" ::class="{ 'rotate-180': !open }" />
-        </button>
-        <div
-            x-show="open"
-            x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 -translate-y-1"
-            x-transition:enter-end="opacity-100 translate-y-0"
-            x-transition:leave="transition ease-in duration-150"
-            x-transition:leave-start="opacity-100 translate-y-0"
-            x-transition:leave-end="opacity-0 -translate-y-1"
-        >
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <x-agro.stat-card label="Suscripciones activas" :value="$activeSubscriptions" icon="credit-card" color="agro" />
-            <x-agro.stat-card label="Ingresos mensuales (€)" :value="number_format($monthlyRevenue, 2, ',', '.')" icon="banknotes" color="blue" description="Planes mensuales activos" />
-            <x-agro.stat-card label="Ingresos anuales (€)" :value="number_format($yearlyRevenue, 2, ',', '.')" icon="banknotes" color="yellow" description="Planes anuales activos" />
-        </div>
-        </div>
-    </div>
+    <x-agro.stats-section key="supervisor-finance" columns="3">
+        <x-agro.stat-card label="Suscripciones activas" :value="$activeSubscriptions" icon="credit-card" color="agro" />
+        <x-agro.stat-card label="Ingresos mensuales (€)" :value="number_format($monthlyRevenue, 2, ',', '.')" icon="banknotes" color="blue" description="Planes mensuales activos" />
+        <x-agro.stat-card label="Ingresos anuales (€)" :value="number_format($yearlyRevenue, 2, ',', '.')" icon="banknotes" color="yellow" description="Planes anuales activos" />
+    </x-agro.stats-section>
 
     {{-- Tabs --}}
     <div>
         <x-agro.tabs :tabs="$tabs" :active="$activeTab" wireMethod="setTab" />
 
         @if($activeTab === 'subscriptions')
-            <x-agro.data-table
-                :headers="['Viticultor', 'Email', 'Plan', 'Estado', 'Importe (€)', 'Válida hasta']"
-                emptyMessage="No hay suscripciones de viticultores DO."
-            >
-                @foreach($subscriptions as $sub)
-                    <tr class="hover:bg-zinc-50 transition">
-                        <td class="px-6 py-3 text-sm font-medium text-zinc-800">{{ $sub->user?->name ?? '—' }}</td>
-                        <td class="px-6 py-3 text-sm text-zinc-500">{{ $sub->user?->email ?? '—' }}</td>
-                        <td class="px-6 py-3 text-sm text-zinc-500 capitalize">{{ $sub->plan_type }}</td>
-                        <td class="px-6 py-3 text-sm">
-                            <x-agro.status-badge :status="$sub->status" :labels="['active' => 'Activa', 'cancelled' => 'Cancelada', 'expired' => 'Expirada']" />
-                        </td>
-                        <td class="px-6 py-3 text-sm text-zinc-500">{{ number_format($sub->amount, 2, ',', '.') }}</td>
-                        <td class="px-6 py-3 text-sm text-zinc-500">{{ $sub->ends_at?->format('d/m/Y') ?? '—' }}</td>
-                    </tr>
-                @endforeach
+            @if($subscriptions->count() > 0)
+                <div
+                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4"
+                    wire:loading.class="opacity-60 pointer-events-none"
+                    wire:target="setTab"
+                >
+                    @foreach($subscriptions as $sub)
+                        @php
+                            $delay = min($loop->index * 50, 300);
+                            $subStatusColors = [
+                                'active'    => ['badge' => 'green',  'iconBg' => 'bg-emerald-100', 'iconText' => 'text-emerald-600'],
+                                'cancelled' => ['badge' => 'yellow', 'iconBg' => 'bg-yellow-100',  'iconText' => 'text-yellow-600'],
+                                'expired'   => ['badge' => 'red',    'iconBg' => 'bg-red-100',     'iconText' => 'text-red-600'],
+                            ];
+                            $sColor = $subStatusColors[$sub->status] ?? ['badge' => 'zinc', 'iconBg' => 'bg-zinc-100', 'iconText' => 'text-zinc-600'];
+                            $subStatusLabels = ['active' => 'Activa', 'cancelled' => 'Cancelada', 'expired' => 'Expirada'];
+                        @endphp
+                        <x-agro.card
+                            class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                            style="animation-delay: {{ $delay }}ms;"
+                            wire:key="sub-{{ $sub->id }}"
+                        >
+                            <x-slot:header>
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-xl {{ $sColor['iconBg'] }} flex items-center justify-center shrink-0">
+                                        <flux:icon icon="credit-card" class="size-5 {{ $sColor['iconText'] }}" />
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <h3 class="font-bold text-zinc-900 truncate">{{ $sub->user?->name ?? '—' }}</h3>
+                                        <p class="text-xs text-zinc-400 truncate">{{ $sub->user?->email ?? '—' }}</p>
+                                    </div>
+                                    <flux:badge :color="$sColor['badge']" size="sm" class="shrink-0">
+                                        {{ $subStatusLabels[$sub->status] ?? $sub->status }}
+                                    </flux:badge>
+                                </div>
+                            </x-slot:header>
 
-                <x-slot name="pagination">{{ $subscriptions->links() }}</x-slot>
-            </x-agro.data-table>
+                            <div class="flex-1 space-y-3">
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div class="bg-blue-50 rounded-lg p-2 text-center">
+                                        <p class="text-[9px] text-blue-400 uppercase tracking-wide mb-0.5">Plan</p>
+                                        <p class="text-sm font-bold text-blue-700 capitalize">{{ $sub->plan_type }}</p>
+                                    </div>
+                                    <div class="bg-emerald-50 rounded-lg p-2 text-center">
+                                        <p class="text-[9px] text-emerald-400 uppercase tracking-wide mb-0.5">Importe</p>
+                                        <p class="text-sm font-bold text-emerald-700">
+                                            {{ number_format($sub->amount, 2, ',', '.') }}
+                                            <span class="text-[9px] font-normal text-emerald-400">EUR</span>
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-zinc-400">Válida hasta</span>
+                                    <span class="text-zinc-700 font-medium">{{ $sub->ends_at?->format('d/m/Y') ?? '—' }}</span>
+                                </div>
+                            </div>
+                        </x-agro.card>
+                    @endforeach
+                </div>
+
+                <div class="mt-2">
+                    {{ $subscriptions->links() }}
+                </div>
+            @else
+                <x-agro.empty-state
+                    icon="credit-card"
+                    title="Sin suscripciones"
+                    description="No hay suscripciones de viticultores DO."
+                />
+            @endif
 
         @else
-            <x-agro.data-table
-                :headers="['Bodega', 'Uva recibida (kg) ' . $currentYear, 'Valor total (€) ' . $currentYear]"
-                emptyMessage="No hay datos de recepciones para el año actual."
-            >
-                @foreach($harvestValueByWinery as $row)
-                    <tr class="hover:bg-zinc-50 transition">
-                        <td class="px-6 py-3 text-sm font-medium text-zinc-800">{{ $row->winery_name }}</td>
-                        <td class="px-6 py-3 text-sm text-zinc-500">{{ number_format($row->total_kg, 0, ',', '.') }} kg</td>
-                        <td class="px-6 py-3 text-sm text-zinc-500">
-                            @if($row->total_value > 0)
-                                {{ number_format($row->total_value, 2, ',', '.') }} €
-                            @else
-                                —
-                            @endif
-                        </td>
-                    </tr>
-                @endforeach
-            </x-agro.data-table>
+            {{-- Harvest value by winery --}}
+            @if(count($harvestValueByWinery) > 0)
+                <div
+                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4"
+                    wire:loading.class="opacity-60 pointer-events-none"
+                    wire:target="setTab"
+                >
+                    @foreach($harvestValueByWinery as $row)
+                        @php $delay = min($loop->index * 50, 300); @endphp
+                        <x-agro.card
+                            class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                            style="animation-delay: {{ $delay }}ms;"
+                            wire:key="winery-val-{{ $loop->index }}"
+                        >
+                            <x-slot:header>
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center shrink-0">
+                                        <flux:icon icon="building-office-2" class="size-5 text-blue-600" />
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <h3 class="font-bold text-zinc-900 truncate">{{ $row->winery_name }}</h3>
+                                        <p class="text-xs text-zinc-400">Campaña {{ $currentYear }}</p>
+                                    </div>
+                                </div>
+                            </x-slot:header>
+
+                            <div class="flex-1 space-y-3">
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div class="bg-amber-50 rounded-lg p-2 text-center">
+                                        <p class="text-[9px] text-amber-400 uppercase tracking-wide mb-0.5">Uva (kg)</p>
+                                        <p class="text-sm font-bold text-amber-700">
+                                            {{ number_format($row->total_kg, 0, ',', '.') }}
+                                        </p>
+                                    </div>
+                                    <div class="bg-emerald-50 rounded-lg p-2 text-center">
+                                        <p class="text-[9px] text-emerald-400 uppercase tracking-wide mb-0.5">Valor</p>
+                                        <p class="text-sm font-bold text-emerald-700">
+                                            @if($row->total_value > 0)
+                                                {{ number_format($row->total_value, 2, ',', '.') }}
+                                                <span class="text-[9px] font-normal text-emerald-400">EUR</span>
+                                            @else
+                                                —
+                                            @endif
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </x-agro.card>
+                    @endforeach
+                </div>
+            @else
+                <x-agro.empty-state
+                    icon="building-office-2"
+                    title="Sin datos"
+                    description="No hay datos de recepciones para el año actual."
+                />
+            @endif
         @endif
     </div>
 
 </div>
-

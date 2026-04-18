@@ -21,29 +21,7 @@
 
 {{-- Stats --}}
 @if($insurances->total() > 0)
-    <div x-data="{
-        open: localStorage.getItem('agri-insurance-stats-open') !== 'false',
-        toggle() {
-            this.open = !this.open;
-            localStorage.setItem('agri-insurance-stats-open', String(this.open));
-        }
-    }">
-        <button
-            @click="toggle()"
-            class="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-widest hover:text-zinc-600 transition-colors mb-3"
-        >
-            <span>Estadísticas</span>
-            <flux:icon icon="chevron-up" class="size-3.5 transition-transform duration-200" ::class="{ 'rotate-180': !open }" />
-        </button>
-        <div
-            x-show="open"
-            x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 -translate-y-1"
-            x-transition:enter-end="opacity-100 translate-y-0"
-            x-transition:leave="transition ease-in duration-150"
-            x-transition:leave-start="opacity-100 translate-y-0"
-            x-transition:leave-end="opacity-0 -translate-y-1"
-        >
+    <x-agro.stats-section key="agri-insurance-stats">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <x-agro.stat-card
                 label="Pólizas activas"
@@ -58,8 +36,7 @@
                 color="zinc"
             />
         </div>
-        </div>
-    </div>
+    </x-agro.stats-section>
 @endif
 
 {{-- Filtros --}}
@@ -77,9 +54,94 @@
     </x-agro.filter-select>
 </x-agro.filter-bar>
 
-{{-- Tabla --}}
-<x-agro.card>
-    @if($insurances->count() === 0)
+{{-- Cards --}}
+<x-agro.loading-grid target="filter_status, filter_coverage_type" />
+<div wire:loading.remove wire:target="filter_status, filter_coverage_type">
+    @if($insurances->count() > 0)
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            @foreach($insurances as $insurance)
+                @php $delay = min($loop->index * 50, 300); @endphp
+                <x-agro.card
+                    class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                    style="animation-delay: {{ $delay }}ms;"
+                    wire:key="ins-{{ $insurance->id }}"
+                >
+                    <x-slot:header>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center shrink-0">
+                                <flux:icon icon="shield-exclamation" class="size-5 text-violet-600" />
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-bold text-zinc-900 truncate">{{ $insurance->insurance_company }}</h3>
+                                <p class="text-xs text-zinc-500">{{ $insurance->policy_number ?? 'Sin nº póliza' }}</p>
+                            </div>
+                            <x-agro.status-badge :label="$insurance->status_label" :color="$insurance->status_color" />
+                        </div>
+                    </x-slot:header>
+
+                    <div class="flex-1 space-y-4">
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="bg-agro-50 rounded-xl p-3">
+                                <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Cobertura</p>
+                                <p class="text-sm font-bold text-agro-700 leading-none">{{ $insurance->coverage_type_label }}</p>
+                            </div>
+                            <div class="bg-agro-50 rounded-xl p-3">
+                                <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Prima</p>
+                                @if($insurance->premium)
+                                    <p class="text-sm font-bold text-agro-700 leading-none font-mono">{{ number_format($insurance->premium, 2) }} €</p>
+                                @else
+                                    <p class="text-sm font-bold text-zinc-400 leading-none">—</p>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="space-y-2 text-sm">
+                            @if($insurance->agent_name)
+                                <div class="flex items-center justify-between">
+                                    <span class="text-zinc-400">Agente</span>
+                                    <span class="text-zinc-700 font-medium truncate ml-2">{{ $insurance->agent_name }}</span>
+                                </div>
+                            @endif
+                            <div class="flex items-center justify-between">
+                                <span class="text-zinc-400">Vigencia</span>
+                                <span class="text-zinc-700 font-medium text-xs">
+                                    {{ $insurance->start_date->format('d/m/Y') }} → {{ $insurance->end_date->format('d/m/Y') }}
+                                </span>
+                            </div>
+                            @if($insurance->isExpiringSoon())
+                                <div class="flex items-center gap-1 text-xs text-amber-600 font-medium">
+                                    <flux:icon icon="exclamation-triangle" class="size-3" />
+                                    Vence pronto
+                                </div>
+                            @endif
+                            @if($insurance->subsidy_amount)
+                                <div class="flex items-center justify-between">
+                                    <span class="text-zinc-400">Subvención</span>
+                                    <span class="text-green-600 font-medium font-mono">-{{ number_format($insurance->subsidy_amount, 2) }} €</span>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+
+                    <x-slot:footer>
+                        @php $btnBase = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors'; @endphp
+                        <div class="flex items-center justify-end gap-0.5">
+                            <a href="{{ roleRoute('viticulturist.agri-insurance.edit', $insurance->id) }}" class="{{ $btnBase }}" title="Editar">
+                                <flux:icon icon="pencil" class="size-4" />
+                            </a>
+                            <button wire:click="delete({{ $insurance->id }})"
+                                wire:confirm="¿Eliminar esta póliza?"
+                                class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                                title="Eliminar">
+                                <flux:icon icon="trash" class="size-4" />
+                            </button>
+                        </div>
+                    </x-slot:footer>
+                </x-agro.card>
+            @endforeach
+        </div>
+        <div class="mt-6">{{ $insurances->links() }}</div>
+    @else
         <x-agro.empty-state
             icon="shield-exclamation"
             title="Sin seguros registrados"
@@ -91,68 +153,7 @@
                 </flux:button>
             </x-slot:action>
         </x-agro.empty-state>
-    @else
-        <x-agro.data-table :headers="['Aseguradora', 'Póliza', 'Cobertura', 'Vigencia', 'Prima', 'Estado', 'Acciones']">
-            @foreach($insurances as $insurance)
-                <x-agro.table-row>
-                    <x-agro.table-cell>
-                        <div>
-                            <p class="text-sm font-medium text-zinc-900">{{ $insurance->insurance_company }}</p>
-                            @if($insurance->agent_name)
-                                <p class="text-xs text-zinc-500">{{ $insurance->agent_name }}</p>
-                            @endif
-                        </div>
-                    </x-agro.table-cell>
-
-                    <x-agro.table-cell>
-                        <span class="text-sm text-zinc-600">{{ $insurance->policy_number ?? '—' }}</span>
-                    </x-agro.table-cell>
-
-                    <x-agro.table-cell>
-                        <x-agro.status-badge :label="$insurance->coverage_type_label" color="blue" />
-                    </x-agro.table-cell>
-
-                    <x-agro.table-cell>
-                        <div class="text-sm text-zinc-600">
-                            <span>{{ $insurance->start_date->format('d/m/Y') }}</span>
-                            <span class="text-zinc-400 mx-1">→</span>
-                            <span class="{{ $insurance->isExpiringSoon() ? 'text-amber-600 font-medium' : '' }}">
-                                {{ $insurance->end_date->format('d/m/Y') }}
-                            </span>
-                            @if($insurance->isExpiringSoon())
-                                <span class="block text-xs text-amber-600">Vence pronto</span>
-                            @endif
-                        </div>
-                    </x-agro.table-cell>
-
-                    <x-agro.table-cell>
-                        @if($insurance->premium)
-                            <span class="text-sm font-semibold text-zinc-700">{{ number_format($insurance->premium, 2) }} €</span>
-                            @if($insurance->subsidy_amount)
-                                <span class="text-xs text-green-600 block">-{{ number_format($insurance->subsidy_amount, 2) }} € subv.</span>
-                            @endif
-                        @else
-                            <span class="text-zinc-400">—</span>
-                        @endif
-                    </x-agro.table-cell>
-
-                    <x-agro.table-cell>
-                        <x-agro.status-badge :label="$insurance->status_label" :color="$insurance->status_color" />
-                    </x-agro.table-cell>
-
-                    <x-agro.table-cell align="right">
-                        <div class="flex items-center justify-end gap-2">
-                            <flux:button href="{{ roleRoute('viticulturist.agri-insurance.edit', $insurance->id) }}" size="sm" variant="ghost" icon="pencil">Editar</flux:button>
-                            <flux:button wire:click="delete({{ $insurance->id }})" wire:confirm="¿Eliminar esta póliza?" size="sm" variant="ghost" icon="trash">Eliminar</flux:button>
-                        </div>
-                    </x-agro.table-cell>
-                </x-agro.table-row>
-            @endforeach
-        </x-agro.data-table>
-
-        <div class="mt-4">{{ $insurances->links() }}</div>
     @endif
-</x-agro.card>
-
 </div>
 
+</div>

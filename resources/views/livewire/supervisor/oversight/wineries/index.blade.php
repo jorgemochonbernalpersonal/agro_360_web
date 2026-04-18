@@ -12,65 +12,32 @@
     </x-agro.page-header>
 
     {{-- Stats --}}
-    <div x-data="{
-        open: localStorage.getItem('oversight-wineries-stats-open') !== 'false',
-        toggle() {
-            this.open = !this.open;
-            localStorage.setItem('oversight-wineries-stats-open', String(this.open));
-        }
-    }">
-        <button
-            @click="toggle()"
-            class="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-widest hover:text-zinc-600 transition-colors mb-3"
-        >
-            <span>Estadísticas</span>
-            <flux:icon icon="chevron-up" class="size-3.5 transition-transform duration-200" ::class="{ 'rotate-180': !open }" />
-        </button>
-        <div
-            x-show="open"
-            x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 -translate-y-1"
-            x-transition:enter-end="opacity-100 translate-y-0"
-            x-transition:leave="transition ease-in duration-150"
-            x-transition:leave-start="opacity-100 translate-y-0"
-            x-transition:leave-end="opacity-0 -translate-y-1"
-        >
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <x-agro.stat-card
-                label="Bodegas supervisadas"
-                :value="$totalWineries"
-                icon="building-office-2"
-                color="blue"
-            />
-            <x-agro.stat-card
-                label="Total uva recibida (kg)"
-                :value="number_format($harvestStats->sum('total_kg'), 0, ',', '.')"
-                icon="scale"
-                color="agro"
-                :description="'Vendimia ' . $vintage"
-            />
-            <x-agro.stat-card
-                label="Recepciones de uva"
-                :value="$harvestStats->sum('reception_count')"
-                icon="inbox"
-                color="yellow"
-                :description="'Vendimia ' . $vintage"
-            />
-        </div>
-        </div>
-    </div>
+    <x-agro.stats-section key="oversight-wineries" columns="3">
+        <x-agro.stat-card
+            label="Bodegas supervisadas"
+            :value="$totalWineries"
+            icon="building-office-2"
+            color="blue"
+        />
+        <x-agro.stat-card
+            label="Total uva recibida (kg)"
+            :value="number_format($harvestStats->sum('total_kg'), 0, ',', '.')"
+            icon="scale"
+            color="agro"
+            :description="'Vendimia ' . $vintage"
+        />
+        <x-agro.stat-card
+            label="Recepciones de uva"
+            :value="$harvestStats->sum('reception_count')"
+            icon="inbox"
+            color="yellow"
+            :description="'Vendimia ' . $vintage"
+        />
+    </x-agro.stats-section>
 
     {{-- Filters --}}
     <div class="flex flex-wrap items-center gap-3">
-        <div class="relative">
-            <flux:icon icon="magnifying-glass" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 pointer-events-none" />
-            <input
-                type="text"
-                wire:model.live.debounce.300ms="search"
-                placeholder="Buscar bodega..."
-                class="pl-9 pr-3 py-1.5 text-sm border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 w-52"
-            />
-        </div>
+        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar bodega..." />
 
         @if($availableVintages->isNotEmpty())
             <select
@@ -90,54 +57,101 @@
         @endif
     </div>
 
-    {{-- Table --}}
-    <x-agro.data-table
-        :headers="['Bodega', 'Viticultores DO', 'Recepciones ' . $vintage, 'Uva recibida (kg)', '']"
-        emptyMessage="No hay bodegas adscritas a esta denominación."
-    >
-        @foreach($wineries as $winery)
-            @php
-                $stats = $harvestStats[$winery->id] ?? null;
-            @endphp
-            <tr class="hover:bg-zinc-50 transition">
-                <td class="px-6 py-3 text-sm font-medium text-zinc-800">
-                    <a href="{{ route('supervisor.oversight.wineries.show', $winery) }}"
-                       wire:navigate
-                       class="hover:text-blue-600 transition">
-                        {{ $winery->name }}
-                    </a>
-                    <div class="text-xs text-zinc-400">{{ $winery->email }}</div>
-                </td>
-                <td class="px-6 py-3 text-sm text-zinc-500">
-                    {{ $vitCountByWinery[$winery->id] ?? 0 }}
-                </td>
-                <td class="px-6 py-3 text-sm text-zinc-500">
-                    {{ $stats?->reception_count ?? '—' }}
-                </td>
-                <td class="px-6 py-3 text-sm text-zinc-500">
-                    @if($stats?->total_kg)
-                        {{ number_format($stats->total_kg, 0, ',', '.') }} kg
-                    @else
-                        —
-                    @endif
-                </td>
-                <td class="px-6 py-3 text-right">
-                    <flux:button
-                        wire:click="unlinkWinery({{ $winery->id }})"
-                        wire:confirm="¿Desvincular {{ addslashes($winery->name) }} de la denominación? Se eliminarán también las asignaciones de viticultores DO a esta bodega."
-                        variant="ghost"
-                        size="sm"
-                        icon="x-mark"
-                        class="text-zinc-400 hover:text-red-500"
-                    />
-                </td>
-            </tr>
-        @endforeach
+    {{-- Card Grid --}}
+    @if($wineries->count() > 0)
+        <div
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            wire:loading.class="opacity-60 pointer-events-none"
+            wire:target="search, vintageFilter, clearFilters"
+        >
+            @foreach($wineries as $winery)
+                @php
+                    $stats = $harvestStats[$winery->id] ?? null;
+                    $delay = min($loop->index * 50, 300);
+                @endphp
+                <x-agro.card
+                    class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                    style="animation-delay: {{ $delay }}ms;"
+                    wire:key="winery-{{ $winery->id }}"
+                >
+                    <x-slot:header>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center shrink-0">
+                                <flux:icon icon="building-office-2" class="size-5 text-blue-600" />
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-bold text-zinc-900 truncate">
+                                    <a href="{{ route('supervisor.oversight.wineries.show', $winery) }}"
+                                       wire:navigate
+                                       class="hover:text-blue-600 transition">
+                                        {{ $winery->name }}
+                                    </a>
+                                </h3>
+                                <p class="text-xs text-zinc-400 truncate">{{ $winery->email }}</p>
+                            </div>
+                        </div>
+                    </x-slot:header>
 
-        <x-slot name="pagination">
+                    <div class="flex-1 space-y-4">
+                        {{-- Metric boxes --}}
+                        <div class="grid grid-cols-3 gap-2">
+                            <div class="bg-emerald-50 rounded-lg p-2 text-center">
+                                <p class="text-[9px] text-emerald-400 uppercase tracking-wide mb-0.5">Viticultores</p>
+                                <p class="text-sm font-bold text-emerald-700">
+                                    {{ $vitCountByWinery[$winery->id] ?? 0 }}
+                                </p>
+                            </div>
+                            <div class="bg-amber-50 rounded-lg p-2 text-center">
+                                <p class="text-[9px] text-amber-400 uppercase tracking-wide mb-0.5">Recepciones</p>
+                                <p class="text-sm font-bold text-amber-700">
+                                    {{ $stats?->reception_count ?? 0 }}
+                                </p>
+                            </div>
+                            <div class="bg-blue-50 rounded-lg p-2 text-center">
+                                <p class="text-[9px] text-blue-400 uppercase tracking-wide mb-0.5">Uva (kg)</p>
+                                <p class="text-sm font-bold text-blue-700">
+                                    @if($stats?->total_kg)
+                                        {{ number_format($stats->total_kg, 0, ',', '.') }}
+                                    @else
+                                        0
+                                    @endif
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <x-slot:footer>
+                        <div class="flex items-center justify-between">
+                            <a href="{{ route('supervisor.oversight.wineries.show', $winery) }}" wire:navigate title="Ver detalle">
+                                <button class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-blue-600 hover:bg-blue-50 transition-colors">
+                                    <flux:icon icon="eye" class="size-4" />
+                                </button>
+                            </a>
+                            <flux:button
+                                wire:click="unlinkWinery({{ $winery->id }})"
+                                wire:confirm="¿Desvincular {{ addslashes($winery->name) }} de la denominación? Se eliminarán también las asignaciones de viticultores DO a esta bodega."
+                                variant="ghost"
+                                size="sm"
+                                icon="x-mark"
+                                class="text-zinc-400 hover:text-red-500"
+                                title="Desvincular"
+                            />
+                        </div>
+                    </x-slot:footer>
+                </x-agro.card>
+            @endforeach
+        </div>
+
+        <div class="mt-2">
             {{ $wineries->links() }}
-        </x-slot>
-    </x-agro.data-table>
+        </div>
+    @else
+        <x-agro.empty-state
+            icon="building-office-2"
+            title="No hay bodegas adscritas"
+            description="No hay bodegas adscritas a esta denominación."
+        />
+    @endif
 
     {{-- Modal: adscribir bodega existente --}}
     <flux:modal wire:model="showLinkModal" class="max-w-lg">
@@ -202,4 +216,3 @@
     </flux:modal>
 
 </div>
-

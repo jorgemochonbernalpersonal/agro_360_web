@@ -3,7 +3,16 @@
     <x-agro.page-header
         title="Contenedores de Bodega"
         description="Gestiona tus depósitos, barricas y otros contenedores"
-    />
+    >
+        <x-slot:actions>
+            <flux:button href="{{ roleRoute('containers.analytics') }}" wire:navigate variant="ghost" icon="chart-bar">
+                Analítica
+            </flux:button>
+            <flux:button href="{{ roleRoute('containers.create') }}" wire:navigate variant="primary" icon="plus">
+                Nuevo contenedor
+            </flux:button>
+        </x-slot:actions>
+    </x-agro.page-header>
 
     {{-- Tabs Activos / Inactivos --}}
     <x-agro.tabs
@@ -29,31 +38,10 @@
     <div class="flex items-center gap-3">
 
         {{-- Search --}}
-        <div class="flex-1 relative">
-            <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400" />
-            </div>
-            <input
-                wire:model.live.debounce.300ms="search"
-                type="text"
-                placeholder="Buscar contenedor..."
-                class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
-            />
-        </div>
+        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar contenedor..." />
 
         {{-- Botón Filtros --}}
-        <button
-            x-on:click="$dispatch('open-modal', 'container-filters')"
-            class="relative inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors"
-        >
-            <flux:icon icon="adjustments-horizontal" class="size-4 text-zinc-500" />
-            Filtros
-            @if($filterCount > 0)
-                <span class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-agro-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
-                    {{ $filterCount }}
-                </span>
-            @endif
-        </button>
+        <x-agro.filter-button modal="container-filters" :count="$filterCount" />
 
         <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
@@ -68,53 +56,23 @@
         <div class="flex flex-wrap items-center gap-2">
 
             @if($search)
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    <flux:icon icon="magnifying-glass" class="size-3" />
-                    "{{ $search }}"
-                    <button wire:click="$set('search', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip icon="magnifying-glass" :label="'&quot;' . $search . '&quot;'" wireRemove="$set('search', '')" />
             @endif
 
             @if($typeFilter)
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    <flux:icon icon="cube" class="size-3" />
-                    {{ $types->firstWhere('id', $typeFilter)?->name ?? '' }}
-                    <button wire:click="$set('typeFilter', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip icon="cube" :label="$types->firstWhere('id', $typeFilter)?->name ?? ''" wireRemove="$set('typeFilter', '')" />
             @endif
 
             @if($occupancyFilter)
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    <flux:icon icon="chart-bar" class="size-3" />
-                    {{ $occupancyLabels[$occupancyFilter] ?? '' }}
-                    <button wire:click="$set('occupancyFilter', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip icon="chart-bar" :label="$occupancyLabels[$occupancyFilter] ?? ''" wireRemove="$set('occupancyFilter', '')" />
             @endif
 
             @if($roomFilter)
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    <flux:icon icon="building-office" class="size-3" />
-                    {{ $rooms->firstWhere('id', $roomFilter)?->name ?? '' }}
-                    <button wire:click="$set('roomFilter', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip icon="building-office" :label="$rooms->firstWhere('id', $roomFilter)?->name ?? ''" wireRemove="$set('roomFilter', '')" />
             @endif
 
             @if($materialFilter)
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    <flux:icon icon="beaker" class="size-3" />
-                    {{ $materials->firstWhere('id', $materialFilter)?->name ?? '' }}
-                    <button wire:click="$set('materialFilter', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip icon="beaker" :label="$materials->firstWhere('id', $materialFilter)?->name ?? ''" wireRemove="$set('materialFilter', '')" />
             @endif
 
             <button

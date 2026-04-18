@@ -67,65 +67,118 @@
             <option value="winery">Bodegas</option>
             <option value="viticulturist">Viticultores</option>
         </select>
-        <div class="relative">
-            <flux:icon icon="magnifying-glass" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 pointer-events-none" />
-            <input type="text" wire:model.live.debounce.300ms="search" placeholder="Buscar..." class="pl-9 pr-3 py-1.5 text-sm border border-zinc-200 rounded-lg focus:outline-none w-48" />
-        </div>
+        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar..." />
     </div>
 
-    {{-- Tabs + Table --}}
+    {{-- Tabs --}}
     <div>
         <x-agro.tabs :tabs="$tabs" :active="$currentTab" wireMethod="switchTab" />
 
-        <x-agro.data-table
-            :headers="['Sujeto', 'Tipo', 'Fecha', 'Estado', 'Resultado', 'Referencia', '']"
-            emptyMessage="No hay inspecciones registradas."
-        >
-            @foreach($inspections as $inspection)
-                <tr class="hover:bg-zinc-50 transition">
-                    <td class="px-6 py-3 text-sm font-medium text-zinc-800">{{ $inspection->subject?->name ?? '—' }}</td>
-                    <td class="px-6 py-3 text-sm text-zinc-500 capitalize">
-                        {{ $inspection->subject_type === 'winery' ? 'Bodega' : 'Viticultor' }}
-                    </td>
-                    <td class="px-6 py-3 text-sm text-zinc-500">{{ $inspection->inspection_date->format('d/m/Y') }}</td>
-                    <td class="px-6 py-3 text-sm">
-                        <x-agro.status-badge :status="$inspection->status" :labels="\App\Models\DoInspection::STATUS_LABELS" />
-                    </td>
-                    <td class="px-6 py-3 text-sm text-zinc-500">
-                        {{ \App\Models\DoInspection::RESULT_LABELS[$inspection->result] ?? '—' }}
-                    </td>
-                    <td class="px-6 py-3 text-sm text-zinc-400">{{ $inspection->reference_number ?? '—' }}</td>
-                    <td class="px-6 py-3 text-right">
-                        <div class="flex items-center justify-end gap-1 flex-wrap">
-                            @if($inspection->status === 'scheduled')
-                                <button wire:click="updateStatus({{ $inspection->id }}, 'in_progress')"
-                                    class="text-xs text-blue-600 hover:underline">Iniciar</button>
-                            @endif
-                            @if($inspection->status === 'in_progress')
-                                <button wire:click="updateStatus({{ $inspection->id }}, 'completed')"
-                                    class="text-xs text-agro-600 hover:underline">Completar</button>
-                            @endif
-                            @if(in_array($inspection->status, ['scheduled', 'in_progress']))
-                                <button wire:click="updateStatus({{ $inspection->id }}, 'cancelled')"
-                                    class="text-xs text-red-500 hover:underline ml-1">Cancelar</button>
-                            @endif
-                            @if($inspection->result === \App\Models\DoInspection::RESULT_NON_COMPLIANT && $inspection->subject_type === 'winery')
-                                <button wire:click="createNonconformityFromInspection({{ $inspection->id }})"
-                                    wire:confirm="¿Generar un acta de no conformidad para esta inspección? Se creará como borrador en Solicitudes."
-                                    class="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium bg-red-50 text-red-700 border border-red-200 rounded hover:bg-red-100 transition-colors ml-1">
-                                    <flux:icon icon="exclamation-triangle" class="w-3 h-3" />
-                                    Generar acta
-                                </button>
-                            @endif
-                            <button wire:click="openEdit({{ $inspection->id }})"
-                                class="text-xs text-zinc-500 hover:text-zinc-700 hover:underline ml-1">Editar</button>
-                        </div>
-                    </td>
-                </tr>
-            @endforeach
+        {{-- Skeleton durante carga --}}
+        <x-agro.loading-grid target="search, switchTab, typeFilter, nextPage, previousPage" />
 
-            <x-slot name="pagination">{{ $inspections->links() }}</x-slot>
-        </x-agro.data-table>
+        {{-- Card grid --}}
+        <div wire:loading.remove wire:target="search, switchTab, typeFilter, nextPage, previousPage">
+            @if($inspections->count() > 0)
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    @foreach($inspections as $inspection)
+                        @php
+                            $delay = min($loop->index * 50, 300);
+                            $statusColor = match($inspection->status) {
+                                'scheduled'   => 'blue',
+                                'in_progress' => 'yellow',
+                                'completed'   => 'green',
+                                'cancelled'   => 'red',
+                                default       => 'zinc',
+                            };
+                            $statusLabel = \App\Models\DoInspection::STATUS_LABELS[$inspection->status] ?? $inspection->status;
+                            $isWinery = $inspection->subject_type === 'winery';
+                        @endphp
+                        <x-agro.card
+                            class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                            style="animation-delay: {{ $delay }}ms;"
+                            wire:key="inspection-{{ $inspection->id }}"
+                        >
+                            <x-slot:header>
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-xl {{ $isWinery ? 'bg-blue-100' : 'bg-emerald-100' }} flex items-center justify-center shrink-0">
+                                        <flux:icon icon="{{ $isWinery ? 'building-office' : 'user' }}" class="size-5 {{ $isWinery ? 'text-blue-600' : 'text-emerald-600' }}" />
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <h3 class="font-bold text-zinc-900 truncate text-sm">{{ $inspection->subject?->name ?? '—' }}</h3>
+                                        <p class="text-xs text-zinc-500">{{ $isWinery ? 'Bodega' : 'Viticultor' }}</p>
+                                    </div>
+                                    <flux:badge color="{{ $statusColor }}" size="sm" class="shrink-0">{{ $statusLabel }}</flux:badge>
+                                </div>
+                            </x-slot:header>
+
+                            <div class="flex-1 space-y-4">
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div class="bg-agro-50 rounded-xl p-3">
+                                        <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Fecha</p>
+                                        <p class="text-lg font-bold text-agro-700 leading-none">{{ $inspection->inspection_date->format('d/m') }}</p>
+                                        <p class="text-[10px] text-agro-400 mt-0.5">{{ $inspection->inspection_date->format('Y') }}</p>
+                                    </div>
+                                    <div class="bg-agro-50 rounded-xl p-3">
+                                        <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Resultado</p>
+                                        <p class="text-sm font-bold text-agro-700 leading-none mt-1">{{ \App\Models\DoInspection::RESULT_LABELS[$inspection->result] ?? '—' }}</p>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-2 text-sm">
+                                    @if($inspection->reference_number)
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-zinc-400">Referencia</span>
+                                            <span class="text-zinc-700 font-medium font-mono text-xs">{{ $inspection->reference_number }}</span>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <x-slot:footer>
+                                <div class="flex items-center justify-end gap-1 flex-wrap">
+                                    @if($inspection->status === 'scheduled')
+                                        <button wire:click="updateStatus({{ $inspection->id }}, 'in_progress')"
+                                            class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200 rounded-md hover:bg-blue-100 transition-colors">
+                                            Iniciar
+                                        </button>
+                                    @endif
+                                    @if($inspection->status === 'in_progress')
+                                        <button wire:click="updateStatus({{ $inspection->id }}, 'completed')"
+                                            class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-agro-50 text-agro-700 border border-agro-200 rounded-md hover:bg-agro-100 transition-colors">
+                                            Completar
+                                        </button>
+                                    @endif
+                                    @if(in_array($inspection->status, ['scheduled', 'in_progress']))
+                                        <button wire:click="updateStatus({{ $inspection->id }}, 'cancelled')"
+                                            class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-red-50 text-red-600 border border-red-200 rounded-md hover:bg-red-100 transition-colors">
+                                            Cancelar
+                                        </button>
+                                    @endif
+                                    @if($inspection->result === \App\Models\DoInspection::RESULT_NON_COMPLIANT && $inspection->subject_type === 'winery')
+                                        <button wire:click="createNonconformityFromInspection({{ $inspection->id }})"
+                                            wire:confirm="¿Generar un acta de no conformidad para esta inspección? Se creará como borrador en Solicitudes."
+                                            class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-red-50 text-red-700 border border-red-200 rounded-md hover:bg-red-100 transition-colors">
+                                            <flux:icon icon="exclamation-triangle" class="w-3 h-3" />
+                                            Acta
+                                        </button>
+                                    @endif
+                                    @php
+                                        $btnBase = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
+                                    @endphp
+                                    <button wire:click="openEdit({{ $inspection->id }})" class="{{ $btnBase }}" title="Editar">
+                                        <flux:icon icon="pencil" class="size-4" />
+                                    </button>
+                                </div>
+                            </x-slot:footer>
+                        </x-agro.card>
+                    @endforeach
+                </div>
+                <div class="mt-6">{{ $inspections->links() }}</div>
+            @else
+                <x-agro.empty-state icon="clipboard-document-check" title="Sin inspecciones" description="No hay inspecciones registradas con estos filtros." />
+            @endif
+        </div>
     </div>
 
     {{-- Edit modal --}}

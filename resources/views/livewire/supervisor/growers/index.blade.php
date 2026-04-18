@@ -12,107 +12,120 @@
     </x-agro.page-header>
 
     {{-- Stats --}}
-    <div x-data="{
-        open: localStorage.getItem('supervisor-growers-stats-open') !== 'false',
-        toggle() { this.open = !this.open; localStorage.setItem('supervisor-growers-stats-open', String(this.open)); }
-    }">
-        <button @click="toggle()"
-            class="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-widest hover:text-zinc-600 transition-colors mb-3">
-            <span>Estadísticas</span>
-            <flux:icon icon="chevron-up" class="size-3.5 transition-transform duration-200" ::class="{ 'rotate-180': !open }" />
-        </button>
-        <div x-show="open" x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100 translate-y-0">
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <x-agro.stat-card label="Viticultores DO" :value="$totalGrowerCount" icon="users" color="agro" />
-                <x-agro.stat-card label="Total parcelas activas" :value="$plotStatsByVit->sum('plot_count')" icon="map" color="blue" />
-                <x-agro.stat-card label="Superficie total (ha)" :value="number_format($plotStatsByVit->sum('total_area'), 2)" icon="square-3-stack-3d" color="yellow" />
-            </div>
-        </div>
-    </div>
+    <x-agro.stats-section key="supervisor-growers" columns="3">
+        <x-agro.stat-card label="Viticultores DO" :value="$totalGrowerCount" icon="users" color="agro" />
+        <x-agro.stat-card label="Total parcelas activas" :value="$plotStatsByVit->sum('plot_count')" icon="map" color="blue" />
+        <x-agro.stat-card label="Superficie total (ha)" :value="number_format($plotStatsByVit->sum('total_area'), 2)" icon="square-3-stack-3d" color="yellow" />
+    </x-agro.stats-section>
 
     {{-- Search --}}
     <div class="flex items-center gap-2">
-        <div class="relative">
-            <flux:icon icon="magnifying-glass" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 pointer-events-none" />
-            <input type="text" wire:model.live.debounce.300ms="search" placeholder="Buscar viticultor..."
-                class="pl-9 pr-3 py-1.5 text-sm border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-300 w-52" />
-        </div>
+        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar viticultor..." />
         @if($search)
             <button wire:click="clearSearch" class="text-xs text-zinc-400 hover:text-zinc-600 transition px-2 py-1.5">Limpiar</button>
         @endif
     </div>
 
-    {{-- Table --}}
-    <x-agro.data-table
-        :headers="['Viticultor', 'Estado', 'Bodegas asignadas', 'Parcelas / Plantaciones', '']"
-        emptyMessage="No hay viticultores adscritos a esta denominación."
-    >
-        @foreach($growers as $grower)
-            @php
-                $plots     = $plotStatsByVit[$grower->id]       ?? null;
-                $plantings = $activePlantingsByVit[$grower->id] ?? null;
-                $isGhost   = !$grower->can_login;
-                $hasPendingInvite = $isGhost && $grower->invitation_token && $grower->invitation_expires_at?->isFuture();
-            @endphp
-            <tr class="hover:bg-zinc-50 transition">
-                <td class="px-6 py-3 text-sm">
-                    <div class="font-medium text-zinc-800">{{ $grower->name }}</div>
-                    @if(!str_starts_with($grower->email, 'viticultores.'))
-                        <div class="text-xs text-zinc-400">{{ $grower->email }}</div>
-                    @else
-                        <div class="text-xs text-zinc-300 italic">Sin email registrado</div>
-                    @endif
-                </td>
-                <td class="px-6 py-3 text-sm">
-                    @if(!$isGhost)
-                        <flux:badge color="green" size="sm">Activo</flux:badge>
-                    @elseif($hasPendingInvite)
-                        <flux:badge color="amber" size="sm">Invitación enviada</flux:badge>
-                    @else
-                        <flux:badge color="zinc" size="sm">Ghost</flux:badge>
-                    @endif
-                </td>
-                <td class="px-6 py-3 text-sm text-zinc-500">
-                    {{ $wineryNamesByVit[$grower->id] ?? '—' }}
-                </td>
-                <td class="px-6 py-3 text-sm text-zinc-500">
-                    {{ $plots?->plot_count ?? 0 }} parcelas
-                    @if($plantings?->planting_count)
-                        · {{ $plantings->planting_count }} plantac.
-                    @endif
-                </td>
-                <td class="px-6 py-3 text-sm text-right">
-                    @if($isGhost)
-                        @if($hasPendingInvite)
-                            <flux:button
-                                size="xs"
-                                variant="ghost"
-                                icon="x-mark"
-                                wire:click="revokeInvitation({{ $grower->id }})"
-                                wire:confirm="¿Revocar la invitación de {{ $grower->name }}?"
-                            >
-                                Revocar invitación
-                            </flux:button>
-                        @else
-                            <flux:button
-                                size="xs"
-                                variant="ghost"
-                                icon="envelope"
-                                wire:click="openInviteModal({{ $grower->id }})"
-                            >
-                                Invitar
-                            </flux:button>
-                        @endif
-                    @endif
-                </td>
-            </tr>
-        @endforeach
+    {{-- Loading skeleton --}}
+    <x-agro.loading-grid target="search, nextPage, previousPage" />
 
-        <x-slot name="pagination">
-            {{ $growers->links() }}
-        </x-slot>
-    </x-agro.data-table>
+    {{-- Card grid --}}
+    <div wire:loading.remove wire:target="search, nextPage, previousPage">
+        @if($growers->count() > 0)
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                @foreach($growers as $grower)
+                    @php
+                        $delay     = min($loop->index * 50, 300);
+                        $plots     = $plotStatsByVit[$grower->id]       ?? null;
+                        $plantings = $activePlantingsByVit[$grower->id] ?? null;
+                        $isGhost   = !$grower->can_login;
+                        $hasPendingInvite = $isGhost && $grower->invitation_token && $grower->invitation_expires_at?->isFuture();
+                    @endphp
+                    <x-agro.card
+                        class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                        style="animation-delay: {{ $delay }}ms;"
+                        wire:key="grower-{{ $grower->id }}"
+                    >
+                        <x-slot:header>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-agro-100 flex items-center justify-center shrink-0">
+                                    <flux:icon icon="user" class="size-5 text-agro-600" />
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="font-bold text-zinc-900 truncate">{{ $grower->name }}</h3>
+                                    @if(!str_starts_with($grower->email, 'viticultores.'))
+                                        <p class="text-xs text-zinc-500 truncate">{{ $grower->email }}</p>
+                                    @else
+                                        <p class="text-xs text-zinc-300 italic">Sin email registrado</p>
+                                    @endif
+                                </div>
+                                @if(!$isGhost)
+                                    <flux:badge color="green" size="sm" class="shrink-0">Activo</flux:badge>
+                                @elseif($hasPendingInvite)
+                                    <flux:badge color="amber" size="sm" class="shrink-0">Invitación enviada</flux:badge>
+                                @else
+                                    <flux:badge color="zinc" size="sm" class="shrink-0">Ghost</flux:badge>
+                                @endif
+                            </div>
+                        </x-slot:header>
+
+                        <div class="flex-1 space-y-4">
+                            <div class="grid grid-cols-2 gap-2">
+                                <div class="bg-blue-50 rounded-xl p-3">
+                                    <p class="text-[10px] font-semibold text-blue-400 uppercase tracking-widest mb-0.5">Parcelas</p>
+                                    <p class="text-2xl font-bold text-blue-700 leading-none">{{ $plots?->plot_count ?? 0 }}</p>
+                                </div>
+                                <div class="bg-agro-50 rounded-xl p-3">
+                                    <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Plantaciones</p>
+                                    <p class="text-2xl font-bold text-agro-700 leading-none">{{ $plantings?->planting_count ?? 0 }}</p>
+                                </div>
+                            </div>
+
+                            <div class="space-y-2 text-sm">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-zinc-400">Bodegas</span>
+                                    <span class="text-zinc-700 font-medium truncate ml-2 max-w-[60%] text-right">{{ $wineryNamesByVit[$grower->id] ?? '---' }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <x-slot:footer>
+                            @php
+                                $btnBase = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
+                                $btnDanger = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors';
+                            @endphp
+                            <div class="flex items-center justify-end gap-0.5">
+                                @if($isGhost)
+                                    @if($hasPendingInvite)
+                                        <button
+                                            wire:click="revokeInvitation({{ $grower->id }})"
+                                            wire:confirm="¿Revocar la invitación de {{ $grower->name }}?"
+                                            class="{{ $btnDanger }}"
+                                            title="Revocar invitación"
+                                        >
+                                            <flux:icon icon="x-mark" class="size-4" />
+                                        </button>
+                                    @else
+                                        <button
+                                            wire:click="openInviteModal({{ $grower->id }})"
+                                            class="{{ $btnBase }}"
+                                            title="Invitar"
+                                        >
+                                            <flux:icon icon="envelope" class="size-4" />
+                                        </button>
+                                    @endif
+                                @endif
+                            </div>
+                        </x-slot:footer>
+                    </x-agro.card>
+                @endforeach
+            </div>
+
+            <div class="mt-6">{{ $growers->links() }}</div>
+        @else
+            <x-agro.empty-state icon="users" title="No hay viticultores" description="No hay viticultores adscritos a esta denominación." />
+        @endif
+    </div>
 
     {{-- Modal: Crear viticultor ghost --}}
     <flux:modal wire:model="showCreateModal" class="w-full max-w-lg">

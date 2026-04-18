@@ -16,35 +16,12 @@
     />
 
     {{-- KPIs --}}
-    <div x-data="{
-        open: localStorage.getItem('notebook-containers-stats-open') !== 'false',
-        toggle() {
-            this.open = !this.open;
-            localStorage.setItem('notebook-containers-stats-open', String(this.open));
-        }
-    }">
-        <button
-            @click="toggle()"
-            class="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-widest hover:text-zinc-600 transition-colors mb-3"
-        >
-            <span>Estadísticas</span>
-            <flux:icon icon="chevron-up" class="size-3.5 transition-transform duration-200" ::class="{ 'rotate-180': !open }" />
-        </button>
-        <div
-            x-show="open"
-            x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 -translate-y-1"
-            x-transition:enter-end="opacity-100 translate-y-0"
-            x-transition:leave="transition ease-in duration-150"
-            x-transition:leave-start="opacity-100 translate-y-0"
-            x-transition:leave-end="opacity-0 -translate-y-1"
-        >
+    <x-agro.stats-section key="notebook-containers-stats">
         <div class="grid grid-cols-2 gap-4">
             <x-agro.stat-card label="Capacidad Total" :value="number_format($stats['total_capacity'], 0) . ' kg'" icon="scale" color="green" />
             <x-agro.stat-card label="Capacidad Usada" :value="number_format($stats['total_used'], 0) . ' kg'" icon="archive-box" color="blue" />
         </div>
-        </div>
-    </div>
+    </x-agro.stats-section>
 
     {{-- Toolbar --}}
     @php
@@ -55,30 +32,9 @@
 
     <div class="flex items-center gap-3">
 
-        <div class="flex-1 relative">
-            <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400" />
-            </div>
-            <input
-                wire:model.live.debounce.300ms="search"
-                type="text"
-                placeholder="Buscar por nombre, número de serie, parcela..."
-                class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
-            />
-        </div>
+        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar por nombre, número de serie, parcela..." />
 
-        <button
-            x-on:click="$dispatch('open-modal', 'container-filters')"
-            class="relative inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors"
-        >
-            <flux:icon icon="adjustments-horizontal" class="size-4 text-zinc-500" />
-            Filtros
-            @if($filterCount > 0)
-                <span class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-agro-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
-                    {{ $filterCount }}
-                </span>
-            @endif
-        </button>
+        <x-agro.filter-button modal="container-filters" :count="$filterCount" />
 
         <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
@@ -92,21 +48,10 @@
     @if($search || $selectedCampaign || $selectedHarvest || $filterAvailability)
         <div class="flex flex-wrap items-center gap-2">
             @if($search)
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    <flux:icon icon="magnifying-glass" class="size-3" />
-                    "{{ $search }}"
-                    <button wire:click="$set('search', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip icon="magnifying-glass" :label="'&quot;' . $search . '&quot;'" wireRemove="$set('search', '')" />
             @endif
             @if($filterAvailability)
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    {{ $filterAvailability === 'available' ? 'Disponibles' : 'Asignados' }}
-                    <button wire:click="$set('filterAvailability', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip :label="$filterAvailability === 'available' ? 'Disponibles' : 'Asignados'" wireRemove="$set('filterAvailability', '')" />
             @endif
             <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">
                 Limpiar todo
@@ -114,82 +59,131 @@
         </div>
     @endif
 
-    {{-- Tabla --}}
-    @php
-        $headers = ['Contenedor', 'Cosecha', 'Peso', 'Estado', 'Acciones'];
-    @endphp
+    {{-- Loading skeleton --}}
+    <x-agro.loading-grid target="switchTab, search, selectedCampaign, selectedHarvest, filterAvailability, clearFilters, nextPage, previousPage" />
 
-    <x-agro.data-table
-        :headers="$headers"
-        empty-message="No hay contenedores registrados"
-        empty-description="{{ ($search || $selectedCampaign || $selectedHarvest || $filterAvailability) ? 'No se encontraron contenedores con los filtros seleccionados' : 'Los contenedores aparecerán aquí cuando se registren' }}"
-    >
+    {{-- Card grid --}}
+    <div wire:loading.remove wire:target="switchTab, search, selectedCampaign, selectedHarvest, filterAvailability, clearFilters, nextPage, previousPage">
         @if($containers->count() > 0)
-            @foreach($containers as $container)
-                <x-agro.table-row wire:key="container-{{ $container->id }}">
-                    <x-agro.table-cell>
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-lg bg-agro-50 flex items-center justify-center shrink-0">
-                                <flux:icon icon="archive-box" class="size-5 text-agro-600" />
-                            </div>
-                            <div>
-                                <div class="text-sm font-bold text-zinc-900">
-                                    {{ $container->name }}
-                                    @if($container->serial_number) #{{ $container->serial_number }} @endif
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                @foreach($containers as $container)
+                    @php
+                        $delay = min($loop->index * 50, 300);
+                        $currentHarvest = $container->harvests->first();
+                        $pct = $container->getOccupancyPercentage();
+                        if ($container->isEmpty())      { $fillColor = 'green'; $fillLabel = 'Vacío'; }
+                        elseif ($container->isFull())   { $fillColor = 'blue';  $fillLabel = 'Lleno'; }
+                        else                            { $fillColor = 'yellow'; $fillLabel = 'Parcial'; }
+                    @endphp
+                    <x-agro.card
+                        class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                        style="animation-delay: {{ $delay }}ms;"
+                        wire:key="container-{{ $container->id }}"
+                    >
+                        <x-slot:header>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-agro-100 flex items-center justify-center shrink-0">
+                                    <flux:icon icon="archive-box" class="size-5 text-agro-600" />
                                 </div>
-                                <div class="text-xs text-zinc-500 mt-0.5">Cantidad: {{ $container->quantity }}</div>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="font-bold text-zinc-900 truncate">
+                                        {{ $container->name }}
+                                        @if($container->serial_number) <span class="text-zinc-400 font-normal">#{{ $container->serial_number }}</span> @endif
+                                    </h3>
+                                    <p class="text-xs text-zinc-500">Cantidad: {{ $container->quantity }}</p>
+                                </div>
+                                <flux:badge :color="$fillColor" size="sm" class="shrink-0">{{ $fillLabel }}</flux:badge>
                             </div>
-                        </div>
-                    </x-agro.table-cell>
-                    <x-agro.table-cell>
-                        @php $currentHarvest = $container->harvests->first(); @endphp
-                        @if($currentHarvest)
-                            <div>
-                                <div class="text-sm font-medium text-zinc-900">{{ $currentHarvest->activity->plot->name ?? 'Sin parcela' }}</div>
-                                <div class="text-xs text-zinc-500 mt-0.5">{{ $currentHarvest->plotPlanting->grapeVariety->name ?? 'Sin variedad' }}</div>
-                                <div class="text-xs text-zinc-400 mt-0.5">{{ $currentHarvest->harvest_start_date->format('d/m/Y') }}</div>
+                        </x-slot:header>
+
+                        <div class="flex-1 space-y-4">
+                            {{-- Ocupación --}}
+                            <x-agro.progress-bar :percentage="$pct" label="Ocupación" :showValues="false" />
+
+                            {{-- Peso --}}
+                            <div class="grid grid-cols-2 gap-2">
+                                <div class="bg-amber-50 rounded-xl p-3">
+                                    <p class="text-[10px] font-semibold text-amber-400 uppercase tracking-widest mb-0.5">Usado</p>
+                                    <p class="text-lg font-bold text-amber-700 leading-none">
+                                        {{ number_format($container->used_capacity, 0) }}
+                                        <span class="text-[10px] font-normal text-amber-400">kg</span>
+                                    </p>
+                                </div>
+                                <div class="bg-zinc-50 rounded-xl p-3">
+                                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">Capacidad</p>
+                                    <p class="text-lg font-bold text-zinc-600 leading-none">
+                                        {{ number_format($container->capacity, 0) }}
+                                        <span class="text-[10px] font-normal text-zinc-400">kg</span>
+                                    </p>
+                                </div>
                             </div>
-                        @else
-                            <flux:badge color="green" size="sm">Disponible</flux:badge>
-                        @endif
-                    </x-agro.table-cell>
-                    <x-agro.table-cell>
-                        <div class="text-sm font-bold text-zinc-900">
-                            {{ number_format($container->used_capacity, 2) }} / {{ number_format($container->capacity, 2) }} kg
+
+                            {{-- Cosecha asignada --}}
+                            @if($currentHarvest)
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-zinc-400">Parcela</span>
+                                        <span class="text-zinc-700 font-medium truncate ml-2">{{ $currentHarvest->activity->plot->name ?? 'Sin parcela' }}</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-zinc-400">Variedad</span>
+                                        <span class="text-zinc-700 font-medium truncate ml-2">{{ $currentHarvest->plotPlanting->grapeVariety->name ?? '—' }}</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-zinc-400">Fecha</span>
+                                        <span class="text-zinc-500">{{ $currentHarvest->harvest_start_date->format('d/m/Y') }}</span>
+                                    </div>
+                                </div>
+                            @else
+                                <div class="flex items-center gap-2 text-sm text-green-600">
+                                    <flux:icon icon="check-circle" class="size-4" />
+                                    <span class="font-medium">Disponible</span>
+                                </div>
+                            @endif
                         </div>
-                        <div class="text-xs text-zinc-500 mt-0.5">{{ number_format($container->getOccupancyPercentage(), 1) }}% ocupado</div>
-                    </x-agro.table-cell>
-                    <x-agro.table-cell>
-                        <div class="space-y-1">
-                            <x-agro.status-badge :active="!$container->archived" />
+
+                        <x-slot:footer>
                             @php
-                                if ($container->isEmpty())      { $fillColor = 'green'; $fillLabel = 'Vacío'; }
-                                elseif ($container->isFull())   { $fillColor = 'blue';  $fillLabel = 'Lleno'; }
-                                else                            { $fillColor = 'yellow'; $fillLabel = 'Parcial'; }
+                                $btnBase   = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
+                                $btnDanger = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors';
+                                $btnSuccess= 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-agro-600 hover:bg-agro-50 transition-colors';
                             @endphp
-                            <flux:badge :color="$fillColor" size="sm">{{ $fillLabel }}</flux:badge>
-                        </div>
-                    </x-agro.table-cell>
-                    <x-agro.table-cell align="right">
-                        <div class="flex items-center justify-end gap-1">
-                            <x-agro.action-button variant="edit" href="{{ roleRoute('viticulturist.containers.edit', $container->id) }}" />
-                            <x-agro.action-button
-                                :variant="$container->archived ? 'activate' : 'deactivate'"
-                                wireClick="toggleActive({{ $container->id }})"
-                            />
-                        </div>
-                    </x-agro.table-cell>
-                </x-agro.table-row>
-            @endforeach
-            <x-slot name="pagination">{{ $containers->links() }}</x-slot>
+                            <div class="flex items-center justify-end gap-0.5">
+                                <a href="{{ roleRoute('viticulturist.containers.edit', $container->id) }}" class="{{ $btnBase }}" title="Editar">
+                                    <flux:icon icon="pencil-square" class="size-4" />
+                                </a>
+                                @if($container->archived)
+                                    <button wire:click="toggleActive({{ $container->id }})" class="{{ $btnSuccess }}" title="Activar">
+                                        <flux:icon icon="check-circle" class="size-4" />
+                                    </button>
+                                @else
+                                    <button wire:click="toggleActive({{ $container->id }})" class="{{ $btnDanger }}" title="Desactivar">
+                                        <flux:icon icon="no-symbol" class="size-4" />
+                                    </button>
+                                @endif
+                            </div>
+                        </x-slot:footer>
+                    </x-agro.card>
+                @endforeach
+            </div>
+
+            <div class="mt-6">{{ $containers->links() }}</div>
         @else
-            <x-slot name="emptyAction">
-                <flux:button href="{{ roleRoute('viticulturist.containers.create') }}" variant="primary" icon="plus">
-                    Nuevo Contenedor
-                </flux:button>
-            </x-slot>
+            <x-agro.empty-state
+                icon="archive-box"
+                title="No hay contenedores registrados"
+                :description="($search || $selectedCampaign || $selectedHarvest || $filterAvailability) ? 'No se encontraron contenedores con los filtros seleccionados' : 'Los contenedores aparecerán aquí cuando se registren'"
+            >
+                @if(!$search && !$selectedCampaign && !$selectedHarvest && !$filterAvailability)
+                    <x-slot:action>
+                        <flux:button href="{{ roleRoute('viticulturist.containers.create') }}" variant="primary" icon="plus">
+                            Nuevo Contenedor
+                        </flux:button>
+                    </x-slot:action>
+                @endif
+            </x-agro.empty-state>
         @endif
-    </x-agro.data-table>
+    </div>
 
     {{-- Modal Filtros --}}
     <x-agro.modal name="container-filters" maxWidth="sm">

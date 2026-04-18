@@ -14,64 +14,39 @@
     </x-agro.page-header>
 
     {{-- Stats (colapsables) --}}
-    <div x-data="{
-        open: localStorage.getItem('planned-works-stats-open') !== 'false',
-        toggle() {
-            this.open = !this.open;
-            localStorage.setItem('planned-works-stats-open', String(this.open));
-        }
-    }">
-        <button
-            @click="toggle()"
-            class="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-widest hover:text-zinc-600 transition-colors mb-3"
-        >
-            <span>Estadísticas</span>
-            <flux:icon icon="chevron-up" class="size-3.5 transition-transform duration-200" ::class="{ 'rotate-180': !open }" />
-        </button>
-        <div
-            x-show="open"
-            x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 -translate-y-1"
-            x-transition:enter-end="opacity-100 translate-y-0"
-            x-transition:leave="transition ease-in duration-150"
-            x-transition:leave-start="opacity-100 translate-y-0"
-            x-transition:leave-end="opacity-0 -translate-y-1"
-        >
-            <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
-                <x-agro.stat-card
-                    label="Pendientes"
-                    :value="$stats['pending']"
-                    icon="clock"
-                    color="amber"
-                />
-                <x-agro.stat-card
-                    label="Vencidas"
-                    :value="$stats['overdue']"
-                    description="Sin completar a fecha"
-                    icon="exclamation-triangle"
-                    color="red"
-                />
-                <x-agro.stat-card
-                    label="Próximos 7 días"
-                    :value="$stats['upcoming']"
-                    icon="calendar-days"
-                    color="blue"
-                />
-                <x-agro.stat-card
-                    label="Completadas"
-                    :value="$stats['completed']"
-                    icon="check-circle"
-                    color="agro"
-                />
-                <x-agro.stat-card
-                    label="Canceladas"
-                    :value="$stats['cancelled']"
-                    icon="x-circle"
-                    color="zinc"
-                />
-            </div>
-        </div>
-    </div>
+    <x-agro.stats-section key="planned-works" columns="5">
+        <x-agro.stat-card
+            label="Pendientes"
+            :value="$stats['pending']"
+            icon="clock"
+            color="amber"
+        />
+        <x-agro.stat-card
+            label="Vencidas"
+            :value="$stats['overdue']"
+            description="Sin completar a fecha"
+            icon="exclamation-triangle"
+            color="red"
+        />
+        <x-agro.stat-card
+            label="Próximos 7 días"
+            :value="$stats['upcoming']"
+            icon="calendar-days"
+            color="blue"
+        />
+        <x-agro.stat-card
+            label="Completadas"
+            :value="$stats['completed']"
+            icon="check-circle"
+            color="agro"
+        />
+        <x-agro.stat-card
+            label="Canceladas"
+            :value="$stats['cancelled']"
+            icon="x-circle"
+            color="zinc"
+        />
+    </x-agro.stats-section>
 
     {{-- Tabs --}}
     <x-agro.tabs :tabs="[
@@ -88,31 +63,10 @@
     <div class="flex items-center gap-3">
 
         {{-- Search --}}
-        <div class="flex-1 relative">
-            <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400" />
-            </div>
-            <input
-                wire:model.live.debounce.300ms="search"
-                type="text"
-                placeholder="Buscar por título o descripción..."
-                class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
-            />
-        </div>
+        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar por título o descripción..." />
 
         {{-- Filtros --}}
-        <button
-            x-on:click="$dispatch('open-modal', 'planned-works-filters')"
-            class="relative inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors"
-        >
-            <flux:icon icon="adjustments-horizontal" class="size-4 text-zinc-500" />
-            Filtros
-            @if ($filterCount > 0)
-                <span class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-agro-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
-                    {{ $filterCount }}
-                </span>
-            @endif
-        </button>
+        <x-agro.filter-button modal="planned-works-filters" :count="$filterCount" />
 
         {{-- Separador --}}
         <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
@@ -127,36 +81,16 @@
     @if ($filterCategory || $filterPriority || $filterPlot || $filterCampaign)
         <div class="flex flex-wrap items-center gap-2">
             @if ($filterCategory)
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    {{ \App\Models\PlannedWork::CATEGORIES[$filterCategory] ?? $filterCategory }}
-                    <button wire:click="$set('filterCategory', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip :label="\App\Models\PlannedWork::CATEGORIES[$filterCategory] ?? $filterCategory" wireRemove="$set('filterCategory', '')" />
             @endif
             @if ($filterPriority)
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    {{ \App\Models\PlannedWork::PRIORITIES[$filterPriority] ?? $filterPriority }}
-                    <button wire:click="$set('filterPriority', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip :label="\App\Models\PlannedWork::PRIORITIES[$filterPriority] ?? $filterPriority" wireRemove="$set('filterPriority', '')" />
             @endif
             @if ($filterPlot)
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    {{ $plots->find($filterPlot)?->name ?? 'Parcela' }}
-                    <button wire:click="$set('filterPlot', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip :label="$plots->find($filterPlot)?->name ?? 'Parcela'" wireRemove="$set('filterPlot', '')" />
             @endif
             @if ($filterCampaign)
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    {{ $campaigns->find($filterCampaign)?->name ?? 'Campaña' }}
-                    <button wire:click="$set('filterCampaign', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip :label="$campaigns->find($filterCampaign)?->name ?? 'Campaña'" wireRemove="$set('filterCampaign', '')" />
             @endif
             <button
                 wire:click="clearFilters"
@@ -168,16 +102,7 @@
     @endif
 
     {{-- Skeleton durante carga --}}
-    <div
-        wire:loading
-        wire:target="switchTab, search, filterCategory, filterPriority, filterPlot, filterCampaign, nextPage, previousPage, gotoPage"
-    >
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            @for ($i = 0; $i < 8; $i++)
-                <x-agro.skeleton-card />
-            @endfor
-        </div>
-    </div>
+    <x-agro.loading-grid target="switchTab, search, filterCategory, filterPriority, filterPlot, filterCampaign, nextPage, previousPage, gotoPage" />
 
     {{-- Grid de cards --}}
     <div

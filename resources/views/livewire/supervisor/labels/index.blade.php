@@ -69,40 +69,88 @@
         @endif
     </div>
 
-    {{-- Tabs + Table --}}
+    {{-- Tabs + Cards --}}
     <div>
         <x-agro.tabs :tabs="$tabs" :active="$currentTab" wireMethod="switchTab" />
 
-        <x-agro.data-table
-            :headers="['Bodega', 'Añada', 'Lote', 'Solicitadas', 'Emitidas', 'Estado', '']"
-            emptyMessage="No hay solicitudes de contraetiquetas."
-        >
-            @foreach($labels as $label)
-                <tr class="hover:bg-zinc-50 transition">
-                    <td class="px-6 py-3 text-sm font-medium text-zinc-800">{{ $label->winery?->name ?? '—' }}</td>
-                    <td class="px-6 py-3 text-sm text-zinc-500">{{ $label->vintage }}</td>
-                    <td class="px-6 py-3 text-sm text-zinc-400">{{ $label->batch_number ?? '—' }}</td>
-                    <td class="px-6 py-3 text-sm text-zinc-500">{{ number_format($label->quantity_requested, 0, ',', '.') }}</td>
-                    <td class="px-6 py-3 text-sm text-zinc-500">{{ $label->quantity_issued > 0 ? number_format($label->quantity_issued, 0, ',', '.') : '—' }}</td>
-                    <td class="px-6 py-3 text-sm">
-                        <x-agro.status-badge :status="$label->status" :labels="\App\Models\DoLabel::STATUS_LABELS" />
-                    </td>
-                    <td class="px-6 py-3 text-right">
-                        <div class="flex items-center justify-end gap-2">
-                            @if($label->status === 'pending')
-                                <button wire:click="approve({{ $label->id }})" class="text-xs text-blue-600 hover:underline">Aprobar</button>
-                            @endif
-                            @if(in_array($label->status, ['pending', 'approved']))
-                                <button wire:click="issue({{ $label->id }})" class="text-xs text-agro-600 hover:underline">Emitir</button>
-                                <button wire:click="cancel({{ $label->id }})" class="text-xs text-red-500 hover:underline">Cancelar</button>
-                            @endif
-                        </div>
-                    </td>
-                </tr>
-            @endforeach
+        {{-- Loading skeleton --}}
+        <x-agro.loading-grid target="switchTab, vintageFilter, nextPage, previousPage" />
 
-            <x-slot name="pagination">{{ $labels->links() }}</x-slot>
-        </x-agro.data-table>
+        <div wire:loading.remove wire:target="switchTab, vintageFilter, nextPage, previousPage">
+            @if($labels->count() > 0)
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    @foreach($labels as $label)
+                        @php $delay = min($loop->index * 50, 300); @endphp
+                        <x-agro.card
+                            class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                            style="animation-delay: {{ $delay }}ms;"
+                            wire:key="label-{{ $label->id }}"
+                        >
+                            <x-slot:header>
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center shrink-0">
+                                        <flux:icon icon="tag" class="size-5 text-indigo-600" />
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <h3 class="font-bold text-zinc-900 truncate">{{ $label->winery?->name ?? '---' }}</h3>
+                                        <p class="text-xs text-zinc-500">Añada {{ $label->vintage }}</p>
+                                    </div>
+                                    <x-agro.status-badge :status="$label->status" :labels="\App\Models\DoLabel::STATUS_LABELS" class="shrink-0" />
+                                </div>
+                            </x-slot:header>
+
+                            <div class="flex-1 space-y-4">
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div class="bg-indigo-50 rounded-xl p-3">
+                                        <p class="text-[10px] font-semibold text-indigo-400 uppercase tracking-widest mb-0.5">Solicitadas</p>
+                                        <p class="text-2xl font-bold text-indigo-700 leading-none">{{ number_format($label->quantity_requested, 0, ',', '.') }}</p>
+                                    </div>
+                                    <div class="bg-agro-50 rounded-xl p-3">
+                                        <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Emitidas</p>
+                                        <p class="text-2xl font-bold text-agro-700 leading-none">{{ $label->quantity_issued > 0 ? number_format($label->quantity_issued, 0, ',', '.') : '---' }}</p>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-zinc-400">Lote</span>
+                                        <span class="text-zinc-700 font-medium">{{ $label->batch_number ?? '---' }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <x-slot:footer>
+                                @php
+                                    $btnBase = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
+                                    $btnSuccess = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-blue-600 hover:bg-blue-50 transition-colors';
+                                    $btnAgro = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-agro-600 hover:bg-agro-50 transition-colors';
+                                    $btnDanger = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors';
+                                @endphp
+                                <div class="flex items-center justify-end gap-0.5">
+                                    @if($label->status === 'pending')
+                                        <button wire:click="approve({{ $label->id }})" class="{{ $btnSuccess }}" title="Aprobar">
+                                            <flux:icon icon="check-circle" class="size-4" />
+                                        </button>
+                                    @endif
+                                    @if(in_array($label->status, ['pending', 'approved']))
+                                        <button wire:click="issue({{ $label->id }})" class="{{ $btnAgro }}" title="Emitir">
+                                            <flux:icon icon="printer" class="size-4" />
+                                        </button>
+                                        <button wire:click="cancel({{ $label->id }})" class="{{ $btnDanger }}" title="Cancelar">
+                                            <flux:icon icon="x-mark" class="size-4" />
+                                        </button>
+                                    @endif
+                                </div>
+                            </x-slot:footer>
+                        </x-agro.card>
+                    @endforeach
+                </div>
+
+                <div class="mt-6">{{ $labels->links() }}</div>
+            @else
+                <x-agro.empty-state icon="tag" title="No hay solicitudes" description="No hay solicitudes de contraetiquetas." />
+            @endif
+        </div>
     </div>
 
 </div>

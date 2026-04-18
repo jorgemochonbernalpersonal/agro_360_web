@@ -49,29 +49,10 @@
         {{-- Toolbar --}}
         <div class="space-y-3">
             <div class="flex items-center gap-3">
-                <div class="flex-1 relative">
-                    <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                        <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400" />
-                    </div>
-                    <input
-                        wire:model.live.debounce.300ms="inv_search"
-                        type="text"
-                        placeholder="Buscar producto..."
-                        class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
-                    />
-                </div>
+                <x-agro.search-input wire:model.live.debounce.300ms="inv_search" placeholder="Buscar producto..." />
 
                 @php $filterCount = ($inv_product ? 1 : 0) + ($inv_warehouse ? 1 : 0) + ($inv_status !== 'all' ? 1 : 0); @endphp
-                <button
-                    x-on:click="$dispatch('open-modal', 'almacen-inv-filters')"
-                    class="relative inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors"
-                >
-                    <flux:icon icon="adjustments-horizontal" class="size-4 text-zinc-500" />
-                    Filtros
-                    @if($filterCount > 0)
-                        <span class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-agro-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">{{ $filterCount }}</span>
-                    @endif
-                </button>
+                <x-agro.filter-button modal="almacen-inv-filters" :count="$filterCount" />
 
                 <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
@@ -90,33 +71,20 @@
                     <span class="text-xs text-zinc-400">Filtros activos:</span>
 
                     @if($inv_search)
-                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                            <flux:icon icon="magnifying-glass" class="size-3" />
-                            "{{ $inv_search }}"
-                            <button wire:click="$set('inv_search', '')" class="hover:text-agro-900 ml-0.5"><flux:icon icon="x-mark" class="size-3" /></button>
-                        </span>
+                        <x-agro.filter-chip icon="magnifying-glass" :label="'&quot;' . $inv_search . '&quot;'" wireRemove="$set('inv_search', '')" />
                     @endif
 
                     @if($inv_product)
-                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                            Producto: {{ $inv_products->firstWhere('id', $inv_product)?->name ?? $inv_product }}
-                            <button wire:click="$set('inv_product', '')" class="hover:text-agro-900 ml-0.5"><flux:icon icon="x-mark" class="size-3" /></button>
-                        </span>
+                        <x-agro.filter-chip :label="'Producto: ' . ($inv_products->firstWhere('id', $inv_product)?->name ?? $inv_product)" wireRemove="$set('inv_product', '')" />
                     @endif
 
                     @if($inv_warehouse)
-                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                            Almacén: {{ $inv_warehouses->firstWhere('id', $inv_warehouse)?->name ?? $inv_warehouse }}
-                            <button wire:click="$set('inv_warehouse', '')" class="hover:text-agro-900 ml-0.5"><flux:icon icon="x-mark" class="size-3" /></button>
-                        </span>
+                        <x-agro.filter-chip :label="'Almacén: ' . ($inv_warehouses->firstWhere('id', $inv_warehouse)?->name ?? $inv_warehouse)" wireRemove="$set('inv_warehouse', '')" />
                     @endif
 
                     @if($inv_status !== 'all')
                         @php $statusLabels = ['low_stock' => 'Stock bajo', 'expiring' => 'Próx. caducar', 'expired' => 'Caducados']; @endphp
-                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                            {{ $statusLabels[$inv_status] ?? $inv_status }}
-                            <button wire:click="$set('inv_status', 'all')" class="hover:text-agro-900 ml-0.5"><flux:icon icon="x-mark" class="size-3" /></button>
-                        </span>
+                        <x-agro.filter-chip :label="$statusLabels[$inv_status] ?? $inv_status" wireRemove="$set('inv_status', 'all')" />
                     @endif
 
                     <button wire:click="clearInventoryFilters" class="text-xs text-zinc-400 hover:text-zinc-600 underline">Limpiar todo</button>
@@ -306,29 +274,10 @@
         {{-- Toolbar --}}
         <div class="space-y-3">
             <div class="flex items-center gap-3">
-                <div class="flex-1 relative">
-                    <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                        <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400" />
-                    </div>
-                    <input
-                        wire:model.live.debounce.300ms="sup_search"
-                        type="text"
-                        placeholder="Buscar insumo..."
-                        class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
-                    />
-                </div>
+                <x-agro.search-input wire:model.live.debounce.300ms="sup_search" placeholder="Buscar insumo..." />
 
                 @php $supFilterCount = ($sup_type ? 1 : 0) + ($sup_low ? 1 : 0); @endphp
-                <button
-                    x-on:click="$dispatch('open-modal', 'almacen-sup-filters')"
-                    class="relative inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors"
-                >
-                    <flux:icon icon="adjustments-horizontal" class="size-4 text-zinc-500" />
-                    Filtros
-                    @if($supFilterCount > 0)
-                        <span class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-agro-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">{{ $supFilterCount }}</span>
-                    @endif
-                </button>
+                <x-agro.filter-button modal="almacen-sup-filters" :count="$supFilterCount" />
 
                 <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
@@ -341,25 +290,15 @@
                     <span class="text-xs text-zinc-400">Filtros activos:</span>
 
                     @if($sup_search)
-                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                            <flux:icon icon="magnifying-glass" class="size-3" />
-                            "{{ $sup_search }}"
-                            <button wire:click="$set('sup_search', '')" class="hover:text-agro-900 ml-0.5"><flux:icon icon="x-mark" class="size-3" /></button>
-                        </span>
+                        <x-agro.filter-chip icon="magnifying-glass" :label="'&quot;' . $sup_search . '&quot;'" wireRemove="$set('sup_search', '')" />
                     @endif
 
                     @if($sup_type)
-                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                            {{ $supplyTypes[$sup_type] ?? $sup_type }}
-                            <button wire:click="$set('sup_type', '')" class="hover:text-agro-900 ml-0.5"><flux:icon icon="x-mark" class="size-3" /></button>
-                        </span>
+                        <x-agro.filter-chip :label="$supplyTypes[$sup_type] ?? $sup_type" wireRemove="$set('sup_type', '')" />
                     @endif
 
                     @if($sup_low)
-                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                            Stock bajo
-                            <button wire:click="$set('sup_low', false)" class="hover:text-agro-900 ml-0.5"><flux:icon icon="x-mark" class="size-3" /></button>
-                        </span>
+                        <x-agro.filter-chip label="Stock bajo" wireRemove="$set('sup_low', false)" />
                     @endif
 
                     <button wire:click="clearSupplyFilters" class="text-xs text-zinc-400 hover:text-zinc-600 underline">Limpiar todo</button>
@@ -500,17 +439,7 @@
         {{-- Toolbar --}}
         <div class="space-y-3">
             <div class="flex items-center gap-3">
-                <div class="flex-1 relative">
-                    <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                        <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400" />
-                    </div>
-                    <input
-                        wire:model.live.debounce.300ms="wh_search"
-                        type="text"
-                        placeholder="Buscar por nombre o ubicación..."
-                        class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
-                    />
-                </div>
+                <x-agro.search-input wire:model.live.debounce.300ms="wh_search" placeholder="Buscar por nombre o ubicación..." />
                 <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
                 <flux:button href="{{ roleRoute('viticulturist.warehouse.warehouses.create') }}" variant="primary" icon="plus">
                     Nuevo
@@ -521,11 +450,7 @@
             @if($wh_search)
                 <div class="flex flex-wrap items-center gap-2">
                     <span class="text-xs text-zinc-400">Filtros activos:</span>
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                        <flux:icon icon="magnifying-glass" class="size-3" />
-                        "{{ $wh_search }}"
-                        <button wire:click="$set('wh_search', '')" class="hover:text-agro-900 ml-0.5"><flux:icon icon="x-mark" class="size-3" /></button>
-                    </span>
+                    <x-agro.filter-chip icon="magnifying-glass" :label="'&quot;' . $wh_search . '&quot;'" wireRemove="$set('wh_search', '')" />
                 </div>
             @endif
         </div>

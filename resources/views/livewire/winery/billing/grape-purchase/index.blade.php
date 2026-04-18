@@ -37,17 +37,7 @@
 
     {{-- Toolbar --}}
     <div class="flex items-center gap-3">
-        <div class="flex-1 relative">
-            <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400" />
-            </div>
-            <input
-                wire:model.live.debounce.300ms="search"
-                type="text"
-                placeholder="Buscar por nº, ref. o viticultor..."
-                class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
-            />
-        </div>
+        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar por nº, ref. o viticultor..." />
         <flux:select wire:model.live="viticulturistFilter" class="w-48">
             <flux:select.option value="">Todos los viticultores</flux:select.option>
             @foreach ($viticulturists as $v)
@@ -67,13 +57,7 @@
     </div>
 
     {{-- Loading skeleton --}}
-    <div wire:loading wire:target="search, viticulturistFilter, paymentFilter, clearFilters, nextPage, previousPage">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            @for($i = 0; $i < 8; $i++)
-                <x-agro.skeleton-card />
-            @endfor
-        </div>
-    </div>
+    <x-agro.loading-grid target="search, viticulturistFilter, paymentFilter, clearFilters, nextPage, previousPage" />
 
     <div wire:loading.remove wire:target="search, viticulturistFilter, paymentFilter, clearFilters, nextPage, previousPage">
     @if ($invoices->count() > 0)

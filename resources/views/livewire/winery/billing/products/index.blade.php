@@ -9,31 +9,10 @@
     <div class="space-y-3">
         <div class="flex items-center gap-3">
 
-            <div class="flex-1 relative">
-                <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                    <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400" />
-                </div>
-                <input
-                    wire:model.live.debounce.300ms="search"
-                    type="text"
-                    placeholder="Buscar por nº factura, albarán o cliente..."
-                    class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
-                />
-            </div>
+            <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar por nº factura, albarán o cliente..." />
 
             @php $filterCount = ($filterStatus ? 1 : 0) + ($filterPaymentStatus ? 1 : 0) + ($filterDeliveryStatus ? 1 : 0) + ($filterGift ? 1 : 0); @endphp
-            <button
-                x-on:click="$dispatch('open-modal', 'products-invoice-filters')"
-                class="relative inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors"
-            >
-                <flux:icon icon="adjustments-horizontal" class="size-4 text-zinc-500" />
-                Filtros
-                @if($filterCount > 0)
-                    <span class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-agro-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
-                        {{ $filterCount }}
-                    </span>
-                @endif
-            </button>
+            <x-agro.filter-button modal="products-invoice-filters" :count="$filterCount" />
 
             <flux:button wire:click="openExportModal" variant="outline" icon="arrow-down-tray">
                 Exportar
@@ -57,35 +36,22 @@
                 <span class="text-xs text-zinc-400">Filtros activos:</span>
 
                 @if($search)
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                        <flux:icon icon="magnifying-glass" class="size-3" />
-                        "{{ $search }}"
-                        <button wire:click="$set('search', '')" class="hover:text-agro-900 ml-0.5"><flux:icon icon="x-mark" class="size-3" /></button>
-                    </span>
+                    <x-agro.filter-chip icon="magnifying-glass" :label="'&quot;' . $search . '&quot;'" wireRemove="$set('search', '')" />
                 @endif
 
                 @if($filterStatus)
                     @php $statusLabels = ['draft' => 'Borrador', 'sent' => 'Emitida', 'cancelled' => 'Cancelada']; @endphp
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                        Factura: {{ $statusLabels[$filterStatus] ?? $filterStatus }}
-                        <button wire:click="$set('filterStatus', '')" class="hover:text-agro-900 ml-0.5"><flux:icon icon="x-mark" class="size-3" /></button>
-                    </span>
+                    <x-agro.filter-chip :label="'Factura: ' . ($statusLabels[$filterStatus] ?? $filterStatus)" wireRemove="$set('filterStatus', '')" />
                 @endif
 
                 @if($filterPaymentStatus)
                     @php $payLabels = ['unpaid' => 'Pendiente', 'partial' => 'Parcial', 'paid' => 'Cobrada']; @endphp
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                        Cobro: {{ $payLabels[$filterPaymentStatus] ?? $filterPaymentStatus }}
-                        <button wire:click="$set('filterPaymentStatus', '')" class="hover:text-agro-900 ml-0.5"><flux:icon icon="x-mark" class="size-3" /></button>
-                    </span>
+                    <x-agro.filter-chip :label="'Cobro: ' . ($payLabels[$filterPaymentStatus] ?? $filterPaymentStatus)" wireRemove="$set('filterPaymentStatus', '')" />
                 @endif
 
                 @if($filterDeliveryStatus)
                     @php $delivLabels = ['pending' => 'Pendiente', 'delivered' => 'Entregada', 'cancelled' => 'Cancelada']; @endphp
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                        Entrega: {{ $delivLabels[$filterDeliveryStatus] ?? $filterDeliveryStatus }}
-                        <button wire:click="$set('filterDeliveryStatus', '')" class="hover:text-agro-900 ml-0.5"><flux:icon icon="x-mark" class="size-3" /></button>
-                    </span>
+                    <x-agro.filter-chip :label="'Entrega: ' . ($delivLabels[$filterDeliveryStatus] ?? $filterDeliveryStatus)" wireRemove="$set('filterDeliveryStatus', '')" />
                 @endif
 
                 @if($filterGift)

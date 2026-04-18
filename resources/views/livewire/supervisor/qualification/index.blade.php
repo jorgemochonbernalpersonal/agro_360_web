@@ -87,39 +87,103 @@
         </select>
     </div>
 
-    {{-- Tabs + Table --}}
+    {{-- Tabs + Card grid --}}
     <div>
         <x-agro.tabs :tabs="$tabs" :active="$currentTab" wireMethod="switchTab" />
 
-        <x-agro.data-table
-            :headers="['Vino', 'Bodega', 'Añada', 'Color', 'Alcohol', 'Fecha cata', 'Resultado', '']"
-            emptyMessage="No hay registros de calificación."
-        >
-            @foreach($qualifications as $q)
-                <tr class="hover:bg-zinc-50 transition">
-                    <td class="px-6 py-3 text-sm font-medium text-zinc-800">{{ $q->wine_name }}</td>
-                    <td class="px-6 py-3 text-sm text-zinc-500">{{ $q->winery?->name ?? '—' }}</td>
-                    <td class="px-6 py-3 text-sm text-zinc-500">{{ $q->vintage }}</td>
-                    <td class="px-6 py-3 text-sm text-zinc-500 capitalize">{{ $colorLabels[$q->color] ?? '—' }}</td>
-                    <td class="px-6 py-3 text-sm text-zinc-500">{{ $q->alcohol_percentage ? $q->alcohol_percentage . '%' : '—' }}</td>
-                    <td class="px-6 py-3 text-sm text-zinc-500">{{ $q->qualification_date?->format('d/m/Y') ?? '—' }}</td>
-                    <td class="px-6 py-3 text-sm">
-                        <x-agro.status-badge :status="$q->result" :labels="$resultLabels" />
-                    </td>
-                    <td class="px-6 py-3 text-right">
-                        <div class="flex items-center justify-end gap-2">
-                            @if($q->result === 'pending')
-                                <button wire:click="qualify({{ $q->id }})" class="text-xs text-agro-600 hover:underline">Calificar</button>
-                                <button wire:click="disqualify({{ $q->id }})" class="text-xs text-red-500 hover:underline">Descalificar</button>
-                            @endif
-                            <button wire:click="openEdit({{ $q->id }})" class="text-xs text-zinc-500 hover:text-zinc-700 hover:underline">Editar</button>
-                        </div>
-                    </td>
-                </tr>
-            @endforeach
+        {{-- Skeleton durante carga --}}
+        <x-agro.loading-grid target="search, switchTab, vintageFilter, colorFilter, nextPage, previousPage" />
 
-            <x-slot name="pagination">{{ $qualifications->links() }}</x-slot>
-        </x-agro.data-table>
+        {{-- Card grid --}}
+        <div wire:loading.remove wire:target="search, switchTab, vintageFilter, colorFilter, nextPage, previousPage">
+            @if($qualifications->count() > 0)
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    @foreach($qualifications as $q)
+                        @php
+                            $delay = min($loop->index * 50, 300);
+                            $resultColor = match($q->result) {
+                                'qualified'    => 'green',
+                                'disqualified' => 'red',
+                                'pending'      => 'yellow',
+                                default        => 'zinc',
+                            };
+                            $colorIcon = match($q->color) {
+                                'red'   => ['bg' => 'bg-red-100',   'text' => 'text-red-600'],
+                                'white' => ['bg' => 'bg-amber-100', 'text' => 'text-amber-600'],
+                                'rose'  => ['bg' => 'bg-pink-100',  'text' => 'text-pink-600'],
+                                default => ['bg' => 'bg-purple-100', 'text' => 'text-purple-600'],
+                            };
+                        @endphp
+                        <x-agro.card
+                            class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                            style="animation-delay: {{ $delay }}ms;"
+                            wire:key="qual-{{ $q->id }}"
+                        >
+                            <x-slot:header>
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-xl {{ $colorIcon['bg'] }} flex items-center justify-center shrink-0">
+                                        <flux:icon icon="beaker" class="size-5 {{ $colorIcon['text'] }}" />
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <h3 class="font-bold text-zinc-900 truncate text-sm">{{ $q->wine_name }}</h3>
+                                        <p class="text-xs text-zinc-500">{{ $q->winery?->name ?? '—' }}</p>
+                                    </div>
+                                    <x-agro.status-badge :status="$q->result" :labels="$resultLabels" />
+                                </div>
+                            </x-slot:header>
+
+                            <div class="flex-1 space-y-4">
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div class="bg-agro-50 rounded-xl p-3">
+                                        <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Añada</p>
+                                        <p class="text-2xl font-bold text-agro-700 leading-none">{{ $q->vintage }}</p>
+                                    </div>
+                                    <div class="bg-agro-50 rounded-xl p-3">
+                                        <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Alcohol</p>
+                                        <p class="text-2xl font-bold text-agro-700 leading-none">{{ $q->alcohol_percentage ? $q->alcohol_percentage . '%' : '—' }}</p>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-zinc-400">Color</span>
+                                        <span class="text-zinc-700 font-medium capitalize">{{ $colorLabels[$q->color] ?? '—' }}</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-zinc-400">Fecha cata</span>
+                                        <span class="text-zinc-700 font-medium">{{ $q->qualification_date?->format('d/m/Y') ?? '—' }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <x-slot:footer>
+                                <div class="flex items-center justify-end gap-1 flex-wrap">
+                                    @if($q->result === 'pending')
+                                        <button wire:click="qualify({{ $q->id }})"
+                                            class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-agro-50 text-agro-700 border border-agro-200 rounded-md hover:bg-agro-100 transition-colors">
+                                            Calificar
+                                        </button>
+                                        <button wire:click="disqualify({{ $q->id }})"
+                                            class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-red-50 text-red-600 border border-red-200 rounded-md hover:bg-red-100 transition-colors">
+                                            Descalificar
+                                        </button>
+                                    @endif
+                                    @php
+                                        $btnBase = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
+                                    @endphp
+                                    <button wire:click="openEdit({{ $q->id }})" class="{{ $btnBase }}" title="Editar">
+                                        <flux:icon icon="pencil" class="size-4" />
+                                    </button>
+                                </div>
+                            </x-slot:footer>
+                        </x-agro.card>
+                    @endforeach
+                </div>
+                <div class="mt-6">{{ $qualifications->links() }}</div>
+            @else
+                <x-agro.empty-state icon="star" title="Sin calificaciones" description="No hay registros de calificación con estos filtros." />
+            @endif
+        </div>
     </div>
 
     {{-- Edit modal --}}

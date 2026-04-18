@@ -78,51 +78,82 @@
             </button>
         </x-agro.filter-bar>
 
-        {{-- Tabla --}}
-        <x-agro.data-table
-            :headers="['Fecha', 'Viticultor', 'Parcela', 'Tipo de actividad', 'Notas']"
-            emptyMessage="No hay actividades con los filtros seleccionados."
-        >
-            @foreach($activities as $activity)
-                <tr class="hover:bg-zinc-50 transition">
-                    <td class="px-6 py-3 text-sm text-zinc-600 whitespace-nowrap">
-                        {{ $activity->activity_date->format('d/m/Y') }}
-                    </td>
-                    <td class="px-6 py-3 text-sm text-zinc-700">
-                        {{ $activity->viticulturist?->name ?? '—' }}
-                    </td>
-                    <td class="px-6 py-3 text-sm text-zinc-500">
-                        {{ $activity->plot?->name ?? '—' }}
-                    </td>
-                    <td class="px-6 py-3">
-                        @php
-                            $typeColors = [
-                                'phytosanitary' => 'bg-red-50 text-red-700 border-red-200',
-                                'fertilization' => 'bg-yellow-50 text-yellow-700 border-yellow-200',
-                                'irrigation'    => 'bg-blue-50 text-blue-700 border-blue-200',
-                                'cultural'      => 'bg-zinc-50 text-zinc-700 border-zinc-200',
-                                'observation'   => 'bg-violet-50 text-violet-700 border-violet-200',
-                                'harvest'       => 'bg-emerald-50 text-emerald-700 border-emerald-200',
-                                'pruning'       => 'bg-orange-50 text-orange-700 border-orange-200',
-                                'post_harvest'  => 'bg-teal-50 text-teal-700 border-teal-200',
-                                'phenology'     => 'bg-indigo-50 text-indigo-700 border-indigo-200',
-                            ];
-                            $colorClass = $typeColors[$activity->activity_type] ?? 'bg-zinc-50 text-zinc-700 border-zinc-200';
-                        @endphp
-                        <span class="inline-flex px-2 py-0.5 rounded-full text-xs border {{ $colorClass }}">
-                            {{ $activityTypes[$activity->activity_type] ?? $activity->activity_type }}
-                        </span>
-                    </td>
-                    <td class="px-6 py-3 text-sm text-zinc-400 max-w-xs truncate">
-                        {{ $activity->notes ?? '—' }}
-                    </td>
-                </tr>
-            @endforeach
+        {{-- Card Grid --}}
+        @php
+            $typeColors = [
+                'phytosanitary' => ['bg' => 'bg-red-50', 'text' => 'text-red-700', 'border' => 'border-red-200', 'icon' => 'beaker', 'iconBg' => 'bg-red-100', 'iconText' => 'text-red-600'],
+                'fertilization' => ['bg' => 'bg-yellow-50', 'text' => 'text-yellow-700', 'border' => 'border-yellow-200', 'icon' => 'sparkles', 'iconBg' => 'bg-yellow-100', 'iconText' => 'text-yellow-600'],
+                'irrigation'    => ['bg' => 'bg-blue-50', 'text' => 'text-blue-700', 'border' => 'border-blue-200', 'icon' => 'cloud', 'iconBg' => 'bg-blue-100', 'iconText' => 'text-blue-600'],
+                'cultural'      => ['bg' => 'bg-zinc-50', 'text' => 'text-zinc-700', 'border' => 'border-zinc-200', 'icon' => 'wrench', 'iconBg' => 'bg-zinc-100', 'iconText' => 'text-zinc-600'],
+                'observation'   => ['bg' => 'bg-violet-50', 'text' => 'text-violet-700', 'border' => 'border-violet-200', 'icon' => 'eye', 'iconBg' => 'bg-violet-100', 'iconText' => 'text-violet-600'],
+                'harvest'       => ['bg' => 'bg-emerald-50', 'text' => 'text-emerald-700', 'border' => 'border-emerald-200', 'icon' => 'scissors', 'iconBg' => 'bg-emerald-100', 'iconText' => 'text-emerald-600'],
+                'pruning'       => ['bg' => 'bg-orange-50', 'text' => 'text-orange-700', 'border' => 'border-orange-200', 'icon' => 'scissors', 'iconBg' => 'bg-orange-100', 'iconText' => 'text-orange-600'],
+                'post_harvest'  => ['bg' => 'bg-teal-50', 'text' => 'text-teal-700', 'border' => 'border-teal-200', 'icon' => 'archive-box', 'iconBg' => 'bg-teal-100', 'iconText' => 'text-teal-600'],
+                'phenology'     => ['bg' => 'bg-indigo-50', 'text' => 'text-indigo-700', 'border' => 'border-indigo-200', 'icon' => 'sun', 'iconBg' => 'bg-indigo-100', 'iconText' => 'text-indigo-600'],
+            ];
+            $defaultTypeStyle = ['bg' => 'bg-zinc-50', 'text' => 'text-zinc-700', 'border' => 'border-zinc-200', 'icon' => 'clipboard-document-list', 'iconBg' => 'bg-zinc-100', 'iconText' => 'text-zinc-600'];
+        @endphp
 
-            <x-slot name="pagination">
+        @if($activities->count() > 0)
+            <div
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                wire:loading.class="opacity-60 pointer-events-none"
+                wire:target="filterVit, filterPlot, filterType, filterFrom, filterTo, clearFilters"
+            >
+                @foreach($activities as $activity)
+                    @php
+                        $style = $typeColors[$activity->activity_type] ?? $defaultTypeStyle;
+                        $delay = min($loop->index * 50, 300);
+                    @endphp
+                    <x-agro.card
+                        class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                        style="animation-delay: {{ $delay }}ms;"
+                        wire:key="activity-{{ $activity->id }}"
+                    >
+                        <x-slot:header>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl {{ $style['iconBg'] }} flex items-center justify-center shrink-0">
+                                    <flux:icon :icon="$style['icon']" class="size-5 {{ $style['iconText'] }}" />
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="font-bold text-zinc-900 truncate">
+                                        {{ $activityTypes[$activity->activity_type] ?? $activity->activity_type }}
+                                    </h3>
+                                    <p class="text-xs text-zinc-400">{{ $activity->activity_date->format('d/m/Y') }}</p>
+                                </div>
+                                <span class="inline-flex px-2 py-0.5 rounded-full text-xs border {{ $style['bg'] }} {{ $style['text'] }} {{ $style['border'] }} shrink-0">
+                                    {{ $activityTypes[$activity->activity_type] ?? $activity->activity_type }}
+                                </span>
+                            </div>
+                        </x-slot:header>
+
+                        <div class="flex-1 space-y-3">
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-zinc-400">Viticultor</span>
+                                <span class="text-zinc-700 font-medium truncate ml-2">{{ $activity->viticulturist?->name ?? '—' }}</span>
+                            </div>
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-zinc-400">Parcela</span>
+                                <span class="text-zinc-600 truncate ml-2">{{ $activity->plot?->name ?? '—' }}</span>
+                            </div>
+                            @if($activity->notes)
+                                <p class="text-xs text-zinc-400 line-clamp-2">{{ $activity->notes }}</p>
+                            @endif
+                        </div>
+                    </x-agro.card>
+                @endforeach
+            </div>
+
+            <div class="mt-2">
                 {{ $activities->links() }}
-            </x-slot>
-        </x-agro.data-table>
+            </div>
+        @else
+            <x-agro.empty-state
+                icon="clipboard-document-list"
+                title="Sin actividades"
+                description="No hay actividades con los filtros seleccionados."
+            />
+        @endif
 
     @endif
 

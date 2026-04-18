@@ -7,26 +7,10 @@
 
     {{-- Toolbar --}}
     <div class="flex items-center gap-3">
-        <div class="flex-1 relative">
-            <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400" />
-            </div>
-            <input wire:model.live.debounce.300ms="search" type="text"
-                placeholder="Buscar por nombre, variedad, código..."
-                class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition" />
-        </div>
+        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar por nombre, variedad, código..." />
 
         @php $filterCount = ($typeFilter ? 1 : 0) + ($statusFilter ? 1 : 0) + ($vintageFilter ? 1 : 0); @endphp
-        <button x-on:click="$dispatch('open-modal', 'wine-filters')"
-            class="relative inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors">
-            <flux:icon icon="adjustments-horizontal" class="size-4 text-zinc-500" />
-            Filtros
-            @if($filterCount > 0)
-                <span class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-agro-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
-                    {{ $filterCount }}
-                </span>
-            @endif
-        </button>
+        <x-agro.filter-button modal="wine-filters" :count="$filterCount" />
 
         <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
@@ -41,24 +25,15 @@
             <span class="text-xs text-zinc-400">Filtros activos:</span>
 
             @if($typeFilter)
-                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    {{ $types[$typeFilter] ?? $typeFilter }}
-                    <button wire:click="$set('typeFilter', '')" class="hover:text-agro-900 ml-0.5"><flux:icon icon="x-mark" class="size-3" /></button>
-                </span>
+                <x-agro.filter-chip :label="$types[$typeFilter] ?? $typeFilter" wireRemove="$set('typeFilter', '')" />
             @endif
 
             @if($statusFilter)
-                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    {{ $statuses[$statusFilter] ?? $statusFilter }}
-                    <button wire:click="$set('statusFilter', '')" class="hover:text-agro-900 ml-0.5"><flux:icon icon="x-mark" class="size-3" /></button>
-                </span>
+                <x-agro.filter-chip :label="$statuses[$statusFilter] ?? $statusFilter" wireRemove="$set('statusFilter', '')" />
             @endif
 
             @if($vintageFilter)
-                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    Añada {{ $vintageFilter }}
-                    <button wire:click="$set('vintageFilter', '')" class="hover:text-agro-900 ml-0.5"><flux:icon icon="x-mark" class="size-3" /></button>
-                </span>
+                <x-agro.filter-chip :label="'Añada ' . $vintageFilter" wireRemove="$set('vintageFilter', '')" />
             @endif
 
             <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">Limpiar todo</button>
@@ -66,13 +41,7 @@
     @endif
 
     {{-- Skeleton durante carga --}}
-    <div wire:loading wire:target="search, typeFilter, statusFilter, vintageFilter, nextPage, previousPage, gotoPage">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            @for($i = 0; $i < 8; $i++)
-                <x-agro.skeleton-card />
-            @endfor
-        </div>
-    </div>
+    <x-agro.loading-grid target="search, typeFilter, statusFilter, vintageFilter, nextPage, previousPage, gotoPage" />
 
     {{-- Grid real --}}
     <div wire:loading.remove wire:target="search, typeFilter, statusFilter, vintageFilter, nextPage, previousPage, gotoPage">

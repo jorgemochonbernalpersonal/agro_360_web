@@ -14,60 +14,37 @@
     </x-agro.page-header>
 
     {{-- Stats colapsables --}}
-    <div x-data="{
-        open: localStorage.getItem('water-concessions-stats-open') !== 'false',
-        toggle() {
-            this.open = !this.open;
-            localStorage.setItem('water-concessions-stats-open', String(this.open));
-        }
-    }">
-        <button
-            @click="toggle()"
-            class="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-widest hover:text-zinc-600 transition-colors mb-3"
-        >
-            <span>Estadísticas</span>
-            <flux:icon icon="chevron-up" class="size-3.5 transition-transform duration-200" ::class="{ 'rotate-180': !open }" />
-        </button>
-        <div
-            x-show="open"
-            x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 -translate-y-1"
-            x-transition:enter-end="opacity-100 translate-y-0"
-            x-transition:leave="transition ease-in duration-150"
-            x-transition:leave-start="opacity-100 translate-y-0"
-            x-transition:leave-end="opacity-0 -translate-y-1"
-        >
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <x-agro.stat-card
-                    label="Concesiones activas"
-                    :value="$stats['active']"
-                    icon="beaker"
-                    color="blue"
-                />
-                <x-agro.stat-card
-                    label="M³ autorizados"
-                    :value="number_format($stats['total_m3'], 0, ',', '.')"
-                    description="Volumen total concedido"
-                    icon="beaker"
-                    color="agro"
-                />
-                <x-agro.stat-card
-                    label="M³ utilizados"
-                    :value="number_format($stats['used_m3'] ?? 0, 0, ',', '.')"
-                    description="Consumo registrado"
-                    icon="beaker"
-                    color="green"
-                />
-                <x-agro.stat-card
-                    label="Próximas a vencer"
-                    :value="$stats['expiring_soon']"
-                    description="En los próximos 90 días"
-                    icon="clock"
-                    color="amber"
-                />
-            </div>
+    <x-agro.stats-section key="water-concessions">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <x-agro.stat-card
+                label="Concesiones activas"
+                :value="$stats['active']"
+                icon="beaker"
+                color="blue"
+            />
+            <x-agro.stat-card
+                label="M³ autorizados"
+                :value="number_format($stats['total_m3'], 0, ',', '.')"
+                description="Volumen total concedido"
+                icon="beaker"
+                color="agro"
+            />
+            <x-agro.stat-card
+                label="M³ utilizados"
+                :value="number_format($stats['used_m3'] ?? 0, 0, ',', '.')"
+                description="Consumo registrado"
+                icon="beaker"
+                color="green"
+            />
+            <x-agro.stat-card
+                label="Próximas a vencer"
+                :value="$stats['expiring_soon']"
+                description="En los próximos 90 días"
+                icon="clock"
+                color="amber"
+            />
         </div>
-    </div>
+    </x-agro.stats-section>
 
     {{-- Tabs --}}
     <x-agro.tabs
@@ -111,13 +88,7 @@
     {{-- Chips de filtros activos --}}
     @if($filterConcessionType)
         <div class="flex flex-wrap items-center gap-2">
-            <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                <flux:icon icon="tag" class="size-3" />
-                {{ $concessionTypes[$filterConcessionType] ?? $filterConcessionType }}
-                <button wire:click="$set('filterConcessionType', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
-                    <flux:icon icon="x-mark" class="size-3" />
-                </button>
-            </span>
+            <x-agro.filter-chip icon="tag" :label="$concessionTypes[$filterConcessionType] ?? $filterConcessionType" wireRemove="$set('filterConcessionType', '')" />
         </div>
     @endif
 
@@ -125,26 +96,7 @@
     <div wire:loading.class="opacity-60 pointer-events-none" wire:target="search, filterConcessionType, switchTab, clearFilters">
 
         {{-- Skeleton de carga --}}
-        <div wire:loading wire:target="search, filterConcessionType, switchTab, clearFilters">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                @for($i = 0; $i < 8; $i++)
-                    <div class="bg-white rounded-2xl border border-zinc-100 shadow-sm p-5 animate-pulse">
-                        <div class="flex items-center gap-3 mb-4">
-                            <div class="w-10 h-10 rounded-xl bg-zinc-100 shrink-0"></div>
-                            <div class="flex-1 space-y-2">
-                                <div class="h-3.5 bg-zinc-100 rounded w-3/4"></div>
-                                <div class="h-3 bg-zinc-100 rounded w-1/2"></div>
-                            </div>
-                        </div>
-                        <div class="space-y-2">
-                            <div class="h-8 bg-zinc-100 rounded w-1/2"></div>
-                            <div class="h-3 bg-zinc-100 rounded w-full"></div>
-                            <div class="h-3 bg-zinc-100 rounded w-2/3"></div>
-                        </div>
-                    </div>
-                @endfor
-            </div>
-        </div>
+        <x-agro.loading-grid target="search, filterConcessionType, switchTab, clearFilters" />
 
         {{-- Estado vacío --}}
         <div wire:loading.remove wire:target="search, filterConcessionType, switchTab, clearFilters">

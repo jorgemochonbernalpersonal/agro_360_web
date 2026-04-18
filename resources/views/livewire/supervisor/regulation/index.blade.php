@@ -61,50 +61,93 @@
                 <option value="transferencia">Transferencia</option>
             </select>
 
-            <div class="relative">
-                <flux:icon icon="magnifying-glass" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 pointer-events-none" />
-                <input type="text" wire:model.live.debounce.300ms="search"
-                    placeholder="Buscar autorización o parcela..."
-                    class="pl-9 pr-3 py-1.5 text-sm border border-zinc-200 rounded-lg focus:outline-none w-60" />
-            </div>
+            <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar autorización o parcela..." />
         </div>
 
-        {{-- Table --}}
-        <x-agro.data-table
-            :headers="['Viticultor', 'Parcela', 'Variedad', 'Nº autorización', 'Tipo derecho', 'Fecha autorización', 'Arranque']"
-            emptyMessage="No hay plantaciones con autorización registrada."
-        >
-            @foreach($items as $planting)
-                @php
-                    $rightLabels = ['nueva' => 'Nueva', 'replantacion' => 'Replantación', 'conversion' => 'Conversión', 'transferencia' => 'Transferencia'];
-                    $rightColors = ['nueva' => 'emerald', 'replantacion' => 'blue', 'conversion' => 'amber', 'transferencia' => 'violet'];
-                    $rc = $rightColors[$planting->right_type] ?? 'zinc';
-                @endphp
-                <tr class="hover:bg-zinc-50 transition">
-                    <td class="px-6 py-3 text-sm font-medium text-zinc-800">{{ $planting->plot?->viticulturist?->name ?? '—' }}</td>
-                    <td class="px-6 py-3 text-sm text-zinc-600">{{ $planting->plot?->name ?? '—' }}</td>
-                    <td class="px-6 py-3 text-sm text-zinc-500">{{ $planting->grapeVariety?->name ?? '—' }}</td>
-                    <td class="px-6 py-3 text-sm font-mono text-zinc-700">{{ $planting->planting_authorization }}</td>
-                    <td class="px-6 py-3 text-sm">
-                        @if($planting->right_type)
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-{{ $rc }}-100 text-{{ $rc }}-700">
-                                {{ $rightLabels[$planting->right_type] ?? $planting->right_type }}
-                            </span>
-                        @else
-                            <span class="text-zinc-400">—</span>
-                        @endif
-                    </td>
-                    <td class="px-6 py-3 text-sm text-zinc-500">
-                        {{ $planting->authorization_date ? $planting->authorization_date->format('d/m/Y') : '—' }}
-                    </td>
-                    <td class="px-6 py-3 text-sm text-zinc-500">
-                        {{ $planting->uprooting_date ? $planting->uprooting_date->format('d/m/Y') : '—' }}
-                    </td>
-                </tr>
-            @endforeach
+        {{-- Skeleton durante carga --}}
+        <x-agro.loading-grid target="search, switchTab, filterVit, filterRightType, nextPage, previousPage" />
 
-            <x-slot name="pagination">{{ $items->links() }}</x-slot>
-        </x-agro.data-table>
+        {{-- Card grid --}}
+        <div wire:loading.remove wire:target="search, switchTab, filterVit, filterRightType, nextPage, previousPage">
+            @if($items->count() > 0)
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    @foreach($items as $planting)
+                        @php
+                            $delay = min($loop->index * 50, 300);
+                            $rightLabels = ['nueva' => 'Nueva', 'replantacion' => 'Replantación', 'conversion' => 'Conversión', 'transferencia' => 'Transferencia'];
+                            $rightColors = ['nueva' => 'emerald', 'replantacion' => 'blue', 'conversion' => 'amber', 'transferencia' => 'violet'];
+                            $rc = $rightColors[$planting->right_type] ?? 'zinc';
+                            $rightBg = [
+                                'nueva'          => 'bg-emerald-100',
+                                'replantacion'   => 'bg-blue-100',
+                                'conversion'     => 'bg-amber-100',
+                                'transferencia'  => 'bg-violet-100',
+                            ];
+                            $rightIconColor = [
+                                'nueva'          => 'text-emerald-600',
+                                'replantacion'   => 'text-blue-600',
+                                'conversion'     => 'text-amber-600',
+                                'transferencia'  => 'text-violet-600',
+                            ];
+                            $rightIcons = [
+                                'nueva'          => 'sparkles',
+                                'replantacion'   => 'arrow-path',
+                                'conversion'     => 'arrows-right-left',
+                                'transferencia'  => 'arrow-right-circle',
+                            ];
+                            $bgClass = $rightBg[$planting->right_type] ?? 'bg-zinc-100';
+                            $iconColorClass = $rightIconColor[$planting->right_type] ?? 'text-zinc-500';
+                            $iconName = $rightIcons[$planting->right_type] ?? 'document-check';
+                        @endphp
+                        <x-agro.card
+                            class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                            style="animation-delay: {{ $delay }}ms;"
+                            wire:key="planting-{{ $planting->id }}"
+                        >
+                            <x-slot:header>
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-xl {{ $bgClass }} flex items-center justify-center shrink-0">
+                                        <flux:icon icon="{{ $iconName }}" class="size-5 {{ $iconColorClass }}" />
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <h3 class="font-bold text-zinc-900 truncate text-sm">{{ $planting->plot?->name ?? '—' }}</h3>
+                                        <p class="text-xs text-zinc-500">{{ $planting->plot?->viticulturist?->name ?? '—' }}</p>
+                                    </div>
+                                    @if($planting->right_type)
+                                        <flux:badge color="{{ $rc }}" size="sm" class="shrink-0">{{ $rightLabels[$planting->right_type] ?? $planting->right_type }}</flux:badge>
+                                    @endif
+                                </div>
+                            </x-slot:header>
+
+                            <div class="flex-1 space-y-4">
+                                <div class="bg-agro-50 rounded-xl p-3">
+                                    <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Nº autorización</p>
+                                    <p class="text-sm font-bold text-agro-700 leading-none font-mono">{{ $planting->planting_authorization }}</p>
+                                </div>
+
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-zinc-400">Variedad</span>
+                                        <span class="text-zinc-700 font-medium">{{ $planting->grapeVariety?->name ?? '—' }}</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-zinc-400">Fecha autorización</span>
+                                        <span class="text-zinc-700 font-medium">{{ $planting->authorization_date ? $planting->authorization_date->format('d/m/Y') : '—' }}</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-zinc-400">Arranque</span>
+                                        <span class="text-zinc-700 font-medium">{{ $planting->uprooting_date ? $planting->uprooting_date->format('d/m/Y') : '—' }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </x-agro.card>
+                    @endforeach
+                </div>
+                <div class="mt-6">{{ $items->links() }}</div>
+            @else
+                <x-agro.empty-state icon="document-check" title="Sin autorizaciones" description="No hay plantaciones con autorización registrada." />
+            @endif
+        </div>
 
     {{-- ── TAB: Certificaciones ecológicas ────────────────────────────────── --}}
     @elseif($currentTab === 'certificaciones')
@@ -135,50 +178,75 @@
                 <option value="expired">Caducadas</option>
             </select>
 
-            <div class="relative">
-                <flux:icon icon="magnifying-glass" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 pointer-events-none" />
-                <input type="text" wire:model.live.debounce.300ms="search"
-                    placeholder="Buscar nº certificado u organismo..."
-                    class="pl-9 pr-3 py-1.5 text-sm border border-zinc-200 rounded-lg focus:outline-none w-64" />
-            </div>
+            <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar nº certificado u organismo..." />
         </div>
 
-        {{-- Table --}}
-        <x-agro.data-table
-            :headers="['Viticultor', 'Organismo certificador', 'Nº certificado', 'Emisión', 'Caducidad', 'Estado']"
-            emptyMessage="No hay certificaciones ecológicas registradas."
-        >
-            @foreach($items as $cert)
-                @php
-                    $isExpired  = $cert->is_expired;
-                    $isExpiring = $cert->is_expiring_soon;
-                    $statusColor = $isExpired ? 'red' : ($isExpiring ? 'amber' : 'emerald');
-                    $statusLabel = $isExpired ? 'Caducada' : ($isExpiring ? 'Por vencer' : 'Vigente');
-                @endphp
-                <tr class="hover:bg-zinc-50 transition">
-                    <td class="px-6 py-3 text-sm font-medium text-zinc-800">{{ $cert->viticulturist?->name ?? '—' }}</td>
-                    <td class="px-6 py-3 text-sm text-zinc-600">{{ $cert->certifying_body ?? '—' }}</td>
-                    <td class="px-6 py-3 text-sm font-mono text-zinc-700">{{ $cert->certificate_number ?? '—' }}</td>
-                    <td class="px-6 py-3 text-sm text-zinc-500">
-                        {{ $cert->issue_date ? $cert->issue_date->format('d/m/Y') : '—' }}
-                    </td>
-                    <td class="px-6 py-3 text-sm {{ $isExpired ? 'text-red-600 font-medium' : ($isExpiring ? 'text-amber-600 font-medium' : 'text-zinc-500') }}">
-                        {{ $cert->expiry_date ? $cert->expiry_date->format('d/m/Y') : '—' }}
-                    </td>
-                    <td class="px-6 py-3 text-sm">
-                        @if($cert->active)
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-{{ $statusColor }}-100 text-{{ $statusColor }}-700">
-                                {{ $statusLabel }}
-                            </span>
-                        @else
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-zinc-100 text-zinc-500">Inactiva</span>
-                        @endif
-                    </td>
-                </tr>
-            @endforeach
+        {{-- Skeleton durante carga --}}
+        <x-agro.loading-grid target="search, switchTab, filterVit, filterStatus, nextPage, previousPage" />
 
-            <x-slot name="pagination">{{ $items->links() }}</x-slot>
-        </x-agro.data-table>
+        {{-- Card grid --}}
+        <div wire:loading.remove wire:target="search, switchTab, filterVit, filterStatus, nextPage, previousPage">
+            @if($items->count() > 0)
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    @foreach($items as $cert)
+                        @php
+                            $delay = min($loop->index * 50, 300);
+                            $isExpired  = $cert->is_expired;
+                            $isExpiring = $cert->is_expiring_soon;
+                            $statusColor = $isExpired ? 'red' : ($isExpiring ? 'amber' : 'emerald');
+                            $statusLabel = $isExpired ? 'Caducada' : ($isExpiring ? 'Por vencer' : 'Vigente');
+                            $iconBg = $isExpired ? 'bg-red-100' : ($isExpiring ? 'bg-amber-100' : 'bg-emerald-100');
+                            $iconText = $isExpired ? 'text-red-600' : ($isExpiring ? 'text-amber-600' : 'text-emerald-600');
+                        @endphp
+                        <x-agro.card
+                            class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                            style="animation-delay: {{ $delay }}ms;"
+                            wire:key="cert-{{ $cert->id }}"
+                        >
+                            <x-slot:header>
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-xl {{ $iconBg }} flex items-center justify-center shrink-0">
+                                        <flux:icon icon="check-badge" class="size-5 {{ $iconText }}" />
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <h3 class="font-bold text-zinc-900 truncate text-sm">{{ $cert->viticulturist?->name ?? '—' }}</h3>
+                                        <p class="text-xs text-zinc-500">{{ $cert->certifying_body ?? '—' }}</p>
+                                    </div>
+                                    @if($cert->active)
+                                        <flux:badge color="{{ $statusColor }}" size="sm" class="shrink-0">{{ $statusLabel }}</flux:badge>
+                                    @else
+                                        <flux:badge color="zinc" size="sm" class="shrink-0">Inactiva</flux:badge>
+                                    @endif
+                                </div>
+                            </x-slot:header>
+
+                            <div class="flex-1 space-y-4">
+                                <div class="bg-agro-50 rounded-xl p-3">
+                                    <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Nº certificado</p>
+                                    <p class="text-sm font-bold text-agro-700 leading-none font-mono">{{ $cert->certificate_number ?? '—' }}</p>
+                                </div>
+
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-zinc-400">Emisión</span>
+                                        <span class="text-zinc-700 font-medium">{{ $cert->issue_date ? $cert->issue_date->format('d/m/Y') : '—' }}</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-zinc-400">Caducidad</span>
+                                        <span class="{{ $isExpired ? 'text-red-600 font-semibold' : ($isExpiring ? 'text-amber-600 font-semibold' : 'text-zinc-700 font-medium') }}">
+                                            {{ $cert->expiry_date ? $cert->expiry_date->format('d/m/Y') : '—' }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </x-agro.card>
+                    @endforeach
+                </div>
+                <div class="mt-6">{{ $items->links() }}</div>
+            @else
+                <x-agro.empty-state icon="check-badge" title="Sin certificaciones" description="No hay certificaciones ecológicas registradas." />
+            @endif
+        </div>
 
     {{-- ── TAB: Pliego de condiciones / Reglamento interno ─────────────────── --}}
     @elseif(in_array($currentTab, ['pliego', 'reglamento']))

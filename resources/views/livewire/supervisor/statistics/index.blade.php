@@ -6,93 +6,96 @@
     />
 
     {{-- Stat cards --}}
-    <div x-data="{
-        open: localStorage.getItem('supervisor-statistics-stats-open') !== 'false',
-        toggle() {
-            this.open = !this.open;
-            localStorage.setItem('supervisor-statistics-stats-open', String(this.open));
-        }
-    }">
-        <button
-            @click="toggle()"
-            class="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-widest hover:text-zinc-600 transition-colors mb-3"
-        >
-            <span>Estadísticas</span>
-            <flux:icon icon="chevron-up" class="size-3.5 transition-transform duration-200" ::class="{ 'rotate-180': !open }" />
-        </button>
-        <div
-            x-show="open"
-            x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 -translate-y-1"
-            x-transition:enter-end="opacity-100 translate-y-0"
-            x-transition:leave="transition ease-in duration-150"
-            x-transition:leave-start="opacity-100 translate-y-0"
-            x-transition:leave-end="opacity-0 -translate-y-1"
-        >
-        <div class="grid grid-cols-2 gap-4">
-            <x-agro.stat-card
-                label="Bodegas"
-                :value="$totalWineries"
-                icon="building-office-2"
-                color="blue"
-            />
-            <x-agro.stat-card
-                label="Viticultores DO"
-                :value="$totalViticulturists"
-                icon="users"
-                color="agro"
-            />
-            <x-agro.stat-card
-                label="Superficie (ha)"
-                :value="number_format($totalPlotAreaHa, 2)"
-                icon="map"
-                color="yellow"
-            />
-            <x-agro.stat-card
-                label="Uva {{ $currentYear }} (kg)"
-                :value="number_format($totalKgCurrentVintage, 0, ',', '.')"
-                icon="scale"
-                color="orange"
-                :description="'Vendimia ' . $currentYear"
-            />
-        </div>
-        </div>
-    </div>
+    <x-agro.stats-section key="supervisor-statistics">
+        <x-agro.stat-card
+            label="Bodegas"
+            :value="$totalWineries"
+            icon="building-office-2"
+            color="blue"
+        />
+        <x-agro.stat-card
+            label="Viticultores DO"
+            :value="$totalViticulturists"
+            icon="users"
+            color="agro"
+        />
+        <x-agro.stat-card
+            label="Superficie (ha)"
+            :value="number_format($totalPlotAreaHa, 2)"
+            icon="map"
+            color="yellow"
+        />
+        <x-agro.stat-card
+            label="Uva {{ $currentYear }} (kg)"
+            :value="number_format($totalKgCurrentVintage, 0, ',', '.')"
+            icon="scale"
+            color="orange"
+            :description="'Vendimia ' . $currentYear"
+        />
+    </x-agro.stats-section>
 
-    {{-- Harvest by vintage table --}}
+    {{-- Harvest by vintage cards --}}
     <div>
         <h2 class="text-sm font-semibold text-zinc-700 mb-3">Histórico de vendimias</h2>
 
-        <x-agro.data-table
-            :headers="['Añada', 'Recepciones', 'Total uva (kg)', 'Brix medio', '']"
-            emptyMessage="No hay datos de vendimias aún."
-        >
-            @foreach($harvestByVintage as $row)
-                <tr class="hover:bg-zinc-50 transition">
-                    <td class="px-6 py-3 text-sm font-semibold text-zinc-800">
-                        {{ $row->vintage }}
-                        @if($row->vintage === $currentYear)
-                            <span class="ml-1.5 text-[10px] font-bold bg-agro-100 text-agro-700 px-1.5 py-0.5 rounded-full uppercase">actual</span>
-                        @endif
-                    </td>
-                    <td class="px-6 py-3 text-sm text-zinc-500">
-                        {{ $row->reception_count }}
-                    </td>
-                    <td class="px-6 py-3 text-sm text-zinc-500">
-                        {{ number_format($row->total_kg, 0, ',', '.') }} kg
-                    </td>
-                    <td class="px-6 py-3 text-sm text-zinc-500">
-                        @if($row->avg_brix)
-                            {{ $row->avg_brix }} °Bx
-                        @else
-                            —
-                        @endif
-                    </td>
-                    <td class="px-6 py-3"></td>
-                </tr>
-            @endforeach
-        </x-agro.data-table>
+        @if(count($harvestByVintage) > 0)
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach($harvestByVintage as $row)
+                    @php $delay = min($loop->index * 50, 300); @endphp
+                    <x-agro.card
+                        class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                        style="animation-delay: {{ $delay }}ms;"
+                        wire:key="vintage-{{ $row->vintage }}"
+                    >
+                        <x-slot:header>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
+                                    <flux:icon icon="calendar" class="size-5 text-amber-600" />
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="font-bold text-zinc-900">Vendimia {{ $row->vintage }}</h3>
+                                    <p class="text-xs text-zinc-400">Datos de campaña</p>
+                                </div>
+                                @if($row->vintage === $currentYear)
+                                    <flux:badge color="green" size="sm" class="shrink-0">Actual</flux:badge>
+                                @endif
+                            </div>
+                        </x-slot:header>
+
+                        <div class="flex-1 space-y-3">
+                            <div class="grid grid-cols-3 gap-2">
+                                <div class="bg-amber-50 rounded-lg p-2 text-center">
+                                    <p class="text-[9px] text-amber-400 uppercase tracking-wide mb-0.5">Recepciones</p>
+                                    <p class="text-sm font-bold text-amber-700">{{ $row->reception_count }}</p>
+                                </div>
+                                <div class="bg-emerald-50 rounded-lg p-2 text-center">
+                                    <p class="text-[9px] text-emerald-400 uppercase tracking-wide mb-0.5">Uva (kg)</p>
+                                    <p class="text-sm font-bold text-emerald-700">
+                                        {{ number_format($row->total_kg, 0, ',', '.') }}
+                                    </p>
+                                </div>
+                                <div class="bg-blue-50 rounded-lg p-2 text-center">
+                                    <p class="text-[9px] text-blue-400 uppercase tracking-wide mb-0.5">Brix</p>
+                                    <p class="text-sm font-bold text-blue-700">
+                                        @if($row->avg_brix)
+                                            {{ $row->avg_brix }}°
+                                        @else
+                                            —
+                                        @endif
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </x-agro.card>
+                @endforeach
+            </div>
+        @else
+            <x-agro.empty-state
+                icon="calendar"
+                title="Sin datos"
+                description="No hay datos de vendimias aún."
+            />
+        @endif
     </div>
 
 </div>
-

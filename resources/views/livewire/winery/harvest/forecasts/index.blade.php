@@ -18,14 +18,7 @@
         <div class="flex items-center gap-3">
 
             {{-- Search --}}
-            <div class="flex-1 relative">
-                <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                    <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400" />
-                </div>
-                <input wire:model.live.debounce.300ms="search" type="text"
-                    placeholder="Buscar viticultor, parcela, variedad..."
-                    class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition" />
-            </div>
+            <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar viticultor, parcela, variedad..." />
 
             {{-- Filtros --}}
             <button @click="filtersOpen = !filtersOpen"
@@ -96,33 +89,15 @@
         <div class="flex flex-wrap items-center gap-2">
             @if($campaignFilter)
                 @php $campLabel = $campaigns->firstWhere('id', $campaignFilter)?->year ?? $campaignFilter; @endphp
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    <flux:icon icon="calendar" class="size-3" />
-                    Campaña: {{ $campLabel }}
-                    <button wire:click="$set('campaignFilter', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip icon="calendar" :label="'Campaña: ' . $campLabel" wireRemove="$set('campaignFilter', '')" />
             @endif
             @if($viticulturistFilter)
                 @php $viticLabel = $linkedViticulturists->firstWhere('id', $viticulturistFilter)?->name ?? $viticulturistFilter; @endphp
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    <flux:icon icon="user" class="size-3" />
-                    {{ $viticLabel }}
-                    <button wire:click="$set('viticulturistFilter', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip icon="user" :label="$viticLabel" wireRemove="$set('viticulturistFilter', '')" />
             @endif
             @if($statusFilter)
                 @php $statusLabel = ['confirmed' => 'Confirmadas', 'draft' => 'Borradores'][$statusFilter] ?? $statusFilter; @endphp
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    <flux:icon icon="funnel" class="size-3" />
-                    {{ $statusLabel }}
-                    <button wire:click="$set('statusFilter', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip icon="funnel" :label="$statusLabel" wireRemove="$set('statusFilter', '')" />
             @endif
             <button wire:click="$set('search', ''); $set('campaignFilter', ''); $set('viticulturistFilter', ''); $set('statusFilter', '')"
                 class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">

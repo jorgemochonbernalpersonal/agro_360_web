@@ -47,16 +47,7 @@
 
     {{-- Toolbar --}}
     <div class="flex items-center gap-3">
-        <button x-on:click="$dispatch('open-modal', 'subcontracting-filters')"
-            class="relative inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors">
-            <flux:icon icon="adjustments-horizontal" class="size-4 text-zinc-500" />
-            Filtros
-            @if($filterCount > 0)
-                <span class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-agro-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
-                    {{ $filterCount }}
-                </span>
-            @endif
-        </button>
+        <x-agro.filter-button modal="subcontracting-filters" :count="$filterCount" />
     </div>
 
     {{-- Chips de filtros activos --}}
@@ -64,42 +55,18 @@
         <div class="flex flex-wrap items-center gap-2">
             @if($filter_campaign_id)
                 @php $campaignLabel = $campaigns->firstWhere('id', $filter_campaign_id)?->name ?? $filter_campaign_id; @endphp
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    <flux:icon icon="calendar-days" class="size-3" />
-                    {{ $campaignLabel }}
-                    <button wire:click="$set('filter_campaign_id', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip icon="calendar-days" :label="$campaignLabel" wireRemove="$set('filter_campaign_id', '')" />
             @endif
             @if($filter_plot_id)
                 @php $plotLabel = $plots->firstWhere('id', $filter_plot_id)?->name ?? $filter_plot_id; @endphp
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    <flux:icon icon="map" class="size-3" />
-                    {{ $plotLabel }}
-                    <button wire:click="$set('filter_plot_id', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip icon="map" :label="$plotLabel" wireRemove="$set('filter_plot_id', '')" />
             @endif
             @if($filter_service_type)
                 @php $typeLabel = $serviceTypes[$filter_service_type] ?? $filter_service_type; @endphp
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    <flux:icon icon="tag" class="size-3" />
-                    {{ $typeLabel }}
-                    <button wire:click="$set('filter_service_type', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip icon="tag" :label="$typeLabel" wireRemove="$set('filter_service_type', '')" />
             @endif
             @if($filter_invoiced !== '')
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    <flux:icon icon="document-check" class="size-3" />
-                    {{ $filter_invoiced ? 'Facturado' : 'Pendiente' }}
-                    <button wire:click="$set('filter_invoiced', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip icon="document-check" :label="$filter_invoiced ? 'Facturado' : 'Pendiente'" wireRemove="$set('filter_invoiced', '')" />
             @endif
             <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">
                 Limpiar todo

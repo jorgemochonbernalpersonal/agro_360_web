@@ -11,74 +11,107 @@
     </x-slot:actions>
 </x-agro.page-header>
 
-<x-agro.card>
-    <x-agro.filter-bar>
-        <x-agro.filter-input wire:model.live="search" placeholder="Buscar por responsable o notas..." />
-        <x-agro.filter-select wire:model.live="typeFilter" placeholder="Todos los tipos">
-            @foreach($types as $key => $label)
-                <option value="{{ $key }}">{{ $label }}</option>
-            @endforeach
-        </x-agro.filter-select>
-        <x-agro.filter-select wire:model.live="statusFilter" placeholder="Todos los estados">
-            @foreach($statuses as $key => $label)
-                <option value="{{ $key }}">{{ $label }}</option>
-            @endforeach
-        </x-agro.filter-select>
-    </x-agro.filter-bar>
+<x-agro.filter-bar>
+    <x-agro.filter-input wire:model.live="search" placeholder="Buscar por responsable o notas..." />
+    <x-agro.filter-select wire:model.live="typeFilter" placeholder="Todos los tipos">
+        @foreach($types as $key => $label)
+            <option value="{{ $key }}">{{ $label }}</option>
+        @endforeach
+    </x-agro.filter-select>
+    <x-agro.filter-select wire:model.live="statusFilter" placeholder="Todos los estados">
+        @foreach($statuses as $key => $label)
+            <option value="{{ $key }}">{{ $label }}</option>
+        @endforeach
+    </x-agro.filter-select>
+</x-agro.filter-bar>
 
-    <x-agro.data-table :headers="['Fecha', 'Tipo', 'Contenedor origen', 'Contenedor destino', 'Volumen (L)', 'Estado', 'Acciones']">
-        @forelse($operations as $operation)
-            <x-agro.table-row>
-                <x-agro.table-cell>
-                    <span class="font-medium text-zinc-900 dark:text-zinc-100">
-                        {{ $operation->operation_date->format('d/m/Y') }}
-                    </span>
-                </x-agro.table-cell>
-                <x-agro.table-cell>
-                    {{ $operation->type_label }}
-                </x-agro.table-cell>
-                <x-agro.table-cell>
-                    {{ $operation->sourceContainer?->name ?? '—' }}
-                </x-agro.table-cell>
-                <x-agro.table-cell>
-                    {{ $operation->targetContainer?->name ?? '—' }}
-                </x-agro.table-cell>
-                <x-agro.table-cell>
-                    @if($operation->volume_liters !== null)
-                        {{ number_format($operation->volume_liters, 2) }}
-                    @else
-                        <span class="text-zinc-400">—</span>
-                    @endif
-                </x-agro.table-cell>
-                <x-agro.table-cell>
-                    @php
-                        $statusColor = match($operation->status) {
-                            'planned'     => 'zinc',
-                            'in_progress' => 'yellow',
-                            'completed'   => 'green',
-                            'cancelled'   => 'red',
-                            default       => 'zinc',
-                        };
-                    @endphp
-                    <x-agro.status-badge :label="$operation->status_label" :color="$statusColor" />
-                </x-agro.table-cell>
-                <x-agro.table-cell align="right">
-                    <div class="flex justify-end gap-2">
-                        <flux:button size="sm" variant="ghost" icon="pencil"
-                            href="{{ roleRoute('cellar-operations.edit', $operation) }}" wire:navigate />
-                        <flux:button size="sm" variant="ghost" icon="trash"
-                            wire:click="delete({{ $operation->id }})"
-                            wire:loading.attr="disabled"
-                            wire:confirm="¿Eliminar esta operación?" />
+<x-agro.loading-grid target="search, typeFilter, statusFilter, nextPage, previousPage" />
+
+<div wire:loading.remove wire:target="search, typeFilter, statusFilter, nextPage, previousPage">
+    @if($operations->count() > 0)
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            @foreach($operations as $operation)
+                @php $delay = min($loop->index * 50, 300); @endphp
+                @php
+                    $statusColor = match($operation->status) {
+                        'planned'     => 'zinc',
+                        'in_progress' => 'yellow',
+                        'completed'   => 'green',
+                        'cancelled'   => 'red',
+                        default       => 'zinc',
+                    };
+                @endphp
+                <x-agro.card
+                    class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                    style="animation-delay: {{ $delay }}ms;"
+                    wire:key="operation-{{ $operation->id }}"
+                >
+                    <x-slot:header>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center shrink-0">
+                                <flux:icon icon="beaker" class="size-5 text-emerald-600" />
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-bold text-zinc-900 truncate">{{ $operation->type_label }}</h3>
+                                <p class="text-xs text-zinc-500">{{ $operation->operation_date->format('d/m/Y') }}</p>
+                            </div>
+                            <x-agro.status-badge :label="$operation->status_label" :color="$statusColor" class="shrink-0" />
+                        </div>
+                    </x-slot:header>
+
+                    <div class="flex-1 space-y-4">
+                        <div class="grid grid-cols-1 gap-2">
+                            <div class="bg-agro-50 rounded-xl p-3">
+                                <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Volumen</p>
+                                <p class="text-2xl font-bold text-agro-700 leading-none">
+                                    @if($operation->volume_liters !== null)
+                                        {{ number_format($operation->volume_liters, 2) }}
+                                    @else
+                                        —
+                                    @endif
+                                </p>
+                                @if($operation->volume_liters !== null)
+                                    <p class="text-[10px] text-agro-400">litros</p>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="space-y-2 text-sm">
+                            <div class="flex items-center justify-between">
+                                <span class="text-zinc-400">Origen</span>
+                                <span class="text-zinc-700 font-medium truncate ml-2">{{ $operation->sourceContainer?->name ?? '—' }}</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-zinc-400">Destino</span>
+                                <span class="text-zinc-700 font-medium truncate ml-2">{{ $operation->targetContainer?->name ?? '—' }}</span>
+                            </div>
+                        </div>
                     </div>
-                </x-agro.table-cell>
-            </x-agro.table-row>
-        @empty
-            <x-agro.empty-state icon="calendar-days" title="Sin operaciones"
-                description="Registra trasiegos, clarificaciones, filtraciones y otras operaciones de tu bodega." />
-        @endforelse
-    </x-agro.data-table>
 
-    {{ $operations->links() }}
-</x-agro.card>
+                    <x-slot:footer>
+                        @php $btnBase = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors'; @endphp
+                        <div class="flex items-center justify-end gap-0.5">
+                            <a href="{{ roleRoute('cellar-operations.edit', $operation) }}" wire:navigate class="{{ $btnBase }}" title="Editar">
+                                <flux:icon icon="pencil" class="size-4" />
+                            </a>
+                            <button
+                                wire:click="delete({{ $operation->id }})"
+                                wire:loading.attr="disabled"
+                                wire:confirm="¿Eliminar esta operación?"
+                                class="{{ $btnBase }} hover:!text-red-500 hover:!bg-red-50"
+                                title="Eliminar"
+                            >
+                                <flux:icon icon="trash" class="size-4" />
+                            </button>
+                        </div>
+                    </x-slot:footer>
+                </x-agro.card>
+            @endforeach
+        </div>
+        <div class="mt-6">{{ $operations->links() }}</div>
+    @else
+        <x-agro.empty-state icon="calendar-days" title="Sin operaciones"
+            description="Registra trasiegos, clarificaciones, filtraciones y otras operaciones de tu bodega." />
+    @endif
+</div>
 </div>

@@ -60,46 +60,65 @@
                     description="La DO no ha asignado aún viticultores a tu bodega."
                 />
             @else
-                <x-agro.data-table
-                    :headers="['Viticultor', 'Parcelas activas', 'Superficie (ha)', 'Última actividad']"
-                >
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-1">
                     @foreach($doViticulturists as $row)
-                        <x-agro.table-row>
-                            <x-agro.table-cell>
-                                <div class="flex items-center gap-2">
-                                    <div class="size-7 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
-                                        <flux:icon icon="user" class="size-3.5 text-blue-600" />
+                        @php $delay = min($loop->index * 50, 300); @endphp
+                        <x-agro.card
+                            class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                            style="animation-delay: {{ $delay }}ms;"
+                            wire:key="vit-{{ $row->id }}"
+                        >
+                            <x-slot:header>
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center shrink-0">
+                                        <flux:icon icon="user" class="size-5 text-blue-600" />
                                     </div>
-                                    <div>
-                                        <p class="font-medium text-zinc-800 text-sm">{{ $row->viticulturist->name }}</p>
+                                    <div class="flex-1 min-w-0">
+                                        <h3 class="font-bold text-zinc-900 truncate">{{ $row->viticulturist->name }}</h3>
                                         @if($row->viticulturist->email && !str_starts_with($row->viticulturist->email, 'viticultores.'))
-                                            <p class="text-xs text-zinc-400">{{ $row->viticulturist->email }}</p>
+                                            <p class="text-xs text-zinc-500">{{ $row->viticulturist->email }}</p>
                                         @endif
                                     </div>
                                 </div>
-                            </x-agro.table-cell>
-                            <x-agro.table-cell>
-                                {{ $row->plot_count ?: '—' }}
-                            </x-agro.table-cell>
-                            <x-agro.table-cell>
-                                @if($row->total_area)
-                                    {{ number_format($row->total_area, 2, ',', '.') }} ha
-                                @else
-                                    —
-                                @endif
-                            </x-agro.table-cell>
-                            <x-agro.table-cell>
-                                @if($row->last_activity)
-                                    <span class="text-zinc-500">
-                                        {{ \Carbon\Carbon::parse($row->last_activity)->translatedFormat('d M Y') }}
-                                    </span>
-                                @else
-                                    <span class="text-zinc-300">Sin actividad</span>
-                                @endif
-                            </x-agro.table-cell>
-                        </x-agro.table-row>
+                            </x-slot:header>
+
+                            <div class="flex-1 space-y-4">
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div class="bg-agro-50 rounded-xl p-3">
+                                        <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Parcelas</p>
+                                        <p class="text-2xl font-bold text-agro-700 leading-none">{{ $row->plot_count ?: '—' }}</p>
+                                    </div>
+                                    <div class="bg-agro-50 rounded-xl p-3">
+                                        <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Superficie</p>
+                                        <p class="text-2xl font-bold text-agro-700 leading-none">
+                                            @if($row->total_area)
+                                                {{ number_format($row->total_area, 2, ',', '.') }}
+                                            @else
+                                                —
+                                            @endif
+                                        </p>
+                                        @if($row->total_area)
+                                            <p class="text-[10px] text-agro-400">ha</p>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-zinc-400">Última actividad</span>
+                                        <span class="text-zinc-700 font-medium">
+                                            @if($row->last_activity)
+                                                {{ \Carbon\Carbon::parse($row->last_activity)->translatedFormat('d M Y') }}
+                                            @else
+                                                Sin actividad
+                                            @endif
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </x-agro.card>
                     @endforeach
-                </x-agro.data-table>
+                </div>
             @endif
         </x-agro.card>
 

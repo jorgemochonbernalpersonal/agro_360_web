@@ -11,61 +11,93 @@
     </x-slot:actions>
 </x-agro.page-header>
 
-<x-agro.card>
-    <x-agro.filter-bar>
-        <x-agro.filter-input wire:model.live="search" placeholder="Buscar por nombre..." />
-        <x-agro.filter-select wire:model.live="typeFilter" placeholder="Todos los tipos">
-            @foreach($types as $key => $label)
-                <option value="{{ $key }}">{{ $label }}</option>
-            @endforeach
-        </x-agro.filter-select>
-    </x-agro.filter-bar>
+<x-agro.filter-bar>
+    <x-agro.filter-input wire:model.live="search" placeholder="Buscar por nombre..." />
+    <x-agro.filter-select wire:model.live="typeFilter" placeholder="Todos los tipos">
+        @foreach($types as $key => $label)
+            <option value="{{ $key }}">{{ $label }}</option>
+        @endforeach
+    </x-agro.filter-select>
+</x-agro.filter-bar>
 
-    <x-agro.data-table :headers="['Nombre', 'Tipo', 'Stock actual', 'Unidad', 'Caducidad', 'Acciones']">
-        @forelse($supplies as $supply)
-            <x-agro.table-row>
-                <x-agro.table-cell>
-                    <div class="font-medium text-zinc-900 dark:text-zinc-100">{{ $supply->name }}</div>
-                    @if($supply->commercial_name)
-                        <div class="text-xs text-zinc-500">{{ $supply->commercial_name }}</div>
-                    @endif
-                </x-agro.table-cell>
-                <x-agro.table-cell>
-                    <x-agro.status-badge :label="$supply->type_label" color="blue" />
-                </x-agro.table-cell>
-                <x-agro.table-cell>
-                    @if($supply->current_stock !== null)
-                        <span class="{{ $supply->isLowStock() ? 'text-red-600 font-semibold' : 'text-zinc-700 dark:text-zinc-300' }}">
-                            {{ number_format($supply->current_stock, 3) }}
-                        </span>
-                        @if($supply->isLowStock())
-                            <flux:icon icon="exclamation-triangle" class="inline w-4 h-4 text-red-500 ml-1" />
-                        @endif
-                    @else
-                        <span class="text-zinc-400">—</span>
-                    @endif
-                </x-agro.table-cell>
-                <x-agro.table-cell>{{ $supply->unitOfMeasurement?->symbol ?? '—' }}</x-agro.table-cell>
-                <x-agro.table-cell>
-                    {{ $supply->expiry_date?->format('d/m/Y') ?? '—' }}
-                </x-agro.table-cell>
-                <x-agro.table-cell align="right">
-                    <div class="flex justify-end gap-2">
-                        <flux:button size="sm" variant="ghost" icon="pencil"
-                            href="{{ roleRoute('winery-supplies.edit', $supply) }}" wire:navigate />
-                        <flux:button size="sm" variant="ghost" icon="trash"
-                            wire:click="delete({{ $supply->id }})"
-                            wire:loading.attr="disabled"
-                            wire:confirm="¿Eliminar este insumo?" />
+<x-agro.loading-grid target="search, typeFilter, nextPage, previousPage" />
+
+<div wire:loading.remove wire:target="search, typeFilter, nextPage, previousPage">
+    @if($supplies->count() > 0)
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            @foreach($supplies as $supply)
+                @php $delay = min($loop->index * 50, 300); @endphp
+                <x-agro.card
+                    class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                    style="animation-delay: {{ $delay }}ms;"
+                    wire:key="supply-{{ $supply->id }}"
+                >
+                    <x-slot:header>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-cyan-100 flex items-center justify-center shrink-0">
+                                <flux:icon icon="beaker" class="size-5 text-cyan-600" />
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-bold text-zinc-900 truncate">{{ $supply->name }}</h3>
+                                <p class="text-xs text-zinc-500">{{ $supply->commercial_name ?? '—' }}</p>
+                            </div>
+                            <x-agro.status-badge :label="$supply->type_label" color="blue" class="shrink-0" />
+                        </div>
+                    </x-slot:header>
+
+                    <div class="flex-1 space-y-4">
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="bg-agro-50 rounded-xl p-3">
+                                <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Stock</p>
+                                <p class="text-2xl font-bold {{ $supply->current_stock !== null && $supply->isLowStock() ? 'text-red-600' : 'text-agro-700' }} leading-none">
+                                    @if($supply->current_stock !== null)
+                                        {{ number_format($supply->current_stock, 3) }}
+                                        @if($supply->isLowStock())
+                                            <flux:icon icon="exclamation-triangle" class="inline w-4 h-4 text-red-500 ml-1" />
+                                        @endif
+                                    @else
+                                        —
+                                    @endif
+                                </p>
+                            </div>
+                            <div class="bg-agro-50 rounded-xl p-3">
+                                <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Unidad</p>
+                                <p class="text-2xl font-bold text-agro-700 leading-none">{{ $supply->unitOfMeasurement?->symbol ?? '—' }}</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2 text-sm">
+                            <div class="flex items-center justify-between">
+                                <span class="text-zinc-400">Caducidad</span>
+                                <span class="text-zinc-700 font-medium">{{ $supply->expiry_date?->format('d/m/Y') ?? '—' }}</span>
+                            </div>
+                        </div>
                     </div>
-                </x-agro.table-cell>
-            </x-agro.table-row>
-        @empty
-            <x-agro.empty-state icon="beaker" title="Sin insumos"
-                description="Añade productos de limpieza, aditivos y otros insumos de bodega." />
-        @endforelse
-    </x-agro.data-table>
 
-    {{ $supplies->links() }}
-</x-agro.card>
+                    <x-slot:footer>
+                        @php $btnBase = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors'; @endphp
+                        <div class="flex items-center justify-end gap-0.5">
+                            <a href="{{ roleRoute('winery-supplies.edit', $supply) }}" wire:navigate class="{{ $btnBase }}" title="Editar">
+                                <flux:icon icon="pencil" class="size-4" />
+                            </a>
+                            <button
+                                wire:click="delete({{ $supply->id }})"
+                                wire:loading.attr="disabled"
+                                wire:confirm="¿Eliminar este insumo?"
+                                class="{{ $btnBase }} hover:!text-red-500 hover:!bg-red-50"
+                                title="Eliminar"
+                            >
+                                <flux:icon icon="trash" class="size-4" />
+                            </button>
+                        </div>
+                    </x-slot:footer>
+                </x-agro.card>
+            @endforeach
+        </div>
+        <div class="mt-6">{{ $supplies->links() }}</div>
+    @else
+        <x-agro.empty-state icon="beaker" title="Sin insumos"
+            description="Añade productos de limpieza, aditivos y otros insumos de bodega." />
+    @endif
+</div>
 </div>

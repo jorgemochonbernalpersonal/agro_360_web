@@ -50,78 +50,32 @@
     <div class="flex items-center gap-3">
 
         {{-- Search --}}
-        <div class="flex-1 relative">
-            <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400" />
-            </div>
-            <input wire:model.live.debounce.300ms="search" type="text"
-                placeholder="Buscar viticultor, variedad, parcela..."
-                class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition" />
-        </div>
+        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar viticultor, variedad, parcela..." />
 
         {{-- Filtros --}}
-        <button x-on:click="$dispatch('open-modal', 'summary-filters')"
-            class="relative inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors">
-            <flux:icon icon="adjustments-horizontal" class="size-4 text-zinc-500" />
-            Filtros
-            @if($filterCount > 0)
-                <span class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-agro-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
-                    {{ $filterCount }}
-                </span>
-            @endif
-        </button>
+        <x-agro.filter-button modal="summary-filters" :count="$filterCount" />
     </div>
 
     {{-- Chips de filtros activos --}}
     @if($filterCount > 0)
         <div class="flex flex-wrap items-center gap-2">
             @if($search)
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    <flux:icon icon="magnifying-glass" class="size-3" />
-                    {{ $search }}
-                    <button wire:click="$set('search', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip icon="magnifying-glass" :label="$search" wireRemove="$set('search', '')" />
             @endif
             @if($campaignFilter)
                 @php $campLabel = $campaigns->firstWhere('id', $campaignFilter)?->year ?? $campaignFilter; @endphp
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    <flux:icon icon="calendar" class="size-3" />
-                    Añada: {{ $campLabel }}
-                    <button wire:click="$set('campaignFilter', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip icon="calendar" :label="'Añada: ' . $campLabel" wireRemove="$set('campaignFilter', '')" />
             @endif
             @if($viticulturistFilter)
                 @php $viticLabel = $linkedViticulturists->firstWhere('id', $viticulturistFilter)?->name ?? $viticulturistFilter; @endphp
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    <flux:icon icon="user" class="size-3" />
-                    {{ $viticLabel }}
-                    <button wire:click="$set('viticulturistFilter', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip icon="user" :label="$viticLabel" wireRemove="$set('viticulturistFilter', '')" />
             @endif
             @if($varietyFilter)
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    <flux:icon icon="tag" class="size-3" />
-                    {{ $varietyFilter }}
-                    <button wire:click="$set('varietyFilter', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip icon="tag" :label="$varietyFilter" wireRemove="$set('varietyFilter', '')" />
             @endif
             @if($alertFilter)
                 @php $alertLabel = $alertFilter === 'exceeded' ? '⚠ Superados' : 'En riesgo (≥80%)'; @endphp
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-red-50 text-red-700 text-xs font-medium rounded-full border border-red-200">
-                    <flux:icon icon="bell-alert" class="size-3" />
-                    {{ $alertLabel }}
-                    <button wire:click="$set('alertFilter', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-red-100 transition-colors">
-                        <flux:icon icon="x-mark" class="size-3" />
-                    </button>
-                </span>
+                <x-agro.filter-chip icon="bell-alert" :label="$alertLabel" wireRemove="$set('alertFilter', '')" />
             @endif
             <button
                 wire:click="$set('search', ''); $set('campaignFilter', ''); $set('viticulturistFilter', ''); $set('varietyFilter', ''); $set('alertFilter', '')"
@@ -132,13 +86,7 @@
     @endif
 
     {{-- Skeleton durante carga --}}
-    <div wire:loading wire:target="search, campaignFilter, viticulturistFilter, varietyFilter, alertFilter">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            @for($i = 0; $i < 6; $i++)
-                <x-agro.skeleton-card />
-            @endfor
-        </div>
-    </div>
+    <x-agro.loading-grid target="search, campaignFilter, viticulturistFilter, varietyFilter, alertFilter" :count="6" />
 
     {{-- Grid de cards --}}
     <div wire:loading.remove wire:target="search, campaignFilter, viticulturistFilter, varietyFilter, alertFilter">

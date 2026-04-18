@@ -23,15 +23,7 @@
 
     {{-- Search + Assign button --}}
     <div class="flex items-center gap-2">
-        <div class="relative flex-1 max-w-xs">
-            <flux:icon icon="magnifying-glass" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 pointer-events-none" />
-            <input
-                type="text"
-                wire:model.live.debounce.300ms="search"
-                placeholder="Buscar..."
-                class="pl-9 pr-3 py-1.5 w-full text-sm border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300"
-            />
-        </div>
+        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar..." />
         @if($search)
             <button wire:click="clearSearch" class="text-xs text-zinc-400 hover:text-zinc-600 transition px-2 py-1.5">
                 Limpiar
@@ -45,7 +37,7 @@
         @endif
     </div>
 
-    {{-- Tabs + Table --}}
+    {{-- Tabs + Cards --}}
     <div>
         <x-agro.tabs
             :tabs="[
@@ -55,67 +47,129 @@
             :active="$currentTab"
         />
 
-        @if($currentTab === 'wineries')
-            <x-agro.data-table
-                :headers="['Bodega', 'Email', 'Viticultores DO', '']"
-                emptyMessage="No hay bodegas adscritas a esta denominación."
-            >
-                @foreach($items as $winery)
-                    <x-agro.table-row>
-                        <x-agro.table-cell>
-                            <a href="{{ route('supervisor.oversight.wineries.show', $winery) }}" wire:navigate
-                               class="font-medium text-zinc-800 hover:text-indigo-600 transition">
-                                {{ $winery->name }}
-                            </a>
-                        </x-agro.table-cell>
-                        <x-agro.table-cell>
-                            <span class="text-zinc-500">{{ $winery->email }}</span>
-                        </x-agro.table-cell>
-                        <x-agro.table-cell>
-                            {{ $vitCountByWinery[$winery->id] ?? 0 }}
-                        </x-agro.table-cell>
-                        <x-agro.table-cell align="right">
-                            <flux:button
-                                wire:click="unassignWinery({{ $winery->id }})"
-                                wire:confirm="¿Desadscribir {{ $winery->name }} de la denominación? Los viticultores asignados por la DO a esta bodega también se desvincularán."
-                                variant="ghost"
-                                size="sm"
-                                icon="x-mark"
+        {{-- Loading skeleton --}}
+        <x-agro.loading-grid target="search, switchTab, nextPage, previousPage" />
+
+        <div wire:loading.remove wire:target="search, switchTab, nextPage, previousPage">
+            @if($currentTab === 'wineries')
+                @if($items->count() > 0)
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        @foreach($items as $winery)
+                            @php
+                                $delay = min($loop->index * 50, 300);
+                                $vitCount = $vitCountByWinery[$winery->id] ?? 0;
+                            @endphp
+                            <x-agro.card
+                                class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                                style="animation-delay: {{ $delay }}ms;"
+                                wire:key="winery-{{ $winery->id }}"
                             >
-                                Desadscribir
-                            </flux:button>
-                        </x-agro.table-cell>
-                    </x-agro.table-row>
-                @endforeach
+                                <x-slot:header>
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center shrink-0">
+                                            <flux:icon icon="building-office-2" class="size-5 text-blue-600" />
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <a href="{{ route('supervisor.oversight.wineries.show', $winery) }}" wire:navigate
+                                               class="font-bold text-zinc-900 truncate block hover:text-indigo-600 transition">
+                                                {{ $winery->name }}
+                                            </a>
+                                            <p class="text-xs text-zinc-500 truncate">{{ $winery->email }}</p>
+                                        </div>
+                                    </div>
+                                </x-slot:header>
 
-                <x-slot name="pagination">
-                    {{ $items->links() }}
-                </x-slot>
-            </x-agro.data-table>
-        @else
-            <x-agro.data-table
-                :headers="['Viticultor', 'Email', 'Parcelas']"
-                emptyMessage="No hay viticultores adscritos a esta denominación."
-            >
-                @foreach($items as $viticulturist)
-                    <x-agro.table-row>
-                        <x-agro.table-cell>
-                            <span class="font-medium text-zinc-800">{{ $viticulturist->name }}</span>
-                        </x-agro.table-cell>
-                        <x-agro.table-cell>
-                            <span class="text-zinc-500">{{ $viticulturist->email }}</span>
-                        </x-agro.table-cell>
-                        <x-agro.table-cell>
-                            {{ $viticulturist->plots_count }}
-                        </x-agro.table-cell>
-                    </x-agro.table-row>
-                @endforeach
+                                <div class="flex-1 space-y-4">
+                                    <div class="grid grid-cols-1 gap-2">
+                                        <div class="bg-blue-50 rounded-xl p-3">
+                                            <p class="text-[10px] font-semibold text-blue-400 uppercase tracking-widest mb-0.5">Viticultores DO</p>
+                                            <p class="text-2xl font-bold text-blue-700 leading-none">{{ $vitCount }}</p>
+                                        </div>
+                                    </div>
 
-                <x-slot name="pagination">
-                    {{ $items->links() }}
-                </x-slot>
-            </x-agro.data-table>
-        @endif
+                                    <div class="space-y-2 text-sm">
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-zinc-400">Email</span>
+                                            <span class="text-zinc-700 font-medium truncate ml-2 max-w-[60%] text-right">{{ $winery->email }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <x-slot:footer>
+                                    @php
+                                        $btnBase = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
+                                        $btnDanger = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors';
+                                    @endphp
+                                    <div class="flex items-center justify-end gap-0.5">
+                                        <a href="{{ route('supervisor.oversight.wineries.show', $winery) }}" wire:navigate class="{{ $btnBase }}" title="Ver">
+                                            <flux:icon icon="eye" class="size-4" />
+                                        </a>
+                                        <button
+                                            wire:click="unassignWinery({{ $winery->id }})"
+                                            wire:confirm="¿Desadscribir {{ $winery->name }} de la denominación? Los viticultores asignados por la DO a esta bodega también se desvincularán."
+                                            class="{{ $btnDanger }}"
+                                            title="Desadscribir"
+                                        >
+                                            <flux:icon icon="x-mark" class="size-4" />
+                                        </button>
+                                    </div>
+                                </x-slot:footer>
+                            </x-agro.card>
+                        @endforeach
+                    </div>
+
+                    <div class="mt-6">{{ $items->links() }}</div>
+                @else
+                    <x-agro.empty-state icon="building-office-2" title="No hay bodegas" description="No hay bodegas adscritas a esta denominación." />
+                @endif
+
+            @else
+                @if($items->count() > 0)
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        @foreach($items as $viticulturist)
+                            @php $delay = min($loop->index * 50, 300); @endphp
+                            <x-agro.card
+                                class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                                style="animation-delay: {{ $delay }}ms;"
+                                wire:key="vit-{{ $viticulturist->id }}"
+                            >
+                                <x-slot:header>
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-xl bg-agro-100 flex items-center justify-center shrink-0">
+                                            <flux:icon icon="user" class="size-5 text-agro-600" />
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <h3 class="font-bold text-zinc-900 truncate">{{ $viticulturist->name }}</h3>
+                                            <p class="text-xs text-zinc-500 truncate">{{ $viticulturist->email }}</p>
+                                        </div>
+                                    </div>
+                                </x-slot:header>
+
+                                <div class="flex-1 space-y-4">
+                                    <div class="grid grid-cols-1 gap-2">
+                                        <div class="bg-agro-50 rounded-xl p-3">
+                                            <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Parcelas</p>
+                                            <p class="text-2xl font-bold text-agro-700 leading-none">{{ $viticulturist->plots_count }}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="space-y-2 text-sm">
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-zinc-400">Email</span>
+                                            <span class="text-zinc-700 font-medium truncate ml-2 max-w-[60%] text-right">{{ $viticulturist->email }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </x-agro.card>
+                        @endforeach
+                    </div>
+
+                    <div class="mt-6">{{ $items->links() }}</div>
+                @else
+                    <x-agro.empty-state icon="users" title="No hay viticultores" description="No hay viticultores adscritos a esta denominación." />
+                @endif
+            @endif
+        </div>
     </div>
 
     {{-- Modal adscribir bodega --}}

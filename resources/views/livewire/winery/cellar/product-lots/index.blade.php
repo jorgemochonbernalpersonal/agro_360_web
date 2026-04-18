@@ -9,13 +9,7 @@
 
     {{-- Toolbar: search + tipo + nuevo producto --}}
     <div class="flex items-center gap-3">
-        <div class="flex-1 relative">
-            <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400" />
-            </div>
-            <input wire:model.live.debounce.300ms="search" type="text" placeholder="Buscar por nombre..."
-                class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition" />
-        </div>
+        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar por nombre..." />
 
         <flux:select wire:model.live="typeFilter" size="sm" class="w-44">
             <flux:select.option value="">Todos los tipos</flux:select.option>
@@ -50,13 +44,7 @@
     </div>
 
     {{-- Grid skeleton durante carga --}}
-    <div wire:loading wire:target="switchTab, search, typeFilter, nextPage, previousPage, gotoPage">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            @for ($i = 0; $i < 6; $i++)
-                <x-agro.skeleton-card />
-            @endfor
-        </div>
-    </div>
+    <x-agro.loading-grid target="switchTab, search, typeFilter, nextPage, previousPage, gotoPage" :count="6" />
 
     {{-- Grid real --}}
     <div wire:loading.remove wire:target="switchTab, search, typeFilter, nextPage, previousPage, gotoPage">

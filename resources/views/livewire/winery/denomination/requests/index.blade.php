@@ -72,109 +72,123 @@
         </flux:select>
     </div>
 
-    {{-- Tabla ───────────────────────────────────────────────────────────── --}}
-    <x-agro.data-table :headers="['Tipo', 'Título', 'Estado', 'Fecha', 'Vence', 'Acción']">
-        @forelse($requests as $req)
-            <x-agro.table-row>
-                <x-agro.table-cell>
-                    <div class="flex items-center gap-1.5">
-                        @if(in_array($req->type, \App\Models\SupervisorRequest::WINERY_INITIATED))
-                            <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-blue-50 text-blue-600 border border-blue-200">Tú</span>
-                        @else
-                            <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-violet-50 text-violet-600 border border-violet-200">DO</span>
-                        @endif
-                        <span class="text-xs font-medium text-zinc-600">{{ $typeLabels[$req->type] ?? $req->type }}</span>
-                    </div>
-                </x-agro.table-cell>
-                <x-agro.table-cell>
-                    <div>
-                        <p class="text-sm text-zinc-800">{{ $req->title ?: '—' }}</p>
-                        @if($req->notes)
-                            <p class="text-xs text-zinc-400 mt-0.5 line-clamp-1">{{ $req->notes }}</p>
-                        @endif
-                    </div>
-                </x-agro.table-cell>
-                <x-agro.table-cell>
+    {{-- Cards ───────────────────────────────────────────────────────────── --}}
+    <x-agro.loading-grid target="statusFilter, nextPage, previousPage" />
+
+    <div wire:loading.remove wire:target="statusFilter, nextPage, previousPage">
+        @if($requests->count() > 0)
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                @foreach($requests as $req)
+                    @php $delay = min($loop->index * 50, 300); @endphp
                     @php $color = $statusColors[$req->status] ?? 'zinc'; @endphp
-                    <x-agro.status-badge :status="$req->status" :label="$statusLabels[$req->status] ?? $req->status" :color="$color" />
-                </x-agro.table-cell>
-                <x-agro.table-cell>
-                    <span class="text-xs text-zinc-400">
-                        {{ $req->sent_at ? $req->sent_at->format('d/m/Y') : $req->created_at->format('d/m/Y') }}
-                    </span>
-                </x-agro.table-cell>
-                <x-agro.table-cell>
-                    @if($req->due_date)
-                        @if($req->isOverdue())
-                            <span class="inline-flex items-center gap-1 text-xs font-medium text-red-600">
-                                <flux:icon icon="exclamation-circle" class="w-3.5 h-3.5" />
-                                {{ $req->due_date->format('d/m/Y') }}
-                            </span>
-                        @else
-                            <span class="text-xs text-amber-600">{{ $req->due_date->format('d/m/Y') }}</span>
-                        @endif
-                    @else
-                        <span class="text-xs text-zinc-300">—</span>
-                    @endif
-                </x-agro.table-cell>
-                <x-agro.table-cell align="right">
-                    <div class="flex items-center justify-end gap-1">
-                        @if($req->canBeRespondedByWinery())
-                            <flux:button wire:click="startResponding({{ $req->id }})" variant="primary" size="sm">
-                                Responder
-                            </flux:button>
-                            @if(in_array($req->type, \App\Models\SupervisorRequest::WINERY_INITIATED))
-                                <flux:button wire:click="retractRequest({{ $req->id }})"
-                                    wire:confirm="¿Retirar esta solicitud? Quedará archivada y la DO no podrá actuar sobre ella."
-                                    variant="ghost" size="sm" icon="x-mark">
-                                </flux:button>
-                            @endif
-                        @elseif($req->response_notes)
-                            <span class="text-xs text-zinc-400 italic">Respondida</span>
-                        @else
-                            <span class="text-xs text-zinc-300">—</span>
-                        @endif
-                    </div>
-                </x-agro.table-cell>
-            </x-agro.table-row>
+                    <x-agro.card
+                        class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                        style="animation-delay: {{ $delay }}ms;"
+                        wire:key="req-{{ $req->id }}"
+                    >
+                        <x-slot:header>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center shrink-0">
+                                    <flux:icon icon="document-text" class="size-5 text-indigo-600" />
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="font-bold text-zinc-900 truncate">{{ $req->title ?: '—' }}</h3>
+                                    <p class="text-xs text-zinc-500">
+                                        @if(in_array($req->type, \App\Models\SupervisorRequest::WINERY_INITIATED))
+                                            <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-blue-50 text-blue-600 border border-blue-200">Tú</span>
+                                        @else
+                                            <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-violet-50 text-violet-600 border border-violet-200">DO</span>
+                                        @endif
+                                        {{ $typeLabels[$req->type] ?? $req->type }}
+                                    </p>
+                                </div>
+                                <x-agro.status-badge :status="$req->status" :label="$statusLabels[$req->status] ?? $req->status" :color="$color" class="shrink-0" />
+                            </div>
+                        </x-slot:header>
 
-            {{-- Panel inline de respuesta --}}
-            @if($respondingId === $req->id)
-                <tr class="bg-blue-50">
-                    <td colspan="6" class="px-6 py-4">
-                        <div class="space-y-3">
+                        <div class="flex-1 space-y-4">
                             @if($req->notes)
-                                <p class="text-sm text-zinc-600"><span class="font-medium">Notas de la DO:</span> {{ $req->notes }}</p>
+                                <p class="text-xs text-zinc-400 line-clamp-2">{{ $req->notes }}</p>
                             @endif
-                            <div>
-                                <label class="block text-sm font-medium text-zinc-700 mb-1">Tu respuesta</label>
-                                <flux:textarea wire:model="responseNotes" rows="3" placeholder="Escribe tu respuesta o comentarios…" />
-                                @error('responseNotes') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
-                            </div>
-                            <div class="flex gap-2">
-                                <flux:button wire:click="respond" variant="primary" size="sm">Enviar respuesta</flux:button>
-                                <flux:button wire:click="cancelResponding" variant="ghost" size="sm">Cancelar</flux:button>
+
+                            <div class="space-y-2 text-sm">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-zinc-400">Fecha</span>
+                                    <span class="text-zinc-700 font-medium">
+                                        {{ $req->sent_at ? $req->sent_at->format('d/m/Y') : $req->created_at->format('d/m/Y') }}
+                                    </span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-zinc-400">Vence</span>
+                                    <span class="font-medium">
+                                        @if($req->due_date)
+                                            @if($req->isOverdue())
+                                                <span class="inline-flex items-center gap-1 text-red-600">
+                                                    <flux:icon icon="exclamation-circle" class="w-3.5 h-3.5" />
+                                                    {{ $req->due_date->format('d/m/Y') }}
+                                                </span>
+                                            @else
+                                                <span class="text-amber-600">{{ $req->due_date->format('d/m/Y') }}</span>
+                                            @endif
+                                        @else
+                                            <span class="text-zinc-300">—</span>
+                                        @endif
+                                    </span>
+                                </div>
                             </div>
                         </div>
-                    </td>
-                </tr>
-            @endif
 
-        @empty
-            <x-agro.table-row>
-                <td colspan="6" class="px-6 py-12 text-center">
-                    <div class="flex flex-col items-center gap-2">
-                        <div class="w-10 h-10 rounded-full bg-zinc-100 flex items-center justify-center">
-                            <flux:icon icon="document-text" class="size-5 text-zinc-400" />
-                        </div>
-                        <p class="text-sm font-medium text-zinc-500">Sin solicitudes</p>
-                        <p class="text-xs text-zinc-400">Aquí aparecerán las comunicaciones con tu denominación de origen.</p>
-                    </div>
-                </td>
-            </x-agro.table-row>
-        @endforelse
+                        <x-slot:footer>
+                            <div class="flex items-center justify-end gap-1">
+                                @if($req->canBeRespondedByWinery())
+                                    <flux:button wire:click="startResponding({{ $req->id }})" variant="primary" size="sm">
+                                        Responder
+                                    </flux:button>
+                                    @if(in_array($req->type, \App\Models\SupervisorRequest::WINERY_INITIATED))
+                                        <flux:button wire:click="retractRequest({{ $req->id }})"
+                                            wire:confirm="¿Retirar esta solicitud? Quedará archivada y la DO no podrá actuar sobre ella."
+                                            variant="ghost" size="sm" icon="x-mark">
+                                        </flux:button>
+                                    @endif
+                                @elseif($req->response_notes)
+                                    <span class="text-xs text-zinc-400 italic">Respondida</span>
+                                @else
+                                    <span class="text-xs text-zinc-300">—</span>
+                                @endif
+                            </div>
+                        </x-slot:footer>
+                    </x-agro.card>
 
-        <x-slot name="pagination">{{ $requests->links() }}</x-slot>
-    </x-agro.data-table>
+                    {{-- Panel inline de respuesta --}}
+                    @if($respondingId === $req->id)
+                        <x-agro.card class="md:col-span-2 lg:col-span-3 xl:col-span-4 border-blue-200 bg-blue-50/50">
+                            <div class="space-y-3">
+                                @if($req->notes)
+                                    <p class="text-sm text-zinc-600"><span class="font-medium">Notas de la DO:</span> {{ $req->notes }}</p>
+                                @endif
+                                <div>
+                                    <label class="block text-sm font-medium text-zinc-700 mb-1">Tu respuesta</label>
+                                    <flux:textarea wire:model="responseNotes" rows="3" placeholder="Escribe tu respuesta o comentarios…" />
+                                    @error('responseNotes') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                                </div>
+                                <div class="flex gap-2">
+                                    <flux:button wire:click="respond" variant="primary" size="sm">Enviar respuesta</flux:button>
+                                    <flux:button wire:click="cancelResponding" variant="ghost" size="sm">Cancelar</flux:button>
+                                </div>
+                            </div>
+                        </x-agro.card>
+                    @endif
+                @endforeach
+            </div>
+
+            <div class="mt-6">{{ $requests->links() }}</div>
+        @else
+            <x-agro.empty-state
+                icon="document-text"
+                title="Sin solicitudes"
+                description="Aquí aparecerán las comunicaciones con tu denominación de origen."
+            />
+        @endif
+    </div>
 
 </div>
