@@ -34,7 +34,7 @@ class Index extends Component
             ->get(['id', 'name', 'year']);
 
         $plotsQuery = Plot::where('viticulturist_id', $userId)->orderBy('name');
-        $plots      = $plotsQuery->get(['id', 'name', 'municipality', 'area_ha']);
+        $plots      = $plotsQuery->get(['id', 'name', 'municipality_id', 'area']);
 
         $data = $this->filterCampaign
             ? $this->buildEstateData($userId, (int) $this->filterCampaign)
