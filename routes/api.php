@@ -77,6 +77,12 @@ use App\Http\Controllers\Api\Viticulturist\PhytosanitaryProductController;
 use App\Http\Controllers\Api\Viticulturist\CrewController;
 use App\Http\Controllers\Api\Viticulturist\FieldApplicatorController;
 use App\Http\Controllers\Api\Viticulturist\FieldEquipmentController;
+use App\Http\Controllers\Api\Producer\DashboardController as ProducerDashboard;
+use App\Http\Controllers\Api\Producer\IntegratedEstateController;
+use App\Http\Controllers\Api\Producer\IntegratedCampaignController;
+use App\Http\Controllers\Api\Producer\FullTraceabilityController;
+use App\Http\Controllers\Api\Producer\FinancialSummaryController;
+use App\Http\Controllers\Api\Producer\CampaignComparisonController;
 use App\Http\Controllers\Api\Supervisor\DashboardController as SupervisorDashboard;
 use App\Http\Controllers\Api\Supervisor\OversightController;
 use Illuminate\Support\Facades\Route;
@@ -647,6 +653,17 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
 
         // ── Equipos campo ────────────────────────────────────────────────────
         Route::get('/field-equipment', [FieldEquipmentController::class, 'index'])->middleware('throttle:60,1');
+    });
+
+    // ── Producer (endpoints exclusivos) ──────────────────────────────────────
+    Route::prefix('producer')->middleware('api.role:producer')->group(function () {
+
+        Route::get('/dashboard',                          ProducerDashboard::class)->middleware('throttle:60,1');
+        Route::get('/integrated-estate',                  IntegratedEstateController::class)->middleware('throttle:30,1');
+        Route::get('/integrated-campaign/{campaignId}',   IntegratedCampaignController::class)->middleware('throttle:30,1');
+        Route::get('/full-traceability/{campaignId}',     FullTraceabilityController::class)->middleware('throttle:30,1');
+        Route::get('/financial-summary',                  FinancialSummaryController::class)->middleware('throttle:30,1');
+        Route::get('/campaign-comparison',                CampaignComparisonController::class)->middleware('throttle:30,1');
     });
 
     // ── Supervisor ────────────────────────────────────────────────────────────
