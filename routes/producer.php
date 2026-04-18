@@ -236,6 +236,12 @@ Route::middleware(['role:producer', 'check.beta'])
             Route::get('/{loss}/edit', \App\Livewire\Winery\WineLosses\Edit::class)->name('edit');
         });
 
+        // ── Aditivos Enológicos ───────────────────────────────────────────
+        Route::get('/wine-additives', \App\Livewire\Winery\WineAdditives\Index::class)->name('wine-additives.index');
+
+        // ── Mantenimientos globales ───────────────────────────────────────
+        Route::get('/container-maintenances', \App\Livewire\Winery\Cellar\Containers\MaintenanceGlobal::class)->name('container-maintenances.index');
+
         // ── Lotes de producto ─────────────────────────────────────────────
         Route::prefix('product-lots')->name('product-lots.')->group(function () {
             Route::get('/', \App\Livewire\Winery\Cellar\ProductLots\Index::class)->name('index');

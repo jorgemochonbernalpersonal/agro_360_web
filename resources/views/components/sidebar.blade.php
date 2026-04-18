@@ -48,9 +48,9 @@
     $chapterColors['compliance_w'] = $chapterColors['compliance'];
     $chapterColors['business_w']   = $chapterColors['business'];
     $chapterColors['winery_res']   = ['accent' => '#fb923c', 'bg' => 'rgba(251,146,60,0.12)',  'border' => 'rgba(251,146,60,0.5)'];   // naranja (insumos)
-    $chapterColors['elaboration']  = ['accent' => '#f87171', 'bg' => 'rgba(248,113,113,0.12)', 'border' => 'rgba(248,113,113,0.5)'];  // rojo vino (hereda bodega)
+    $chapterColors['cellar']       = ['accent' => '#f87171', 'bg' => 'rgba(248,113,113,0.12)', 'border' => 'rgba(248,113,113,0.5)'];  // rojo vino (infraestructura bodega)
+    $chapterColors['wines']        = ['accent' => '#e879f9', 'bg' => 'rgba(232,121,249,0.12)', 'border' => 'rgba(232,121,249,0.5)'];  // fuchsia (vinificación)
     $chapterColors['output']       = ['accent' => '#c084fc', 'bg' => 'rgba(192,132,252,0.12)', 'border' => 'rgba(192,132,252,0.5)'];  // violeta (producto)
-    $chapterColors['analytics_w']  = ['accent' => '#60a5fa', 'bg' => 'rgba(96,165,250,0.12)',  'border' => 'rgba(96,165,250,0.5)'];   // azul (análisis)
 
     $viticulturistChapters = [
         ['key' => 'campaign',      'icon' => 'pencil-square',            'label' => 'Campaña',              'sections' => ['campaigns']],
@@ -69,10 +69,10 @@
 
     $wineryChapters = [
         ['key' => 'harvest',      'icon' => 'archive-box-arrow-down', 'label' => 'Vendimia',      'sections' => ['harvest', 'denomination'], 'section_labels' => ['harvest' => 'Vendimia', 'denomination' => 'Denominación de Origen']],
-        ['key' => 'elaboration',  'icon' => 'beaker',                 'label' => 'Elaboración',   'sections' => ['cellar_elaboration']],
+        ['key' => 'cellar',       'icon' => 'cube',                   'label' => 'Bodega',        'sections' => ['cellar_infra']],
+        ['key' => 'wines',        'icon' => 'beaker',                 'label' => 'Vinos',         'sections' => ['cellar_wines']],
         ['key' => 'output',       'icon' => 'archive-box',            'label' => 'Producto',      'sections' => ['cellar_output']],
-        ['key' => 'territory',    'icon' => 'map',                    'label' => 'Parcelas',      'sections' => ['territory']],
-        ['key' => 'analytics_w',  'icon' => 'chart-bar-square',       'label' => 'Análisis',      'sections' => ['analytics']],
+        ['key' => 'territory',    'icon' => 'map',                    'label' => 'Parcelas',      'sections' => ['territory', 'analytics'], 'section_labels' => ['territory' => 'Parcelas', 'analytics' => 'Análisis de Finca']],
         ['key' => 'compliance',   'icon' => 'shield-check',           'label' => 'Normativa',     'sections' => ['winery_compliance', 'registrations'], 'section_labels' => ['winery_compliance' => 'Normativa Bodega', 'registrations' => 'Registros y Autorizaciones']],
         ['key' => 'business',     'icon' => 'calculator',             'label' => 'Negocio',       'sections' => ['billing']],
         ['key' => 'winery_res',   'icon' => 'building-storefront',    'label' => 'Insumos',       'sections' => ['winery_resources', 'winery_docs'], 'section_labels' => ['winery_resources' => 'Insumos y Proveedores', 'winery_docs' => 'Documentos']],
@@ -199,6 +199,34 @@
     }
 
     $mainItems = $menu['main'] ?? [];
+
+    // ── Generar índice de búsqueda con todos los ítems navegables ─────
+    $searchIndex = [];
+    // Main items
+    foreach ($mainItems as $item) {
+        if (isset($item['route'])) {
+            $searchIndex[] = ['href' => route($item['route']), 'label' => $item['label'], 'chapter' => 'Principal'];
+        }
+    }
+    // Chapter items
+    foreach ($chapters as $ch) {
+        foreach ($ch['sections'] as $sectionKey) {
+            if (!isset($menu[$sectionKey])) continue;
+            foreach ($menu[$sectionKey] as $item) {
+                if (isset($item['divider']) || isset($item['section_header'])) continue;
+                if (!isset($item['route'])) continue;
+                try {
+                    $searchIndex[] = ['href' => route($item['route']), 'label' => $item['label'], 'chapter' => $ch['label']];
+                } catch (\Exception $e) { /* ruta no registrada, skip */ }
+            }
+        }
+    }
+    // Rail bottom
+    foreach (($menu['rail_bottom'] ?? []) as $item) {
+        if (isset($item['route'])) {
+            $searchIndex[] = ['href' => route($item['route']), 'label' => $item['label'], 'chapter' => 'Sistema'];
+        }
+    }
 @endphp
 
 <div
@@ -216,9 +244,40 @@
             $store.nav.close();
         },
         mobileOpen: false,
-        mobileChapter: '{{ $activeChapterKey }}'
+        mobileChapter: '{{ $activeChapterKey }}',
+        @if($user->role === 'producer')
+        pins: JSON.parse(localStorage.getItem('agro365_pins') || '[]'),
+        togglePin(href, label) {
+            const idx = this.pins.findIndex(p => p.href === href);
+            if (idx >= 0) { this.pins.splice(idx, 1); }
+            else if (this.pins.length < 10) { this.pins.push({ href, label }); }
+            localStorage.setItem('agro365_pins', JSON.stringify(this.pins));
+        },
+        isPinned(href) { return this.pins.some(p => p.href === href); },
+        @endif
+        // ── Buscador Cmd+K ──────────────────────────────────
+        showCmdk: false,
+        cmdkQuery: '',
+        cmdkSelected: 0,
+        cmdkItems: @js($searchIndex),
+        get cmdkFiltered() {
+            if (!this.cmdkQuery.trim()) return this.cmdkItems.slice(0, 8);
+            const q = this.cmdkQuery.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            return this.cmdkItems.filter(i => {
+                const label = i.label.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                const chapter = i.chapter.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                return label.includes(q) || chapter.includes(q);
+            }).slice(0, 10);
+        },
+        openCmdk() { this.showCmdk = true; this.cmdkQuery = ''; this.cmdkSelected = 0; this.$nextTick(() => this.$refs.cmdkInput?.focus()); },
+        closeCmdk() { this.showCmdk = false; this.cmdkQuery = ''; },
+        cmdkGo(href) { this.closeCmdk(); window.location.href = href; },
+        cmdkDown() { this.cmdkSelected = Math.min(this.cmdkSelected + 1, this.cmdkFiltered.length - 1); },
+        cmdkUp() { this.cmdkSelected = Math.max(this.cmdkSelected - 1, 0); },
+        cmdkEnter() { const item = this.cmdkFiltered[this.cmdkSelected]; if (item) this.cmdkGo(item.href); },
     }"
-    @keydown.escape.window="$store.nav.close(); mobileOpen = false"
+    @keydown.escape.window="if (showCmdk) { closeCmdk(); } else { $store.nav.close(); mobileOpen = false; }"
+    @keydown.window="if (($event.metaKey || $event.ctrlKey) && $event.key === 'k') { $event.preventDefault(); if (showCmdk) { closeCmdk(); } else { openCmdk(); } }"
     @mobile-nav-toggle.window="mobileOpen = !mobileOpen"
 >
     {{-- ═══════════════════ RAIL 64px (solo lg+) ═══════════════════ --}}
@@ -233,6 +292,13 @@
             <img src="{{ asset('images/logo.png') }}" alt="Agro365" width="26" height="26"
                  class="object-contain group-hover:scale-110 transition-transform">
         </a>
+
+        {{-- Buscar (Cmd+K) --}}
+        <button type="button" @click="openCmdk()" title="Buscar (Ctrl+K)"
+                class="relative group flex items-center justify-center w-11 h-11 rounded-xl transition-all duration-150 text-white/45 hover:bg-white/10 hover:text-white flex-shrink-0">
+            <flux:icon icon="magnifying-glass" class="w-5 h-5" />
+            <span class="rail-tooltip">Buscar <kbd class="ml-1 px-1 py-0.5 text-[9px] bg-white/20 rounded">Ctrl+K</kbd></span>
+        </button>
 
         <div class="w-8 border-t border-white/10 mb-1"></div>
 
@@ -254,6 +320,20 @@
         <div class="w-8 border-t border-white/10 my-1"></div>
 
         @if($user->role === 'producer')
+        {{-- Producer: Frecuentes (solo si hay pins) --}}
+        <template x-if="pins.length > 0">
+            <button type="button" x-on:click="$store.nav.toggle('_favorites')" title="Frecuentes"
+                class="notebook-tab flex-shrink-0 relative group flex items-center justify-center w-11 h-11 rounded-xl transition-all duration-200 mb-0.5"
+                :class="$store.nav.open === '_favorites' ? 'tab-open' : ''"
+                data-key="_favorites" data-active="false"
+                style="--tab-accent: #f59e0b; --tab-bg: rgba(245,158,11,0.12); --tab-border: rgba(245,158,11,0.5);">
+                <svg class="w-5 h-5 tab-icon transition-colors duration-150" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                </svg>
+                <span class="rail-tooltip" style="border-left: 2px solid #f59e0b">Frecuentes</span>
+            </button>
+        </template>
+
         {{-- Producer: tab switcher Viñedo / Bodega --}}
         <div class="flex w-full px-2 gap-1 mb-0.5 flex-shrink-0">
             <button type="button"
@@ -360,6 +440,65 @@
 
     {{-- ═══════════════════ FLYOUT PANELS (solo lg+) ═══════════════════ --}}
     <div class="hidden lg:block">
+
+    {{-- Flyout de Frecuentes (Producer, Alpine-rendered) --}}
+    @if($user->role === 'producer')
+    <div
+        x-show="$store.nav.open === '_favorites' && pins.length > 0"
+        x-cloak
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0 -translate-x-2"
+        x-transition:enter-end="opacity-100 translate-x-0"
+        x-transition:leave="transition ease-in duration-150"
+        x-transition:leave-start="opacity-100 translate-x-0"
+        x-transition:leave-end="opacity-0 -translate-x-2"
+        class="fixed left-16 top-0 h-full w-64 z-40 flex flex-col shadow-2xl"
+        style="background: rgba(236, 246, 230, 0.96); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-right: 1px solid rgba(245,158,11,0.5);"
+    >
+        <div class="h-16 flex items-center gap-3 px-4 flex-shrink-0 border-b border-zinc-300/50">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: rgba(245,158,11,0.12); box-shadow: 0 0 0 1px rgba(245,158,11,0.5);">
+                <svg class="w-4 h-4" fill="#f59e0b" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            </div>
+            <span class="text-sm font-semibold text-zinc-800 tracking-wide">Frecuentes</span>
+            <button type="button" x-on:click="$store.nav.close()"
+                    class="ml-auto w-7 h-7 flex items-center justify-center rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-200/60 transition-colors">
+                <flux:icon icon="x-mark" class="w-4 h-4" />
+            </button>
+        </div>
+        <div class="flex flex-1 overflow-hidden">
+            <div class="w-px flex-shrink-0 ml-5 my-2" style="background: #f59e0b; opacity: 0.4;"></div>
+            <nav class="flex-1 overflow-y-auto py-2 sidebar-scrollbar notebook-lines-light">
+                <template x-for="pin in pins" :key="pin.href">
+                    <div class="flex items-center group">
+                        <a :href="pin.href"
+                           x-on:click="$store.nav.close()"
+                           class="notebook-item flex-1 flex items-center gap-3 px-3 py-2.5 mx-2 transition-all duration-150 text-zinc-500 hover:text-zinc-900">
+                            <span class="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0"></span>
+                            <span class="text-sm font-medium flex-1 leading-tight" x-text="pin.label"></span>
+                        </a>
+                        <button type="button"
+                            @click.prevent.stop="togglePin(pin.href, pin.label)"
+                            class="flex-shrink-0 w-6 h-6 mr-2 flex items-center justify-center text-amber-400 hover:text-red-400 transition-colors rounded"
+                            title="Quitar de frecuentes">
+                            <flux:icon icon="x-mark" class="w-3.5 h-3.5" />
+                        </button>
+                    </div>
+                </template>
+                <div class="mx-4 mt-4 mb-2 flex items-center gap-2">
+                    <span class="text-[9px] font-semibold tracking-wider uppercase text-zinc-400 whitespace-nowrap">Tip</span>
+                    <div class="flex-1 border-t border-zinc-300/40"></div>
+                </div>
+                <p class="px-4 text-[11px] text-zinc-400 leading-relaxed">
+                    Haz clic en <svg class="inline w-3 h-3 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg> en cualquier ítem del menú para añadirlo aquí.
+                </p>
+            </nav>
+        </div>
+        <div class="px-4 py-2.5 border-t border-zinc-300/50 flex-shrink-0">
+            <p class="text-[10px] font-semibold tracking-widest uppercase" style="color: #f59e0b;">Frecuentes</p>
+        </div>
+    </div>
+    @endif
+
     @foreach($chapters as $ch)
         @php
             $color = $chapterColors[$ch['key']] ?? $chapterColors['system'];
@@ -415,7 +554,14 @@
                 <nav class="flex-1 overflow-y-auto py-2 sidebar-scrollbar notebook-lines-light">
                     @foreach($chapterItems as $item)
                         @if(isset($item['divider']) && $item['divider'])
-                            <div class="mx-4 my-1.5 border-t border-zinc-300/50"></div>
+                            @if(isset($item['label']))
+                                <div class="mx-4 mt-3 mb-1 flex items-center gap-2">
+                                    <span class="text-[9px] font-semibold tracking-wider uppercase text-zinc-400 whitespace-nowrap">{{ $item['label'] }}</span>
+                                    <div class="flex-1 border-t border-zinc-300/40"></div>
+                                </div>
+                            @else
+                                <div class="mx-4 my-1.5 border-t border-zinc-300/50"></div>
+                            @endif
                         @elseif(isset($item['section_header']) && $item['section_header'])
                             <p class="px-4 pt-3 pb-1 text-[10px] font-bold tracking-widest uppercase"
                                style="color: {{ $color['accent'] }}; opacity: 0.75;">{{ $item['label'] }}</p>
@@ -443,6 +589,14 @@
                                     <span class="px-1.5 py-0.5 text-[9px] font-bold bg-emerald-100 text-emerald-600 rounded-full whitespace-nowrap">Nuevo</span>
                                 @elseif($item['active'] ?? false)
                                     <div class="w-1.5 h-1.5 rounded-full flex-shrink-0" style="background: {{ $color['accent'] }};"></div>
+                                @endif
+                                @if($user->role === 'producer')
+                                    <span @click.prevent.stop="togglePin('{{ route($item['route']) }}', {{ \Illuminate\Support\Js::from($item['label']) }})"
+                                          class="flex-shrink-0 w-5 h-5 flex items-center justify-center cursor-pointer transition-all duration-150"
+                                          :class="isPinned('{{ route($item['route']) }}') ? 'text-amber-400' : 'text-zinc-300 opacity-0 group-hover:opacity-100 hover:text-amber-400'"
+                                          title="Añadir a frecuentes">
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                    </span>
                                 @endif
                             </a>
 
@@ -604,7 +758,14 @@
                         <div class="ml-4 border-l pl-3" style="border-color: {{ $color['accent'] }}50;">
                             @foreach($chItems as $item)
                                 @if(isset($item['divider']) && $item['divider'])
-                                    <div class="my-1 border-t border-white/10"></div>
+                                    @if(isset($item['label']))
+                                        <div class="mx-1 mt-2.5 mb-1 flex items-center gap-2">
+                                            <span class="text-[9px] font-semibold tracking-wider uppercase text-white/35 whitespace-nowrap">{{ $item['label'] }}</span>
+                                            <div class="flex-1 border-t border-white/10"></div>
+                                        </div>
+                                    @else
+                                        <div class="my-1 border-t border-white/10"></div>
+                                    @endif
                                 @elseif(isset($item['section_header']) && $item['section_header'])
                                     <p class="px-3 pt-2.5 pb-0.5 text-[9px] font-bold tracking-widest uppercase"
                                        style="color: {{ $color['accent'] }}; opacity: 0.75;">{{ $item['label'] }}</p>
@@ -653,6 +814,68 @@
             @endif
         </div>{{-- /panel --}}
     </div>{{-- /mobile drawer --}}
+
+    {{-- ═══════════════════ CMD+K SEARCH OVERLAY ═══════════════════ --}}
+    <div x-show="showCmdk" x-cloak class="fixed inset-0 z-[100] flex items-start justify-center pt-[15vh]"
+         x-transition:enter="transition ease-out duration-150"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-100"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0">
+
+        {{-- Backdrop --}}
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="closeCmdk()"></div>
+
+        {{-- Dialog --}}
+        <div class="relative w-full max-w-lg mx-4 bg-white rounded-2xl shadow-2xl ring-1 ring-zinc-200 overflow-hidden"
+             x-transition:enter="transition ease-out duration-150"
+             x-transition:enter-start="opacity-0 scale-95 translate-y-2"
+             x-transition:enter-end="opacity-100 scale-100 translate-y-0">
+
+            {{-- Input --}}
+            <div class="flex items-center gap-3 px-4 border-b border-zinc-200">
+                <flux:icon icon="magnifying-glass" class="w-5 h-5 text-zinc-400 flex-shrink-0" />
+                <input type="text"
+                       x-ref="cmdkInput"
+                       x-model="cmdkQuery"
+                       @keydown.down.prevent="cmdkDown()"
+                       @keydown.up.prevent="cmdkUp()"
+                       @keydown.enter.prevent="cmdkEnter()"
+                       placeholder="Buscar sección..."
+                       class="flex-1 py-4 text-sm bg-transparent border-0 outline-none text-zinc-900 placeholder:text-zinc-400 focus:ring-0">
+                <kbd class="px-1.5 py-0.5 text-[10px] font-medium bg-zinc-100 text-zinc-500 rounded border border-zinc-200">ESC</kbd>
+            </div>
+
+            {{-- Results --}}
+            <div class="max-h-80 overflow-y-auto py-2">
+                <template x-for="(item, idx) in cmdkFiltered" :key="item.href">
+                    <a :href="item.href"
+                       @click.prevent="cmdkGo(item.href)"
+                       @mouseenter="cmdkSelected = idx"
+                       class="flex items-center gap-3 px-4 py-2.5 mx-2 rounded-xl text-sm transition-colors cursor-pointer"
+                       :class="cmdkSelected === idx ? 'bg-green-50 text-green-900' : 'text-zinc-600 hover:bg-zinc-50'">
+                        <span class="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                              :class="cmdkSelected === idx ? 'bg-green-500' : 'bg-zinc-300'"></span>
+                        <span class="flex-1 font-medium" x-text="item.label"></span>
+                        <span class="text-[11px] text-zinc-400" x-text="item.chapter"></span>
+                    </a>
+                </template>
+                <template x-if="cmdkFiltered.length === 0">
+                    <div class="px-4 py-8 text-center text-sm text-zinc-400">
+                        Sin resultados para "<span x-text="cmdkQuery"></span>"
+                    </div>
+                </template>
+            </div>
+
+            {{-- Footer --}}
+            <div class="px-4 py-2 border-t border-zinc-100 flex items-center gap-4 text-[11px] text-zinc-400">
+                <span class="flex items-center gap-1"><kbd class="px-1 py-0.5 bg-zinc-100 rounded text-[10px]">&uarr;&darr;</kbd> navegar</span>
+                <span class="flex items-center gap-1"><kbd class="px-1 py-0.5 bg-zinc-100 rounded text-[10px]">&crarr;</kbd> ir</span>
+                <span class="flex items-center gap-1"><kbd class="px-1 py-0.5 bg-zinc-100 rounded text-[10px]">esc</kbd> cerrar</span>
+            </div>
+        </div>
+    </div>
 
 </div>
 

@@ -16,6 +16,7 @@ class ViticulturistMenu
         $menu['main'] = [
             ['icon' => 'home',         'label' => 'Dashboard',      'route' => 'viticulturist.dashboard',           'active' => request()->routeIs('viticulturist.dashboard')],
             ['icon' => 'calendar-days','label' => 'Calendario',     'route' => 'viticulturist.calendar',            'active' => request()->routeIs('viticulturist.calendar')],
+            ['icon' => 'bolt',         'label' => 'Entrada Rápida', 'route' => 'viticulturist.quick-entry',         'active' => request()->routeIs('viticulturist.quick-entry')],
         ];
 
         // ── Campaña ───────────────────────────────────────────────────────────
@@ -24,8 +25,8 @@ class ViticulturistMenu
             ['icon' => 'folder-open',             'label' => 'Documentos de Campaña', 'route' => 'viticulturist.campaign-documents.index', 'active' => request()->routeIs('viticulturist.campaign-documents.*')],
             ['icon' => 'check-badge',             'label' => 'Firma y Cierre',        'route' => 'viticulturist.campaign-sign.index',       'active' => request()->routeIs('viticulturist.campaign-sign.*')],
             ['divider' => true],
-            ['icon' => 'queue-list',              'label' => 'Plan de Trabajos',         'route' => 'viticulturist.planned-works.index',       'active' => request()->routeIs('viticulturist.planned-works.*'), 'new' => true],
-            ['icon' => 'chart-bar-square',        'label' => 'Comparativa de Campañas', 'route' => 'viticulturist.campaign-comparison',        'active' => request()->routeIs('viticulturist.campaign-comparison'), 'new' => true],
+            ['icon' => 'queue-list',              'label' => 'Plan de Trabajos',         'route' => 'viticulturist.planned-works.index',       'active' => request()->routeIs('viticulturist.planned-works.*')],
+            ['icon' => 'chart-bar-square',        'label' => 'Comparativa de Campañas', 'route' => 'viticulturist.campaign-comparison',        'active' => request()->routeIs('viticulturist.campaign-comparison')],
         ];
 
         // ── Relación con Bodega ───────────────────────────────────────────────
@@ -77,7 +78,7 @@ class ViticulturistMenu
             ['icon' => 'cloud',             'label' => 'Meteorología',        'route' => 'viticulturist.meteorology.index',       'active' => request()->routeIs('viticulturist.meteorology*')],
             ['icon' => 'viewfinder-circle', 'label' => 'Entorno de Parcelas', 'route' => 'viticulturist.plot-environments.index', 'active' => request()->routeIs('viticulturist.plot-environments.*')],
             ['divider' => true],
-            ['icon' => 'beaker',            'label' => 'Análisis de Suelo',   'route' => 'viticulturist.soil-analyses.index',     'active' => request()->routeIs('viticulturist.soil-analyses.*'), 'new' => true],
+            ['icon' => 'beaker',            'label' => 'Análisis de Suelo',   'route' => 'viticulturist.soil-analyses.index',     'active' => request()->routeIs('viticulturist.soil-analyses.*')],
         ];
 
         // ── Recursos ──────────────────────────────────────────────────────────
@@ -99,7 +100,7 @@ class ViticulturistMenu
             ['icon' => 'users',                  'label' => 'Clientes',                 'route' => 'viticulturist.clients.index',                 'active' => request()->routeIs('viticulturist.clients.*')],
             ['divider' => true],
             ['icon' => 'presentation-chart-bar', 'label' => 'Estadísticas Financieras', 'route' => 'viticulturist.financial-stats',               'active' => request()->routeIs('viticulturist.financial-stats')],
-            ['icon' => 'document-check',         'label' => 'VeriFactu',                'route' => 'viticulturist.verifactu.index',               'active' => request()->routeIs('viticulturist.verifactu*'), 'wip' => true, 'new' => true],
+            ['icon' => 'document-check',         'label' => 'VeriFactu',                'route' => 'viticulturist.verifactu.index',               'active' => request()->routeIs('viticulturist.verifactu*'), 'wip' => true],
         ];
 
         // ── Rail bottom ───────────────────────────────────────────────────────
@@ -118,17 +119,19 @@ class ViticulturistMenu
     {
         return [
             ['icon' => 'book-open',          'label' => 'Cuaderno Digital',       'route' => "{$prefix}.digital-notebook",                          'active' => request()->routeIs("{$prefix}.digital-notebook") && !request()->routeIs("{$prefix}.digital-notebook.*")],
-            ['divider' => true],
+            ['divider' => true, 'label' => 'Día a día'],
             ['icon' => 'shield-exclamation', 'label' => 'Tratamientos',           'route' => "{$prefix}.digital-notebook.treatment.index",          'active' => request()->routeIs("{$prefix}.digital-notebook.treatment.*")],
             ['icon' => 'funnel',             'label' => 'Fertilizaciones',        'route' => "{$prefix}.digital-notebook.fertilization.index",      'active' => request()->routeIs("{$prefix}.digital-notebook.fertilization.*")],
             ['icon' => 'arrows-pointing-in', 'label' => 'Riegos',                 'route' => "{$prefix}.digital-notebook.irrigation.index",         'active' => request()->routeIs("{$prefix}.digital-notebook.irrigation.*")],
             ['icon' => 'wrench-screwdriver', 'label' => 'Labores Culturales',     'route' => "{$prefix}.digital-notebook.cultural.index",           'active' => request()->routeIs("{$prefix}.digital-notebook.cultural.*")],
+            ['divider' => true, 'label' => 'Seguimiento'],
             ['icon' => 'eye',                'label' => 'Observaciones',          'route' => "{$prefix}.digital-notebook.observation.index",        'active' => request()->routeIs("{$prefix}.digital-notebook.observation.*")],
             ['icon' => 'sun',                'label' => 'Fenología',              'route' => "{$prefix}.phenology.index",                           'active' => request()->routeIs("{$prefix}.phenology.*")],
+            ['divider' => true, 'label' => 'Ciclo'],
             ['icon' => 'scissors',           'label' => 'Podas',                  'route' => "{$prefix}.digital-notebook.pruning.index",            'active' => request()->routeIs("{$prefix}.digital-notebook.pruning.*")],
             ['icon' => 'archive-box',        'label' => 'Post-Vendimia',          'route' => "{$prefix}.digital-notebook.post-harvest.index",       'active' => request()->routeIs("{$prefix}.digital-notebook.post-harvest.*")],
             ['icon' => 'chart-bar-square',   'label' => 'Rendimientos Estimados', 'route' => "{$prefix}.digital-notebook.estimated-yields.index",   'active' => request()->routeIs("{$prefix}.digital-notebook.estimated-yields.*")],
-            ['divider' => true],
+            ['divider' => true, 'label' => 'Cosecha'],
             ['icon' => 'archive-box-arrow-down', 'label' => $harvestLabel, 'route' => "{$prefix}.harvests.index", 'active' => request()->routeIs("{$prefix}.harvests.*")],
         ];
     }
@@ -141,7 +144,7 @@ class ViticulturistMenu
         return [
             ['icon' => 'chart-bar',  'label' => 'Cumplimiento Cuaderno',   'route' => "{$prefix}.pac-compliance",              'active' => request()->routeIs("{$prefix}.pac-compliance")],
             ['icon' => 'bug-ant',    'label' => 'Gestión de Plagas',       'route' => "{$prefix}.pest-management.index",       'active' => request()->routeIs("{$prefix}.pest-management.*")],
-            ['icon' => 'bell-alert', 'label' => 'Alertas Fitosanitarias',  'route' => "{$prefix}.phytosanitary-alerts.index",  'active' => request()->routeIs("{$prefix}.phytosanitary-alerts.*"), 'new' => true],
+            ['icon' => 'bell-alert', 'label' => 'Alertas Fitosanitarias',  'route' => "{$prefix}.phytosanitary-alerts.index",  'active' => request()->routeIs("{$prefix}.phytosanitary-alerts.*")],
         ];
     }
 
@@ -153,12 +156,13 @@ class ViticulturistMenu
         return [
             ['icon' => 'clipboard-document-check', 'label' => 'Análisis de Residuos',      'route' => "{$prefix}.residue-analyses.index",       'active' => request()->routeIs("{$prefix}.residue-analyses.*")],
             ['icon' => 'trash',                    'label' => 'Gestión de Residuos',       'route' => "{$prefix}.residue-managements.index",    'active' => request()->routeIs("{$prefix}.residue-managements.*")],
+            ['icon' => 'archive-box-x-mark',       'label' => 'Envases Fitosanitarios',    'route' => "{$prefix}.container-returns.index",      'active' => request()->routeIs("{$prefix}.container-returns.*")],
+            ['divider' => true, 'label' => 'Consumos'],
             ['icon' => 'bolt',                     'label' => 'Consumo Energético',        'route' => "{$prefix}.energy-usages.index",          'active' => request()->routeIs("{$prefix}.energy-usages.*")],
             ['icon' => 'academic-cap',             'label' => 'Registro de Agua',          'route' => "{$prefix}.water-concessions.index",      'active' => request()->routeIs("{$prefix}.water-concessions.*")],
             ['icon' => 'calculator',               'label' => 'Plan de Fertilización',     'route' => "{$prefix}.fertilization-plans.index",    'active' => request()->routeIs("{$prefix}.fertilization-plans.*")],
-            ['icon' => 'archive-box-x-mark',       'label' => 'Envases Fitosanitarios',    'route' => "{$prefix}.container-returns.index",      'active' => request()->routeIs("{$prefix}.container-returns.*")],
-            ['divider' => true],
-            ['icon' => 'sparkles',                 'label' => 'Biodiversidad y Cubiertas', 'route' => "{$prefix}.biodiversity-records.index",   'active' => request()->routeIs("{$prefix}.biodiversity-records.*"), 'new' => true],
+            ['divider' => true, 'label' => 'Ecosistema'],
+            ['icon' => 'sparkles',                 'label' => 'Biodiversidad y Cubiertas', 'route' => "{$prefix}.biodiversity-records.index",   'active' => request()->routeIs("{$prefix}.biodiversity-records.*")],
         ];
     }
 
@@ -170,7 +174,7 @@ class ViticulturistMenu
         return [
             ['icon' => 'inbox-arrow-down',   'label' => 'Declaración de Vendimia',  'route' => "{$prefix}.harvest-declarations.index", 'active' => request()->routeIs("{$prefix}.harvest-declarations.*")],
             ['icon' => 'cube-transparent',   'label' => 'Subproductos Vendimia',    'route' => "{$prefix}.harvest-byproducts.index",   'active' => request()->routeIs("{$prefix}.harvest-byproducts.*")],
-            ['icon' => 'arrow-trending-up',  'label' => 'Trazabilidad de Uva',      'route' => "{$prefix}.grape-traceability",         'active' => request()->routeIs("{$prefix}.grape-traceability"), 'new' => true],
+            ['icon' => 'arrow-trending-up',  'label' => 'Trazabilidad de Uva',      'route' => "{$prefix}.grape-traceability",         'active' => request()->routeIs("{$prefix}.grape-traceability")],
             ['divider' => true],
             ['icon' => 'star',               'label' => 'Certificaciones y Sellos', 'route' => "{$prefix}.certifications.index",       'active' => request()->routeIs("{$prefix}.certifications.*")],
             ['icon' => 'arrow-up-tray',      'label' => 'Exportaciones CUE',        'route' => "{$prefix}.cue-exports.index",          'active' => request()->routeIs("{$prefix}.cue-exports.*")],
@@ -227,7 +231,7 @@ class ViticulturistMenu
             ['icon' => 'user',            'label' => 'Asesorías Técnicas',          'route' => "{$prefix}.advisory-memberships.index",      'active' => request()->routeIs("{$prefix}.advisory-memberships.*")],
             ['icon' => 'identification',  'label' => 'Aplicadores ROPO',            'route' => "{$prefix}.field-applicators.index",         'active' => request()->routeIs("{$prefix}.field-applicators.*")],
             ['icon' => 'cog-8-tooth',     'label' => 'Equipos ITB/ITEA',            'route' => "{$prefix}.field-equipment.index",           'active' => request()->routeIs("{$prefix}.field-equipment.*")],
-            ['icon' => 'lifebuoy',        'label' => 'Seguros Agrarios',            'route' => "{$prefix}.agri-insurance.index",            'active' => request()->routeIs("{$prefix}.agri-insurance*"), 'new' => true],
+            ['icon' => 'lifebuoy',        'label' => 'Seguros Agrarios',            'route' => "{$prefix}.agri-insurance.index",            'active' => request()->routeIs("{$prefix}.agri-insurance*")],
         ];
     }
 

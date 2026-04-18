@@ -99,6 +99,9 @@ Route::middleware(['role:winery,producer'])
             Route::get('/containers/{container}/additives/create', \App\Livewire\Winery\Cellar\Containers\Additives\Create::class)->name('containers.additives.create');
             Route::get('/containers/{container}/additives/{additive}/edit', \App\Livewire\Winery\Cellar\Containers\Additives\Edit::class)->name('containers.additives.edit');
 
+            // ── Mantenimientos globales ───────────────────────────────────
+            Route::get('/container-maintenances', \App\Livewire\Winery\Cellar\Containers\MaintenanceGlobal::class)->name('container-maintenances.index');
+
             // ── Salas de bodega ───────────────────────────────────────────
             Route::get('/container-rooms', \App\Livewire\Winery\Cellar\ContainerRooms\Index::class)->name('container-rooms.index');
             Route::get('/container-rooms/create', \App\Livewire\Winery\Cellar\ContainerRooms\Create::class)->name('container-rooms.create');
@@ -196,6 +199,9 @@ Route::middleware(['role:winery,producer'])
         Route::get('/wine-losses', \App\Livewire\Winery\WineLosses\Index::class)->name('wine-losses.index');
         Route::get('/wine-losses/create', \App\Livewire\Winery\WineLosses\Create::class)->name('wine-losses.create');
         Route::get('/wine-losses/{loss}/edit', \App\Livewire\Winery\WineLosses\Edit::class)->name('wine-losses.edit');
+
+        // ── Aditivos Enológicos ───────────────────────────────────────
+        Route::get('/wine-additives', \App\Livewire\Winery\WineAdditives\Index::class)->name('wine-additives.index');
 
         // ── Inventario de insumos de bodega ───────────────────────────
         Route::get('/inventory', fn() => redirect()->route('winery.winery-supplies.index'))->name('inventory.index');
