@@ -58,7 +58,7 @@ class Index extends Component
         $plotsQuery = Plot::where('viticulturist_id', $userId)
             ->with([
                 'plantings' => fn ($q) => $q->with('grapeVariety:id,name')
-                    ->whereNull('removal_date')
+                    ->whereNull('uprooting_date')
                     ->orderBy('name'),
                 'latestRemoteSensing',
             ]);
