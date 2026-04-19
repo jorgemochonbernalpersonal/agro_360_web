@@ -2860,7 +2860,7 @@ class ProducerDemoSeeder_test extends Seeder
             $month   = $dayOff <= 30 ? 9 : 10;
             $day     = $dayOff <= 30 ? $dayOff : ($dayOff - 30);
             $weight  = round(mt_rand(300, 1400) + mt_rand(0, 9) / 10, 1);
-            $brix    = round(21.5 + ($pIdx * 0.3) + mt_rand(-5, 5) / 10, 1);
+            $brix    = round(21.5 + ($pIdx % 8) * 0.3 + mt_rand(-5, 5) / 10, 1);
             $baume   = round($brix * 0.55, 1);
             $ph      = round(3.28 + mt_rand(0, 15) / 100, 2);
             $acidity = round(5.3 + mt_rand(0, 12) / 10, 1);
