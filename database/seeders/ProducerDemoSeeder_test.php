@@ -1441,16 +1441,16 @@ class ProducerDemoSeeder_test extends Seeder
             $c25 => ['year' => 2025, 'invoiced' => true],
             $c26 => ['year' => 2026, 'invoiced' => false],
         ];
-        $serviceTypes = ['harvesting', 'treatment', 'pruning', 'analysis', 'soil_work', 'fertilization', 'irrigation', 'certification', 'consulting', 'transport'];
+        $serviceTypes = ['harvesting', 'treatment', 'pruning', 'analysis', 'soil_work', 'fertilization', 'irrigation', 'transport', 'other', 'other'];
         $companies    = [
             'Cuadrilla Pérez e Hijos', 'AgroService Canarias SL', 'Podas Atlánticas SL',
             'Laboratorio Agrícola Canario', 'Labores Agrícolas Guía SL', 'Nutrición Vegetal Canarias SL',
-            'Riegos Insulares SA', 'Agroasesores Canarias SL', 'Transporte Agrícola GC', 'TechAgro Canarias',
+            'Riegos Insulares SA', 'Transporte Agrícola GC', 'TechAgro Canarias', 'AgroConsult GC SL',
         ];
         $descriptions = [
             'Vendimia manual parcela #{p}', 'Tratamiento preventivo mildiu #{p}', 'Poda invierno parcela #{p}',
             'Análisis madurez + residuos #{p}', 'Laboreo entre líneas #{p}', 'Fertirrigación nitrogenada #{p}',
-            'Instalación/mantenimiento goteo #{p}', 'Certificación ecológica #{p}', 'Asesoría técnica campaña #{p}', 'Transporte materiales #{p}',
+            'Instalación/mantenimiento goteo #{p}', 'Transporte materiales parcela #{p}', 'Trabajos varios parcela #{p}', 'Servicios técnicos parcela #{p}',
         ];
 
         $i = 1;
