@@ -295,6 +295,67 @@ class ProducerDemoSeeder_test extends Seeder
             $this->createWineryAlerts($now);
         });
 
+        // 39. Plan de trabajos 2026
+        $this->step('Plan de trabajos 2026 (~28)', function () use ($now, $plotIds, $campaign2026Id) {
+            $this->createPlannedWorks($plotIds, $campaign2026Id, $now);
+        });
+
+        // 40. Recepciones bodega 2026 (batches + cosechas winery_id)
+        $this->step('Recepciones bodega 2026 (8 batches + 8 recepciones)', function () use ($now, $plantingIds, $campaign2026Id) {
+            $this->createWineryReceptions2026($plantingIds, $campaign2026Id, $now);
+        });
+
+        // 41. Vinos cosecha 2026
+        $wineIds2026 = [];
+        $this->step('Vinos cosecha 2026 (8 referencias)', function () use ($now, &$wineIds2026) {
+            $wineIds2026 = $this->createWines2026($now);
+        });
+
+        // 42. Lotes producto vintage 2026 (40)
+        $this->step('Lotes producto vintage 2026 (40)', function () use ($now, $wineIds2026) {
+            $this->createProductLots2026($wineIds2026, $now);
+        });
+
+        // 43. Análisis de suelo (24)
+        $this->step('Análisis de suelo (24: 8 parcelas × 3 campañas)', function () use ($now, $plotIds, $campaign2024Id, $campaign2025Id, $campaign2026Id) {
+            $this->createSoilAnalyses($plotIds, $campaign2024Id, $campaign2025Id, $campaign2026Id, $now);
+        });
+
+        // 44. Registros biodiversidad (24)
+        $this->step('Registros biodiversidad (24)', function () use ($now, $plotIds, $campaign2026Id) {
+            $this->createBiodiversityRecords($plotIds, $campaign2026Id, $now);
+        });
+
+        // 45. Alertas fitosanitarias (12)
+        $this->step('Alertas fitosanitarias (12)', function () use ($now) {
+            $this->createPhytosanitaryAlerts($now);
+        });
+
+        // 46. Previsiones cosecha (24)
+        $this->step('Previsiones cosecha (24: 8 plantaciones × 3 campañas)', function () use ($now, $plantingIds, $campaign2024Id, $campaign2025Id, $campaign2026Id) {
+            $this->createYieldForecasts($plantingIds, $campaign2024Id, $campaign2025Id, $campaign2026Id, $now);
+        });
+
+        // 47. Entregas + cosechas comercializadas 2026
+        $this->step('Entregas cosecha + comercializadas 2026 (~16)', function () use ($now, $plantingIds, $campaign2026Id) {
+            $this->createHarvestDeliveries($plantingIds, $campaign2026Id, $now);
+        });
+
+        // 48. Actividades extra — parcelas 8-32 (250)
+        $this->step('Actividades extra parcelas 8-32 (~250)', function () use ($now, $plotIds, $wvId, $campaign2026Id) {
+            $this->createExtraActivities($plotIds, $wvId, $campaign2026Id, $now);
+        });
+
+        // 49. Facturas producto vino 2026 (13)
+        $this->step('Facturas producto vino 2026 (13)', function () use ($now, $wineIds2026) {
+            $this->createProductInvoices($wineIds2026, $now);
+        });
+
+        // 50. Mantenimientos contenedores adicionales (10)
+        $this->step('Mantenimientos contenedores adicionales (10)', function () use ($now, $wineryContainerIds) {
+            $this->createExtraContainerMaintenances($wineryContainerIds, $now);
+        });
+
         $this->command->info('');
         $this->command->info('✅ ProducerDemoSeeder completado.');
         $this->command->info("   Producer: " . self::EMAIL);
@@ -528,6 +589,24 @@ class ProducerDemoSeeder_test extends Seeder
 
         // Clientes (después de invoices)
         DB::table('clients')->where('user_id', $uid)->delete();
+
+        // Plan de trabajos
+        DB::table('planned_works')->where('viticulturist_id', $uid)->delete();
+
+        // Recepciones bodega (harvests con winery_id)
+        DB::table('harvests')->where('winery_id', $uid)->delete();
+        // Batches recepción
+        DB::table('grape_reception_batches')->where('winery_id', $uid)->orWhere('viticulturist_id', $uid)->delete();
+        // Análisis de suelo
+        DB::table('soil_analyses')->where('viticulturist_id', $uid)->delete();
+        // Biodiversidad
+        DB::table('biodiversity_records')->where('viticulturist_id', $uid)->delete();
+        // Alertas fitosanitarias
+        DB::table('phytosanitary_alerts')->where('viticulturist_id', $uid)->delete();
+        // Previsiones cosecha
+        DB::table('winery_yield_forecasts')->where('winery_id', $uid)->orWhere('viticulturist_id', $uid)->delete();
+        // Entregas cosecha
+        DB::table('harvest_deliveries')->where('viticulturist_id', $uid)->delete();
     }
 
     // ─── 2. Productos fitosanitarios ──────────────────────────────────────────
@@ -837,7 +916,8 @@ class ProducerDemoSeeder_test extends Seeder
         foreach (array_slice($plotIds, 0, 4) as $i => $pid) {
             $aId = $act(['plot_id' => $pid, 'plot_planting_id' => $plantingIds[$i * 2], 'activity_type' => 'harvest', 'activity_date' => '2024-09-' . str_pad(8 + $i * 3, 2, '0', STR_PAD_LEFT), 'notes' => 'Vendimia manual.']);
             $weight = [800, 650, 550, 900][$i];
-            DB::table('harvests')->insert(['activity_id' => $aId, 'plot_planting_id' => $plantingIds[$i * 2], 'harvest_start_date' => '2024-09-' . str_pad(8 + $i * 3, 2, '0', STR_PAD_LEFT), 'total_weight' => $weight, 'brix_degree' => 22.0 + $i * 0.5, 'ph_level' => 3.35, 'acidity_level' => 5.8, 'status' => 'active', 'health_status' => 'sano', 'created_at' => $now, 'updated_at' => $now]);
+            $brix2024 = 22.0 + $i * 0.5;
+            DB::table('harvests')->insert(['activity_id' => $aId, 'plot_planting_id' => $plantingIds[$i * 2], 'harvest_start_date' => '2024-09-' . str_pad(8 + $i * 3, 2, '0', STR_PAD_LEFT), 'total_weight' => $weight, 'brix_degree' => $brix2024, 'baume_degree' => round($brix2024 * 0.55, 1), 'ph_level' => 3.35, 'acidity_level' => 5.8, 'price_per_kg' => 0.62, 'yield_per_hectare' => round($weight / 0.5, 1), 'total_value' => round($weight * 0.62, 2), 'status' => 'active', 'health_status' => 'sano', 'created_at' => $now, 'updated_at' => $now]);
         }
 
         // Post-vendimia
@@ -886,7 +966,8 @@ class ProducerDemoSeeder_test extends Seeder
         foreach (array_slice($plotIds, 0, 4) as $i => $pid) {
             $aId = $act(['plot_id' => $pid, 'plot_planting_id' => $plantingIds[$i * 2], 'activity_type' => 'harvest', 'activity_date' => '2025-09-' . str_pad(10 + $i * 3, 2, '0', STR_PAD_LEFT), 'notes' => 'Vendimia manual. Selección de racimos.']);
             $weight = [920, 780, 640, 1000][$i];
-            DB::table('harvests')->insert(['activity_id' => $aId, 'plot_planting_id' => $plantingIds[$i * 2], 'harvest_start_date' => '2025-09-' . str_pad(10 + $i * 3, 2, '0', STR_PAD_LEFT), 'total_weight' => $weight, 'brix_degree' => 22.5 + $i * 0.5, 'ph_level' => 3.35 + $i * 0.02, 'acidity_level' => 5.8 - $i * 0.1, 'status' => 'active', 'health_status' => 'sano', 'notes' => 'Uva sana.', 'created_at' => $now, 'updated_at' => $now]);
+            $brix2025 = 22.5 + $i * 0.5;
+            DB::table('harvests')->insert(['activity_id' => $aId, 'plot_planting_id' => $plantingIds[$i * 2], 'harvest_start_date' => '2025-09-' . str_pad(10 + $i * 3, 2, '0', STR_PAD_LEFT), 'total_weight' => $weight, 'brix_degree' => $brix2025, 'baume_degree' => round($brix2025 * 0.55, 1), 'ph_level' => 3.35 + $i * 0.02, 'acidity_level' => 5.8 - $i * 0.1, 'price_per_kg' => 0.65, 'yield_per_hectare' => round($weight / 0.5, 1), 'total_value' => round($weight * 0.65, 2), 'status' => 'active', 'health_status' => 'sano', 'notes' => 'Uva sana.', 'created_at' => $now, 'updated_at' => $now]);
         }
 
         // Post-vendimia
@@ -1154,7 +1235,9 @@ class ProducerDemoSeeder_test extends Seeder
                 'activity_date' => $date, 'notes' => $notes]);
             DB::table('harvests')->insert(['activity_id' => $aId, 'plot_planting_id' => $plantings[$idx],
                 'harvest_start_date' => $date, 'total_weight' => $weight, 'brix_degree' => $brix,
-                'ph_level' => $ph, 'acidity_level' => $acidity, 'status' => 'active',
+                'baume_degree' => round($brix * 0.55, 1), 'ph_level' => $ph, 'acidity_level' => $acidity,
+                'price_per_kg' => 0.68, 'yield_per_hectare' => round($weight / 0.5, 1),
+                'total_value' => round($weight * 0.68, 2), 'status' => 'active',
                 'health_status' => 'sano', 'notes' => $notes, 'created_at' => $now, 'updated_at' => $now]);
         }
         // 8 actividades
@@ -2166,6 +2249,532 @@ class ProducerDemoSeeder_test extends Seeder
         }
     }
 
+    // ─── 39. Plan de trabajos 2026 ────────────────────────────────────────────
+
+    private function createPlannedWorks(array $plotIds, int $campaignId, $now): void
+    {
+        $uid = self::PRODUCER_USER_ID;
+
+        // 8 plots: $plotIds[0..7]
+        $p = $plotIds;
+
+        $works = [
+            // ── Podas ──────────────────────────────────────────────────────────
+            ['plot' => 0, 'cat' => 'poda',         'pri' => 'alta',    'sta' => 'completada', 'title' => 'Poda de invierno — Parcela El Lomo',           'desc' => 'Poda en vaso. Carga ajustada 8-10 yemas/cepa.', 'start' => '2026-01-12', 'end' => '2026-01-13', 'comp' => '2026-01-13', 'notes' => 'Completada según plan.'],
+            ['plot' => 1, 'cat' => 'poda',         'pri' => 'alta',    'sta' => 'completada', 'title' => 'Poda de invierno — Parcela Las Tinajas',        'desc' => 'Tijera neumática. 6h trabajo.', 'start' => '2026-01-20', 'end' => '2026-01-21', 'comp' => '2026-01-21', 'notes' => null],
+            ['plot' => 2, 'cat' => 'poda',         'pri' => 'alta',    'sta' => 'completada', 'title' => 'Poda de invierno — Parcela Caidero Norte',      'desc' => 'Poda mixta Guyot.', 'start' => '2026-01-26', 'end' => '2026-01-27', 'comp' => '2026-01-27', 'notes' => null],
+            // ── Labores culturales ─────────────────────────────────────────────
+            ['plot' => 0, 'cat' => 'labor_cultural', 'pri' => 'media', 'sta' => 'completada', 'title' => 'Laboreo suelo — 1ª pasada primavera',           'desc' => 'Control de cubierta vegetal y aireación.', 'start' => '2026-03-10', 'end' => '2026-03-10', 'comp' => '2026-03-10', 'notes' => null],
+            ['plot' => 3, 'cat' => 'labor_cultural', 'pri' => 'media', 'sta' => 'completada', 'title' => 'Despunte y deshojado — Parcela Bandama',        'desc' => 'Mejora ventilación racimos. Reducir presión fúngica.', 'start' => '2026-06-15', 'end' => '2026-06-16', 'comp' => '2026-06-16', 'notes' => null],
+            ['plot' => 4, 'cat' => 'labor_cultural', 'pri' => 'baja',  'sta' => 'completada', 'title' => 'Aclareo de racimos — Parcela Tenteniguada',     'desc' => 'Reducción carga. Mejorar calidad uva.', 'start' => '2026-07-08', 'end' => '2026-07-08', 'comp' => '2026-07-08', 'notes' => null],
+            ['plot' => 5, 'cat' => 'labor_cultural', 'pri' => 'media', 'sta' => 'completada', 'title' => 'Laboreo otoñal — Parcela Montaña Alta',         'desc' => 'Aireación y preparación para abono.', 'start' => '2026-10-20', 'end' => '2026-10-20', 'comp' => '2026-10-20', 'notes' => null],
+            // ── Tratamientos ──────────────────────────────────────────────────
+            ['plot' => null, 'cat' => 'tratamiento', 'pri' => 'alta',   'sta' => 'completada', 'title' => 'Preventivo mildiu — 1ª aplicación',            'desc' => 'Cobre + azufre WG. Todas las parcelas.', 'start' => '2026-04-05', 'end' => '2026-04-05', 'comp' => '2026-04-05', 'notes' => 'Condiciones climáticas óptimas.'],
+            ['plot' => null, 'cat' => 'tratamiento', 'pri' => 'alta',   'sta' => 'completada', 'title' => 'Tratamiento oídio — 2ª aplicación',             'desc' => 'Azufre mojable 80%. Temperatura < 28°C.', 'start' => '2026-05-18', 'end' => '2026-05-18', 'comp' => '2026-05-19', 'notes' => null],
+            ['plot' => null, 'cat' => 'tratamiento', 'pri' => 'urgente','sta' => 'completada', 'title' => 'Tratamiento Botrytis preventivo',               'desc' => 'Cierre de racimos. Fenhexamid.', 'start' => '2026-07-25', 'end' => '2026-07-25', 'comp' => '2026-07-26', 'notes' => 'Aplicado un día después por lluvia.'],
+            ['plot' => null, 'cat' => 'tratamiento', 'pri' => 'alta',   'sta' => 'completada', 'title' => 'Tratamiento post-vendimia heridas poda verde',  'desc' => 'Pasta fungicida en cortes. Prevención excoriosis.', 'start' => '2026-10-05', 'end' => '2026-10-06', 'comp' => '2026-10-06', 'notes' => null],
+            // ── Fertilizaciones ──────────────────────────────────────────────
+            ['plot' => 0, 'cat' => 'fertilizacion', 'pri' => 'alta',   'sta' => 'completada', 'title' => 'Abonado de fondo NPK — Parcela El Lomo',        'desc' => 'NPK 8-15-15, 300 kg/ha. Incorporado suelo.', 'start' => '2026-03-18', 'end' => '2026-03-18', 'comp' => '2026-03-18', 'notes' => null],
+            ['plot' => 1, 'cat' => 'fertilizacion', 'pri' => 'media',  'sta' => 'completada', 'title' => 'Fertirrigación nitrogenada — verano',           'desc' => 'Nitrato amónico diluido en riego goteo.', 'start' => '2026-06-28', 'end' => '2026-06-28', 'comp' => '2026-06-28', 'notes' => null],
+            ['plot' => 2, 'cat' => 'fertilizacion', 'pri' => 'media',  'sta' => 'completada', 'title' => 'Corrección potásica — premaduración',           'desc' => 'Sulfato potásico, 150 kg/ha. Envero.', 'start' => '2026-08-05', 'end' => '2026-08-05', 'comp' => '2026-08-05', 'notes' => null],
+            // ── Riegos ────────────────────────────────────────────────────────
+            ['plot' => 0, 'cat' => 'riego',        'pri' => 'media',   'sta' => 'completada', 'title' => 'Riego post-brotación — parcelas goteo',         'desc' => 'Dotación 800L. Reposición hídrica.', 'start' => '2026-05-02', 'end' => '2026-05-02', 'comp' => '2026-05-02', 'notes' => null],
+            ['plot' => 3, 'cat' => 'riego',        'pri' => 'alta',    'sta' => 'completada', 'title' => 'Riego de apoyo verano — Bandama',               'desc' => 'Periodo seco. 2×800L semana.', 'start' => '2026-07-10', 'end' => '2026-07-10', 'comp' => '2026-07-10', 'notes' => null],
+            ['plot' => 4, 'cat' => 'riego',        'pri' => 'alta',    'sta' => 'completada', 'title' => 'Riego premaduración — Tenteniguada',            'desc' => 'Cese riego 3 semanas antes vendimia.', 'start' => '2026-08-25', 'end' => '2026-08-25', 'comp' => '2026-08-25', 'notes' => null],
+            // ── Vendimia ──────────────────────────────────────────────────────
+            ['plot' => 0, 'cat' => 'vendimia',     'pri' => 'urgente', 'sta' => 'completada', 'title' => 'Vendimia — El Lomo (Listán Negro)',             'desc' => 'Recolección manual. Control brix > 23°.', 'start' => '2026-09-15', 'end' => '2026-09-15', 'comp' => '2026-09-15', 'notes' => '1.050 kg recogidos.'],
+            ['plot' => 1, 'cat' => 'vendimia',     'pri' => 'urgente', 'sta' => 'completada', 'title' => 'Vendimia — Las Tinajas (Marmajuelo)',           'desc' => 'Maduración tecnológica 22-23°Brix.', 'start' => '2026-09-17', 'end' => '2026-09-17', 'comp' => '2026-09-17', 'notes' => null],
+            ['plot' => 6, 'cat' => 'vendimia',     'pri' => 'urgente', 'sta' => 'completada', 'title' => 'Vendimia — Parcela Sur (Listán Blanco)',        'desc' => 'Selección racimos. Brix objetivo 24°.', 'start' => '2026-09-25', 'end' => '2026-09-25', 'comp' => '2026-09-25', 'notes' => '1.200 kg. Excelente cosecha.'],
+            // ── Observaciones ─────────────────────────────────────────────────
+            ['plot' => 0, 'cat' => 'observacion',  'pri' => 'media',   'sta' => 'completada', 'title' => 'Control estado sanitario — junio',              'desc' => 'Revisión síntomas mildiu/oídio pre-tratamiento.', 'start' => '2026-06-01', 'end' => '2026-06-01', 'comp' => '2026-06-01', 'notes' => 'Sin incidencias.'],
+            ['plot' => 2, 'cat' => 'observacion',  'pri' => 'media',   'sta' => 'completada', 'title' => 'Control madurez — control brix agosto',         'desc' => 'Seguimiento semanal grados brix hasta vendimia.', 'start' => '2026-08-12', 'end' => '2026-08-12', 'comp' => '2026-08-12', 'notes' => '22.0°Brix. Previsión vendimia 18 sep.'],
+            // ── Post-vendimia ─────────────────────────────────────────────────
+            ['plot' => 0, 'cat' => 'post_vendimia','pri' => 'media',   'sta' => 'completada', 'title' => 'Tratamiento post-vendimia — madera',            'desc' => 'Aplicación fungicida heridas poda verde.', 'start' => '2026-10-08', 'end' => '2026-10-08', 'comp' => '2026-10-08', 'notes' => null],
+            // ── Pendientes ────────────────────────────────────────────────────
+            ['plot' => null,'cat' => 'labor_cultural','pri' => 'media', 'sta' => 'pendiente', 'title' => 'Laboreo otoñal y enmienda cálcica',              'desc' => 'Ajuste pH suelo. Cal agrícola 200 kg/ha.', 'start' => '2026-11-15', 'end' => '2026-11-16', 'comp' => null, 'notes' => null],
+            ['plot' => 0, 'cat' => 'poda',         'pri' => 'alta',    'sta' => 'pendiente', 'title' => 'Poda invierno 2026/27 — El Lomo',                'desc' => 'Poda en vaso. Carga adaptada campaña anterior.', 'start' => '2027-01-10', 'end' => '2027-01-12', 'comp' => null, 'notes' => null],
+            ['plot' => 1, 'cat' => 'poda',         'pri' => 'alta',    'sta' => 'pendiente', 'title' => 'Poda invierno 2026/27 — Las Tinajas',            'desc' => 'Revisar estado sarmientos. Reducir carga si necesario.', 'start' => '2027-01-18', 'end' => '2027-01-20', 'comp' => null, 'notes' => null],
+            ['plot' => 2, 'cat' => 'fertilizacion','pri' => 'media',   'sta' => 'pendiente', 'title' => 'Abonado de fondo 2027 — Caidero Norte',          'desc' => 'NPK 8-15-15 según análisis suelo.', 'start' => '2027-03-10', 'end' => '2027-03-10', 'comp' => null, 'notes' => 'Pendiente análisis foliares.'],
+        ];
+
+        foreach ($works as $w) {
+            DB::table('planned_works')->insert([
+                'viticulturist_id' => $uid,
+                'campaign_id'      => $campaignId,
+                'plot_id'          => $w['plot'] !== null ? ($plotIds[$w['plot']] ?? null) : null,
+                'category'         => $w['cat'],
+                'title'            => $w['title'],
+                'description'      => $w['desc'],
+                'planned_date'     => $w['start'],
+                'planned_end_date' => $w['end'],
+                'priority'         => $w['pri'],
+                'status'           => $w['sta'],
+                'notes'            => $w['notes'],
+                'completed_at'     => $w['comp'],
+                'created_at'       => $now,
+                'updated_at'       => $now,
+            ]);
+        }
+    }
+
+    // ─── 40. Recepciones bodega 2026 ─────────────────────────────────────────
+
+    private function createWineryReceptions2026(array $plantingIds, int $campaignId, $now): void
+    {
+        $uid  = self::PRODUCER_USER_ID;
+        $data = [
+            // [date, planting_idx, weight, brix, baume, ph, acidity, notes]
+            ['2026-09-15', 0, 1050.0, 23.5, 12.9, 3.38, 5.6, 'Recepción Listán Negro. Excelente estado.'],
+            ['2026-09-17', 1,  870.0, 22.8, 12.5, 3.35, 5.9, 'Recepción Marmajuelo. Aromático.'],
+            ['2026-09-18', 2,  720.0, 22.0, 12.1, 3.32, 6.1, 'Recepción Moscatel. Concentrado.'],
+            ['2026-09-20', 3, 1100.0, 23.8, 13.1, 3.40, 5.5, 'Recepción Listán Negro parcela Bandama.'],
+            ['2026-09-22', 4,  680.0, 22.5, 12.4, 3.33, 5.8, 'Recepción Vijariego. Bajo rend., calidad alta.'],
+            ['2026-09-23', 5,  610.0, 21.8, 12.0, 3.30, 6.2, 'Recepción Tintilla. Parcela joven.'],
+            ['2026-09-25', 6, 1200.0, 24.0, 13.2, 3.42, 5.4, 'Recepción Listán Blanco. Gran cosecha.'],
+            ['2026-09-26', 7,  980.0, 23.2, 12.8, 3.36, 5.7, 'Recepción Malvasía Aromática.'],
+        ];
+
+        foreach ($data as [$date, $idx, $weight, $brix, $baume, $ph, $acidity, $notes]) {
+            $batchId = DB::table('grape_reception_batches')->insertGetId([
+                'winery_id'             => $uid,
+                'viticulturist_id'      => $uid,
+                'plot_planting_id'      => $plantingIds[$idx],
+                'campaign_id'           => $campaignId,
+                'vintage_year'          => 2026,
+                'total_weight_kg'       => $weight,
+                'designation_of_origin' => 'DO Gran Canaria',
+                'status'                => 'closed',
+                'notes'                 => $notes,
+                'created_at'            => $now,
+                'updated_at'            => $now,
+            ]);
+
+            DB::table('harvests')->insert([
+                'winery_id'          => $uid,
+                'batch_id'           => $batchId,
+                'plot_planting_id'   => $plantingIds[$idx],
+                'harvest_start_date' => $date,
+                'total_weight'       => $weight,
+                'brix_degree'        => $brix,
+                'baume_degree'       => $baume,
+                'ph_level'           => $ph,
+                'acidity_level'      => $acidity,
+                'price_per_kg'       => 0.68,
+                'yield_per_hectare'  => round($weight / 0.5, 1),
+                'total_value'        => round($weight * 0.68, 2),
+                'status'             => 'active',
+                'health_status'      => 'sano',
+                'notes'              => $notes,
+                'created_at'         => $now,
+                'updated_at'         => $now,
+            ]);
+        }
+    }
+
+    // ─── 41. Vinos cosecha 2026 ───────────────────────────────────────────────
+
+    private function createWines2026($now): array
+    {
+        $uid   = self::PRODUCER_USER_ID;
+        $wines = [
+            ['name' => 'Agaete Tinto Joven 2026',     'wine_type' => 'red',   'vintage' => 2026, 'variety' => 'Listán Negro 80%, Tintilla 20%',    'volume_liters' => 680.0,  'notes' => 'DO GC 2026. Tinto frutal joven.'],
+            ['name' => 'Agaete Tinto Selección 2026',  'wine_type' => 'red',   'vintage' => 2026, 'variety' => 'Listán Negro 70%, Baboso 30%',      'volume_liters' => 715.0,  'notes' => 'DO GC 2026. Selección parcela Bandama.'],
+            ['name' => 'Agaete Marmajuelo 2026',       'wine_type' => 'white', 'vintage' => 2026, 'variety' => 'Marmajuelo 100%',                   'volume_liters' => 565.0,  'notes' => 'DO GC 2026. Blanco varietal floral.'],
+            ['name' => 'Agaete Listán Blanco 2026',    'wine_type' => 'white', 'vintage' => 2026, 'variety' => 'Listán Blanco 100%',                'volume_liters' => 780.0,  'notes' => 'DO GC 2026. Gran cosecha 2026.'],
+            ['name' => 'Agaete Moscatel Natural 2026', 'wine_type' => 'white', 'vintage' => 2026, 'variety' => 'Moscatel 100%',                     'volume_liters' => 468.0,  'notes' => 'DO GC 2026. Dulce natural. Alta concentración.'],
+            ['name' => 'Agaete Malvasía 2026',         'wine_type' => 'white', 'vintage' => 2026, 'variety' => 'Malvasía Aromática 100%',           'volume_liters' => 637.0,  'notes' => 'DO GC 2026. Perfume floral atlántico.'],
+            ['name' => 'Agaete Vijariego 2026',        'wine_type' => 'white', 'vintage' => 2026, 'variety' => 'Vijariego Blanco 100%',             'volume_liters' => 442.0,  'notes' => 'DO GC 2026. Varietal atlántico seco.'],
+            ['name' => 'Agaete Rosado Tintilla 2026',  'wine_type' => 'rose',  'vintage' => 2026, 'variety' => 'Tintilla 100%',                     'volume_liters' => 396.0,  'notes' => 'DO GC 2026. Rosado de lágrima. Sangrado corto.'],
+        ];
+        $ids = [];
+        foreach ($wines as $w) {
+            $ids[] = DB::table('wines')->insertGetId(array_merge($w, ['user_id' => $uid, 'status' => 'in_progress', 'created_at' => $now, 'updated_at' => $now]));
+        }
+        return $ids;
+    }
+
+    // ─── 42. Lotes producto vintage 2026 ─────────────────────────────────────
+
+    private function createProductLots2026(array $wineIds, $now): void
+    {
+        $uid      = self::PRODUCER_USER_ID;
+        $wineData = [
+            // [wine_type, price_litro, price_75, price_375, price_caja]
+            ['tinto',  2.80, 8.50, 5.00, 48.45],
+            ['tinto',  3.20, 9.80, 5.90, 55.86],
+            ['blanco', 3.00, 9.00, 5.50, 51.30],
+            ['blanco', 2.90, 8.80, 5.20, 50.16],
+            ['blanco', 4.50, 14.0, 8.00, 79.80],
+            ['blanco', 3.80, 12.0, 6.50, 68.40],
+            ['blanco', 3.50, 11.0, 6.20, 62.70],
+            ['rosado', 3.20, 10.0, 5.80, 57.00],
+        ];
+
+        foreach ($wineIds as $i => $wineId) {
+            [$wtype, $pL, $p75, $p375, $pCaja] = $wineData[$i] ?? $wineData[0];
+
+            // Lot 1 — Granel (litros)
+            $q = 500.0; $s = 160.0;
+            DB::table('wine_lots')->insert(['user_id' => $uid, 'wine_id' => $wineId, 'name' => "Granel 2026 — Lot " . ($i + 1), 'vintage' => 2026, 'wine_type' => $wtype, 'quantity' => $q, 'initial_quantity' => $q, 'sold_quantity' => $s, 'available_quantity' => $q - $s, 'reserved_quantity' => 0, 'price_per_unit' => $pL, 'unit' => 'litros', 'alcohol' => 13.0, 'residual_sugar' => 2.5, 'total_acidity' => 5.8, 'archived' => false, 'created_at' => $now, 'updated_at' => $now]);
+
+            // Lot 2 — Botella 75cl
+            $q = 600.0; $s = 210.0; $r = 30.0;
+            DB::table('wine_lots')->insert(['user_id' => $uid, 'wine_id' => $wineId, 'name' => "Botella 75cl 2026 — Ref " . ($i + 1), 'vintage' => 2026, 'wine_type' => $wtype, 'quantity' => $q, 'initial_quantity' => $q, 'sold_quantity' => $s, 'available_quantity' => $q - $s - $r, 'reserved_quantity' => $r, 'price_per_unit' => $p75, 'unit' => 'botellas', 'bottle_format' => '75cl', 'units_per_case' => 6, 'alcohol' => 13.0, 'archived' => false, 'created_at' => $now, 'updated_at' => $now]);
+
+            // Lot 3 — Botella 37.5cl
+            $q = 300.0; $s = 90.0;
+            DB::table('wine_lots')->insert(['user_id' => $uid, 'wine_id' => $wineId, 'name' => "Botella 37.5cl 2026 — Ref " . ($i + 1), 'vintage' => 2026, 'wine_type' => $wtype, 'quantity' => $q, 'initial_quantity' => $q, 'sold_quantity' => $s, 'available_quantity' => $q - $s, 'reserved_quantity' => 0, 'price_per_unit' => $p375, 'unit' => 'botellas', 'bottle_format' => '37.5cl', 'units_per_case' => 12, 'alcohol' => 13.0, 'archived' => false, 'created_at' => $now, 'updated_at' => $now]);
+
+            // Lot 4 — Caja 6 botellas 75cl
+            $q = 100.0; $s = 38.0;
+            DB::table('wine_lots')->insert(['user_id' => $uid, 'wine_id' => $wineId, 'name' => "Caja 6×75cl 2026 — Ref " . ($i + 1), 'vintage' => 2026, 'wine_type' => $wtype, 'quantity' => $q, 'initial_quantity' => $q, 'sold_quantity' => $s, 'available_quantity' => $q - $s, 'reserved_quantity' => 0, 'price_per_unit' => $pCaja, 'unit' => 'cajas', 'units_per_case' => 6, 'alcohol' => 13.0, 'archived' => false, 'created_at' => $now, 'updated_at' => $now]);
+
+            // Lot 5 — Magnum 1.5L
+            $q = 120.0; $s = 32.0;
+            DB::table('wine_lots')->insert(['user_id' => $uid, 'wine_id' => $wineId, 'name' => "Magnum 1.5L 2026 — Ref " . ($i + 1), 'vintage' => 2026, 'wine_type' => $wtype, 'quantity' => $q, 'initial_quantity' => $q, 'sold_quantity' => $s, 'available_quantity' => $q - $s, 'reserved_quantity' => 0, 'price_per_unit' => round($p75 * 2 * 1.12, 2), 'unit' => 'botellas', 'bottle_format' => '1.5L', 'units_per_case' => 3, 'alcohol' => 13.0, 'archived' => false, 'created_at' => $now, 'updated_at' => $now]);
+        }
+    }
+
+    // ─── 43. Análisis de suelo ────────────────────────────────────────────────
+
+    private function createSoilAnalyses(array $plotIds, int $c2024, int $c2025, int $c2026, $now): void
+    {
+        $uid      = self::PRODUCER_USER_ID;
+        $labs     = ['SGS Servicios Analíticos', 'Laboratorio Agroalimentario Las Palmas', 'CIFA Canarias'];
+        $textures = ['franco-arcilloso', 'franco', 'franco-limoso', 'arcilloso-limoso', 'franco-arenoso'];
+        $campaigns = [$c2024 => 2024, $c2025 => 2025, $c2026 => 2026];
+
+        foreach (array_slice($plotIds, 0, 8) as $pi => $plotId) {
+            foreach ($campaigns as $cId => $year) {
+                DB::table('soil_analyses')->insert([
+                    'viticulturist_id'        => $uid,
+                    'plot_id'                 => $plotId,
+                    'campaign_id'             => $cId,
+                    'analysis_date'           => "{$year}-02-" . str_pad(10 + $pi * 2, 2, '0', STR_PAD_LEFT),
+                    'laboratory'              => $labs[$pi % 3],
+                    'sample_depth_cm'         => [30, 40, 50][$pi % 3],
+                    'ph'                      => round(6.2 + ($pi * 0.1), 1),
+                    'organic_matter'          => round(2.1 + ($pi * 0.15), 2),
+                    'nitrogen_total'          => round(0.12 + ($pi * 0.01), 3),
+                    'phosphorus'              => round(15 + $pi * 2.5, 1),
+                    'potassium'               => round(180 + $pi * 20, 1),
+                    'calcium'                 => round(1200 + $pi * 80, 1),
+                    'magnesium'               => round(85 + $pi * 8, 1),
+                    'texture_class'           => $textures[$pi % 5],
+                    'electrical_conductivity' => round(0.18 + ($pi * 0.02), 2),
+                    'limestone'               => round(8 + $pi * 1.5, 1),
+                    'notes'                   => "Análisis campaña {$year}. pH óptimo 6.2-6.8. Mat. orgánica adecuada.",
+                    'created_at'              => $now,
+                    'updated_at'              => $now,
+                ]);
+            }
+        }
+    }
+
+    // ─── 44. Registros biodiversidad ─────────────────────────────────────────
+
+    private function createBiodiversityRecords(array $plotIds, int $campaignId, $now): void
+    {
+        $uid   = self::PRODUCER_USER_ID;
+        $types = [
+            'flora'           => ['Presencia de plantas aromáticas nativas: romero, tomillo, lavanda silvestre.', 'Rosmarinus officinalis, Thymus vulgaris, Lavandula canariensis'],
+            'fauna'           => ['Avistamiento cernícalo vulgar. Especie indicadora de ecosistema saludable.', 'Falco tinnunculus, Columba livia, Sylvia melanocephala'],
+            'cubierta_vegetal' => ['Cubierta vegetal espontánea con gramíneas y leguminosas. BCAM 9 PAC.', 'Lolium perenne, Trifolium repens, Medicago sativa'],
+        ];
+        $months = [4, 6, 8];
+
+        foreach (array_slice($plotIds, 0, 8) as $pi => $plotId) {
+            foreach (array_values($types) as $ti => [$desc, $species]) {
+                $rtype = array_keys($types)[$ti];
+                DB::table('biodiversity_records')->insert([
+                    'viticulturist_id' => $uid,
+                    'plot_id'          => $plotId,
+                    'campaign_id'      => $campaignId,
+                    'record_type'      => $rtype,
+                    'description'      => $desc,
+                    'area_m2'          => round(120 + $pi * 35, 1),
+                    'species'          => $species,
+                    'record_date'      => '2026-0' . $months[$ti] . '-' . str_pad(10 + $pi, 2, '0', STR_PAD_LEFT),
+                    'notes'            => "Parcela {$pi}. Biodiversidad favorable.",
+                    'created_at'       => $now,
+                    'updated_at'       => $now,
+                ]);
+            }
+        }
+    }
+
+    // ─── 45. Alertas fitosanitarias ──────────────────────────────────────────
+
+    private function createPhytosanitaryAlerts($now): void
+    {
+        $uid    = self::PRODUCER_USER_ID;
+        $alerts = [
+            ['Alerta Mildiu — condiciones favorables infección', 'ESTACION_FITOPATOLOGICA', 'mildiu', 'alta', 'Gran Canaria Norte', 'Temperatura 18-22°C con HR >90%. Favorable para Plasmopara viticola.', 'Aplicar fungicida cúprico preventivo en parcelas de ladera.', '2026-04-02', '2026-05-15', true],
+            ['Alerta Oídio — presión moderada-alta', 'SERVICIO_SANIDAD_VEGETAL', 'oidio', 'media', 'Valle de Agaete', 'Condiciones cálidas y secas propicias para Erysiphe necator.', 'Azufre micronizado en días sin lluvia.', '2026-05-10', '2026-06-20', true],
+            ['Polilla del Racimo — vuelo activo', 'ESTACION_FITOPATOLOGICA', 'polilla', 'media', 'Gran Canaria', 'Capturas superan umbral 200 adultos/trampa/semana.', 'Bacillus thuringiensis en ecológico.', '2026-05-25', '2026-06-30', true],
+            ['Alerta Botrytis — humedad post-lluvia', 'SERVICIO_SANIDAD_VEGETAL', 'botrytis', 'alta', 'Gran Canaria Noreste', 'Período húmedo 3+ días. Riesgo botritis en cierre racimos.', 'Fenhexamid antes del cierre de racimos.', '2026-07-20', '2026-08-15', true],
+            ['Araña Roja — calor extremo verano', 'ESTACION_FITOPATOLOGICA', 'arana_roja', 'media', 'Medianías Sur GC', 'Temp. >35°C sostenidas favorecen Panonychus ulmi.', 'Revisar envés hojas semanalmente. Acaricida si >5/hoja.', '2026-07-01', '2026-08-31', false],
+            ['Excoriosis activa tras pedrisco', 'ESTACION_FITOPATOLOGICA', 'excoriosis', 'alta', 'Zona Interior GC', 'Daños mecánicos granizo. Alto riesgo Phomopsis viticola.', 'Pasta fungicida en heridas. Revisar sarmientos.', '2026-04-18', '2026-05-20', false],
+            ['Aviso helada tardía — abril', 'AEMET_CANARIAS', 'helada', 'urgente', 'Altitudes >700m GC', 'Descenso térmico puntual. Brotación avanzada en riesgo.', 'Velas antihelada o riego aspersión nocturno.', '2026-04-12', '2026-04-14', false],
+            ['Flavescencia Dorada — vigilancia preventiva', 'DGPIF_CANARIAS', 'flavescencia', 'baja', 'Gran Canaria', 'Sin detección oficial. Vigilancia obligatoria.', 'Inspeccionar síntomas: hojas en cucurucho, racimos secos.', '2026-03-01', '2026-11-30', true],
+            ['Cicadela — vector FD activo', 'SERVICIO_SANIDAD_VEGETAL', 'cicadela', 'media', 'Viñedos costeros', 'Capturas Scaphoideus titanus crecientes en red de trampas.', 'Insecticida autorizado en período vegetativo.', '2026-06-01', '2026-07-31', true],
+            ['Mildiu tardío — lluvias otoñales', 'ESTACION_FITOPATOLOGICA', 'mildiu', 'media', 'Gran Canaria Norte', 'Lluvias sept. Riesgo proteger cosecha tardía.', 'Preventivo en parcelas vendimia prevista >20 sep.', '2026-09-01', '2026-09-25', false],
+            ['Podredumbre ácida — ataque avispa', 'ESTACION_FITOPATOLOGICA', 'podredumbre_acida', 'alta', 'Valle de Agaete', 'Daños avispa aumentan infección levaduras ácidas.', 'Control plagas + inspección diaria cosecha tardía.', '2026-08-10', '2026-09-20', false],
+            ['Sequía severa — estrés hídrico crítico', 'CLAVERIE_CANARIAS', 'sequia', 'media', 'Medianías GC', 'Déficit hídrico >60% sobre media. Riesgo fitosanitario secundario.', 'Aumentar riego disponible. Priorizar parcelas jóvenes.', '2026-07-15', '2026-08-31', true],
+        ];
+
+        foreach ($alerts as [$title, $source, $type, $severity, $area, $desc, $recs, $date, $expiry, $active]) {
+            DB::table('phytosanitary_alerts')->insert([
+                'viticulturist_id' => $uid,
+                'title'            => $title,
+                'source'           => $source,
+                'alert_type'       => $type,
+                'severity'         => $severity,
+                'affected_area'    => $area,
+                'description'      => $desc,
+                'recommendations'  => $recs,
+                'alert_date'       => $date,
+                'expiry_date'      => $expiry,
+                'active'           => $active,
+                'created_at'       => $now,
+                'updated_at'       => $now,
+            ]);
+        }
+    }
+
+    // ─── 46. Previsiones de cosecha ───────────────────────────────────────────
+
+    private function createYieldForecasts(array $plantingIds, int $c2024, int $c2025, int $c2026, $now): void
+    {
+        $uid         = self::PRODUCER_USER_ID;
+        $baseKg      = [850, 900, 780, 1050, 720, 650, 1100, 950];
+        $campaigns   = [
+            $c2024 => ['year' => 2024, 'mult' => 0.88, 'date' => '2024-07-15', 'status' => 'confirmed'],
+            $c2025 => ['year' => 2025, 'mult' => 0.95, 'date' => '2025-07-20', 'status' => 'confirmed'],
+            $c2026 => ['year' => 2026, 'mult' => 1.00, 'date' => '2026-07-18', 'status' => 'confirmed'],
+        ];
+
+        foreach ($campaigns as $cId => $c) {
+            foreach (array_slice($plantingIds, 0, 8) as $pi => $plantingId) {
+                DB::table('winery_yield_forecasts')->insert([
+                    'winery_id'        => $uid,
+                    'viticulturist_id' => $uid,
+                    'plot_planting_id' => $plantingId,
+                    'campaign_id'      => $cId,
+                    'vintage_year'     => $c['year'],
+                    'estimated_kg'     => round($baseKg[$pi] * $c['mult'], 1),
+                    'estimation_date'  => $c['date'],
+                    'status'           => $c['status'],
+                    'notes'            => "Previsión campaña {$c['year']}. Basada en histórico y estado vegetativo.",
+                    'created_at'       => $now,
+                    'updated_at'       => $now,
+                ]);
+            }
+        }
+    }
+
+    // ─── 47. Entregas + cosechas comercializadas 2026 ────────────────────────
+
+    private function createHarvestDeliveries(array $plantingIds, int $campaignId, $now): void
+    {
+        $uid  = self::PRODUCER_USER_ID;
+        $data = [
+            ['2026-09-15', 0, 1050.0, 0.68, 'Bodega Propia Agaete', '35.P02318/C', 'PROD-2026-001'],
+            ['2026-09-17', 1,  870.0, 0.68, 'Bodega Propia Agaete', '35.P02318/C', 'PROD-2026-002'],
+            ['2026-09-18', 2,  720.0, 0.65, 'Bodega Propia Agaete', '35.P02318/C', 'PROD-2026-003'],
+            ['2026-09-20', 3, 1100.0, 0.70, 'Bodega Propia Agaete', '35.P02318/C', 'PROD-2026-004'],
+            ['2026-09-22', 4,  680.0, 0.65, 'Bodega Propia Agaete', '35.P02318/C', 'PROD-2026-005'],
+            ['2026-09-23', 5,  610.0, 0.62, 'Bodega Propia Agaete', '35.P02318/C', 'PROD-2026-006'],
+            ['2026-09-25', 6, 1200.0, 0.70, 'Bodega Propia Agaete', '35.P02318/C', 'PROD-2026-007'],
+            ['2026-09-26', 7,  980.0, 0.68, 'Bodega Propia Agaete', '35.P02318/C', 'PROD-2026-008'],
+        ];
+        $brixData  = [23.5, 22.8, 22.0, 23.8, 22.5, 21.8, 24.0, 23.2];
+        $baumeData = [12.9, 12.5, 12.1, 13.1, 12.4, 12.0, 13.2, 12.8];
+
+        // Lookup field harvest IDs for 2026 (activity-based)
+        $harvestIds = DB::table('harvests as h')
+            ->join('agricultural_activities as aa', 'h.activity_id', '=', 'aa.id')
+            ->where('aa.viticulturist_id', $uid)
+            ->where('aa.campaign_id', $campaignId)
+            ->where('aa.activity_type', 'harvest')
+            ->orderBy('h.id')
+            ->pluck('h.id')
+            ->values();
+
+        foreach ($data as $i => [$date, $idx, $weight, $price, $buyer, $rega, $ticket]) {
+            $total = round($weight * $price, 2);
+
+            DB::table('harvest_deliveries')->insert([
+                'viticulturist_id'      => $uid,
+                'plot_planting_id'      => $plantingIds[$idx] ?? null,
+                'harvest_id'            => $harvestIds[$i] ?? null,
+                'vintage_year'          => 2026,
+                'buyer_name'            => $buyer,
+                'delivery_date'         => $date,
+                'delivered_kg'          => $weight,
+                'price_per_kg'          => $price,
+                'total_price'           => $total,
+                'ticket_number'         => $ticket,
+                'destination_rega_code' => $rega,
+                'status'                => 'matched',
+                'baume_degree'          => $baumeData[$i],
+                'brix_degree'           => $brixData[$i],
+                'notes'                 => 'Uva propia. Entregada en bodega propia.',
+                'created_at'            => $now,
+                'updated_at'            => $now,
+            ]);
+
+            if ($harvestIds->has($i)) {
+                DB::table('marketed_harvests')->insert([
+                    'harvest_id'         => $harvestIds[$i],
+                    'campaign_id'        => $campaignId,
+                    'viticulturist_id'   => $uid,
+                    'delivery_date'      => $date,
+                    'quantity_kg'        => $weight,
+                    'destination_type'   => 'own_winery',
+                    'buyer_name'         => $buyer,
+                    'buyer_rega_code'    => $rega,
+                    'transport_document' => $ticket,
+                    'price_per_kg'       => $price,
+                    'total_value'        => $total,
+                    'active'             => true,
+                    'created_at'         => $now,
+                    'updated_at'         => $now,
+                ]);
+            }
+        }
+    }
+
+    // ─── 48. Actividades extra — parcelas 8-32 ───────────────────────────────
+
+    private function createExtraActivities(array $plotIds, int $wvId, int $campaignId, $now): void
+    {
+        $uid      = self::PRODUCER_USER_ID;
+        $schedule = [
+            ['phytosanitary_treatment', '2026-04-08',  'Preventivo mildiu 1ª aplicación.'],
+            ['cultural',                '2026-04-22',  'Laboreo primavera. Control cubierta vegetal.'],
+            ['irrigation',             '2026-05-18',  'Riego post-brotación. Reposición hídrica.'],
+            ['observation',            '2026-06-03',  'Seguimiento estado fitosanitario.'],
+            ['phytosanitary_treatment', '2026-06-20',  'Tratamiento oídio. Azufre mojable.'],
+            ['irrigation',             '2026-07-08',  'Riego apoyo verano. Sequía activa.'],
+            ['observation',            '2026-07-25',  'Control madurez y estado sanitario.'],
+            ['irrigation',             '2026-08-08',  'Riego pre-maduración.'],
+            ['observation',            '2026-08-30',  'Toma de muestras para análisis brix.'],
+            ['cultural',                '2026-10-28',  'Laboreo otoñal. Aireación suelo.'],
+        ];
+
+        foreach (array_slice($plotIds, 8, 25) as $pi => $plotId) {
+            foreach ($schedule as [$type, $date, $notes]) {
+                DB::table('agricultural_activities')->insert([
+                    'viticulturist_id'         => $uid,
+                    'winery_viticulturist_id'  => $wvId,
+                    'campaign_id'              => $campaignId,
+                    'plot_id'                  => $plotId,
+                    'plot_planting_id'         => null,
+                    'activity_type'            => $type,
+                    'activity_date'            => $date,
+                    'is_locked'                => false,
+                    'notes'                    => $notes . " Parcela idx {$pi}.",
+                    'created_at'               => $now,
+                    'updated_at'               => $now,
+                ]);
+            }
+        }
+    }
+
+    // ─── 49. Facturas producto vino 2026 ─────────────────────────────────────
+
+    private function createProductInvoices(array $wineIds2026, $now): void
+    {
+        $uid     = self::PRODUCER_USER_ID;
+        $clients = DB::table('clients')->where('user_id', $uid)->pluck('id');
+        if ($clients->isEmpty()) return;
+
+        $invoiceData = [
+            ['wine_sale',    '2026-03-15', 4800.00, 0, 'Venta tinto joven 2026 — mercado canario'],
+            ['wine_sale',    '2026-04-01', 3200.00, 1, 'Venta Marmajuelo 2026 — tiendas especializadas'],
+            ['wine_sale',    '2026-04-20', 2800.00, 2, 'Venta tinto selección 2026'],
+            ['wine_sale',    '2026-05-10', 5500.00, 3, 'Exportación 2026 — rosado y blanco'],
+            ['wine_sale',    '2026-05-25', 1950.00, 4, 'Venta Moscatel 2026 — restaurantes GC'],
+            ['wine_sale',    '2026-06-08', 3300.00, 0, 'Venta Malvasía 2026 — enotecas'],
+            ['wine_sale',    '2026-06-25', 2100.00, 1, 'Venta Vijariego 2026 — canal HORECA'],
+            ['wine_sale',    '2026-07-15', 4200.00, 2, 'Venta blancos 2026 — canal HORECA'],
+            ['wine_sale',    '2026-08-01', 6800.00, 3, 'Pedido gran formato exportación Península'],
+            ['wine_sale',    '2026-09-01', 3100.00, 4, 'Fin temporada — turismo enológico'],
+            ['harvest_sale', '2026-10-05', 2142.00, 0, 'Venta uva cosecha 2026 — parcelas extra'],
+            ['harvest_sale', '2026-10-12', 1890.00, 1, 'Cosecha uva blanca 2026 — cooperativa'],
+            ['harvest_sale', '2026-10-20', 1530.00, 2, 'Uva tinto 2026 — venta directa bodega'],
+        ];
+
+        $counter = 11;
+        foreach ($invoiceData as [$type, $date, $total, $cIdx, $desc]) {
+            $clientId  = $clients[$cIdx] ?? $clients->first();
+            $invoiceId = DB::table('invoices')->insertGetId([
+                'user_id'        => $uid,
+                'client_id'      => $clientId,
+                'invoice_number' => 'FP-2026-' . str_pad($counter, 4, '0', STR_PAD_LEFT),
+                'invoice_date'   => $date,
+                'status'         => 'paid',
+                'payment_status' => 'paid',
+                'subtotal'       => $total,
+                'tax_base'       => $total,
+                'total_amount'   => $total,
+                'observations'   => $desc,
+                'created_at'     => $now,
+                'updated_at'     => $now,
+            ]);
+            DB::table('invoice_items')->insert([
+                'invoice_id'  => $invoiceId,
+                'name'        => $desc,
+                'description' => $desc,
+                'quantity'    => 1,
+                'unit'        => 'partida',
+                'unit_price'  => $total,
+                'subtotal'    => $total,
+                'total'       => $total,
+                'created_at'  => $now,
+                'updated_at'  => $now,
+            ]);
+            $counter++;
+        }
+    }
+
+    // ─── 50. Mantenimientos contenedores adicionales ──────────────────────────
+
+    private function createExtraContainerMaintenances(array $containerIds, $now): void
+    {
+        $maintenances = [
+            ['Limpieza profunda DT-01 pre-campaña 2026',       'cleaning',        '2026-01-10', '2026-01-10', 120.0],
+            ['Reválvulas y juntas DT-02',                       'repair',          '2026-01-15', '2026-01-16', 280.0],
+            ['Revisión temperatura fermentación DT-03',         'inspection',      '2026-02-05', '2026-02-05',  85.0],
+            ['Sulfitado preventivo barricas — lote primavera',  'sulfuring',       '2026-03-01', '2026-03-01', 150.0],
+            ['Revisión técnica anual contenedores bodega',      'inspection',      '2026-03-20', '2026-03-21', 380.0],
+            ['Recubrimiento epoxi DT-05',                       'repair',          '2026-04-12', '2026-04-14', 620.0],
+            ['Limpieza y desinfección pre-vendimia',            'cleaning',        '2026-08-20', '2026-08-20', 240.0],
+            ['Revisión manómetros y válvulas seguridad',        'inspection',      '2026-09-01', '2026-09-01',  95.0],
+            ['Tratamiento madera barrica B-03',                 'tartrate_removal','2026-10-05', '2026-10-06', 185.0],
+            ['Mantenimiento preventivo anual — auditoría',      'inspection',      '2026-11-10', null,          450.0],
+        ];
+
+        foreach ($maintenances as $mi => [$desc, $type, $sched, $performed, $cost]) {
+            $containerId = $containerIds[$mi % count($containerIds)];
+            DB::table('container_maintenances')->insert([
+                'container_id'          => $containerId,
+                'maintenance_type'      => $type,
+                'maintenance_name'      => $desc,
+                'scheduled_date'        => $sched,
+                'performed_date'        => $performed,
+                'next_maintenance_date' => '2027-01-15',
+                'status'                => $performed ? 'completed' : 'scheduled',
+                'cost'                  => $cost,
+                'performed_by'          => 'Equipo bodega Producer 2026',
+                'notes'                 => 'Mantenimiento planificado 2026.',
+                'created_at'            => $now,
+                'updated_at'            => $now,
+            ]);
+        }
+    }
+
     // ─── Resumen final ────────────────────────────────────────────────────────
 
     private function printSummary(): void
@@ -2195,6 +2804,16 @@ class ProducerDemoSeeder_test extends Seeder
             'Eco-certificaciones'    => DB::table('eco_certifications')->where('user_id', $uid)->count(),
             'Documentos bodega'      => DB::table('winery_documents')->where('user_id', $uid)->count(),
             'Alertas'                => DB::table('winery_alerts')->where('user_id', $uid)->count(),
+            'Lotes producto 2026'    => DB::table('wine_lots')->where('user_id', $uid)->where('vintage', 2026)->count(),
+            'Recepciones 2026'       => DB::table('harvests')->where('winery_id', $uid)->count(),
+            'Batches recepción'      => DB::table('grape_reception_batches')->where('winery_id', $uid)->count(),
+            'Análisis suelo'         => DB::table('soil_analyses')->where('viticulturist_id', $uid)->count(),
+            'Registros biodiversidad'=> DB::table('biodiversity_records')->where('viticulturist_id', $uid)->count(),
+            'Alertas fitosanitarias' => DB::table('phytosanitary_alerts')->where('viticulturist_id', $uid)->count(),
+            'Previsiones cosecha'    => DB::table('winery_yield_forecasts')->where('winery_id', $uid)->count(),
+            'Entregas cosecha'       => DB::table('harvest_deliveries')->where('viticulturist_id', $uid)->count(),
+            'Plan trabajos'          => DB::table('planned_works')->where('viticulturist_id', $uid)->count(),
+            'Total actividades'      => DB::table('agricultural_activities')->where('viticulturist_id', $uid)->count(),
         ];
         foreach ($stats as $label => $count) {
             $icon = $count > 0 ? '  ✅' : '  ⚠️ ';
