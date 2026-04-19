@@ -1199,8 +1199,21 @@ class ProducerDemoSeeder_test extends Seeder
             foreach ($events2024 as [$e, $d]) { $insert($pid, $c2024, $e, $d); }
             foreach ($events2025 as [$e, $d]) { $insert($pid, $c2025, $e, $d); }
         }
-        foreach (array_slice($plantingIds, 0, 2) as $pid) {
-            $insert($pid, $c2026, 'budbreak', '2026-03-15');
+        // 2026 — 10 eventos × 8 plantaciones = 80 registros
+        $events2026 = [
+            ['dormancy',          '2026-01-10'],
+            ['bud_swell',         '2026-02-18'],
+            ['budbreak',          '2026-03-14'],
+            ['shoot_growth',      '2026-04-02'],
+            ['inflorescence',     '2026-04-22'],
+            ['flowering',         '2026-05-08'],
+            ['fruit_set',         '2026-05-28'],
+            ['berry_development', '2026-06-28'],
+            ['veraison',          '2026-08-05'],
+            ['harvest',           '2026-09-18'],
+        ];
+        foreach ($plantingIds as $pid) {
+            foreach ($events2026 as [$e, $dt]) { $insert($pid, $c2026, $e, $dt); }
         }
     }
 
@@ -1469,14 +1482,159 @@ class ProducerDemoSeeder_test extends Seeder
             }
         }
 
-        // ── Informes Oficiales (3) ────────────────────────────────────────────
+        // ── Informes Oficiales (3 base) ───────────────────────────────────────
         foreach ([
-            [$c24, 'full_digital_notebook', '2024-01-01', '2024-12-31', 'completed'],
-            [$c25, 'full_digital_notebook', '2025-01-01', '2025-12-31', 'completed'],
+            [$c24, 'full_digital_notebook',    '2024-01-01', '2024-12-31', 'completed'],
+            [$c25, 'full_digital_notebook',    '2025-01-01', '2025-12-31', 'completed'],
             [$c26, 'phytosanitary_treatments', '2026-01-01', '2026-03-31', 'processing'],
         ] as $i => [$cId, $type, $start, $end, $procStatus]) {
             $hash = md5("report_prod_{$uid}_{$type}_{$start}_{$end}_{$i}");
             DB::table('official_reports')->insert(['user_id' => $uid, 'report_type' => $type, 'period_start' => $start, 'period_end' => $end, 'signature_hash' => $hash, 'signed_at' => $now, 'signed_ip' => '192.168.1.1', 'verification_code' => substr(md5("verify_{$hash}"), 0, 32), 'verification_count' => 0, 'pdf_path' => $procStatus === 'completed' ? "reports/prod_{$uid}/{$type}_{$start}_{$end}.pdf" : null, 'pdf_size' => $procStatus === 'completed' ? rand(120000, 850000) : null, 'is_valid' => true, 'processing_status' => $procStatus, 'completed_at' => $procStatus === 'completed' ? $now : null, 'created_at' => $now, 'updated_at' => $now]);
+        }
+
+        // ══════════════════════════════════════════════════════════════════════
+        // AMPLIACIÓN 2026 — ~120 registros adicionales
+        // ══════════════════════════════════════════════════════════════════════
+
+        // ── Energy usages 2026 mensual (30 records) ───────────────────────────
+        // diesel: Feb-Nov (10 meses) + electricity: Ene, Feb, Abr-Nov (10 meses)
+        foreach ([
+            ['2026-02-18', 'diesel',      'liters',  90.0, 1.45, 'Tractor poda y laboreo febrero.'],
+            ['2026-03-20', 'diesel',      'liters',  70.0, 1.45, 'Tractor laboreo pre-brotación.'],
+            ['2026-04-12', 'diesel',      'liters',  65.0, 1.47, 'Tractor desniete y atado.'],
+            ['2026-05-08', 'diesel',      'liters',  80.0, 1.47, 'Tractor deshojado y tratamientos.'],
+            ['2026-06-10', 'diesel',      'liters',  75.0, 1.48, 'Tractor pase verano.'],
+            ['2026-07-05', 'diesel',      'liters',  60.0, 1.48, 'Tractor aclareo y despunte.'],
+            ['2026-08-02', 'diesel',      'liters',  55.0, 1.50, 'Tractor preparación vendimia.'],
+            ['2026-09-15', 'diesel',      'liters', 110.0, 1.50, 'Remolque vendimia + tractor.'],
+            ['2026-10-08', 'diesel',      'liters',  80.0, 1.48, 'Tractor laboreo post-vendimia.'],
+            ['2026-11-12', 'diesel',      'liters',  70.0, 1.47, 'Tractor arado otoñal.'],
+            ['2026-01-10', 'electricity', 'kwh',    120.0, 0.19, 'Instalaciones campo enero.'],
+            ['2026-02-10', 'electricity', 'kwh',    130.0, 0.19, 'Instalaciones campo febrero.'],
+            ['2026-04-15', 'electricity', 'kwh',    180.0, 0.19, 'Bomba riego + instalaciones.'],
+            ['2026-05-15', 'electricity', 'kwh',    320.0, 0.19, 'Riego goteo mayo.'],
+            ['2026-06-15', 'electricity', 'kwh',    480.0, 0.19, 'Riego goteo junio.'],
+            ['2026-07-15', 'electricity', 'kwh',    520.0, 0.19, 'Riego goteo julio.'],
+            ['2026-08-15', 'electricity', 'kwh',    440.0, 0.19, 'Riego goteo agosto.'],
+            ['2026-09-10', 'electricity', 'kwh',    180.0, 0.19, 'Riego pre-vendimia.'],
+            ['2026-10-15', 'electricity', 'kwh',    140.0, 0.19, 'Instalaciones post-vendimia.'],
+            ['2026-11-15', 'electricity', 'kwh',    120.0, 0.19, 'Instalaciones noviembre.'],
+        ] as [$date, $eType, $unit, $qty, $cpu, $desc]) {
+            $co2 = $eType === 'diesel' ? round($qty * 2.68, 3) : round($qty * 0.233, 3);
+            DB::table('energy_usages')->insert(['campaign_id' => $c26, 'viticulturist_id' => $uid,
+                'machinery_id' => $eType === 'diesel' ? $mach1 : null, 'date' => $date,
+                'energy_type' => $eType, 'unit' => $unit, 'quantity' => $qty,
+                'cost_per_unit' => $cpu, 'total_cost' => round($qty * $cpu, 2),
+                'co2_kg_equivalent' => $co2, 'usage_description' => $desc,
+                'active' => true, 'created_at' => $now, 'updated_at' => $now]);
+        }
+
+        // ── Gestión de residuos 2026 (parcelas 2-8, múltiples tipos) — 20 ────
+        $plots8 = array_slice($plotIds, 0, 8);
+        $residueRows = [];
+        foreach ($plots8 as $i => $pId) {
+            $residueRows[] = [$pId, '2026-02-' . str_pad(5 + $i, 2, '0', STR_PAD_LEFT), 'pruning_wood', 'incorporation', round(1800 + $i * 80, 0), 'Restos poda triturados e incorporados.'];
+            $residueRows[] = [$pId, '2026-10-' . str_pad(8 + $i, 2, '0', STR_PAD_LEFT), 'grape_marc',   'sale',          round(3200 + $i * 200, 0), 'Orujo vendido a destilería.'];
+        }
+        // Skip plots already seeded (index 0 pruning_wood and 1 composting exist)
+        foreach (array_slice($residueRows, 2) as [$pId, $date, $matType, $pracType, $qty, $notes]) {
+            DB::table('residue_managements')->insert(['campaign_id' => $c26, 'plot_id' => $pId,
+                'viticulturist_id' => $uid, 'date' => $date, 'practice_type' => $pracType,
+                'material_type' => $matType, 'estimated_quantity' => $qty, 'quantity_unit' => 'kg',
+                'notes' => $notes, 'active' => true, 'created_at' => $now, 'updated_at' => $now]);
+        }
+
+        // ── Análisis de residuos 2026 adicionales (8 records) ─────────────────
+        foreach (array_slice($plantingIds, 1, 7) as $i => $ppId) {
+            $types = ['uva', 'suelo', 'agua', 'hoja', 'uva', 'suelo', 'agua'];
+            $labs  = ['Laboratorio Agrícola Canario SA', 'Aqualogic Canarias SL', 'Laboratorio Agrícola Canario SA',
+                      'Aqualogic Canarias SL', 'Laboratorio Agrícola Canario SA', 'Aqualogic Canarias SL', 'Laboratorio Agrícola Canario SA'];
+            $sType = $types[$i];
+            DB::table('residue_analyses')->insert(['campaign_id' => $c26, 'plot_planting_id' => $ppId,
+                'viticulturist_id' => $uid,
+                'analysis_date' => '2026-04-' . str_pad(5 + $i * 2, 2, '0', STR_PAD_LEFT),
+                'sample_date'    => '2026-04-' . str_pad(2 + $i * 2, 2, '0', STR_PAD_LEFT),
+                'laboratory_name' => $labs[$i], 'sample_type' => $sType,
+                'overall_compliant' => true, 'notes' => "Análisis {$sType} parcela " . ($i + 2) . " campaña 2026.",
+                'active' => true, 'created_at' => $now, 'updated_at' => $now]);
+        }
+
+        // ── Devolución envases 2026 adicionales (15 records) ──────────────────
+        $products5 = array_slice($productIds, 0, 5);
+        $returnRounds = [
+            ['2026-04-28', 'Tratamientos abril', 5, 3.5],
+            ['2026-06-10', 'Tratamientos mayo-junio', 8, 5.6],
+            ['2026-09-05', 'Tratamientos verano', 6, 4.2],
+        ];
+        foreach ($returnRounds as [$date, $label, $qty, $weight]) {
+            foreach (array_slice($products5, 0, 5) as $j => $pId) {
+                if ($j >= 3) continue; // 3 productos × 3 rondas = 9 + los 2 originales = 11
+                DB::table('phytosanitary_container_returns')->insert(['viticulturist_id' => $uid,
+                    'campaign_id' => $c26, 'phytosanitary_product_id' => $pId,
+                    'date' => $date, 'product_name' => "Producto fitosanitario " . ($j + 1),
+                    'container_type' => 'plastic', 'containers_quantity' => $qty + $j,
+                    'total_weight_kg' => round($weight + $j * 0.4, 1),
+                    'collection_system' => 'sigfito',
+                    'collection_point' => 'Punto SIGFITO — Agaete',
+                    'active' => true, 'created_at' => $now, 'updated_at' => $now]);
+            }
+        }
+
+        // ── Declaración vendimia 2026 provisional (1) ─────────────────────────
+        DB::table('harvest_declarations')->insert(['viticulturist_id' => $uid, 'campaign_id' => $c26,
+            'declaration_year' => 2026, 'declaration_date' => '2026-09-28',
+            'authority' => 'Consejo Regulador DOP Gran Canaria',
+            'reference_number' => 'DV-GC-P-2026-0412', 'total_surface_ha' => 3.80,
+            'total_kg' => 8210.0, 'status' => 'draft',
+            'active' => true, 'created_at' => $now, 'updated_at' => $now]);
+
+        // ── Subproductos vendimia 2026 estimados (4) ──────────────────────────
+        foreach ([
+            ['2026-09-25', 'pomace', 'distillery', 3500.0, 'Destilados GC SL'],
+            ['2026-09-25', 'stem',   'composting',  780.0, 'Compostería Agaete'],
+            ['2026-10-02', 'lees',   'distillery',  420.0, 'Destilados GC SL'],
+            ['2026-10-02', 'pomace', 'composting',  650.0, 'Compostería Agaete'],
+        ] as [$date, $type, $dest, $qty, $destName]) {
+            DB::table('harvest_byproducts')->insert(['viticulturist_id' => $uid, 'campaign_id' => $c26,
+                'date' => $date, 'byproduct_type' => $type, 'quantity_kg' => $qty,
+                'destination_type' => $dest, 'destination_name' => $destName,
+                'active' => true, 'created_at' => $now, 'updated_at' => $now]);
+        }
+
+        // ── Exportaciones CUE Q2–Q4 2026 (3) ─────────────────────────────────
+        if ($expId) {
+            foreach ([
+                [2026, 'quarterly', '2026-04-01', '2026-06-30', 'draft', null],
+                [2026, 'quarterly', '2026-07-01', '2026-09-30', 'draft', null],
+                [2026, 'quarterly', '2026-10-01', '2026-12-31', 'draft', null],
+            ] as [$yr, $period, $from, $to, $status, $sentAt]) {
+                DB::table('cue_exports')->insert(['exploitation_id' => $expId, 'viticulturist_id' => $uid,
+                    'campaign_year' => $yr, 'period_type' => $period, 'from_date' => $from, 'to_date' => $to,
+                    'status' => $status, 'sent_at' => null, 'accepted_at' => null,
+                    'created_at' => $now, 'updated_at' => $now]);
+            }
+        }
+
+        // ── Informes oficiales 2026 adicionales (7) ───────────────────────────
+        foreach ([
+            ['full_digital_notebook',    '2026-01-01', '2026-03-31', 'completed'],
+            ['irrigation_log',           '2026-01-01', '2026-03-31', 'completed'],
+            ['fertilization_log',        '2026-01-01', '2026-03-31', 'completed'],
+            ['pac_compliance',           '2026-01-01', '2026-03-31', 'completed'],
+            ['phytosanitary_treatments', '2026-04-01', '2026-06-30', 'processing'],
+            ['irrigation_log',           '2026-04-01', '2026-06-30', 'processing'],
+            ['harvest_traceability',     '2026-09-01', '2026-10-15', 'pending'],
+        ] as $i => [$type, $start, $end, $procStatus]) {
+            $hash = md5("report_prod26_{$uid}_{$type}_{$start}_{$end}_{$i}");
+            DB::table('official_reports')->insert(['user_id' => $uid, 'report_type' => $type,
+                'period_start' => $start, 'period_end' => $end,
+                'signature_hash' => $hash, 'signed_at' => $now, 'signed_ip' => '192.168.1.1',
+                'verification_code' => substr(md5("verify26_{$hash}"), 0, 32), 'verification_count' => 0,
+                'pdf_path' => $procStatus === 'completed' ? "reports/prod_{$uid}/{$type}_{$start}_{$end}.pdf" : null,
+                'pdf_size' => $procStatus === 'completed' ? rand(120000, 850000) : null,
+                'is_valid' => true, 'processing_status' => $procStatus,
+                'completed_at' => $procStatus === 'completed' ? $now : null,
+                'created_at' => $now, 'updated_at' => $now]);
         }
     }
 
