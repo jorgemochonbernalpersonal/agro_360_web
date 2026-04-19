@@ -2065,7 +2065,7 @@ class ProducerDemoSeeder_test extends Seeder
         $productTypes  = ['grape', 'grape', 'grape', 'must', 'concentrated_must'];
         $varieties     = ['Listán Negro', 'Marmajuelo', 'Baboso Negro', 'Vijariego', 'Moscatel', 'Tintilla', 'Listán Blanco', 'Malvasía'];
         $origins       = ['Gran Canaria', 'Tenerife', 'La Palma', 'Lanzarote', 'Fuerteventura'];
-        $statuses      = ['received', 'received', 'received', 'pending', 'cancelled'];
+        $statuses      = ['received', 'received', 'received', 'pending', 'rejected'];
 
         $rows = [];
         for ($i = 1; $i <= $supplierCount; $i++) {
