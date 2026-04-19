@@ -197,22 +197,25 @@ class ProducerDemoSeeder_test extends Seeder
         // ─── LADO BODEGA ──────────────────────────────────────────────────────
 
         // 23. Salas de bodega
-        $this->step('Salas de bodega (3)', function () use ($now) {
-            $this->createContainerRooms($now);
+        $roomIds = [];
+        $this->step('Salas de bodega (450)', function () use ($now, &$roomIds) {
+            $roomIds = $this->createContainerRooms($now);
         });
 
         // 24. Contenedores bodega
         $wineryContainerIds = [];
-        $this->step('Contenedores bodega (30: depósitos + barricas)', function () use ($now, &$wineryContainerIds) {
-            $wineryContainerIds = $this->createWineryContainers($now);
+        $this->step('Contenedores bodega (450: depósitos + barricas + bins)', function () use ($now, $roomIds, &$wineryContainerIds) {
+            $wineryContainerIds = $this->createWineryContainers($now, $roomIds);
         });
 
         // 25. Enólogos + proveedores + suministros bodega
-        $this->step('Enólogos (2)', function () use ($now) {
-            $this->createOenologists($now);
+        $oenologistIds = [];
+        $this->step('Enólogos (450)', function () use ($now, &$oenologistIds) {
+            $oenologistIds = $this->createOenologists($now);
         });
-        $this->step('Proveedores bodega (3)', function () use ($now) {
-            $this->createSuppliers($now);
+        $supplierIds = [];
+        $this->step('Proveedores bodega (450)', function () use ($now, &$supplierIds) {
+            $supplierIds = $this->createSuppliers($now);
         });
         $this->step('Suministros bodega (5)', function () use ($now) {
             $this->createWinerySupplies($now);
@@ -238,8 +241,8 @@ class ProducerDemoSeeder_test extends Seeder
         });
 
         // 29. Aditivos bodega
-        $this->step('Aditivos enológicos (15)', function () use ($now, $wineIds) {
-            $this->createWineAdditives($wineIds, $now);
+        $this->step('Aditivos enológicos (15)', function () use ($now, $wineIds, $oenologistIds) {
+            $this->createWineAdditives($wineIds, $now, $oenologistIds);
         });
 
         // 30. Análisis de vino
@@ -354,6 +357,11 @@ class ProducerDemoSeeder_test extends Seeder
         // 50. Mantenimientos contenedores adicionales (10)
         $this->step('Mantenimientos contenedores adicionales (10)', function () use ($now, $wineryContainerIds) {
             $this->createExtraContainerMaintenances($wineryContainerIds, $now);
+        });
+
+        // 51. Compras externas uva (450 — un registro por proveedor)
+        $this->step('Compras externas uva (450: 1 por proveedor)', function () use ($now, $supplierIds, $wineIds, $wineryContainerIds) {
+            $this->createSupplierPurchases($supplierIds, $wineIds, $wineryContainerIds, $now);
         });
 
         $this->command->info('');
@@ -1919,7 +1927,7 @@ class ProducerDemoSeeder_test extends Seeder
 
     // ─── 23. Salas de bodega ─────────────────────────────────────────────────
 
-    private function createContainerRooms($now): void
+    private function createContainerRooms($now): array
     {
         $uid       = self::PRODUCER_USER_ID;
         $roomTypes = [
@@ -1930,9 +1938,10 @@ class ProducerDemoSeeder_test extends Seeder
             ['Sala Recepción',    'Recepción de vendimia.',             8, 17.0, 68.0],
             ['Almacén Insumos',   'Almacén productos enológicos.',      6, 18.5, 60.0],
         ];
+        $ids = [];
         for ($i = 1; $i <= 450; $i++) {
-            $t = $roomTypes[($i - 1) % count($roomTypes)];
-            DB::table('container_rooms')->insert([
+            $t     = $roomTypes[($i - 1) % count($roomTypes)];
+            $ids[] = DB::table('container_rooms')->insertGetId([
                 'user_id'     => $uid,
                 'name'        => $t[0] . ' Producer ' . str_pad($i, 3, '0', STR_PAD_LEFT),
                 'description' => $t[1],
@@ -1943,13 +1952,15 @@ class ProducerDemoSeeder_test extends Seeder
                 'updated_at'  => $now,
             ]);
         }
+        return $ids;
     }
 
     // ─── 24. Contenedores bodega ─────────────────────────────────────────────
 
-    private function createWineryContainers($now): array
+    private function createWineryContainers($now, array $roomIds = []): array
     {
-        $uid  = self::PRODUCER_USER_ID;
+        $uid      = self::PRODUCER_USER_ID;
+        $roomCount = count($roomIds);
         $typeIds = DB::table('container_types')
             ->whereIn('name', ['Depósito acero inoxidable', 'Barrica francesa', 'Depósito polivalente'])
             ->pluck('id', 'name');
@@ -1958,15 +1969,19 @@ class ProducerDemoSeeder_test extends Seeder
         $polivalent = $typeIds['Depósito polivalente']       ?? $deposito;
 
         $containers = [];
-        $depCaps = [5000, 8000, 10000, 12000, 6000];
-        for ($i = 1; $i <= 220; $i++) {
-            $containers[] = ['user_id' => $uid, 'name' => sprintf('Depósito PD%03d', $i), 'type_id' => $deposito, 'capacity' => $depCaps[($i - 1) % 5], 'description' => 'Nave elaboración', 'created_at' => $now, 'updated_at' => $now];
+        $depCaps    = [5000, 8000, 10000, 12000, 6000];
+        $n          = 0;
+        for ($i = 1; $i <= 220; $i++, $n++) {
+            $roomId = $roomCount > 0 ? $roomIds[$n % $roomCount] : null;
+            $containers[] = ['user_id' => $uid, 'name' => sprintf('Depósito PD%03d', $i), 'type_id' => $deposito, 'capacity' => $depCaps[($i - 1) % 5], 'container_room_id' => $roomId, 'description' => 'Nave elaboración', 'created_at' => $now, 'updated_at' => $now];
         }
-        for ($i = 1; $i <= 150; $i++) {
-            $containers[] = ['user_id' => $uid, 'name' => sprintf('Barrica PB%03d', $i), 'type_id' => $barrica, 'capacity' => 225, 'description' => 'Sala barricas', 'created_at' => $now, 'updated_at' => $now];
+        for ($i = 1; $i <= 150; $i++, $n++) {
+            $roomId = $roomCount > 0 ? $roomIds[$n % $roomCount] : null;
+            $containers[] = ['user_id' => $uid, 'name' => sprintf('Barrica PB%03d', $i), 'type_id' => $barrica, 'capacity' => 225, 'container_room_id' => $roomId, 'description' => 'Sala barricas', 'created_at' => $now, 'updated_at' => $now];
         }
-        for ($i = 1; $i <= 80; $i++) {
-            $containers[] = ['user_id' => $uid, 'name' => sprintf('Bins Vendimia PBV%03d', $i), 'type_id' => $polivalent, 'capacity' => 800, 'description' => 'Patio exterior', 'created_at' => $now, 'updated_at' => $now];
+        for ($i = 1; $i <= 80; $i++, $n++) {
+            $roomId = $roomCount > 0 ? $roomIds[$n % $roomCount] : null;
+            $containers[] = ['user_id' => $uid, 'name' => sprintf('Bins Vendimia PBV%03d', $i), 'type_id' => $polivalent, 'capacity' => 800, 'container_room_id' => $roomId, 'description' => 'Patio exterior', 'created_at' => $now, 'updated_at' => $now];
         }
 
         $ids = [];
@@ -1980,18 +1995,18 @@ class ProducerDemoSeeder_test extends Seeder
 
     // ─── 25. Enólogos, Proveedores, Suministros bodega ──────────────────────
 
-    private function createOenologists($now): void
+    private function createOenologists($now): array
     {
         $uid        = self::PRODUCER_USER_ID;
         $firstNames = ['Marcos', 'Elena', 'Carlos', 'Ana', 'Luis', 'María', 'Pedro', 'Laura', 'José', 'Carmen'];
         $lastNames  = ['Rodríguez Santana', 'Castro Medina', 'González Pérez', 'Hernández López', 'Martín García',
                        'Díaz Moreno', 'Álvarez Jiménez', 'Torres Romero', 'Navarro Ruiz', 'Domínguez Serrano'];
         $roles      = ['Enólogo jefe.', 'Responsable de calidad.', 'Técnico de bodega.', 'Enólogo consultor.', 'Jefe de producción.'];
-        $rows = [];
+        $ids = [];
         for ($i = 1; $i <= 450; $i++) {
             $fName = $firstNames[($i - 1) % count($firstNames)];
             $lName = $lastNames[($i - 1) % count($lastNames)];
-            $rows[] = [
+            $ids[] = DB::table('oenologists')->insertGetId([
                 'user_id'        => $uid,
                 'name'           => $fName,
                 'surname'        => $lName,
@@ -2001,14 +2016,12 @@ class ProducerDemoSeeder_test extends Seeder
                 'notes'          => $roles[($i - 1) % count($roles)],
                 'created_at'     => $now,
                 'updated_at'     => $now,
-            ];
+            ]);
         }
-        foreach (array_chunk($rows, 50) as $chunk) {
-            DB::table('oenologists')->insert($chunk);
-        }
+        return $ids;
     }
 
-    private function createSuppliers($now): void
+    private function createSuppliers($now): array
     {
         $uid        = self::PRODUCER_USER_ID;
         $prefixes   = ['Botella & Corcho', 'Suministros Enológicos', 'Agrochem', 'Envases Vinícolas', 'AgroSupply',
@@ -2017,14 +2030,14 @@ class ProducerDemoSeeder_test extends Seeder
         $contacts   = ['Pedro Jiménez', 'Laura Montes', 'Rodrigo Acosta', 'Ana García', 'Carlos López',
                        'María Hernández', 'José Torres', 'Carmen Díaz', 'Luis Romero', 'Elena Martín'];
         $categories = ['packaging', 'chemicals', 'equipment', 'logistics', 'other'];
-        $rows = [];
+        $ids = [];
         for ($i = 1; $i <= 450; $i++) {
             $prefix   = $prefixes[($i - 1) % count($prefixes)];
             $suffix   = $suffixes[($i - 1) % count($suffixes)];
             $contact  = $contacts[($i - 1) % count($contacts)];
             $category = $categories[($i - 1) % count($categories)];
             $vatSufx  = str_pad($i, 5, '0', STR_PAD_LEFT);
-            $rows[] = [
+            $ids[] = DB::table('suppliers')->insertGetId([
                 'user_id'        => $uid,
                 'name'           => "{$prefix} Producer {$i} {$suffix}",
                 'contact_person' => $contact,
@@ -2034,10 +2047,61 @@ class ProducerDemoSeeder_test extends Seeder
                 'active'         => true,
                 'created_at'     => $now,
                 'updated_at'     => $now,
+            ]);
+        }
+        return $ids;
+    }
+
+    private function createSupplierPurchases(array $supplierIds, array $wineIds, array $containerIds, $now): void
+    {
+        $uid          = self::PRODUCER_USER_ID;
+        $supplierCount = count($supplierIds);
+        $wineCount     = count($wineIds);
+        $containerCount= count($containerIds);
+        $productTypes  = ['grapes', 'grapes', 'grapes', 'must', 'concentrate'];
+        $varieties     = ['Listán Negro', 'Marmajuelo', 'Baboso Negro', 'Vijariego', 'Moscatel', 'Tintilla', 'Listán Blanco', 'Malvasía'];
+        $origins       = ['Gran Canaria', 'Tenerife', 'La Palma', 'Lanzarote', 'Fuerteventura'];
+        $statuses      = ['received', 'received', 'received', 'pending', 'cancelled'];
+
+        $rows = [];
+        for ($i = 1; $i <= $supplierCount; $i++) {
+            $sIdx      = $i - 1;
+            $wIdx      = ($i - 1) % $wineCount;
+            $cIdx      = ($i - 1) % $containerCount;
+            $pType     = $productTypes[($i - 1) % count($productTypes)];
+            $variety   = $varieties[($i - 1) % count($varieties)];
+            $origin    = $origins[($i - 1) % count($origins)];
+            $vintage   = 2023 + ($i % 4);
+            $qty       = round(mt_rand(200, 2000) + mt_rand(0, 9) / 10, 1);
+            $price     = round(0.55 + ($sIdx % 8) * 0.04, 3);
+            $brix      = round(21.0 + ($sIdx % 8) * 0.3 + mt_rand(-3, 3) / 10, 1);
+            $baume     = round($brix * 0.55, 1);
+            $month     = mt_rand(8, 10);
+            $day       = mt_rand(1, 28);
+            $rows[] = [
+                'user_id'                => $uid,
+                'supplier_id'            => $supplierIds[$sIdx],
+                'supplier_name'          => null,
+                'wine_id'                => $wineIds[$wIdx],
+                'destination_container_id' => $containerIds[$cIdx],
+                'product_type'           => $pType,
+                'variety'                => $variety,
+                'origin'                 => $origin,
+                'vintage_year'           => $vintage,
+                'quantity_kg'            => $qty,
+                'price_per_kg'           => $price,
+                'total_price'            => round($qty * $price, 2),
+                'purchase_date'          => sprintf('%d-%02d-%02d', $vintage, $month, $day),
+                'brix_degree'            => $brix,
+                'baume_degree'           => $baume,
+                'status'                 => $statuses[($i - 1) % count($statuses)],
+                'created_by'             => $uid,
+                'created_at'             => $now,
+                'updated_at'             => $now,
             ];
         }
         foreach (array_chunk($rows, 50) as $chunk) {
-            DB::table('suppliers')->insert($chunk);
+            DB::table('external_grape_purchases')->insert($chunk);
         }
     }
 
@@ -2136,22 +2200,26 @@ class ProducerDemoSeeder_test extends Seeder
 
     // ─── 29. Aditivos enológicos ──────────────────────────────────────────────
 
-    private function createWineAdditives(array $wineIds, $now): void
+    private function createWineAdditives(array $wineIds, $now, array $oenologistIds = []): void
     {
-        $uid = self::PRODUCER_USER_ID;
-        $oenologistId = DB::table('oenologists')->where('user_id', $uid)->value('id');
-        $supplyId     = DB::table('winery_supplies')->where('user_id', $uid)->value('id');
-        $unitId       = DB::table('units_of_measurement')->where('symbol', 'g')->value('id');
+        $uid        = self::PRODUCER_USER_ID;
+        $supplyId   = DB::table('winery_supplies')->where('user_id', $uid)->value('id');
+        $unitId     = DB::table('units_of_measurement')->where('symbol', 'g')->value('id');
+        $oenCount   = count($oenologistIds);
+        // Fallback: first oenologist if none passed
+        $fallbackId = $oenCount > 0 ? $oenologistIds[0] : DB::table('oenologists')->where('user_id', $uid)->value('id');
 
         $catalog = [
             ['Metabisulfito de potasio (SO2)', 5.0], ['Bentonita', 80.0], ['Levaduras EC1118', 20.0],
             ['Nutrientes (DAP)', 15.0], ['Ácido tartárico', 50.0],
         ];
 
+        $n = 0;
         foreach (array_slice($wineIds, 0, 5) as $i => $wineId) {
             $count = 2 + ($i % 3);
-            for ($j = 0; $j < $count; $j++) {
-                $a = $catalog[($i + $j) % count($catalog)];
+            for ($j = 0; $j < $count; $j++, $n++) {
+                $a           = $catalog[($i + $j) % count($catalog)];
+                $oenologistId = $oenCount > 0 ? $oenologistIds[$n % $oenCount] : $fallbackId;
                 DB::table('wine_additives')->insert(['wine_id' => $wineId, 'additive_name' => $a[0], 'quantity' => $a[1], 'unit_of_measurement_id' => $unitId, 'application_date' => '2025-09-' . str_pad(15 + $j * 3, 2, '0', STR_PAD_LEFT), 'oenologist_id' => $oenologistId, 'winery_supply_id' => $supplyId, 'notes' => 'Dosis estándar.', 'created_by' => $uid, 'created_at' => $now, 'updated_at' => $now]);
             }
         }
