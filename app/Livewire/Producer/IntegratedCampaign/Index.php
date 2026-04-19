@@ -19,7 +19,7 @@ class Index extends Component
     public function mount(): void
     {
         $active = Campaign::where('viticulturist_id', Auth::id())
-            ->where('status', 'active')
+            ->where('active', true)
             ->orderByDesc('year')
             ->first();
 
@@ -31,7 +31,7 @@ class Index extends Component
         $userId    = Auth::id();
         $campaigns = Campaign::where('viticulturist_id', $userId)
             ->orderByDesc('year')
-            ->get(['id', 'name', 'year', 'status']);
+            ->get(['id', 'name', 'year', 'active']);
 
         $data = $this->filterCampaign
             ? $this->buildDashboard($userId, (int) $this->filterCampaign)

@@ -12,14 +12,14 @@
             <flux:select wire:model.live="filterCampaign">
                 <option value="">Seleccionar campaña...</option>
                 @foreach($campaigns as $c)
-                    <option value="{{ $c->id }}">{{ $c->name }} ({{ $c->year }}) {{ $c->status === 'active' ? '● Activa' : '' }}</option>
+                    <option value="{{ $c->id }}">{{ $c->name }} ({{ $c->year }}) {{ $c->active ? '● Activa' : '' }}</option>
                 @endforeach
             </flux:select>
         </flux:field>
 
         @if($campaign)
             <div class="flex items-center gap-2 pb-1">
-                <flux:badge size="sm" :color="$campaign->status === 'active' ? 'green' : 'zinc'">{{ ucfirst($campaign->status) }}</flux:badge>
+                <flux:badge size="sm" :color="$campaign->active ? 'green' : 'zinc'">{{ $campaign->active ? 'Activa' : 'Cerrada' }}</flux:badge>
             </div>
         @endif
     </div>
