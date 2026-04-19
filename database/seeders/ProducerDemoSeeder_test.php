@@ -2537,7 +2537,7 @@ class ProducerDemoSeeder_test extends Seeder
     private function createWineryAlerts($now): void
     {
         $uid = self::PRODUCER_USER_ID;
-        $alertTypes = ['maintenance', 'expiry', 'fermentation', 'stock', 'certification', 'temperature', 'quality', 'compliance', 'delivery', 'analysis'];
+        $alertTypes = ['maintenance', 'expiry', 'fermentation', 'stock', 'certification', 'label', 'custom', 'dispute', 'maintenance', 'stock'];
         $severities = ['info', 'warning', 'critical', 'warning'];
         $titleTemplates = [
             'Mantenimiento pendiente — Contenedor {n}',
