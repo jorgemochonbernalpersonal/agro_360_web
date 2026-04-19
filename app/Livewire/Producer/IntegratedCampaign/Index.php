@@ -106,8 +106,7 @@ class Index extends Component
         $plotCosts = DB::table('plot_costs')
             ->where('viticulturist_id', $userId)
             ->where('campaign_id', $campaignId)
-            ->selectRaw('COALESCE(SUM(total_cost), 0) as total_cost')
-            ->value('total_cost') ?? 0;
+            ->sum('amount') ?? 0;
 
         // ═══════════════════════════════════════════════════════════
         // BODEGA
