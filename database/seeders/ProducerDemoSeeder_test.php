@@ -301,7 +301,7 @@ class ProducerDemoSeeder_test extends Seeder
         });
 
         // 40. Recepciones bodega 2026 (batches + cosechas winery_id)
-        $this->step('Recepciones bodega 2026 (450 batches + 450 recepciones)', function () use ($now, $plantingIds, $campaign2026Id) {
+        $this->step('Recepciones bodega 2026 (8 batches + 450 recepciones)', function () use ($now, $plantingIds, $campaign2026Id) {
             $this->createWineryReceptions2026($plantingIds, $campaign2026Id, $now);
         });
 
@@ -2734,8 +2734,10 @@ class ProducerDemoSeeder_test extends Seeder
             $allData[] = [sprintf('2026-%02d-%02d', $month, min($day, 28)), $pIdx, $weight, $brix, $baume, $ph, $acidity, "Recepción {$variety}. Batch #{$i}."];
         }
 
-        foreach ($allData as [$date, $idx, $weight, $brix, $baume, $ph, $acidity, $notes]) {
-            $batchId = DB::table('grape_reception_batches')->insertGetId([
+        // ── 8 batches (1 por plantación, constraint único) ──────────────────
+        $batchIds = [];
+        foreach ($data as [$date, $idx, $weight, $brix, $baume, $ph, $acidity, $notes]) {
+            $batchIds[] = DB::table('grape_reception_batches')->insertGetId([
                 'winery_id'             => $uid,
                 'viticulturist_id'      => $uid,
                 'plot_planting_id'      => $plantingIds[$idx % $plantingCount],
@@ -2748,8 +2750,12 @@ class ProducerDemoSeeder_test extends Seeder
                 'created_at'            => $now,
                 'updated_at'            => $now,
             ]);
+        }
 
-            $price = $prices[$idx % count($prices)];
+        // ── 450 harvests rotando los 8 batch IDs ────────────────────────────
+        foreach ($allData as $j => [$date, $idx, $weight, $brix, $baume, $ph, $acidity, $notes]) {
+            $price   = $prices[$idx % count($prices)];
+            $batchId = $batchIds[$j % count($batchIds)];
             DB::table('harvests')->insert([
                 'winery_id'          => $uid,
                 'batch_id'           => $batchId,
