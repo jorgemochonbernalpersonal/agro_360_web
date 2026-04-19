@@ -2363,7 +2363,7 @@ class ProducerDemoSeeder_test extends Seeder
                 'user_id'        => $uid,
                 'wine_id'        => $wineId,
                 'name'           => 'Etiqueta principal — Vino Producer ' . ($i + 1),
-                'source'         => ($i % 3 === 0) ? 'external' : 'own',
+                'source'         => ['own', 'own', 'do_assigned', 'own', 'other'][$i % 5],
                 'start_number'   => $start,
                 'end_number'     => $start + $total - 1,
                 'total_quantity' => $total,
