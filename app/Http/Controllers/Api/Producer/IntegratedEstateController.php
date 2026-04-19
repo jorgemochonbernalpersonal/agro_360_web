@@ -96,6 +96,6 @@ class IntegratedEstateController extends Controller
                     'plant_count'    => $pl->plant_count,
                 ]),
             ]),
-        ]);
+        ])->header('Cache-Control', 'private, max-age=300');
     }
 }

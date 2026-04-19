@@ -143,6 +143,6 @@ class IntegratedCampaignController extends Controller
                 'yield_loss_pct'   => $yieldLoss,
                 'value_multiplier' => $valueMult,
             ],
-        ]);
+        ])->header('Cache-Control', 'private, max-age=300');
     }
 }

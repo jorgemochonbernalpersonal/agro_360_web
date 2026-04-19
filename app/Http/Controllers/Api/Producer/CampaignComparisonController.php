@@ -34,7 +34,7 @@ class CampaignComparisonController extends Controller
         return response()->json([
             'campaign_a' => $this->campaignData($userId, $campaignA, $plotIds),
             'campaign_b' => $this->campaignData($userId, $campaignB, $plotIds),
-        ]);
+        ])->header('Cache-Control', 'private, max-age=600');
     }
 
     private function campaignData(int $userId, Campaign $campaign, $plotIds): array

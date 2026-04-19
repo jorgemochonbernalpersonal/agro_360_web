@@ -139,6 +139,6 @@ class FinancialSummaryController extends Controller
                 'pct'      => ((float) ($containerStats->capacity ?? 0)) > 0
                     ? round((float) ($containerStats->used ?? 0) / (float) $containerStats->capacity * 100, 1) : 0,
             ],
-        ]);
+        ])->header('Cache-Control', 'private, max-age=600');
     }
 }

@@ -111,6 +111,6 @@ class FullTraceabilityController extends Controller
                 'revenue'     => (float) ($productStats->revenue ?? 0),
             ],
             'flow_by_plot' => $flowByPlot,
-        ]);
+        ])->header('Cache-Control', 'private, max-age=300');
     }
 }

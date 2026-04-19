@@ -131,6 +131,7 @@ class DashboardController extends Controller
             ];
         });
 
-        return response()->json($data);
+        return response()->json($data)
+            ->header('Cache-Control', 'private, max-age=120');
     }
 }
