@@ -127,7 +127,7 @@ class ProducerDemoSeeder_test extends Seeder
         });
 
         // 10. Actividades 2026
-        $this->step('Actividades 2026 (~15)', function () use ($now, $plotIds, $plantingIds, $productIds, $wvId, $campaign2026Id) {
+        $this->step('Actividades 2026 (~640)', function () use ($now, $plotIds, $plantingIds, $productIds, $wvId, $campaign2026Id) {
             $this->createActivities2026($plotIds, $plantingIds, $productIds, $wvId, $campaign2026Id, $now);
         });
 
@@ -895,6 +895,8 @@ class ProducerDemoSeeder_test extends Seeder
     }
 
     // ─── 10. Actividades 2026 ─────────────────────────────────────────────────
+    // ~640 actividades: poda(8) + laboreo(40) + trabajos verde(48) + tratamientos(128)
+    // + fertilizaciones(64) + riegos(200) + observaciones(128) + vendimia(8) + post-vendimia(16)
 
     private function createActivities2026(array $plotIds, array $plantingIds, array $productIds, int $wvId, int $campaignId, $now): void
     {
@@ -906,19 +908,274 @@ class ProducerDemoSeeder_test extends Seeder
             'campaign_id' => $campaignId, 'is_locked' => false, 'created_at' => $now, 'updated_at' => $now,
         ], $data));
 
-        // Poda 2026
-        foreach ([0, 1, 2, 3] as $i) {
-            $aId = $act(['plot_id' => $plotIds[$i], 'plot_planting_id' => $plantingIds[$i * 2], 'activity_type' => 'pruning', 'activity_date' => '2026-02-' . str_pad($i * 4 + 3, 2, '0', STR_PAD_LEFT), 'notes' => 'Poda de invierno 2026.']);
-            DB::table('cultural_works')->insert(['activity_id' => $aId, 'work_type' => 'pruning', 'description' => 'Tijera neumática', 'hours_worked' => 5.5, 'created_at' => $now, 'updated_at' => $now]);
+        $plots    = array_slice($plotIds,     0, 8);
+        $plantings = array_slice($plantingIds, 0, 8);
+        $d = fn(string $base, int $offset) => date('Y-m-d', strtotime("{$base} +{$offset} days"));
+
+        // ── 1. Poda de invierno (Ene-Feb) — 8 ──────────────────────────────
+        $podaDates = ['2026-01-12','2026-01-16','2026-01-22','2026-01-28','2026-02-03','2026-02-09','2026-02-15','2026-02-20'];
+        foreach ($plots as $i => $pid) {
+            $aId = $act(['plot_id' => $pid, 'plot_planting_id' => $plantings[$i], 'activity_type' => 'pruning',
+                'activity_date' => $podaDates[$i], 'notes' => 'Poda de invierno 2026. Carga 8-10 yemas/cepa.']);
+            DB::table('cultural_works')->insert(['activity_id' => $aId, 'work_type' => 'pruning',
+                'description' => 'Tijera neumática Infaco + tijera manual. Residuos triturados e incorporados.',
+                'hours_worked' => 6.5, 'residue_management' => 'triturado_incorporado',
+                'created_at' => $now, 'updated_at' => $now]);
         }
 
-        // Tratamiento preventivo
-        $aId = $act(['plot_id' => $plotIds[3], 'plot_planting_id' => $plantingIds[6], 'activity_type' => 'phytosanitary_treatment', 'activity_date' => '2026-04-05', 'notes' => 'Preventivo mildiu inicio brotación.']);
-        DB::table('phytosanitary_treatments')->insert(['activity_id' => $aId, 'product_id' => $prod0, 'dose_per_hectare' => 2.5, 'application_method' => 'pulverizador_hidraulico', 'target_pest' => 'Mildiu', 'humidity' => 70.0, 'created_at' => $now, 'updated_at' => $now]);
+        // ── 2. Laboreo suelo (3 rondas × 8 = 24) ───────────────────────────
+        foreach ([
+            ['2026-01-25', 'Laboreo superficial post-poda. Volteo de restos vegetales.', 'soil_tillage', null],
+            ['2026-02-28', 'Pase de cultivador. Eliminación de adventicias.',             'weeding',      null],
+            ['2026-03-18', 'Laboreo preparatorio pre-brotación.',                         'soil_tillage', null],
+        ] as [$base, $desc, $wt, $res]) {
+            foreach ($plots as $i => $pid) {
+                $aId = $act(['plot_id' => $pid, 'plot_planting_id' => $plantings[$i], 'activity_type' => 'cultural_work',
+                    'activity_date' => $d($base, $i), 'notes' => $desc]);
+                $row = ['activity_id' => $aId, 'work_type' => $wt, 'description' => $desc, 'hours_worked' => 3.5, 'created_at' => $now, 'updated_at' => $now];
+                if ($res) $row['residue_management'] = $res;
+                DB::table('cultural_works')->insert($row);
+            }
+        }
 
-        // Observación fenológica
-        $aId = $act(['plot_id' => $plotIds[0], 'plot_planting_id' => $plantingIds[0], 'activity_type' => 'observation', 'activity_date' => '2026-03-28', 'notes' => 'Observación inicio brotación.']);
-        DB::table('observations')->insert(['activity_id' => $aId, 'observation_type' => 'phenology', 'affected_area_percentage' => 0.00, 'threshold_exceeded' => false, 'description' => 'Inicio brotación 15-20% yemas.', 'created_at' => $now, 'updated_at' => $now]);
+        // ── 3. Desniete / eliminación brotes (Mar) — 8 ─────────────────────
+        foreach ($plots as $i => $pid) {
+            $aId = $act(['plot_id' => $pid, 'plot_planting_id' => $plantings[$i], 'activity_type' => 'cultural_work',
+                'activity_date' => $d('2026-03-25', $i), 'notes' => 'Desniete. Eliminación de brotes no deseados.']);
+            DB::table('cultural_works')->insert(['activity_id' => $aId, 'work_type' => 'desbudding',
+                'description' => 'Eliminación manual brotes basales y de tronco. 10-15 min/cepa.',
+                'hours_worked' => 4.0, 'created_at' => $now, 'updated_at' => $now]);
+        }
+
+        // ── 4. Atado de pámpanos (Abr) — 8 ─────────────────────────────────
+        foreach ($plots as $i => $pid) {
+            $aId = $act(['plot_id' => $pid, 'plot_planting_id' => $plantings[$i], 'activity_type' => 'cultural_work',
+                'activity_date' => $d('2026-04-14', $i * 2), 'notes' => 'Atado y orientación de pámpanos en alambres.']);
+            DB::table('cultural_works')->insert(['activity_id' => $aId, 'work_type' => 'shoot_positioning',
+                'description' => 'Atado con grapas y rafia en segundo y tercer alambre.',
+                'hours_worked' => 5.0, 'created_at' => $now, 'updated_at' => $now]);
+        }
+
+        // ── 5. Deshojado zona racimos (May) — 8 ────────────────────────────
+        foreach ($plots as $i => $pid) {
+            $aId = $act(['plot_id' => $pid, 'plot_planting_id' => $plantings[$i], 'activity_type' => 'cultural_work',
+                'activity_date' => $d('2026-05-12', $i * 2), 'notes' => 'Deshojado zona de racimos. Mejora aireación y luminosidad.']);
+            DB::table('cultural_works')->insert(['activity_id' => $aId, 'work_type' => 'leaf_removal',
+                'description' => 'Deshojado manual lado mañana. 6-8 hojas eliminadas por sarmiento.',
+                'hours_worked' => 5.5, 'created_at' => $now, 'updated_at' => $now]);
+        }
+
+        // ── 6. Despunte de pámpanos (Jun) — 8 ──────────────────────────────
+        foreach ($plots as $i => $pid) {
+            $aId = $act(['plot_id' => $pid, 'plot_planting_id' => $plantings[$i], 'activity_type' => 'cultural_work',
+                'activity_date' => $d('2026-06-08', $i * 2), 'notes' => 'Despunte de pámpanos. Control del vigor vegetativo.']);
+            DB::table('cultural_works')->insert(['activity_id' => $aId, 'work_type' => 'shoot_topping',
+                'description' => 'Despunte mecánico + repaso manual. Altura canopia 70 cm.',
+                'hours_worked' => 3.0, 'created_at' => $now, 'updated_at' => $now]);
+        }
+
+        // ── 7. Aclareo de racimos (Jun-Jul) — 8 ────────────────────────────
+        foreach ($plots as $i => $pid) {
+            $aId = $act(['plot_id' => $pid, 'plot_planting_id' => $plantings[$i], 'activity_type' => 'cultural_work',
+                'activity_date' => $d('2026-06-22', $i * 3), 'notes' => 'Aclareo de racimos. Objetivo 1-1.5 kg/cepa.']);
+            DB::table('cultural_works')->insert(['activity_id' => $aId, 'work_type' => 'bunch_thinning',
+                'description' => 'Eliminación segundo racimo en cepas con exceso de carga.',
+                'hours_worked' => 6.0, 'created_at' => $now, 'updated_at' => $now]);
+        }
+
+        // ── 8. Desbroce verano (Jul) — 8 ───────────────────────────────────
+        foreach ($plots as $i => $pid) {
+            $aId = $act(['plot_id' => $pid, 'plot_planting_id' => $plantings[$i], 'activity_type' => 'cultural_work',
+                'activity_date' => $d('2026-07-06', $i * 2), 'notes' => 'Desbroce entre filas. Mantenimiento cubierta vegetal.']);
+            DB::table('cultural_works')->insert(['activity_id' => $aId, 'work_type' => 'weeding',
+                'description' => 'Pase de desbrozadora en entrecalles.',
+                'hours_worked' => 2.5, 'residue_management' => 'triturado_superficie',
+                'created_at' => $now, 'updated_at' => $now]);
+        }
+
+        // ── 9. Laboreo otoñal (2 rondas × 8 = 16) ──────────────────────────
+        foreach ([
+            ['2026-10-15', 'Laboreo post-vendimia. Incorporación de restos vegetales.', 'soil_tillage', 'triturado_incorporado'],
+            ['2026-11-10', 'Arado otoñal. Apertura de surcos para recogida de lluvias.',  'soil_tillage', null],
+        ] as [$base, $desc, $wt, $res]) {
+            foreach ($plots as $i => $pid) {
+                $aId = $act(['plot_id' => $pid, 'plot_planting_id' => $plantings[$i], 'activity_type' => 'cultural_work',
+                    'activity_date' => $d($base, $i), 'notes' => $desc]);
+                $row = ['activity_id' => $aId, 'work_type' => $wt, 'description' => $desc, 'hours_worked' => 3.0, 'created_at' => $now, 'updated_at' => $now];
+                if ($res) $row['residue_management'] = $res;
+                DB::table('cultural_works')->insert($row);
+            }
+        }
+        // Trabajos culturales: 8+24+8+8+8+8+8+8+16 = 96
+
+        // ── 10. Tratamientos fitosanitarios (16 rondas × 8 = 128) ──────────
+        foreach ([
+            ['2026-02-20', $prod0, 2.0,  'pulverizador_hidraulico', 'Mildiu',         60, 'Preventivo invernal. Caldo bordelés.'],
+            ['2026-03-15', $prod0, 2.5,  'pulverizador_hidraulico', 'Mildiu',         65, 'Primer preventivo mildiu inicio brotación.'],
+            ['2026-04-05', $prod0, 2.5,  'pulverizador_hidraulico', 'Mildiu',         70, 'Preventivo mildiu pre-floración.'],
+            ['2026-04-22', $prod1, 0.30, 'pulverizador_hidraulico', 'Oídio',          45, 'Preventivo oídio. Humedad moderada.'],
+            ['2026-05-08', $prod0, 3.0,  'pulverizador_hidraulico', 'Mildiu',         75, 'Preventivo mildiu cuajado.'],
+            ['2026-05-22', $prod1, 0.35, 'pulverizador_hidraulico', 'Oídio',          42, 'Tratamiento oídio pre-verano.'],
+            ['2026-06-05', $prod0, 3.0,  'pulverizador_hidraulico', 'Mildiu',         80, 'Preventivo mildiu engorde del grano.'],
+            ['2026-06-18', $prod4, 1.5,  'pulverizador_hidraulico', 'Ácaros',         38, 'Acaricida. Araña roja detectada en focos.'],
+            ['2026-07-02', $prod0, 2.5,  'pulverizador_hidraulico', 'Mildiu',         72, 'Tratamiento mildiu verano.'],
+            ['2026-07-16', $prod1, 0.30, 'pulverizador_hidraulico', 'Oídio',          35, 'Mantenimiento preventivo oídio verano.'],
+            ['2026-07-30', $prod2, 1.0,  'pulverizador_hidraulico', 'Polilla racimo', 55, 'Tratamiento polilla 2ª generación.'],
+            ['2026-08-10', $prod0, 2.0,  'pulverizador_hidraulico', 'Mildiu',         68, 'Preventivo mildiu pre-veraison.'],
+            ['2026-08-25', $prod2, 1.0,  'pulverizador_hidraulico', 'Botrytis',       70, 'Preventivo botrytis inicio veraison.'],
+            ['2026-09-02', $prod1, 0.25, 'pulverizador_hidraulico', 'Oídio',          40, 'Último tratamiento pre-vendimia.'],
+            ['2026-10-10', $prod3, 1.5,  'pulverizador_hidraulico', 'Excoriosis',     55, 'Post-vendimia. Protección heridas poda verde.'],
+            ['2026-11-05', $prod3, 1.2,  'mochila',                  'Eutipiosis',     50, 'Preventivo eutipiosis y yesca en troncos.'],
+        ] as [$base, $prodId, $dose, $method, $pest, $humidity, $notes]) {
+            foreach ($plots as $i => $pid) {
+                $aId = $act(['plot_id' => $pid, 'plot_planting_id' => $plantings[$i], 'activity_type' => 'phytosanitary_treatment',
+                    'activity_date' => $d($base, $i), 'notes' => $notes]);
+                DB::table('phytosanitary_treatments')->insert(['activity_id' => $aId, 'product_id' => $prodId,
+                    'dose_per_hectare' => $dose, 'application_method' => $method, 'target_pest' => $pest,
+                    'humidity' => $humidity, 'created_at' => $now, 'updated_at' => $now]);
+            }
+        }
+        // 128 actividades
+
+        // ── 11. Fertilizaciones (8 rondas × 8 = 64) ────────────────────────
+        foreach ([
+            ['2026-03-05', 'NPK 8-15-15',          'mineral', '8-15-15',  300.0, 'incorporado_suelo', 'Abonado de fondo pre-brotación.'],
+            ['2026-04-10', 'Nitrato amónico 27%',   'mineral', '27-0-0',   150.0, 'incorporado_suelo', 'Cobertera nitrogenada brotación.'],
+            ['2026-05-15', 'Fosfato monoamónico',   'mineral', '12-61-0',   80.0, 'fertirrigation',    'Aporte P vía fertirriego cuajado.'],
+            ['2026-06-01', 'Sulfato potásico',       'mineral', '0-0-50',   120.0, 'fertirrigation',    'Aporte K engorde. Fertirriego.'],
+            ['2026-06-25', 'Calcio-Boro foliar',    'mineral',  null,        10.0, 'foliar',            'Corrector foliar Ca+B cuajado.'],
+            ['2026-07-15', 'Sulfato de magnesio',    'mineral',  null,        60.0, 'fertirrigation',    'Corrección deficiencia Mg verano.'],
+            ['2026-08-05', 'Cloruro potásico',       'mineral', '0-0-60',    90.0, 'fertirrigation',    'Pre-vendimia. Maduración con K.'],
+            ['2026-10-20', 'Compost orgánico',       'organic',  null,      1500.0, 'incorporated',      'Enmienda orgánica otoñal.'],
+        ] as [$base, $name, $type, $npk, $qty, $method, $notes]) {
+            foreach ($plots as $i => $pid) {
+                $aId = $act(['plot_id' => $pid, 'plot_planting_id' => $plantings[$i], 'activity_type' => 'fertilization',
+                    'activity_date' => $d($base, $i), 'notes' => $notes]);
+                $row = ['activity_id' => $aId, 'fertilizer_name' => $name, 'fertilizer_type' => $type,
+                    'quantity' => $qty, 'application_method' => $method, 'created_at' => $now, 'updated_at' => $now];
+                if ($npk) $row['npk_ratio'] = $npk;
+                DB::table('fertilizations')->insert($row);
+            }
+        }
+        // 64 actividades
+
+        // ── 12. Riegos (25 sesiones × 8 = 200) ─────────────────────────────
+        foreach ([
+            // Mayo — 6 sesiones
+            ['2026-05-04', 180, 600,  false, null,                    null],
+            ['2026-05-09', 210, 700,  false, null,                    null],
+            ['2026-05-14', 180, 600,  true,  'Aminoácidos 1 L/ha',    0.5],
+            ['2026-05-20', 240, 800,  false, null,                    null],
+            ['2026-05-25', 210, 700,  false, null,                    null],
+            ['2026-05-30', 180, 600,  true,  'NPK líquido 2 L/ha',    1.0],
+            // Junio — 6 sesiones
+            ['2026-06-04', 240, 850,  false, null,                    null],
+            ['2026-06-09', 240, 850,  true,  'Sulfato K 1.5 kg/ha',   0.8],
+            ['2026-06-14', 210, 750,  false, null,                    null],
+            ['2026-06-20', 240, 850,  true,  'Calcio foliar 1 L/ha',  0.5],
+            ['2026-06-25', 210, 750,  false, null,                    null],
+            ['2026-06-30', 240, 850,  false, null,                    null],
+            // Julio — 5 sesiones
+            ['2026-07-05', 270, 950,  false, null,                    null],
+            ['2026-07-11', 270, 950,  true,  'Mg foliar 1 kg/ha',     0.6],
+            ['2026-07-17', 270, 950,  false, null,                    null],
+            ['2026-07-23', 240, 850,  false, null,                    null],
+            ['2026-07-29', 240, 850,  true,  'K líquido 2 L/ha',      1.0],
+            // Agosto — 5 sesiones
+            ['2026-08-04', 210, 750,  false, null,                    null],
+            ['2026-08-10', 210, 750,  true,  'Calcio 1.5 L/ha',       0.7],
+            ['2026-08-16', 180, 600,  false, null,                    null],
+            ['2026-08-22', 180, 600,  false, null,                    null],
+            ['2026-08-28', 150, 500,  false, null,                    null],
+            // Septiembre — 3 sesiones
+            ['2026-09-03', 120, 400,  false, null,                    null],
+            ['2026-09-08', 120, 400,  false, null,                    null],
+            ['2026-09-13',  90, 300,  false, null,                    null],
+        ] as [$base, $duration, $volume, $isFertirrigation, $fertProduct, $fertDose]) {
+            foreach ($plots as $i => $pid) {
+                $aId = $act(['plot_id' => $pid, 'plot_planting_id' => $plantings[$i], 'activity_type' => 'irrigation',
+                    'activity_date' => $d($base, $i), 'notes' => 'Riego localizado por goteo.']);
+                $row = ['activity_id' => $aId, 'irrigation_method' => 'goteo', 'duration_minutes' => $duration,
+                    'water_volume' => $volume, 'water_volume_unit' => 'L', 'water_source' => 'Red de riego agrícola',
+                    'is_fertirrigation' => $isFertirrigation, 'created_at' => $now, 'updated_at' => $now];
+                if ($isFertirrigation && $fertProduct) {
+                    $row['fertilizer_product'] = $fertProduct;
+                    $row['fertilizer_dose']    = $fertDose;
+                }
+                DB::table('irrigations')->insert($row);
+            }
+        }
+        // 200 actividades
+
+        // ── 13. Observaciones (16 tipos × 8 = 128) ──────────────────────────
+        foreach ([
+            ['2026-02-10', 'phenology', 'Recuento yemas activas post-poda. 95% viabilidad.',                    0.0,  false, null],
+            ['2026-03-12', 'phenology', 'Inicio lloro. Actividad vegetativa confirmada.',                        0.0,  false, null],
+            ['2026-03-28', 'phenology', 'Inicio brotación 15-20% yemas. Estado B-C BBCH.',                       0.0,  false, null],
+            ['2026-04-08', 'phenology', 'Brotación 80%. Estado D-E BBCH. Sin daños por heladas.',                0.0,  false, null],
+            ['2026-04-20', 'pest',      'Inspección mildiu. Sin síntomas visibles. Riesgo bajo.',                0.0,  false, null],
+            ['2026-05-02', 'phenology', 'Inicio floración. 15% flores abiertas. BBCH 61.',                       0.0,  false, null],
+            ['2026-05-18', 'pest',      'Oídio detectado 5% superficie. Umbral no superado. Seguimiento.',       5.0,  false, '2026-05-25'],
+            ['2026-05-28', 'phenology', 'Cuajado confirmado. 40% flores cuajadas. BBCH 71.',                     0.0,  false, null],
+            ['2026-06-10', 'pest',      'Polilla 1ª generación. Daños menores <3%. Monitoreo trampas.',          3.0,  false, '2026-06-20'],
+            ['2026-06-28', 'pest',      'Araña roja. Focos localizados. Umbral de acción superado.',             8.0,  true,  '2026-07-05'],
+            ['2026-07-08', 'phenology', 'Inicio veraison. 20% bayas cambiando color. BBCH 81.',                  0.0,  false, null],
+            ['2026-07-20', 'pest',      'Revisión post-tratamiento ácaros. Control eficaz >90%.',                1.0,  false, null],
+            ['2026-08-01', 'phenology', 'Veraison 90% completado. Inicio maduración tecnológica.',               0.0,  false, null],
+            ['2026-08-15', 'pest',      'Botrytis riesgo medio. Humedad elevada. Tratamiento preventivo urgente.',7.0, false, '2026-08-20'],
+            ['2026-09-05', 'general',   'Pre-vendimia. Brix 21.5-23.0°. pH 3.30-3.42. Estado óptimo.',          0.0,  false, null],
+            ['2026-09-18', 'general',   'Parcela vendimia completada. Estado sanitario: sano.',                  0.0,  false, null],
+        ] as [$base, $type, $desc, $area, $exceeded, $followUp]) {
+            foreach ($plots as $i => $pid) {
+                $aId = $act(['plot_id' => $pid, 'plot_planting_id' => $plantings[$i], 'activity_type' => 'observation',
+                    'activity_date' => $d($base, $i), 'notes' => $desc]);
+                $row = ['activity_id' => $aId, 'observation_type' => $type, 'description' => $desc,
+                    'affected_area_percentage' => $area, 'threshold_exceeded' => $exceeded,
+                    'created_at' => $now, 'updated_at' => $now];
+                if ($followUp) $row['follow_up_date'] = $followUp;
+                DB::table('observations')->insert($row);
+            }
+        }
+        // 128 actividades
+
+        // ── 14. Vendimia 2026 (8) ───────────────────────────────────────────
+        $vendimiaData = [
+            ['2026-09-15', 0, 1050, 23.5, 3.38, 5.6, 'Tinto joven. Excelente sanidad. Vendimia manual.'],
+            ['2026-09-17', 1,  870, 22.8, 3.35, 5.9, 'Blanco Marmajuelo. Aromático. Recolección temprana.'],
+            ['2026-09-18', 2,  720, 22.0, 3.32, 6.1, 'Moscatel. Cosecha pequeña. Alta concentración.'],
+            ['2026-09-20', 3, 1100, 23.8, 3.40, 5.5, 'Listán negro. Buena carga. Madurez perfecta.'],
+            ['2026-09-22', 4,  680, 22.5, 3.33, 5.8, 'Vijariego blanco. Maduro. Baja producción.'],
+            ['2026-09-23', 5,  610, 21.8, 3.30, 6.2, 'Tintilla. Parcela joven. Brix más bajo.'],
+            ['2026-09-25', 6, 1200, 24.0, 3.42, 5.4, 'Listán blanco. Excelente cosecha. Brix alto.'],
+            ['2026-09-26', 7,  980, 23.2, 3.36, 5.7, 'Malvasía aromática. Óptimo equilibrio.'],
+        ];
+        foreach ($vendimiaData as [$date, $idx, $weight, $brix, $ph, $acidity, $notes]) {
+            $aId = $act(['plot_id' => $plots[$idx], 'plot_planting_id' => $plantings[$idx], 'activity_type' => 'harvest',
+                'activity_date' => $date, 'notes' => $notes]);
+            DB::table('harvests')->insert(['activity_id' => $aId, 'plot_planting_id' => $plantings[$idx],
+                'harvest_start_date' => $date, 'total_weight' => $weight, 'brix_degree' => $brix,
+                'ph_level' => $ph, 'acidity_level' => $acidity, 'status' => 'active',
+                'health_status' => 'sano', 'notes' => $notes, 'created_at' => $now, 'updated_at' => $now]);
+        }
+        // 8 actividades
+
+        // ── 15. Post-vendimia (2 rondas × 8 = 16) ──────────────────────────
+        foreach ([
+            ['2026-10-05', 'trunk_treatment', 1.5, 'kg/ha', 'Protección heridas poda verde. Prevención excoriosis.',   0],
+            ['2026-11-03', 'trunk_treatment', 1.2, 'kg/ha', 'Tratamiento preventivo eutipiosis y yesca en troncos.',  48],
+        ] as [$base, $appType, $dose, $doseUnit, $notes, $reentry]) {
+            foreach ($plots as $i => $pid) {
+                $aId = $act(['plot_id' => $pid, 'plot_planting_id' => $plantings[$i], 'activity_type' => 'post_harvest_treatment',
+                    'activity_date' => $d($base, $i), 'notes' => $notes]);
+                DB::table('post_harvest_treatments')->insert(['activity_id' => $aId, 'product_id' => $prod3,
+                    'application_type' => $appType, 'treated_area_ha' => 1.2, 'dose_per_hectare' => $dose,
+                    'dose_unit' => $doseUnit, 'reentry_interval_hours' => $reentry,
+                    'notes' => $notes, 'created_at' => $now, 'updated_at' => $now]);
+            }
+        }
+        // 16 actividades
+        // ─────────────────────────────────────────────────────────────────────
+        // TOTAL 2026: 96+128+64+200+128+8+16 = 640 actividades
     }
 
     // ─── 11. Fenología ─────────────────────────────────────────────────────────
