@@ -1100,7 +1100,7 @@ class ProducerDemoSeeder_test extends Seeder
                     'is_fertirrigation' => $isFertirrigation, 'created_at' => $now, 'updated_at' => $now];
                 if ($isFertirrigation && $fertProduct) {
                     $row['fertilizer_product'] = $fertProduct;
-                    $row['fertilizer_dose']    = $fertDose;
+                    $row['fertilizer_dose_per_ha']    = $fertDose;
                 }
                 DB::table('irrigations')->insert($row);
             }
