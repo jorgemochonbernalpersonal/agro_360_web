@@ -332,7 +332,7 @@ class ProducerDemoSeeder_test extends Seeder
         });
 
         // 46. Previsiones cosecha (24)
-        $this->step('Previsiones cosecha (456: 8 plantaciones × 3 campañas × 19 estimaciones)', function () use ($now, $plantingIds, $campaign2024Id, $campaign2025Id, $campaign2026Id) {
+        $this->step('Previsiones cosecha (24: 8 plantaciones × 3 campañas)', function () use ($now, $plantingIds, $campaign2024Id, $campaign2025Id, $campaign2026Id) {
             $this->createYieldForecasts($plantingIds, $campaign2024Id, $campaign2025Id, $campaign2026Id, $now);
         });
 
@@ -3082,33 +3082,22 @@ class ProducerDemoSeeder_test extends Seeder
             $c2026 => ['year' => 2026, 'mult' => 1.00, 'date' => '2026-07-18', 'status' => 'confirmed'],
         ];
 
-        // 8 plantaciones × 3 campañas × 19 estimaciones mensuales = 456 previsiones
-        $estimationMonths = [3, 4, 5, 6, 7, 8, 9];   // meses de estimación en campaña
-        $estimationTypes  = ['early', 'mid', 'final']; // tipo de estimación
-
+        // 8 plantaciones × 3 campañas = 24 previsiones (límite unique constraint)
         foreach ($campaigns as $cId => $c) {
             foreach (array_slice($plantingIds, 0, 8) as $pi => $plantingId) {
-                $base = $baseKg[$pi] * $c['mult'];
-                // ~19 estimaciones por combinación planting×campaign distribuidas en meses + tipos
-                for ($em = 0; $em < 19; $em++) {
-                    $month    = $estimationMonths[$em % count($estimationMonths)];
-                    $day      = mt_rand(1, 28);
-                    $variance = 0.85 + ($em % 7) * 0.05; // de 0.85 a 1.15 conforme avanza temporada
-                    $estKg    = round($base * $variance + mt_rand(-50, 50), 1);
-                    DB::table('winery_yield_forecasts')->insert([
-                        'winery_id'        => $uid,
-                        'viticulturist_id' => $uid,
-                        'plot_planting_id' => $plantingId,
-                        'campaign_id'      => $cId,
-                        'vintage_year'     => $c['year'],
-                        'estimated_kg'     => max(100, $estKg),
-                        'estimation_date'  => sprintf('%d-%02d-%02d', $c['year'], $month, $day),
-                        'status'           => $c['status'],
-                        'notes'            => "Previsión {$estimationTypes[$em % 3]} — mes {$month} campaña {$c['year']}.",
-                        'created_at'       => $now,
-                        'updated_at'       => $now,
-                    ]);
-                }
+                DB::table('winery_yield_forecasts')->insert([
+                    'winery_id'        => $uid,
+                    'viticulturist_id' => $uid,
+                    'plot_planting_id' => $plantingId,
+                    'campaign_id'      => $cId,
+                    'vintage_year'     => $c['year'],
+                    'estimated_kg'     => round($baseKg[$pi] * $c['mult'], 1),
+                    'estimation_date'  => $c['date'],
+                    'status'           => $c['status'],
+                    'notes'            => "Previsión campaña {$c['year']}. Basada en histórico y estado vegetativo.",
+                    'created_at'       => $now,
+                    'updated_at'       => $now,
+                ]);
             }
         }
     }
