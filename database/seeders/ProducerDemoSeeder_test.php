@@ -165,7 +165,7 @@ class ProducerDemoSeeder_test extends Seeder
         });
 
         // 17. Subcontrataciones
-        $this->step('Subcontrataciones (15)', function () use ($now, $plotIds, $campaign2024Id, $campaign2025Id, $campaign2026Id) {
+        $this->step('Subcontrataciones (450: 150×campaña)', function () use ($now, $plotIds, $campaign2024Id, $campaign2025Id, $campaign2026Id) {
             $this->createSubcontractings($plotIds, $campaign2024Id, $campaign2025Id, $campaign2026Id, $now);
         });
 
@@ -248,7 +248,7 @@ class ProducerDemoSeeder_test extends Seeder
         });
 
         // 31. Embotellamientos + lotes + etiquetado
-        $this->step('Embotellamientos (4) + Lotes etiquetas (4) + Etiquetado (3)', function () use ($now, $wineIds, $wineryContainerIds) {
+        $this->step('Embotellamientos (50) + Lotes etiquetas (4) + Etiquetado', function () use ($now, $wineIds, $wineryContainerIds) {
             $this->createBottlings($wineIds, $wineryContainerIds, $now);
             $this->createLabelBatches($wineIds, $now);
             $this->createLabelings($now);
@@ -268,17 +268,17 @@ class ProducerDemoSeeder_test extends Seeder
         });
 
         // 34. Clientes
-        $this->step('Clientes (6)', function () use ($now) {
+        $this->step('Clientes (450: 250 empresas + 200 particulares)', function () use ($now) {
             $this->createClients($now);
         });
 
         // 35. Facturas
-        $this->step('Facturas mixtas (10: cosecha + vino)', function () use ($now, $campaign2024Id, $campaign2025Id) {
+        $this->step('Facturas mixtas (150: 75×2024 + 75×2025)', function () use ($now, $campaign2024Id, $campaign2025Id) {
             $this->createInvoices($campaign2024Id, $campaign2025Id, $now);
         });
 
         // 36. Notas de cata
-        $this->step('Notas de cata (6)', function () use ($now, $wineIds) {
+        $this->step('Notas de cata (450)', function () use ($now, $wineIds) {
             $this->createTastingNotes($wineIds, $now);
         });
 
@@ -288,20 +288,20 @@ class ProducerDemoSeeder_test extends Seeder
         });
 
         // 38. Documentos bodega + alertas
-        $this->step('Documentos bodega (4)', function () use ($now) {
+        $this->step('Documentos bodega (450)', function () use ($now) {
             $this->createWineryDocuments($now);
         });
-        $this->step('Alertas (5)', function () use ($now) {
+        $this->step('Alertas bodega (450)', function () use ($now) {
             $this->createWineryAlerts($now);
         });
 
         // 39. Plan de trabajos 2026
-        $this->step('Plan de trabajos 2026 (~28)', function () use ($now, $plotIds, $campaign2026Id) {
+        $this->step('Plan de trabajos 2026 (~450)', function () use ($now, $plotIds, $campaign2026Id) {
             $this->createPlannedWorks($plotIds, $campaign2026Id, $now);
         });
 
         // 40. Recepciones bodega 2026 (batches + cosechas winery_id)
-        $this->step('Recepciones bodega 2026 (8 batches + 8 recepciones)', function () use ($now, $plantingIds, $campaign2026Id) {
+        $this->step('Recepciones bodega 2026 (450 batches + 450 recepciones)', function () use ($now, $plantingIds, $campaign2026Id) {
             $this->createWineryReceptions2026($plantingIds, $campaign2026Id, $now);
         });
 
@@ -312,32 +312,32 @@ class ProducerDemoSeeder_test extends Seeder
         });
 
         // 42. Lotes producto vintage 2026 (40)
-        $this->step('Lotes producto vintage 2026 (40)', function () use ($now, $wineIds2026) {
+        $this->step('Lotes producto vintage 2026 (~456)', function () use ($now, $wineIds2026) {
             $this->createProductLots2026($wineIds2026, $now);
         });
 
         // 43. Análisis de suelo (24)
-        $this->step('Análisis de suelo (24: 8 parcelas × 3 campañas)', function () use ($now, $plotIds, $campaign2024Id, $campaign2025Id, $campaign2026Id) {
+        $this->step('Análisis de suelo (450: 150 parcelas × 3 campañas)', function () use ($now, $plotIds, $campaign2024Id, $campaign2025Id, $campaign2026Id) {
             $this->createSoilAnalyses($plotIds, $campaign2024Id, $campaign2025Id, $campaign2026Id, $now);
         });
 
         // 44. Registros biodiversidad (24)
-        $this->step('Registros biodiversidad (24)', function () use ($now, $plotIds, $campaign2026Id) {
+        $this->step('Registros biodiversidad (450: 150 parcelas × 3 tipos)', function () use ($now, $plotIds, $campaign2026Id) {
             $this->createBiodiversityRecords($plotIds, $campaign2026Id, $now);
         });
 
         // 45. Alertas fitosanitarias (12)
-        $this->step('Alertas fitosanitarias (12)', function () use ($now) {
+        $this->step('Alertas fitosanitarias (450)', function () use ($now) {
             $this->createPhytosanitaryAlerts($now);
         });
 
         // 46. Previsiones cosecha (24)
-        $this->step('Previsiones cosecha (24: 8 plantaciones × 3 campañas)', function () use ($now, $plantingIds, $campaign2024Id, $campaign2025Id, $campaign2026Id) {
+        $this->step('Previsiones cosecha (456: 8 plantaciones × 3 campañas × 19 estimaciones)', function () use ($now, $plantingIds, $campaign2024Id, $campaign2025Id, $campaign2026Id) {
             $this->createYieldForecasts($plantingIds, $campaign2024Id, $campaign2025Id, $campaign2026Id, $now);
         });
 
         // 47. Entregas + cosechas comercializadas 2026
-        $this->step('Entregas cosecha + comercializadas 2026 (~16)', function () use ($now, $plantingIds, $campaign2026Id) {
+        $this->step('Entregas cosecha (450: 2024+2025+2026)', function () use ($now, $plantingIds, $campaign2026Id) {
             $this->createHarvestDeliveries($plantingIds, $campaign2026Id, $now);
         });
 
@@ -347,7 +347,7 @@ class ProducerDemoSeeder_test extends Seeder
         });
 
         // 49. Facturas producto vino 2026 (13)
-        $this->step('Facturas producto vino 2026 (13)', function () use ($now, $wineIds2026) {
+        $this->step('Facturas producto vino 2026 (300)', function () use ($now, $wineIds2026) {
             $this->createProductInvoices($wineIds2026, $now);
         });
 
@@ -1435,23 +1435,52 @@ class ProducerDemoSeeder_test extends Seeder
     private function createSubcontractings(array $plotIds, int $c24, int $c25, int $c26, $now): void
     {
         $uid = self::PRODUCER_USER_ID;
-        $rows = [
-            ['campaign_id' => $c24, 'plot_id' => $plotIds[0], 'service_type' => 'harvesting',    'company_name' => 'Cuadrilla Pérez e Hijos',      'service_date' => '2024-08-20', 'amount' => 1800.00, 'invoiced' => true,  'invoice_number' => 'FP2024-0041', 'description' => 'Vendimia manual Listán Negro'],
-            ['campaign_id' => $c24, 'plot_id' => $plotIds[1], 'service_type' => 'treatment',     'company_name' => 'AgroService Canarias SL',      'service_date' => '2024-05-10', 'amount' =>  620.00, 'invoiced' => true,  'invoice_number' => 'AGS-2024-P18', 'description' => 'Tratamiento mildiu preventivo'],
-            ['campaign_id' => $c24, 'plot_id' => $plotIds[2], 'service_type' => 'pruning',       'company_name' => 'Podas Atlánticas SL',          'service_date' => '2024-01-15', 'amount' =>  980.00, 'invoiced' => true,  'invoice_number' => 'PA-2024-P05',  'description' => 'Poda en vaso parcela norte'],
-            ['campaign_id' => $c24, 'plot_id' => $plotIds[0], 'service_type' => 'analysis',      'company_name' => 'Laboratorio Agrícola Canario', 'service_date' => '2024-07-20', 'amount' =>  390.00, 'invoiced' => true,  'invoice_number' => 'LAC-2024-P42', 'description' => 'Análisis madurez + residuos'],
-            ['campaign_id' => $c25, 'plot_id' => $plotIds[0], 'service_type' => 'harvesting',    'company_name' => 'Cuadrilla Pérez e Hijos',      'service_date' => '2025-08-18', 'amount' => 1950.00, 'invoiced' => true,  'invoice_number' => 'FP2025-0038', 'description' => 'Vendimia manual Listán Negro 2025'],
-            ['campaign_id' => $c25, 'plot_id' => $plotIds[1], 'service_type' => 'pruning',       'company_name' => 'Podas Atlánticas SL',          'service_date' => '2025-01-08', 'amount' => 1050.00, 'invoiced' => true,  'invoice_number' => 'PA-2025-P03',  'description' => 'Poda formación viñas jóvenes'],
-            ['campaign_id' => $c25, 'plot_id' => $plotIds[2], 'service_type' => 'treatment',     'company_name' => 'AgroService Canarias SL',      'service_date' => '2025-04-22', 'amount' =>  580.00, 'invoiced' => true,  'invoice_number' => 'AGS-2025-P11', 'description' => 'Preventivo mildiu + oídio'],
-            ['campaign_id' => $c25, 'plot_id' => $plotIds[3], 'service_type' => 'soil_work',     'company_name' => 'Labores Agrícolas Guía SL',    'service_date' => '2025-02-15', 'amount' =>  680.00, 'invoiced' => true,  'invoice_number' => 'LAG-2025-P09', 'description' => 'Laboreo entre líneas y subsolado'],
-            ['campaign_id' => $c26, 'plot_id' => $plotIds[0], 'service_type' => 'pruning',       'company_name' => 'Podas Atlánticas SL',          'service_date' => '2026-01-10', 'amount' => 1100.00, 'invoiced' => false, 'invoice_number' => null,            'description' => 'Poda corta en cordón royat 2026'],
-            ['campaign_id' => $c26, 'plot_id' => $plotIds[1], 'service_type' => 'pruning',       'company_name' => 'Podas Atlánticas SL',          'service_date' => '2026-01-18', 'amount' => 1000.00, 'invoiced' => false, 'invoice_number' => null,            'description' => 'Poda seca lote sur 2026'],
-            ['campaign_id' => $c26, 'plot_id' => $plotIds[2], 'service_type' => 'soil_work',     'company_name' => 'Labores Agrícolas Guía SL',    'service_date' => '2026-02-10', 'amount' =>  720.00, 'invoiced' => false, 'invoice_number' => null,            'description' => 'Laboreo primavera 2026'],
-            ['campaign_id' => $c26, 'plot_id' => $plotIds[3], 'service_type' => 'fertilization', 'company_name' => 'Nutrición Vegetal Canarias SL','service_date' => '2026-03-12', 'amount' =>  510.00, 'invoiced' => false, 'invoice_number' => null,            'description' => 'Fertirrigación brotación 2026'],
-            ['campaign_id' => $c26, 'plot_id' => $plotIds[0], 'service_type' => 'treatment',     'company_name' => 'AgroService Canarias SL',      'service_date' => '2026-03-28', 'amount' =>  640.00, 'invoiced' => false, 'invoice_number' => null,            'description' => 'Tratamiento preventivo brotación 2026'],
+        $plotCount    = count($plotIds);
+        $campaigns    = [
+            $c24 => ['year' => 2024, 'invoiced' => true],
+            $c25 => ['year' => 2025, 'invoiced' => true],
+            $c26 => ['year' => 2026, 'invoiced' => false],
         ];
-        foreach ($rows as $r) {
-            DB::table('subcontractings')->insert(array_merge($r, ['viticulturist_id' => $uid, 'created_at' => $now, 'updated_at' => $now]));
+        $serviceTypes = ['harvesting', 'treatment', 'pruning', 'analysis', 'soil_work', 'fertilization', 'irrigation', 'certification', 'consulting', 'transport'];
+        $companies    = [
+            'Cuadrilla Pérez e Hijos', 'AgroService Canarias SL', 'Podas Atlánticas SL',
+            'Laboratorio Agrícola Canario', 'Labores Agrícolas Guía SL', 'Nutrición Vegetal Canarias SL',
+            'Riegos Insulares SA', 'Agroasesores Canarias SL', 'Transporte Agrícola GC', 'TechAgro Canarias',
+        ];
+        $descriptions = [
+            'Vendimia manual parcela #{p}', 'Tratamiento preventivo mildiu #{p}', 'Poda invierno parcela #{p}',
+            'Análisis madurez + residuos #{p}', 'Laboreo entre líneas #{p}', 'Fertirrigación nitrogenada #{p}',
+            'Instalación/mantenimiento goteo #{p}', 'Certificación ecológica #{p}', 'Asesoría técnica campaña #{p}', 'Transporte materiales #{p}',
+        ];
+
+        $i = 1;
+        foreach ($campaigns as $cId => $cam) {
+            $year = $cam['year'];
+            // 150 subcontrataciones por campaña = 450 total
+            for ($j = 1; $j <= 150; $j++, $i++) {
+                $sTypeIdx  = ($i - 1) % count($serviceTypes);
+                $pIdx      = ($i - 1) % $plotCount;
+                $month     = mt_rand(1, 12);
+                $day       = mt_rand(1, 28);
+                $amount    = round(mt_rand(300, 2500) + mt_rand(0, 99) / 100, 2);
+                $invoiced  = $cam['invoiced'];
+                $invNum    = $invoiced ? strtoupper(substr($serviceTypes[$sTypeIdx], 0, 3)) . "-{$year}-P" . str_pad($i, 4, '0', STR_PAD_LEFT) : null;
+                $desc      = str_replace('#{p}', $pIdx + 1, $descriptions[$sTypeIdx]);
+                DB::table('subcontractings')->insert([
+                    'viticulturist_id' => $uid,
+                    'campaign_id'      => $cId,
+                    'plot_id'          => $plotIds[$pIdx],
+                    'service_type'     => $serviceTypes[$sTypeIdx],
+                    'company_name'     => $companies[$sTypeIdx % count($companies)],
+                    'service_date'     => sprintf('%d-%02d-%02d', $year, $month, $day),
+                    'amount'           => $amount,
+                    'invoiced'         => $invoiced,
+                    'invoice_number'   => $invNum,
+                    'description'      => $desc,
+                    'created_at'       => $now,
+                    'updated_at'       => $now,
+                ]);
+            }
         }
     }
 
@@ -2041,16 +2070,100 @@ class ProducerDemoSeeder_test extends Seeder
     private function createBottlings(array $wineIds, array $containerIds, $now): void
     {
         $uid = self::PRODUCER_USER_ID;
-        $bottlings = [
-            ['wine_id' => $wineIds[0], 'date' => '2025-11-20', 'bottles' => 4200, 'liters' => 3150.0, 'notes' => 'Tinto joven primera tirada.'],
-            ['wine_id' => $wineIds[3], 'date' => '2025-11-25', 'bottles' => 3100, 'liters' => 2325.0, 'notes' => 'Blanco Marmajuelo.'],
-            ['wine_id' => $wineIds[5], 'date' => '2025-12-02', 'bottles' => 1550, 'liters' => 1162.5, 'notes' => 'Rosado primera tirada.'],
-            ['wine_id' => $wineIds[1], 'date' => '2026-02-15', 'bottles' => 2300, 'liters' => 1725.0, 'notes' => 'Crianza 6 meses.'],
+        $containerCount = count($containerIds);
+        $wineCount      = count($wineIds);
+
+        $notesByType = [
+            'tinto'    => ['Tinto joven primera tirada.', 'Tinto selección — embotellado manual.', 'Tinto barrica 6 meses.', 'Tinto crianza cosecha especial.'],
+            'blanco'   => ['Blanco Marmajuelo fresco.', 'Blanco afrutado vendimia temprana.', 'Blanco fermentado en barrica.'],
+            'rosado'   => ['Rosado primera tirada.', 'Rosado sangrado directo.', 'Rosado monovarietal.'],
+            'espumoso' => ['Brut nature segunda fermentación.', 'Espumoso reserva 18 meses.'],
         ];
-        foreach ($bottlings as $i => $b) {
-            $lotNumber = 'PLOT-' . date('Ymd', strtotime($b['date'])) . '-' . str_pad($i + 1, 3, '0', STR_PAD_LEFT);
-            $bottlingId = DB::table('wine_bottlings')->insertGetId(['user_id' => $uid, 'wine_id' => $b['wine_id'], 'container_id' => $containerIds[$i] ?? $containerIds[0], 'bottling_date' => $b['date'], 'bottle_format' => '750', 'quantity_bottles' => $b['bottles'], 'quantity_liters' => $b['liters'], 'lot_number' => $lotNumber, 'notes' => $b['notes'], 'created_by' => $uid, 'created_at' => $now, 'updated_at' => $now]);
-            DB::table('wine_lots')->insert(['user_id' => $uid, 'wine_id' => $b['wine_id'], 'name' => $lotNumber, 'vintage' => (int)substr($b['date'], 0, 4), 'wine_type' => 'tinto', 'quantity' => $b['liters'], 'initial_quantity' => $b['liters'], 'available_quantity' => $b['liters'], 'unit' => 'litros', 'bottling_date' => $b['date'], 'archived' => false, 'created_at' => $now, 'updated_at' => $now]);
+        $wineTypes  = ['tinto', 'tinto', 'tinto', 'blanco', 'blanco', 'rosado', 'espumoso', 'tinto'];
+        $formats    = ['750', '750', '750', '500', '375', '1500'];
+
+        // ── 2024: 12 embotellamientos ─────────────────────────────────────
+        for ($i = 1; $i <= 12; $i++) {
+            $wIdx    = ($i - 1) % $wineCount;
+            $wType   = $wineTypes[$wIdx % count($wineTypes)];
+            $notes   = $notesByType[$wType][($i - 1) % count($notesByType[$wType])];
+            $month   = mt_rand(9, 12);
+            $day     = mt_rand(1, 28);
+            $date    = sprintf('2024-%02d-%02d', $month, $day);
+            $bottles = mt_rand(800, 5000);
+            $liters  = round($bottles * 0.75, 3);
+            $lot     = 'PLOT-' . date('Ymd', strtotime($date)) . '-' . str_pad($i, 3, '0', STR_PAD_LEFT);
+            DB::table('wine_bottlings')->insertGetId([
+                'user_id' => $uid, 'wine_id' => $wineIds[$wIdx],
+                'container_id' => $containerIds[$i % $containerCount],
+                'bottling_date' => $date, 'bottle_format' => $formats[$i % count($formats)],
+                'quantity_bottles' => $bottles, 'quantity_liters' => $liters,
+                'lot_number' => $lot, 'notes' => $notes,
+                'created_by' => $uid, 'created_at' => $now, 'updated_at' => $now,
+            ]);
+            DB::table('wine_lots')->insert([
+                'user_id' => $uid, 'wine_id' => $wineIds[$wIdx],
+                'name' => $lot, 'vintage' => 2024, 'wine_type' => $wType,
+                'quantity' => $liters, 'initial_quantity' => $liters, 'available_quantity' => $liters,
+                'unit' => 'litros', 'bottling_date' => $date, 'archived' => false,
+                'created_at' => $now, 'updated_at' => $now,
+            ]);
+        }
+
+        // ── 2025: 16 embotellamientos ─────────────────────────────────────
+        for ($i = 1; $i <= 16; $i++) {
+            $wIdx    = $i % $wineCount;
+            $wType   = $wineTypes[$wIdx % count($wineTypes)];
+            $notes   = $notesByType[$wType][($i - 1) % count($notesByType[$wType])];
+            $month   = mt_rand(9, 12);
+            $day     = mt_rand(1, 28);
+            $date    = sprintf('2025-%02d-%02d', $month, $day);
+            $bottles = mt_rand(1000, 6000);
+            $liters  = round($bottles * 0.75, 3);
+            $lot     = 'PLOT-' . date('Ymd', strtotime($date)) . '-' . str_pad($i, 3, '0', STR_PAD_LEFT);
+            DB::table('wine_bottlings')->insertGetId([
+                'user_id' => $uid, 'wine_id' => $wineIds[$wIdx],
+                'container_id' => $containerIds[$i % $containerCount],
+                'bottling_date' => $date, 'bottle_format' => $formats[$i % count($formats)],
+                'quantity_bottles' => $bottles, 'quantity_liters' => $liters,
+                'lot_number' => $lot, 'notes' => $notes,
+                'created_by' => $uid, 'created_at' => $now, 'updated_at' => $now,
+            ]);
+            DB::table('wine_lots')->insert([
+                'user_id' => $uid, 'wine_id' => $wineIds[$wIdx],
+                'name' => $lot, 'vintage' => 2025, 'wine_type' => $wType,
+                'quantity' => $liters, 'initial_quantity' => $liters, 'available_quantity' => $liters,
+                'unit' => 'litros', 'bottling_date' => $date, 'archived' => false,
+                'created_at' => $now, 'updated_at' => $now,
+            ]);
+        }
+
+        // ── 2026: 22 embotellamientos ─────────────────────────────────────
+        for ($i = 1; $i <= 22; $i++) {
+            $wIdx    = ($i + 2) % $wineCount;
+            $wType   = $wineTypes[$wIdx % count($wineTypes)];
+            $notes   = $notesByType[$wType][($i - 1) % count($notesByType[$wType])];
+            $month   = mt_rand(1, 4);
+            $day     = mt_rand(1, 28);
+            $date    = sprintf('2026-%02d-%02d', $month, $day);
+            $bottles = mt_rand(1200, 7000);
+            $liters  = round($bottles * 0.75, 3);
+            $lot     = 'PLOT-' . date('Ymd', strtotime($date)) . '-' . str_pad($i, 3, '0', STR_PAD_LEFT);
+            DB::table('wine_bottlings')->insertGetId([
+                'user_id' => $uid, 'wine_id' => $wineIds[$wIdx],
+                'container_id' => $containerIds[$i % $containerCount],
+                'bottling_date' => $date, 'bottle_format' => $formats[$i % count($formats)],
+                'quantity_bottles' => $bottles, 'quantity_liters' => $liters,
+                'lot_number' => $lot, 'notes' => $notes,
+                'created_by' => $uid, 'created_at' => $now, 'updated_at' => $now,
+            ]);
+            DB::table('wine_lots')->insert([
+                'user_id' => $uid, 'wine_id' => $wineIds[$wIdx],
+                'name' => $lot, 'vintage' => 2026, 'wine_type' => $wType,
+                'quantity' => $liters, 'initial_quantity' => $liters, 'available_quantity' => $liters,
+                'unit' => 'litros', 'bottling_date' => $date, 'archived' => false,
+                'created_at' => $now, 'updated_at' => $now,
+            ]);
         }
     }
 
@@ -2129,16 +2242,87 @@ class ProducerDemoSeeder_test extends Seeder
     private function createClients($now): void
     {
         $uid = self::PRODUCER_USER_ID;
-        $clients = [
-            ['client_type' => 'company',    'company_name' => 'Restaurantes Canarios SL',    'company_document' => 'B35100001', 'email' => 'compras@restcanarios-prod.es',  'phone' => '928100001'],
-            ['client_type' => 'company',    'company_name' => 'Distribuidora Atlántico SLU', 'company_document' => 'B35100002', 'email' => 'pedidos@disatlantico-prod.es',  'phone' => '928100002'],
-            ['client_type' => 'individual', 'first_name' => 'Pedro', 'last_name' => 'Suárez Martín',   'particular_document' => '45100P01T', 'email' => 'pedro.prod@gmail.com',   'phone' => '629100001'],
-            ['client_type' => 'company',    'company_name' => 'Wine Export Canarias SL',     'company_document' => 'B35100003', 'email' => 'export@wineexport-prod.es',     'phone' => '928100003'],
-            ['client_type' => 'individual', 'first_name' => 'Laura', 'last_name' => 'Álvarez Pérez',   'particular_document' => '45100P02P', 'email' => 'laura.prod@gmail.com',   'phone' => '629100002'],
-            ['client_type' => 'individual', 'first_name' => 'Miguel', 'last_name' => 'Falcón Torres',  'particular_document' => '45100P03R', 'email' => null,                     'phone' => '629100003'],
+
+        // ── Empresas (250) ────────────────────────────────────────────────────
+        $companyPrefixes = [
+            'Restaurantes', 'Distribuidora', 'Exportadora', 'Bodegas', 'Viñedos',
+            'Cooperativa', 'Comercial', 'Grupo', 'Inversiones', 'Importadora',
+            'Alimentación', 'Hostelería', 'Enoteca', 'Gourmet', 'Agrícola',
+            'Vinicultora', 'Denominación', 'Productos', 'Servicios', 'Logística',
         ];
-        foreach ($clients as $c) {
-            DB::table('clients')->insert(array_merge($c, ['user_id' => $uid, 'active' => true, 'created_at' => $now, 'updated_at' => $now]));
+        $companyNouns = [
+            'Canarios', 'Atlántico', 'Gran Canaria', 'Isleña', 'del Sur',
+            'Palmera', 'Norteña', 'Insular', 'del Vino', 'Vinícola',
+            'de Agaete', 'del Norte', 'Macaronesia', 'Tropical', 'Lanzaroteña',
+            'Gomera', 'Hierro', 'Tenerife', 'Fuerteventura', 'La Palma',
+        ];
+        $companySuffixes = ['SL', 'SLU', 'SA', 'CB', 'SC', 'SLU', 'SAU', 'SLL', 'SL', 'SA'];
+        $companyActivities = [
+            'restauracion', 'distribucion', 'exportacion', 'importacion', 'horeca',
+            'enoteca', 'logistica', 'comercial', 'agricola', 'hosteleria',
+        ];
+
+        $rows = [];
+        for ($i = 1; $i <= 250; $i++) {
+            $prefix   = $companyPrefixes[($i - 1) % count($companyPrefixes)];
+            $noun     = $companyNouns[(int)(($i - 1) / count($companyPrefixes)) % count($companyNouns)];
+            $suffix   = $companySuffixes[$i % count($companySuffixes)];
+            $activity = $companyActivities[$i % count($companyActivities)];
+            $name     = "{$prefix} {$noun} {$suffix}";
+            $docNum   = 'B35' . str_pad(200000 + $i, 6, '0', STR_PAD_LEFT);
+            $domain   = strtolower(str_replace([' ', 'á','é','í','ó','ú','ñ'], ['-','a','e','i','o','u','n'], "{$prefix}-{$noun}"));
+            $rows[] = [
+                'user_id'          => $uid,
+                'client_type'      => 'company',
+                'company_name'     => $name,
+                'company_document' => $docNum,
+                'email'            => "pedidos{$i}@{$domain}-gc.es",
+                'phone'            => '928' . str_pad(200000 + $i, 6, '0', STR_PAD_LEFT),
+                'active'           => true,
+                'created_at'       => $now,
+                'updated_at'       => $now,
+            ];
+        }
+
+        // ── Particulares (200) ────────────────────────────────────────────────
+        $firstNames = [
+            'Pedro','Laura','Miguel','Carmen','Antonio','Isabel','José','María',
+            'Francisco','Ana','Manuel','Rosa','Juan','Lucía','Carlos','Elena',
+            'Rafael','Sofía','Fernando','Marta','Diego','Valentina','Pablo','Nuria',
+            'Álvaro','Patricia','Sergio','Cristina','David','Raquel',
+        ];
+        $lastNames = [
+            'Suárez','Álvarez','Falcón','González','Hernández','Rodríguez','Martín',
+            'Pérez','Torres','Cabrera','Domínguez','Reyes','Santana','Vega','Cruz',
+            'Medina','Delgado','Ortega','Mora','Navarro','Gutiérrez','Jiménez','Ruiz',
+            'Díaz','Vargas','Ramos','Romero','Flores','León','Castro',
+        ];
+        $nifLetters = 'TRWAGMYFPDXBNJZSQVHLCKE';
+
+        for ($i = 1; $i <= 200; $i++) {
+            $firstName = $firstNames[($i - 1) % count($firstNames)];
+            $lastName1 = $lastNames[($i - 1) % count($lastNames)];
+            $lastName2 = $lastNames[$i % count($lastNames)];
+            $nifNum    = 45200000 + $i;
+            $nifLetter = $nifLetters[$nifNum % 23];
+            $emailSlug = strtolower(str_replace(['á','é','í','ó','ú','ñ','ü'], ['a','e','i','o','u','n','u'], "{$firstName}.{$lastName1}{$i}"));
+            $rows[] = [
+                'user_id'             => $uid,
+                'client_type'         => 'individual',
+                'first_name'          => $firstName,
+                'last_name'           => "{$lastName1} {$lastName2}",
+                'particular_document' => $nifNum . $nifLetter,
+                'email'               => $i % 5 === 0 ? null : "{$emailSlug}@gmail.com",
+                'phone'               => '629' . str_pad(200000 + $i, 6, '0', STR_PAD_LEFT),
+                'active'              => true,
+                'created_at'          => $now,
+                'updated_at'          => $now,
+            ];
+        }
+
+        // Insertar en bloques de 50
+        foreach (array_chunk($rows, 50) as $chunk) {
+            DB::table('clients')->insert($chunk);
         }
     }
 
@@ -2149,24 +2333,78 @@ class ProducerDemoSeeder_test extends Seeder
         $uid     = self::PRODUCER_USER_ID;
         $clients = DB::table('clients')->where('user_id', $uid)->pluck('id');
         if ($clients->isEmpty()) return;
+        $clientCount = $clients->count();
 
-        $invoiceData = [
-            ['type' => 'wine_sale',    'date' => '2024-12-01', 'total' => 3800.00,  'client_idx' => 0, 'desc' => 'Venta tinto joven 2024'],
-            ['type' => 'wine_sale',    'date' => '2025-12-01', 'total' => 4200.00,  'client_idx' => 0, 'desc' => 'Venta tinto joven 2025'],
-            ['type' => 'wine_sale',    'date' => '2025-12-10', 'total' => 3100.00,  'client_idx' => 1, 'desc' => 'Venta blanco Marmajuelo 2025'],
-            ['type' => 'wine_sale',    'date' => '2026-01-15', 'total' => 1800.00,  'client_idx' => 2, 'desc' => 'Venta rosado 2025'],
-            ['type' => 'wine_sale',    'date' => '2026-02-20', 'total' => 5200.00,  'client_idx' => 3, 'desc' => 'Venta crianza 2024 — exportación'],
-            ['type' => 'wine_sale',    'date' => '2026-03-05', 'total' => 2100.00,  'client_idx' => 4, 'desc' => 'Venta listán blanco 2025'],
-            ['type' => 'harvest_sale', 'date' => '2024-10-05', 'total' => 1100.00,  'client_idx' => 0, 'desc' => 'Venta cosecha uva tinto 2024'],
-            ['type' => 'harvest_sale', 'date' => '2025-10-05', 'total' => 1250.00,  'client_idx' => 0, 'desc' => 'Venta cosecha uva tinto 2025'],
-            ['type' => 'harvest_sale', 'date' => '2025-10-12', 'total' => 980.00,   'client_idx' => 1, 'desc' => 'Venta cosecha uva blanco 2025'],
-            ['type' => 'harvest_sale', 'date' => '2025-10-18', 'total' => 750.00,   'client_idx' => 2, 'desc' => 'Venta cosecha uva rosado 2025'],
+        $wineDescs = [
+            'Venta tinto joven', 'Venta blanco Marmajuelo', 'Venta rosado selección',
+            'Venta crianza barrica', 'Venta listán blanco', 'Venta malvasía seco',
+            'Venta espumoso brut', 'Venta tinto selección', 'Venta blanco afrutado',
+            'Venta tinto reserva',
         ];
+        $harvestDescs = [
+            'Venta cosecha uva tinto', 'Venta cosecha uva blanco', 'Venta cosecha uva rosado',
+            'Venta uva listán negro', 'Venta uva moscatel', 'Venta uva malvasía',
+        ];
+        $statuses = ['paid', 'paid', 'paid', 'pending', 'overdue'];
 
-        foreach ($invoiceData as $i => $inv) {
-            $clientId  = $clients[$inv['client_idx']] ?? $clients->first();
-            $invoiceId = DB::table('invoices')->insertGetId(['user_id' => $uid, 'client_id' => $clientId, 'invoice_number' => 'FP-' . date('Y', strtotime($inv['date'])) . '-' . str_pad($i + 1, 4, '0', STR_PAD_LEFT), 'invoice_date' => $inv['date'], 'status' => 'paid', 'payment_status' => 'paid', 'subtotal' => $inv['total'], 'tax_base' => $inv['total'], 'total_amount' => $inv['total'], 'observations' => $inv['desc'], 'created_at' => $now, 'updated_at' => $now]);
-            DB::table('invoice_items')->insert(['invoice_id' => $invoiceId, 'name' => $inv['desc'], 'description' => $inv['desc'], 'quantity' => 1, 'unit' => 'partida', 'unit_price' => $inv['total'], 'subtotal' => $inv['total'], 'total' => $inv['total'], 'created_at' => $now, 'updated_at' => $now]);
+        // ── 2024: 75 facturas ──────────────────────────────────────────────
+        $counter2024 = 1;
+        for ($i = 1; $i <= 75; $i++) {
+            $isHarvest = $i > 60;
+            $month     = $isHarvest ? mt_rand(10, 11) : mt_rand(1, 12);
+            $day       = mt_rand(1, 28);
+            $date      = sprintf('2024-%02d-%02d', $month, $day);
+            $total     = round(mt_rand(800, 8500) + mt_rand(0, 99) / 100, 2);
+            $desc      = $isHarvest
+                ? ($harvestDescs[($i - 1) % count($harvestDescs)] . ' 2024')
+                : ($wineDescs[($i - 1) % count($wineDescs)] . ' 2024');
+            $type      = $isHarvest ? 'harvest_sale' : 'wine_sale';
+            $clientId  = $clients[($i - 1) % $clientCount];
+            $status    = $statuses[$i % count($statuses)];
+            $invNum    = 'FP-2024-' . str_pad($counter2024++, 4, '0', STR_PAD_LEFT);
+            $invId = DB::table('invoices')->insertGetId([
+                'user_id' => $uid, 'client_id' => $clientId,
+                'invoice_number' => $invNum, 'invoice_date' => $date,
+                'status' => $status, 'payment_status' => $status,
+                'subtotal' => $total, 'tax_base' => $total, 'total_amount' => $total,
+                'observations' => $desc, 'created_at' => $now, 'updated_at' => $now,
+            ]);
+            DB::table('invoice_items')->insert([
+                'invoice_id' => $invId, 'name' => $desc, 'description' => $desc,
+                'quantity' => 1, 'unit' => 'partida',
+                'unit_price' => $total, 'subtotal' => $total, 'total' => $total,
+                'created_at' => $now, 'updated_at' => $now,
+            ]);
+        }
+
+        // ── 2025: 75 facturas ──────────────────────────────────────────────
+        $counter2025 = 1;
+        for ($i = 1; $i <= 75; $i++) {
+            $isHarvest = $i > 60;
+            $month     = $isHarvest ? mt_rand(10, 11) : mt_rand(1, 12);
+            $day       = mt_rand(1, 28);
+            $date      = sprintf('2025-%02d-%02d', $month, $day);
+            $total     = round(mt_rand(900, 9500) + mt_rand(0, 99) / 100, 2);
+            $desc      = $isHarvest
+                ? ($harvestDescs[($i - 1) % count($harvestDescs)] . ' 2025')
+                : ($wineDescs[($i - 1) % count($wineDescs)] . ' 2025');
+            $type      = $isHarvest ? 'harvest_sale' : 'wine_sale';
+            $clientId  = $clients[$i % $clientCount];
+            $status    = $statuses[$i % count($statuses)];
+            $invNum    = 'FP-2025-' . str_pad($counter2025++, 4, '0', STR_PAD_LEFT);
+            $invId = DB::table('invoices')->insertGetId([
+                'user_id' => $uid, 'client_id' => $clientId,
+                'invoice_number' => $invNum, 'invoice_date' => $date,
+                'status' => $status, 'payment_status' => $status,
+                'subtotal' => $total, 'tax_base' => $total, 'total_amount' => $total,
+                'observations' => $desc, 'created_at' => $now, 'updated_at' => $now,
+            ]);
+            DB::table('invoice_items')->insert([
+                'invoice_id' => $invId, 'name' => $desc, 'description' => $desc,
+                'quantity' => 1, 'unit' => 'partida',
+                'unit_price' => $total, 'subtotal' => $total, 'total' => $total,
+                'created_at' => $now, 'updated_at' => $now,
+            ]);
         }
     }
 
@@ -2175,17 +2413,54 @@ class ProducerDemoSeeder_test extends Seeder
     private function createTastingNotes(array $wineIds, $now): void
     {
         $uid = self::PRODUCER_USER_ID;
-        $notes = [
-            ['color' => 'rojo cereza brillante', 'aroma' => 'Frutas rojas frescas, frambuesa, violeta.', 'palate' => 'Fresco, taninos suaves. Final frutal.', 'score' => 88],
-            ['color' => 'rojo rubí con ribete granate', 'aroma' => 'Frutas negras maduras, especias.', 'palate' => 'Estructurado, taninos maduros.', 'score' => 91],
-            ['color' => 'rojo granate profundo', 'aroma' => 'Mora, ciruela, tabaco, vainilla.', 'palate' => 'Complejo, untuoso, muy largo.', 'score' => 93],
-            ['color' => 'amarillo pajizo', 'aroma' => 'Flor blanca, cítricos, hierbas.', 'palate' => 'Fresco, mineral, acidez viva.', 'score' => 90],
-            ['color' => 'amarillo pálido', 'aroma' => 'Flores blancas, fruta tropical.', 'palate' => 'Ligero, fresco, delicado.', 'score' => 87],
-            ['color' => 'salmón rosáceo intenso', 'aroma' => 'Fresas, frambuesa, pétalos de rosa.', 'palate' => 'Carnoso, frutal.', 'score' => 89],
+        $colors = [
+            'rojo cereza brillante', 'rojo rubí con ribete granate', 'rojo granate profundo',
+            'amarillo pajizo con reflejos verdosos', 'amarillo pálido brillante', 'salmón rosáceo intenso',
+            'rojo violáceo intenso', 'dorado luminoso', 'rosa frambuesa vivo',
+            'granate oscuro con borde teja', 'amarillo oro pálido', 'rojo cereza picota',
         ];
-        foreach (array_slice($wineIds, 0, 6) as $wi => $wineId) {
-            $n = $notes[$wi];
-            DB::table('wine_tasting_notes')->insert(['user_id' => $uid, 'wine_id' => $wineId, 'evaluation_date' => '2025-12-' . str_pad(1 + $wi * 3, 2, '0', STR_PAD_LEFT), 'evaluator_name' => 'Productor Agaete', 'visual_color' => $n['color'], 'aroma_descriptors' => $n['aroma'], 'overall_conclusion' => $n['palate'], 'overall_score' => $n['score'], 'created_by' => $uid, 'created_at' => $now, 'updated_at' => $now]);
+        $aromas = [
+            'Frutas rojas frescas, frambuesa, violeta.', 'Frutas negras maduras, especias, clavo.',
+            'Mora, ciruela, tabaco, vainilla tostada.', 'Flor blanca, cítricos, hierbas frescas.',
+            'Flores blancas, fruta tropical, coco.', 'Fresas, frambuesa, pétalos de rosa.',
+            'Fruta roja madura, pimienta, laurel.', 'Miel, fruta confitada, azafrán.',
+            'Pomelo, lima, hierbabuena.', 'Cuero, tabaco, trufa, frutos secos.',
+            'Melocotón, albaricoque, vainilla suave.', 'Pera, manzana golden, brioche.',
+        ];
+        $palates = [
+            'Fresco, taninos suaves. Final frutal.', 'Estructurado, taninos maduros, largo.',
+            'Complejo, untuoso, postgusto muy largo.', 'Fresco, mineral, acidez viva y elegante.',
+            'Ligero, fresco, delicado y equilibrado.', 'Carnoso, frutal, final cremoso.',
+            'Potente, denso, tánico y persistente.', 'Dulce, untuoso, equilibrado por acidez.',
+            'Sabroso, vibrante, final cítrico.', 'Voluminoso, especiado, retronasal largo.',
+            'Suave, goloso, fácil de beber.', 'Elegante, fino, final mineral.',
+        ];
+        $evaluators = [
+            'Productor Agaete', 'Enólogo Jefe', 'Panel de Cata Interno',
+            'Sumiller Invitado', 'Equipo Técnico Bodega',
+        ];
+        $wineCount = count($wineIds);
+
+        // ~28 notas por vino × 16 vinos = ~450 notas en total
+        for ($i = 1; $i <= 450; $i++) {
+            $wineId   = $wineIds[($i - 1) % $wineCount];
+            $year     = [2024, 2025, 2026][($i - 1) % 3];
+            $month    = mt_rand(1, 12);
+            $day      = mt_rand(1, 28);
+            $score    = mt_rand(82, 98);
+            DB::table('wine_tasting_notes')->insert([
+                'user_id'            => $uid,
+                'wine_id'            => $wineId,
+                'evaluation_date'    => sprintf('%d-%02d-%02d', $year, $month, $day),
+                'evaluator_name'     => $evaluators[($i - 1) % count($evaluators)],
+                'visual_color'       => $colors[($i - 1) % count($colors)],
+                'aroma_descriptors'  => $aromas[($i - 1) % count($aromas)],
+                'overall_conclusion' => $palates[($i - 1) % count($palates)],
+                'overall_score'      => $score,
+                'created_by'         => $uid,
+                'created_at'         => $now,
+                'updated_at'         => $now,
+            ]);
         }
     }
 
@@ -2225,27 +2500,86 @@ class ProducerDemoSeeder_test extends Seeder
     private function createWineryDocuments($now): void
     {
         $uid = self::PRODUCER_USER_ID;
-        foreach ([
-            ['Licencia de Actividad Producer', 'license', 'LA-PROD-GC-2019-004521', '2019-06-15', '2029-06-14', 'Ayuntamiento de Agaete'],
-            ['Registro Sanitario Producer', 'sanitary', 'RGSA-PROD-35.002318/C', '2020-03-01', null, 'AESAN'],
-            ['Plan Autocontrol APPCC Producer', 'plan', 'APPCC-PROD-2024-V3', '2024-01-10', '2026-01-09', null],
-            ['Declaración Cosecha 2024 Producer', 'declaration', 'DEC-PROD-2024-GC', '2024-11-30', null, 'Consejería Agricultura Canarias'],
-        ] as [$title, $type, $ref, $issue, $expiry, $auth]) {
-            DB::table('winery_documents')->insert(['user_id' => $uid, 'title' => $title, 'document_type' => $type, 'reference_number' => $ref, 'issue_date' => $issue, 'expiry_date' => $expiry, 'issuing_authority' => $auth, 'active' => true, 'created_at' => $now, 'updated_at' => $now]);
+        $docTypes   = ['license', 'sanitary', 'plan', 'declaration', 'contract', 'certificate', 'permit', 'report', 'audit', 'registration'];
+        $docTitles  = [
+            'Licencia de Actividad', 'Registro Sanitario', 'Plan APPCC', 'Declaración Cosecha',
+            'Contrato Suministro', 'Certificado Ecológico', 'Permiso Vertidos', 'Informe Inspección',
+            'Auditoría Interna', 'Registro DO Gran Canaria',
+        ];
+        $authorities = [
+            'Ayuntamiento de Agaete', 'AESAN', null, 'Consejería Agricultura Canarias',
+            'Consejo Regulador DO GC', 'CAAE', 'ACCA', 'Cabildo de Gran Canaria', null, 'Ministerio Agricultura',
+        ];
+        $years = [2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026];
+
+        for ($i = 1; $i <= 450; $i++) {
+            $typeIdx = ($i - 1) % count($docTypes);
+            $year    = $years[($i - 1) % count($years)];
+            $expYear = $year + mt_rand(1, 10);
+            $month   = mt_rand(1, 12);
+            $day     = mt_rand(1, 28);
+            DB::table('winery_documents')->insert([
+                'user_id'          => $uid,
+                'title'            => $docTitles[$typeIdx] . " {$year} — Ref. {$i}",
+                'document_type'    => $docTypes[$typeIdx],
+                'reference_number' => strtoupper(substr($docTypes[$typeIdx], 0, 4)) . "-PROD-GC-{$year}-" . str_pad($i, 5, '0', STR_PAD_LEFT),
+                'issue_date'       => sprintf('%d-%02d-%02d', $year, $month, $day),
+                'expiry_date'      => $i % 4 === 0 ? null : sprintf('%d-%02d-%02d', $expYear, $month, $day),
+                'issuing_authority'=> $authorities[$typeIdx],
+                'active'           => $i % 10 !== 0,
+                'created_at'       => $now,
+                'updated_at'       => $now,
+            ]);
         }
     }
 
     private function createWineryAlerts($now): void
     {
         $uid = self::PRODUCER_USER_ID;
-        foreach ([
-            ['maintenance', 'warning', 'Mantenimiento pendiente — Depósito PD03', 'Sulfitado programado para hoy.', false],
-            ['expiry', 'critical', 'Certificación ecológica expira en 30 días', 'Iniciar trámite de renovación.', false],
-            ['fermentation', 'warning', 'Temperatura fermentación elevada', 'Control 3er día: 22.5°C. Revisar frío.', false],
-            ['stock', 'info', 'Stock bajo — Bentonita sódica', 'Quedan 8 kg. Mínimo: 10 kg.', true],
-            ['certification', 'info', 'Renovación APPCC requerida', 'Revisar antes de enero 2026.', false],
-        ] as [$type, $severity, $title, $message, $isRead]) {
-            DB::table('winery_alerts')->insert(['user_id' => $uid, 'alert_type' => $type, 'severity' => $severity, 'title' => $title, 'message' => $message, 'is_read' => $isRead, 'read_at' => $isRead ? now()->subDays(1)->toDateTimeString() : null, 'auto_generated' => true, 'triggered_at' => now()->subDays(mt_rand(1, 7))->toDateTimeString(), 'created_at' => $now, 'updated_at' => $now]);
+        $alertTypes = ['maintenance', 'expiry', 'fermentation', 'stock', 'certification', 'temperature', 'quality', 'compliance', 'delivery', 'analysis'];
+        $severities = ['info', 'warning', 'critical', 'urgente'];
+        $titleTemplates = [
+            'Mantenimiento pendiente — Contenedor {n}',
+            'Certificación expira en {n} días',
+            'Temperatura fermentación elevada — Depósito D{n}',
+            'Stock bajo — Producto #{n}',
+            'Renovación autorización #{n} requerida',
+            'Temperatura bodega fuera de rango — Sala {n}',
+            'Control calidad pendiente — Lote #{n}',
+            'Cumplimiento normativo — Acción #{n}',
+            'Recepción pendiente — Batch #{n}',
+            'Resultado análisis disponible — Muestra #{n}',
+        ];
+        $messages = [
+            'Revisar y programar intervención.',
+            'Iniciar trámite de renovación inmediatamente.',
+            'Activar sistema de frío. Control urgente.',
+            'Solicitar pedido al proveedor.',
+            'Documentar y actualizar registro oficial.',
+            'Ajustar climatización de la sala.',
+            'Programar cata de control interno.',
+            'Revisar documentación y actualizar.',
+            'Confirmar fecha y cantidad con proveedor.',
+            'Revisar valores y comparar con histórico.',
+        ];
+
+        for ($i = 1; $i <= 450; $i++) {
+            $tIdx    = ($i - 1) % count($alertTypes);
+            $title   = str_replace('{n}', $i, $titleTemplates[$tIdx]);
+            $isRead  = $i % 3 === 0;
+            DB::table('winery_alerts')->insert([
+                'user_id'      => $uid,
+                'alert_type'   => $alertTypes[$tIdx],
+                'severity'     => $severities[$i % count($severities)],
+                'title'        => $title,
+                'message'      => $messages[$tIdx],
+                'is_read'      => $isRead,
+                'read_at'      => $isRead ? now()->subDays(mt_rand(1, 30))->toDateTimeString() : null,
+                'auto_generated' => true,
+                'triggered_at' => now()->subDays(mt_rand(1, 365))->toDateTimeString(),
+                'created_at'   => $now,
+                'updated_at'   => $now,
+            ]);
         }
     }
 
@@ -2315,6 +2649,50 @@ class ProducerDemoSeeder_test extends Seeder
                 'updated_at'       => $now,
             ]);
         }
+
+        // ── Trabajos generados (hasta ~450 total) ────────────────────────────
+        $categories  = ['poda', 'labor_cultural', 'tratamiento', 'fertilizacion', 'riego', 'observacion', 'vendimia', 'post_vendimia'];
+        $priorities  = ['baja', 'media', 'alta', 'urgente'];
+        $statuses    = ['completada', 'completada', 'completada', 'pendiente', 'en_curso'];
+        $catTitles   = [
+            'poda'           => ['Poda de invierno', 'Poda de formación', 'Poda en verde', 'Poda Guyot'],
+            'labor_cultural' => ['Laboreo primavera', 'Deshojado', 'Aclareo racimos', 'Laboreo otoñal', 'Despunte'],
+            'tratamiento'    => ['Preventivo mildiu', 'Tratamiento oídio', 'Tratamiento botrytis', 'Aplicación insecticida'],
+            'fertilizacion'  => ['Abonado NPK fondo', 'Fertirrigación nitrogenada', 'Corrección potásica', 'Enmienda orgánica'],
+            'riego'          => ['Riego post-brotación', 'Riego apoyo verano', 'Riego premaduración', 'Riego establecimiento'],
+            'observacion'    => ['Control sanitario', 'Control madurez', 'Inspección general', 'Toma muestras'],
+            'vendimia'       => ['Vendimia manual', 'Vendimia mecánica', 'Selección racimos'],
+            'post_vendimia'  => ['Tratamiento heridas', 'Aplicación fungicida', 'Control post-cosecha'],
+        ];
+        $plotCount = count($plotIds);
+        $generated = count($works);
+
+        for ($i = 1; $generated < 450; $i++, $generated++) {
+            $catIdx  = ($i - 1) % count($categories);
+            $cat     = $categories[$catIdx];
+            $titles  = $catTitles[$cat];
+            $title   = $titles[($i - 1) % count($titles)] . " — Parcela #{$i}";
+            $month   = mt_rand(1, 12);
+            $day     = mt_rand(1, 28);
+            $sta     = $statuses[$i % count($statuses)];
+            $date    = sprintf('2026-%02d-%02d', $month, $day);
+            DB::table('planned_works')->insert([
+                'viticulturist_id' => $uid,
+                'campaign_id'      => $campaignId,
+                'plot_id'          => $plotIds[$i % $plotCount],
+                'category'         => $cat,
+                'title'            => $title,
+                'description'      => "Trabajo programado campaña 2026. {$title}.",
+                'planned_date'     => $date,
+                'planned_end_date' => $date,
+                'priority'         => $priorities[$i % count($priorities)],
+                'status'           => $sta,
+                'notes'            => null,
+                'completed_at'     => $sta === 'completada' ? $date : null,
+                'created_at'       => $now,
+                'updated_at'       => $now,
+            ]);
+        }
     }
 
     // ─── 40. Recepciones bodega 2026 ─────────────────────────────────────────
@@ -2334,11 +2712,32 @@ class ProducerDemoSeeder_test extends Seeder
             ['2026-09-26', 7,  980.0, 23.2, 12.8, 3.36, 5.7, 'Recepción Malvasía Aromática.'],
         ];
 
-        foreach ($data as [$date, $idx, $weight, $brix, $baume, $ph, $acidity, $notes]) {
+        $plantingCount = count($plantingIds);
+        $varietyNames  = ['Listán Negro', 'Marmajuelo', 'Moscatel', 'Listán Negro Bandama', 'Vijariego', 'Tintilla', 'Listán Blanco', 'Malvasía Aromática'];
+        $healthStates  = ['sano', 'sano', 'sano', 'sano', 'optimo', 'bueno', 'sano'];
+        $prices        = [0.68, 0.70, 0.65, 0.72, 0.62, 0.68, 0.70, 0.68];
+
+        // ── 8 recepciones base + 442 generadas = 450 total ─────────────────
+        $allData = $data;
+        for ($i = count($data) + 1; $i <= 450; $i++) {
+            $pIdx    = ($i - 1) % $plantingCount;
+            $dayOff  = ($i % 45) + 1;
+            $month   = $dayOff <= 30 ? 9 : 10;
+            $day     = $dayOff <= 30 ? $dayOff : ($dayOff - 30);
+            $weight  = round(mt_rand(300, 1400) + mt_rand(0, 9) / 10, 1);
+            $brix    = round(21.5 + ($pIdx * 0.3) + mt_rand(-5, 5) / 10, 1);
+            $baume   = round($brix * 0.55, 1);
+            $ph      = round(3.28 + mt_rand(0, 15) / 100, 2);
+            $acidity = round(5.3 + mt_rand(0, 12) / 10, 1);
+            $variety = $varietyNames[$pIdx % count($varietyNames)];
+            $allData[] = [sprintf('2026-%02d-%02d', $month, min($day, 28)), $pIdx, $weight, $brix, $baume, $ph, $acidity, "Recepción {$variety}. Batch #{$i}."];
+        }
+
+        foreach ($allData as [$date, $idx, $weight, $brix, $baume, $ph, $acidity, $notes]) {
             $batchId = DB::table('grape_reception_batches')->insertGetId([
                 'winery_id'             => $uid,
                 'viticulturist_id'      => $uid,
-                'plot_planting_id'      => $plantingIds[$idx],
+                'plot_planting_id'      => $plantingIds[$idx % $plantingCount],
                 'campaign_id'           => $campaignId,
                 'vintage_year'          => 2026,
                 'total_weight_kg'       => $weight,
@@ -2349,21 +2748,22 @@ class ProducerDemoSeeder_test extends Seeder
                 'updated_at'            => $now,
             ]);
 
+            $price = $prices[$idx % count($prices)];
             DB::table('harvests')->insert([
                 'winery_id'          => $uid,
                 'batch_id'           => $batchId,
-                'plot_planting_id'   => $plantingIds[$idx],
+                'plot_planting_id'   => $plantingIds[$idx % $plantingCount],
                 'harvest_start_date' => $date,
                 'total_weight'       => $weight,
                 'brix_degree'        => $brix,
                 'baume_degree'       => $baume,
                 'ph_level'           => $ph,
                 'acidity_level'      => $acidity,
-                'price_per_kg'       => 0.68,
+                'price_per_kg'       => $price,
                 'yield_per_hectare'  => round($weight / 0.5, 1),
-                'total_value'        => round($weight * 0.68, 2),
+                'total_value'        => round($weight * $price, 2),
                 'status'             => 'active',
-                'health_status'      => 'sano',
+                'health_status'      => $healthStates[$idx % count($healthStates)],
                 'notes'              => $notes,
                 'created_at'         => $now,
                 'updated_at'         => $now,
@@ -2432,6 +2832,89 @@ class ProducerDemoSeeder_test extends Seeder
             // Lot 5 — Magnum 1.5L
             $q = 120.0; $s = 32.0;
             DB::table('wine_lots')->insert(['user_id' => $uid, 'wine_id' => $wineId, 'name' => "Magnum 1.5L 2026 — Ref " . ($i + 1), 'vintage' => 2026, 'wine_type' => $wtype, 'quantity' => $q, 'initial_quantity' => $q, 'sold_quantity' => $s, 'available_quantity' => $q - $s, 'reserved_quantity' => 0, 'price_per_unit' => round($p75 * 2 * 1.12, 2), 'unit' => 'botellas', 'bottle_format' => '1.5L', 'units_per_case' => 3, 'alcohol' => 13.0, 'archived' => false, 'created_at' => $now, 'updated_at' => $now]);
+
+            // Lotes adicionales — tiradas mensuales (enero–diciembre × variedades formato)
+            $formatVariants = [
+                ['botellas', '75cl',  6,  $p75,       mt_rand(400, 900)],
+                ['botellas', '75cl',  6,  $p75,       mt_rand(200, 600)],
+                ['litros',   null,    null, $pL,       mt_rand(200, 800)],
+                ['cajas',    null,    6,  $pCaja,      mt_rand(50, 200)],
+                ['botellas', '37.5cl',12, $p375,      mt_rand(100, 350)],
+                ['botellas', '1.5L',  3,  round($p75 * 2.2, 2), mt_rand(50, 150)],
+                ['botellas', '75cl',  6,  round($p75 * 1.05, 2), mt_rand(150, 500)],
+                ['cajas',    null,    12, round($pCaja * 0.9, 2), mt_rand(40, 180)],
+                ['botellas', '75cl',  6,  $p75,       mt_rand(300, 700)],
+                ['litros',   null,    null, $pL,       mt_rand(100, 400)],
+                ['botellas', '37.5cl',12, $p375,      mt_rand(80, 250)],
+                ['botellas', '75cl',  6,  $p75,       mt_rand(200, 600)],
+                ['cajas',    null,    6,  $pCaja,      mt_rand(30, 120)],
+                ['botellas', '1.5L',  3,  round($p75 * 2.1, 2), mt_rand(40, 130)],
+                ['litros',   null,    null, $pL,       mt_rand(150, 500)],
+                ['botellas', '75cl',  6,  $p75,       mt_rand(250, 650)],
+                ['botellas', '37.5cl',12, $p375,      mt_rand(90, 280)],
+                ['cajas',    null,    6,  $pCaja,      mt_rand(50, 160)],
+                ['botellas', '75cl',  6,  $p75,       mt_rand(180, 550)],
+                ['litros',   null,    null, $pL,       mt_rand(120, 380)],
+                ['botellas', '75cl',  6,  round($p75 * 1.08, 2), mt_rand(200, 600)],
+                ['botellas', '1.5L',  3,  round($p75 * 2.15, 2), mt_rand(35, 100)],
+                ['cajas',    null,    12, $pCaja,      mt_rand(60, 200)],
+                ['botellas', '37.5cl',12, $p375,      mt_rand(70, 220)],
+                ['litros',   null,    null, $pL,       mt_rand(200, 600)],
+                ['botellas', '75cl',  6,  $p75,       mt_rand(300, 800)],
+                ['cajas',    null,    6,  $pCaja,      mt_rand(40, 150)],
+                ['botellas', '75cl',  6,  $p75,       mt_rand(150, 450)],
+                ['litros',   null,    null, $pL,       mt_rand(80, 300)],
+                ['botellas', '37.5cl',12, $p375,      mt_rand(60, 200)],
+                ['botellas', '1.5L',  3,  round($p75 * 2.18, 2), mt_rand(30, 90)],
+                ['cajas',    null,    6,  round($pCaja * 1.05, 2), mt_rand(50, 180)],
+                ['botellas', '75cl',  6,  $p75,       mt_rand(200, 700)],
+                ['litros',   null,    null, $pL,       mt_rand(100, 350)],
+                ['botellas', '37.5cl',12, $p375,      mt_rand(80, 250)],
+                ['botellas', '75cl',  6,  $p75,       mt_rand(250, 650)],
+                ['cajas',    null,    6,  $pCaja,      mt_rand(35, 130)],
+                ['botellas', '1.5L',  3,  round($p75 * 2.12, 2), mt_rand(40, 110)],
+                ['litros',   null,    null, $pL,       mt_rand(150, 450)],
+                ['botellas', '75cl',  6,  $p75,       mt_rand(180, 520)],
+                ['cajas',    null,    12, round($pCaja * 0.95, 2), mt_rand(50, 180)],
+                ['botellas', '37.5cl',12, $p375,      mt_rand(75, 230)],
+                ['botellas', '75cl',  6,  $p75,       mt_rand(280, 750)],
+                ['litros',   null,    null, $pL,       mt_rand(120, 400)],
+                ['botellas', '1.5L',  3,  round($p75 * 2.2, 2),  mt_rand(30, 95)],
+                ['cajas',    null,    6,  $pCaja,      mt_rand(45, 160)],
+                ['botellas', '75cl',  6,  $p75,       mt_rand(200, 600)],
+                ['botellas', '37.5cl',12, $p375,      mt_rand(65, 200)],
+                ['litros',   null,    null, $pL,       mt_rand(100, 300)],
+                ['botellas', '75cl',  6,  $p75,       mt_rand(250, 700)],
+                ['cajas',    null,    6,  round($pCaja * 1.02, 2), mt_rand(40, 140)],
+                ['botellas', '1.5L',  3,  round($p75 * 2.08, 2), mt_rand(35, 105)],
+            ];
+
+            foreach ($formatVariants as $fv => [$unit, $format, $upc, $price, $qty]) {
+                $sold = (int)($qty * mt_rand(30, 75) / 100);
+                $rsv  = (int)(($qty - $sold) * mt_rand(0, 20) / 100);
+                $lotName = "Ref {$wtype} 2026 — Vino " . ($i + 1) . " Lote " . ($fv + 6);
+                $row = [
+                    'user_id'           => $uid,
+                    'wine_id'           => $wineId,
+                    'name'              => $lotName,
+                    'vintage'           => 2026,
+                    'wine_type'         => $wtype,
+                    'quantity'          => (float)$qty,
+                    'initial_quantity'  => (float)$qty,
+                    'sold_quantity'     => (float)$sold,
+                    'available_quantity'=> (float)max(0, $qty - $sold - $rsv),
+                    'reserved_quantity' => (float)$rsv,
+                    'price_per_unit'    => $price,
+                    'unit'              => $unit,
+                    'alcohol'           => round(12.5 + ($fv % 4) * 0.25, 1),
+                    'archived'          => false,
+                    'created_at'        => $now,
+                    'updated_at'        => $now,
+                ];
+                if ($format)  $row['bottle_format']  = $format;
+                if ($upc)     $row['units_per_case'] = $upc;
+                DB::table('wine_lots')->insert($row);
+            }
         }
     }
 
@@ -2444,26 +2927,28 @@ class ProducerDemoSeeder_test extends Seeder
         $textures = ['franco-arcilloso', 'franco', 'franco-limoso', 'arcilloso-limoso', 'franco-arenoso'];
         $campaigns = [$c2024 => 2024, $c2025 => 2025, $c2026 => 2026];
 
-        foreach (array_slice($plotIds, 0, 8) as $pi => $plotId) {
+        // 150 parcelas × 3 campañas = 450 análisis
+        foreach (array_slice($plotIds, 0, 150) as $pi => $plotId) {
             foreach ($campaigns as $cId => $year) {
+                $day = str_pad(($pi % 20) + 1, 2, '0', STR_PAD_LEFT);
                 DB::table('soil_analyses')->insert([
                     'viticulturist_id'        => $uid,
                     'plot_id'                 => $plotId,
                     'campaign_id'             => $cId,
-                    'analysis_date'           => "{$year}-02-" . str_pad(10 + $pi * 2, 2, '0', STR_PAD_LEFT),
+                    'analysis_date'           => "{$year}-02-{$day}",
                     'laboratory'              => $labs[$pi % 3],
                     'sample_depth_cm'         => [30, 40, 50][$pi % 3],
-                    'ph'                      => round(6.2 + ($pi * 0.1), 1),
-                    'organic_matter'          => round(2.1 + ($pi * 0.15), 2),
-                    'nitrogen_total'          => round(0.12 + ($pi * 0.01), 3),
-                    'phosphorus'              => round(15 + $pi * 2.5, 1),
-                    'potassium'               => round(180 + $pi * 20, 1),
-                    'calcium'                 => round(1200 + $pi * 80, 1),
-                    'magnesium'               => round(85 + $pi * 8, 1),
+                    'ph'                      => round(5.8 + ($pi % 15) * 0.08, 1),
+                    'organic_matter'          => round(1.8 + ($pi % 20) * 0.12, 2),
+                    'nitrogen_total'          => round(0.10 + ($pi % 25) * 0.008, 3),
+                    'phosphorus'              => round(12 + ($pi % 30) * 2.0, 1),
+                    'potassium'               => round(160 + ($pi % 40) * 15, 1),
+                    'calcium'                 => round(1100 + ($pi % 50) * 60, 1),
+                    'magnesium'               => round(75 + ($pi % 30) * 6, 1),
                     'texture_class'           => $textures[$pi % 5],
-                    'electrical_conductivity' => round(0.18 + ($pi * 0.02), 2),
-                    'limestone'               => round(8 + $pi * 1.5, 1),
-                    'notes'                   => "Análisis campaña {$year}. pH óptimo 6.2-6.8. Mat. orgánica adecuada.",
+                    'electrical_conductivity' => round(0.15 + ($pi % 25) * 0.015, 2),
+                    'limestone'               => round(6 + ($pi % 20) * 1.2, 1),
+                    'notes'                   => "Análisis campaña {$year}. Parcela #{$pi}.",
                     'created_at'              => $now,
                     'updated_at'              => $now,
                 ]);
@@ -2483,19 +2968,21 @@ class ProducerDemoSeeder_test extends Seeder
         ];
         $months = [4, 6, 8];
 
-        foreach (array_slice($plotIds, 0, 8) as $pi => $plotId) {
+        // 150 parcelas × 3 tipos = 450 registros
+        foreach (array_slice($plotIds, 0, 150) as $pi => $plotId) {
             foreach (array_values($types) as $ti => [$desc, $species]) {
                 $rtype = array_keys($types)[$ti];
+                $day   = str_pad(($pi % 18) + 1, 2, '0', STR_PAD_LEFT);
                 DB::table('biodiversity_records')->insert([
                     'viticulturist_id' => $uid,
                     'plot_id'          => $plotId,
                     'campaign_id'      => $campaignId,
                     'record_type'      => $rtype,
                     'description'      => $desc,
-                    'area_m2'          => round(120 + $pi * 35, 1),
+                    'area_m2'          => round(80 + ($pi % 50) * 12, 1),
                     'species'          => $species,
-                    'record_date'      => '2026-0' . $months[$ti] . '-' . str_pad(10 + $pi, 2, '0', STR_PAD_LEFT),
-                    'notes'            => "Parcela {$pi}. Biodiversidad favorable.",
+                    'record_date'      => '2026-0' . $months[$ti] . '-' . $day,
+                    'notes'            => "Parcela #{$pi}. Biodiversidad favorable.",
                     'created_at'       => $now,
                     'updated_at'       => $now,
                 ]);
@@ -2540,6 +3027,40 @@ class ProducerDemoSeeder_test extends Seeder
                 'updated_at'       => $now,
             ]);
         }
+
+        // ── Alertas generadas (hasta 450 total) ──────────────────────────────
+        $genTypes      = ['mildiu', 'oidio', 'botrytis', 'polilla', 'arana_roja', 'excoriosis', 'helada', 'sequia', 'cicadela', 'podredumbre_acida'];
+        $genSeverities = ['baja', 'media', 'alta', 'urgente'];
+        $genSources    = ['ESTACION_FITOPATOLOGICA', 'SERVICIO_SANIDAD_VEGETAL', 'AEMET_CANARIAS', 'CLAVERIE_CANARIAS', 'DGPIF_CANARIAS'];
+        $genAreas      = ['Gran Canaria Norte', 'Valle de Agaete', 'Medianías GC', 'Zona Interior GC', 'Gran Canaria'];
+        $generated     = count($alerts);
+
+        for ($i = $generated + 1; $generated < 450; $i++, $generated++) {
+            $tIdx     = ($i - 1) % count($genTypes);
+            $type     = $genTypes[$tIdx];
+            $year     = [2024, 2025, 2026][($i - 1) % 3];
+            $month    = mt_rand(3, 11);
+            $day      = mt_rand(1, 28);
+            $date     = sprintf('%d-%02d-%02d', $year, $month, $day);
+            $expMonth = $month + mt_rand(1, 2);
+            $expYear  = $expMonth > 12 ? $year + 1 : $year;
+            $expMonth = $expMonth > 12 ? $expMonth - 12 : $expMonth;
+            DB::table('phytosanitary_alerts')->insert([
+                'viticulturist_id' => $uid,
+                'title'            => "Alerta {$type} #{$i} — condiciones favorables campaña {$year}",
+                'source'           => $genSources[$i % count($genSources)],
+                'alert_type'       => $type,
+                'severity'         => $genSeverities[$i % count($genSeverities)],
+                'affected_area'    => $genAreas[$i % count($genAreas)],
+                'description'      => "Condiciones propicias para {$type}. Campaña {$year}. Monitorizar parcelas.",
+                'recommendations'  => "Aplicar tratamiento preventivo. Revisar umbrales en parcelas afectadas.",
+                'alert_date'       => $date,
+                'expiry_date'      => sprintf('%d-%02d-%02d', $expYear, $expMonth, min($day + 10, 28)),
+                'active'           => $i % 4 !== 0,
+                'created_at'       => $now,
+                'updated_at'       => $now,
+            ]);
+        }
     }
 
     // ─── 46. Previsiones de cosecha ───────────────────────────────────────────
@@ -2554,21 +3075,33 @@ class ProducerDemoSeeder_test extends Seeder
             $c2026 => ['year' => 2026, 'mult' => 1.00, 'date' => '2026-07-18', 'status' => 'confirmed'],
         ];
 
+        // 8 plantaciones × 3 campañas × 19 estimaciones mensuales = 456 previsiones
+        $estimationMonths = [3, 4, 5, 6, 7, 8, 9];   // meses de estimación en campaña
+        $estimationTypes  = ['early', 'mid', 'final']; // tipo de estimación
+
         foreach ($campaigns as $cId => $c) {
             foreach (array_slice($plantingIds, 0, 8) as $pi => $plantingId) {
-                DB::table('winery_yield_forecasts')->insert([
-                    'winery_id'        => $uid,
-                    'viticulturist_id' => $uid,
-                    'plot_planting_id' => $plantingId,
-                    'campaign_id'      => $cId,
-                    'vintage_year'     => $c['year'],
-                    'estimated_kg'     => round($baseKg[$pi] * $c['mult'], 1),
-                    'estimation_date'  => $c['date'],
-                    'status'           => $c['status'],
-                    'notes'            => "Previsión campaña {$c['year']}. Basada en histórico y estado vegetativo.",
-                    'created_at'       => $now,
-                    'updated_at'       => $now,
-                ]);
+                $base = $baseKg[$pi] * $c['mult'];
+                // ~19 estimaciones por combinación planting×campaign distribuidas en meses + tipos
+                for ($em = 0; $em < 19; $em++) {
+                    $month    = $estimationMonths[$em % count($estimationMonths)];
+                    $day      = mt_rand(1, 28);
+                    $variance = 0.85 + ($em % 7) * 0.05; // de 0.85 a 1.15 conforme avanza temporada
+                    $estKg    = round($base * $variance + mt_rand(-50, 50), 1);
+                    DB::table('winery_yield_forecasts')->insert([
+                        'winery_id'        => $uid,
+                        'viticulturist_id' => $uid,
+                        'plot_planting_id' => $plantingId,
+                        'campaign_id'      => $cId,
+                        'vintage_year'     => $c['year'],
+                        'estimated_kg'     => max(100, $estKg),
+                        'estimation_date'  => sprintf('%d-%02d-%02d', $c['year'], $month, $day),
+                        'status'           => $c['status'],
+                        'notes'            => "Previsión {$estimationTypes[$em % 3]} — mes {$month} campaña {$c['year']}.",
+                        'created_at'       => $now,
+                        'updated_at'       => $now,
+                    ]);
+                }
             }
         }
     }
@@ -2601,14 +3134,48 @@ class ProducerDemoSeeder_test extends Seeder
             ->pluck('h.id')
             ->values();
 
+        $plantingCount = count($plantingIds);
+        $buyers = [
+            'Bodega Propia Agaete', 'Cooperativa Viticultores GC', 'Bodegas Tafuriaste SL',
+            'Bodega Los Berrazales SA', 'Compra Directa — Bodega Atlántico', 'Cooperativa Norteña GC',
+        ];
+        $regas   = ['35.P02318/C', '35.P04521/C', '35.P01834/C'];
+        $statuses = ['matched', 'matched', 'matched', 'pending', 'confirmed'];
+
+        // ── 8 entregas base + 442 generadas = 450 total ────────────────────
+        $allData = [];
         foreach ($data as $i => [$date, $idx, $weight, $price, $buyer, $rega, $ticket]) {
+            $allData[] = [$date, $idx, $weight, $price, $buyer, $rega, $ticket,
+                $brixData[$i], $baumeData[$i], 2026];
+        }
+        for ($i = count($data) + 1; $i <= 450; $i++) {
+            $pIdx    = ($i - 1) % $plantingCount;
+            $year    = [2024, 2025, 2026][($i - 1) % 3];
+            $month   = $year === 2026 ? mt_rand(9, 10) : mt_rand(8, 11);
+            $day     = mt_rand(1, 28);
+            $weight  = round(mt_rand(300, 1500) + mt_rand(0, 9) / 10, 1);
+            $price   = round(0.60 + ($pIdx % 5) * 0.025, 3);
+            $brix    = round(21.0 + mt_rand(0, 30) / 10, 1);
+            $baume   = round($brix * 0.55, 1);
+            $allData[] = [
+                sprintf('%d-%02d-%02d', $year, $month, $day),
+                $pIdx, $weight, $price,
+                $buyers[$i % count($buyers)],
+                $regas[$i % count($regas)],
+                'PROD-' . $year . '-' . str_pad($i, 4, '0', STR_PAD_LEFT),
+                $brix, $baume, $year,
+            ];
+        }
+
+        foreach ($allData as $i => [$date, $idx, $weight, $price, $buyer, $rega, $ticket, $brix, $baume, $year]) {
             $total = round($weight * $price, 2);
+            $status = $statuses[$i % count($statuses)];
 
             DB::table('harvest_deliveries')->insert([
                 'viticulturist_id'      => $uid,
-                'plot_planting_id'      => $plantingIds[$idx] ?? null,
+                'plot_planting_id'      => $plantingIds[$idx % $plantingCount] ?? null,
                 'harvest_id'            => $harvestIds[$i] ?? null,
-                'vintage_year'          => 2026,
+                'vintage_year'          => $year,
                 'buyer_name'            => $buyer,
                 'delivery_date'         => $date,
                 'delivered_kg'          => $weight,
@@ -2616,10 +3183,10 @@ class ProducerDemoSeeder_test extends Seeder
                 'total_price'           => $total,
                 'ticket_number'         => $ticket,
                 'destination_rega_code' => $rega,
-                'status'                => 'matched',
-                'baume_degree'          => $baumeData[$i],
-                'brix_degree'           => $brixData[$i],
-                'notes'                 => 'Uva propia. Entregada en bodega propia.',
+                'status'                => $status,
+                'baume_degree'          => $baume,
+                'brix_degree'           => $brix,
+                'notes'                 => 'Uva propia. Entregada en bodega.',
                 'created_at'            => $now,
                 'updated_at'            => $now,
             ]);
@@ -2689,33 +3256,54 @@ class ProducerDemoSeeder_test extends Seeder
         $uid     = self::PRODUCER_USER_ID;
         $clients = DB::table('clients')->where('user_id', $uid)->pluck('id');
         if ($clients->isEmpty()) return;
+        $clientCount = $clients->count();
 
-        $invoiceData = [
-            ['wine_sale',    '2026-03-15', 4800.00, 0, 'Venta tinto joven 2026 — mercado canario'],
-            ['wine_sale',    '2026-04-01', 3200.00, 1, 'Venta Marmajuelo 2026 — tiendas especializadas'],
-            ['wine_sale',    '2026-04-20', 2800.00, 2, 'Venta tinto selección 2026'],
-            ['wine_sale',    '2026-05-10', 5500.00, 3, 'Exportación 2026 — rosado y blanco'],
-            ['wine_sale',    '2026-05-25', 1950.00, 4, 'Venta Moscatel 2026 — restaurantes GC'],
-            ['wine_sale',    '2026-06-08', 3300.00, 0, 'Venta Malvasía 2026 — enotecas'],
-            ['wine_sale',    '2026-06-25', 2100.00, 1, 'Venta Vijariego 2026 — canal HORECA'],
-            ['wine_sale',    '2026-07-15', 4200.00, 2, 'Venta blancos 2026 — canal HORECA'],
-            ['wine_sale',    '2026-08-01', 6800.00, 3, 'Pedido gran formato exportación Península'],
-            ['wine_sale',    '2026-09-01', 3100.00, 4, 'Fin temporada — turismo enológico'],
-            ['harvest_sale', '2026-10-05', 2142.00, 0, 'Venta uva cosecha 2026 — parcelas extra'],
-            ['harvest_sale', '2026-10-12', 1890.00, 1, 'Cosecha uva blanca 2026 — cooperativa'],
-            ['harvest_sale', '2026-10-20', 1530.00, 2, 'Uva tinto 2026 — venta directa bodega'],
+        $wineDescs = [
+            'Venta tinto joven 2026 — mercado canario',
+            'Venta Marmajuelo 2026 — tiendas especializadas',
+            'Venta tinto selección 2026',
+            'Exportación 2026 — rosado y blanco',
+            'Venta Moscatel 2026 — restaurantes GC',
+            'Venta Malvasía 2026 — enotecas',
+            'Venta Vijariego 2026 — canal HORECA',
+            'Venta blancos 2026 — canal HORECA',
+            'Pedido gran formato exportación Península',
+            'Fin temporada — turismo enológico',
+            'Venta tinto barrica 2026 — distribuidora',
+            'Venta espumoso 2026 — eventos',
+            'Venta crianza 2026 — exportación Europa',
+            'Venta rosado 2026 — hostelería GC',
+            'Venta listán negro 2026 — restauración',
         ];
+        $harvestDescs = [
+            'Venta uva cosecha 2026 — parcelas extra',
+            'Cosecha uva blanca 2026 — cooperativa',
+            'Uva tinto 2026 — venta directa bodega',
+            'Uva moscatel 2026 — productor local',
+            'Cosecha uva rosado 2026 — venta directa',
+        ];
+        $statuses = ['paid', 'paid', 'paid', 'paid', 'pending', 'overdue'];
 
-        $counter = 11;
-        foreach ($invoiceData as [$type, $date, $total, $cIdx, $desc]) {
-            $clientId  = $clients[$cIdx] ?? $clients->first();
+        // ── 300 facturas 2026 ────────────────────────────────────────────────
+        for ($i = 1; $i <= 300; $i++) {
+            $isHarvest = $i > 260;
+            $month     = $isHarvest ? mt_rand(10, 12) : mt_rand(1, 12);
+            $day       = mt_rand(1, 28);
+            $date      = sprintf('2026-%02d-%02d', $month, $day);
+            $total     = round(mt_rand(1000, 12000) + mt_rand(0, 99) / 100, 2);
+            $desc      = $isHarvest
+                ? $harvestDescs[($i - 1) % count($harvestDescs)]
+                : $wineDescs[($i - 1) % count($wineDescs)];
+            $clientId  = $clients[($i - 1) % $clientCount];
+            $status    = $statuses[$i % count($statuses)];
+            $invNum    = 'FP-2026-' . str_pad($i, 4, '0', STR_PAD_LEFT);
             $invoiceId = DB::table('invoices')->insertGetId([
                 'user_id'        => $uid,
                 'client_id'      => $clientId,
-                'invoice_number' => 'FP-2026-' . str_pad($counter, 4, '0', STR_PAD_LEFT),
+                'invoice_number' => $invNum,
                 'invoice_date'   => $date,
-                'status'         => 'paid',
-                'payment_status' => 'paid',
+                'status'         => $status,
+                'payment_status' => $status,
                 'subtotal'       => $total,
                 'tax_base'       => $total,
                 'total_amount'   => $total,
@@ -2735,7 +3323,6 @@ class ProducerDemoSeeder_test extends Seeder
                 'created_at'  => $now,
                 'updated_at'  => $now,
             ]);
-            $counter++;
         }
     }
 
