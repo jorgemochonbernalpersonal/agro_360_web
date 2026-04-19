@@ -930,7 +930,7 @@ class ProducerDemoSeeder_test extends Seeder
             ['2026-03-18', 'Laboreo preparatorio pre-brotación.',                         'soil_tillage', null],
         ] as [$base, $desc, $wt, $res]) {
             foreach ($plots as $i => $pid) {
-                $aId = $act(['plot_id' => $pid, 'plot_planting_id' => $plantings[$i], 'activity_type' => 'cultural_work',
+                $aId = $act(['plot_id' => $pid, 'plot_planting_id' => $plantings[$i], 'activity_type' => 'cultural',
                     'activity_date' => $d($base, $i), 'notes' => $desc]);
                 $row = ['activity_id' => $aId, 'work_type' => $wt, 'description' => $desc, 'hours_worked' => 3.5, 'created_at' => $now, 'updated_at' => $now];
                 if ($res) $row['residue_management'] = $res;
@@ -940,7 +940,7 @@ class ProducerDemoSeeder_test extends Seeder
 
         // ── 3. Desniete / eliminación brotes (Mar) — 8 ─────────────────────
         foreach ($plots as $i => $pid) {
-            $aId = $act(['plot_id' => $pid, 'plot_planting_id' => $plantings[$i], 'activity_type' => 'cultural_work',
+            $aId = $act(['plot_id' => $pid, 'plot_planting_id' => $plantings[$i], 'activity_type' => 'cultural',
                 'activity_date' => $d('2026-03-25', $i), 'notes' => 'Desniete. Eliminación de brotes no deseados.']);
             DB::table('cultural_works')->insert(['activity_id' => $aId, 'work_type' => 'desbudding',
                 'description' => 'Eliminación manual brotes basales y de tronco. 10-15 min/cepa.',
@@ -949,7 +949,7 @@ class ProducerDemoSeeder_test extends Seeder
 
         // ── 4. Atado de pámpanos (Abr) — 8 ─────────────────────────────────
         foreach ($plots as $i => $pid) {
-            $aId = $act(['plot_id' => $pid, 'plot_planting_id' => $plantings[$i], 'activity_type' => 'cultural_work',
+            $aId = $act(['plot_id' => $pid, 'plot_planting_id' => $plantings[$i], 'activity_type' => 'cultural',
                 'activity_date' => $d('2026-04-14', $i * 2), 'notes' => 'Atado y orientación de pámpanos en alambres.']);
             DB::table('cultural_works')->insert(['activity_id' => $aId, 'work_type' => 'shoot_positioning',
                 'description' => 'Atado con grapas y rafia en segundo y tercer alambre.',
@@ -958,7 +958,7 @@ class ProducerDemoSeeder_test extends Seeder
 
         // ── 5. Deshojado zona racimos (May) — 8 ────────────────────────────
         foreach ($plots as $i => $pid) {
-            $aId = $act(['plot_id' => $pid, 'plot_planting_id' => $plantings[$i], 'activity_type' => 'cultural_work',
+            $aId = $act(['plot_id' => $pid, 'plot_planting_id' => $plantings[$i], 'activity_type' => 'cultural',
                 'activity_date' => $d('2026-05-12', $i * 2), 'notes' => 'Deshojado zona de racimos. Mejora aireación y luminosidad.']);
             DB::table('cultural_works')->insert(['activity_id' => $aId, 'work_type' => 'leaf_removal',
                 'description' => 'Deshojado manual lado mañana. 6-8 hojas eliminadas por sarmiento.',
@@ -967,7 +967,7 @@ class ProducerDemoSeeder_test extends Seeder
 
         // ── 6. Despunte de pámpanos (Jun) — 8 ──────────────────────────────
         foreach ($plots as $i => $pid) {
-            $aId = $act(['plot_id' => $pid, 'plot_planting_id' => $plantings[$i], 'activity_type' => 'cultural_work',
+            $aId = $act(['plot_id' => $pid, 'plot_planting_id' => $plantings[$i], 'activity_type' => 'cultural',
                 'activity_date' => $d('2026-06-08', $i * 2), 'notes' => 'Despunte de pámpanos. Control del vigor vegetativo.']);
             DB::table('cultural_works')->insert(['activity_id' => $aId, 'work_type' => 'shoot_topping',
                 'description' => 'Despunte mecánico + repaso manual. Altura canopia 70 cm.',
@@ -976,7 +976,7 @@ class ProducerDemoSeeder_test extends Seeder
 
         // ── 7. Aclareo de racimos (Jun-Jul) — 8 ────────────────────────────
         foreach ($plots as $i => $pid) {
-            $aId = $act(['plot_id' => $pid, 'plot_planting_id' => $plantings[$i], 'activity_type' => 'cultural_work',
+            $aId = $act(['plot_id' => $pid, 'plot_planting_id' => $plantings[$i], 'activity_type' => 'cultural',
                 'activity_date' => $d('2026-06-22', $i * 3), 'notes' => 'Aclareo de racimos. Objetivo 1-1.5 kg/cepa.']);
             DB::table('cultural_works')->insert(['activity_id' => $aId, 'work_type' => 'bunch_thinning',
                 'description' => 'Eliminación segundo racimo en cepas con exceso de carga.',
@@ -985,7 +985,7 @@ class ProducerDemoSeeder_test extends Seeder
 
         // ── 8. Desbroce verano (Jul) — 8 ───────────────────────────────────
         foreach ($plots as $i => $pid) {
-            $aId = $act(['plot_id' => $pid, 'plot_planting_id' => $plantings[$i], 'activity_type' => 'cultural_work',
+            $aId = $act(['plot_id' => $pid, 'plot_planting_id' => $plantings[$i], 'activity_type' => 'cultural',
                 'activity_date' => $d('2026-07-06', $i * 2), 'notes' => 'Desbroce entre filas. Mantenimiento cubierta vegetal.']);
             DB::table('cultural_works')->insert(['activity_id' => $aId, 'work_type' => 'weeding',
                 'description' => 'Pase de desbrozadora en entrecalles.',
@@ -999,7 +999,7 @@ class ProducerDemoSeeder_test extends Seeder
             ['2026-11-10', 'Arado otoñal. Apertura de surcos para recogida de lluvias.',  'soil_tillage', null],
         ] as [$base, $desc, $wt, $res]) {
             foreach ($plots as $i => $pid) {
-                $aId = $act(['plot_id' => $pid, 'plot_planting_id' => $plantings[$i], 'activity_type' => 'cultural_work',
+                $aId = $act(['plot_id' => $pid, 'plot_planting_id' => $plantings[$i], 'activity_type' => 'cultural',
                     'activity_date' => $d($base, $i), 'notes' => $desc]);
                 $row = ['activity_id' => $aId, 'work_type' => $wt, 'description' => $desc, 'hours_worked' => 3.0, 'created_at' => $now, 'updated_at' => $now];
                 if ($res) $row['residue_management'] = $res;
