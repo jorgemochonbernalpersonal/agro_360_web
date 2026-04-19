@@ -149,7 +149,7 @@ class ProducerDemoSeeder_test extends Seeder
 
         // 14. Maquinaria
         $machineryIds = [];
-        $this->step('Maquinaria (8)', function () use ($now, &$machineryIds) {
+        $this->step('Maquinaria (450)', function () use ($now, &$machineryIds) {
             $machineryIds = $this->createMachinery($now);
         });
 
@@ -223,7 +223,7 @@ class ProducerDemoSeeder_test extends Seeder
 
         // 26. Vinos
         $wineIds = [];
-        $this->step('Vinos (8 referencias)', function () use ($now, &$wineIds) {
+        $this->step('Vinos (225 referencias 2023-2025)', function () use ($now, &$wineIds) {
             $wineIds = $this->createWines($now);
         });
 
@@ -251,7 +251,7 @@ class ProducerDemoSeeder_test extends Seeder
         });
 
         // 31. Embotellamientos + lotes + etiquetado
-        $this->step('Embotellamientos (50) + Lotes etiquetas (4) + Etiquetado', function () use ($now, $wineIds, $wineryContainerIds) {
+        $this->step('Embotellamientos (450) + Lotes etiquetas (450) + Etiquetado', function () use ($now, $wineIds, $wineryContainerIds) {
             $this->createBottlings($wineIds, $wineryContainerIds, $now);
             $this->createLabelBatches($wineIds, $now);
             $this->createLabelings($now);
@@ -266,7 +266,7 @@ class ProducerDemoSeeder_test extends Seeder
         });
 
         // 33. Mantenimiento contenedores
-        $this->step('Mantenimiento contenedores (5)', function () use ($now, $wineryContainerIds) {
+        $this->step('Mantenimiento contenedores (450)', function () use ($now, $wineryContainerIds) {
             $this->createContainerMaintenances($wineryContainerIds, $now);
         });
 
@@ -280,10 +280,7 @@ class ProducerDemoSeeder_test extends Seeder
             $this->createInvoices($campaign2024Id, $campaign2025Id, $now);
         });
 
-        // 36. Notas de cata
-        $this->step('Notas de cata (450)', function () use ($now, $wineIds) {
-            $this->createTastingNotes($wineIds, $now);
-        });
+        // 36. Notas de cata (movido a paso 41b — necesita $wineIds2026)
 
         // 37. Compliance bodega
         $this->step('Compliance bodega (eco_certifications + sanitary + bottling_auth)', function () use ($now, $wineIds) {
@@ -304,14 +301,19 @@ class ProducerDemoSeeder_test extends Seeder
         });
 
         // 40. Recepciones bodega 2026 (batches + cosechas winery_id)
-        $this->step('Recepciones bodega 2026 (8 batches + 450 recepciones)', function () use ($now, $plantingIds, $campaign2026Id) {
+        $this->step('Recepciones bodega 2026 (450 batches + 450 recepciones)', function () use ($now, $plantingIds, $campaign2026Id) {
             $this->createWineryReceptions2026($plantingIds, $campaign2026Id, $now);
         });
 
         // 41. Vinos cosecha 2026
         $wineIds2026 = [];
-        $this->step('Vinos cosecha 2026 (8 referencias)', function () use ($now, &$wineIds2026) {
+        $this->step('Vinos cosecha 2026 (225 referencias)', function () use ($now, &$wineIds2026) {
             $wineIds2026 = $this->createWines2026($now);
+        });
+
+        // 41b. Notas de cata (450 — cubre vinos 2024/2025 + 2026)
+        $this->step('Notas de cata (450)', function () use ($now, $wineIds, $wineIds2026) {
+            $this->createTastingNotes(array_merge($wineIds, $wineIds2026), $now);
         });
 
         // 42. Lotes producto vintage 2026 (40)
@@ -335,7 +337,7 @@ class ProducerDemoSeeder_test extends Seeder
         });
 
         // 46. Previsiones cosecha (24)
-        $this->step('Previsiones cosecha (24: 8 plantaciones × 3 campañas)', function () use ($now, $plantingIds, $campaign2024Id, $campaign2025Id, $campaign2026Id) {
+        $this->step('Previsiones cosecha (450: 150 plantaciones × 3 campañas)', function () use ($now, $plantingIds, $campaign2024Id, $campaign2025Id, $campaign2026Id) {
             $this->createYieldForecasts($plantingIds, $campaign2024Id, $campaign2025Id, $campaign2026Id, $now);
         });
 
@@ -1533,9 +1535,10 @@ class ProducerDemoSeeder_test extends Seeder
 
     private function createRegistrosOficiales(array $plantingIds, array $plotIds, array $productIds, array $machineryIds, array $exploitationIds, int $c24, int $c25, int $c26, $now): void
     {
-        $uid   = self::PRODUCER_USER_ID;
-        $expId = $exploitationIds[0] ?? null;
-        $mach1 = $machineryIds[0] ?? null;
+        $uid       = self::PRODUCER_USER_ID;
+        $expId     = $exploitationIds[0] ?? null;
+        $machCount = count($machineryIds);
+        $machIdx   = 0; // rotating pointer
 
         // ── Análisis de Residuos (6) ──────────────────────────────────────────
         foreach ([
@@ -1570,8 +1573,9 @@ class ProducerDemoSeeder_test extends Seeder
             [$c26, '2026-01-15', 'diesel', 'liters', 75.0, 1.42, 'Tractor poda 2026'],
             [$c26, '2026-03-10', 'electricity', 'kwh', 150.0, 0.18, 'Instalaciones campo'],
         ] as [$cId, $date, $eType, $unit, $qty, $cpu, $desc]) {
-            $co2 = $eType === 'diesel' ? round($qty * 2.68, 3) : round($qty * 0.233, 3);
-            DB::table('energy_usages')->insert(['campaign_id' => $cId, 'viticulturist_id' => $uid, 'machinery_id' => $eType === 'diesel' ? $mach1 : null, 'date' => $date, 'energy_type' => $eType, 'unit' => $unit, 'quantity' => $qty, 'cost_per_unit' => $cpu, 'total_cost' => round($qty * $cpu, 2), 'co2_kg_equivalent' => $co2, 'usage_description' => $desc, 'active' => true, 'created_at' => $now, 'updated_at' => $now]);
+            $co2   = $eType === 'diesel' ? round($qty * 2.68, 3) : round($qty * 0.233, 3);
+            $machId = ($eType === 'diesel' && $machCount > 0) ? $machineryIds[$machIdx++ % $machCount] : null;
+            DB::table('energy_usages')->insert(['campaign_id' => $cId, 'viticulturist_id' => $uid, 'machinery_id' => $machId, 'date' => $date, 'energy_type' => $eType, 'unit' => $unit, 'quantity' => $qty, 'cost_per_unit' => $cpu, 'total_cost' => round($qty * $cpu, 2), 'co2_kg_equivalent' => $co2, 'usage_description' => $desc, 'active' => true, 'created_at' => $now, 'updated_at' => $now]);
         }
 
         // ── Concesiones de Agua (2) ───────────────────────────────────────────
@@ -1679,7 +1683,7 @@ class ProducerDemoSeeder_test extends Seeder
         ] as [$date, $eType, $unit, $qty, $cpu, $desc]) {
             $co2 = $eType === 'diesel' ? round($qty * 2.68, 3) : round($qty * 0.233, 3);
             DB::table('energy_usages')->insert(['campaign_id' => $c26, 'viticulturist_id' => $uid,
-                'machinery_id' => $eType === 'diesel' ? $mach1 : null, 'date' => $date,
+                'machinery_id' => ($eType === 'diesel' && $machCount > 0) ? $machineryIds[$machIdx++ % $machCount] : null, 'date' => $date,
                 'energy_type' => $eType, 'unit' => $unit, 'quantity' => $qty,
                 'cost_per_unit' => $cpu, 'total_cost' => round($qty * $cpu, 2),
                 'co2_kg_equivalent' => $co2, 'usage_description' => $desc,
@@ -2349,12 +2353,28 @@ class ProducerDemoSeeder_test extends Seeder
 
     private function createLabelBatches(array $wineIds, $now): void
     {
-        $uid = self::PRODUCER_USER_ID;
-        foreach (array_slice($wineIds, 0, 4) as $i => $wineId) {
-            $total = mt_rand(3000, 6000);
-            $used  = mt_rand((int)($total * 0.4), $total);
-            $start = 2000000 + $i * 10000;
-            DB::table('label_batches')->insert(['user_id' => $uid, 'wine_id' => $wineId, 'name' => "Etiqueta principal — Vino Producer {$i}", 'source' => 'own', 'start_number' => $start, 'end_number' => $start + $total - 1, 'total_quantity' => $total, 'used_quantity' => $used, 'wasted_quantity' => mt_rand(5, 30), 'created_at' => $now, 'updated_at' => $now]);
+        $uid  = self::PRODUCER_USER_ID;
+        $rows = [];
+        foreach ($wineIds as $i => $wineId) {
+            $total   = mt_rand(1500, 6000);
+            $used    = mt_rand((int)($total * 0.3), (int)($total * 0.9));
+            $start   = 2000000 + $i * 10000;
+            $rows[]  = [
+                'user_id'        => $uid,
+                'wine_id'        => $wineId,
+                'name'           => 'Etiqueta principal — Vino Producer ' . ($i + 1),
+                'source'         => ($i % 3 === 0) ? 'external' : 'own',
+                'start_number'   => $start,
+                'end_number'     => $start + $total - 1,
+                'total_quantity' => $total,
+                'used_quantity'  => $used,
+                'wasted_quantity'=> mt_rand(5, 50),
+                'created_at'     => $now,
+                'updated_at'     => $now,
+            ];
+        }
+        foreach (array_chunk($rows, 50) as $chunk) {
+            DB::table('label_batches')->insert($chunk);
         }
     }
 
@@ -2410,10 +2430,34 @@ class ProducerDemoSeeder_test extends Seeder
 
     private function createContainerMaintenances(array $containerIds, $now): void
     {
-        foreach (array_slice($containerIds, 0, 5) as $i => $containerId) {
-            $types = [['cleaning', 'Limpieza con sosa cáustica', 120.0], ['sulfuring', 'Sulfitado preventivo', 50.0], ['inspection', 'Revisión juntas y válvulas', 80.0], ['tartrate_removal', 'Destartraje alcalino', 250.0], ['repair', 'Reparación válvula', 400.0]];
-            $t = $types[$i % count($types)];
-            DB::table('container_maintenances')->insert(['container_id' => $containerId, 'maintenance_type' => $t[0], 'maintenance_name' => $t[1], 'scheduled_date' => now()->subDays(30 + $i * 10)->format('Y-m-d'), 'performed_date' => now()->subDays(28 + $i * 10)->format('Y-m-d'), 'next_maintenance_date' => now()->addDays(150)->format('Y-m-d'), 'status' => 'completed', 'cost' => $t[2], 'performed_by' => 'Equipo bodega Producer', 'notes' => 'Mantenimiento programado.', 'created_at' => $now, 'updated_at' => $now]);
+        $types = [
+            ['cleaning',        'Limpieza con sosa cáustica',    120.0],
+            ['sulfuring',       'Sulfitado preventivo',            50.0],
+            ['inspection',      'Revisión juntas y válvulas',      80.0],
+            ['tartrate_removal','Destartraje alcalino',           250.0],
+            ['repair',          'Reparación válvula',             400.0],
+        ];
+        $rows = [];
+        foreach ($containerIds as $i => $containerId) {
+            $t      = $types[$i % count($types)];
+            $offset = 30 + ($i % 300);
+            $rows[] = [
+                'container_id'          => $containerId,
+                'maintenance_type'      => $t[0],
+                'maintenance_name'      => $t[1] . ' — Contenedor ' . ($i + 1),
+                'scheduled_date'        => now()->subDays($offset)->format('Y-m-d'),
+                'performed_date'        => now()->subDays($offset - 2)->format('Y-m-d'),
+                'next_maintenance_date' => now()->addDays(150 + ($i % 60))->format('Y-m-d'),
+                'status'                => 'completed',
+                'cost'                  => $t[2],
+                'performed_by'          => 'Equipo bodega Producer',
+                'notes'                 => 'Mantenimiento programado.',
+                'created_at'            => $now,
+                'updated_at'            => $now,
+            ];
+        }
+        foreach (array_chunk($rows, 50) as $chunk) {
+            DB::table('container_maintenances')->insert($chunk);
         }
     }
 
