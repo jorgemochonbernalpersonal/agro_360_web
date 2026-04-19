@@ -783,7 +783,7 @@ class ProducerDemoSeeder_test extends Seeder
         $varietyPool  = [$negro, $blanco, $baboso, $marmaj, $vijarieg, $moscatel, $malvasia, $tintilla];
         $rootstocks   = ['110R', 'Pie franco', 'SO4', '161-49C', 'Pie franco', '110R', 'SO4'];
         $trainingSys  = [1, 2, 1, 2, 1, 2, 1];
-        $rightTypes   = ['replantacion', 'nueva_plantacion', 'transferencia', 'replantacion'];
+        $rightTypes   = ['replantacion', 'nueva', 'transferencia', 'conversion'];
         $doOrigin     = 'DO Gran Canaria';
         $plotCount    = count($plotIds);
 
