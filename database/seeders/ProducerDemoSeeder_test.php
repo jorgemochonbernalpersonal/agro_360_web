@@ -1530,11 +1530,11 @@ class ProducerDemoSeeder_test extends Seeder
             DB::table('wine_analyses')->insert([
                 'wine_id' => $wineId, 'container_id' => $containerIds[$i] ?? $containerIds[0],
                 'analysis_date' => '2025-12-' . str_pad(5 + $i * 5, 2, '0', STR_PAD_LEFT),
-                'alcohol_content' => round(13.0 + $i * 0.3, 2), 'ph' => round(3.30 + $i * 0.05, 2),
+                'alcoholic_strength' => round(13.0 + $i * 0.3, 2), 'ph' => round(3.30 + $i * 0.05, 2),
                 'total_acidity' => round(5.5 + $i * 0.2, 2), 'volatile_acidity' => round(0.25 + $i * 0.05, 2),
                 'residual_sugar' => round(1.5 + $i * 0.3, 2), 'free_so2' => round(25.0 + $i * 2, 1),
                 'total_so2' => round(60.0 + $i * 5, 1), 'density' => round(0.992 + $i * 0.001, 4),
-                'laboratory_name' => 'Laboratorio Enológico Atlántico', 'result' => 'passed',
+                'laboratory' => 'Laboratorio Enológico Atlántico', 'result' => 'passed',
                 'notes' => 'Análisis completo pre-embotellado.', 'created_by' => $uid,
                 'created_at' => $now, 'updated_at' => $now,
             ]);
