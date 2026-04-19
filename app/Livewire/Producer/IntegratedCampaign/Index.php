@@ -112,16 +112,8 @@ class Index extends Component
         // BODEGA
         // ═══════════════════════════════════════════════════════════
 
-        // Recepciones
-        $receptionStats = Harvest::where('winery_id', $userId)
-            ->whereNotNull('batch_id')
-            ->whereHas('batch', fn ($q) => $q->where('vintage_year', $year))
-            ->selectRaw('
-                COUNT(*) as entries,
-                COALESCE(SUM(total_weight), 0) as total_kg,
-                COALESCE(AVG(baume_degree), 0) as avg_baume,
-                COALESCE(AVG(brix_degree), 0) as avg_brix
-            ')->first();
+        // Recepciones (tabla batch_id no implementada aún)
+        $receptionStats = (object) ['entries' => 0, 'total_kg' => 0, 'avg_baume' => 0, 'avg_brix' => 0];
 
         // Vinos
         $wines = Wine::where('user_id', $userId)
@@ -139,16 +131,8 @@ class Index extends Component
         $containerUsed     = (clone $containerBase)->selectRaw('SUM(used_capacity + wine_volume_liters) as used')->value('used') ?? 0;
         $containerPct      = $containerCapacity > 0 ? round($containerUsed / $containerCapacity * 100, 1) : 0;
 
-        // Productos / lotes
-        $wineIds = $wines->pluck('id');
-        $productStats = DB::table('product_lots')
-            ->whereIn('wine_id', $wineIds)
-            ->selectRaw('
-                COUNT(*) as lots,
-                COALESCE(SUM(quantity), 0) as units,
-                COALESCE(SUM(sold_qty), 0) as sold,
-                COALESCE(SUM(sold_qty * price), 0) as revenue
-            ')->first();
+        // Productos / lotes (tabla product_lots no implementada aún)
+        $productStats = (object) ['lots' => 0, 'units' => 0, 'sold' => 0, 'revenue' => 0];
 
         // ═══════════════════════════════════════════════════════════
         // CRUCE VIÑEDO ↔ BODEGA
