@@ -3136,7 +3136,7 @@ class ProducerDemoSeeder_test extends Seeder
             'Bodega Los Berrazales SA', 'Compra Directa — Bodega Atlántico', 'Cooperativa Norteña GC',
         ];
         $regas   = ['35.P02318/C', '35.P04521/C', '35.P01834/C'];
-        $statuses = ['matched', 'matched', 'matched', 'pending', 'confirmed'];
+        $statuses = ['matched', 'matched', 'matched', 'pending', 'disputed'];
 
         // ── 8 entregas base + 442 generadas = 450 total ────────────────────
         $allData = [];
