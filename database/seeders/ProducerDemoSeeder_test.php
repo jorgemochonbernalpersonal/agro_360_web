@@ -2538,7 +2538,7 @@ class ProducerDemoSeeder_test extends Seeder
     {
         $uid = self::PRODUCER_USER_ID;
         $alertTypes = ['maintenance', 'expiry', 'fermentation', 'stock', 'certification', 'temperature', 'quality', 'compliance', 'delivery', 'analysis'];
-        $severities = ['info', 'warning', 'critical', 'urgente'];
+        $severities = ['info', 'warning', 'critical', 'warning'];
         $titleTemplates = [
             'Mantenimiento pendiente — Contenedor {n}',
             'Certificación expira en {n} días',
