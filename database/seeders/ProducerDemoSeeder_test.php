@@ -1930,11 +1930,11 @@ class ProducerDemoSeeder_test extends Seeder
             ['Sala Recepción',    'Recepción de vendimia.',             8, 17.0, 68.0],
             ['Almacén Insumos',   'Almacén productos enológicos.',      6, 18.5, 60.0],
         ];
-        for ($i = 1; $i <= 30; $i++) {
+        for ($i = 1; $i <= 450; $i++) {
             $t = $roomTypes[($i - 1) % count($roomTypes)];
             DB::table('container_rooms')->insert([
                 'user_id'     => $uid,
-                'name'        => $t[0] . ' Producer ' . str_pad($i, 2, '0', STR_PAD_LEFT),
+                'name'        => $t[0] . ' Producer ' . str_pad($i, 3, '0', STR_PAD_LEFT),
                 'description' => $t[1],
                 'capacity'    => $t[2],
                 'temperature' => $t[3],
