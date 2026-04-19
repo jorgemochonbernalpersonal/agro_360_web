@@ -82,9 +82,18 @@
                     </x-slot:header>
                     @php
                         $actLabels = [
-                            'phytosanitary' => 'Tratamientos', 'fertilization' => 'Fertilizaciones', 'irrigation' => 'Riegos',
-                            'cultural' => 'Labores', 'observation' => 'Observaciones', 'harvest' => 'Vendimia',
-                            'pruning' => 'Podas', 'phenology' => 'Fenología', 'post_harvest' => 'Post-vendimia',
+                            'phytosanitary'           => 'Tratamientos',
+                            'phytosanitary_treatment' => 'Tratamientos',
+                            'fertilization'           => 'Fertilizaciones',
+                            'irrigation'              => 'Riegos',
+                            'cultural'                => 'Labores',
+                            'cultural_work'           => 'Labores',
+                            'observation'             => 'Observaciones',
+                            'harvest'                 => 'Vendimia',
+                            'pruning'                 => 'Podas',
+                            'phenology'               => 'Fenología',
+                            'post_harvest'            => 'Post-vendimia',
+                            'post_harvest_treatment'  => 'Post-vendimia',
                         ];
                     @endphp
                     <div class="space-y-1.5">

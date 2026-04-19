@@ -117,10 +117,9 @@ class Index extends Component
 
         // Vinos
         $wines = Wine::where('user_id', $userId)
-            ->where('vintage', $year)
-            ->get(['id', 'name', 'wine_type', 'status']);
+            ->get(['id', 'name', 'wine_type', 'status', 'vintage', 'volume_liters']);
 
-        $wineVolume = $wines->sum('current_volume');
+        $wineVolume = $wines->sum('volume_liters');
 
         $winesByType = $wines->groupBy('wine_type')->map->count()->toArray();
         $winesByStatus = $wines->groupBy('status')->map->count()->toArray();
