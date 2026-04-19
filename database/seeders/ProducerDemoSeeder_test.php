@@ -2715,7 +2715,7 @@ class ProducerDemoSeeder_test extends Seeder
 
         $plantingCount = count($plantingIds);
         $varietyNames  = ['Listán Negro', 'Marmajuelo', 'Moscatel', 'Listán Negro Bandama', 'Vijariego', 'Tintilla', 'Listán Blanco', 'Malvasía Aromática'];
-        $healthStates  = ['sano', 'sano', 'sano', 'sano', 'optimo', 'bueno', 'sano'];
+        $healthStates  = ['sano', 'sano', 'sano', 'sano', 'daño_leve', 'sano', 'sano'];
         $prices        = [0.68, 0.70, 0.65, 0.72, 0.62, 0.68, 0.70, 0.68];
 
         // ── 8 recepciones base + 442 generadas = 450 total ─────────────────
