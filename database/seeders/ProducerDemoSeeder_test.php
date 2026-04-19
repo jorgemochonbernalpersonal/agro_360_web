@@ -99,7 +99,7 @@ class ProducerDemoSeeder_test extends Seeder
 
         // 5. Plantaciones
         $plantingIds = [];
-        $this->step('Plantaciones (8)', function () use ($now, $plotIds, &$plantingIds) {
+        $this->step('Plantaciones (450)', function () use ($now, $plotIds, &$plantingIds) {
             $plantingIds = $this->createPlantings($plotIds, $now);
         });
 
@@ -768,7 +768,7 @@ class ProducerDemoSeeder_test extends Seeder
     private function createPlantings(array $plotIds, $now): array
     {
         $varieties = DB::table('grape_varieties')
-            ->whereIn('name', ['Listán Negro', 'Listán Blanco', 'Baboso Negro', 'Marmajuelo', 'Vijariego'])
+            ->whereIn('name', ['Listán Negro', 'Listán Blanco', 'Baboso Negro', 'Marmajuelo', 'Vijariego', 'Moscatel', 'Malvasía', 'Tintilla'])
             ->pluck('id', 'name');
 
         $negro    = $varieties['Listán Negro']  ?? 1;
@@ -776,24 +776,49 @@ class ProducerDemoSeeder_test extends Seeder
         $baboso   = $varieties['Baboso Negro']  ?? $negro;
         $marmaj   = $varieties['Marmajuelo']    ?? $blanco;
         $vijarieg = $varieties['Vijariego']     ?? $blanco;
+        $moscatel = $varieties['Moscatel']      ?? $blanco;
+        $malvasia = $varieties['Malvasía']      ?? $blanco;
+        $tintilla = $varieties['Tintilla']      ?? $negro;
 
-        $base = ['status' => 'active', 'active' => true, 'right_type' => 'replantacion', 'created_at' => $now, 'updated_at' => $now];
+        $varietyPool  = [$negro, $blanco, $baboso, $marmaj, $vijarieg, $moscatel, $malvasia, $tintilla];
+        $rootstocks   = ['110R', 'Pie franco', 'SO4', '161-49C', 'Pie franco', '110R', 'SO4'];
+        $trainingSys  = [1, 2, 1, 2, 1, 2, 1];
+        $rightTypes   = ['replantacion', 'nueva_plantacion', 'transferencia', 'replantacion'];
+        $doOrigin     = 'DO Gran Canaria';
+        $plotCount    = count($plotIds);
 
-        $plantings = [
-            ['plot_id' => $plotIds[0], 'grape_variety_id' => $negro,    'area_planted' => 0.700, 'planting_year' => 2008, 'vine_count' => 700,  'row_spacing' => 2.0, 'vine_spacing' => 1.5, 'rootstock' => '110R', 'training_system_id' => 2, 'irrigated' => true,  'designation_of_origin' => 'DO Gran Canaria', 'notes' => 'Listán Negro para tinto joven y crianza.'],
-            ['plot_id' => $plotIds[0], 'grape_variety_id' => $baboso,   'area_planted' => 0.500, 'planting_year' => 2010, 'vine_count' => 500,  'row_spacing' => 2.0, 'vine_spacing' => 1.5, 'rootstock' => '110R', 'training_system_id' => 2, 'irrigated' => true,  'designation_of_origin' => 'DO Gran Canaria', 'notes' => 'Baboso Negro para vino de autor.'],
-            ['plot_id' => $plotIds[1], 'grape_variety_id' => $negro,    'area_planted' => 0.550, 'planting_year' => 1995, 'vine_count' => 440,  'row_spacing' => 2.5, 'vine_spacing' => 1.5, 'rootstock' => 'Pie franco', 'training_system_id' => 1, 'irrigated' => false, 'designation_of_origin' => 'DO Gran Canaria', 'notes' => 'Viña vieja. Producción baja y concentrada.'],
-            ['plot_id' => $plotIds[1], 'grape_variety_id' => $blanco,   'area_planted' => 0.300, 'planting_year' => 2000, 'vine_count' => 240,  'row_spacing' => 2.5, 'vine_spacing' => 1.5, 'rootstock' => 'Pie franco', 'training_system_id' => 1, 'irrigated' => false, 'designation_of_origin' => 'DO Gran Canaria'],
-            ['plot_id' => $plotIds[2], 'grape_variety_id' => $baboso,   'area_planted' => 0.400, 'planting_year' => 2003, 'vine_count' => 320,  'row_spacing' => 3.0, 'vine_spacing' => 2.0, 'rootstock' => 'Pie franco', 'training_system_id' => 1, 'irrigated' => false, 'designation_of_origin' => 'DO Gran Canaria', 'notes' => 'Ecológico. Sin fitosanitarios de síntesis.'],
-            ['plot_id' => $plotIds[2], 'grape_variety_id' => $negro,    'area_planted' => 0.300, 'planting_year' => 2005, 'vine_count' => 240,  'row_spacing' => 3.0, 'vine_spacing' => 2.0, 'rootstock' => 'Pie franco', 'training_system_id' => 1, 'irrigated' => false, 'designation_of_origin' => 'DO Gran Canaria'],
-            ['plot_id' => $plotIds[3], 'grape_variety_id' => $marmaj,   'area_planted' => 0.600, 'planting_year' => 2012, 'vine_count' => 600,  'row_spacing' => 2.0, 'vine_spacing' => 1.5, 'rootstock' => 'SO4',        'training_system_id' => 2, 'irrigated' => true,  'designation_of_origin' => 'DO Gran Canaria', 'notes' => 'Marmajuelo para blanco fresco.'],
-            ['plot_id' => $plotIds[3], 'grape_variety_id' => $vijarieg, 'area_planted' => 0.450, 'planting_year' => 2014, 'vine_count' => 450,  'row_spacing' => 2.0, 'vine_spacing' => 1.5, 'rootstock' => 'SO4',        'training_system_id' => 2, 'irrigated' => true,  'designation_of_origin' => 'DO Gran Canaria', 'notes' => 'Vijariego blanco. Aromático.'],
-        ];
+        $base = ['status' => 'active', 'active' => true, 'created_at' => $now, 'updated_at' => $now];
 
         $ids = [];
-        foreach ($plantings as $p) {
-            $ids[] = DB::table('plot_plantings')->insertGetId(array_merge($base, $p));
+
+        // 450 plantaciones distribuidas en las 460 parcelas (1 por parcela excepto las primeras ~10 con 2)
+        for ($i = 0; $i < 450; $i++) {
+            $plotId     = $plotIds[$i % $plotCount];
+            $varId      = $varietyPool[$i % count($varietyPool)];
+            $year       = mt_rand(1990, 2024);
+            $area       = round(0.20 + ($i % 12) * 0.08, 2); // 0.20 – 1.08 ha
+            $vines      = (int)($area * 900 + mt_rand(-50, 50));
+            $rowSp      = [1.5, 2.0, 2.5, 3.0][$i % 4];
+            $vineSp     = [1.0, 1.5, 2.0][$i % 3];
+            $irrigated  = $i % 3 !== 0;
+
+            $ids[] = DB::table('plot_plantings')->insertGetId(array_merge($base, [
+                'plot_id'              => $plotId,
+                'grape_variety_id'     => $varId,
+                'area_planted'         => $area,
+                'planting_year'        => $year,
+                'vine_count'           => $vines,
+                'row_spacing'          => $rowSp,
+                'vine_spacing'         => $vineSp,
+                'rootstock'            => $rootstocks[$i % count($rootstocks)],
+                'training_system_id'   => $trainingSys[$i % count($trainingSys)],
+                'irrigated'            => $irrigated,
+                'designation_of_origin'=> $doOrigin,
+                'right_type'           => $rightTypes[$i % count($rightTypes)],
+                'notes'                => null,
+            ]));
         }
+
         return $ids;
     }
 
