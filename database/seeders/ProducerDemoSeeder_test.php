@@ -2345,7 +2345,8 @@ class ProducerDemoSeeder_test extends Seeder
             'Venta cosecha uva tinto', 'Venta cosecha uva blanco', 'Venta cosecha uva rosado',
             'Venta uva listán negro', 'Venta uva moscatel', 'Venta uva malvasía',
         ];
-        $statuses = ['paid', 'paid', 'paid', 'pending', 'overdue'];
+        $statuses        = ['paid', 'paid', 'paid', 'sent', 'draft'];
+        $paymentStatuses = ['paid', 'paid', 'paid', 'unpaid', 'overdue'];
 
         // ── 2024: 75 facturas ──────────────────────────────────────────────
         $counter2024 = 1;
@@ -2365,7 +2366,7 @@ class ProducerDemoSeeder_test extends Seeder
             $invId = DB::table('invoices')->insertGetId([
                 'user_id' => $uid, 'client_id' => $clientId,
                 'invoice_number' => $invNum, 'invoice_date' => $date,
-                'status' => $status, 'payment_status' => $status,
+                'status' => $status, 'payment_status' => $paymentStatuses[$i % count($paymentStatuses)],
                 'subtotal' => $total, 'tax_base' => $total, 'total_amount' => $total,
                 'observations' => $desc, 'created_at' => $now, 'updated_at' => $now,
             ]);
@@ -2395,7 +2396,7 @@ class ProducerDemoSeeder_test extends Seeder
             $invId = DB::table('invoices')->insertGetId([
                 'user_id' => $uid, 'client_id' => $clientId,
                 'invoice_number' => $invNum, 'invoice_date' => $date,
-                'status' => $status, 'payment_status' => $status,
+                'status' => $status, 'payment_status' => $paymentStatuses[$i % count($paymentStatuses)],
                 'subtotal' => $total, 'tax_base' => $total, 'total_amount' => $total,
                 'observations' => $desc, 'created_at' => $now, 'updated_at' => $now,
             ]);
@@ -3282,7 +3283,8 @@ class ProducerDemoSeeder_test extends Seeder
             'Uva moscatel 2026 — productor local',
             'Cosecha uva rosado 2026 — venta directa',
         ];
-        $statuses = ['paid', 'paid', 'paid', 'paid', 'pending', 'overdue'];
+        $statuses        = ['paid', 'paid', 'paid', 'paid', 'sent', 'draft'];
+        $paymentStatuses = ['paid', 'paid', 'paid', 'paid', 'unpaid', 'overdue'];
 
         // ── 300 facturas 2026 ────────────────────────────────────────────────
         for ($i = 1; $i <= 300; $i++) {
@@ -3303,7 +3305,7 @@ class ProducerDemoSeeder_test extends Seeder
                 'invoice_number' => $invNum,
                 'invoice_date'   => $date,
                 'status'         => $status,
-                'payment_status' => $status,
+                'payment_status' => $paymentStatuses[$i % count($paymentStatuses)],
                 'subtotal'       => $total,
                 'tax_base'       => $total,
                 'total_amount'   => $total,
