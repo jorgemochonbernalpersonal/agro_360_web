@@ -1615,15 +1615,12 @@ class ProducerDemoSeeder_test extends Seeder
             }
         }
 
-        // ── Informes oficiales 2026 adicionales (7) ───────────────────────────
+        // ── Informes oficiales 2026 adicionales (4) ───────────────────────────
         foreach ([
             ['full_digital_notebook',    '2026-01-01', '2026-03-31', 'completed'],
-            ['irrigation_log',           '2026-01-01', '2026-03-31', 'completed'],
-            ['fertilization_log',        '2026-01-01', '2026-03-31', 'completed'],
-            ['pac_compliance',           '2026-01-01', '2026-03-31', 'completed'],
+            ['phytosanitary_treatments', '2026-01-01', '2026-03-31', 'completed'],
             ['phytosanitary_treatments', '2026-04-01', '2026-06-30', 'processing'],
-            ['irrigation_log',           '2026-04-01', '2026-06-30', 'processing'],
-            ['harvest_traceability',     '2026-09-01', '2026-10-15', 'pending'],
+            ['full_digital_notebook',    '2026-04-01', '2026-06-30', 'processing'],
         ] as $i => [$type, $start, $end, $procStatus]) {
             $hash = md5("report_prod26_{$uid}_{$type}_{$start}_{$end}_{$i}");
             DB::table('official_reports')->insert(['user_id' => $uid, 'report_type' => $type,
