@@ -4,11 +4,13 @@ namespace App\Livewire\Producer\IntegratedEstate;
 
 use App\Models\AgriculturalActivity;
 use App\Models\Campaign;
-use App\Models\PhenologyObservation;
+use App\Models\EstimatedYield;
+use App\Models\Harvest;
 use App\Models\Plot;
 use App\Models\PlotPlanting;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 class Index extends Component
@@ -26,23 +28,31 @@ class Index extends Component
         $this->filterCampaign = (string) ($active?->id ?? '');
     }
 
-    public function render()
+    #[Computed(cache: true, seconds: 300)]
+    public function campaigns()
     {
-        $userId    = Auth::id();
-        $campaigns = Campaign::where('viticulturist_id', $userId)
+        return Campaign::where('viticulturist_id', Auth::id())
             ->orderByDesc('year')
             ->get(['id', 'name', 'year']);
+    }
 
-        $plotsQuery = Plot::where('viticulturist_id', $userId)->orderBy('name');
-        $plots      = $plotsQuery->get(['id', 'name', 'municipality_id', 'area']);
+    #[Computed(cache: true, seconds: 300)]
+    public function plots()
+    {
+        return Plot::where('viticulturist_id', Auth::id())
+            ->orderBy('name')
+            ->get(['id', 'name']);
+    }
 
+    public function render()
+    {
         $data = $this->filterCampaign
-            ? $this->buildEstateData($userId, (int) $this->filterCampaign)
+            ? $this->buildDashboardData(Auth::id(), (int) $this->filterCampaign)
             : null;
 
         return view('livewire.producer.integrated-estate.index', [
-            'campaigns' => $campaigns,
-            'plots'     => $plots,
+            'campaigns' => $this->campaigns,
+            'plots'     => $this->plots,
             'data'      => $data,
         ])->layout('layouts.app', [
             'title'       => 'Panel de Finca Integral',
@@ -50,48 +60,44 @@ class Index extends Component
         ]);
     }
 
-    private function buildEstateData(int $userId, int $campaignId): array
+    private function buildDashboardData(int $userId, int $campaignId): array
     {
         $plotFilter = $this->filterPlot ? (int) $this->filterPlot : null;
 
-        // ── Parcelas con plantaciones y último dato de teledetección ──────
-        $plotsQuery = Plot::where('viticulturist_id', $userId)
-            ->with([
-                'plantings' => fn ($q) => $q->with('grapeVariety:id,name')
-                    ->whereNull('uprooting_date')
-                    ->orderBy('name'),
-                'latestRemoteSensing',
-            ]);
-
+        // ── Parcelas (solo agregados, sin eager loading masivo) ───────────
+        $plotsQuery = Plot::where('viticulturist_id', $userId);
         if ($plotFilter) {
             $plotsQuery->where('id', $plotFilter);
         }
+        $plots = $plotsQuery->orderBy('name')->get(['id', 'name', 'area', 'municipality_id']);
 
-        $plotsWithData = $plotsQuery->orderBy('name')->get();
+        $plotIds = $plots->pluck('id');
 
-        // ── Stats generales ──────────────────────────────────────────────
-        $totalArea      = $plotsWithData->sum('area_ha');
-        $totalPlantings = $plotsWithData->sum(fn ($p) => $p->plantings->count());
-        $varietyCounts  = $plotsWithData->flatMap->plantings
+        // ── Plantaciones activas (una sola query, sin relaciones anidadas) ─
+        $plantings = PlotPlanting::whereIn('plot_id', $plotIds)
+            ->whereNull('uprooting_date')
+            ->with('grapeVariety:id,name')
+            ->get(['id', 'plot_id', 'planting_year', 'grape_variety_id']);
+
+        $plantingIds = $plantings->pluck('id');
+
+        // ── Stats generales ───────────────────────────────────────────────
+        $totalArea      = $plots->sum('area');
+        $totalPlantings = $plantings->count();
+
+        $varietyCounts = $plantings
             ->groupBy(fn ($pl) => $pl->grapeVariety?->name ?? 'Sin variedad')
             ->map->count()
             ->sortDesc();
 
-        // ── Fenología: últimas observaciones por parcela/plantación ──────
-        $plantingIds = $plotsWithData->flatMap->plantings->pluck('id');
+        $lifeCycleStages = $plantings
+            ->groupBy(fn ($pl) => $pl->life_cycle_stage ?? 'desconocido')
+            ->map->count()
+            ->toArray();
 
-        $latestPhenology = PhenologyObservation::whereIn('plot_planting_id', $plantingIds)
-            ->where('campaign_id', $campaignId)
-            ->select('plot_planting_id', 'event', 'obs_date', 'bbch_code')
-            ->orderByDesc('obs_date')
-            ->get()
-            ->groupBy('plot_planting_id')
-            ->map->first();
-
-        // ── Actividades recientes de la campaña ─────────────────────────
+        // ── Actividades por tipo (campaña) ────────────────────────────────
         $actQuery = AgriculturalActivity::where('viticulturist_id', $userId)
-            ->where('campaign_id', $campaignId)
-            ->with('plot:id,name');
+            ->where('campaign_id', $campaignId);
 
         if ($plotFilter) {
             $actQuery->where('plot_id', $plotFilter);
@@ -104,45 +110,83 @@ class Index extends Component
             ->toArray();
 
         $recentActivities = (clone $actQuery)
+            ->with('plot:id,name')
             ->orderByDesc('activity_date')
             ->take(8)
             ->get(['id', 'plot_id', 'activity_type', 'activity_date', 'phenological_stage']);
 
-        // ── Rendimientos: estimado vs real por parcela ───────────────────
-        $yieldPerPlot = [];
-        foreach ($plotsWithData as $plot) {
-            $plotYield = ['plot_name' => $plot->name, 'estimated' => 0, 'actual' => 0];
-            foreach ($plot->plantings as $planting) {
-                $variance = $planting->getYieldVariance($campaignId);
-                if ($variance) {
-                    $plotYield['estimated'] += $variance['estimated'];
-                    $plotYield['actual']    += $variance['actual'];
-                }
-            }
-            if ($plotYield['estimated'] > 0 || $plotYield['actual'] > 0) {
-                $plotYield['variance_pct'] = $plotYield['estimated'] > 0
-                    ? round(($plotYield['actual'] - $plotYield['estimated']) / $plotYield['estimated'] * 100, 1)
-                    : null;
-                $yieldPerPlot[] = $plotYield;
-            }
-        }
-
-        // ── Life cycle stages de plantaciones ────────────────────────────
-        $lifeCycleStages = $plotsWithData->flatMap->plantings
-            ->groupBy(fn ($pl) => $pl->life_cycle_stage ?? 'desconocido')
-            ->map->count()
-            ->toArray();
+        // ── Rendimiento: batch query — 2 queries en vez de 2N ────────────
+        $yieldPerPlot = $this->buildYieldSummary($plantings, $plotIds, $campaignId);
 
         return [
-            'plotsWithData'    => $plotsWithData,
+            'plots'            => $plots,
             'totalArea'        => $totalArea,
             'totalPlantings'   => $totalPlantings,
             'varietyCounts'    => $varietyCounts,
-            'latestPhenology'  => $latestPhenology,
+            'lifeCycleStages'  => $lifeCycleStages,
             'activityCounts'   => $activityCounts,
             'recentActivities' => $recentActivities,
             'yieldPerPlot'     => $yieldPerPlot,
-            'lifeCycleStages'  => $lifeCycleStages,
         ];
+    }
+
+    /**
+     * Calcula rendimiento estimado vs real con 2 queries totales (no N+1).
+     */
+    private function buildYieldSummary($plantings, $plotIds, int $campaignId): array
+    {
+        if ($plantings->isEmpty()) {
+            return [];
+        }
+
+        $plantingIds = $plantings->pluck('id');
+
+        // Query 1: rendimientos estimados
+        $estimated = EstimatedYield::whereIn('plot_planting_id', $plantingIds)
+            ->where('campaign_id', $campaignId)
+            ->pluck('estimated_total_yield', 'plot_planting_id');
+
+        if ($estimated->isEmpty()) {
+            return [];
+        }
+
+        // Query 2: kg reales cosechados (JOIN en vez de whereHas para evitar subquery)
+        $actual = Harvest::whereIn('harvests.plot_planting_id', $estimated->keys())
+            ->where('harvests.status', 'active')
+            ->join('agricultural_activities as aa', 'aa.id', '=', 'harvests.activity_id')
+            ->where('aa.campaign_id', $campaignId)
+            ->selectRaw('harvests.plot_planting_id, SUM(harvests.total_weight) as total')
+            ->groupBy('harvests.plot_planting_id')
+            ->pluck('total', 'plot_planting_id');
+
+        // Agrupar por parcela
+        $plotNames = Plot::whereIn('id', $plotIds)->pluck('name', 'id');
+        $plantingPlotMap = $plantings->pluck('plot_id', 'id');
+
+        $perPlot = [];
+        foreach ($estimated as $plantingId => $est) {
+            $plotId   = $plantingPlotMap[$plantingId] ?? null;
+            $plotName = $plotNames[$plotId] ?? 'Desconocida';
+            $act      = (float) ($actual[$plantingId] ?? 0);
+            $estVal   = (float) $est;
+
+            if (!isset($perPlot[$plotId])) {
+                $perPlot[$plotId] = ['plot_name' => $plotName, 'estimated' => 0, 'actual' => 0];
+            }
+            $perPlot[$plotId]['estimated'] += $estVal;
+            $perPlot[$plotId]['actual']    += $act;
+        }
+
+        $result = [];
+        foreach ($perPlot as $row) {
+            if ($row['estimated'] > 0 || $row['actual'] > 0) {
+                $row['variance_pct'] = $row['estimated'] > 0
+                    ? round(($row['actual'] - $row['estimated']) / $row['estimated'] * 100, 1)
+                    : null;
+                $result[] = $row;
+            }
+        }
+
+        return $result;
     }
 }
