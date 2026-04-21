@@ -71,6 +71,7 @@ class Edit extends Component
     {
         // Si es un modelo, usarlo directamente; si es un ID, buscarlo
         if ($invoice instanceof Invoice) {
+            abort_unless($invoice->user_id === \Illuminate\Support\Facades\Auth::id(), 404);
             $this->invoice = $invoice;
         } else {
             $user = Auth::user();
@@ -108,7 +109,7 @@ class Edit extends Component
         // Batch-load latest HarvestStock per harvest item (evita N+1)
         $itemHarvestIds = $this->invoice->items->pluck('harvest_id')->filter();
         $itemLatestStocks = \App\Models\HarvestStock::whereIn('harvest_id', $itemHarvestIds)
-            ->whereRaw('id = (SELECT MAX(hs2.id) FROM harvest_stock hs2 WHERE hs2.harvest_id = harvest_stock.harvest_id)')
+            ->whereRaw('id = (SELECT MAX(hs2.id) FROM harvest_stocks hs2 WHERE hs2.harvest_id = harvest_stocks.harvest_id)')
             ->get()
             ->keyBy('harvest_id');
 
@@ -186,7 +187,7 @@ class Edit extends Component
         // Batch-load latest HarvestStock por cosecha (evita N+1)
         $harvestIds   = $harvests->pluck('id');
         $latestStocks = \App\Models\HarvestStock::whereIn('harvest_id', $harvestIds)
-            ->whereRaw('id = (SELECT MAX(hs2.id) FROM harvest_stock hs2 WHERE hs2.harvest_id = harvest_stock.harvest_id)')
+            ->whereRaw('id = (SELECT MAX(hs2.id) FROM harvest_stocks hs2 WHERE hs2.harvest_id = harvest_stocks.harvest_id)')
             ->get()
             ->keyBy('harvest_id');
 
@@ -516,13 +517,17 @@ class Edit extends Component
 
     public function getTaxAmountProperty(): float
     {
-        $taxRates  = collect($this->availableTaxes)->keyBy('id');
+        // Fetch tax rates directly from DB — $availableTaxes may be plain arrays after
+        // Livewire serialization, making ->rate object-property access unreliable.
+        $taxIds   = collect($this->items)->pluck('tax_id')->filter()->unique()->values()->all();
+        $taxRates = empty($taxIds) ? [] : Tax::whereIn('id', $taxIds)->pluck('rate', 'id')->all();
+
         $taxAmount = 0;
         foreach ($this->items as $item) {
             $itemSubtotal = ($item['quantity'] ?? 0) * ($item['unit_price'] ?? 0);
             $itemDiscount = $itemSubtotal * (($item['discount_percentage'] ?? 0) / 100);
             $itemSubtotalAfterDiscount = $itemSubtotal - $itemDiscount;
-            $taxRate  = ($item['tax_id'] ?? null) ? (float) ($taxRates[$item['tax_id']]?->rate ?? 0) : 0;
+            $taxRate = isset($item['tax_id'], $taxRates[$item['tax_id']]) ? (float) $taxRates[$item['tax_id']] : 0;
             $taxAmount += $itemSubtotalAfterDiscount * ($taxRate / 100);
         }
         return round($taxAmount, 2);
@@ -608,27 +613,6 @@ class Edit extends Component
 
         try {
             DB::transaction(function () {
-                $subtotal       = $this->subtotal;
-                $discountAmount = $this->discountAmount;
-                $taxAmount      = $this->taxAmount;
-                $totalAmount    = $this->totalAmount;
-
-                $this->invoice->update([
-                    'client_id'            => $this->client_id,
-                    'client_address_id'    => $this->client_address_id ?: null,
-                    'invoice_date'         => $this->invoice_date ?: null,
-                    'delivery_note_date'   => $this->delivery_note_date ?: null,
-                    // delivery_status y payment_status se gestionan vía saveStatuses()
-                    'subtotal'             => $subtotal,
-                    'discount_amount'      => $discountAmount,
-                    'tax_base'             => $subtotal,
-                    'tax_rate'             => $taxAmount > 0 && $subtotal > 0 ? ($taxAmount / $subtotal) * 100 : 0,
-                    'tax_amount'           => $taxAmount,
-                    'total_amount'         => $totalAmount,
-                    'observations'         => $this->observations ?: null,
-                    'observations_invoice' => $this->observations_invoice ?: null,
-                ]);
-
                 // Delete old items individually so InvoiceItemObserver::deleting() fires per item.
                 // Bulk delete ($query->delete()) does NOT trigger model events.
                 // Observer routes: draft → ContainerStockService::unreserveStock()
@@ -636,10 +620,15 @@ class Edit extends Component
                 $this->invoice->load('items.harvest');
                 $this->invoice->items->each(fn ($item) => $item->delete());
 
-                // Recreate items — InvoiceItemObserver::created() fires per item and routes:
+                // Recreate items and accumulate totals using Tax::find() — avoids relying on
+                // $availableTaxes which may be plain arrays after Livewire serialization.
+                // InvoiceItemObserver::created() fires per item and routes:
                 //   draft → ContainerStockService::reserveStock()
                 //   sent  → ContainerStockService::directSale()
-                // No manual stock call needed — observer is the single source of truth.
+                $subtotal       = 0.0;
+                $discountAmount = 0.0;
+                $taxAmount      = 0.0;
+
                 foreach ($this->items as $itemData) {
                     $itemSubtotal              = $itemData['quantity'] * $itemData['unit_price'];
                     $itemDiscount              = $itemSubtotal * ($itemData['discount_percentage'] / 100);
@@ -648,6 +637,10 @@ class Edit extends Component
                     $tax     = $itemData['tax_id'] ? Tax::find($itemData['tax_id']) : null;
                     $taxRate = $tax ? $tax->rate : 0;
                     $itemTax = $itemSubtotalAfterDiscount * ($taxRate / 100);
+
+                    $subtotal       += $itemSubtotalAfterDiscount;
+                    $discountAmount += $itemDiscount;
+                    $taxAmount      += $itemTax;
 
                     $this->invoice->items()->create([
                         'harvest_id'          => $itemData['harvest_id'] ?? null,
@@ -669,6 +662,27 @@ class Edit extends Component
                         'concept_type'        => $itemData['concept_type'] ?? 'other',
                     ]);
                 }
+
+                $subtotal       = round($subtotal, 2);
+                $discountAmount = round($discountAmount, 2);
+                $taxAmount      = round($taxAmount, 2);
+                $totalAmount    = round($subtotal + $taxAmount, 2);
+
+                $this->invoice->update([
+                    'client_id'            => $this->client_id,
+                    'client_address_id'    => $this->client_address_id ?: null,
+                    'invoice_date'         => $this->invoice_date ?: null,
+                    'delivery_note_date'   => $this->delivery_note_date ?: null,
+                    // delivery_status y payment_status se gestionan vía saveStatuses()
+                    'subtotal'             => $subtotal,
+                    'discount_amount'      => $discountAmount,
+                    'tax_base'             => $subtotal,
+                    'tax_rate'             => $taxAmount > 0 && $subtotal > 0 ? ($taxAmount / $subtotal) * 100 : 0,
+                    'tax_amount'           => $taxAmount,
+                    'total_amount'         => $totalAmount,
+                    'observations'         => $this->observations ?: null,
+                    'observations_invoice' => $this->observations_invoice ?: null,
+                ]);
 
                 $this->invoice->logAction(
                     'updated',

@@ -153,14 +153,14 @@ class InvoiceObserver
     }
 
     /**
-     * Cambio de status: controla el DOCUMENTO, NO el stock.
+     * Cambio de status: controla el DOCUMENTO y convierte stock según la transición.
      *
-     * draft → sent: asignar número de factura + snapshot de facturación.
+     * draft → sent: asignar número + snapshot + convertir reservas en ventas.
+     * sent → draft: revertir ventas a reservas.
      * → cancelled: liberar stock como fallback de seguridad.
      */
     protected function handleStatusChange(Invoice $invoice, string $oldStatus, string $newStatus): void
     {
-        // draft → sent: solo papeleo (número + snapshot), NO mueve stock
         if ($oldStatus === 'draft' && $newStatus === 'sent') {
             if (! $invoice->invoice_number) {
                 $settings      = \App\Models\InvoicingSetting::getOrCreateForUser($invoice->user_id);
@@ -168,6 +168,34 @@ class InvoiceObserver
                 $invoice->updateQuietly(['invoice_number' => $invoiceNumber]);
             }
             $this->populateBillingSnapshot($invoice);
+
+            // Convertir reservas en ventas contables
+            $invoice->loadMissing('items.harvest');
+            DB::transaction(function () use ($invoice) {
+                foreach ($invoice->items as $item) {
+                    if (! $item->harvest_id) {
+                        continue;
+                    }
+                    $this->stockService->confirmSale(
+                        $item->harvest,
+                        $item,
+                        $invoice->invoice_number ?? ''
+                    );
+                }
+            });
+        }
+
+        // sent → draft: revertir ventas a reservas
+        elseif ($oldStatus === 'sent' && $newStatus === 'draft') {
+            $invoice->loadMissing('items.harvest');
+            DB::transaction(function () use ($invoice) {
+                foreach ($invoice->items as $item) {
+                    if (! $item->harvest_id) {
+                        continue;
+                    }
+                    $this->stockService->revertSaleToReservation($item->harvest, $item);
+                }
+            });
         }
 
         // Cualquier estado → cancelled: liberar stock (safety net)

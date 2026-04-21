@@ -310,4 +310,173 @@ class EditTest extends WineryTestCase
 
         Livewire::test(Edit::class, ['id' => $otherInvoice->id]);
     }
+
+    // ── Stock transitions ─────────────────────────────────────────────────────
+
+    public function test_adding_line_to_draft_reserves_new_lot(): void
+    {
+        // Start with full lots; makeInvoice will decrement lotA by 6 → available=494, reserved=6
+        $lotA    = $this->makeLot(500);
+        $lotB    = $this->makeLot(100);
+        $invoice = $this->makeInvoice($lotA);
+        $tax     = $this->makeTax(21);
+        $client  = Client::where('user_id', $this->winery->id)->first();
+
+        // Save the invoice with original line (lotA, 6) PLUS a new line (lotB, 4)
+        Livewire::test(Edit::class, ['id' => $invoice->id])
+            ->set('client_id', (string) $client->id)
+            ->set('items', [
+                [
+                    'wine_lot_id'         => $lotA->id,
+                    'name'                => 'Rioja Reserva 2020',
+                    'description'         => '',
+                    'sku'                 => '',
+                    'quantity'            => 6,
+                    'available_qty'       => 500,
+                    'unit_price'          => 12.50,
+                    'discount_percentage' => 0,
+                    'tax_id'              => $tax->id,
+                    'concept_type'        => 'wine',
+                ],
+                [
+                    'wine_lot_id'         => $lotB->id,
+                    'name'                => 'Otro Vino 2021',
+                    'description'         => '',
+                    'sku'                 => '',
+                    'quantity'            => 4,
+                    'available_qty'       => 100,
+                    'unit_price'          => 10.00,
+                    'discount_percentage' => 0,
+                    'tax_id'              => $tax->id,
+                    'concept_type'        => 'wine',
+                ],
+            ])
+            ->call('save')
+            ->assertHasNoErrors();
+
+        // lotA unchanged (6 reserved → cancelled → re-reserved)
+        $this->assertEquals(494, (float) $lotA->fresh()->available_quantity);
+        $this->assertEquals(6,   (float) $lotA->fresh()->reserved_quantity);
+
+        // lotB: 4 bottles now reserved
+        $this->assertEquals(96, (float) $lotB->fresh()->available_quantity);
+        $this->assertEquals(4,  (float) $lotB->fresh()->reserved_quantity);
+    }
+
+    public function test_removing_line_from_draft_returns_stock_to_available(): void
+    {
+        // lotA: 6 reserved by invoice; lotB: also 8 reserved by same invoice
+        $lotA = $this->makeLot(494, 6);
+        $lotB = $this->makeLot(92, 8);
+
+        $client  = $this->makeClient();
+        $address = $this->makeAddress($client);
+        $invoice = Invoice::create([
+            'user_id'            => $this->winery->id,
+            'client_id'          => $client->id,
+            'invoice_type'       => 'wine_sale',
+            'delivery_note_code' => 'ALB-2024-0001',
+            'order_date'         => '2024-10-01',
+            'status'             => 'draft',
+            'payment_status'     => 'unpaid',
+            'delivery_status'    => 'pending',
+            'subtotal'           => 155,
+            'discount_amount'    => 0,
+            'tax_base'           => 155,
+            'tax_amount'         => 32.55,
+            'total_amount'       => 187.55,
+        ]);
+        InvoiceItem::create([
+            'invoice_id'   => $invoice->id,
+            'wine_lot_id'  => $lotA->id,
+            'concept_type' => 'wine',
+            'name'         => 'Rioja Reserva 2020',
+            'quantity'     => 6,
+            'unit_price'   => 12.50,
+            'tax_rate'     => 21,
+            'subtotal'     => 75,
+            'tax_base'     => 75,
+            'tax_amount'   => 15.75,
+            'total'        => 90.75,
+        ]);
+        InvoiceItem::create([
+            'invoice_id'   => $invoice->id,
+            'wine_lot_id'  => $lotB->id,
+            'concept_type' => 'wine',
+            'name'         => 'Otro Vino 2021',
+            'quantity'     => 8,
+            'unit_price'   => 10.00,
+            'tax_rate'     => 21,
+            'subtotal'     => 80,
+            'tax_base'     => 80,
+            'tax_amount'   => 16.80,
+            'total'        => 96.80,
+        ]);
+
+        $tax = $this->makeTax(21);
+
+        // Save keeping only lotA (remove lotB line)
+        Livewire::test(Edit::class, ['id' => $invoice->id])
+            ->set('client_id', (string) $client->id)
+            ->set('items', [[
+                'wine_lot_id'         => $lotA->id,
+                'name'                => 'Rioja Reserva 2020',
+                'description'         => '',
+                'sku'                 => '',
+                'quantity'            => 6,
+                'available_qty'       => 500,
+                'unit_price'          => 12.50,
+                'discount_percentage' => 0,
+                'tax_id'              => $tax->id,
+                'concept_type'        => 'wine',
+            ]])
+            ->call('save')
+            ->assertHasNoErrors();
+
+        // lotA: still reserved (6)
+        $this->assertEquals(494, (float) $lotA->fresh()->available_quantity);
+        $this->assertEquals(6,   (float) $lotA->fresh()->reserved_quantity);
+
+        // lotB: 8 bottles returned to available, nothing reserved
+        $this->assertEquals(100, (float) $lotB->fresh()->available_quantity);
+        $this->assertEquals(0,   (float) $lotB->fresh()->reserved_quantity);
+    }
+
+    public function test_confirm_delivery_moves_reserved_to_sold(): void
+    {
+        // makeLot(500) + makeInvoice → available=494, reserved=6
+        $lot     = $this->makeLot(500);
+        $invoice = $this->makeInvoice($lot);
+
+        Livewire::test(Edit::class, ['id' => $invoice->id])
+            ->set('pendingDeliveryStatus', 'delivered')
+            ->call('confirmDeliveryStatus')
+            ->assertHasNoErrors();
+
+        // reserved→sold: reserved back to 0, sold = 6
+        $this->assertEquals(494, (float) $lot->fresh()->available_quantity);
+        $this->assertEquals(0,   (float) $lot->fresh()->reserved_quantity);
+        $this->assertEquals(6,   (float) $lot->fresh()->sold_quantity);
+
+        $this->assertEquals('delivered', $invoice->fresh()->delivery_status);
+    }
+
+    public function test_confirm_cancel_moves_reserved_back_to_available(): void
+    {
+        // makeLot(500) + makeInvoice → available=494, reserved=6
+        $lot     = $this->makeLot(500);
+        $invoice = $this->makeInvoice($lot);
+
+        Livewire::test(Edit::class, ['id' => $invoice->id])
+            ->set('pendingDeliveryStatus', 'cancelled')
+            ->call('confirmDeliveryStatus')
+            ->assertHasNoErrors();
+
+        // reserved→available: back to full 500, nothing reserved
+        $this->assertEquals(500, (float) $lot->fresh()->available_quantity);
+        $this->assertEquals(0,   (float) $lot->fresh()->reserved_quantity);
+
+        $this->assertEquals('cancelled', $invoice->fresh()->delivery_status);
+    }
+
 }

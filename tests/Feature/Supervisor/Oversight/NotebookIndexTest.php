@@ -23,8 +23,8 @@ class NotebookIndexTest extends SupervisorTestCase
             'source'              => WineryViticulturist::SOURCE_SUPERVISOR,
             'supervisor_id'       => $supervisor->id,
             'assigned_by'         => $supervisor->id,
-            'cuaderno_access'     => $cuadernoAccess,
-            'cuaderno_granted_at' => $cuadernoAccess ? now() : null,
+            'notebook_access'     => $cuadernoAccess,
+            'notebook_granted_at' => $cuadernoAccess ? now() : null,
         ]);
 
         return [$supervisor, $viticulturist, $winery];
@@ -136,8 +136,8 @@ class NotebookIndexTest extends SupervisorTestCase
             'source'              => WineryViticulturist::SOURCE_SUPERVISOR,
             'supervisor_id'       => $supervisor->id,
             'assigned_by'         => $supervisor->id,
-            'cuaderno_access'     => true,
-            'cuaderno_granted_at' => now(),
+            'notebook_access'     => true,
+            'notebook_granted_at' => now(),
         ]);
 
         $plot1 = $this->makePlot($vit1);

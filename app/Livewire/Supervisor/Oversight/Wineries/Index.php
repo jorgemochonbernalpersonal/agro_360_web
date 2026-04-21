@@ -76,7 +76,7 @@ class Index extends Component
         $doId = Auth::id();
 
         $winery = User::where('id', $this->linkWineryId)
-            ->where('role', User::ROLE_WINERY)
+            ->whereIn('role', [User::ROLE_WINERY, User::ROLE_PRODUCER])
             ->firstOrFail();
 
         $alreadyLinked = SupervisorWinery::where('supervisor_id', $doId)

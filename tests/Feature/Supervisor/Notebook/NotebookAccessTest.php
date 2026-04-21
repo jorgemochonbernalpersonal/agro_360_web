@@ -145,8 +145,8 @@ class NotebookAccessTest extends SupervisorTestCase
             ->first();
 
         $relation->update([
-            'cuaderno_access'    => true,
-            'cuaderno_granted_at' => now()->subDay(),
+            'notebook_access'     => true,
+            'notebook_granted_at' => now()->subDay(),
         ]);
 
         $request = NotebookAccessRequest::create([
@@ -162,7 +162,7 @@ class NotebookAccessTest extends SupervisorTestCase
             ->call('revokeAccess', $request->id)
             ->assertDispatched('toast');
 
-        $this->assertFalse((bool) $relation->fresh()->cuaderno_access);
+        $this->assertFalse((bool) $relation->fresh()->notebook_access);
         $this->assertDatabaseMissing('notebook_access_requests', ['id' => $request->id]);
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Supervisor\Oversight\Growers;
 
+use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\AgriculturalActivity;
 use App\Models\Certification;
 use App\Models\DoInspection;
@@ -16,6 +17,8 @@ use Livewire\Component;
 
 class Show extends Component
 {
+    use WithToastNotifications;
+
     public User $viticulturist;
 
     public function mount(User $viticulturist): void
@@ -25,6 +28,17 @@ class Show extends Component
             ->firstOrFail();
 
         $this->viticulturist = $viticulturist;
+    }
+
+    public function revokeNotebookAccess(): void
+    {
+        $relation = SupervisorViticulturist::where('supervisor_id', Auth::id())
+            ->where('viticulturist_id', $this->viticulturist->id)
+            ->firstOrFail();
+
+        $relation->revokeNotebookAccess();
+
+        $this->toastSuccess('Acceso al cuaderno revocado.');
     }
 
     #[Layout('layouts.app')]
@@ -50,8 +64,12 @@ class Show extends Component
             ->with('winery')
             ->get();
 
-        // Acceso cuaderno: alguna de esas relaciones tiene acceso concedido
-        $hasNotebookAccess = $wineryRelations->where('notebook_access', true)->isNotEmpty();
+        // Acceso cuaderno: permiso directo DO→viticultor en supervisor_viticulturist
+        $supervisorRelation = SupervisorViticulturist::where('supervisor_id', $supervisorId)
+            ->where('viticulturist_id', $viticulturistId)
+            ->first();
+
+        $hasNotebookAccess = $supervisorRelation?->hasNotebookAccess() ?? false;
 
         // Últimas actividades del cuaderno (solo si hay acceso)
         $recentActivities = collect();
@@ -89,17 +107,18 @@ class Show extends Component
         $lockedPlots     = $plots->filter(fn($p) => $p->is_locked)->count();
 
         return view('livewire.supervisor.oversight.growers.show', [
-            'plots'             => $plots,
-            'totalArea'         => $totalArea,
-            'totalPlots'        => $totalPlots,
-            'wineryRelations'   => $wineryRelations,
-            'hasNotebookAccess' => $hasNotebookAccess,
-            'recentActivities'  => $recentActivities,
-            'activityCounts'    => $activityCounts,
-            'certifications'    => $certifications,
-            'inspections'       => $inspections,
-            'plotsWithoutPac'   => $plotsWithoutPac,
-            'lockedPlots'       => $lockedPlots,
+            'plots'               => $plots,
+            'totalArea'           => $totalArea,
+            'totalPlots'          => $totalPlots,
+            'wineryRelations'     => $wineryRelations,
+            'hasNotebookAccess'   => $hasNotebookAccess,
+            'supervisorRelation'  => $supervisorRelation,
+            'recentActivities'    => $recentActivities,
+            'activityCounts'      => $activityCounts,
+            'certifications'      => $certifications,
+            'inspections'         => $inspections,
+            'plotsWithoutPac'     => $plotsWithoutPac,
+            'lockedPlots'         => $lockedPlots,
         ]);
     }
 }

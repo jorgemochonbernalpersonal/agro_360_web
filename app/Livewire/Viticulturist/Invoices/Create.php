@@ -110,7 +110,7 @@ class Create extends Component
         // Cargar el último HarvestStock por cosecha en una sola query (evita N+1)
         $harvestIds  = $harvests->pluck('id');
         $latestStocks = \App\Models\HarvestStock::whereIn('harvest_id', $harvestIds)
-            ->whereRaw('id = (SELECT MAX(hs2.id) FROM harvest_stock hs2 WHERE hs2.harvest_id = harvest_stock.harvest_id)')
+            ->whereRaw('id = (SELECT MAX(hs2.id) FROM harvest_stocks hs2 WHERE hs2.harvest_id = harvest_stocks.harvest_id)')
             ->get()
             ->keyBy('harvest_id');
 

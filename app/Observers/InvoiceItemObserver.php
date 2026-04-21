@@ -13,10 +13,7 @@ class InvoiceItemObserver
     ) {}
 
     /**
-     * Al añadir un item a una factura: SIEMPRE reservar stock.
-     *
-     * La confirmación de venta (reserved → sold) ocurre cuando
-     * delivery_status cambia a 'delivered' (gestionado por InvoiceObserver).
+     * Al añadir un item: reserva si la factura es draft, venta directa si es sent/approved.
      */
     public function created(InvoiceItem $item): void
     {
@@ -30,12 +27,17 @@ class InvoiceItemObserver
         }
 
         try {
-            $this->stockService->reserveStock($item->harvest, $item);
+            if (in_array($invoice->status, ['sent', 'approved'])) {
+                $this->stockService->directSale($item->harvest, $item, $invoice->invoice_number ?? '');
+            } else {
+                $this->stockService->reserveStock($item->harvest, $item);
+            }
         } catch (\Exception $e) {
-            Log::error('[InvoiceItemObserver] Error al reservar stock en created', [
+            Log::error('[InvoiceItemObserver] Error al gestionar stock en created', [
                 'item_id'        => $item->id,
                 'invoice_id'     => $item->invoice_id,
                 'harvest_id'     => $item->harvest_id,
+                'invoice_status' => $invoice->status,
                 'error'          => $e->getMessage(),
             ]);
             throw $e;
@@ -85,10 +87,10 @@ class InvoiceItemObserver
     }
 
     /**
-     * Al eliminar un item: liberar stock según delivery_status.
+     * Al eliminar un item: devuelve stock según el estado de la factura.
      *
-     * Si delivery_status = delivered → el stock está en sold → release desde sold
-     * Si delivery_status = pending   → el stock está en reserved → unreserve
+     * Si sent/approved o delivery_status=delivered → stock en sold → movement_type='return'
+     * Si draft/pending → stock en reserved → movement_type='unreserve'
      */
     public function deleting(InvoiceItem $item): void
     {
@@ -101,20 +103,20 @@ class InvoiceItemObserver
             return;
         }
 
+        $invoiceStatus  = $invoice->status;
         $deliveryStatus = $invoice->delivery_status;
 
         try {
-            if ($deliveryStatus === 'delivered') {
-                // Stock ya confirmado como vendido → devolver
+            if ($deliveryStatus === 'delivered' || in_array($invoiceStatus, ['sent', 'approved'])) {
                 $this->stockService->releaseFromInvoice($item->harvest, $item, 'sent');
             } else {
-                // Stock aún reservado → liberar reserva
                 $this->stockService->unreserveStock($item->harvest, $item);
             }
         } catch (\Exception $e) {
             Log::error('[InvoiceItemObserver] Error al liberar stock en deleting', [
                 'item_id'         => $item->id,
                 'invoice_id'      => $item->invoice_id,
+                'invoice_status'  => $invoiceStatus,
                 'delivery_status' => $deliveryStatus,
                 'harvest_id'      => $item->harvest_id,
                 'error'           => $e->getMessage(),

@@ -65,9 +65,7 @@ class Index extends Component
         $this->validate([
             'createName'  => ['required', 'string', 'max:255'],
             'createEmail' => ['nullable', 'email', 'max:255', 'unique:users,email'],
-            'createDni'   => ['nullable', 'string', 'max:20',
-                Rule::unique('users', 'dni')->where('can_login', true),
-            ],
+            'createDni'   => ['nullable', 'string', 'max:20', Rule::unique('users', 'dni')],
             'createPhone' => ['nullable', 'string', 'max:20'],
         ], [
             'createName.required'  => 'El nombre es obligatorio.',

@@ -5,6 +5,7 @@ namespace Tests\Feature\Supervisor;
 use App\Models\DoLabel;
 use App\Models\DoQualification;
 use App\Models\NotebookAccessRequest;
+use App\Models\SupervisorRequest;
 use App\Models\SupervisorWinery;
 use App\Models\User;
 use App\Models\WineryViticulturist;
@@ -218,5 +219,62 @@ class DashboardTest extends SupervisorTestCase
 
         Livewire::test(\App\Livewire\Supervisor\Dashboard::class)
             ->assertViewHas('pendingNotebookRequests', 0);
+    }
+
+    // ── pendingRequests ───────────────────────────────────────────────────────
+
+    public function test_dashboard_counts_pending_and_in_review_requests(): void
+    {
+        [$supervisor, $winery] = $this->makeSupervisorWithWinery();
+
+        SupervisorRequest::create(['supervisor_id' => $supervisor->id, 'winery_id' => $winery->id, 'type' => SupervisorRequest::TYPE_NONCONFORMITY, 'status' => SupervisorRequest::STATUS_PENDING]);
+        SupervisorRequest::create(['supervisor_id' => $supervisor->id, 'winery_id' => $winery->id, 'type' => SupervisorRequest::TYPE_NONCONFORMITY, 'status' => SupervisorRequest::STATUS_IN_REVIEW]);
+        SupervisorRequest::create(['supervisor_id' => $supervisor->id, 'winery_id' => $winery->id, 'type' => SupervisorRequest::TYPE_NONCONFORMITY, 'status' => SupervisorRequest::STATUS_APPROVED]);
+
+        $this->actingAs($supervisor);
+
+        Livewire::test(\App\Livewire\Supervisor\Dashboard::class)
+            ->assertViewHas('pendingRequests', 2);
+    }
+
+    public function test_dashboard_pending_requests_isolated_from_other_supervisor(): void
+    {
+        [$supervisor]                    = $this->makeSupervisorWithWinery();
+        [$otherSupervisor, $otherWinery] = $this->makeSupervisorWithWinery();
+
+        SupervisorRequest::create(['supervisor_id' => $otherSupervisor->id, 'winery_id' => $otherWinery->id, 'type' => SupervisorRequest::TYPE_NONCONFORMITY, 'status' => SupervisorRequest::STATUS_PENDING]);
+
+        $this->actingAs($supervisor);
+
+        Livewire::test(\App\Livewire\Supervisor\Dashboard::class)
+            ->assertViewHas('pendingRequests', 0);
+    }
+
+    // ── overdueRequests ───────────────────────────────────────────────────────
+
+    public function test_dashboard_counts_overdue_open_requests(): void
+    {
+        [$supervisor, $winery] = $this->makeSupervisorWithWinery();
+
+        SupervisorRequest::create(['supervisor_id' => $supervisor->id, 'winery_id' => $winery->id, 'type' => SupervisorRequest::TYPE_NONCONFORMITY, 'status' => SupervisorRequest::STATUS_PENDING,   'due_date' => now()->subDays(3)]);
+        SupervisorRequest::create(['supervisor_id' => $supervisor->id, 'winery_id' => $winery->id, 'type' => SupervisorRequest::TYPE_NONCONFORMITY, 'status' => SupervisorRequest::STATUS_IN_REVIEW, 'due_date' => now()->subDay()]);
+        SupervisorRequest::create(['supervisor_id' => $supervisor->id, 'winery_id' => $winery->id, 'type' => SupervisorRequest::TYPE_NONCONFORMITY, 'status' => SupervisorRequest::STATUS_APPROVED,  'due_date' => now()->subDay()]);
+
+        $this->actingAs($supervisor);
+
+        Livewire::test(\App\Livewire\Supervisor\Dashboard::class)
+            ->assertViewHas('overdueRequests', 2);
+    }
+
+    public function test_dashboard_overdue_excludes_future_due_dates(): void
+    {
+        [$supervisor, $winery] = $this->makeSupervisorWithWinery();
+
+        SupervisorRequest::create(['supervisor_id' => $supervisor->id, 'winery_id' => $winery->id, 'type' => SupervisorRequest::TYPE_NONCONFORMITY, 'status' => SupervisorRequest::STATUS_PENDING, 'due_date' => now()->addDays(5)]);
+
+        $this->actingAs($supervisor);
+
+        Livewire::test(\App\Livewire\Supervisor\Dashboard::class)
+            ->assertViewHas('overdueRequests', 0);
     }
 }
