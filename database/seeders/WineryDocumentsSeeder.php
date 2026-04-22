@@ -5,150 +5,191 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * Genera 450 documentos de bodega para user_id=1.
+ * 8 tipos × ~56 documentos, con énfasis en años 2025–2026.
+ */
 class WineryDocumentsSeeder extends Seeder
 {
     private const WINERY_USER_ID = 1;
+
+    private const TYPES = [
+        'license', 'sanitary', 'authorization', 'certification',
+        'contract', 'plan', 'declaration', 'permit',
+    ];
+
+    private const TITLES = [
+        'license' => [
+            'Licencia de Actividad — Elaboración de Vinos',
+            'Licencia Ambiental — Bodega',
+            'Licencia de Apertura — Nave de Fermentación',
+            'Licencia de Obras — Ampliación Depósitos',
+            'Licencia de Uso — Almacén de Insumos',
+            'Licencia de Actividad — Embotellado',
+            'Licencia Municipal — Almacén Producto Terminado',
+        ],
+        'sanitary' => [
+            'Registro Sanitario de Elaborador — RESA',
+            'Autorización Sanitaria de Funcionamiento',
+            'Informe Sanitario Favorable — Actividad Enológica',
+            'Certificado de Higiene Alimentaria',
+            'Registro de Establecimiento Alimentario',
+            'Acta de Control Sanitario — Bodega',
+            'Informe Inspección Sanitaria Anual',
+        ],
+        'authorization' => [
+            'Autorización Operador Vitivinícola — OIVE',
+            'Autorización de Embotellado',
+            'Autorización de Etiquetado',
+            'Autorización de Exportación a Terceros Países',
+            'Autorización Uso Mención Reserva',
+            'Autorización Uso Prácticas Enológicas Especiales',
+            'Autorización Comercialización en D.O. Gran Canaria',
+        ],
+        'certification' => [
+            'Certificado Agricultura Ecológica — CAAE',
+            'Inscripción Denominación de Origen Gran Canaria',
+            'Certificado ISO 9001 — Sistema de Calidad',
+            'Certificado GlobalGAP — Buenas Prácticas Agrícolas',
+            'Certificado Huella de Carbono',
+            'Certificado Fair Trade',
+            'Certificado Producción Integrada',
+        ],
+        'contract' => [
+            'Contrato Seguro Responsabilidad Civil',
+            'Contrato Gestión Residuos Sólidos (Orujos y Lías)',
+            'Contrato Suministro Botellas y Corchos',
+            'Contrato Servicio Laboratorio Analítico',
+            'Contrato Transporte y Distribución',
+            'Contrato Arrendamiento Parcela',
+            'Contrato Mantenimiento Maquinaria Enológica',
+            'Contrato Consultoría Enológica',
+            'Contrato Asesoría Fiscal y Contable',
+        ],
+        'plan' => [
+            'Plan de Autocontrol APPCC — Bodega',
+            'Plan de Emergencias y Evacuación',
+            'Plan de Igualdad de Género',
+            'Plan de Gestión de Residuos',
+            'Plan de Prevención de Riesgos Laborales',
+            'Plan de Continuidad de Negocio',
+            'Plan de Formación del Personal',
+        ],
+        'declaration' => [
+            'Declaración de Cosecha',
+            'Declaración Anual de Producción',
+            'Declaración de Movimientos SILICIE',
+            'Declaración de Existencias',
+            'Declaración de Exportación',
+            'Declaración de Intrastat — Operaciones Intracomunitarias',
+            'Declaración de Alta en el Registro Vitivinícola',
+        ],
+        'permit' => [
+            'Permiso Vertido Aguas Residuales',
+            'Permiso Instalación Depósitos a Presión',
+            'Permiso de Ruidos — Proceso Vendimia',
+            'Permiso de Edificación — Ampliación Nave',
+            'Permiso Uso de Agua Industrial',
+            'Permiso Almacenamiento Productos Fitosanitarios',
+            'Permiso Instalación Eléctrica Industrial',
+        ],
+    ];
+
+    private const AUTHORITIES = [
+        'license'       => ['Ayuntamiento de Agaete', 'Cabildo de Gran Canaria', 'Gobierno de Canarias', 'Ayuntamiento de Las Palmas'],
+        'sanitary'      => ['AESAN', 'Consejería de Sanidad de Canarias', 'Ministerio de Sanidad', 'Dirección General de Salud Pública'],
+        'authorization' => ['OIVE', 'Consejo Regulador D.O. Gran Canaria', 'MAPA', 'Gobierno de Canarias', 'Agencia Tributaria'],
+        'certification' => ['CAAE', 'Consejo Regulador D.O. Gran Canaria', 'Bureau Veritas', 'AENOR', 'SGS Ibérica'],
+        'contract'      => ['Mapfre Seguros', 'Gestora Ambiental Canarias S.L.', 'Botella & Corcho Canarias', 'Laboratorio Atlántico', 'Tecnivin S.A.'],
+        'plan'          => ['Asesoría PRL Canarias', 'Consultora Enológica Atlántico', 'Recursos Humanos Externos S.L.', null],
+        'declaration'   => ['Consejería de Agricultura de Canarias', 'AEAT', 'Consejo Regulador D.O. Gran Canaria', 'Ministerio de Agricultura'],
+        'permit'        => ['Confederación Hidrográfica del Sur', 'Ayuntamiento de Agaete', 'Cabildo de Gran Canaria', 'Industria y Energía GC'],
+    ];
+
+    // Años de emisión con peso (más 2025 y 2026)
+    private const YEAR_POOL = [2020, 2021, 2022, 2022, 2023, 2023, 2024, 2024, 2025, 2025, 2026, 2026, 2026, 2026, 2026];
+
+    // Vigencia en años por tipo (null = indefinido)
+    private const VALIDITY_YEARS = [
+        'license'       => 10,
+        'sanitary'      => null,
+        'authorization' => 5,
+        'certification' => 1,
+        'contract'      => 1,
+        'plan'          => 2,
+        'declaration'   => null,
+        'permit'        => 5,
+    ];
 
     public function run(): void
     {
         $this->cleanup();
 
         $now  = now();
-        $rows = [
-            [
-                'user_id'           => self::WINERY_USER_ID,
-                'title'             => 'Licencia de Actividad — Elaboración de Vinos',
-                'document_type'     => 'license',
-                'reference_number'  => 'LA-GC-2019-004521',
-                'issue_date'        => '2019-06-15',
-                'expiry_date'       => '2029-06-14',
-                'issuing_authority' => 'Ayuntamiento de Agaete',
-                'notes'             => 'Licencia de actividad para elaboración, crianza y embotellado de vinos.',
-                'active'            => true,
-                'created_at'        => $now,
-                'updated_at'        => $now,
-            ],
-            [
-                'user_id'           => self::WINERY_USER_ID,
-                'title'             => 'Registro Sanitario de Elaborador — RESA',
-                'document_type'     => 'sanitary',
-                'reference_number'  => 'RGSA-35.002318/C',
-                'issue_date'        => '2020-03-01',
-                'expiry_date'       => null,
-                'issuing_authority' => 'Agencia Española de Seguridad Alimentaria (AESAN)',
-                'notes'             => 'Registro de elaborador de bebidas alcohólicas. Sin caducidad.',
-                'active'            => true,
-                'created_at'        => $now,
-                'updated_at'        => $now,
-            ],
-            [
-                'user_id'           => self::WINERY_USER_ID,
-                'title'             => 'Autorización Operador Vitivinícola — OIVE',
-                'document_type'     => 'authorization',
-                'reference_number'  => 'OIVE-GC-2022-00034',
-                'issue_date'        => '2022-09-01',
-                'expiry_date'       => '2027-08-31',
-                'issuing_authority' => 'Organización Interprofesional del Vino de España',
-                'notes'             => 'Autorización para declarar producción ante organismos reguladores.',
-                'active'            => true,
-                'created_at'        => $now,
-                'updated_at'        => $now,
-            ],
-            [
-                'user_id'           => self::WINERY_USER_ID,
-                'title'             => 'Certificado Agricultura Ecológica — CAAE',
-                'document_type'     => 'certification',
-                'reference_number'  => 'CAAE-AE-GC-00234-2021',
-                'issue_date'        => '2021-01-15',
-                'expiry_date'       => now()->addMonths(3)->toDateString(),
-                'issuing_authority' => 'CAAE — Comité Andaluz de Agricultura Ecológica',
-                'notes'             => 'Certificación para línea de vinos ecológicos. Renovación anual.',
-                'active'            => true,
-                'created_at'        => $now,
-                'updated_at'        => $now,
-            ],
-            [
-                'user_id'           => self::WINERY_USER_ID,
-                'title'             => 'Contrato de Seguro Responsabilidad Civil',
-                'document_type'     => 'contract',
-                'reference_number'  => 'POL-RC-2025-00567890',
-                'issue_date'        => '2025-01-01',
-                'expiry_date'       => '2025-12-31',
-                'issuing_authority' => 'Mapfre Seguros',
-                'notes'             => 'Póliza responsabilidad civil general y de producto. Cobertura 1.200.000€.',
-                'active'            => true,
-                'created_at'        => $now,
-                'updated_at'        => $now,
-            ],
-            [
-                'user_id'           => self::WINERY_USER_ID,
-                'title'             => 'Plan de Autocontrol APPCC — Bodega',
-                'document_type'     => 'plan',
-                'reference_number'  => 'APPCC-2024-V3',
-                'issue_date'        => '2024-01-10',
-                'expiry_date'       => '2026-01-09',
-                'issuing_authority' => null,
-                'notes'             => 'Análisis de Peligros y Puntos de Control Crítico actualizado versión 3.',
-                'active'            => true,
-                'created_at'        => $now,
-                'updated_at'        => $now,
-            ],
-            [
-                'user_id'           => self::WINERY_USER_ID,
-                'title'             => 'Declaración de Cosecha Campaña 2024',
-                'document_type'     => 'declaration',
-                'reference_number'  => 'DEC-COSECHA-2024-GC',
-                'issue_date'        => '2024-11-30',
-                'expiry_date'       => null,
-                'issuing_authority' => 'Consejería de Agricultura — Gobierno de Canarias',
-                'notes'             => 'Declaración anual de producción ante la Administración Autonómica.',
-                'active'            => true,
-                'created_at'        => $now,
-                'updated_at'        => $now,
-            ],
-            [
-                'user_id'           => self::WINERY_USER_ID,
-                'title'             => 'Inscripción en Denominación de Origen Gran Canaria',
-                'document_type'     => 'certification',
-                'reference_number'  => 'DO-GC-BODEGA-0128',
-                'issue_date'        => '2020-05-20',
-                'expiry_date'       => null,
-                'issuing_authority' => 'Consejo Regulador D.O. Gran Canaria',
-                'notes'             => 'Número de inscripción como bodega elaboradora en la D.O. Gran Canaria.',
-                'active'            => true,
-                'created_at'        => $now,
-                'updated_at'        => $now,
-            ],
-            [
-                'user_id'           => self::WINERY_USER_ID,
-                'title'             => 'Permiso Vertido Aguas Residuales',
-                'document_type'     => 'permit',
-                'reference_number'  => 'PV-CHSUR-2022-1245',
-                'issue_date'        => '2022-04-01',
-                'expiry_date'       => '2027-03-31',
-                'issuing_authority' => 'Confederación Hidrográfica del Sur',
-                'notes'             => 'Autorización de vertido de aguas de limpieza y proceso. Caudal máx. 50 m³/día.',
-                'active'            => true,
-                'created_at'        => $now,
-                'updated_at'        => $now,
-            ],
-            [
-                'user_id'           => self::WINERY_USER_ID,
-                'title'             => 'Contrato Gestión Residuos Sólidos (Orujos)',
-                'document_type'     => 'contract',
-                'reference_number'  => 'GRS-2025-00089',
-                'issue_date'        => '2025-02-01',
-                'expiry_date'       => '2026-01-31',
-                'issuing_authority' => 'Gestora Ambiental Canarias S.L.',
-                'notes'             => 'Contrato para recogida y tratamiento de orujos y lías. Frecuencia mensual.',
-                'active'            => true,
-                'created_at'        => $now,
-                'updated_at'        => $now,
-            ],
-        ];
+        $rows = [];
 
-        DB::table('winery_documents')->insert($rows);
-        $this->command->info('✅ Documentos de bodega: ' . count($rows) . ' registros');
+        // Contadores por tipo para títulos únicos dentro de cada tipo
+        $typeCounters = array_fill_keys(self::TYPES, 0);
+
+        for ($i = 0; $i < 450; $i++) {
+            $type    = self::TYPES[$i % count(self::TYPES)];
+            $typeCounters[$type]++;
+            $tc      = $typeCounters[$type];
+
+            $titles    = self::TITLES[$type];
+            $baseTtitle = $titles[($i) % count($titles)];
+
+            // Año de emisión (pool ponderado hacia 2025–2026)
+            $issueYear = self::YEAR_POOL[$i % count(self::YEAR_POOL)];
+            $issueDay  = str_pad(($i % 28) + 1, 2, '0', STR_PAD_LEFT);
+            $issueMon  = str_pad(($i % 12) + 1, 2, '0', STR_PAD_LEFT);
+            $issueDate = "$issueYear-$issueMon-$issueDay";
+
+            // Expiry date
+            $validYears = self::VALIDITY_YEARS[$type];
+            $expiryDate = $validYears !== null
+                ? date('Y-m-d', strtotime("+{$validYears} years", strtotime($issueDate)))
+                : null;
+
+            // Autoridad emisora
+            $authorities = self::AUTHORITIES[$type];
+            $authority   = $authorities[$i % count($authorities)];
+
+            // Número de referencia único
+            $refPrefix = strtoupper(substr($type, 0, 3));
+            $refNumber = "{$refPrefix}-GC-{$issueYear}-" . str_pad($tc, 5, '0', STR_PAD_LEFT);
+
+            // Título con año para unicidad
+            $title = $baseTtitle . " — {$issueYear}";
+            if ($tc > count(self::YEAR_POOL)) {
+                $title .= " (Nº $tc)";
+            }
+
+            // Activo: expirado si expiry_date < hoy
+            $active = $expiryDate === null || $expiryDate >= now()->toDateString();
+
+            $rows[] = [
+                'user_id'           => self::WINERY_USER_ID,
+                'title'             => $title,
+                'document_type'     => $type,
+                'reference_number'  => $refNumber,
+                'issue_date'        => $issueDate,
+                'expiry_date'       => $expiryDate,
+                'issuing_authority' => $authority,
+                'notes'             => "Documento de tipo {$type} emitido en {$issueYear}. Nº interno: {$tc}.",
+                'active'            => $active,
+                'created_at'        => $now,
+                'updated_at'        => $now,
+            ];
+        }
+
+        foreach (array_chunk($rows, 100) as $chunk) {
+            DB::table('winery_documents')->insert($chunk);
+        }
+
+        $activos   = count(array_filter($rows, fn($r) => $r['active']));
+        $doc2026   = count(array_filter($rows, fn($r) => str_starts_with($r['issue_date'], '2026')));
+        $this->command->info("✅ Documentos de bodega: " . count($rows) . " registros ({$activos} activos, {$doc2026} emitidos en 2026)");
     }
 
     private function cleanup(): void
