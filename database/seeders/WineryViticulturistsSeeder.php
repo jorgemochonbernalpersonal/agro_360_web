@@ -162,8 +162,8 @@ class WineryViticulturistsSeeder extends Seeder
 
         // ── winery_viticulturist pivot ────────────────────────────────────────
         // Detect optional columns that may not exist on older DB schema versions
-        $hasNotebookAccess = Schema::hasColumn('winery_viticulturist', 'cuaderno_access');
-        $hasNotes          = Schema::hasColumn('winery_viticulturist', 'notes');
+        $hasNotebookAccess = Schema::hasColumn('winery_viticulturist', 'notebook_access');
+        $hasNotes = Schema::hasColumn('winery_viticulturist', 'notes');
 
         $pivotRows     = [];
         $notebookCount = 0;
@@ -194,9 +194,9 @@ class WineryViticulturistsSeeder extends Seeder
                     ? now()->subDays(200 - ($idx % 180))->toDateTimeString()
                     : null;
 
-                $row['cuaderno_access']     = $notebookAccess;
-                $row['cuaderno_granted_at'] = $notebookGranted;
-                $row['cuaderno_revoked_at'] = null;
+                $row['notebook_access']     = $notebookAccess;
+                $row['notebook_granted_at'] = $notebookGranted;
+                $row['notebook_revoked_at'] = null;
 
                 if ($notebookAccess) {
                     $notebookCount++;
