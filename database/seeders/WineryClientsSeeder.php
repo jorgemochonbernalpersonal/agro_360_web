@@ -120,6 +120,16 @@ class WineryClientsSeeder extends Seeder
 
     private function cleanup(): void
     {
+        // Borrar facturas (y sus items) que referencian clientes de este usuario
+        $invoiceIds = DB::table('invoices')
+            ->where('user_id', self::WINERY_USER_ID)
+            ->pluck('id');
+
+        if ($invoiceIds->isNotEmpty()) {
+            DB::table('invoice_items')->whereIn('invoice_id', $invoiceIds)->delete();
+            DB::table('invoices')->whereIn('id', $invoiceIds)->delete();
+        }
+
         DB::table('clients')->where('user_id', self::WINERY_USER_ID)->delete();
     }
 }
