@@ -65,12 +65,8 @@ class WineryDisputesSeeder extends Seeder
         $now  = now();
         $rows = [];
 
-        // Status pool: mayoría delivered, ~20% disputed, ~15% resolved
-        $statusPool = [
-            'delivered', 'delivered', 'delivered', 'delivered', 'delivered',
-            'disputed', 'disputed',
-            'resolved',
-        ];
+        // harvest_deliveries.status enum: solo 'disputed' | 'resolved'
+        $statusPool = ['disputed', 'disputed', 'disputed', 'resolved', 'resolved'];
 
         for ($i = 0; $i < 450; $i++) {
             $harvest   = $wineryHarvests[$i % count($wineryHarvests)];
@@ -127,10 +123,9 @@ class WineryDisputesSeeder extends Seeder
             DB::table('harvest_deliveries')->insert($chunk);
         }
 
-        $delivered = count(array_filter($rows, fn($r) => $r['status'] === 'delivered'));
         $disputed  = count(array_filter($rows, fn($r) => $r['status'] === 'disputed'));
         $resolved  = count(array_filter($rows, fn($r) => $r['status'] === 'resolved'));
-        $this->command->info("✅ Deliveries/Disputas: " . count($rows) . " registros ({$delivered} entregadas, {$disputed} en disputa, {$resolved} resueltas)");
+        $this->command->info("✅ Disputas: " . count($rows) . " registros ({$disputed} en disputa, {$resolved} resueltas)");
     }
 
     private function cleanup(): void
