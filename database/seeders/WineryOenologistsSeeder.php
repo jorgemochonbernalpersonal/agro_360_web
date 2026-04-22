@@ -9,54 +9,70 @@ class WineryOenologistsSeeder extends Seeder
 {
     private const WINERY_USER_ID = 1;
 
+    private const FIRST_NAMES = [
+        'Marcos', 'Elena', 'Alejandro', 'Carmen', 'Antonio', 'Isabel', 'Manuel', 'Ana',
+        'Juan', 'María', 'Pedro', 'Laura', 'Diego', 'Sofía', 'Jorge', 'Lucía',
+        'Álvaro', 'Marta', 'Sergio', 'Paula', 'Roberto', 'Cristina', 'Francisco', 'Patricia',
+        'Miguel', 'Sandra', 'Andrés', 'Natalia', 'Carlos', 'Beatriz',
+    ];
+
+    private const LAST_NAMES = [
+        'Rodríguez Santana', 'García López', 'Martínez Vega', 'Sánchez Medina', 'González Reyes',
+        'Pérez Castro', 'Fernández Díaz', 'Torres Acosta', 'Ramírez Santos', 'Jiménez Herrera',
+        'Moreno Delgado', 'Ruiz Cabrera', 'Ortega Navarro', 'López Flores', 'Suárez Leal',
+        'Castro Betancor', 'Medina Santana', 'Vega González', 'Santos Rodríguez', 'Herrera García',
+        'Delgado Pérez', 'Cabrera Torres', 'Navarro Ramírez', 'Flores Jiménez', 'Leal Moreno',
+        'Betancor Ruiz', 'Santana Ortega', 'González López', 'Pérez Martínez', 'García Sánchez',
+    ];
+
+    private const SPECIALTIES = [
+        'Especialista en variedades autóctonas de Gran Canaria.',
+        'Responsable de análisis y control de calidad.',
+        'Consultor externo. Colabora en temporada de vendimia.',
+        'Experto en fermentaciones maloláctcas y estabilización.',
+        'Especialista en vinos blancos y espumosos canarios.',
+        'Enólogo de crianza y reservas en barrica.',
+        'Técnico de viticultura y enología ecológica.',
+        'Especialista en elaboración de vinos dulces naturales.',
+        'Coordinador de recepciones y control de vendimia.',
+        'Experto en análisis fisicoquímicos y microbiológicos.',
+    ];
+
     public function run(): void
     {
         $this->cleanup();
 
-        $now = now();
+        $now  = now();
+        $rows = [];
 
-        $oenologists = [
-            [
+        $fn  = self::FIRST_NAMES;
+        $ln  = self::LAST_NAMES;
+        $sp  = self::SPECIALTIES;
+
+        for ($i = 0; $i < 450; $i++) {
+            $firstName = $fn[$i % count($fn)];
+            $lastName  = $ln[$i % count($ln)];
+            $num       = $i + 1;
+
+            $rows[] = [
                 'user_id'        => self::WINERY_USER_ID,
-                'name'           => 'Marcos',
-                'surname'        => 'Rodríguez Santana',
-                'license_number' => 'OEN-GC-0421',
-                'email'          => 'marcos.rodriguez@enologia-canarias.es',
-                'phone'          => '+34 928 441 230',
-                'active'         => true,
-                'notes'          => 'Enólogo jefe. Especialista en variedades autóctonas de Gran Canaria.',
+                'name'           => $firstName,
+                'surname'        => $lastName,
+                'license_number' => 'OEN-GC-' . str_pad($num, 4, '0', STR_PAD_LEFT),
+                'email'          => 'oen.' . $num . '@enologia-canarias.es',
+                'phone'          => '+34 9' . str_pad(10000000 + ($i * 13 % 89000000), 8, '0', STR_PAD_LEFT),
+                'active'         => $i % 8 !== 7,  // ~88% activos
+                'notes'          => $sp[$i % count($sp)],
                 'created_at'     => $now,
                 'updated_at'     => $now,
-            ],
-            [
-                'user_id'        => self::WINERY_USER_ID,
-                'name'           => 'Elena',
-                'surname'        => 'Castro Medina',
-                'license_number' => 'OEN-GC-0389',
-                'email'          => 'elena.castro@enologia-canarias.es',
-                'phone'          => '+34 928 553 701',
-                'active'         => true,
-                'notes'          => 'Responsable de análisis y control de calidad. Experta en fermentaciones maloláctcas.',
-                'created_at'     => $now,
-                'updated_at'     => $now,
-            ],
-            [
-                'user_id'        => self::WINERY_USER_ID,
-                'name'           => 'Alejandro',
-                'surname'        => 'Pérez Vega',
-                'license_number' => 'OEN-GC-0512',
-                'email'          => 'alejandro.perez@agrotech.es',
-                'phone'          => '+34 629 884 112',
-                'active'         => false,
-                'notes'          => 'Consultor externo. Colabora en temporada de vendimia.',
-                'created_at'     => $now,
-                'updated_at'     => $now,
-            ],
-        ];
+            ];
+        }
 
-        DB::table('oenologists')->insert($oenologists);
+        foreach (array_chunk($rows, 100) as $chunk) {
+            DB::table('oenologists')->insert($chunk);
+        }
 
-        $this->command->info('✅ Enólogos: ' . count($oenologists) . ' registros');
+        $this->command->info('✅ Enólogos: ' . count($rows) . ' registros');
     }
 
     private function cleanup(): void

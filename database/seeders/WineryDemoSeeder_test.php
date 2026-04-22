@@ -16,13 +16,13 @@ use Illuminate\Support\Facades\DB;
  *
  * Orden de ejecución (respeta dependencias):
  *   0.  units_of_measurement  (auto-seed si vacío)
- *   1.  Contenedores          (WineryContainersSeeder — limpia y recrea)
- *   2.  Salas de bodega       (WineryRoomsSeeder)
- *   3.  Enólogos
- *   4.  Clientes
- *   5.  Proveedores
+ *   1.  Contenedores          (WineryContainersSeeder — 450: depósitos + barricas + tinas + ánforas)
+ *   2.  Salas de bodega       (WineryRoomsSeeder — 450: 10 tipos × 45 unidades)
+ *   3.  Enólogos              (450)
+ *   4.  Clientes              (450: 250 empresas + 200 particulares)
+ *   5.  Proveedores           (450)
  *   6.  Suministros de bodega
- *   7.  Vinos (20 referencias)
+ *   7.  Vinos                 (450: 225 vendimias 2022–2025 + 225 vendimia 2026)
  *   8.  Controles de fermentación
  *   9.  Traslados de vino
  *  10.  Mermas de vino
@@ -72,19 +72,19 @@ class WineryDemoSeeder_test extends Seeder
         $this->ensureUnitsOfMeasurement();
 
         // Paso 1: Contenedores (autónomo — limpia y recrea)
-        $this->runStep('Contenedores (100 depósitos/barricas)', WineryContainersSeeder::class);
+        $this->runStep('Contenedores (450: depósitos + barricas + tinas + ánforas)', WineryContainersSeeder::class);
 
         // Paso 2: Salas de bodega
-        $this->runStep('Salas de bodega', WineryRoomsSeeder::class);
+        $this->runStep('Salas de bodega (450: 10 tipos × 45 unidades)', WineryRoomsSeeder::class);
 
         // Paso 3-6: Personas y proveedores
-        $this->runStep('Enólogos',           WineryOenologistsSeeder::class);
-        $this->runStep('Clientes',           WineryClientsSeeder::class);
-        $this->runStep('Proveedores',        WinerySuppliersSeeder::class);
-        $this->runStep('Suministros bodega', WinerySuppliesSeeder::class);
+        $this->runStep('Enólogos (450)',           WineryOenologistsSeeder::class);
+        $this->runStep('Clientes (450: 250 empresas + 200 particulares)', WineryClientsSeeder::class);
+        $this->runStep('Proveedores (450)',         WinerySuppliersSeeder::class);
+        $this->runStep('Suministros bodega',        WinerySuppliesSeeder::class);
 
         // Paso 7: Core — Vinos
-        $this->runStep('Vinos (20 referencias)', WineryWinesSeeder::class);
+        $this->runStep('Vinos (450: 225 vendimias 2022–2025 + 225 vendimia 2026)', WineryWinesSeeder::class);
 
         // Paso 8-11: Operaciones de vinificación
         $this->runStep('Controles de fermentación',  WineryFermentationControlsSeeder::class);
@@ -115,7 +115,7 @@ class WineryDemoSeeder_test extends Seeder
         $this->runStep('Compras uva/mosto externo',   WineryExternalPurchasesSeeder::class);
 
         // Paso 21-22: Facturación
-        $this->runStep('Facturas de venta',           WineryInvoicesSeeder::class);
+        $this->runStep('Facturas de venta (300: 150×2025 + 150×2026)', WineryInvoicesSeeder::class);
         $this->runStep('Liquidaciones de uva',        WineryGrapeInvoicesSeeder::class);
 
         // Paso 23-25: Calidad y previsiones

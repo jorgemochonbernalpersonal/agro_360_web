@@ -5,71 +5,121 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * Genera 450 clientes para la bodega (user_id=1).
+ * 250 empresas + 200 particulares.
+ */
 class WineryClientsSeeder extends Seeder
 {
     private const WINERY_USER_ID = 1;
+
+    // 10 tipos × 25 nombres = 250 combinaciones únicas para empresas
+    private const BUSINESS_TYPES = [
+        'Restaurante', 'Hotel', 'Vinoteca', 'Distribuciones', 'Grupo Gastronómico',
+        'Bodegas', 'Hipermercado', 'Importaciones', 'Comercializadora', 'Cooperativa',
+    ];
+    private const BUSINESS_NAMES = [
+        'El Palmeral', 'Mar de Nubes', 'Isla Verde', 'Las Cumbres', 'El Rincón',
+        'Los Berrazales', 'La Caldera', 'El Carrizal', 'Las Palomeras', 'El Puerto',
+        'La Montaña', 'El Valle', 'Los Volcanes', 'La Cumbre', 'El Drago',
+        'La Aldea', 'El Pinar', 'Las Nieves', 'El Juncal', 'La Vega',
+        'Los Llanos', 'La Cruz', 'El Paso', 'Los Pinos', 'Atlántico',
+    ];
+
+    // 20 nombres × 10 apellidos = 200 combinaciones únicas para particulares
+    private const FIRST_NAMES = [
+        'Antonio', 'María', 'Carlos', 'Isabel', 'Pedro', 'Laura', 'José', 'Ana',
+        'Manuel', 'Carmen', 'Francisco', 'Lucía', 'David', 'Marta', 'Alejandro',
+        'Sofía', 'Miguel', 'Paula', 'Jorge', 'Beatriz',
+    ];
+    private const LAST_NAMES = [
+        'González Álvarez', 'Suárez Cabrera', 'Hernández Ramos', 'Falcón Betancor',
+        'Medina Santana', 'Rodríguez Pérez', 'García Díaz', 'López Torres',
+        'Martínez Vega', 'Sánchez Castro',
+    ];
+
+    private const PAYMENT_METHODS = ['transfer', 'transfer', 'transfer', 'cash', 'other'];
 
     public function run(): void
     {
         $this->cleanup();
 
-        $now = now();
-
-        $clients = [
-            // --- Restaurantes ---
-            ['client_type' => 'company', 'company_name' => 'Restaurante El Palmeral', 'company_document' => 'B76543210', 'first_name' => null, 'last_name' => null, 'email' => 'compras@elpalmeral.es', 'phone' => '+34 928 271 450', 'payment_method' => 'transfer', 'default_discount' => 5.00, 'has_cae' => false, 'active' => true, 'notes' => 'Restaurante en Las Palmas. Compra regularmente tinto joven.'],
-            ['client_type' => 'company', 'company_name' => 'Hotel Rural Agaete & Spa', 'company_document' => 'B12398745', 'first_name' => null, 'last_name' => null, 'email' => 'recepcion@hotelagaete.es', 'phone' => '+34 928 898 020', 'payment_method' => 'transfer', 'default_discount' => 8.00, 'has_cae' => false, 'active' => true, 'notes' => 'Hotel de lujo en Agaete. Selección premium para carta de vinos.'],
-            ['client_type' => 'company', 'company_name' => 'Vinoteca La Cava Canaria', 'company_document' => 'B34129876', 'first_name' => null, 'last_name' => null, 'email' => 'pedidos@lacavacanaria.com', 'phone' => '+34 928 364 890', 'payment_method' => 'transfer', 'default_discount' => 10.00, 'has_cae' => false, 'active' => true, 'notes' => 'Tienda especializada en vinos de Canarias. Cliente fijo mensual.'],
-            ['client_type' => 'company', 'company_name' => 'Restaurante Mar de Nubes', 'company_document' => 'B98712340', 'first_name' => null, 'last_name' => null, 'email' => 'cocina@mardenubes.es', 'phone' => '+34 928 452 311', 'payment_method' => 'other', 'default_discount' => 0.00, 'has_cae' => false, 'active' => true, 'notes' => 'Restaurante en Puerto de Las Nieves. Especialidad en mariscos.'],
-            ['client_type' => 'company', 'company_name' => 'Grupo Gastronómico Isla Verde', 'company_document' => 'B56712309', 'first_name' => null, 'last_name' => null, 'email' => 'administracion@islaverde.es', 'phone' => '+34 928 500 120', 'payment_method' => 'transfer', 'default_discount' => 12.00, 'has_cae' => false, 'active' => true, 'notes' => 'Cadena de 4 restaurantes en GC. Pedidos bimensuales.'],
-
-            // --- Distribuidores ---
-            ['client_type' => 'company', 'company_name' => 'Distribuciones Atlántico S.L.', 'company_document' => 'B76100234', 'first_name' => null, 'last_name' => null, 'email' => 'ventas@distatlant.es', 'phone' => '+34 928 330 450', 'payment_method' => 'transfer', 'default_discount' => 15.00, 'has_cae' => true, 'cae_number' => 'CAE-GC-2019-00234', 'active' => true, 'notes' => 'Distribuidora regional. Opera en toda Gran Canaria y Fuerteventura.'],
-            ['client_type' => 'company', 'company_name' => 'Vinos del Sur Distribución', 'company_document' => 'B22345678', 'first_name' => null, 'last_name' => null, 'email' => 'pedidos@vinossur.es', 'phone' => '+34 928 611 780', 'payment_method' => 'transfer', 'default_discount' => 18.00, 'has_cae' => true, 'cae_number' => 'CAE-GC-2020-00567', 'active' => true, 'notes' => 'Distribuidor para Península. Especializado en vinos de Denominación de Origen.'],
-            ['client_type' => 'company', 'company_name' => 'Canarias Gourmet Exports', 'company_document' => 'B88901234', 'first_name' => null, 'last_name' => null, 'email' => 'export@canargourmet.com', 'phone' => '+34 928 470 019', 'payment_method' => 'transfer', 'default_discount' => 20.00, 'has_cae' => true, 'cae_number' => 'CAE-GC-2021-00089', 'active' => true, 'notes' => 'Exportador a Alemania y Países Bajos. Pedidos trimestrales de 500-2000 botellas.'],
-            ['client_type' => 'company', 'company_name' => 'Bodegas Reunidas del Norte', 'company_document' => 'B44512036', 'first_name' => null, 'last_name' => null, 'email' => 'compras@bodrn.es', 'phone' => '+34 922 345 678', 'payment_method' => 'transfer', 'default_discount' => 15.00, 'has_cae' => true, 'cae_number' => 'CAE-TF-2018-00312', 'active' => true, 'notes' => 'Distribuidor en Tenerife y La Palma.'],
-
-            // --- Supermercados / Retail ---
-            ['client_type' => 'company', 'company_name' => 'Hiperdino GC', 'company_document' => 'A78234561', 'first_name' => null, 'last_name' => null, 'email' => 'proveedores@hiperdino.es', 'phone' => '+34 928 411 000', 'payment_method' => 'transfer', 'default_discount' => 10.00, 'has_cae' => false, 'active' => true, 'notes' => 'Cadena de supermercados. Sección vinos locales.'],
-            ['client_type' => 'company', 'company_name' => 'El Corte Inglés Las Palmas', 'company_document' => 'A28023472', 'first_name' => null, 'last_name' => null, 'email' => 'proveedores.lpa@elcorteingles.es', 'phone' => '+34 928 266 000', 'payment_method' => 'transfer', 'default_discount' => 5.00, 'has_cae' => false, 'active' => true, 'notes' => 'Tienda gourmet. Solo vinos premium y añadas especiales.'],
-
-            // --- Particulares / Coleccionistas ---
-            ['client_type' => 'individual', 'company_name' => null, 'company_document' => null, 'first_name' => 'Antonio', 'last_name' => 'Herrera González', 'email' => 'antonio.herrera@gmail.com', 'phone' => '+34 629 001 234', 'payment_method' => 'cash', 'default_discount' => 0.00, 'has_cae' => false, 'active' => true, 'notes' => 'Coleccionista particular. Compra 2-3 cajas por campaña.'],
-            ['client_type' => 'individual', 'company_name' => null, 'company_document' => null, 'first_name' => 'María', 'last_name' => 'Cabrera Delgado', 'email' => 'mcabrera@outlook.es', 'phone' => '+34 617 445 892', 'payment_method' => 'cash', 'default_discount' => 0.00, 'has_cae' => false, 'active' => true, 'notes' => 'Clienta habitual de la tienda online. Interesada en blancos y espumosos.'],
-            ['client_type' => 'individual', 'company_name' => null, 'company_document' => null, 'first_name' => 'Carlos', 'last_name' => 'Navarro Suárez', 'email' => 'cnavarro@icloud.com', 'phone' => '+34 660 778 314', 'payment_method' => 'other', 'default_discount' => 5.00, 'has_cae' => false, 'active' => true, 'notes' => 'Sommelier freelance. Recomienda nuestros vinos en eventos de catas.'],
-            ['client_type' => 'individual', 'company_name' => null, 'company_document' => null, 'first_name' => 'Isabel', 'last_name' => 'Flores Reyes', 'email' => 'isabelflores@gmail.com', 'phone' => '+34 635 129 007', 'payment_method' => 'transfer', 'default_discount' => 0.00, 'has_cae' => false, 'active' => false, 'notes' => 'Antigua clienta. Pendiente de reactivar cuenta.'],
-        ];
-
+        $now  = now();
         $rows = [];
-        foreach ($clients as $c) {
-            $rows[] = array_merge($c, [
-                'user_id'       => self::WINERY_USER_ID,
-                'balance'       => 0,
-                'cae_number'    => $c['cae_number'] ?? null,
-                'account_number'=> null,
-                'avatar'        => null,
-                'particular_document' => null,
-                'created_at'    => $now,
-                'updated_at'    => $now,
-            ]);
+
+        // ── 250 empresas ────────────────────────────────────────────────────────
+        for ($i = 0; $i < 250; $i++) {
+            $type       = self::BUSINESS_TYPES[$i % count(self::BUSINESS_TYPES)];
+            $name       = self::BUSINESS_NAMES[(int)floor($i / count(self::BUSINESS_TYPES)) % count(self::BUSINESS_NAMES)];
+            $companyDoc = 'B' . str_pad(10000000 + $i, 8, '0', STR_PAD_LEFT);
+            $payment    = self::PAYMENT_METHODS[$i % count(self::PAYMENT_METHODS)];
+            $hasCae     = in_array($type, ['Distribuciones', 'Importaciones', 'Comercializadora']) && ($i % 2 === 0);
+            $discount   = [0, 5, 8, 10, 12, 15, 18, 20][$i % 8];
+
+            $rows[] = [
+                'user_id'              => self::WINERY_USER_ID,
+                'client_type'          => 'company',
+                'company_name'         => "$type $name",
+                'company_document'     => $companyDoc,
+                'first_name'           => null,
+                'last_name'            => null,
+                'email'                => 'pedidos.' . ($i + 1) . '@cliente.agro365.demo',
+                'phone'                => '+34 9' . str_pad(10000000 + ($i * 17 % 89000000), 8, '0', STR_PAD_LEFT),
+                'payment_method'       => $payment,
+                'default_discount'     => $discount,
+                'has_cae'              => $hasCae,
+                'cae_number'           => $hasCae ? 'CAE-GC-2020-' . str_pad($i, 5, '0', STR_PAD_LEFT) : null,
+                'active'               => $i % 12 !== 11,   // ~92% activos
+                'notes'                => null,
+                'balance'              => 0,
+                'account_number'       => null,
+                'avatar'               => null,
+                'particular_document'  => null,
+                'created_at'           => $now,
+                'updated_at'           => $now,
+            ];
         }
 
-        DB::table('clients')->insert($rows);
+        // ── 200 particulares ────────────────────────────────────────────────────
+        for ($i = 0; $i < 200; $i++) {
+            $firstName = self::FIRST_NAMES[$i % count(self::FIRST_NAMES)];
+            $lastName  = self::LAST_NAMES[(int)floor($i / count(self::FIRST_NAMES)) % count(self::LAST_NAMES)];
+            $payment   = ['cash', 'transfer', 'other'][$i % 3];
+            $discount  = $i % 5 === 0 ? 5.00 : 0.00;
 
-        $this->command->info('✅ Clientes: ' . count($rows) . ' registros');
+            $rows[] = [
+                'user_id'              => self::WINERY_USER_ID,
+                'client_type'          => 'individual',
+                'company_name'         => null,
+                'company_document'     => null,
+                'first_name'           => $firstName,
+                'last_name'            => $lastName,
+                'email'                => strtolower(str_replace(' ', '.', $firstName)) . '.' . ($i + 1) . '@gmail.com',
+                'phone'                => '+34 6' . str_pad(10000000 + ($i * 31 % 89000000), 8, '0', STR_PAD_LEFT),
+                'payment_method'       => $payment,
+                'default_discount'     => $discount,
+                'has_cae'              => false,
+                'cae_number'           => null,
+                'active'               => $i % 15 !== 14,   // ~93% activos
+                'notes'                => null,
+                'balance'              => 0,
+                'account_number'       => null,
+                'avatar'               => null,
+                'particular_document'  => null,
+                'created_at'           => $now,
+                'updated_at'           => $now,
+            ];
+        }
+
+        foreach (array_chunk($rows, 100) as $chunk) {
+            DB::table('clients')->insert($chunk);
+        }
+
+        $this->command->info('✅ Clientes: ' . count($rows) . ' registros (250 empresas + 200 particulares)');
     }
 
     private function cleanup(): void
     {
-        // Borrar facturas (y sus líneas) vinculadas a estos clientes antes de borrar clientes
-        $clientIds = DB::table('clients')->where('user_id', self::WINERY_USER_ID)->pluck('id');
-        if ($clientIds->isNotEmpty()) {
-            $invoiceIds = DB::table('invoices')->whereIn('client_id', $clientIds)->pluck('id');
-            if ($invoiceIds->isNotEmpty()) {
-                DB::table('invoice_items')->whereIn('invoice_id', $invoiceIds)->delete();
-                DB::table('invoices')->whereIn('id', $invoiceIds)->delete();
-            }
-        }
         DB::table('clients')->where('user_id', self::WINERY_USER_ID)->delete();
     }
 }

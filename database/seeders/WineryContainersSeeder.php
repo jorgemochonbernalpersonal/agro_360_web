@@ -17,13 +17,13 @@ class WineryContainersSeeder extends Seeder
 
     private const DISTRIBUTION = [
         // [type_id, material_id, unit, capacity_range, qty, prefix, description]
-        [2, 4, 'litros', [10000, 50000], 28, 'Depósito', 'Depósito de acero inoxidable para fermentación y almacenamiento'],
-        [3, 4, 'litros', [2000,  10000], 22, 'Tanque',   'Tanque de fermentación de acero inoxidable'],
-        [1, 1, 'litros', [225,     500], 20, 'Barrica',  'Barrica de roble francés para crianza'],
-        [1, 2, 'litros', [225,     300], 10, 'Barrica',  'Barrica de roble americano para crianza'],
-        [4, 5, 'litros', [3000,  20000],  8, 'Tina',     'Tina de hormigón para fermentación tradicional'],
-        [5, 6, 'litros', [300,     600],  7, 'Ánfora',   'Ánfora de cerámica para crianza en barro'],
-        [3, 7, 'litros', [5000,  15000],  5, 'Tanque',   'Tanque de fibra de vidrio para almacenamiento'],
+        [2, 4, 'litros', [10000, 50000], 126, 'Depósito', 'Depósito de acero inoxidable para fermentación y almacenamiento'],
+        [3, 4, 'litros', [2000,  10000],  99, 'Tanque',   'Tanque de fermentación de acero inoxidable'],
+        [1, 1, 'litros', [225,     500],  90, 'Barrica',  'Barrica de roble francés para crianza'],
+        [1, 2, 'litros', [225,     300],  45, 'Barrica',  'Barrica de roble americano para crianza'],
+        [4, 5, 'litros', [3000,  20000],  36, 'Tina',     'Tina de hormigón para fermentación tradicional'],
+        [5, 6, 'litros', [300,     600],  31, 'Ánfora',   'Ánfora de cerámica para crianza en barro'],
+        [3, 7, 'litros', [5000,  15000],  23, 'Tanque',   'Tanque de fibra de vidrio para almacenamiento'],
     ];
 
     public function run(): void

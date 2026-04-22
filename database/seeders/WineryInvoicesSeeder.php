@@ -6,12 +6,53 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
 /**
- * Facturas de venta de productos (vino embotellado).
+ * Genera 300 facturas de venta de vino embotellado.
+ *   · 150 facturas de 2025 (histórico)
+ *   · 150 facturas de 2026 (campaña activa — prioridad demo)
+ *
  * Usa direct DB para evitar InvoiceItemObserver y conflictos de stock.
  */
 class WineryInvoicesSeeder extends Seeder
 {
     private const WINERY_USER_ID = 1;
+
+    // Productos 2025 con precio unitario
+    private const PRODUCTS_2025 = [
+        ['Tinto Joven 2024 — 750ml',         7.50],
+        ['Tinto Crianza 2023 — 750ml',       12.00],
+        ['Gran Tinto Reserva 2022 — 750ml',  18.00],
+        ['Blanco Vijariego 2024 — 750ml',    10.00],
+        ['Blanco Barrica 2023 — 750ml',      11.50],
+        ['Malvasía Seco 2024 — 750ml',        9.50],
+        ['Rosado Agaete 2024 — 750ml',        8.00],
+        ['Rosado Joven 2024 — 750ml',         8.50],
+        ['Espumoso Brut 2022 — 750ml',       16.00],
+        ['Espumoso Rosé 2023 — 750ml',       17.50],
+        ['Malvasía Dulce 2023 — 500ml',      14.00],
+        ['Tinto Ecológico 2024 — 750ml',     10.00],
+        ['Blanco Ecológico 2024 — 750ml',    10.50],
+        ['Maceración Carbónica 2024 — 750ml', 9.00],
+        ['Tinto Barrica 2023 — 750ml',       11.00],
+    ];
+
+    // Productos 2026 con precio unitario
+    private const PRODUCTS_2026 = [
+        ['Tinto Joven 2026 — 750ml',          8.00],
+        ['Tinto Barrica 2026 — 750ml',        13.00],
+        ['Tinto Crianza 2025 — 750ml',        12.50],
+        ['Blanco Joven 2026 — 750ml',          9.00],
+        ['Blanco Barrica 2025 — 750ml',       11.50],
+        ['Malvasía Seco 2026 — 750ml',         9.50],
+        ['Rosado 2026 — 750ml',                9.50],
+        ['Rosado Ecológico 2026 — 750ml',     10.00],
+        ['Espumoso Brut 2026 — 750ml',        17.00],
+        ['Brut Nature 2026 — 750ml',          19.00],
+        ['Malvasía Dulce 2025 — 500ml',       15.00],
+        ['Tinto Ecológico 2026 — 750ml',      10.50],
+        ['Blanco Ecológico 2026 — 750ml',     11.00],
+        ['Gran Tinto Reserva 2023 — 750ml',   20.00],
+        ['Vijariego 2026 — 750ml',            12.00],
+    ];
 
     public function run(): void
     {
@@ -27,143 +68,109 @@ class WineryInvoicesSeeder extends Seeder
             return;
         }
 
-        $now      = now();
-        $invoices = [
-            [
-                'client_idx'     => 0,
-                'invoice_number' => 'FAC-2025-001',
-                'invoice_date'   => now()->subDays(120)->toDateString(),
-                'status'         => 'paid',
-                'payment_status' => 'paid',
-                'payment_type'   => 'transfer',
-                'subtotal'       => 1200.000,
-                'tax_rate'       => 21.0,
-                'items' => [
-                    ['name' => 'Tinto Joven 2024 — 750ml', 'qty' => 120, 'unit_price' => 7.50, 'unit' => 'botella'],
-                    ['name' => 'Rosado Agaete 2024 — 750ml', 'qty' => 48, 'unit_price' => 8.00, 'unit' => 'botella'],
-                ],
-            ],
-            [
-                'client_idx'     => 1,
-                'invoice_number' => 'FAC-2025-002',
-                'invoice_date'   => now()->subDays(95)->toDateString(),
-                'status'         => 'paid',
-                'payment_status' => 'paid',
-                'payment_type'   => 'transfer',
-                'subtotal'       => 2160.000,
-                'tax_rate'       => 21.0,
-                'items' => [
-                    ['name' => 'Crianza 2022 — 750ml', 'qty' => 96, 'unit_price' => 13.50, 'unit' => 'botella'],
-                    ['name' => 'Blanco Vijariego 2024 — 750ml', 'qty' => 72, 'unit_price' => 10.00, 'unit' => 'botella'],
-                ],
-            ],
-            [
-                'client_idx'     => 2,
-                'invoice_number' => 'FAC-2025-003',
-                'invoice_date'   => now()->subDays(75)->toDateString(),
-                'status'         => 'sent',
-                'payment_status' => 'unpaid',
-                'payment_type'   => 'transfer',
-                'subtotal'       => 840.000,
-                'tax_rate'       => 21.0,
-                'items' => [
-                    ['name' => 'Espumoso Brut Nature Gran Agaete — 750ml', 'qty' => 48, 'unit_price' => 17.50, 'unit' => 'botella'],
-                ],
-            ],
-            [
-                'client_idx'     => 3,
-                'invoice_number' => 'FAC-2025-004',
-                'invoice_date'   => now()->subDays(60)->toDateString(),
-                'status'         => 'paid',
-                'payment_status' => 'paid',
-                'payment_type'   => 'cash',
-                'subtotal'       => 540.000,
-                'tax_rate'       => 21.0,
-                'items' => [
-                    ['name' => 'Tinto Barrica 2023 — 750ml', 'qty' => 36, 'unit_price' => 11.00, 'unit' => 'botella'],
-                    ['name' => 'Malvasía Dulce 2024 — 500ml', 'qty' => 24, 'unit_price' => 8.25, 'unit' => 'botella'],
-                ],
-            ],
-            [
-                'client_idx'     => 4,
-                'invoice_number' => 'FAC-2025-005',
-                'invoice_date'   => now()->subDays(45)->toDateString(),
-                'status'         => 'sent',
-                'payment_status' => 'partial',
-                'payment_type'   => 'transfer',
-                'subtotal'       => 3500.000,
-                'tax_rate'       => 21.0,
-                'items' => [
-                    ['name' => 'Tinto Joven 2024 — 750ml (caja 6u)', 'qty' => 60, 'unit_price' => 45.00, 'unit' => 'caja'],
-                    ['name' => 'Blanco Barrica Listán 2023 — 750ml', 'qty' => 24, 'unit_price' => 12.50, 'unit' => 'botella'],
-                ],
-            ],
-            [
-                'client_idx'     => 5,
-                'invoice_number' => 'FAC-2025-006',
-                'invoice_date'   => now()->subDays(30)->toDateString(),
-                'status'         => 'draft',
-                'payment_status' => 'unpaid',
-                'payment_type'   => null,
-                'subtotal'       => 720.000,
-                'tax_rate'       => 21.0,
-                'items' => [
-                    ['name' => 'Reserva 2021 — 750ml', 'qty' => 36, 'unit_price' => 20.00, 'unit' => 'botella'],
-                ],
-            ],
-            [
-                'client_idx'     => 0,
-                'invoice_number' => 'FAC-2025-007',
-                'invoice_date'   => now()->subDays(15)->toDateString(),
-                'status'         => 'sent',
-                'payment_status' => 'unpaid',
-                'payment_type'   => 'transfer',
-                'subtotal'       => 1680.000,
-                'tax_rate'       => 21.0,
-                'items' => [
-                    ['name' => 'Ecológico Tinto 2024 — 750ml', 'qty' => 120, 'unit_price' => 9.00, 'unit' => 'botella'],
-                    ['name' => 'Ecológico Blanco 2024 — 750ml', 'qty' => 60, 'unit_price' => 9.00, 'unit' => 'botella'],
-                ],
-            ],
-            [
-                'client_idx'     => 1,
-                'invoice_number' => 'FAC-2025-008',
-                'invoice_date'   => now()->subDays(5)->toDateString(),
-                'status'         => 'draft',
-                'payment_status' => 'unpaid',
-                'payment_type'   => null,
-                'subtotal'       => 2520.000,
-                'tax_rate'       => 21.0,
-                'items' => [
-                    ['name' => 'Espumoso Rosé 2024 — 750ml', 'qty' => 72, 'unit_price' => 19.00, 'unit' => 'botella'],
-                    ['name' => 'Maceración Carbónica 2024 — 750ml', 'qty' => 48, 'unit_price' => 12.50, 'unit' => 'botella'],
-                ],
-            ],
-        ];
-
+        $now           = now();
         $totalInvoices = 0;
         $totalItems    = 0;
+        $invoiceRows   = [];
+        $itemRows      = [];
 
-        foreach ($invoices as $inv) {
-            $clientId  = $clientIds[$inv['client_idx'] % count($clientIds)];
-            $taxAmount = round($inv['subtotal'] * $inv['tax_rate'] / 100, 3);
-            $total     = round($inv['subtotal'] + $taxAmount, 3);
+        // Hoy: 2026-04-22
+        // 2025: daysAgo 487 (2025-01-01) → 112 (2025-12-31)
+        // 2026: daysAgo 111 (2026-01-01) → 0   (2026-04-22)
+
+        for ($i = 0; $i < 300; $i++) {
+            $is2026   = $i >= 150;
+            $yearIdx  = $is2026 ? ($i - 150) : $i;
+            $year     = $is2026 ? 2026 : 2025;
+
+            // Fecha distribuida linealmente dentro del año
+            if ($is2026) {
+                $daysAgo     = (int)round(111 - $yearIdx * 111 / 149);
+                $invoiceNum  = 'FAC-2026-' . str_pad($yearIdx + 1, 3, '0', STR_PAD_LEFT);
+            } else {
+                $daysAgo     = (int)round(487 - $yearIdx * 375 / 149);
+                $invoiceNum  = 'FAC-2025-' . str_pad($yearIdx + 1, 3, '0', STR_PAD_LEFT);
+            }
+
+            $invoiceDate  = now()->subDays($daysAgo)->toDateString();
+            $clientId     = $clientIds[$i % count($clientIds)];
+            $taxRate      = 21.0;
+            $paymentTypes = ['transfer', 'transfer', 'cash', 'transfer', 'other'];
+            $paymentType  = $paymentTypes[$i % count($paymentTypes)];
+
+            // Status: 2025 → más pagadas; 2026 → más recientes (draft/sent)
+            if ($is2026) {
+                $status = match ($i % 6) {
+                    0, 1    => 'draft',
+                    2, 3    => 'sent',
+                    default => 'paid',
+                };
+            } else {
+                $status = match ($i % 5) {
+                    0       => 'sent',
+                    1       => 'paid',
+                    2, 3, 4 => 'paid',
+                };
+            }
+
+            $paymentStatus = match ($status) {
+                'paid'  => 'paid',
+                'sent'  => ($i % 3 === 0 ? 'partial' : 'unpaid'),
+                default => 'unpaid',
+            };
+
+            // Items: 1–3 líneas por factura
+            $products    = $is2026 ? self::PRODUCTS_2026 : self::PRODUCTS_2025;
+            $numItems    = 1 + ($i % 3);
+            $subtotal    = 0.000;
+            $pendingItems = [];
+
+            for ($j = 0; $j < $numItems; $j++) {
+                [$prodName, $unitPrice] = $products[($i + $j * 5) % count($products)];
+                $qty         = 24 + (($i + $j) % 8) * 12;  // 24, 36, 48 ... 108 botellas
+                $itemSubtotal= round($qty * $unitPrice, 3);
+                $itemTax     = round($itemSubtotal * $taxRate / 100, 3);
+                $subtotal   += $itemSubtotal;
+
+                $pendingItems[] = [
+                    'name'                => $prodName,
+                    'concept_type'        => 'product',
+                    'quantity'            => $qty,
+                    'unit'                => 'botella',
+                    'unit_price'          => $unitPrice,
+                    'discount_percentage' => 0,
+                    'discount_amount'     => 0,
+                    'tax_rate'            => $taxRate,
+                    'tax_base'            => $itemSubtotal,
+                    'tax_amount'          => $itemTax,
+                    'subtotal'            => $itemSubtotal,
+                    'total'               => round($itemSubtotal + $itemTax, 3),
+                    'status'              => 'active',
+                    'payment_status'      => $paymentStatus === 'paid' ? 'paid' : 'unpaid',
+                    'delivery_status'     => $status === 'paid' ? 'delivered' : 'pending',
+                    'created_at'          => $now,
+                    'updated_at'          => $now,
+                ];
+            }
+
+            $taxAmount = round($subtotal * $taxRate / 100, 3);
+            $total     = round($subtotal + $taxAmount, 3);
 
             $invoiceId = DB::table('invoices')->insertGetId([
                 'user_id'         => self::WINERY_USER_ID,
                 'client_id'       => $clientId,
-                'invoice_number'  => $inv['invoice_number'],
-                'invoice_date'    => $inv['invoice_date'],
+                'invoice_number'  => $invoiceNum,
+                'invoice_date'    => $invoiceDate,
                 'invoice_type'    => 'wine_sale',
-                'status'          => $inv['status'],
-                'payment_status'  => $inv['payment_status'],
-                'payment_type'    => $inv['payment_type'],
-                'subtotal'        => $inv['subtotal'],
-                'tax_base'        => $inv['subtotal'],
-                'tax_rate'        => $inv['tax_rate'],
+                'status'          => $status,
+                'payment_status'  => $paymentStatus,
+                'payment_type'    => $status === 'draft' ? null : $paymentType,
+                'subtotal'        => round($subtotal, 3),
+                'tax_base'        => round($subtotal, 3),
+                'tax_rate'        => $taxRate,
                 'tax_amount'      => $taxAmount,
                 'total_amount'    => $total,
-                'delivery_status' => $inv['status'] === 'paid' ? 'delivered' : 'pending',
+                'delivery_status' => $status === 'paid' ? 'delivered' : 'pending',
                 'sif_status'      => 'pendiente',
                 'corrective'      => false,
                 'gift'            => false,
@@ -171,38 +178,26 @@ class WineryInvoicesSeeder extends Seeder
                 'updated_at'      => $now,
             ]);
 
+            foreach ($pendingItems as $item) {
+                $item['invoice_id'] = $invoiceId;
+                $itemRows[]         = $item;
+                $totalItems++;
+            }
+
             $totalInvoices++;
 
-            foreach ($inv['items'] as $item) {
-                $itemSubtotal = round($item['qty'] * $item['unit_price'], 3);
-                $itemTax      = round($itemSubtotal * $inv['tax_rate'] / 100, 3);
-
-                DB::table('invoice_items')->insert([
-                    'invoice_id'      => $invoiceId,
-                    'name'            => $item['name'],
-                    'concept_type'    => 'product',
-                    'quantity'        => $item['qty'],
-                    'unit'            => $item['unit'],
-                    'unit_price'      => $item['unit_price'],
-                    'discount_percentage' => 0,
-                    'discount_amount'  => 0,
-                    'tax_rate'        => $inv['tax_rate'],
-                    'tax_base'        => $itemSubtotal,
-                    'tax_amount'      => $itemTax,
-                    'subtotal'        => $itemSubtotal,
-                    'total'           => round($itemSubtotal + $itemTax, 3),
-                    'status'          => 'active',
-                    'payment_status'  => $inv['payment_status'] === 'paid' ? 'paid' : 'unpaid',
-                    'delivery_status' => $inv['status'] === 'paid' ? 'delivered' : 'pending',
-                    'created_at'      => $now,
-                    'updated_at'      => $now,
-                ]);
-
-                $totalItems++;
+            // Insert items in batches every 50 invoices
+            if (count($itemRows) >= 150) {
+                DB::table('invoice_items')->insert($itemRows);
+                $itemRows = [];
             }
         }
 
-        $this->command->info("✅ Facturas de venta: {$totalInvoices} facturas, {$totalItems} líneas");
+        if (!empty($itemRows)) {
+            DB::table('invoice_items')->insert($itemRows);
+        }
+
+        $this->command->info("✅ Facturas de venta: {$totalInvoices} facturas (150 × 2025 + 150 × 2026), {$totalItems} líneas");
     }
 
     private function cleanup(): void

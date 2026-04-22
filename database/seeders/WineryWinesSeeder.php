@@ -6,12 +6,54 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
 /**
- * Crea 20 vinos realistas para bodega user_id=1 (Agaete, Gran Canaria).
+ * Genera 450 vinos para bodega user_id=1 (Agaete, Gran Canaria).
+ *   · 225 vinos de vendimias 2022–2025 (histórico)
+ *   · 225 vinos de vendimia 2026       (campaña activa, prioridad demo)
+ *
  * Depende de: WineryOenologistsSeeder
  */
 class WineryWinesSeeder extends Seeder
 {
     private const WINERY_USER_ID = 1;
+
+    // Rotación de tipos (10 slots): 30% tinto, 30% blanco, 20% rosado, 10% espumoso, 10% dulce
+    private const TYPE_POOL = ['red', 'red', 'red', 'white', 'white', 'white', 'rose', 'rose', 'sparkling', 'sweet'];
+
+    private const NAMES_BY_TYPE = [
+        'red'      => ['Tinto Joven', 'Tinto Barrica', 'Tinto Crianza', 'Tinto Reserva', 'Gran Tinto', 'Tinto Ecológico', 'Tinto Maceración Carbónica'],
+        'white'    => ['Blanco Joven', 'Blanco Barrica', 'Malvasía Seco', 'Vijariego', 'Blanco Ecológico', 'Listán Blanco', 'Marmajuelo'],
+        'rose'     => ['Rosado', 'Rosado Joven', 'Rosado Ecológico', 'Rosé Barrica'],
+        'sparkling'=> ['Espumoso Brut', 'Espumoso Rosé', 'Brut Nature', 'Cava Especial'],
+        'sweet'    => ['Malvasía Dulce', 'Dulce Natural', 'Generoso', 'Mistela'],
+    ];
+
+    private const VARIETIES_BY_TYPE = [
+        'red'      => ['Listán Negro 100%', 'Negramoll 80% · Listán Negro 20%', 'Listán Negro 70% · Negramoll 30%', 'Baboso Negro 100%', 'Tintilla 100%', 'Listán Negro 90% · Negramoll 10%', 'Listán Negro 60% · Baboso 40%'],
+        'white'    => ['Listán Blanco 100%', 'Malvasía Volcánica 100%', 'Vijariego 100%', 'Marmajuelo 100%', 'Listán Blanco 60% · Vijariego 40%', 'Listán Blanco 80% · Marmajuelo 20%', 'Gual 100%'],
+        'rose'     => ['Listán Negro 100%', 'Negramoll 100%', 'Listán Negro 70% · Negramoll 30%', 'Baboso Negro 100%'],
+        'sparkling'=> ['Malvasía 70% · Listán Blanco 30%', 'Listán Negro 100%', 'Listán Blanco 100%', 'Vijariego 100%'],
+        'sweet'    => ['Malvasía Volcánica 100%', 'Moscatel 100%', 'Listán Blanco 100%', 'Gual 100%'],
+    ];
+
+    private const AGING_POOL = ['joven', 'barrica', 'joven', 'crianza', 'joven', 'barrica', 'reserva'];
+
+    // Volúmenes (litros) por tipo [min, max]
+    private const VOLUME_RANGE = [
+        'red'      => [6000,  25000],
+        'white'    => [4000,  18000],
+        'rose'     => [1500,   7000],
+        'sparkling'=> [ 800,   4000],
+        'sweet'    => [ 400,   2000],
+    ];
+
+    // Categorías por tipo
+    private const CATEGORIES_BY_TYPE = [
+        'red'      => ['Vino de mesa', 'Vino de calidad', 'Vino de calidad superior', 'Vino ecológico'],
+        'white'    => ['Vino de mesa', 'Vino de calidad', 'Vino de calidad superior', 'Vino ecológico'],
+        'rose'     => ['Vino de mesa', 'Vino de calidad', 'Vino ecológico'],
+        'sparkling'=> ['Vino espumoso', 'Vino espumoso de calidad'],
+        'sweet'    => ['Vino generoso dulce', 'Vino licoroso'],
+    ];
 
     public function run(): void
     {
@@ -19,353 +61,100 @@ class WineryWinesSeeder extends Seeder
 
         $now = now();
 
-        // Obtener IDs de enólogos
         $oenologists = DB::table('oenologists')
             ->where('user_id', self::WINERY_USER_ID)
             ->pluck('id')
             ->toArray();
 
-        $oen1 = $oenologists[0] ?? null;
-        $oen2 = $oenologists[1] ?? null;
-
-        $wines = [
-            // ── TINTOS ──────────────────────────────────────────────────────────
-            [
-                'name'                 => 'Agaete Tinto Joven 2025',
-                'vintage'              => 2025,
-                'wine_type'            => 'red',
-                'aging_type'           => 'joven',
-                'category'             => 'Vino de mesa',
-                'status'               => 'in_progress',
-                'variety'              => 'Listán Negro 100%',
-                'volume_liters'        => 18500.000,
-                'initial_quantity_kg'  => 24000.000,
-                'is_organic'           => false,
-                'is_must'              => false,
-                'oenologist_id'        => $oen1,
-                'internal_code'        => 'TJ-2025-01',
-                'notes'                => 'Vendimia 2025. En proceso de fermentación alcohólica.',
-            ],
-            [
-                'name'                 => 'Negramoll Crianza 2023',
-                'vintage'              => 2023,
-                'wine_type'            => 'red',
-                'aging_type'           => 'crianza',
-                'category'             => 'Vino de calidad',
-                'status'               => 'aged',
-                'variety'              => 'Negramoll 80% · Listán Negro 20%',
-                'volume_liters'        => 8200.000,
-                'initial_quantity_kg'  => 11000.000,
-                'is_organic'           => false,
-                'is_must'              => false,
-                'oenologist_id'        => $oen1,
-                'internal_code'        => 'TC-2023-01',
-                'notes'                => 'Crianza 12 meses en barrica de roble francés. Listo para embotellar.',
-            ],
-            [
-                'name'                 => 'Gran Reserva Listán Negro 2022',
-                'vintage'              => 2022,
-                'wine_type'            => 'red',
-                'aging_type'           => 'reserva',
-                'category'             => 'Vino de calidad superior',
-                'status'               => 'bottled',
-                'variety'              => 'Listán Negro 100%',
-                'volume_liters'        => 4800.000,
-                'initial_quantity_kg'  => 6500.000,
-                'is_organic'           => true,
-                'is_must'              => false,
-                'oenologist_id'        => $oen1,
-                'internal_code'        => 'GR-2022-01',
-                'notes'                => 'Producción limitada 6.400 botellas. Medalla de plata en concurso internacional.',
-            ],
-            [
-                'name'                 => 'Tinto Barrica 2023',
-                'vintage'              => 2023,
-                'wine_type'            => 'red',
-                'aging_type'           => 'barrica',
-                'category'             => 'Vino de calidad',
-                'status'               => 'aged',
-                'variety'              => 'Listán Negro 70% · Negramoll 30%',
-                'volume_liters'        => 6100.000,
-                'initial_quantity_kg'  => 8200.000,
-                'is_organic'           => false,
-                'is_must'              => false,
-                'oenologist_id'        => $oen2,
-                'internal_code'        => 'TB-2023-02',
-                'notes'                => '6 meses en barrica de roble americano.',
-            ],
-            [
-                'name'                 => 'Tinto Ecológico 2024',
-                'vintage'              => 2024,
-                'wine_type'            => 'red',
-                'aging_type'           => 'joven',
-                'category'             => 'Vino ecológico',
-                'status'               => 'bottled',
-                'variety'              => 'Listán Negro 90% · Negramoll 10%',
-                'volume_liters'        => 9500.000,
-                'initial_quantity_kg'  => 12600.000,
-                'is_organic'           => true,
-                'is_must'              => false,
-                'oenologist_id'        => $oen1,
-                'internal_code'        => 'TE-2024-01',
-                'notes'                => 'Certificación ecológica CAAE. Sin herbicidas.',
-            ],
-            [
-                'name'                 => 'Tinto Maceración Carbónica 2025',
-                'vintage'              => 2025,
-                'wine_type'            => 'red',
-                'aging_type'           => 'joven',
-                'category'             => 'Vino de mesa',
-                'status'               => 'in_progress',
-                'variety'              => 'Listán Negro 100%',
-                'volume_liters'        => 5200.000,
-                'initial_quantity_kg'  => 7000.000,
-                'is_organic'           => false,
-                'is_must'              => false,
-                'oenologist_id'        => $oen2,
-                'internal_code'        => 'TMC-2025-01',
-                'notes'                => 'Maceración carbónica tradicional. Fruta y viveza.',
-            ],
-            [
-                'name'                 => 'Tinto Joven 2022',
-                'vintage'              => 2022,
-                'wine_type'            => 'red',
-                'aging_type'           => 'joven',
-                'category'             => 'Vino de mesa',
-                'status'               => 'sold',
-                'variety'              => 'Listán Negro 100%',
-                'volume_liters'        => 0.000,
-                'initial_quantity_kg'  => 15000.000,
-                'is_organic'           => false,
-                'is_must'              => false,
-                'oenologist_id'        => $oen1,
-                'internal_code'        => 'TJ-2022-01',
-                'notes'                => 'Stock agotado. Muy buena acogida en mercado local.',
-            ],
-
-            // ── BLANCOS ──────────────────────────────────────────────────────────
-            [
-                'name'                 => 'Vijariego Blanco 2025',
-                'vintage'              => 2025,
-                'wine_type'            => 'white',
-                'aging_type'           => 'joven',
-                'category'             => 'Vino de calidad',
-                'status'               => 'in_progress',
-                'variety'              => 'Vijariego Negro 100%',
-                'volume_liters'        => 7800.000,
-                'initial_quantity_kg'  => 10500.000,
-                'is_organic'           => false,
-                'is_must'              => false,
-                'oenologist_id'        => $oen2,
-                'internal_code'        => 'VB-2025-01',
-                'notes'                => 'Fermentación en frío a 16°C. Aromas tropicales característicos.',
-            ],
-            [
-                'name'                 => 'Malvasía Seco 2024',
-                'vintage'              => 2024,
-                'wine_type'            => 'white',
-                'aging_type'           => 'joven',
-                'category'             => 'Vino de calidad superior',
-                'status'               => 'bottled',
-                'variety'              => 'Malvasía Volcánica 100%',
-                'volume_liters'        => 5400.000,
-                'initial_quantity_kg'  => 7200.000,
-                'is_organic'           => true,
-                'is_must'              => false,
-                'oenologist_id'        => $oen1,
-                'internal_code'        => 'MS-2024-01',
-                'notes'                => 'Fermentación en depósito de acero. Mínimo SO2. Notas cítricas y florales.',
-            ],
-            [
-                'name'                 => 'Listán Blanco Barrica 2023',
-                'vintage'              => 2023,
-                'wine_type'            => 'white',
-                'aging_type'           => 'barrica',
-                'category'             => 'Vino de calidad',
-                'status'               => 'bottled',
-                'variety'              => 'Listán Blanco 100%',
-                'volume_liters'        => 3200.000,
-                'initial_quantity_kg'  => 4300.000,
-                'is_organic'           => false,
-                'is_must'              => false,
-                'oenologist_id'        => $oen1,
-                'internal_code'        => 'LBB-2023-01',
-                'notes'                => '4 meses en barrica de roble francés con bâtonnage semanal.',
-            ],
-            [
-                'name'                 => 'Blanco Ecológico 2024',
-                'vintage'              => 2024,
-                'wine_type'            => 'white',
-                'aging_type'           => 'joven',
-                'category'             => 'Vino ecológico',
-                'status'               => 'aged',
-                'variety'              => 'Listán Blanco 60% · Vijariego 40%',
-                'volume_liters'        => 11000.000,
-                'initial_quantity_kg'  => 14800.000,
-                'is_organic'           => true,
-                'is_must'              => false,
-                'oenologist_id'        => $oen2,
-                'internal_code'        => 'BE-2024-01',
-                'notes'                => 'Coupage singular. Sin adición de sulfitos.',
-            ],
-            [
-                'name'                 => 'Blanco Joven 2025',
-                'vintage'              => 2025,
-                'wine_type'            => 'white',
-                'aging_type'           => 'joven',
-                'category'             => 'Vino de mesa',
-                'status'               => 'in_progress',
-                'variety'              => 'Listán Blanco 100%',
-                'volume_liters'        => 14200.000,
-                'initial_quantity_kg'  => 19000.000,
-                'is_organic'           => false,
-                'is_must'              => false,
-                'oenologist_id'        => $oen1,
-                'internal_code'        => 'BJ-2025-01',
-                'notes'                => 'Mayor volumen de la campaña. Mercado general.',
-            ],
-
-            // ── ROSADOS ──────────────────────────────────────────────────────────
-            [
-                'name'                 => 'Rosado de Agaete 2024',
-                'vintage'              => 2024,
-                'wine_type'            => 'rose',
-                'aging_type'           => 'joven',
-                'category'             => 'Vino de calidad',
-                'status'               => 'bottled',
-                'variety'              => 'Listán Negro 100%',
-                'volume_liters'        => 4100.000,
-                'initial_quantity_kg'  => 5600.000,
-                'is_organic'           => false,
-                'is_must'              => false,
-                'oenologist_id'        => $oen2,
-                'internal_code'        => 'RA-2024-01',
-                'notes'                => 'Método de sangrado. Color salmón intenso, muy frutal.',
-            ],
-            [
-                'name'                 => 'Rosado Negramoll 2025',
-                'vintage'              => 2025,
-                'wine_type'            => 'rose',
-                'aging_type'           => 'joven',
-                'category'             => 'Vino de mesa',
-                'status'               => 'in_progress',
-                'variety'              => 'Negramoll 100%',
-                'volume_liters'        => 3400.000,
-                'initial_quantity_kg'  => 4600.000,
-                'is_organic'           => false,
-                'is_must'              => false,
-                'oenologist_id'        => $oen2,
-                'internal_code'        => 'RN-2025-01',
-                'notes'                => 'En proceso de clarificación.',
-            ],
-
-            // ── ESPUMOSOS ────────────────────────────────────────────────────────
-            [
-                'name'                 => 'Brut Nature Gran Agaete 2022',
-                'vintage'              => 2022,
-                'wine_type'            => 'sparkling',
-                'aging_type'           => 'reserva',
-                'category'             => 'Vino espumoso de calidad',
-                'status'               => 'bottled',
-                'variety'              => 'Malvasía 70% · Listán Blanco 30%',
-                'volume_liters'        => 2400.000,
-                'initial_quantity_kg'  => 3200.000,
-                'is_organic'           => false,
-                'is_must'              => false,
-                'oenologist_id'        => $oen1,
-                'internal_code'        => 'ESP-2022-01',
-                'notes'                => 'Método tradicional. 24 meses en botella. Tiraje manual.',
-            ],
-            [
-                'name'                 => 'Espumoso Rosé 2023',
-                'vintage'              => 2023,
-                'wine_type'            => 'sparkling',
-                'aging_type'           => 'joven',
-                'category'             => 'Vino espumoso',
-                'status'               => 'aged',
-                'variety'              => 'Listán Negro 100%',
-                'volume_liters'        => 1800.000,
-                'initial_quantity_kg'  => 2400.000,
-                'is_organic'           => false,
-                'is_must'              => false,
-                'oenologist_id'        => $oen2,
-                'internal_code'        => 'ESPR-2023-01',
-                'notes'                => 'Segunda fermentación en tanque. Fresco y afrutado.',
-            ],
-
-            // ── DULCES ───────────────────────────────────────────────────────────
-            [
-                'name'                 => 'Malvasía Dulce 2023',
-                'vintage'              => 2023,
-                'wine_type'            => 'sweet',
-                'aging_type'           => 'crianza',
-                'category'             => 'Vino generoso dulce',
-                'status'               => 'bottled',
-                'variety'              => 'Malvasía Volcánica 100%',
-                'volume_liters'        => 1200.000,
-                'initial_quantity_kg'  => 2000.000,
-                'is_organic'           => true,
-                'is_must'              => false,
-                'oenologist_id'        => $oen1,
-                'internal_code'        => 'MD-2023-01',
-                'notes'                => 'Pasificación parcial en viña. 140g/L azúcar residual. Botellas de 500ml.',
-            ],
-
-            // ── MOSTO ────────────────────────────────────────────────────────────
-            [
-                'name'                 => 'Mosto Listán Blanco 2025',
-                'vintage'              => 2025,
-                'wine_type'            => 'white',
-                'aging_type'           => null,
-                'category'             => 'Mosto',
-                'status'               => 'in_progress',
-                'variety'              => 'Listán Blanco 100%',
-                'volume_liters'        => 3100.000,
-                'initial_quantity_kg'  => 4200.000,
-                'is_organic'           => false,
-                'is_must'              => true,
-                'oenologist_id'        => null,
-                'internal_code'        => 'MOSTO-2025-01',
-                'notes'                => 'Mosto sulfitado para posterior fermentación controlada.',
-            ],
-
-            // ── VINO CANCELADO ────────────────────────────────────────────────────
-            [
-                'name'                 => 'Coupage Experimental 2023',
-                'vintage'              => 2023,
-                'wine_type'            => 'red',
-                'aging_type'           => null,
-                'category'             => null,
-                'status'               => 'cancelled',
-                'variety'              => 'Listán Negro 50% · Syrah 50%',
-                'volume_liters'        => 0.000,
-                'initial_quantity_kg'  => 3000.000,
-                'is_organic'           => false,
-                'is_must'              => false,
-                'oenologist_id'        => $oen2,
-                'internal_code'        => 'EXP-2023-01',
-                'notes'                => 'Cancelado por problemas de acidez volátil excesiva. Derivado a vinagre.',
-            ],
-        ];
-
         $rows = [];
-        foreach ($wines as $w) {
-            $rows[] = array_merge($w, [
-                'user_id'    => self::WINERY_USER_ID,
-                'trace_token'=> null,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ]);
+
+        // ── Grupo A: 225 vinos de vendimias 2022–2025 ───────────────────────────
+        for ($i = 0; $i < 225; $i++) {
+            $rows[] = $this->buildWine($i, $oenologists, $now, isGroup2026: false);
         }
 
-        DB::table('wines')->insert($rows);
+        // ── Grupo B: 225 vinos de vendimia 2026 ────────────────────────────────
+        for ($i = 225; $i < 450; $i++) {
+            $rows[] = $this->buildWine($i, $oenologists, $now, isGroup2026: true);
+        }
 
-        $this->command->info('✅ Vinos: ' . count($rows) . ' registros');
+        foreach (array_chunk($rows, 100) as $chunk) {
+            DB::table('wines')->insert($chunk);
+        }
+
+        $totalHistorico = count(array_filter($rows, fn($r) => $r['vintage'] < 2026));
+        $total2026      = count(array_filter($rows, fn($r) => $r['vintage'] === 2026));
+        $this->command->info("✅ Vinos: " . count($rows) . " registros ({$totalHistorico} vendimias 2022–2025 + {$total2026} vendimia 2026)");
+    }
+
+    private function buildWine(int $i, array $oenologists, $now, bool $isGroup2026): array
+    {
+        $type    = self::TYPE_POOL[$i % count(self::TYPE_POOL)];
+        $namePool= self::NAMES_BY_TYPE[$type];
+        $baseName= $namePool[$i % count($namePool)];
+        $variety = self::VARIETIES_BY_TYPE[$type][$i % count(self::VARIETIES_BY_TYPE[$type])];
+        $aging   = self::AGING_POOL[$i % count(self::AGING_POOL)];
+        $catPool = self::CATEGORIES_BY_TYPE[$type];
+        $category= $catPool[$i % count($catPool)];
+        $oenId   = !empty($oenologists) ? $oenologists[$i % count($oenologists)] : null;
+
+        [$volMin, $volMax] = self::VOLUME_RANGE[$type];
+
+        if ($isGroup2026) {
+            $vintage = 2026;
+            // 2026: principalmente in_progress, algunos aged recién iniciados
+            $status  = match ($i % 6) {
+                0       => 'aged',
+                default => 'in_progress',
+            };
+            $volume = round(($volMin + ($i % 10) * ($volMax - $volMin) / 10) / 1000 * 1000, 3);
+        } else {
+            $vintagePool = [2022, 2023, 2024, 2025];
+            $vintage     = $vintagePool[$i % 4];
+            $status = match ($vintage) {
+                2022    => ['sold', 'bottled', 'bottled', 'sold'][$i % 4],
+                2023    => ['bottled', 'aged', 'bottled', 'aged'][$i % 4],
+                2024    => ['bottled', 'bottled', 'aged', 'in_progress'][$i % 4],
+                default => ['in_progress', 'aged', 'in_progress', 'aged'][$i % 4],
+            };
+            $volume = $status === 'sold'
+                ? 0.000
+                : round(($volMin + ($i % 10) * ($volMax - $volMin) / 10) / 1000 * 1000, 3);
+        }
+
+        $initialKg = $status === 'sold'
+            ? round(($volMin + ($i % 8) * ($volMax - $volMin) / 8) * 1.35, 3)
+            : round($volume * 1.35, 3);
+
+        $isOrganic = $i % 9 === 0;
+        $isMust    = false;
+
+        return [
+            'user_id'               => self::WINERY_USER_ID,
+            'name'                  => "$baseName $vintage",
+            'vintage'               => $vintage,
+            'wine_type'             => $type,
+            'aging_type'            => in_array($type, ['sweet', 'sparkling']) ? 'crianza' : $aging,
+            'category'              => $category,
+            'status'                => $status,
+            'variety'               => $variety,
+            'volume_liters'         => $volume,
+            'initial_quantity_kg'   => $initialKg,
+            'is_organic'            => $isOrganic,
+            'is_must'               => $isMust,
+            'oenologist_id'         => $oenId,
+            'internal_code'         => 'WS-' . str_pad($i + 1, 4, '0', STR_PAD_LEFT),
+            'notes'                 => $isGroup2026
+                ? "Vendimia 2026 — elaboración en curso."
+                : "Vendimia $vintage — archivo histórico.",
+            'trace_token'           => null,
+            'created_at'            => $now,
+            'updated_at'            => $now,
+        ];
     }
 
     private function cleanup(): void
     {
-        // Las operaciones (transfers, losses, etc.) se eliminan en cascada
         DB::table('wines')->where('user_id', self::WINERY_USER_ID)->delete();
     }
 }
