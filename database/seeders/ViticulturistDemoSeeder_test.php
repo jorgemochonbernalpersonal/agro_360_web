@@ -9,15 +9,20 @@ use Illuminate\Support\Facades\DB;
  * Seeder demo completo para el rol Viticultor (user_id = 338).
  *
  * Crea datos coherentes y realistas para Gran Canaria (Agaete):
- *   · 5 parcelas con 2 plantaciones cada una
- *   · Campañas 2024 (cerrada) y 2025 (activa)
- *   · ~65 actividades agrícolas con sus sub-tablas
- *   · Observaciones fenológicas
+ *   · 460 parcelas SIGPAC + 450 plantaciones
+ *   · Campañas 2024 (cerrada), 2025 (cerrada), 2026 (activa)
+ *   · ~110 actividades agrícolas con sus sub-tablas
+ *   · 450 clientes (250 empresas + 200 particulares)
+ *   · 450 subcontrataciones (100×2024 + 150×2025 + 200×2026)
+ *   · 450 contenedores (50 narrativos + 400 adicionales)
+ *   · 450 máquinas (12 narrativas + 438 adicionales)
+ *   · 450 facturas (10 narrativas + 440 adicionales)
+ *   · ~120 registros oficiales (análisis, residuos, energía, agua, etc.)
  *
- * Requiere que user_id=1 (winery) y user_id=2 (viticultor) existan.
+ * Requiere user_id=1 (winery) y user_id=338 (viticultor).
  *
  * Uso:
- *   php artisan db:seed --class=ViticulturistDemoSeeder
+ *   php artisan db:seed --class=ViticulturistDemoSeeder_test
  */
 class ViticulturistDemoSeeder_test extends Seeder
 {
@@ -65,7 +70,7 @@ class ViticulturistDemoSeeder_test extends Seeder
 
         // ── 4. Plantaciones ────────────────────────────────────────────────────
         $plantingIds = [];
-        $this->step('Plantaciones (10)', function () use ($now, $plotIds, &$plantingIds) {
+        $this->step('Plantaciones (450: 10 narrativas + 440 adicionales)', function () use ($now, $plotIds, &$plantingIds) {
             $plantingIds = $this->createPlantings($plotIds, $now);
         });
 
@@ -108,13 +113,13 @@ class ViticulturistDemoSeeder_test extends Seeder
 
         // ── 11. Contenedores (crítico para vendimias y facturación) ──────────
         $containerIds = [];
-        $this->step('Contenedores (50: bins + tinas + depósitos + tanques)', function () use ($now, &$containerIds) {
+        $this->step('Contenedores (450: 50 narrativos + 400 adicionales)', function () use ($now, &$containerIds) {
             $containerIds = $this->createContainers($now);
         });
 
         // ── 12. Maquinaria ────────────────────────────────────────────────────
         $machineryIds = [];
-        $this->step('Maquinaria (12)', function () use ($now, &$machineryIds) {
+        $this->step('Maquinaria (450: 12 narrativas + 438 adicionales)', function () use ($now, &$machineryIds) {
             $machineryIds = $this->createMachinery($now);
         });
 
@@ -130,12 +135,12 @@ class ViticulturistDemoSeeder_test extends Seeder
         });
 
         // ── 15. Clientes ──────────────────────────────────────────────────────
-        $this->step('Clientes (8)', function () use ($now) {
+        $this->step('Clientes (450: 250 empresas + 200 particulares)', function () use ($now) {
             $this->createClients($now);
         });
 
         // ── 16. Subcontrataciones ─────────────────────────────────────────────
-        $this->step('Subcontrataciones (20)', function () use ($now, $plotIds, $campaign2024Id, $campaign2025Id, $campaign2026Id) {
+        $this->step('Subcontrataciones (450)', function () use ($now, $plotIds, $campaign2024Id, $campaign2025Id, $campaign2026Id) {
             $this->createSubcontractings($plotIds, $campaign2024Id, $campaign2025Id, $campaign2026Id, $now);
         });
 
@@ -165,8 +170,8 @@ class ViticulturistDemoSeeder_test extends Seeder
         });
 
         // ── 22. Facturas ──────────────────────────────────────────────────────
-        $this->step('Facturas (6 venta cosecha + 4 liquidaciones bodega + items)', function () use ($now, $campaign2024Id, $campaign2025Id) {
-            $this->createInvoices($campaign2024Id, $campaign2025Id, $now);
+        $this->step('Facturas (450: 10 narrativas + 440 adicionales)', function () use ($now, $campaign2024Id, $campaign2025Id, $campaign2026Id) {
+            $this->createInvoices($campaign2024Id, $campaign2025Id, $campaign2026Id, $now);
         });
 
         // ── 23. Gestión Territorial ───────────────────────────────────────────
@@ -782,7 +787,39 @@ class ViticulturistDemoSeeder_test extends Seeder
         foreach ($plantings as $p) {
             $ids[] = DB::table('plot_plantings')->insertGetId(array_merge($base, $p));
         }
-        return $ids;
+
+        // ── 440 plantaciones adicionales (loop) ───────────────────────────────
+        $varietyIds   = [$listanNegro, $listanBlanco, $negramoll, $moscatel, $tintilla];
+        $trainSystems = [1, 1, 2, 2, 3];
+        $rootstocks   = ['110R', 'SO4', '41B', 'Propio (pie franco)', '3309C', 'Paulsen 1103'];
+        $doOptions    = ['DO Gran Canaria', 'DO Gran Canaria', 'DO Gran Canaria', null];
+        $plotCount    = count($plotIds);
+        $extraRows    = [];
+
+        for ($i = 0; $i < 440; $i++) {
+            $plantingYear = 1985 + ($i % 37);    // 1985–2021
+            $area         = round(0.15 + ($i % 25) * 0.04, 2); // 0.15–1.11 ha
+            $extraRows[]  = array_merge($base, [
+                'plot_id'               => $plotIds[($i + 5) % $plotCount],
+                'grape_variety_id'      => $varietyIds[$i % 5],
+                'area_planted'          => $area,
+                'planting_year'         => $plantingYear,
+                'vine_count'            => (int)($area * 900 + ($i % 120)),
+                'row_spacing'           => round(1.5 + ($i % 4) * 0.5, 1),
+                'vine_spacing'          => round(1.0 + ($i % 3) * 0.5, 1),
+                'rootstock'             => $rootstocks[$i % count($rootstocks)],
+                'training_system_id'    => $trainSystems[$i % 5],
+                'irrigated'             => $i % 3 === 0,
+                'designation_of_origin' => $doOptions[$i % 4],
+                'notes'                 => null,
+            ]);
+        }
+
+        foreach (array_chunk($extraRows, 100) as $chunk) {
+            DB::table('plot_plantings')->insert($chunk);
+        }
+
+        return $ids; // índices 0-9 usados por actividades/rendimientos/fenología
     }
 
     // ─── 6. Campañas ──────────────────────────────────────────────────────────
@@ -1931,7 +1968,69 @@ class ViticulturistDemoSeeder_test extends Seeder
         foreach ($rows as $r) {
             $ids[] = DB::table('machinery')->insertGetId(array_merge($r, ['viticulturist_id' => $vitId, 'notes' => null, 'image' => null, 'created_at' => $now, 'updated_at' => $now]));
         }
-        return $ids;
+
+        // ── 438 máquinas adicionales (loop) ───────────────────────────────────
+        $machPool = [
+            ['tractor',   'John Deere',   '5{N}75E',      'JD5{N}75',   [25000, 75000]],
+            ['tractor',   'New Holland',  'T4.{N}',        'NH-T4{N}',   [30000, 80000]],
+            ['tractor',   'Kubota',       'M{N}060',       'KUB{N}060',  [20000, 55000]],
+            ['tractor',   'Fiat',         '{N}40 DT',      'FIAT{N}40',  [8000,  25000]],
+            ['tractor',   'Fendt',        '{N}14 Vario',   'FDT{N}14',   [50000, 120000]],
+            ['sprayer',   'Grupo Ulma',   'VF-{N}00',      'ATM-U{N}',   [5000,  15000]],
+            ['sprayer',   'Empas',        'MP-{N}00',      'ATM-E{N}',   [4000,  12000]],
+            ['sprayer',   'Hardi',        'Navigator {N}', 'HARD{N}',    [6000,  20000]],
+            ['pruner',    'Felco',        '{N}01',         'FEL{N}01',   [600,   2500]],
+            ['pruner',    'Lisam',        'LS-{N}0',       'LIS-{N}0',   [800,   2800]],
+            ['pruner',    'Infaco',       'F3015-{N}',     'INF{N}',     [900,   3500]],
+            ['mower',     'Husqvarna',    '5{N}5FX',       'HUS5{N}5',   [800,   2500]],
+            ['mower',     'Stihl',        'FS {N}',        'STI-FS{N}',  [500,   2000]],
+            ['harvester', 'Gregoire',     'G7.{N}00',      'GRE7{N}',    [60000, 150000]],
+            ['other',     'Agratic',      'RB-{N}000',     'REM-A{N}',   [2000,  8000]],
+            ['other',     'Castillo',     'RV-{N}000',     'REM-C{N}',   [1500,  6000]],
+            ['other',     'Netafim',      'Riego Goteo {N}','RIE-N{N}',  [500,   5000]],
+            ['other',     'Manitou',      'MT {N}26',      'MAN{N}26',   [30000, 70000]],
+        ];
+
+        $extraMach = [];
+        for ($i = 0; $i < 438; $i++) {
+            [$mType, $brand, $modelTpl, $snTpl, $pRange] = $machPool[$i % count($machPool)];
+            $num    = str_pad($i + 13, 3, '0', STR_PAD_LEFT); // start after original 12
+            $year   = 2008 + ($i % 16);
+            $price  = (int)($pRange[0] + ($pRange[1] - $pRange[0]) * ($i % 11) / 10);
+            $curVal = (int)($price * (0.2 + ($i % 7) * 0.1));
+
+            $extraMach[] = [
+                'viticulturist_id'   => $vitId,
+                'name'               => ucfirst($mType) . ' ' . $brand . ' ' . str_replace('{N}', $num, $modelTpl),
+                'type'               => $mType,
+                'brand'              => $brand,
+                'model'              => str_replace('{N}', $num, $modelTpl),
+                'serial_number'      => str_replace('{N}', $num, $snTpl) . '-EXT-' . $num,
+                'year'               => $year,
+                'purchase_date'      => ($year + 1) . '-' . str_pad(($i % 12) + 1, 2, '0', STR_PAD_LEFT) . '-15',
+                'purchase_price'     => $price,
+                'current_value'      => $curVal,
+                'roma_registration'  => ($mType === 'tractor' || $mType === 'harvester')
+                    ? 'GC-T-' . (5200 + $i)
+                    : null,
+                'is_rented'          => false,
+                'capacity'           => null,
+                'last_revision_date' => $year >= 2018
+                    ? '2025-' . str_pad(($i % 12) + 1, 2, '0', STR_PAD_LEFT) . '-10'
+                    : null,
+                'active'             => $i % 10 !== 9,
+                'notes'              => null,
+                'image'              => null,
+                'created_at'         => $now,
+                'updated_at'         => $now,
+            ];
+        }
+
+        foreach (array_chunk($extraMach, 100) as $chunk) {
+            DB::table('machinery')->insert($chunk);
+        }
+
+        return $ids; // índices 0-1 (tractores) y 3 (atomizador) usados por registros oficiales
     }
 
     // ─── 13. Explotaciones ───────────────────────────────────────────────────
@@ -2055,19 +2154,109 @@ class ViticulturistDemoSeeder_test extends Seeder
     private function createClients($now): void
     {
         $vitId = self::VIT_USER_ID;
-        $clients = [
-            ['client_type' => 'company',    'company_name' => 'Bodega Agaete Artesana SL',         'company_document' => 'B35012345', 'first_name' => null,      'last_name' => null,         'email' => 'compras@bodegaagaete.com',    'phone' => '+34 928 901 001', 'payment_method' => 'transfer', 'default_discount' => 5.00,  'has_cae' => true,  'cae_number' => 'CAE-GC-0421', 'active' => true,  'balance' => 0.00],
-            ['client_type' => 'company',    'company_name' => 'Cooperativa Vitivinícola del Norte', 'company_document' => 'F35098765', 'first_name' => null,      'last_name' => null,         'email' => 'gestion@coopvitivinicola.es', 'phone' => '+34 928 902 002', 'payment_method' => 'transfer', 'default_discount' => 3.00,  'has_cae' => true,  'cae_number' => 'CAE-GC-0118', 'active' => true,  'balance' => 0.00],
-            ['client_type' => 'company',    'company_name' => 'Distribuciones Canarias Vino SL',   'company_document' => 'B35054321', 'first_name' => null,      'last_name' => null,         'email' => 'pedidos@dcvino.es',           'phone' => '+34 928 903 003', 'payment_method' => 'transfer', 'default_discount' => 2.00,  'has_cae' => false, 'cae_number' => null,           'active' => true,  'balance' => 0.00],
-            ['client_type' => 'company',    'company_name' => 'Restaurante El Faro de Agaete',     'company_document' => 'B35077890', 'first_name' => null,      'last_name' => null,         'email' => 'info@elfarodagaete.com',      'phone' => '+34 928 904 004', 'payment_method' => 'cash',     'default_discount' => 0.00,  'has_cae' => false, 'cae_number' => null,           'active' => true,  'balance' => 0.00],
-            ['client_type' => 'individual', 'company_name' => null,                                'company_document' => null,        'first_name' => 'Ramón',   'last_name' => 'Morales Díaz',  'email' => 'ramon.morales@gmail.com',  'phone' => '+34 629 905 005', 'payment_method' => 'cash',     'default_discount' => 0.00,  'has_cae' => false, 'cae_number' => null,           'active' => true,  'balance' => 0.00],
-            ['client_type' => 'individual', 'company_name' => null,                                'company_document' => null,        'first_name' => 'Clara',   'last_name' => 'Santana Vega',  'email' => 'clarita.sv@hotmail.com',   'phone' => '+34 629 906 006', 'payment_method' => 'transfer', 'default_discount' => 0.00,  'has_cae' => false, 'cae_number' => null,           'active' => true,  'balance' => 0.00],
-            ['client_type' => 'individual', 'company_name' => null,                                'company_document' => null,        'first_name' => 'Miguel',  'last_name' => 'Falcón Torres', 'email' => null,                       'phone' => '+34 629 907 007', 'payment_method' => 'cash',     'default_discount' => 0.00,  'has_cae' => false, 'cae_number' => null,           'active' => true,  'balance' => 0.00],
-            ['client_type' => 'individual', 'company_name' => null,                                'company_document' => null,        'first_name' => 'Antonia', 'last_name' => 'Ramos Perdomo', 'email' => 'antonia.rp@outlook.es',    'phone' => '+34 629 908 008', 'payment_method' => 'transfer', 'default_discount' => 2.00,  'has_cae' => false, 'cae_number' => null,           'active' => false, 'balance' => 0.00],
+
+        // ── 250 empresas (10 tipos × 25 variantes) ───────────────────────────
+        $bizTypes = [
+            ['Bodega',            'SL',  'transfer', true,  5.00],
+            ['Cooperativa',       'CAV', 'transfer', true,  3.00],
+            ['Distribuciones',    'SL',  'transfer', false, 2.00],
+            ['Restaurante',       'SL',  'cash',     false, 0.00],
+            ['Hotel',             'SA',  'transfer', false, 0.00],
+            ['Vinoteca',          'SL',  'cash',     false, 0.00],
+            ['Importadora',       'SLU', 'transfer', false, 1.50],
+            ['Tienda Gourmets',   'CB',  'cash',     false, 0.00],
+            ['Hostelería',        'SL',  'transfer', false, 0.00],
+            ['Enoteca',           'SL',  'cash',     false, 0.00],
         ];
-        foreach ($clients as $r) {
-            DB::table('clients')->insert(array_merge($r, ['user_id' => $vitId, 'particular_document' => null, 'account_number' => null, 'avatar' => null, 'notes' => null, 'created_at' => $now, 'updated_at' => $now]));
+        $bizSuffs = [
+            'Canarias', 'Agaete', 'Atlántico', 'Gran Canaria', 'del Norte',
+            'Las Palmas', 'del Sur', 'Noreste', 'Isleña', 'Premium',
+            'Select', 'Gáldar', 'Arucas', 'Agüimes', 'Telde',
+            'La Aldea', 'Mogán', 'Firgas', 'Ingenio', 'Artenara',
+            'de la Cumbre', 'Volcánica', 'Berrazales', 'Lanzarote', 'Fuerteventura',
+        ];
+
+        $companyRows = [];
+        for ($i = 0; $i < 250; $i++) {
+            $typeIdx    = (int)floor($i / 25);
+            $sufIdx     = $i % 25;
+            [$prefix, $form, $payment, $hasCae, $disc] = $bizTypes[$typeIdx];
+            $company    = "{$prefix} {$bizSuffs[$sufIdx]} {$form}";
+            $docNum     = 'B35' . str_pad(100000 + $i, 6, '0', STR_PAD_LEFT);
+            $companyRows[] = [
+                'user_id'            => $vitId,
+                'client_type'        => 'company',
+                'company_name'       => $company,
+                'company_document'   => $docNum,
+                'first_name'         => null,
+                'last_name'          => null,
+                'email'              => 'cliente' . ($i + 1) . '@vitvit.es',
+                'phone'              => '+34 928 ' . str_pad(100000 + $i, 6, '0', STR_PAD_LEFT),
+                'payment_method'     => $payment,
+                'default_discount'   => $disc,
+                'has_cae'            => $hasCae,
+                'cae_number'         => $hasCae ? 'CAE-GC-' . str_pad($i + 1, 4, '0', STR_PAD_LEFT) : null,
+                'active'             => $i % 12 !== 11,
+                'balance'            => 0.00,
+                'particular_document'=> null,
+                'account_number'     => null,
+                'avatar'             => null,
+                'notes'              => null,
+                'created_at'         => $now,
+                'updated_at'         => $now,
+            ];
         }
+
+        // ── 200 particulares (20 nombres × 10 apellidos) ─────────────────────
+        $firstNames = [
+            'Carlos','Ana','Pedro','María','Luis','Carmen','Javier','Isabel',
+            'Antonio','Rosa','Manuel','Elena','Francisco','Laura','Juan',
+            'Sofía','David','Patricia','Alejandro','Beatriz',
+        ];
+        $lastNames = [
+            'González Pérez','Rodríguez Martín','López Sánchez','García Hernández',
+            'Martínez Torres','Fernández Díaz','Suárez Morales','Cabrera Vega',
+            'Falcón Delgado','Navarro Acosta',
+        ];
+
+        $individualRows = [];
+        for ($i = 0; $i < 200; $i++) {
+            $fName = $firstNames[$i % 20];
+            $lName = $lastNames[(int)floor($i / 20)];
+            $individualRows[] = [
+                'user_id'            => $vitId,
+                'client_type'        => 'individual',
+                'company_name'       => null,
+                'company_document'   => null,
+                'first_name'         => $fName,
+                'last_name'          => $lName,
+                'email'              => $i % 4 !== 3
+                    ? strtolower(str_replace(' ', '.', $fName)) . ($i + 1) . '@gmail.com'
+                    : null,
+                'phone'              => '+34 629 ' . str_pad(900000 + $i, 6, '0', STR_PAD_LEFT),
+                'payment_method'     => $i % 3 === 0 ? 'transfer' : 'cash',
+                'default_discount'   => 0.00,
+                'has_cae'            => false,
+                'cae_number'         => null,
+                'active'             => $i % 15 !== 14,
+                'balance'            => 0.00,
+                'particular_document'=> null,
+                'account_number'     => null,
+                'avatar'             => null,
+                'notes'              => null,
+                'created_at'         => $now,
+                'updated_at'         => $now,
+            ];
+        }
+
+        foreach (array_chunk($companyRows, 100) as $chunk) {
+            DB::table('clients')->insert($chunk);
+        }
+        foreach (array_chunk($individualRows, 100) as $chunk) {
+            DB::table('clients')->insert($chunk);
+        }
+
+        $this->command->info('  → Clientes: 250 empresas + 200 particulares = 450 total');
     }
 
     // ─── 16. Subcontrataciones ───────────────────────────────────────────────
@@ -2075,42 +2264,96 @@ class ViticulturistDemoSeeder_test extends Seeder
     private function createSubcontractings(array $plotIds, int $c24, int $c25, int $c26, $now): void
     {
         $vitId = self::VIT_USER_ID;
-        $p = $plotIds;
-        $rows = [
-            // 2024
-            ['campaign_id' => $c24, 'plot_id' => $p[0], 'service_type' => 'harvesting',   'company_name' => 'Cuadrilla Hernández e Hijos',    'service_date' => '2024-08-20', 'service_end_date' => '2024-08-25', 'amount' => 1800.00, 'invoiced' => true,  'invoice_number' => 'F2024-0041', 'description' => 'Vendimia manual Listán Negro lote 1'],
-            ['campaign_id' => $c24, 'plot_id' => $p[1], 'service_type' => 'harvesting',   'company_name' => 'Cuadrilla Hernández e Hijos',    'service_date' => '2024-08-27', 'service_end_date' => '2024-09-01', 'amount' => 2100.00, 'invoiced' => true,  'invoice_number' => 'F2024-0042', 'description' => 'Vendimia manual Listán Blanco lote 2'],
-            ['campaign_id' => $c24, 'plot_id' => $p[2], 'service_type' => 'treatment',    'company_name' => 'AgroService Canarias SL',        'service_date' => '2024-05-10', 'service_end_date' => null,         'amount' =>  620.00, 'invoiced' => true,  'invoice_number' => 'AGS-2024-018', 'description' => 'Tratamiento anti-mildiu preventivo'],
-            ['campaign_id' => $c24, 'plot_id' => $p[3], 'service_type' => 'pruning',      'company_name' => 'Podas Atlánticas SL',            'service_date' => '2024-01-15', 'service_end_date' => '2024-01-20', 'amount' =>  980.00, 'invoiced' => true,  'invoice_number' => 'PA-2024-005',  'description' => 'Poda en vaso parcela norte'],
-            ['campaign_id' => $c24, 'plot_id' => $p[4], 'service_type' => 'fertilization','company_name' => 'Nutrición Vegetal Canarias SL',  'service_date' => '2024-03-05', 'service_end_date' => null,         'amount' =>  450.00, 'invoiced' => true,  'invoice_number' => 'NVC-2024-012', 'description' => 'Aporte orgánico + N-P-K post-poda'],
-            ['campaign_id' => $c24, 'plot_id' => $p[0], 'service_type' => 'transport',    'company_name' => 'Transportes Viñedo GC SL',       'service_date' => '2024-09-02', 'service_end_date' => null,         'amount' =>  280.00, 'invoiced' => true,  'invoice_number' => 'TRV-2024-031', 'description' => 'Transporte uva a bodega Agaete'],
-            ['campaign_id' => $c24, 'plot_id' => $p[1], 'service_type' => 'analysis',     'company_name' => 'Laboratorio Agrícola Canario SA','service_date' => '2024-07-20', 'service_end_date' => null,         'amount' =>  390.00, 'invoiced' => true,  'invoice_number' => 'LAC-2024-042', 'description' => 'Análisis de madurez + residuos'],
-            // 2025
-            ['campaign_id' => $c25, 'plot_id' => $p[0], 'service_type' => 'harvesting',   'company_name' => 'Cuadrilla Hernández e Hijos',    'service_date' => '2025-08-18', 'service_end_date' => '2025-08-22', 'amount' => 1950.00, 'invoiced' => true,  'invoice_number' => 'F2025-0038', 'description' => 'Vendimia manual — lote Listán Negro'],
-            ['campaign_id' => $c25, 'plot_id' => $p[1], 'service_type' => 'harvesting',   'company_name' => 'Cuadrilla Hernández e Hijos',    'service_date' => '2025-08-25', 'service_end_date' => '2025-08-30', 'amount' => 2200.00, 'invoiced' => true,  'invoice_number' => 'F2025-0039', 'description' => 'Vendimia manual — lote Listán Blanco'],
-            ['campaign_id' => $c25, 'plot_id' => $p[2], 'service_type' => 'pruning',      'company_name' => 'Podas Atlánticas SL',            'service_date' => '2025-01-08', 'service_end_date' => '2025-01-13', 'amount' => 1050.00, 'invoiced' => true,  'invoice_number' => 'PA-2025-003',  'description' => 'Poda de formación viñas jóvenes'],
-            ['campaign_id' => $c25, 'plot_id' => $p[3], 'service_type' => 'pruning',      'company_name' => 'Podas Atlánticas SL',            'service_date' => '2025-01-20', 'service_end_date' => '2025-01-24', 'amount' =>  920.00, 'invoiced' => true,  'invoice_number' => 'PA-2025-004',  'description' => 'Poda seca parcelas norte'],
-            ['campaign_id' => $c25, 'plot_id' => $p[4], 'service_type' => 'irrigation',   'company_name' => 'Riegos Canarios SL',             'service_date' => '2025-06-01', 'service_end_date' => null,         'amount' =>  340.00, 'invoiced' => true,  'invoice_number' => 'RC-2025-021',  'description' => 'Reparación y mantenimiento sistema de riego'],
-            ['campaign_id' => $c25, 'plot_id' => $p[0], 'service_type' => 'soil_work',    'company_name' => 'Labores Agrícolas Guía SL',      'service_date' => '2025-02-15', 'service_end_date' => '2025-02-16', 'amount' =>  680.00, 'invoiced' => true,  'invoice_number' => 'LAG-2025-009', 'description' => 'Laboreo entre líneas y subsolado'],
-            ['campaign_id' => $c25, 'plot_id' => $p[1], 'service_type' => 'treatment',    'company_name' => 'AgroService Canarias SL',        'service_date' => '2025-04-22', 'service_end_date' => null,         'amount' =>  580.00, 'invoiced' => true,  'invoice_number' => 'AGS-2025-011', 'description' => 'Tratamiento preventivo mildiu + oídio'],
-            // 2026
-            ['campaign_id' => $c26, 'plot_id' => $p[0], 'service_type' => 'pruning',      'company_name' => 'Podas Atlánticas SL',            'service_date' => '2026-01-10', 'service_end_date' => '2026-01-15', 'amount' => 1100.00, 'invoiced' => false, 'invoice_number' => null,            'description' => 'Poda corta en cordón royat'],
-            ['campaign_id' => $c26, 'plot_id' => $p[1], 'service_type' => 'pruning',      'company_name' => 'Podas Atlánticas SL',            'service_date' => '2026-01-18', 'service_end_date' => '2026-01-22', 'amount' => 1000.00, 'invoiced' => false, 'invoice_number' => null,            'description' => 'Poda seca lote sur'],
-            ['campaign_id' => $c26, 'plot_id' => $p[2], 'service_type' => 'soil_work',    'company_name' => 'Labores Agrícolas Guía SL',      'service_date' => '2026-02-10', 'service_end_date' => '2026-02-11', 'amount' =>  720.00, 'invoiced' => false, 'invoice_number' => null,            'description' => 'Laboreo primavera y aporte compost'],
-            ['campaign_id' => $c26, 'plot_id' => $p[3], 'service_type' => 'fertilization','company_name' => 'Nutrición Vegetal Canarias SL',  'service_date' => '2026-03-12', 'service_end_date' => null,         'amount' =>  510.00, 'invoiced' => false, 'invoice_number' => null,            'description' => 'Fertirrigación brotación'],
-            ['campaign_id' => $c26, 'plot_id' => $p[4], 'service_type' => 'irrigation',   'company_name' => 'Riegos Canarios SL',             'service_date' => '2026-03-20', 'service_end_date' => null,         'amount' =>  290.00, 'invoiced' => false, 'invoice_number' => null,            'description' => 'Instalación goteros nuevos'],
-            ['campaign_id' => $c26, 'plot_id' => $p[0], 'service_type' => 'treatment',    'company_name' => 'AgroService Canarias SL',        'service_date' => '2026-03-28', 'service_end_date' => null,         'amount' =>  640.00, 'invoiced' => false, 'invoice_number' => null,            'description' => 'Tratamiento preventivo brotación 2026'],
+
+        // Distribución por campaña: 2024=100, 2025=150, 2026=200 (énfasis 2026)
+        $campaignPool = array_merge(
+            array_fill(0, 100, $c24),
+            array_fill(0, 150, $c25),
+            array_fill(0, 200, $c26)
+        );
+
+        $serviceTypes = [
+            'harvesting', 'pruning', 'treatment', 'fertilization',
+            'irrigation', 'soil_work', 'transport', 'analysis',
         ];
-        foreach ($rows as $r) {
-            DB::table('subcontractings')->insert(array_merge($r, [
+
+        $companies = [
+            'Cuadrilla Hernández e Hijos',
+            'AgroService Canarias SL',
+            'Podas Atlánticas SL',
+            'Nutrición Vegetal Canarias SL',
+            'Transportes Viñedo GC SL',
+            'Laboratorio Agrícola Canario SA',
+            'Riegos Canarios SL',
+            'Labores Agrícolas Guía SL',
+            'Bureau Veritas Agrícola',
+            'AgroTécnica Norte SL',
+            'Cuadrilla Agaete e Hijos',
+            'Fitosanitarios Canarios CB',
+            'Biofertilizantes Atlántico SL',
+            'Mecanización Viticultora GC SA',
+            'Análisis y Consultoría Agraria SL',
+        ];
+
+        $serviceDescriptions = [
+            'harvesting'    => ['Vendimia manual uva tinta', 'Vendimia manual uva blanca', 'Recogida selectiva racimos', 'Vendimia con microvendimiadora'],
+            'pruning'       => ['Poda en vaso', 'Poda guyot', 'Poda formación', 'Poda seca invernal'],
+            'treatment'     => ['Tratamiento anti-mildiu', 'Tratamiento oídio', 'Aplicación cobre preventivo', 'Tratamiento polilla del racimo'],
+            'fertilization' => ['Aportación orgánica compost', 'Fertirrigación primavera', 'Abonado NPK', 'Aporte vermicompost'],
+            'irrigation'    => ['Mantenimiento goteros', 'Reparación sistema riego', 'Instalación nueva línea', 'Limpieza filtros'],
+            'soil_work'     => ['Laboreo entre líneas', 'Subsolado fondo', 'Fresado cubierta vegetal', 'Aporte de tierra volcánica'],
+            'transport'     => ['Transporte uva a bodega', 'Transporte insumos finca', 'Transporte material poda', 'Transporte maquinaria'],
+            'analysis'      => ['Análisis de madurez', 'Análisis residuos', 'Análisis foliar', 'Análisis agua riego'],
+        ];
+
+        $plotCount = count($plotIds);
+        $rows = [];
+
+        for ($i = 0; $i < 450; $i++) {
+            $cId        = $campaignPool[$i];
+            $year       = ($cId === $c24) ? 2024 : (($cId === $c25) ? 2025 : 2026);
+            $sType      = $serviceTypes[$i % count($serviceTypes)];
+            $company    = $companies[$i % count($companies)];
+            $descs      = $serviceDescriptions[$sType];
+            $desc       = $descs[$i % count($descs)] . ' — lote ' . ($i + 1);
+            $plotId     = $plotIds[$i % min($plotCount, 5)]; // cicla sobre primeras 5 parcelas
+
+            // Fecha de servicio: dentro del año de campaña
+            $dayOfYear  = 15 + ($i % 330);
+            $serviceDate = (new \DateTime("{$year}-01-01"))
+                ->modify("+{$dayOfYear} days")
+                ->format('Y-m-d');
+
+            $isInvoiced = $year < 2026 || $i % 5 !== 0;
+            $amount     = round(200 + ($i % 40) * 50, 2); // 200–2150€
+
+            $rows[] = [
                 'viticulturist_id' => $vitId,
+                'campaign_id'      => $cId,
+                'plot_id'          => $plotId,
+                'service_type'     => $sType,
+                'company_name'     => $company,
+                'service_date'     => $serviceDate,
+                'service_end_date' => ($i % 3 !== 0) ? null : (new \DateTime($serviceDate))->modify('+5 days')->format('Y-m-d'),
+                'amount'           => $amount,
+                'invoiced'         => $isInvoiced,
+                'invoice_number'   => $isInvoiced
+                    ? strtoupper(substr($sType, 0, 3)) . '-' . $year . '-' . str_pad($i + 1, 5, '0', STR_PAD_LEFT)
+                    : null,
+                'description'      => $desc,
                 'contact_person'   => null,
                 'contact_phone'    => null,
                 'notes'            => null,
                 'created_at'       => $now,
                 'updated_at'       => $now,
-            ]));
+            ];
         }
+
+        foreach (array_chunk($rows, 100) as $chunk) {
+            DB::table('subcontractings')->insert($chunk);
+        }
+
+        $this->command->info('  → Subcontrataciones: 450 (100×2024 + 150×2025 + 200×2026)');
     }
 
     // ─── 17. Registros Oficiales ─────────────────────────────────────────────
@@ -2888,6 +3131,61 @@ class ViticulturistDemoSeeder_test extends Seeder
             ]));
         }
 
+        // ── 400 contenedores adicionales (loop) ───────────────────────────────
+        // type_id:     1=Barrica, 2=Depósito, 3=Tanque, 4=Tina/Bin, 5=Ánfora
+        // material_id: 1=Roble Francés, 4=Acero Inox, 5=Hormigón, 7=Fibra Vidrio (solo IDs verificados)
+        $extraContDefs = [
+            // [prefix, type_id, material_id, capacity_range, suffix_start]
+            ['BB',  1, 1, [225, 500],   21],  // Barricas roble francés
+            ['DEP', 2, 4, [1000, 8000], 11],  // Depósitos inox
+            ['TAN', 3, 4, [800, 6000],  11],  // Tanques fermentación
+            ['ANF', 5, 5, [300, 1500],  1],   // Ánforas hormigón
+            ['BIN', 4, 7, [300, 600],   21],  // Bins fibra vidrio
+            ['TRC', 4, 5, [800, 2000],  11],  // Tinas hormigón adicionales
+            ['DEP', 2, 4, [500, 3000],  21],  // Depósitos pequeños inox
+            ['BB',  1, 1, [225, 300],   51],  // Barricas pequeñas roble
+        ];
+
+        $extraConts = [];
+        for ($i = 0; $i < 400; $i++) {
+            $defIdx  = $i % count($extraContDefs);
+            [$pfx, $typeId, $matId, $capRange, $snStart] = $extraContDefs[$defIdx];
+            $seqNum  = $snStart + (int)floor($i / count($extraContDefs));
+            $num     = str_pad($seqNum, 3, '0', STR_PAD_LEFT);
+            $cap     = $capRange[0] + ($i % ($capRange[1] - $capRange[0] + 100));
+            $year    = 2016 + ($i % 10);
+            $hasMain = $typeId !== 4 && $i % 3 !== 2;
+
+            $extraConts[] = [
+                'user_id'              => $vitId,
+                'name'                 => $pfx . '-EXT-' . $num,
+                'description'          => $pfx . ' contenedor adicional Nº ' . ($i + 1),
+                'capacity'             => (float)$cap,
+                'type_id'              => $typeId,
+                'material_id'          => $matId,
+                'serial_number'        => $pfx . '-AGT-EXT-' . str_pad($i + 1, 4, '0', STR_PAD_LEFT),
+                'purchase_date'        => $year . '-' . str_pad(($i % 12) + 1, 2, '0', STR_PAD_LEFT) . '-01',
+                'archived'             => $i % 20 === 19,
+                'supplier_name'        => null,
+                'container_room_id'    => null,
+                'oak_type'             => $typeId === 1 ? ($i % 3 === 0 ? 'nunca' : null) : null,
+                'toast_type'           => null,
+                'x_position'           => null,
+                'y_position'           => null,
+                'photos'               => null,
+                'thumbnail_img'        => null,
+                'next_maintenance_date'=> $hasMain
+                    ? '2026-' . str_pad(($i % 12) + 1, 2, '0', STR_PAD_LEFT) . '-01 00:00:00'
+                    : null,
+                'created_at'           => $now,
+                'updated_at'           => $now,
+            ];
+        }
+
+        foreach (array_chunk($extraConts, 100) as $chunk) {
+            DB::table('containers')->insert($chunk);
+        }
+
         return $ids;
     }
 
@@ -3030,7 +3328,7 @@ class ViticulturistDemoSeeder_test extends Seeder
 
     // ─── 22. Facturas ────────────────────────────────────────────────────────
 
-    private function createInvoices(int $c24, int $c25, $now): void
+    private function createInvoices(int $c24, int $c25, int $c26, $now): void
     {
         $vitId   = self::VIT_USER_ID;
         $winId   = self::WINERY_USER_ID;
@@ -3219,6 +3517,125 @@ class ViticulturistDemoSeeder_test extends Seeder
                 'updated_at'          => $now,
             ]);
         }
+
+        // ── 440 facturas adicionales harvest_sale (220×2025 + 220×2026) ──────
+        $allClients = DB::table('clients')
+            ->where('user_id', $vitId)
+            ->orderBy('id')
+            ->get(['id', 'client_type', 'company_name', 'first_name', 'last_name'])
+            ->values();
+
+        if ($allClients->isEmpty()) {
+            return;
+        }
+
+        $varieties  = ['Listán Negro', 'Listán Blanco', 'Negramoll', 'Moscatel', 'Tintilla', 'Vijariego', 'Baboso Negro', 'Gual'];
+        $pricesKg   = [0.28, 0.26, 0.30, 0.35, 0.32, 0.38, 0.40, 0.33];
+        $kgOptions  = [1200, 1800, 2400, 3000, 4000, 4800, 6000, 7200];
+
+        $bulkInvoices = [];
+        $bulkItems    = [];
+
+        for ($i = 0; $i < 440; $i++) {
+            $is2026    = $i >= 220;
+            $yearIdx   = $is2026 ? ($i - 220) : $i;
+            $year      = $is2026 ? 2026 : 2025;
+            $cId       = $is2026 ? $c26 : $c25;
+
+            // Fecha dentro del año
+            $daysAgo   = $is2026
+                ? (int)round(111 - $yearIdx * 111 / 219)
+                : (int)round(487 - $yearIdx * 375 / 219);
+            $invDate   = now()->subDays($daysAgo)->toDateString();
+
+            $client    = $allClients[$i % $allClients->count()];
+            $clientName = $client->company_name ?? trim("{$client->first_name} {$client->last_name}");
+
+            $variety   = $varieties[$i % count($varieties)];
+            $priceKg   = $pricesKg[$i % count($pricesKg)];
+            $kg        = $kgOptions[$i % count($kgOptions)];
+            $taxRate   = $client->client_type === 'company' ? 10.00 : 0.00;
+            $subtotal  = round($kg * $priceKg, 2);
+            $taxAmount = round($subtotal * $taxRate / 100, 2);
+            $total     = round($subtotal + $taxAmount, 2);
+
+            if ($is2026) {
+                $status    = match ($i % 5) { 0, 1 => 'draft', 2 => 'sent', default => 'paid' };
+            } else {
+                $status    = match ($i % 6) { 0 => 'sent', default => 'paid' };
+            }
+            $payStatus = $status === 'paid' ? 'paid' : 'unpaid';
+
+            $invoiceNum++;
+            $invNumber = 'VIT' . $vitId . '-' . $year . '-' . str_pad($invoiceNum, 4, '0', STR_PAD_LEFT);
+
+            $invoiceId = DB::table('invoices')->insertGetId([
+                'user_id'                    => $vitId,
+                'invoice_type'               => 'harvest_sale',
+                'client_id'                  => $client->id,
+                'viticulturist_id'            => null,
+                'invoice_number'             => $invNumber,
+                'invoice_date'               => $invDate,
+                'payment_date'               => date('Y-m-d', strtotime($invDate . ' +30 days')),
+                'subtotal'                   => $subtotal,
+                'discount_amount'            => 0,
+                'tax_base'                   => $subtotal,
+                'tax_rate'                   => $taxRate,
+                'tax_amount'                 => $taxAmount,
+                'total_amount'               => $total,
+                'status'                     => $status,
+                'payment_status'             => $payStatus,
+                'payment_type'               => $status === 'paid' ? 'transfer' : null,
+                'billing_company_name'       => $clientName,
+                'billing_address'            => 'Gran Canaria, España',
+                'current_invoice_code'       => $invoiceNum,
+                'current_delivery_note_code' => 1,
+                'order_date'                 => $now,
+                'bank_payment_status'        => $status === 'paid',
+                'delivery_status'            => 'delivered',
+                'sif_status'                 => 'pendiente',
+                'is_verified_aet'            => false,
+                'sent'                       => $status !== 'draft',
+                'viewed'                     => $status !== 'draft',
+                'delivery_viewed'            => false,
+                'payment_status_viewed'      => false,
+                'corrective'                 => false,
+                'gift'                       => false,
+                'observations'               => "Venta cosecha {$variety} — Campaña {$year}. Entrega Nº " . ($i + 1) . ".",
+                'observations_invoice'       => null,
+                'created_at'                 => $now,
+                'updated_at'                 => $now,
+            ]);
+
+            DB::table('invoice_items')->insert([
+                'invoice_id'          => $invoiceId,
+                'harvest_id'          => null,
+                'wine_lot_id'         => null,
+                'name'                => "Uva {$variety} — {$kg} kg × " . number_format($priceKg, 2) . '€',
+                'description'         => "{$kg} kg × {$priceKg} €/kg — Vendimia {$year}",
+                'sku'                 => null,
+                'concept_type'        => 'harvest',
+                'quantity'            => $kg,
+                'unit_price'          => $priceKg,
+                'discount_percentage' => 0,
+                'discount_amount'     => 0,
+                'tax_id'              => null,
+                'tax_name'            => $taxRate > 0 ? 'IVA 10%' : 'Exento REAG',
+                'tax_rate'            => $taxRate,
+                'tax_base'            => $subtotal,
+                'tax_amount'          => $taxAmount,
+                'subtotal'            => $subtotal,
+                'total'               => $total,
+                'status'              => 'active',
+                'payment_status'      => $payStatus,
+                'delivery_status'     => 'delivered',
+                'variations'          => null,
+                'created_at'          => $now,
+                'updated_at'          => $now,
+            ]);
+        }
+
+        $this->command->info('  → Facturas: 10 narrativas + 440 adicionales = 450 total (220×2025 + 220×2026)');
     }
 
     // ─── 23. Gestión Territorial ─────────────────────────────────────────────
