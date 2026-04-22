@@ -64,18 +64,28 @@ class WineryViticulturistsSeeder extends Seeder
     {
         $this->cleanup();
 
-        $now          = now();
-        $userRows     = [];
-        $firstNames   = self::FIRST_NAMES;
-        $lastNames    = self::LAST_NAMES;
-        $fnCount      = count($firstNames);
-        $lnCount      = count($lastNames);
+        $now        = now();
+        $firstNames = self::FIRST_NAMES;
+        $lastNames  = self::LAST_NAMES;
+        $fnCount    = count($firstNames);
+        $lnCount    = count($lastNames);
+
+        // Detect optional users columns added by later migrations
+        $hasDni          = Schema::hasColumn('users', 'dni');
+        $hasCanLogin     = Schema::hasColumn('users', 'can_login');
+        $hasActivatedAt  = Schema::hasColumn('users', 'activated_at');
+        $hasInvToken     = Schema::hasColumn('users', 'invitation_token');
+        $hasInvSentAt    = Schema::hasColumn('users', 'invitation_sent_at');
+        $hasInvExpiresAt = Schema::hasColumn('users', 'invitation_expires_at');
+        $hasPwdReset     = Schema::hasColumn('users', 'password_must_reset');
+
+        $userRows = [];
 
         for ($i = 0; $i < 450; $i++) {
-            $firstName  = $firstNames[$i % $fnCount];
-            $lastName   = $lastNames[$i % $lnCount];
-            $name       = $firstName . ' ' . $lastName;
-            $email      = strtolower(
+            $firstName = $firstNames[$i % $fnCount];
+            $lastName  = $lastNames[$i % $lnCount];
+            $name      = $firstName . ' ' . $lastName;
+            $email     = strtolower(
                 preg_replace('/\s+/', '.', iconv('UTF-8', 'ASCII//TRANSLIT', $firstName))
                 . '.' .
                 preg_replace('/\s+/', '.', iconv('UTF-8', 'ASCII//TRANSLIT', explode(' ', $lastName)[0]))
@@ -83,34 +93,54 @@ class WineryViticulturistsSeeder extends Seeder
                 . '@' . self::EMAIL_DOMAIN
             );
 
-            $isActive     = $i < 300;  // first 300 are active
-            $dniNumber    = 10000000 + ($i * 197) % 89999999; // pseudo-random, no collisions across 450 records
-            $dniLetter    = self::DNI_LETTERS[$dniNumber % 23];
-            $dni          = $dniNumber . $dniLetter;
+            $isActive  = $i < 300; // first 300 are active
 
-            $verifiedAt   = $isActive ? $now->copy()->subDays(365 - ($i % 300))->toDateTimeString() : null;
-            $activatedAt  = $isActive ? $now->copy()->subDays(360 - ($i % 300))->toDateTimeString() : null;
-
-            $invToken     = !$isActive ? bin2hex(random_bytes(16)) : null;
-            $invSentAt    = !$isActive ? $now->copy()->subDays(30 - ($i % 25))->toDateTimeString() : null;
-            $invExpiresAt = !$isActive ? $now->copy()->addDays(7)->toDateTimeString() : null;
-
-            $userRows[] = [
-                'name'                  => $name,
-                'dni'                   => $dni,
-                'email'                 => $email,
-                'password'              => self::PASSWORD_HASH,
-                'role'                  => 'viticulturist',
-                'can_login'             => $isActive,
-                'email_verified_at'     => $verifiedAt,
-                'activated_at'          => $activatedAt,
-                'invitation_token'      => $invToken,
-                'invitation_sent_at'    => $invSentAt,
-                'invitation_expires_at' => $invExpiresAt,
-                'password_must_reset'   => false,
-                'created_at'            => $now,
-                'updated_at'            => $now,
+            $row = [
+                'name'              => $name,
+                'email'             => $email,
+                'password'          => self::PASSWORD_HASH,
+                'role'              => 'viticulturist',
+                'email_verified_at' => $isActive ? $now->copy()->subDays(365 - ($i % 300))->toDateTimeString() : null,
+                'created_at'        => $now,
+                'updated_at'        => $now,
             ];
+
+            if ($hasDni) {
+                $dniNumber    = 10000000 + ($i * 197) % 89999999; // pseudo-random, no collisions across 450
+                $row['dni']   = $dniNumber . self::DNI_LETTERS[$dniNumber % 23];
+            }
+
+            if ($hasCanLogin) {
+                $row['can_login'] = $isActive;
+            }
+
+            if ($hasActivatedAt) {
+                $row['activated_at'] = $isActive
+                    ? $now->copy()->subDays(360 - ($i % 300))->toDateTimeString()
+                    : null;
+            }
+
+            if ($hasInvToken) {
+                $row['invitation_token'] = !$isActive ? bin2hex(random_bytes(16)) : null;
+            }
+
+            if ($hasInvSentAt) {
+                $row['invitation_sent_at'] = !$isActive
+                    ? $now->copy()->subDays(30 - ($i % 25))->toDateTimeString()
+                    : null;
+            }
+
+            if ($hasInvExpiresAt) {
+                $row['invitation_expires_at'] = !$isActive
+                    ? $now->copy()->addDays(7)->toDateTimeString()
+                    : null;
+            }
+
+            if ($hasPwdReset) {
+                $row['password_must_reset'] = false;
+            }
+
+            $userRows[] = $row;
         }
 
         // Insert users in chunks and retrieve their IDs
