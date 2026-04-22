@@ -54,8 +54,7 @@ class WineryContainerMaintenancesSeeder extends Seeder
             $daysAgo       = 365 - (int)round($i * 365 / 449);   // de 365 a 0 días atrás
             $scheduledDate = now()->subDays($daysAgo)->format('Y-m-d');
             $isCompleted   = $daysAgo > 3;
-            $isCurrent     = !$isCompleted && $i % 3 === 0;
-            $status        = $isCompleted ? 'completed' : ($isCurrent ? 'in_progress' : 'scheduled');
+            $status        = $isCompleted ? 'completed' : (($i % 4 === 0) ? 'cancelled' : 'scheduled');
 
             $performedDate = $isCompleted ? now()->subDays(max(0, $daysAgo - 1))->format('Y-m-d') : null;
             $nextDate      = $isCompleted ? now()->addDays(180 - ($i % 90))->format('Y-m-d') : null;
