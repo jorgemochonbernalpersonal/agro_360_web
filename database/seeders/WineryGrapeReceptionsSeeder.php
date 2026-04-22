@@ -671,11 +671,18 @@ class WineryGrapeReceptionsSeeder extends Seeder
             ->where('viticulturist_id', self::WINERY_USER_ID)
             ->delete();
 
-        // Remove ALL winery_viticulturist links for this winery (rebuilt fresh below).
-        // This also clears orphaned records from old seeder runs with different email patterns.
-        DB::table('winery_viticulturist')
-            ->where('winery_id', self::WINERY_USER_ID)
-            ->delete();
+        // Remove winery_viticulturist links only for THIS seeder's 6 demo viticulturists.
+        // Do NOT delete all links — WineryViticulturistsSeeder also creates links for winery_id=1.
+        $demoVitIdsForLink = DB::table('users')
+            ->where('email', 'LIKE', '%' . self::DEMO_EMAIL_SUFFIX)
+            ->pluck('id');
+
+        if ($demoVitIdsForLink->isNotEmpty()) {
+            DB::table('winery_viticulturist')
+                ->where('winery_id', self::WINERY_USER_ID)
+                ->whereIn('viticulturist_id', $demoVitIdsForLink)
+                ->delete();
+        }
 
         // Demo viticulturist infrastructure
         $demoUserIds = DB::table('users')
