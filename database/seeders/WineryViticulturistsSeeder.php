@@ -4,30 +4,31 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 /**
- * Crea 450 viticultores demo y los vincula a la bodega (user_id = 1).
+ * Creates 450 demo viticulturists and links them to the winery (user_id = 1).
  *
- *   · 300 activos    (can_login=true, email verificado, activated_at)
- *   · 150 ghost      (can_login=false, invitación pendiente)
+ *   · 300 active  (can_login=true, email verified, activated_at)
+ *   · 150 ghost   (can_login=false, pending invitation)
  *
- *   · ~380 source='own'           (vinculados por la bodega)
- *   · ~ 70 source='viticulturist' (auto-registrados)
+ *   · ~380 source='own'           (linked by the winery)
+ *   · ~ 70 source='viticulturist' (self-registered)
  *
- *   · ~220 con cuaderno_access=true
+ *   · ~200 with notebook access (cuaderno_access=true, only if column exists)
  *
- * Todos usan email *@vit.bodegaagaete.demo para identificarlos en cleanup.
+ * All use email *@vit.bodegaagaete.demo for idempotent cleanup.
  *
- * Debe ejecutarse ANTES de WineryGrapeReceptionsSeeder.
+ * Must run BEFORE WineryGrapeReceptionsSeeder.
  */
 class WineryViticulturistsSeeder extends Seeder
 {
     private const WINERY_USER_ID  = 1;
     private const EMAIL_DOMAIN    = 'vit.bodegaagaete.demo';
-    // Bcrypt hash de "password" — evita 450 llamadas lentas a bcrypt()
+    // Bcrypt hash of "password" — avoids 450 slow bcrypt() calls
     private const PASSWORD_HASH   = '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi';
 
-    // ── Nombres ───────────────────────────────────────────────────────────────
+    // ── Names ────────────────────────────────────────────────────────────────
 
     private const FIRST_NAMES = [
         'Carlos', 'Ana', 'Pedro', 'María', 'José', 'Laura', 'Antonio', 'Isabel',
@@ -56,7 +57,7 @@ class WineryViticulturistsSeeder extends Seeder
         'Leiva Benítez',     'Benítez Espino',
     ];
 
-    // ── DNI letter table ──────────────────────────────────────────────────────
+    // ── DNI check-letter table ────────────────────────────────────────────────
     private const DNI_LETTERS = 'TRWAGMYFPDXBNJZSQVHLCKE';
 
     public function run(): void
@@ -82,8 +83,8 @@ class WineryViticulturistsSeeder extends Seeder
                 . '@' . self::EMAIL_DOMAIN
             );
 
-            $isActive     = $i < 300;  // primeros 300 activos
-            $dniNumber    = 10000000 + ($i * 197) % 89999999; // pseudoaleatorio, sin colisiones en 450
+            $isActive     = $i < 300;  // first 300 are active
+            $dniNumber    = 10000000 + ($i * 197) % 89999999; // pseudo-random, no collisions across 450 records
             $dniLetter    = self::DNI_LETTERS[$dniNumber % 23];
             $dni          = $dniNumber . $dniLetter;
 
@@ -112,13 +113,12 @@ class WineryViticulturistsSeeder extends Seeder
             ];
         }
 
-        // Insertar usuarios en lotes y recoger IDs
-        $insertedIds = [];
+        // Insert users in chunks and retrieve their IDs
         foreach (array_chunk($userRows, 100) as $chunk) {
             DB::table('users')->insert($chunk);
         }
 
-        // Recuperar IDs en orden de inserción (por email domain)
+        // Fetch inserted IDs ordered by insertion sequence (via email domain)
         $insertedIds = DB::table('users')
             ->where('email', 'like', '%@' . self::EMAIL_DOMAIN)
             ->orderBy('id')
@@ -126,66 +126,82 @@ class WineryViticulturistsSeeder extends Seeder
             ->toArray();
 
         if (empty($insertedIds)) {
-            $this->command->error('No se pudieron recuperar los IDs de viticultores creados.');
+            $this->command->error('Could not retrieve IDs for the created viticulturist users.');
             return;
         }
 
         // ── winery_viticulturist pivot ────────────────────────────────────────
-        $pivotRows = [];
+        // Detect optional columns that may not exist on older DB schema versions
+        $hasNotebookAccess = Schema::hasColumn('winery_viticulturist', 'cuaderno_access');
+        $hasNotes          = Schema::hasColumn('winery_viticulturist', 'notes');
 
-        // sources: primeros 380 = 'own', últimos 70 = 'viticulturist'
-        // cuaderno_access: activos con índice par (hasta ~220)
+        $pivotRows     = [];
+        $notebookCount = 0;
+
+        // First 380 linked by winery ('own'), last 70 self-registered ('viticulturist')
         foreach ($insertedIds as $idx => $vitId) {
-            $isActive        = $idx < 300;
-            $source          = $idx < 380 ? 'own' : 'viticulturist';
-            $cuadernoAccess  = $isActive && ($idx % 3 !== 2); // ~200 de los 300 activos
-            $cuadernoGranted = $cuadernoAccess
-                ? now()->subDays(200 - ($idx % 180))->toDateTimeString()
-                : null;
+            $isActive = $idx < 300;
+            $source   = $idx < 380 ? 'own' : 'viticulturist';
 
-            $pivotRows[] = [
-                'winery_id'           => self::WINERY_USER_ID,
-                'viticulturist_id'    => $vitId,
-                'assigned_by'         => self::WINERY_USER_ID,
-                'source'              => $source,
-                'supervisor_id'       => null,
+            $row = [
+                'winery_id'               => self::WINERY_USER_ID,
+                'viticulturist_id'        => $vitId,
+                'assigned_by'             => self::WINERY_USER_ID,
+                'source'                  => $source,
+                'supervisor_id'           => null,
                 'parent_viticulturist_id' => null,
-                'notes'               => null,
-                'cuaderno_access'     => $cuadernoAccess,
-                'cuaderno_granted_at' => $cuadernoGranted,
-                'cuaderno_revoked_at' => null,
-                'created_at'          => $now,
-                'updated_at'          => $now,
+                'created_at'              => $now,
+                'updated_at'              => $now,
             ];
+
+            if ($hasNotes) {
+                $row['notes'] = null;
+            }
+
+            if ($hasNotebookAccess) {
+                $notebookAccess  = $isActive && ($idx % 3 !== 2); // ~200 of 300 active users
+                $notebookGranted = $notebookAccess
+                    ? now()->subDays(200 - ($idx % 180))->toDateTimeString()
+                    : null;
+
+                $row['cuaderno_access']     = $notebookAccess;
+                $row['cuaderno_granted_at'] = $notebookGranted;
+                $row['cuaderno_revoked_at'] = null;
+
+                if ($notebookAccess) {
+                    $notebookCount++;
+                }
+            }
+
+            $pivotRows[] = $row;
         }
 
         foreach (array_chunk($pivotRows, 100) as $chunk) {
             DB::table('winery_viticulturist')->insert($chunk);
         }
 
-        $active    = count(array_filter($pivotRows, fn($r) => $r['cuaderno_access']));
-        $own       = count(array_filter($pivotRows, fn($r) => $r['source'] === 'own'));
+        $own = count(array_filter($pivotRows, fn($r) => $r['source'] === 'own'));
         $this->command->info(
-            '✅ Viticultores vinculados: ' . count($pivotRows) . " registros" .
-            " (300 activos · 150 ghost · {$active} con cuaderno · {$own} own)"
+            '✅ Linked viticulturists: ' . count($pivotRows) . " records" .
+            " (300 active · 150 ghost · {$notebookCount} with notebook · {$own} own)"
         );
     }
 
     private function cleanup(): void
     {
-        // Localizar usuarios demo por dominio de email
+        // Locate demo users by their email domain
         $demoVitIds = DB::table('users')
             ->where('email', 'like', '%@' . self::EMAIL_DOMAIN)
             ->pluck('id');
 
         if ($demoVitIds->isNotEmpty()) {
-            // Pivot primero (FK child)
+            // Delete pivot records first (FK child)
             DB::table('winery_viticulturist')
                 ->where('winery_id', self::WINERY_USER_ID)
                 ->whereIn('viticulturist_id', $demoVitIds)
                 ->delete();
 
-            // Eliminar usuarios demo
+            // Delete demo user accounts
             DB::table('users')->whereIn('id', $demoVitIds)->delete();
         }
     }
