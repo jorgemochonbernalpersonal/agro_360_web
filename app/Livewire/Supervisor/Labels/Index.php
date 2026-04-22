@@ -6,6 +6,8 @@ use App\Models\DoLabel;
 use App\Models\SupervisorWinery;
 use App\Livewire\Concerns\WithToastNotifications;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -58,6 +60,13 @@ class Index extends Component
 
     public function saveLabel(): void
     {
+        Gate::authorize('create', DoLabel::class);
+
+        if (!RateLimiter::attempt('label-save:' . Auth::id(), 20, fn() => null, 60)) {
+            $this->toastError('Demasiadas solicitudes. Espera un minuto antes de continuar.');
+            return;
+        }
+
         $this->validate([
             'winery_id'          => 'required|integer|exists:users,id',
             'vintage'            => 'required|integer|min:1990|max:2100',
@@ -96,6 +105,7 @@ class Index extends Component
     public function issue(int $labelId): void
     {
         $label = DoLabel::forSupervisor(Auth::id())->findOrFail($labelId);
+        Gate::authorize('update', $label);
 
         if (!in_array($label->status, [DoLabel::STATUS_PENDING, DoLabel::STATUS_APPROVED])) {
             $this->toastError('Solo se pueden emitir solicitudes pendientes o aprobadas.');
@@ -116,6 +126,7 @@ class Index extends Component
     public function approve(int $labelId): void
     {
         $label = DoLabel::forSupervisor(Auth::id())->findOrFail($labelId);
+        Gate::authorize('update', $label);
         $label->update(['status' => DoLabel::STATUS_APPROVED]);
         $this->toastSuccess('Solicitud aprobada.');
     }
@@ -123,6 +134,7 @@ class Index extends Component
     public function cancel(int $labelId): void
     {
         $label = DoLabel::forSupervisor(Auth::id())->findOrFail($labelId);
+        Gate::authorize('update', $label);
         $label->update(['status' => DoLabel::STATUS_CANCELLED]);
         $this->toastSuccess('Solicitud cancelada.');
     }
@@ -144,11 +156,16 @@ class Index extends Component
 
         $labels = $query->orderByDesc('created_at')->paginate(15);
 
+        $statusCounts = DoLabel::forSupervisor($doId)
+            ->selectRaw('status, count(*) as total')
+            ->groupBy('status')
+            ->pluck('total', 'status');
+
         $counts = [
-            'all'       => DoLabel::forSupervisor($doId)->count(),
-            'pending'   => DoLabel::forSupervisor($doId)->where('status', 'pending')->count(),
-            'approved'  => DoLabel::forSupervisor($doId)->where('status', 'approved')->count(),
-            'issued'    => DoLabel::forSupervisor($doId)->where('status', 'issued')->count(),
+            'all'      => $statusCounts->sum(),
+            'pending'  => $statusCounts->get('pending', 0),
+            'approved' => $statusCounts->get('approved', 0),
+            'issued'   => $statusCounts->get('issued', 0),
         ];
 
         $availableVintages = DoLabel::forSupervisor($doId)

@@ -32,9 +32,15 @@ use App\Observers\PhytosanitaryTreatmentObserver;
 use App\Observers\PlotObserver;
 use App\Observers\PlotPlantingObserver;
 use App\Observers\WineLossObserver;
+use App\Models\DoInspection;
+use App\Models\DoLabel;
+use App\Models\DoQualification;
 use App\Policies\AgriculturalActivityPolicy;
 use App\Policies\CampaignPolicy;
 use App\Policies\CrewPolicy;
+use App\Policies\DoInspectionPolicy;
+use App\Policies\DoLabelPolicy;
+use App\Policies\DoQualificationPolicy;
 use App\Policies\MachineryPolicy;
 use App\Policies\PlotPlantingPolicy;
 use App\Policies\PlotPolicy;
@@ -62,6 +68,9 @@ class AppServiceProvider extends ServiceProvider
         AgriculturalActivity::class => AgriculturalActivityPolicy::class,
         Crew::class               => CrewPolicy::class,
         Machinery::class          => MachineryPolicy::class,
+        DoLabel::class            => DoLabelPolicy::class,
+        DoInspection::class       => DoInspectionPolicy::class,
+        DoQualification::class    => DoQualificationPolicy::class,
     ];
 
     public function register(): void

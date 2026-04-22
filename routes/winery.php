@@ -16,6 +16,9 @@ Route::middleware(['role:winery,producer'])
         // ── Denominación de Origen ───────────────────────────────────
         Route::get('/denomination', \App\Livewire\Winery\Denomination\Index::class)->name('denomination.index');
         Route::get('/denomination/requests', \App\Livewire\Winery\Denomination\Requests\Index::class)->name('denomination.requests.index');
+        Route::get('/denomination/labels', \App\Livewire\Winery\Denomination\Labels\Index::class)->name('denomination.labels.index');
+        Route::get('/denomination/inspections', \App\Livewire\Winery\Denomination\Inspections\Index::class)->name('denomination.inspections.index');
+        Route::get('/denomination/qualifications', \App\Livewire\Winery\Denomination\Qualifications\Index::class)->name('denomination.qualifications.index');
 
         // ── Viticultores ─────────────────────────────────────────────
         Route::get('/viticulturists', \App\Livewire\Winery\Viticulturists\Index::class)->name('viticulturists.index');

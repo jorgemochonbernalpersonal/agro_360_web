@@ -3,17 +3,7 @@
     <x-agro.page-header
         title="Normativa DO"
         description="Autorizaciones de plantación, certificaciones ecológicas y documentos regulatorios."
-    >
-        @if(in_array($currentTab, ['pliego', 'reglamento']))
-        <x-slot name="actions">
-            <button wire:click="openDocForm('{{ $currentTab }}')"
-                class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
-                <flux:icon icon="plus" class="w-4 h-4" />
-                Nuevo documento
-            </button>
-        </x-slot>
-        @endif
-    </x-agro.page-header>
+    />
 
     {{-- Tabs --}}
     <div class="border-b border-zinc-200">
@@ -252,15 +242,22 @@
     @elseif(in_array($currentTab, ['pliego', 'reglamento']))
 
         @php
-            $typeLabel  = $currentTab === 'pliego' ? 'pliego de condiciones' : 'reglamento interno';
-            $typeIcon   = $currentTab === 'pliego' ? 'document-text' : 'clipboard-document-list';
+            $typeLabel = $currentTab === 'pliego' ? 'pliego de condiciones' : 'reglamento interno';
+            $typeIcon  = $currentTab === 'pliego' ? 'document-text' : 'clipboard-document-list';
         @endphp
 
-        {{-- Stats --}}
-        <div class="grid grid-cols-3 gap-3">
-            <x-agro.stat-card label="Borradores" :value="$stats['draft']"    icon="pencil"       color="zinc" />
-            <x-agro.stat-card label="Vigentes"   :value="$stats['active']"   icon="check-circle" color="emerald" />
-            <x-agro.stat-card label="Archivados" :value="$stats['archived']" icon="archive-box"  color="amber" />
+        {{-- Stats + link to management --}}
+        <div class="flex flex-wrap items-center justify-between gap-4">
+            <div class="grid grid-cols-3 gap-3 flex-1">
+                <x-agro.stat-card label="Borradores" :value="$stats['draft']"    icon="pencil"       color="zinc" />
+                <x-agro.stat-card label="Vigentes"   :value="$stats['active']"   icon="check-circle" color="emerald" />
+                <x-agro.stat-card label="Archivados" :value="$stats['archived']" icon="archive-box"  color="amber" />
+            </div>
+            <a href="{{ route('supervisor.documents.index') }}"
+                class="inline-flex items-center gap-1.5 text-sm font-medium text-indigo-600 hover:text-indigo-800 transition shrink-0">
+                Gestionar documentos
+                <flux:icon icon="arrow-top-right-on-square" class="w-4 h-4" />
+            </a>
         </div>
 
         {{-- Filter --}}
@@ -274,12 +271,12 @@
             </select>
         </div>
 
-        {{-- Document list --}}
+        {{-- Document list (read-only) --}}
         @if($items->isEmpty())
             <x-agro.empty-state
                 :icon="$typeIcon"
                 :title="'Sin documentos de ' . $typeLabel"
-                :description="'Crea el primer documento de ' . $typeLabel . ' para esta denominación.'"
+                :description="'Accede a Gestionar documentos para crear el primero.'"
             />
         @else
             <div class="space-y-3">
@@ -289,43 +286,26 @@
                         $sc = $statusColors[$doc->status] ?? 'zinc';
                     @endphp
                     <x-agro.card class="hover:shadow-sm transition">
-                        <div class="flex items-start justify-between gap-4">
-                            <div class="flex items-start gap-3 min-w-0">
-                                <div class="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                    <flux:icon icon="{{ $typeIcon }}" class="w-4 h-4 text-indigo-500" />
-                                </div>
-                                <div class="min-w-0">
-                                    <p class="text-sm font-semibold text-zinc-800">{{ $doc->title }}</p>
-                                    <div class="flex flex-wrap items-center gap-3 mt-1">
-                                        @if($doc->version)
-                                            <span class="text-xs text-zinc-400">v{{ $doc->version }}</span>
-                                        @endif
-                                        @if($doc->effective_date)
-                                            <span class="text-xs text-zinc-400">Vigente desde {{ $doc->effective_date->format('d/m/Y') }}</span>
-                                        @endif
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-{{ $sc }}-100 text-{{ $sc }}-700">
-                                            {{ \App\Models\DoDocument::STATUS_LABELS[$doc->status] }}
-                                        </span>
-                                    </div>
-                                    @if($doc->content)
-                                        <p class="text-xs text-zinc-500 mt-2 line-clamp-2">{{ $doc->content }}</p>
-                                    @endif
-                                </div>
+                        <div class="flex items-start gap-3 min-w-0">
+                            <div class="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <flux:icon icon="{{ $typeIcon }}" class="w-4 h-4 text-indigo-500" />
                             </div>
-                            <div class="flex items-center gap-2 flex-shrink-0">
-                                @if($doc->status === 'draft')
-                                    <button wire:click="activateDocument({{ $doc->id }})"
-                                        class="text-xs text-emerald-600 hover:underline">Activar</button>
+                            <div class="min-w-0">
+                                <p class="text-sm font-semibold text-zinc-800">{{ $doc->title }}</p>
+                                <div class="flex flex-wrap items-center gap-3 mt-1">
+                                    @if($doc->version)
+                                        <span class="text-xs text-zinc-400">v{{ $doc->version }}</span>
+                                    @endif
+                                    @if($doc->effective_date)
+                                        <span class="text-xs text-zinc-400">Vigente desde {{ $doc->effective_date->format('d/m/Y') }}</span>
+                                    @endif
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-{{ $sc }}-100 text-{{ $sc }}-700">
+                                        {{ \App\Models\DoDocument::STATUS_LABELS[$doc->status] }}
+                                    </span>
+                                </div>
+                                @if($doc->content)
+                                    <p class="text-xs text-zinc-500 mt-2 line-clamp-2">{{ $doc->content }}</p>
                                 @endif
-                                @if($doc->status === 'active')
-                                    <button wire:click="archiveDocument({{ $doc->id }})"
-                                        class="text-xs text-amber-600 hover:underline">Archivar</button>
-                                @endif
-                                <button wire:click="openDocForm('{{ $currentTab }}', {{ $doc->id }})"
-                                    class="text-xs text-zinc-500 hover:text-zinc-700 hover:underline">Editar</button>
-                                <button wire:click="deleteDocument({{ $doc->id }})"
-                                    wire:confirm="¿Eliminar este documento?"
-                                    class="text-xs text-red-400 hover:text-red-600 hover:underline">Eliminar</button>
                             </div>
                         </div>
                     </x-agro.card>
@@ -334,69 +314,6 @@
             <div class="mt-4">{{ $items->links() }}</div>
         @endif
 
-    @endif
-
-    {{-- ── Document form modal ─────────────────────────────────────────────── --}}
-    @if($showDocForm)
-        @php
-            $modalTitle = ($editDocId ? 'Editar' : 'Nuevo') . ' documento — ' . ($docFormType === 'pliego' ? 'Pliego de condiciones' : 'Reglamento interno');
-        @endphp
-        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40" wire:key="doc-form-{{ $editDocId ?? 'new' }}">
-            <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
-                <div class="flex items-center justify-between px-6 py-4 border-b border-zinc-100">
-                    <h3 class="text-base font-semibold text-zinc-800">{{ $modalTitle }}</h3>
-                    <button wire:click="closeDocForm" class="text-zinc-400 hover:text-zinc-600">
-                        <flux:icon icon="x-mark" class="w-5 h-5" />
-                    </button>
-                </div>
-                <div class="p-6 space-y-4">
-                    <div>
-                        <label class="block text-xs font-medium text-zinc-600 mb-1">Título <span class="text-red-500">*</span></label>
-                        <input type="text" wire:model="docTitle"
-                            placeholder="Ej: Pliego de condiciones DO Rioja 2026"
-                            class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" />
-                        @error('docTitle') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-medium text-zinc-600 mb-1">Versión</label>
-                            <input type="text" wire:model="docVersion" placeholder="Ej: 2.1"
-                                class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" />
-                        </div>
-                        <div>
-                            <label class="block text-xs font-medium text-zinc-600 mb-1">Fecha de vigencia</label>
-                            <input type="date" wire:model="docEffectiveDate"
-                                class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" />
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-zinc-600 mb-1">Estado</label>
-                        <select wire:model="docStatus"
-                            class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300">
-                            <option value="draft">Borrador</option>
-                            <option value="active">Vigente</option>
-                            <option value="archived">Archivado</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-zinc-600 mb-1">Contenido / resumen</label>
-                        <textarea wire:model="docContent" rows="5"
-                            placeholder="Descripción, puntos clave o texto completo del documento..."
-                            class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300"></textarea>
-                    </div>
-                </div>
-                <div class="flex justify-end gap-3 px-6 py-4 border-t border-zinc-100">
-                    <button wire:click="closeDocForm"
-                        class="px-4 py-2 text-sm font-medium text-zinc-600 border border-zinc-200 rounded-lg hover:bg-zinc-50 transition">
-                        Cancelar
-                    </button>
-                    <button wire:click="saveDocument"
-                        class="px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
-                        {{ $editDocId ? 'Guardar cambios' : 'Crear documento' }}
-                    </button>
-                </div>
-            </div>
-        </div>
     @endif
 
 </div>

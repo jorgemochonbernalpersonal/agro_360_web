@@ -19,7 +19,7 @@
                 <flux:heading size="lg">Enlace no válido</flux:heading>
                 <flux:subheading>
                     Este enlace de activación ha expirado, ya fue usado, o no es correcto.
-                    Contacta con tu bodega para solicitar una nueva invitación.
+                    Contacta con quien te envió la invitación para solicitar una nueva.
                 </flux:subheading>
                 <flux:button href="{{ route('login') }}" variant="ghost" wire:navigate>
                     Ir al inicio de sesión
@@ -37,7 +37,11 @@
                 </div>
                 <flux:heading size="xl">Activa tu cuenta</flux:heading>
                 <flux:subheading>
-                    Tu bodega ya ha configurado tus parcelas y plantaciones.<br>
+                    @if($invitorType === 'supervisor')
+                        La denominación de origen ya ha configurado tus parcelas y plantaciones.<br>
+                    @else
+                        Tu bodega ya ha configurado tus parcelas y plantaciones.<br>
+                    @endif
                     Elige una contraseña para acceder a tu cuaderno de campo.
                 </flux:subheading>
             </div>
@@ -73,9 +77,15 @@
                             <input type="checkbox" wire:model="shareCuaderno"
                                 class="mt-0.5 rounded border-zinc-300 text-agro-600 focus:ring-agro-500" />
                             <div>
-                                <p class="text-sm font-medium text-agro-900">Compartir mi cuaderno de campo con {{ $wineryName }}</p>
+                                <p class="text-sm font-medium text-agro-900">
+                                    Compartir mi cuaderno de campo con {{ $wineryName }}
+                                </p>
                                 <p class="text-xs text-agro-700 mt-0.5">
-                                    La bodega podrá ver tus tratamientos, riegos y labores culturales.
+                                    @if($invitorType === 'supervisor')
+                                        La denominación de origen podrá ver tus tratamientos, riegos y labores culturales.
+                                    @else
+                                        La bodega podrá ver tus tratamientos, riegos y labores culturales.
+                                    @endif
                                     Puedes revocar este acceso en cualquier momento desde Configuración.
                                 </p>
                             </div>

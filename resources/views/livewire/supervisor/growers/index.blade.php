@@ -5,6 +5,9 @@
         description="Viticultores gestionados directamente por la denominación de origen."
     >
         <x-slot:actions>
+            <flux:button wire:click="openLinkModal" variant="ghost" icon="link">
+                Vincular existente
+            </flux:button>
             <flux:button wire:click="openCreateModal" variant="primary" icon="plus">
                 Nuevo viticultor
             </flux:button>
@@ -18,6 +21,32 @@
         <x-agro.stat-card label="Superficie total (ha)" :value="number_format($plotStatsByVit->sum('total_area'), 2)" icon="square-3-stack-3d" color="yellow" />
     </x-agro.stats-section>
 
+    {{-- Status filter tabs --}}
+    <div class="flex items-center gap-1 bg-zinc-100 rounded-xl p-1 w-fit">
+        @foreach ([
+            ''        => ['label' => 'Todos',     'count' => $countsByStatus['all']],
+            'active'  => ['label' => 'Activos',   'count' => $countsByStatus['active']],
+            'invited' => ['label' => 'Invitados', 'count' => $countsByStatus['invited']],
+            'ghost'   => ['label' => 'Ghost',     'count' => $countsByStatus['ghost']],
+        ] as $value => $tab)
+            <button
+                wire:click="setStatusFilter('{{ $value }}')"
+                @class([
+                    'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all',
+                    'bg-white shadow text-zinc-900' => $statusFilter === $value,
+                    'text-zinc-500 hover:text-zinc-700' => $statusFilter !== $value,
+                ])
+            >
+                {{ $tab['label'] }}
+                <span @class([
+                    'inline-flex items-center justify-center min-w-[1.25rem] h-5 rounded-full text-[10px] font-bold px-1',
+                    'bg-agro-100 text-agro-700' => $statusFilter === $value,
+                    'bg-zinc-200 text-zinc-500' => $statusFilter !== $value,
+                ])>{{ $tab['count'] }}</span>
+            </button>
+        @endforeach
+    </div>
+
     {{-- Search --}}
     <div class="flex items-center gap-2">
         <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar viticultor..." />
@@ -27,10 +56,10 @@
     </div>
 
     {{-- Loading skeleton --}}
-    <x-agro.loading-grid target="search, nextPage, previousPage" />
+    <x-agro.loading-grid target="search, nextPage, previousPage, setStatusFilter" />
 
     {{-- Card grid --}}
-    <div wire:loading.remove wire:target="search, nextPage, previousPage">
+    <div wire:loading.remove wire:target="search, nextPage, previousPage, setStatusFilter">
         @if($growers->count() > 0)
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 @foreach($growers as $grower)
@@ -94,27 +123,39 @@
                                 $btnBase = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
                                 $btnDanger = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors';
                             @endphp
-                            <div class="flex items-center justify-end gap-0.5">
-                                @if($isGhost)
-                                    @if($hasPendingInvite)
-                                        <button
-                                            wire:click="revokeInvitation({{ $grower->id }})"
-                                            wire:confirm="¿Revocar la invitación de {{ $grower->name }}?"
-                                            class="{{ $btnDanger }}"
-                                            title="Revocar invitación"
-                                        >
-                                            <flux:icon icon="x-mark" class="size-4" />
-                                        </button>
-                                    @else
-                                        <button
-                                            wire:click="openInviteModal({{ $grower->id }})"
-                                            class="{{ $btnBase }}"
-                                            title="Invitar"
-                                        >
-                                            <flux:icon icon="envelope" class="size-4" />
-                                        </button>
+                            <div class="flex items-center justify-between gap-0.5">
+                                {{-- Remove from pool --}}
+                                <button
+                                    wire:click="removeGrower({{ $grower->id }})"
+                                    wire:confirm="¿Eliminar a {{ $grower->name }} del pool de la DO? Se retirarán también sus asignaciones a bodegas."
+                                    class="{{ $btnDanger }}"
+                                    title="Eliminar del pool"
+                                >
+                                    <flux:icon icon="trash" class="size-4" />
+                                </button>
+
+                                <div class="flex items-center gap-0.5">
+                                    @if($isGhost)
+                                        @if($hasPendingInvite)
+                                            <button
+                                                wire:click="revokeInvitation({{ $grower->id }})"
+                                                wire:confirm="¿Revocar la invitación de {{ $grower->name }}?"
+                                                class="{{ $btnDanger }}"
+                                                title="Revocar invitación"
+                                            >
+                                                <flux:icon icon="x-mark" class="size-4" />
+                                            </button>
+                                        @else
+                                            <button
+                                                wire:click="openInviteModal({{ $grower->id }})"
+                                                class="{{ $btnBase }}"
+                                                title="Invitar"
+                                            >
+                                                <flux:icon icon="envelope" class="size-4" />
+                                            </button>
+                                        @endif
                                     @endif
-                                @endif
+                                </div>
                             </div>
                         </x-slot:footer>
                     </x-agro.card>
@@ -126,6 +167,82 @@
             <x-agro.empty-state icon="users" title="No hay viticultores" description="No hay viticultores adscritos a esta denominación." />
         @endif
     </div>
+
+    {{-- Modal: Vincular viticultor existente --}}
+    <flux:modal wire:model="showLinkModal" class="w-full max-w-lg">
+        <div class="p-6">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="p-2 rounded-lg bg-blue-50">
+                    <flux:icon icon="link" class="size-5 text-blue-600" />
+                </div>
+                <div>
+                    <h3 class="text-base font-semibold text-zinc-900">Vincular viticultor existente</h3>
+                    <p class="text-xs text-zinc-500">Añade al pool un viticultor que ya tiene cuenta activa</p>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <flux:field>
+                    <flux:label>Buscar por nombre, email o DNI</flux:label>
+                    <flux:input
+                        wire:model.live.debounce.300ms="linkQuery"
+                        placeholder="Juan García..."
+                        autofocus
+                    />
+                </flux:field>
+
+                @if(strlen(trim($linkQuery)) >= 2)
+                    @if(count($linkCandidates) > 0)
+                        <div class="border border-zinc-200 rounded-xl overflow-hidden divide-y divide-zinc-100">
+                            @foreach($linkCandidates as $candidate)
+                                <button
+                                    wire:click="selectLinkCandidate({{ $candidate['id'] }})"
+                                    @class([
+                                        'w-full flex items-center gap-3 px-4 py-3 text-left transition-colors',
+                                        'bg-agro-50 ring-1 ring-inset ring-agro-300' => $linkSelectedId === $candidate['id'],
+                                        'hover:bg-zinc-50' => $linkSelectedId !== $candidate['id'],
+                                    ])
+                                >
+                                    <div class="w-8 h-8 rounded-full bg-agro-100 flex items-center justify-center shrink-0">
+                                        <flux:icon icon="user" class="size-4 text-agro-600" />
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-medium text-zinc-900 truncate">{{ $candidate['name'] }}</p>
+                                        <p class="text-xs text-zinc-500 truncate">{{ $candidate['email'] }}</p>
+                                    </div>
+                                    @if($candidate['dni'])
+                                        <span class="text-xs text-zinc-400 shrink-0">{{ $candidate['dni'] }}</span>
+                                    @endif
+                                    @if($linkSelectedId === $candidate['id'])
+                                        <flux:icon icon="check-circle" class="size-4 text-agro-600 shrink-0" />
+                                    @endif
+                                </button>
+                            @endforeach
+                        </div>
+                    @else
+                        <p class="text-sm text-zinc-400 text-center py-4">Sin resultados. Solo se muestran viticultores con cuenta activa que aún no pertenecen a este pool.</p>
+                    @endif
+                @elseif(strlen(trim($linkQuery)) > 0)
+                    <p class="text-xs text-zinc-400">Escribe al menos 2 caracteres para buscar.</p>
+                @endif
+
+                <flux:error name="linkSelectedId" />
+            </div>
+
+            <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-zinc-100">
+                <flux:button variant="ghost" wire:click="closeLinkModal">Cancelar</flux:button>
+                <flux:button
+                    variant="primary"
+                    wire:click="linkExistingGrower"
+                    wire:loading.attr="disabled"
+                    :disabled="!$linkSelectedId"
+                >
+                    <span wire:loading.remove wire:target="linkExistingGrower">Vincular al pool</span>
+                    <span wire:loading wire:target="linkExistingGrower">Vinculando...</span>
+                </flux:button>
+            </div>
+        </div>
+    </flux:modal>
 
     {{-- Modal: Crear viticultor ghost --}}
     <flux:modal wire:model="showCreateModal" class="w-full max-w-lg">

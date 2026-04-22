@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Supervisor\Statistics;
 
+use App\Models\SupervisorViticulturist;
 use App\Models\SupervisorWinery;
 use App\Models\WineryViticulturist;
 use Illuminate\Support\Facades\Auth;
@@ -20,16 +21,17 @@ class Index extends Component
         $wineryIds = SupervisorWinery::where('supervisor_id', $doId)
             ->pluck('winery_id');
 
-        $viticulturistIds = WineryViticulturist::where('supervisor_id', $doId)
-            ->where('source', WineryViticulturist::SOURCE_SUPERVISOR)
-            ->pluck('viticulturist_id')
-            ->unique();
+        // Full viticulturist pool (all DO-managed viticultors, not just winery-assigned)
+        $poolIds = SupervisorViticulturist::where('supervisor_id', $doId)
+            ->pluck('viticulturist_id');
+
+        // ── Top-level stats ───────────────────────────────────────────────────
 
         $totalWineries       = $wineryIds->count();
-        $totalViticulturists = $viticulturistIds->count();
+        $totalViticulturists = $poolIds->count();
 
         $totalPlotAreaHa = (float) DB::table('plots')
-            ->whereIn('viticulturist_id', $viticulturistIds)
+            ->whereIn('viticulturist_id', $poolIds)
             ->where('active', true)
             ->sum('area');
 
@@ -38,6 +40,75 @@ class Index extends Component
             ->where('vintage', $currentYear)
             ->where('status', 'active')
             ->sum('total_weight');
+
+        // ── Pool composition ──────────────────────────────────────────────────
+
+        $poolUsers = DB::table('users')
+            ->whereIn('id', $poolIds)
+            ->select('id', 'can_login', 'invitation_token', 'invitation_expires_at')
+            ->get();
+
+        $poolComposition = [
+            'active'  => $poolUsers->filter(fn ($u) => $u->can_login)->count(),
+            'invited' => $poolUsers->filter(fn ($u) => !$u->can_login && $u->invitation_token && $u->invitation_expires_at && now()->lt($u->invitation_expires_at))->count(),
+            'ghost'   => $poolUsers->filter(fn ($u) => !$u->can_login && (!$u->invitation_token || (bool)($u->invitation_expires_at && now()->gt($u->invitation_expires_at))))->count(),
+        ];
+
+        $notebookAccessCount = SupervisorViticulturist::where('supervisor_id', $doId)
+            ->where('notebook_access', true)
+            ->count();
+
+        // ── Organic plots ─────────────────────────────────────────────────────
+
+        $plotStats = DB::table('plots')
+            ->whereIn('viticulturist_id', $poolIds)
+            ->where('active', true)
+            ->select(
+                DB::raw('COUNT(*) as total_plots'),
+                DB::raw('SUM(CASE WHEN is_organic = 1 THEN 1 ELSE 0 END) as organic_plots'),
+                DB::raw('COALESCE(SUM(area), 0) as total_area'),
+                DB::raw('COALESCE(SUM(CASE WHEN is_organic = 1 THEN area ELSE 0 END), 0) as organic_area'),
+            )
+            ->first();
+
+        $organicPct = $plotStats->total_plots > 0
+            ? round(($plotStats->organic_plots / $plotStats->total_plots) * 100, 1)
+            : 0;
+
+        // ── Top grape varieties ───────────────────────────────────────────────
+
+        $topVarieties = DB::table('plot_plantings')
+            ->join('plots', 'plots.id', '=', 'plot_plantings.plot_id')
+            ->join('grape_varieties', 'grape_varieties.id', '=', 'plot_plantings.grape_variety_id')
+            ->whereIn('plots.viticulturist_id', $poolIds)
+            ->where('plots.active', true)
+            ->where('plot_plantings.status', 'active')
+            ->select(
+                'grape_varieties.name as variety_name',
+                'grape_varieties.color as variety_color',
+                DB::raw('COUNT(DISTINCT plot_plantings.id) as planting_count'),
+                DB::raw('COALESCE(SUM(plot_plantings.area_planted), 0) as total_area'),
+            )
+            ->groupBy('grape_varieties.id', 'grape_varieties.name', 'grape_varieties.color')
+            ->orderByDesc('total_area')
+            ->limit(8)
+            ->get();
+
+        // ── Activity breakdown (current year) ─────────────────────────────────
+
+        $activityBreakdown = DB::table('agricultural_activities')
+            ->join('plots', 'plots.id', '=', 'agricultural_activities.plot_id')
+            ->whereIn('plots.viticulturist_id', $poolIds)
+            ->whereYear('agricultural_activities.activity_date', $currentYear)
+            ->select(
+                'agricultural_activities.activity_type',
+                DB::raw('COUNT(*) as total'),
+            )
+            ->groupBy('agricultural_activities.activity_type')
+            ->orderByDesc('total')
+            ->get();
+
+        // ── Harvest by vintage ────────────────────────────────────────────────
 
         $harvestByVintage = DB::table('harvests')
             ->whereIn('winery_id', $wineryIds)
@@ -57,8 +128,14 @@ class Index extends Component
             'totalViticulturists'   => $totalViticulturists,
             'totalPlotAreaHa'       => $totalPlotAreaHa,
             'totalKgCurrentVintage' => $totalKgCurrentVintage,
-            'harvestByVintage'      => $harvestByVintage,
             'currentYear'           => $currentYear,
+            'poolComposition'       => $poolComposition,
+            'notebookAccessCount'   => $notebookAccessCount,
+            'plotStats'             => $plotStats,
+            'organicPct'            => $organicPct,
+            'topVarieties'          => $topVarieties,
+            'activityBreakdown'     => $activityBreakdown,
+            'harvestByVintage'      => $harvestByVintage,
         ]);
     }
 }

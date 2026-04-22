@@ -2,12 +2,12 @@
 
 namespace App\Livewire\Auth;
 
+use App\Models\SupervisorViticulturist;
 use App\Models\User;
 use App\Models\WineryViticulturist;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
-use Illuminate\Database\Eloquent\Collection;
 
 class ClaimAccount extends Component
 {
@@ -19,10 +19,11 @@ class ClaimAccount extends Component
     public bool   $shareCuaderno = true;
 
     // Estado
-    public bool   $tokenValid   = false;
-    public bool   $activated    = false;
-    public ?User  $pendingUser  = null;
-    public ?string $wineryName  = null;
+    public bool   $tokenValid    = false;
+    public bool   $activated     = false;
+    public ?User  $pendingUser   = null;
+    public ?string $wineryName   = null;  // bodega o DO que invitó
+    public string  $invitorType  = 'winery'; // 'winery' | 'supervisor'
 
     public function mount(string $token): void
     {
@@ -41,28 +42,40 @@ class ClaimAccount extends Component
             return;
         }
 
-        $this->tokenValid   = true;
-        $this->pendingUser  = $user;
-        $this->name         = $user->name;
+        $this->tokenValid  = true;
+        $this->pendingUser = $user;
+        $this->name        = $user->name;
 
         // Pre-rellenar email si ya tiene uno real
         if ($user->email && !str_starts_with($user->email, 'viticultores.')) {
             $this->email = $user->email;
         }
 
-        // Obtener nombre de la bodega que invitó (solo 1 posible por viticultor)
+        // Comprobar si lo invitó una bodega
         $wineryRelation = WineryViticulturist::where('viticulturist_id', $user->id)
             ->whereNotNull('winery_id')
             ->with('winery:id,name')
             ->first();
 
-        if (!$wineryRelation) {
-            // Ghost sin bodega vinculada (caso edge)
-            $this->tokenValid = false;
+        if ($wineryRelation) {
+            $this->invitorType = 'winery';
+            $this->wineryName  = $wineryRelation->winery->name;
             return;
         }
 
-        $this->wineryName = $wineryRelation->winery->name;
+        // Comprobar si lo invitó un supervisor (DO)
+        $supervisorRelation = SupervisorViticulturist::where('viticulturist_id', $user->id)
+            ->with('supervisor:id,name')
+            ->first();
+
+        if ($supervisorRelation) {
+            $this->invitorType = 'supervisor';
+            $this->wineryName  = $supervisorRelation->supervisor->name;
+            return;
+        }
+
+        // Ghost sin relación vinculada
+        $this->tokenValid = false;
     }
 
     protected function rules(): array
@@ -111,12 +124,21 @@ class ClaimAccount extends Component
 
         // Auto-aprobar acceso al cuaderno si el viticultor aceptó
         if ($this->shareCuaderno) {
-            WineryViticulturist::where('viticulturist_id', $this->pendingUser->id)
-                ->whereNotNull('winery_id')
-                ->update([
-                    'notebook_access'     => true,
-                    'notebook_granted_at' => now(),
-                ]);
+            if ($this->invitorType === 'supervisor') {
+                SupervisorViticulturist::where('viticulturist_id', $this->pendingUser->id)
+                    ->update([
+                        'notebook_access'     => true,
+                        'notebook_granted_at' => now(),
+                        'notebook_revoked_at' => null,
+                    ]);
+            } else {
+                WineryViticulturist::where('viticulturist_id', $this->pendingUser->id)
+                    ->whereNotNull('winery_id')
+                    ->update([
+                        'notebook_access'     => true,
+                        'notebook_granted_at' => now(),
+                    ]);
+            }
         }
 
         // Login automático con modelo fresco de BD (garantiza email_verified_at cargado)

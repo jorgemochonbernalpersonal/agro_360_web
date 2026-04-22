@@ -66,7 +66,7 @@
                         <x-agro.card
                             class="animate-fade-in-up flex flex-col hover:-translate-y-1"
                             style="animation-delay: {{ $delay }}ms;"
-                            wire:key="vit-{{ $row->id }}"
+                            wire:key="vit-{{ $row->viticulturist->id }}"
                         >
                             <x-slot:header>
                                 <div class="flex items-center gap-3">
@@ -149,6 +149,45 @@
                 </div>
             </x-agro.card>
         @endif
+
+        {{-- Accesos rápidos DO ───────────────────────────────────────────── --}}
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <a href="{{ route('winery.denomination.qualifications.index') }}"
+               class="group flex items-center gap-4 p-4 rounded-2xl bg-white border border-zinc-200 hover:border-green-300 hover:shadow-sm transition-all">
+                <div class="size-10 rounded-xl bg-green-100 flex items-center justify-center shrink-0 group-hover:bg-green-200 transition-colors">
+                    <flux:icon icon="star" class="size-5 text-green-600" />
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-semibold text-zinc-800">Calificaciones</p>
+                    <p class="text-xs text-zinc-400 truncate">Vinos calificados por la DO</p>
+                </div>
+                <flux:icon icon="chevron-right" class="size-4 text-zinc-300 group-hover:text-green-400 transition-colors shrink-0" />
+            </a>
+
+            <a href="{{ route('winery.denomination.inspections.index') }}"
+               class="group flex items-center gap-4 p-4 rounded-2xl bg-white border border-zinc-200 hover:border-blue-300 hover:shadow-sm transition-all">
+                <div class="size-10 rounded-xl bg-blue-100 flex items-center justify-center shrink-0 group-hover:bg-blue-200 transition-colors">
+                    <flux:icon icon="shield-check" class="size-5 text-blue-600" />
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-semibold text-zinc-800">Inspecciones</p>
+                    <p class="text-xs text-zinc-400 truncate">Inspecciones realizadas por la DO</p>
+                </div>
+                <flux:icon icon="chevron-right" class="size-4 text-zinc-300 group-hover:text-blue-400 transition-colors shrink-0" />
+            </a>
+
+            <a href="{{ route('winery.denomination.labels.index') }}"
+               class="group flex items-center gap-4 p-4 rounded-2xl bg-white border border-zinc-200 hover:border-rose-300 hover:shadow-sm transition-all">
+                <div class="size-10 rounded-xl bg-rose-100 flex items-center justify-center shrink-0 group-hover:bg-rose-200 transition-colors">
+                    <flux:icon icon="tag" class="size-5 text-rose-600" />
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-semibold text-zinc-800">Etiquetas DO</p>
+                    <p class="text-xs text-zinc-400 truncate">Solicitudes de contraetiquetas</p>
+                </div>
+                <flux:icon icon="chevron-right" class="size-4 text-zinc-300 group-hover:text-rose-400 transition-colors shrink-0" />
+            </a>
+        </div>
 
     @endif
 

@@ -5,8 +5,8 @@ namespace Tests\Feature\Supervisor\Territory;
 use App\Livewire\Supervisor\Territory\Index;
 use App\Models\GrapeVariety;
 use App\Models\PlotPlanting;
+use App\Models\SupervisorViticulturist;
 use App\Models\User;
-use App\Models\WineryViticulturist;
 use Livewire\Livewire;
 use Tests\Feature\SupervisorTestCase;
 
@@ -18,11 +18,9 @@ class TerritoryDataTest extends SupervisorTestCase
     {
         $vit = User::factory()->create(['role' => 'viticulturist']);
 
-        WineryViticulturist::create([
+        SupervisorViticulturist::create([
             'supervisor_id'    => $supervisor->id,
-            'winery_id'        => $winery->id,
             'viticulturist_id' => $vit->id,
-            'source'           => WineryViticulturist::SOURCE_SUPERVISOR,
             'assigned_by'      => $supervisor->id,
         ]);
 

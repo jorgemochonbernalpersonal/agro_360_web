@@ -23,8 +23,15 @@ class Index extends Component
     #[Url]
     public string $statusFilter = '';
 
-    public function updatingSearch(): void
+    public function updatingSearch(): void        { $this->resetPage(); }
+    public function updatingVintageFilter(): void { $this->resetPage(); }
+    public function updatingStatusFilter(): void  { $this->resetPage(); }
+
+    public function resetFilters(): void
     {
+        $this->search        = '';
+        $this->vintageFilter = '';
+        $this->statusFilter  = '';
         $this->resetPage();
     }
 

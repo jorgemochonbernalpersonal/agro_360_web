@@ -2,13 +2,13 @@
 
 namespace Tests\Feature\Supervisor;
 
+use App\Models\DoInspection;
 use App\Models\DoLabel;
 use App\Models\DoQualification;
 use App\Models\NotebookAccessRequest;
 use App\Models\SupervisorRequest;
 use App\Models\SupervisorWinery;
 use App\Models\User;
-use App\Models\WineryViticulturist;
 use Livewire\Livewire;
 use Tests\Feature\SupervisorTestCase;
 
@@ -60,20 +60,8 @@ class DashboardTest extends SupervisorTestCase
 
     public function test_dashboard_shows_viticulturist_count(): void
     {
-        [$supervisor, $winery] = $this->makeSupervisorWithWinery();
-
-        $viticulturist = User::factory()->create([
-            'role'              => 'viticulturist',
-            'email_verified_at' => now(),
-        ]);
-
-        WineryViticulturist::create([
-            'winery_id'        => $winery->id,
-            'viticulturist_id' => $viticulturist->id,
-            'source'           => WineryViticulturist::SOURCE_SUPERVISOR,
-            'supervisor_id'    => $supervisor->id,
-            'assigned_by'      => $supervisor->id,
-        ]);
+        $supervisor    = $this->makeSupervisor();
+        $viticulturist = $this->makeViticulturistForSupervisor($supervisor);
 
         $this->actingAs($supervisor);
 
@@ -200,7 +188,8 @@ class DashboardTest extends SupervisorTestCase
         $this->actingAs($supervisor);
 
         Livewire::test(\App\Livewire\Supervisor\Dashboard::class)
-            ->assertViewHas('pendingNotebookRequests', 1);
+            ->assertViewHas('pendingNotebookCount', 1)
+            ->assertViewHas('pendingNotebookRequests', fn($r) => $r->count() === 1);
     }
 
     public function test_approved_notebook_requests_not_counted_as_pending(): void
@@ -218,7 +207,8 @@ class DashboardTest extends SupervisorTestCase
         $this->actingAs($supervisor);
 
         Livewire::test(\App\Livewire\Supervisor\Dashboard::class)
-            ->assertViewHas('pendingNotebookRequests', 0);
+            ->assertViewHas('pendingNotebookCount', 0)
+            ->assertViewHas('pendingNotebookRequests', fn($r) => $r->isEmpty());
     }
 
     // ── pendingRequests ───────────────────────────────────────────────────────
@@ -276,5 +266,74 @@ class DashboardTest extends SupervisorTestCase
 
         Livewire::test(\App\Livewire\Supervisor\Dashboard::class)
             ->assertViewHas('overdueRequests', 0);
+    }
+
+    // ── pendingLabels ─────────────────────────────────────────────────────────
+
+    public function test_dashboard_counts_pending_and_approved_labels(): void
+    {
+        [$supervisor, $winery] = $this->makeSupervisorWithWinery();
+
+        DoLabel::create(['supervisor_id' => $supervisor->id, 'winery_id' => $winery->id, 'vintage' => now()->year, 'quantity_requested' => 100, 'status' => DoLabel::STATUS_PENDING]);
+        DoLabel::create(['supervisor_id' => $supervisor->id, 'winery_id' => $winery->id, 'vintage' => now()->year, 'quantity_requested' => 200, 'status' => DoLabel::STATUS_APPROVED]);
+        DoLabel::create(['supervisor_id' => $supervisor->id, 'winery_id' => $winery->id, 'vintage' => now()->year, 'quantity_requested' => 300, 'status' => DoLabel::STATUS_ISSUED, 'quantity_issued' => 300, 'issued_at' => now()]);
+
+        $this->actingAs($supervisor);
+
+        Livewire::test(\App\Livewire\Supervisor\Dashboard::class)
+            ->assertViewHas('pendingLabels', 2);
+    }
+
+    public function test_dashboard_pending_labels_isolated_from_other_supervisor(): void
+    {
+        [$supervisor]                    = $this->makeSupervisorWithWinery();
+        [$otherSupervisor, $otherWinery] = $this->makeSupervisorWithWinery();
+
+        DoLabel::create(['supervisor_id' => $otherSupervisor->id, 'winery_id' => $otherWinery->id, 'vintage' => now()->year, 'quantity_requested' => 100, 'status' => DoLabel::STATUS_PENDING]);
+
+        $this->actingAs($supervisor);
+
+        Livewire::test(\App\Livewire\Supervisor\Dashboard::class)
+            ->assertViewHas('pendingLabels', 0);
+    }
+
+    // ── nonCompliantInspections ───────────────────────────────────────────────
+
+    public function test_dashboard_counts_non_compliant_inspections(): void
+    {
+        $supervisor = $this->makeSupervisor();
+
+        DoInspection::create(['supervisor_id' => $supervisor->id, 'subject_type' => 'winery', 'subject_id' => $supervisor->id, 'inspection_date' => now()->toDateString(), 'status' => DoInspection::STATUS_COMPLETED, 'result' => DoInspection::RESULT_NON_COMPLIANT]);
+        DoInspection::create(['supervisor_id' => $supervisor->id, 'subject_type' => 'winery', 'subject_id' => $supervisor->id, 'inspection_date' => now()->toDateString(), 'status' => DoInspection::STATUS_COMPLETED, 'result' => DoInspection::RESULT_COMPLIANT]);
+
+        $this->actingAs($supervisor);
+
+        Livewire::test(\App\Livewire\Supervisor\Dashboard::class)
+            ->assertViewHas('nonCompliantInspections', 1);
+    }
+
+    public function test_dashboard_cancelled_non_compliant_inspections_excluded(): void
+    {
+        $supervisor = $this->makeSupervisor();
+
+        DoInspection::create(['supervisor_id' => $supervisor->id, 'subject_type' => 'winery', 'subject_id' => $supervisor->id, 'inspection_date' => now()->toDateString(), 'status' => DoInspection::STATUS_CANCELLED, 'result' => DoInspection::RESULT_NON_COMPLIANT]);
+
+        $this->actingAs($supervisor);
+
+        Livewire::test(\App\Livewire\Supervisor\Dashboard::class)
+            ->assertViewHas('nonCompliantInspections', 0);
+    }
+
+    public function test_dashboard_non_compliant_inspections_isolated_from_other_supervisor(): void
+    {
+        $supervisor      = $this->makeSupervisor();
+        $otherSupervisor = $this->makeSupervisor();
+
+        DoInspection::create(['supervisor_id' => $otherSupervisor->id, 'subject_type' => 'winery', 'subject_id' => $otherSupervisor->id, 'inspection_date' => now()->toDateString(), 'status' => DoInspection::STATUS_COMPLETED, 'result' => DoInspection::RESULT_NON_COMPLIANT]);
+
+        $this->actingAs($supervisor);
+
+        Livewire::test(\App\Livewire\Supervisor\Dashboard::class)
+            ->assertViewHas('nonCompliantInspections', 0);
     }
 }

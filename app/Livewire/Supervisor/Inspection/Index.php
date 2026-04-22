@@ -5,9 +5,11 @@ namespace App\Livewire\Supervisor\Inspection;
 use App\Models\DoInspection;
 use App\Models\SupervisorRequest;
 use App\Models\SupervisorWinery;
-use App\Models\WineryViticulturist;
+use App\Models\SupervisorViticulturist;
 use App\Livewire\Concerns\WithToastNotifications;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -64,6 +66,13 @@ class Index extends Component
 
     public function saveInspection(): void
     {
+        Gate::authorize('create', DoInspection::class);
+
+        if (!RateLimiter::attempt('inspection-save:' . Auth::id(), 20, fn() => null, 60)) {
+            $this->toastError('Demasiadas solicitudes. Espera un minuto antes de continuar.');
+            return;
+        }
+
         $this->validate([
             'subject_type'     => 'required|in:winery,viticulturist',
             'subject_id'       => 'required|integer|exists:users,id',
@@ -76,9 +85,7 @@ class Index extends Component
 
         // Authorization: subject must be supervised by this DO
         $wineryIds = SupervisorWinery::where('supervisor_id', $doId)->pluck('winery_id');
-        $vitIds    = WineryViticulturist::where('supervisor_id', $doId)
-            ->where('source', WineryViticulturist::SOURCE_SUPERVISOR)
-            ->pluck('viticulturist_id');
+        $vitIds    = SupervisorViticulturist::where('supervisor_id', $doId)->pluck('viticulturist_id');
 
         $allowed = $this->subject_type === 'winery'
             ? $wineryIds->contains((int) $this->subject_id)
@@ -106,6 +113,7 @@ class Index extends Component
     public function openEdit(int $inspectionId): void
     {
         $inspection = DoInspection::forSupervisor(Auth::id())->findOrFail($inspectionId);
+        Gate::authorize('update', $inspection);
 
         $this->editInspectionId    = $inspectionId;
         $this->editInspectionDate  = $inspection->inspection_date->format('Y-m-d');
@@ -126,6 +134,9 @@ class Index extends Component
 
     public function updateInspection(): void
     {
+        $inspection = DoInspection::forSupervisor(Auth::id())->findOrFail($this->editInspectionId);
+        Gate::authorize('update', $inspection);
+
         $this->validate([
             'editInspectionDate'  => 'required|date',
             'editResult'          => 'nullable|in:compliant,non_compliant,pending',
@@ -134,7 +145,7 @@ class Index extends Component
             'editReferenceNumber' => 'nullable|string|max:100',
         ]);
 
-        DoInspection::forSupervisor(Auth::id())->findOrFail($this->editInspectionId)->update([
+        $inspection->update([
             'inspection_date'  => $this->editInspectionDate,
             'result'           => $this->editResult           ?: null,
             'findings'         => $this->editFindings         ?: null,
@@ -149,6 +160,7 @@ class Index extends Component
     public function updateStatus(int $inspectionId, string $status): void
     {
         $inspection = DoInspection::forSupervisor(Auth::id())->findOrFail($inspectionId);
+        Gate::authorize('update', $inspection);
         $inspection->update(['status' => $status]);
         $this->toastSuccess('Estado actualizado.');
     }
@@ -156,6 +168,7 @@ class Index extends Component
     public function delete(int $inspectionId): void
     {
         $inspection = DoInspection::forSupervisor(Auth::id())->findOrFail($inspectionId);
+        Gate::authorize('delete', $inspection);
         $inspection->delete();
         $this->toastSuccess('Inspección eliminada.');
     }
@@ -166,6 +179,7 @@ class Index extends Component
             ->where('subject_type', 'winery')
             ->where('result', DoInspection::RESULT_NON_COMPLIANT)
             ->findOrFail($inspectionId);
+        Gate::authorize('update', $inspection);
 
         SupervisorRequest::create([
             'supervisor_id' => Auth::id(),
@@ -203,20 +217,23 @@ class Index extends Component
 
         $inspections = $query->orderByDesc('inspection_date')->paginate(15);
 
+        $statusCounts = DoInspection::forSupervisor($doId)
+            ->selectRaw('status, count(*) as total')
+            ->groupBy('status')
+            ->pluck('total', 'status');
+
         $counts = [
-            'all'         => DoInspection::forSupervisor($doId)->count(),
-            'scheduled'   => DoInspection::forSupervisor($doId)->where('status', 'scheduled')->count(),
-            'in_progress' => DoInspection::forSupervisor($doId)->where('status', 'in_progress')->count(),
-            'completed'   => DoInspection::forSupervisor($doId)->where('status', 'completed')->count(),
+            'all'         => $statusCounts->sum(),
+            'scheduled'   => $statusCounts->get('scheduled', 0),
+            'in_progress' => $statusCounts->get('in_progress', 0),
+            'completed'   => $statusCounts->get('completed', 0),
         ];
 
         // Subjects for the create form
         $wineries        = \App\Models\User::whereIn('id', SupervisorWinery::where('supervisor_id', $doId)->pluck('winery_id'))
             ->orderBy('name')->get(['id', 'name']);
         $viticulturists  = \App\Models\User::whereIn('id',
-                WineryViticulturist::where('supervisor_id', $doId)
-                    ->where('source', WineryViticulturist::SOURCE_SUPERVISOR)
-                    ->pluck('viticulturist_id')->unique()
+                SupervisorViticulturist::where('supervisor_id', $doId)->pluck('viticulturist_id')
             )->orderBy('name')->get(['id', 'name']);
 
         $tabs = [

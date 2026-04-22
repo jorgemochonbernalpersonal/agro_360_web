@@ -68,6 +68,10 @@ class DOMenu
             ['icon' => 'document-text', 'label' => 'Normativa y Autorizaciones', 'route' => 'supervisor.regulation.index', 'active' => request()->routeIs('supervisor.regulation.*')],
         ];
 
+        $menu['do_documents'] = [
+            ['icon' => 'document-duplicate', 'label' => 'Pliegos y Reglamentos', 'route' => 'supervisor.documents.index', 'active' => request()->routeIs('supervisor.documents.*')],
+        ];
+
         $menu['do_territory'] = [
             ['icon' => 'map', 'label' => 'Territorio DO', 'route' => 'supervisor.territory.index', 'active' => request()->routeIs('supervisor.territory.*')],
         ];

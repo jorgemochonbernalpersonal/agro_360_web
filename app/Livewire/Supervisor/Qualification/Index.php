@@ -6,6 +6,7 @@ use App\Models\DoQualification;
 use App\Models\SupervisorWinery;
 use App\Livewire\Concerns\WithToastNotifications;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -70,6 +71,8 @@ class Index extends Component
 
     public function saveQualification(): void
     {
+        Gate::authorize('create', DoQualification::class);
+
         $this->validate([
             'winery_id'          => 'required|integer|exists:users,id',
             'vintage'            => 'required|integer|min:1990|max:2100',
@@ -138,6 +141,9 @@ class Index extends Component
 
     public function updateQualification(): void
     {
+        $qualification = DoQualification::forSupervisor(Auth::id())->findOrFail($this->editId);
+        Gate::authorize('update', $qualification);
+
         $this->validate([
             'editWineName'          => 'required|string|max:200',
             'editVintage'           => 'required|integer|min:1990|max:2100',
@@ -154,7 +160,7 @@ class Index extends Component
             'editQualificationDate' => 'required|date',
         ]);
 
-        DoQualification::forSupervisor(Auth::id())->findOrFail($this->editId)->update([
+        $qualification->update([
             'wine_name'          => $this->editWineName,
             'vintage'            => $this->editVintage,
             'color'              => $this->editColor ?: null,
@@ -176,15 +182,17 @@ class Index extends Component
 
     public function qualify(int $id): void
     {
-        DoQualification::forSupervisor(Auth::id())->findOrFail($id)
-            ->update(['result' => DoQualification::RESULT_QUALIFIED, 'qualified_by' => Auth::id()]);
+        $q = DoQualification::forSupervisor(Auth::id())->findOrFail($id);
+        Gate::authorize('update', $q);
+        $q->update(['result' => DoQualification::RESULT_QUALIFIED, 'qualified_by' => Auth::id()]);
         $this->toastSuccess('Vino calificado DO.');
     }
 
     public function disqualify(int $id): void
     {
-        DoQualification::forSupervisor(Auth::id())->findOrFail($id)
-            ->update(['result' => DoQualification::RESULT_DISQUALIFIED, 'qualified_by' => Auth::id()]);
+        $q = DoQualification::forSupervisor(Auth::id())->findOrFail($id);
+        Gate::authorize('update', $q);
+        $q->update(['result' => DoQualification::RESULT_DISQUALIFIED, 'qualified_by' => Auth::id()]);
         $this->toastSuccess('Vino descalificado.');
     }
 
@@ -207,11 +215,16 @@ class Index extends Component
 
         $qualifications = $query->orderByDesc('qualification_date')->paginate(15);
 
+        $resultCounts = DoQualification::forSupervisor($doId)
+            ->selectRaw('result, count(*) as total')
+            ->groupBy('result')
+            ->pluck('total', 'result');
+
         $counts = [
-            'all'          => DoQualification::forSupervisor($doId)->count(),
-            'pending'      => DoQualification::forSupervisor($doId)->where('result', 'pending')->count(),
-            'qualified'    => DoQualification::forSupervisor($doId)->where('result', 'qualified')->count(),
-            'disqualified' => DoQualification::forSupervisor($doId)->where('result', 'disqualified')->count(),
+            'all'          => $resultCounts->sum(),
+            'pending'      => $resultCounts->get('pending', 0),
+            'qualified'    => $resultCounts->get('qualified', 0),
+            'disqualified' => $resultCounts->get('disqualified', 0),
         ];
 
         $availableVintages = DoQualification::forSupervisor($doId)

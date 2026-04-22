@@ -4,7 +4,7 @@ namespace Tests\Feature\Supervisor\Campaigns;
 
 use App\Livewire\Supervisor\Campaigns\Index;
 use App\Models\User;
-use App\Models\WineryViticulturist;
+use App\Models\SupervisorViticulturist;
 use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
 use Tests\Feature\SupervisorTestCase;
@@ -17,12 +17,9 @@ class CampaignsDataTest extends SupervisorTestCase
     {
         $vit = User::factory()->create(['role' => 'viticulturist']);
 
-        WineryViticulturist::create([
+        SupervisorViticulturist::create([
             'supervisor_id'    => $supervisor->id,
-            'winery_id'        => $winery->id,
             'viticulturist_id' => $vit->id,
-            'source'           => WineryViticulturist::SOURCE_SUPERVISOR,
-            'assigned_by'      => $supervisor->id,
         ]);
 
         return $vit;

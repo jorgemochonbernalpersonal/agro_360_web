@@ -3,6 +3,7 @@
 namespace App\Livewire\Supervisor\Growers;
 
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Models\NotebookAccessRequest;
 use App\Models\SupervisorViticulturist;
 use App\Models\User;
 use App\Models\WineryViticulturist;
@@ -20,7 +21,8 @@ class Index extends Component
 {
     use WithPagination, WithToastNotifications;
 
-    public string $search = '';
+    public string $search        = '';
+    public string $statusFilter  = '';
 
     // ── Create ghost viticulturist ────────────────────────────────────────────
     public bool   $showCreateModal = false;
@@ -34,16 +36,107 @@ class Index extends Component
     public ?int   $inviteGrowerId   = null;
     public string $inviteEmail      = '';
 
+    // ── Link existing viticulturist ───────────────────────────────────────────
+    public bool   $showLinkModal    = false;
+    public string $linkQuery        = '';
+    public ?int   $linkSelectedId   = null;
+
     protected $queryString = [
-        'search' => ['except' => ''],
+        'search'       => ['except' => ''],
+        'statusFilter' => ['except' => ''],
     ];
 
     public function updatingSearch(): void { $this->resetPage(); }
+    public function updatingStatusFilter(): void { $this->resetPage(); }
 
     public function clearSearch(): void
     {
         $this->search = '';
         $this->resetPage();
+    }
+
+    public function setStatusFilter(string $status): void
+    {
+        $this->statusFilter = $status;
+        $this->resetPage();
+    }
+
+    // ── Link existing viticulturist ───────────────────────────────────────────
+
+    public function openLinkModal(): void
+    {
+        $this->reset(['linkQuery', 'linkSelectedId']);
+        $this->resetErrorBag();
+        $this->showLinkModal = true;
+    }
+
+    public function closeLinkModal(): void
+    {
+        $this->showLinkModal = false;
+    }
+
+    public function searchLinkCandidates(): array
+    {
+        $term = trim($this->linkQuery);
+        if (strlen($term) < 2) {
+            return [];
+        }
+
+        $doId    = Auth::id();
+        $poolIds = SupervisorViticulturist::where('supervisor_id', $doId)->pluck('viticulturist_id');
+
+        $like = '%' . mb_strtolower($term) . '%';
+
+        return User::whereIn('role', [User::ROLE_VITICULTURIST, User::ROLE_PRODUCER])
+            ->where('can_login', true)
+            ->whereNotIn('id', $poolIds)
+            ->where(function ($q) use ($like, $term) {
+                $q->whereRaw('LOWER(name) LIKE ?', [$like])
+                  ->orWhereRaw('LOWER(email) LIKE ?', [$like])
+                  ->orWhereRaw('LOWER(COALESCE(dni,\'\')) LIKE ?', [$like]);
+            })
+            ->orderBy('name')
+            ->limit(10)
+            ->get(['id', 'name', 'email', 'dni'])
+            ->toArray();
+    }
+
+    public function selectLinkCandidate(int $userId): void
+    {
+        $this->linkSelectedId = $userId;
+    }
+
+    public function linkExistingGrower(): void
+    {
+        $this->validate([
+            'linkSelectedId' => ['required', 'integer'],
+        ], [
+            'linkSelectedId.required' => 'Selecciona un viticultor de los resultados.',
+        ]);
+
+        $doId = Auth::id();
+
+        $viticulturist = User::whereIn('role', [User::ROLE_VITICULTURIST, User::ROLE_PRODUCER])
+            ->where('can_login', true)
+            ->findOrFail($this->linkSelectedId);
+
+        $alreadyInPool = SupervisorViticulturist::where('supervisor_id', $doId)
+            ->where('viticulturist_id', $viticulturist->id)
+            ->exists();
+
+        if ($alreadyInPool) {
+            $this->toastError("{$viticulturist->name} ya pertenece al pool de la denominación.");
+            return;
+        }
+
+        SupervisorViticulturist::create([
+            'supervisor_id'    => $doId,
+            'viticulturist_id' => $viticulturist->id,
+            'assigned_by'      => $doId,
+        ]);
+
+        $this->showLinkModal = false;
+        $this->toastSuccess("{$viticulturist->name} vinculado al pool de la denominación.");
     }
 
     // ── Create modal ─────────────────────────────────────────────────────────
@@ -187,6 +280,34 @@ class Index extends Component
         $this->toastSuccess('Invitación revocada.');
     }
 
+    // ── Remove grower from pool ───────────────────────────────────────────────
+
+    public function removeGrower(int $growerId): void
+    {
+        $doId = Auth::id();
+
+        $relation = SupervisorViticulturist::where('supervisor_id', $doId)
+            ->where('viticulturist_id', $growerId)
+            ->firstOrFail();
+
+        $grower = User::find($growerId);
+
+        // Remove winery assignments originated by this supervisor
+        WineryViticulturist::where('supervisor_id', $doId)
+            ->where('viticulturist_id', $growerId)
+            ->where('source', WineryViticulturist::SOURCE_SUPERVISOR)
+            ->delete();
+
+        // Remove pending notebook access requests from this supervisor
+        NotebookAccessRequest::where('supervisor_id', $doId)
+            ->where('viticulturist_id', $growerId)
+            ->delete();
+
+        $relation->delete();
+
+        $this->toastSuccess(($grower?->name ?? 'El viticultor') . ' eliminado del pool de la denominación.');
+    }
+
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     protected function hasRealEmail(User $grower): bool
@@ -238,7 +359,28 @@ class Index extends Component
             ->get()
             ->keyBy('viticulturist_id');
 
+        $allGrowers = User::whereIn('id', $poolIds)->get(['id', 'can_login', 'invitation_token', 'invitation_expires_at']);
+
+        $countsByStatus = [
+            'all'     => $allGrowers->count(),
+            'ghost'   => $allGrowers->filter(fn($u) => !$u->can_login && (!$u->invitation_token || ($u->invitation_expires_at && $u->invitation_expires_at->isPast())))->count(),
+            'invited' => $allGrowers->filter(fn($u) => !$u->can_login && $u->invitation_token && $u->invitation_expires_at?->isFuture())->count(),
+            'active'  => $allGrowers->filter(fn($u) => $u->can_login)->count(),
+        ];
+
         $query = User::whereIn('id', $poolIds);
+
+        match ($this->statusFilter) {
+            'ghost'   => $query->where('can_login', false)->where(function ($q) {
+                $q->whereNull('invitation_token')
+                  ->orWhere('invitation_expires_at', '<=', now());
+            }),
+            'invited' => $query->where('can_login', false)
+                               ->whereNotNull('invitation_token')
+                               ->where('invitation_expires_at', '>', now()),
+            'active'  => $query->where('can_login', true),
+            default   => null,
+        };
 
         if ($this->search) {
             $term = '%' . mb_strtolower($this->search) . '%';
@@ -251,9 +393,14 @@ class Index extends Component
         $growers          = $query->orderBy('name')->paginate(15);
         $totalGrowerCount = $poolIds->count();
 
-        // For invite modal: ghost viticultors available in this supervisor's pool
         $ghostGrowerForModal = $this->showInviteModal && $this->inviteGrowerId
             ? User::find($this->inviteGrowerId)
+            : null;
+
+        $linkCandidates = $this->showLinkModal ? $this->searchLinkCandidates() : [];
+
+        $linkSelectedUser = $this->linkSelectedId
+            ? collect($linkCandidates)->firstWhere('id', $this->linkSelectedId)
             : null;
 
         return view('livewire.supervisor.growers.index', [
@@ -262,7 +409,10 @@ class Index extends Component
             'activePlantingsByVit' => $activePlantingsByVit,
             'wineryNamesByVit'     => $wineryNamesByVit,
             'totalGrowerCount'     => $totalGrowerCount,
+            'countsByStatus'       => $countsByStatus,
             'ghostGrowerForModal'  => $ghostGrowerForModal,
+            'linkCandidates'       => $linkCandidates,
+            'linkSelectedUser'     => $linkSelectedUser,
         ]);
     }
 }

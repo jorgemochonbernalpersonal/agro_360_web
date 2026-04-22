@@ -47,6 +47,12 @@ class DoInspection extends Model
         'pending'       => 'Pendiente',
     ];
 
+    public const RESULT_COLORS = [
+        'compliant'     => 'green',
+        'non_compliant' => 'red',
+        'pending'       => 'zinc',
+    ];
+
     public function supervisor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'supervisor_id');
@@ -60,5 +66,10 @@ class DoInspection extends Model
     public function scopeForSupervisor($query, int $supervisorId)
     {
         return $query->where('supervisor_id', $supervisorId);
+    }
+
+    public function scopeForWinery($query, int $wineryId)
+    {
+        return $query->where('subject_type', 'winery')->where('subject_id', $wineryId);
     }
 }

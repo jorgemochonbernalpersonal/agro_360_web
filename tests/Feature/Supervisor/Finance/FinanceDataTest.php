@@ -4,6 +4,7 @@ namespace Tests\Feature\Supervisor\Finance;
 
 use App\Livewire\Supervisor\Finance\Index;
 use App\Models\Subscription;
+use App\Models\SupervisorViticulturist;
 use App\Models\User;
 use App\Models\WineryViticulturist;
 use Illuminate\Support\Facades\DB;
@@ -17,6 +18,12 @@ class FinanceDataTest extends SupervisorTestCase
     private function makeViticulturistForFinance(User $supervisor, User $winery): User
     {
         $vit = User::factory()->create(['role' => 'viticulturist']);
+
+        SupervisorViticulturist::create([
+            'supervisor_id'    => $supervisor->id,
+            'viticulturist_id' => $vit->id,
+            'assigned_by'      => $supervisor->id,
+        ]);
 
         WineryViticulturist::create([
             'supervisor_id'    => $supervisor->id,

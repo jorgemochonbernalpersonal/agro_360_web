@@ -135,8 +135,8 @@
             'key'            => 'do_control_general',
             'icon'           => 'shield-check',
             'label'          => 'Control',
-            'sections'       => ['do_inspection', 'do_regulation'],
-            'section_labels' => ['do_inspection' => 'Inspección', 'do_regulation' => 'Normativa'],
+            'sections'       => ['do_inspection', 'do_regulation', 'do_documents'],
+            'section_labels' => ['do_inspection' => 'Inspección', 'do_regulation' => 'Normativa', 'do_documents' => 'Documentos DO'],
         ],
         [
             'key'            => 'do_territory',

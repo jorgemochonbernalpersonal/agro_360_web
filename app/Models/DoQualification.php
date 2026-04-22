@@ -82,4 +82,9 @@ class DoQualification extends Model
     {
         return $query->where('supervisor_id', $supervisorId);
     }
+
+    public function scopeForWinery($query, int $wineryId)
+    {
+        return $query->where('winery_id', $wineryId);
+    }
 }

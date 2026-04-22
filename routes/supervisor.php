@@ -44,6 +44,9 @@ Route::middleware(['role:supervisor'])
         // ── Regulation ────────────────────────────────────────────────
         Route::get('/regulation', \App\Livewire\Supervisor\Regulation\Index::class)->name('regulation.index');
 
+        // ── Documents (pliegos / reglamentos) ────────────────────────────
+        Route::get('/documents', \App\Livewire\Supervisor\Documents\Index::class)->name('documents.index');
+
         // ── Territory ─────────────────────────────────────────────────
         Route::get('/territory', \App\Livewire\Supervisor\Territory\Index::class)->name('territory.index');
 

@@ -7,7 +7,6 @@ use App\Models\DoDocument;
 use App\Models\PlotPlanting;
 use App\Models\SupervisorViticulturist;
 use App\Models\User;
-use App\Livewire\Concerns\WithToastNotifications;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -15,23 +14,13 @@ use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination, WithToastNotifications;
+    use WithPagination;
 
     public string $currentTab     = 'autorizaciones';
     public string $search         = '';
     public string $filterVit      = '';
     public string $filterStatus   = '';
     public string $filterRightType = '';
-
-    // Document form (pliego / reglamento)
-    public bool   $showDocForm    = false;
-    public string $docFormType    = '';
-    public ?int   $editDocId      = null;
-    public string $docTitle       = '';
-    public string $docVersion     = '';
-    public string $docEffectiveDate = '';
-    public string $docContent     = '';
-    public string $docStatus      = 'draft';
 
     protected $queryString = [
         'currentTab'      => ['except' => 'autorizaciones', 'as' => 'tab'],
@@ -55,87 +44,6 @@ class Index extends Component
     public function updatingFilterVit(): void       { $this->resetPage(); }
     public function updatingFilterStatus(): void    { $this->resetPage(); }
     public function updatingFilterRightType(): void { $this->resetPage(); }
-
-    // ── Document CRUD ─────────────────────────────────────────────────────────
-
-    public function openDocForm(string $type, ?int $docId = null): void
-    {
-        $this->docFormType  = $type;
-        $this->editDocId    = $docId;
-        $this->docTitle     = '';
-        $this->docVersion   = '';
-        $this->docEffectiveDate = '';
-        $this->docContent   = '';
-        $this->docStatus    = 'draft';
-
-        if ($docId) {
-            $doc = DoDocument::forSupervisor(Auth::id())->findOrFail($docId);
-            $this->docTitle         = $doc->title;
-            $this->docVersion       = $doc->version          ?? '';
-            $this->docEffectiveDate = $doc->effective_date   ? $doc->effective_date->format('Y-m-d') : '';
-            $this->docContent       = $doc->content          ?? '';
-            $this->docStatus        = $doc->status;
-        }
-
-        $this->showDocForm = true;
-        $this->resetValidation();
-    }
-
-    public function closeDocForm(): void
-    {
-        $this->showDocForm = false;
-        $this->editDocId   = null;
-        $this->resetValidation();
-    }
-
-    public function saveDocument(): void
-    {
-        $this->validate([
-            'docTitle'          => 'required|string|max:255',
-            'docVersion'        => 'nullable|string|max:30',
-            'docEffectiveDate'  => 'nullable|date',
-            'docContent'        => 'nullable|string',
-            'docStatus'         => 'required|in:draft,active,archived',
-        ]);
-
-        $data = [
-            'supervisor_id'  => Auth::id(),
-            'type'           => $this->docFormType,
-            'title'          => $this->docTitle,
-            'version'        => $this->docVersion         ?: null,
-            'effective_date' => $this->docEffectiveDate   ?: null,
-            'content'        => $this->docContent         ?: null,
-            'status'         => $this->docStatus,
-        ];
-
-        if ($this->editDocId) {
-            DoDocument::forSupervisor(Auth::id())->findOrFail($this->editDocId)->update($data);
-            $this->toastSuccess('Documento actualizado.');
-        } else {
-            DoDocument::create($data);
-            $this->toastSuccess('Documento creado.');
-        }
-
-        $this->closeDocForm();
-    }
-
-    public function archiveDocument(int $docId): void
-    {
-        DoDocument::forSupervisor(Auth::id())->findOrFail($docId)->update(['status' => DoDocument::STATUS_ARCHIVED]);
-        $this->toastSuccess('Documento archivado.');
-    }
-
-    public function activateDocument(int $docId): void
-    {
-        DoDocument::forSupervisor(Auth::id())->findOrFail($docId)->update(['status' => DoDocument::STATUS_ACTIVE]);
-        $this->toastSuccess('Documento marcado como vigente.');
-    }
-
-    public function deleteDocument(int $docId): void
-    {
-        DoDocument::forSupervisor(Auth::id())->findOrFail($docId)->delete();
-        $this->toastSuccess('Documento eliminado.');
-    }
 
     // ── Render ─────────────────────────────────────────────────────────────────
 

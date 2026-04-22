@@ -14,7 +14,7 @@
         />
     @else
 
-        {{-- Card supervisor --}}
+        {{-- DO info card --}}
         <x-agro.card>
             <x-slot:header>
                 <div class="flex items-center gap-2">
@@ -34,20 +34,60 @@
                         <p class="text-xs text-zinc-400 mt-1">Adscrito desde {{ $supervisorJoined->format('d/m/Y') }}</p>
                     @endif
                 </div>
-                <div class="flex-shrink-0">
-                    @if($notebookGranted)
-                        <span class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-green-50 text-green-700 border border-green-200 rounded-full">
-                            <flux:icon icon="book-open" class="size-3.5" />
-                            Acceso cuaderno concedido
-                        </span>
-                    @else
-                        <span class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-zinc-50 text-zinc-500 border border-zinc-200 rounded-full">
-                            <flux:icon icon="lock-closed" class="size-3.5" />
-                            Sin acceso al cuaderno
-                        </span>
-                    @endif
-                </div>
             </div>
+        </x-agro.card>
+
+        {{-- Notebook access card --}}
+        <x-agro.card>
+            <x-slot:header>
+                <div class="flex items-center gap-2">
+                    <flux:icon icon="book-open" class="size-4 text-agro-500" />
+                    <span>Cuaderno de campo</span>
+                </div>
+            </x-slot:header>
+
+            @if($notebookGranted)
+                <div class="flex items-start gap-4">
+                    <div class="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center shrink-0">
+                        <flux:icon icon="check-circle" class="size-5 text-green-600" />
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-zinc-900">Acceso concedido</p>
+                        <p class="text-xs text-zinc-500 mt-0.5">Tu denominación de origen puede consultar las anotaciones de tu cuaderno de campo.</p>
+                    </div>
+                    <button
+                        wire:click="revokeNotebookAccess"
+                        wire:confirm="¿Revocar el acceso al cuaderno? Tu DO dejará de poder ver tus anotaciones."
+                        class="shrink-0 text-xs text-red-500 hover:text-red-700 hover:underline transition"
+                    >
+                        Revocar acceso
+                    </button>
+                </div>
+            @elseif($pendingRequest)
+                <div class="flex items-start gap-4">
+                    <div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center shrink-0">
+                        <flux:icon icon="clock" class="size-5 text-amber-500" />
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-zinc-900">Solicitud pendiente</p>
+                        <p class="text-xs text-zinc-500 mt-0.5">
+                            Tu denominación ha solicitado acceso a tu cuaderno
+                            el {{ $pendingRequest->requested_at->format('d/m/Y') }}.
+                            Puedes aprobarla o rechazarla desde las notificaciones.
+                        </p>
+                    </div>
+                </div>
+            @else
+                <div class="flex items-start gap-4">
+                    <div class="w-10 h-10 rounded-xl bg-zinc-100 flex items-center justify-center shrink-0">
+                        <flux:icon icon="lock-closed" class="size-5 text-zinc-400" />
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-zinc-900">Sin acceso al cuaderno</p>
+                        <p class="text-xs text-zinc-500 mt-0.5">Tu denominación no tiene acceso a tu cuaderno de campo. El cuaderno es privado por defecto.</p>
+                    </div>
+                </div>
+            @endif
         </x-agro.card>
 
         {{-- Bodegas asignadas por la DO --}}
@@ -82,6 +122,46 @@
                 </div>
             @endforelse
         </x-agro.card>
+
+        {{-- DO Documents (pliego, reglamento) --}}
+        @if($doDocuments->count() > 0)
+            <div>
+                <h2 class="text-sm font-semibold text-zinc-700 mb-3">Documentos de la denominación</h2>
+                <div class="space-y-3">
+                    @foreach($doDocuments as $doc)
+                        @php
+                            $typeLabel = $doc->type === 'pliego' ? 'Pliego de condiciones' : 'Reglamento';
+                            $typeColor = $doc->type === 'pliego'
+                                ? 'bg-indigo-100 text-indigo-600'
+                                : 'bg-violet-100 text-violet-600';
+                        @endphp
+                        <x-agro.card>
+                            <div class="flex items-start gap-4">
+                                <div class="w-10 h-10 rounded-xl {{ $typeColor }} flex items-center justify-center shrink-0">
+                                    <flux:icon icon="document-text" class="size-5" />
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        <p class="text-sm font-medium text-zinc-900">{{ $doc->title }}</p>
+                                        <span class="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-500 font-medium">
+                                            {{ $typeLabel }}
+                                        </span>
+                                        @if($doc->version)
+                                            <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 font-medium">
+                                                v{{ $doc->version }}
+                                            </span>
+                                        @endif
+                                    </div>
+                                    @if($doc->effective_date)
+                                        <p class="text-xs text-zinc-400 mt-0.5">Vigente desde {{ $doc->effective_date->format('d/m/Y') }}</p>
+                                    @endif
+                                </div>
+                            </div>
+                        </x-agro.card>
+                    @endforeach
+                </div>
+            </div>
+        @endif
 
         {{-- Info --}}
         <flux:callout variant="info" icon="information-circle">

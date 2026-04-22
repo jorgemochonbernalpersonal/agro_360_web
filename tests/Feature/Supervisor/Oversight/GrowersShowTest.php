@@ -6,9 +6,13 @@ use App\Livewire\Supervisor\Oversight\Growers\Show;
 use App\Models\AgriculturalActivity;
 use App\Models\Certification;
 use App\Models\DoInspection;
+use App\Models\NotebookAccessRequest;
 use App\Models\SupervisorViticulturist;
+use App\Models\SupervisorWinery;
 use App\Models\User;
 use App\Models\WineryViticulturist;
+use App\Notifications\NotebookAccessRequestedNotification;
+use Illuminate\Support\Facades\Notification;
 use Livewire\Livewire;
 use Tests\Feature\SupervisorTestCase;
 
@@ -299,6 +303,98 @@ class GrowersShowTest extends SupervisorTestCase
             ->assertViewHas('inspections', fn($i) => $i->isEmpty());
     }
 
+    // ── requestNotebookAccess ─────────────────────────────────────────────────
+
+    public function test_supervisor_can_request_notebook_access_for_active_viticulturist(): void
+    {
+        Notification::fake();
+
+        $supervisor    = $this->makeSupervisor();
+        $viticulturist = $this->makeViticulturistForSupervisor($supervisor);
+        $viticulturist->update(['can_login' => true]);
+
+        Livewire::actingAs($supervisor)
+            ->test(Show::class, ['viticulturist' => $viticulturist])
+            ->call('requestNotebookAccess')
+            ->assertDispatched('toast');
+
+        $this->assertDatabaseHas('notebook_access_requests', [
+            'supervisor_id'    => $supervisor->id,
+            'viticulturist_id' => $viticulturist->id,
+            'status'           => NotebookAccessRequest::STATUS_PENDING,
+        ]);
+
+        Notification::assertSentTo($viticulturist, NotebookAccessRequestedNotification::class);
+    }
+
+    public function test_request_notebook_access_rejected_for_ghost_viticulturist(): void
+    {
+        $supervisor    = $this->makeSupervisor();
+        $viticulturist = $this->makeViticulturistForSupervisor($supervisor);
+        $viticulturist->update(['can_login' => false]);
+
+        Livewire::actingAs($supervisor)
+            ->test(Show::class, ['viticulturist' => $viticulturist])
+            ->call('requestNotebookAccess')
+            ->assertDispatched('toast');
+
+        $this->assertDatabaseCount('notebook_access_requests', 0);
+    }
+
+    public function test_request_notebook_access_rejected_when_already_pending(): void
+    {
+        Notification::fake();
+
+        $supervisor    = $this->makeSupervisor();
+        $viticulturist = $this->makeViticulturistForSupervisor($supervisor);
+        $viticulturist->update(['can_login' => true]);
+
+        NotebookAccessRequest::create([
+            'supervisor_id'    => $supervisor->id,
+            'viticulturist_id' => $viticulturist->id,
+            'status'           => NotebookAccessRequest::STATUS_PENDING,
+            'requested_at'     => now(),
+        ]);
+
+        Livewire::actingAs($supervisor)
+            ->test(Show::class, ['viticulturist' => $viticulturist])
+            ->call('requestNotebookAccess')
+            ->assertDispatched('toast');
+
+        $this->assertSame(1, NotebookAccessRequest::where('supervisor_id', $supervisor->id)->count());
+
+        Notification::assertNothingSent();
+    }
+
+    public function test_show_exposes_pending_notebook_request_flag(): void
+    {
+        $supervisor    = $this->makeSupervisor();
+        $viticulturist = $this->makeViticulturistForSupervisor($supervisor);
+        $viticulturist->update(['can_login' => true]);
+
+        NotebookAccessRequest::create([
+            'supervisor_id'    => $supervisor->id,
+            'viticulturist_id' => $viticulturist->id,
+            'status'           => NotebookAccessRequest::STATUS_PENDING,
+            'requested_at'     => now(),
+        ]);
+
+        Livewire::actingAs($supervisor)
+            ->test(Show::class, ['viticulturist' => $viticulturist])
+            ->assertViewHas('pendingNotebookRequest', true);
+    }
+
+    public function test_show_pending_notebook_request_flag_false_when_no_request(): void
+    {
+        $supervisor    = $this->makeSupervisor();
+        $viticulturist = $this->makeViticulturistForSupervisor($supervisor);
+        $viticulturist->update(['can_login' => true]);
+
+        Livewire::actingAs($supervisor)
+            ->test(Show::class, ['viticulturist' => $viticulturist])
+            ->assertViewHas('pendingNotebookRequest', false);
+    }
+
     // ── alertas PAC ───────────────────────────────────────────────────────
 
     public function test_show_counts_plots_without_pac_data(): void
@@ -325,5 +421,247 @@ class GrowersShowTest extends SupervisorTestCase
         Livewire::actingAs($supervisor)
             ->test(Show::class, ['viticulturist' => $viticulturist])
             ->assertViewHas('lockedPlots', 1);
+    }
+
+    // ── assignWinery ──────────────────────────────────────────────────────────
+
+    public function test_assign_winery_creates_winery_viticulturist_record(): void
+    {
+        [$supervisor, $winery] = $this->makeSupervisorWithWinery();
+        $viticulturist         = $this->makeViticulturistForSupervisor($supervisor);
+
+        Livewire::actingAs($supervisor)
+            ->test(Show::class, ['viticulturist' => $viticulturist])
+            ->set('assignWineryId', $winery->id)
+            ->call('assignWinery')
+            ->assertDispatched('toast')
+            ->assertSet('showAssignWineryModal', false);
+
+        $this->assertDatabaseHas('winery_viticulturist', [
+            'winery_id'        => $winery->id,
+            'viticulturist_id' => $viticulturist->id,
+            'supervisor_id'    => $supervisor->id,
+            'source'           => WineryViticulturist::SOURCE_SUPERVISOR,
+        ]);
+    }
+
+    public function test_assign_winery_validates_required_id(): void
+    {
+        [$supervisor] = $this->makeSupervisorWithWinery();
+        $viticulturist = $this->makeViticulturistForSupervisor($supervisor);
+
+        Livewire::actingAs($supervisor)
+            ->test(Show::class, ['viticulturist' => $viticulturist])
+            ->set('assignWineryId', null)
+            ->call('assignWinery')
+            ->assertHasErrors(['assignWineryId']);
+    }
+
+    public function test_assign_winery_rejects_winery_not_in_supervisor_pool(): void
+    {
+        $supervisor    = $this->makeSupervisor();
+        $viticulturist = $this->makeViticulturistForSupervisor($supervisor);
+        $outsideWinery = $this->makeWinery();
+
+        $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
+
+        Livewire::actingAs($supervisor)
+            ->test(Show::class, ['viticulturist' => $viticulturist])
+            ->set('assignWineryId', $outsideWinery->id)
+            ->call('assignWinery');
+    }
+
+    public function test_assign_winery_rejects_already_assigned_winery(): void
+    {
+        [$supervisor, $winery] = $this->makeSupervisorWithWinery();
+        $viticulturist         = $this->makeViticulturistForSupervisor($supervisor);
+
+        WineryViticulturist::create([
+            'winery_id'        => $winery->id,
+            'viticulturist_id' => $viticulturist->id,
+            'source'           => WineryViticulturist::SOURCE_SUPERVISOR,
+            'supervisor_id'    => $supervisor->id,
+            'assigned_by'      => $supervisor->id,
+        ]);
+
+        Livewire::actingAs($supervisor)
+            ->test(Show::class, ['viticulturist' => $viticulturist])
+            ->set('assignWineryId', $winery->id)
+            ->call('assignWinery')
+            ->assertDispatched('toast');
+
+        $this->assertSame(1, WineryViticulturist::where('winery_id', $winery->id)
+            ->where('viticulturist_id', $viticulturist->id)
+            ->count());
+    }
+
+    // ── unassignWinery ────────────────────────────────────────────────────────
+
+    public function test_unassign_winery_removes_supervisor_source_record(): void
+    {
+        [$supervisor, $winery] = $this->makeSupervisorWithWinery();
+        $viticulturist         = $this->makeViticulturistForSupervisor($supervisor);
+
+        WineryViticulturist::create([
+            'winery_id'        => $winery->id,
+            'viticulturist_id' => $viticulturist->id,
+            'source'           => WineryViticulturist::SOURCE_SUPERVISOR,
+            'supervisor_id'    => $supervisor->id,
+            'assigned_by'      => $supervisor->id,
+        ]);
+
+        Livewire::actingAs($supervisor)
+            ->test(Show::class, ['viticulturist' => $viticulturist])
+            ->call('unassignWinery', $winery->id)
+            ->assertDispatched('toast');
+
+        $this->assertDatabaseMissing('winery_viticulturist', [
+            'winery_id'        => $winery->id,
+            'viticulturist_id' => $viticulturist->id,
+        ]);
+    }
+
+    public function test_unassign_winery_cannot_remove_own_source_record(): void
+    {
+        [$supervisor, $winery] = $this->makeSupervisorWithWinery();
+        $viticulturist         = $this->makeViticulturistForSupervisor($supervisor);
+
+        WineryViticulturist::create([
+            'winery_id'        => $winery->id,
+            'viticulturist_id' => $viticulturist->id,
+            'source'           => WineryViticulturist::SOURCE_OWN,
+            'supervisor_id'    => null,
+            'assigned_by'      => $winery->id,
+        ]);
+
+        $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
+
+        Livewire::actingAs($supervisor)
+            ->test(Show::class, ['viticulturist' => $viticulturist])
+            ->call('unassignWinery', $winery->id);
+    }
+
+    // ── removeFromPool ────────────────────────────────────────────────────────
+
+    public function test_remove_from_pool_deletes_supervisor_viticulturist_and_redirects(): void
+    {
+        [$supervisor, $winery] = $this->makeSupervisorWithWinery();
+        $viticulturist         = $this->makeViticulturistForSupervisor($supervisor);
+
+        Livewire::actingAs($supervisor)
+            ->test(Show::class, ['viticulturist' => $viticulturist])
+            ->call('removeFromPool')
+            ->assertRedirect(route('supervisor.oversight.growers.index'));
+
+        $this->assertDatabaseMissing('supervisor_viticulturist', [
+            'supervisor_id'    => $supervisor->id,
+            'viticulturist_id' => $viticulturist->id,
+        ]);
+    }
+
+    public function test_remove_from_pool_cascades_winery_viticulturist_records(): void
+    {
+        [$supervisor, $winery] = $this->makeSupervisorWithWinery();
+        $viticulturist         = $this->makeViticulturistForSupervisor($supervisor);
+
+        WineryViticulturist::create([
+            'winery_id'        => $winery->id,
+            'viticulturist_id' => $viticulturist->id,
+            'source'           => WineryViticulturist::SOURCE_SUPERVISOR,
+            'supervisor_id'    => $supervisor->id,
+            'assigned_by'      => $supervisor->id,
+        ]);
+
+        Livewire::actingAs($supervisor)
+            ->test(Show::class, ['viticulturist' => $viticulturist])
+            ->call('removeFromPool');
+
+        $this->assertDatabaseMissing('winery_viticulturist', [
+            'supervisor_id'    => $supervisor->id,
+            'viticulturist_id' => $viticulturist->id,
+        ]);
+    }
+
+    public function test_remove_from_pool_cascades_notebook_access_requests(): void
+    {
+        $supervisor    = $this->makeSupervisor();
+        $viticulturist = $this->makeViticulturistForSupervisor($supervisor);
+        $viticulturist->update(['can_login' => true]);
+
+        NotebookAccessRequest::create([
+            'supervisor_id'    => $supervisor->id,
+            'viticulturist_id' => $viticulturist->id,
+            'status'           => NotebookAccessRequest::STATUS_PENDING,
+            'requested_at'     => now(),
+        ]);
+
+        Livewire::actingAs($supervisor)
+            ->test(Show::class, ['viticulturist' => $viticulturist])
+            ->call('removeFromPool');
+
+        $this->assertDatabaseMissing('notebook_access_requests', [
+            'supervisor_id'    => $supervisor->id,
+            'viticulturist_id' => $viticulturist->id,
+        ]);
+    }
+
+    public function test_remove_from_pool_does_not_cascade_own_source_winery_assignments(): void
+    {
+        [$supervisor, $winery] = $this->makeSupervisorWithWinery();
+        $viticulturist         = $this->makeViticulturistForSupervisor($supervisor);
+
+        WineryViticulturist::create([
+            'winery_id'        => $winery->id,
+            'viticulturist_id' => $viticulturist->id,
+            'source'           => WineryViticulturist::SOURCE_OWN,
+            'supervisor_id'    => null,
+            'assigned_by'      => $winery->id,
+        ]);
+
+        Livewire::actingAs($supervisor)
+            ->test(Show::class, ['viticulturist' => $viticulturist])
+            ->call('removeFromPool');
+
+        $this->assertDatabaseHas('winery_viticulturist', [
+            'winery_id'        => $winery->id,
+            'viticulturist_id' => $viticulturist->id,
+            'source'           => WineryViticulturist::SOURCE_OWN,
+        ]);
+    }
+
+    // ── availableWineries ─────────────────────────────────────────────────────
+
+    public function test_available_wineries_excludes_already_assigned(): void
+    {
+        [$supervisor, $winery1] = $this->makeSupervisorWithWinery();
+        $winery2                = $this->makeWinery();
+        SupervisorWinery::create([
+            'supervisor_id' => $supervisor->id,
+            'winery_id'     => $winery2->id,
+            'assigned_by'   => $supervisor->id,
+        ]);
+        $viticulturist = $this->makeViticulturistForSupervisor($supervisor);
+
+        WineryViticulturist::create([
+            'winery_id'        => $winery1->id,
+            'viticulturist_id' => $viticulturist->id,
+            'source'           => WineryViticulturist::SOURCE_SUPERVISOR,
+            'supervisor_id'    => $supervisor->id,
+            'assigned_by'      => $supervisor->id,
+        ]);
+
+        Livewire::actingAs($supervisor)
+            ->test(Show::class, ['viticulturist' => $viticulturist])
+            ->assertViewHas('availableWineries', fn($w) => $w->count() === 1 && $w->first()->id === $winery2->id);
+    }
+
+    public function test_available_wineries_includes_all_supervisor_wineries_when_none_assigned(): void
+    {
+        [$supervisor, $winery] = $this->makeSupervisorWithWinery();
+        $viticulturist         = $this->makeViticulturistForSupervisor($supervisor);
+
+        Livewire::actingAs($supervisor)
+            ->test(Show::class, ['viticulturist' => $viticulturist])
+            ->assertViewHas('availableWineries', fn($w) => $w->count() === 1);
     }
 }
