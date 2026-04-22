@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\DB;
  *   9.  Traslados de vino
  *  10.  Mermas de vino
  *  11.  Análisis de vino
+ *  11b. Viticultores vinculados (WineryViticulturistsSeeder — 450 usuarios + pivot)
  *  12.  Recepciones de uva    (necesita viticultores vinculados)
  *  12b. Actividades de campo  (necesita viticultores + plots + campañas)
  *  13.  Disputas              (depende de recepciones)
@@ -92,6 +93,9 @@ class WineryDemoSeeder_test extends Seeder
         $this->runStep('Traslados de vino',           WineryWineTransfersSeeder::class);
         $this->runStep('Mermas de vino',              WineryWineLossesSeeder::class);
         $this->runStep('Análisis fisicoquímicos',     WineryWineAnalysisSeeder::class);
+
+        // Paso 11b: Viticultores vinculados (crea 450 usuarios + pivot)
+        $this->runStep('Viticultores vinculados (450: 300 activos + 150 ghost)', WineryViticulturistsSeeder::class);
 
         // Paso 12: Recepciones de uva (depende de viticultores vinculados)
         $this->runStep('Recepciones de uva',         WineryGrapeReceptionsSeeder::class);
@@ -277,6 +281,7 @@ class WineryDemoSeeder_test extends Seeder
                                             ->whereIn('wine_id', DB::table('wines')->where('user_id', $userId)->pluck('id'))
                                             ->count(),
             'Análisis'                   => DB::table('wine_analyses')->where('user_id', $userId)->count(),
+            'Viticultores vinculados'     => DB::table('winery_viticulturist')->where('winery_id', $userId)->count(),
             'Campañas bodega'            => DB::table('campaigns')->where('viticulturist_id', $userId)->count(),
             'Actividades de campo'       => DB::table('agricultural_activities')
                                             ->whereIn('viticulturist_id',
