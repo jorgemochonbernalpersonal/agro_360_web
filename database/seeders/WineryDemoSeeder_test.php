@@ -45,7 +45,8 @@ use Illuminate\Support\Facades\DB;
  *  26.  Cumplimiento regulatorio
  *  27.  Documentos de bodega
  *  28.  Alertas
- *  29.  Recálculo stock contenedores (WineryRecalculateContainerStockSeeder)
+ *  29.  Avisos a viticultores      (WineryAnnouncementsSeeder — 45 avisos)
+ *  30.  Recálculo stock contenedores (WineryRecalculateContainerStockSeeder)
  */
 class WineryDemoSeeder_test extends Seeder
 {
@@ -133,10 +134,11 @@ class WineryDemoSeeder_test extends Seeder
         $this->command->info('  ▶ Aditivos enológicos...');
         $this->seedAdditives();
 
-        // Paso 26-28: Cumplimiento y documentación
+        // Paso 26-29: Cumplimiento, documentación y comunicación
         $this->runStep('Cumplimiento regulatorio',   WineryComplianceSeeder::class);
         $this->runStep('Documentos de bodega',       WineryDocumentsSeeder::class);
         $this->runStep('Alertas',                    WineryAlertsSeeder::class);
+        $this->runStep('Avisos a viticultores (45)', WineryAnnouncementsSeeder::class);
 
         // Paso 29: Recalcular stock de contenedores a partir de operaciones reales
         $this->runStep('Stock contenedores (recálculo)', WineryRecalculateContainerStockSeeder::class);
@@ -315,6 +317,7 @@ class WineryDemoSeeder_test extends Seeder
             'Autorizaciones embotellado' => DB::table('bottling_authorizations')->where('user_id', $userId)->count(),
             'Documentos de bodega'       => DB::table('winery_documents')->where('user_id', $userId)->count(),
             'Alertas'                    => DB::table('winery_alerts')->where('user_id', $userId)->count(),
+            'Avisos a viticultores'      => DB::table('winery_announcements')->where('winery_id', $userId)->count(),
         ];
 
         foreach ($stats as $label => $count) {
