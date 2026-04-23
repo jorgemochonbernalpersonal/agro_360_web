@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Viticulturist\MarketedHarvests;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Viticulturist\AbstractIndex;
 use App\Models\Campaign;
 use App\Models\MarketedHarvest;
@@ -10,6 +11,8 @@ use Illuminate\Support\Facades\Auth;
 
 class Index extends AbstractIndex
 {
+    use WithRoleAwareRedirect;
+
     public string $filterCampaign    = '';
     public string $filterDestination = '';
 
@@ -31,10 +34,10 @@ class Index extends AbstractIndex
     {
         $entry = $this->findOwned(MarketedHarvest::class, $id);
 
-        $this->redirect(route('viticulturist.invoices.create', [
+        $this->viticulturistRoleRedirect('invoices.create', [
             'harvest_id'          => $entry->harvest_id,
             'marketed_harvest_id' => $entry->id,
-        ]));
+        ]);
     }
 
     public function delete(int $id): void

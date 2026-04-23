@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Viticulturist\Viticulturists;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Models\User;
 use App\Models\WineryViticulturist;
 use Livewire\Attributes\Layout;
@@ -15,7 +16,7 @@ use App\Livewire\Concerns\WithToastNotifications;
 
 class Create extends Component
 {
-    use WithToastNotifications;
+    use WithRoleAwareRedirect, WithToastNotifications;
     public $name = '';
     public $email = '';
     public $winery_id = '';
@@ -102,7 +103,7 @@ class Create extends Component
             });
 
             $this->toastSuccess('Viticultor creado correctamente. Puedes enviar la invitación desde la tabla de acciones.');
-            return $this->redirect(route('viticulturist.personal.index', ['viewMode' => 'personal']), navigate: true);
+            return $this->viticulturistRoleRedirect('personal.index', ['viewMode' => 'personal']);
         } catch (\Exception $e) {
             Log::error('Error al crear viticultor', [
                 'error' => $e->getMessage(),

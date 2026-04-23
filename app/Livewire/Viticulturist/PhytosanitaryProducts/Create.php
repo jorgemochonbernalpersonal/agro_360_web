@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Viticulturist\PhytosanitaryProducts;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Models\PhytosanitaryProduct;
 use App\Livewire\Concerns\WithToastNotifications;
 use Illuminate\Support\Facades\Auth;
@@ -10,7 +11,7 @@ use Livewire\Component;
 
 class Create extends Component
 {
-    use WithToastNotifications;
+    use WithRoleAwareRedirect, WithToastNotifications;
     public $name = '';
     public $active_ingredient = '';
     public $registration_number = '';
@@ -68,7 +69,7 @@ class Create extends Component
 
             $this->toastSuccess('Producto fitosanitario creado correctamente.');
 
-            return $this->redirect(route('viticulturist.phytosanitary-products.index'), navigate: true);
+            return $this->viticulturistRoleRedirect('phytosanitary-products.index');
         } catch (\Exception $e) {
             \Log::error('Error al crear producto fitosanitario', [
                 'error' => $e->getMessage(),

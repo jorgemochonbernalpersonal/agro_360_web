@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Viticulturist\Harvests;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Harvest;
 use App\Models\HarvestDelivery;
@@ -17,7 +18,7 @@ use Livewire\Component;
 
 class CreateDelivery extends Component
 {
-    use WithToastNotifications;
+    use WithRoleAwareRedirect, WithToastNotifications;
 
     public string $plot_id          = '';
     public string $plot_planting_id = '';
@@ -168,7 +169,7 @@ class CreateDelivery extends Component
             $this->toastSuccess('Entrega registrada correctamente.');
         }
 
-        return $this->redirect(route('viticulturist.harvests.index'), navigate: true);
+        return $this->viticulturistRoleRedirect('harvests.index');
     }
 
     /**

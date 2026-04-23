@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Viticulturist\PlotCosts;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Campaign;
 use App\Models\Plot;
@@ -11,7 +12,7 @@ use Livewire\Component;
 
 class Create extends Component
 {
-    use WithToastNotifications;
+    use WithRoleAwareRedirect, WithToastNotifications;
 
     public string $plot_id = '';
     public string $campaign_id = '';
@@ -63,7 +64,7 @@ class Create extends Component
 
         $this->toastSuccess('Coste registrado correctamente.');
 
-        return $this->redirect(route('viticulturist.plot-costs.index'), navigate: true);
+        return $this->viticulturistRoleRedirect('plot-costs.index');
     }
 
     public function render()

@@ -2,12 +2,15 @@
 
 namespace App\Livewire\Viticulturist\CueExports;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Viticulturist\AbstractEdit;
 use App\Models\CueExport;
 use App\Models\Exploitation;
 
 class Edit extends AbstractEdit
 {
+    use WithRoleAwareRedirect;
+
     public CueExport $cueExport;
 
     public string $exploitation_id = '';
@@ -22,7 +25,7 @@ class Edit extends AbstractEdit
 
         if ($cueExport->status !== 'draft') {
             session()->flash('error', 'Solo se pueden editar exportaciones en estado Borrador.');
-            $this->redirect(route('viticulturist.cue-exports.index'));
+            $this->viticulturistRoleRedirect('cue-exports.index');
             return;
         }
 

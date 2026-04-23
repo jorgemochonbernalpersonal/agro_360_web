@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Viticulturist\Invoices;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Models\Invoice;
 use App\Models\Client;
 use App\Models\Tax;
@@ -14,7 +15,7 @@ use Illuminate\Support\Facades\DB;
 
 class Edit extends Component
 {
-    use WithToastNotifications;
+    use WithRoleAwareRedirect, WithToastNotifications;
 
     public Invoice $invoice;
 
@@ -460,7 +461,7 @@ class Edit extends Component
 
             $this->toastSuccess('Factura emitida correctamente.');
             $this->closeInvoiceModal();
-            return $this->redirect(route('viticulturist.invoices.index'), navigate: true);
+            return $this->viticulturistRoleRedirect('invoices.index');
         } catch (\Exception $e) {
             $this->toastError($e instanceof RuntimeException ? $e->getMessage() : 'Error al facturar. Inténtalo de nuevo.');
         }
@@ -696,7 +697,7 @@ class Edit extends Component
             });
 
             $this->toastSuccess('Factura actualizada correctamente.');
-            return $this->redirect(route('viticulturist.invoices.index'), navigate: true);
+            return $this->viticulturistRoleRedirect('invoices.index');
         } catch (\Exception $e) {
             $this->toastError($e instanceof RuntimeException ? $e->getMessage() : 'Error al actualizar la factura. Inténtalo de nuevo.');
         }

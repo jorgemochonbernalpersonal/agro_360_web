@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Viticulturist\Invoices;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Models\Invoice;
 use App\Models\Client;
 use App\Models\Tax;
@@ -15,7 +16,7 @@ use Illuminate\Support\Facades\DB;
 
 class Create extends Component
 {
-    use WithToastNotifications;
+    use WithRoleAwareRedirect, WithToastNotifications;
 
     public $client_id = '';
     public $client_address_id = '';
@@ -463,7 +464,7 @@ class Create extends Component
             });
 
             $this->toastSuccess("Albarán {$deliveryNoteCode} creado. Emítelo para generar el número de factura.");
-            return $this->redirect(route('viticulturist.invoices.index'), navigate: true);
+            return $this->viticulturistRoleRedirect('invoices.index');
         } catch (\Exception $e) {
             $this->toastError($e instanceof RuntimeException ? $e->getMessage() : 'Error al crear la factura. Inténtalo de nuevo.');
         }

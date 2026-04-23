@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Viticulturist\PhytosanitaryProducts;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Models\PhytosanitaryProduct;
 use App\Livewire\Concerns\WithToastNotifications;
 use Illuminate\Support\Facades\Auth;
@@ -10,7 +11,7 @@ use Livewire\Component;
 
 class Edit extends Component
 {
-    use WithToastNotifications;
+    use WithRoleAwareRedirect, WithToastNotifications;
     public PhytosanitaryProduct $product;
 
     public $name = '';
@@ -86,7 +87,7 @@ class Edit extends Component
 
             $this->toastSuccess('Producto fitosanitario actualizado correctamente.');
 
-            return $this->redirect(route('viticulturist.phytosanitary-products.index'), navigate: true);
+            return $this->viticulturistRoleRedirect('phytosanitary-products.index');
         } catch (\Exception $e) {
             \Log::error('Error al actualizar producto fitosanitario', [
                 'error' => $e->getMessage(),

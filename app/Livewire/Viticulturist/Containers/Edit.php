@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Viticulturist\Containers;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Models\Container;
 use App\Models\ContainerType;
 use App\Models\ContainerMaterial;
@@ -15,7 +16,7 @@ use Illuminate\Validation\Rule;
 
 class Edit extends Component
 {
-    use WithFileUploads, WithToastNotifications;
+    use WithFileUploads, WithRoleAwareRedirect, WithToastNotifications;
 
     public Container $container;
     
@@ -137,7 +138,7 @@ class Edit extends Component
             ]);
 
             $this->toastSuccess('Contenedor actualizado correctamente.');
-            return $this->redirect(route('viticulturist.containers.show', $this->container->id), navigate: true);
+            return $this->viticulturistRoleRedirect('containers.show', $this->container->id);
             
         } catch (\Exception $e) {
             \Log::error('Error al actualizar contenedor', [

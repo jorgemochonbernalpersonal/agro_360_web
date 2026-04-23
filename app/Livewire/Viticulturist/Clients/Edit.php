@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Viticulturist\Clients;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Models\Client;
 use App\Models\AutonomousCommunity;
 use App\Models\Province;
@@ -13,7 +14,7 @@ use Illuminate\Support\Facades\DB;
 
 class Edit extends Component
 {
-    use WithToastNotifications;
+    use WithRoleAwareRedirect, WithToastNotifications;
 
     public Client $client;
     public $client_id;
@@ -322,7 +323,7 @@ class Edit extends Component
             });
 
             $this->toastSuccess('Cliente actualizado exitosamente.');
-            return $this->redirect(route('viticulturist.clients.index'), navigate: true);
+            return $this->viticulturistRoleRedirect('clients.index');
         } catch (\Exception $e) {
             $this->toastError($e instanceof RuntimeException ? $e->getMessage() : 'Error al actualizar el cliente. Inténtalo de nuevo.');
         }

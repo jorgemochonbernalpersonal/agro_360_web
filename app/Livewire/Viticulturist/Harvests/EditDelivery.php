@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Viticulturist\Harvests;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\HarvestDelivery;
 use App\Models\Plot;
@@ -14,7 +15,7 @@ use Livewire\Component;
 
 class EditDelivery extends Component
 {
-    use WithToastNotifications;
+    use WithRoleAwareRedirect, WithToastNotifications;
 
     public HarvestDelivery $delivery;
 
@@ -174,7 +175,7 @@ class EditDelivery extends Component
 
         $this->toastSuccess($message);
 
-        return $this->redirect(route('viticulturist.harvests.index'), navigate: true);
+        return $this->viticulturistRoleRedirect('harvests.index');
     }
 
     public function delete(): mixed
@@ -223,7 +224,7 @@ class EditDelivery extends Component
 
         $this->toastSuccess('Entrega eliminada.');
 
-        return $this->redirect(route('viticulturist.harvests.index'), navigate: true);
+        return $this->viticulturistRoleRedirect('harvests.index');
     }
 
     public function render()

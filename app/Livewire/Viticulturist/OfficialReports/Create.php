@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Viticulturist\OfficialReports;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Campaign;
 use App\Models\OfficialReport;
@@ -11,7 +12,7 @@ use Livewire\Component;
 
 class Create extends Component
 {
-    use WithToastNotifications;
+    use WithRoleAwareRedirect, WithToastNotifications;
 
     // Formulario de generación
     public $reportType = 'phytosanitary_treatments';
@@ -411,7 +412,7 @@ class Create extends Component
             $this->toastSuccess('✅ Informe en proceso. Te avisaremos por email cuando esté listo (1-5 min).');
 
             // Redirigir
-            return $this->redirect(route('viticulturist.official-reports.index'), navigate: true);
+            return $this->viticulturistRoleRedirect('official-reports.index');
         } catch (\Exception $e) {
             \Log::error('Error al crear informe para cola', [
                 'user_id' => auth()->id(),
@@ -626,7 +627,7 @@ class Create extends Component
         if ($generatedCount > 0) {
             $this->password = '';
             $this->toastSuccess("✅ Se generarán {$generatedCount} informes en lotes. Te avisaremos por email cuando estén listos (5-10 min por lote).");
-            return $this->redirect(route('viticulturist.official-reports.index'), navigate: true);
+            return $this->viticulturistRoleRedirect('official-reports.index');
         } else {
             $this->addError('generation', 'Error al generar informes: ' . implode(', ', $errors));
             $this->toastError('Error al generar informes por lotes.');
@@ -732,7 +733,7 @@ class Create extends Component
         $this->showSuccessModal = false;
 
         // Redirigir a la lista de informes
-        return $this->redirect(route('viticulturist.official-reports.index'), navigate: true);
+        return $this->viticulturistRoleRedirect('official-reports.index');
     }
 
     public function render()

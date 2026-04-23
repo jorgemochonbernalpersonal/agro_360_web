@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Viticulturist\Containers;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Models\Container;
 use App\Models\ContainerType;
 use App\Models\ContainerMaterial;
@@ -16,7 +17,7 @@ use Illuminate\Validation\Rule;
 
 class Create extends Component
 {
-    use WithFileUploads, WithToastNotifications;
+    use WithFileUploads, WithRoleAwareRedirect, WithToastNotifications;
 
     // Básicos
     public $name = '';
@@ -141,7 +142,7 @@ class Create extends Component
             ]);
 
             $this->toastSuccess('Contenedor creado correctamente.');
-            return $this->redirect(route('viticulturist.containers.index'), navigate: true);
+            return $this->viticulturistRoleRedirect('containers.index');
             
         } catch (\Exception $e) {
             \Log::error('Error al crear contenedor', [
