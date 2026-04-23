@@ -160,6 +160,40 @@ class Wine extends Model
         return $this->hasMany(ProductLot::class);
     }
 
+    public function costs(): HasMany
+    {
+        return $this->hasMany(WineCost::class)->orderByDesc('cost_date');
+    }
+
+    /** Coste total de uva calculado desde wine_harvests × price_per_kg */
+    public function getGrapeCostAttribute(): float
+    {
+        return (float) $this->wineHarvests()
+            ->join('harvests', 'wine_harvests.harvest_id', '=', 'harvests.id')
+            ->selectRaw('COALESCE(SUM(wine_harvests.quantity_kg * COALESCE(harvests.price_per_kg, 0)), 0) as total')
+            ->value('total');
+    }
+
+    /** Suma de costes manuales registrados */
+    public function getManualCostAttribute(): float
+    {
+        return (float) $this->costs()->sum('amount');
+    }
+
+    /** Coste total de producción (uva + costes manuales) */
+    public function getTotalProductionCostAttribute(): float
+    {
+        return $this->grape_cost + $this->manual_cost;
+    }
+
+    /** Coste por litro. Null si no hay volumen. */
+    public function getCostPerLiterAttribute(): ?float
+    {
+        $volume = (float) $this->volume_liters;
+        if ($volume <= 0) return null;
+        return $this->total_production_cost / $volume;
+    }
+
     // ─── Helpers de contenedores ───────────────────────────────────────────────
 
     /**

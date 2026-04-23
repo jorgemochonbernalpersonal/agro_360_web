@@ -60,7 +60,8 @@ class WineContainerStockService
                     $fromContainer->save();
 
                     $this->updateCurrentState($fromContainer, null, -$qty);
-                    $this->recordHistory($fromContainer, $transfer, 'wine_transfer_out', -$qty);
+                    // Para blending, el vino que sale del origen es source_wine_id, no el resultado
+                    $this->recordHistory($fromContainer, $transfer, 'wine_transfer_out', -$qty, $transfer->source_wine_id);
                 }
             }
 
@@ -120,8 +121,10 @@ class WineContainerStockService
                     $fromContainer->wine_volume_liters = $fromContainer->wine_volume_liters + $qty;
                     $fromContainer->save();
 
-                    $this->updateCurrentState($fromContainer, $transfer->wine_id, $qty);
-                    $this->recordHistory($fromContainer, $transfer, 'wine_transfer_revert_in', $qty);
+                    // Para blending, el origen tenía source_wine_id, no el wine resultado
+                    $originWineId = $transfer->source_wine_id ?? $transfer->wine_id;
+                    $this->updateCurrentState($fromContainer, $originWineId, $qty);
+                    $this->recordHistory($fromContainer, $transfer, 'wine_transfer_revert_in', $qty, $originWineId);
                 }
             }
 
@@ -440,12 +443,14 @@ class WineContainerStockService
 
     /**
      * Registra una entrada en container_histories para audit trail.
+     * $wineIdOverride permite especificar un wine_id distinto al transfer->wine_id
+     * (necesario para blending, donde el origen tiene un vino diferente al resultado).
      */
-    private function recordHistory(Container $container, WineTransfer $transfer, string $operationType, float $quantity): void
+    private function recordHistory(Container $container, WineTransfer $transfer, string $operationType, float $quantity, ?int $wineIdOverride = null): void
     {
         ContainerHistory::create([
             'container_id'   => $container->id,
-            'wine_id'        => $transfer->wine_id,
+            'wine_id'        => $wineIdOverride ?? $transfer->wine_id,
             'operation_type' => $operationType,
             'quantity'       => $quantity,
             'created_by'     => Auth::id(),

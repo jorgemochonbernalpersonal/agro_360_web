@@ -15,6 +15,13 @@ use Livewire\Component;
 
 class Index extends Component
 {
+    public string $tab = 'general';
+
+    public function updatingTab(): void
+    {
+        $this->dispatch('denomination-tab-changed');
+    }
+
     #[Layout('layouts.app')]
     public function render()
     {

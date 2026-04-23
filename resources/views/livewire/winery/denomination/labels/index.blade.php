@@ -1,10 +1,12 @@
 <div class="space-y-6 animate-fade-in">
 
+    @if(!$embedded)
     <x-agro.page-header
         title="Contraetiquetas DO"
         description="Solicitudes de contraetiquetas emitidas por tu Denominación de Origen."
         icon="tag"
     />
+    @endif
 
     {{-- Filtros --}}
     <div class="flex flex-wrap gap-3">

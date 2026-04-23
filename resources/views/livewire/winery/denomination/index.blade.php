@@ -43,151 +43,149 @@
             </div>
         </x-agro.card>
 
-        {{-- Viticultores asignados por la DO ────────────────────────────── --}}
-        <x-agro.card>
-            <x-slot:header>
-                <div class="flex items-center gap-2">
-                    <flux:icon icon="users" class="size-4 text-blue-500" />
-                    <span>Viticultores asignados por la DO</span>
-                    <span class="ml-1 text-xs text-zinc-400">({{ $doViticulturists->count() }})</span>
-                </div>
-            </x-slot:header>
+        {{-- Tabs ────────────────────────────────────────────────────────── --}}
+        <div class="border-b border-zinc-200">
+            <nav class="-mb-px flex gap-1">
+                @foreach([
+                    ['key' => 'general',        'label' => 'General',         'icon' => 'building-office-2'],
+                    ['key' => 'qualifications', 'label' => 'Calificaciones',  'icon' => 'star'],
+                    ['key' => 'inspections',    'label' => 'Inspecciones',    'icon' => 'shield-check'],
+                    ['key' => 'labels',         'label' => 'Contraetiquetas', 'icon' => 'tag'],
+                ] as $t)
+                    <button
+                        wire:click="$set('tab', '{{ $t['key'] }}')"
+                        class="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors whitespace-nowrap
+                            {{ $tab === $t['key']
+                                ? 'border-violet-500 text-violet-700'
+                                : 'border-transparent text-zinc-500 hover:text-zinc-700 hover:border-zinc-300' }}"
+                    >
+                        <flux:icon icon="{{ $t['icon'] }}" class="size-4" />
+                        {{ $t['label'] }}
+                    </button>
+                @endforeach
+            </nav>
+        </div>
 
-            @if($doViticulturists->isEmpty())
-                <x-agro.empty-state
-                    icon="users"
-                    title="Sin viticultores asignados"
-                    description="La DO no ha asignado aún viticultores a tu bodega."
-                />
-            @else
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-1">
-                    @foreach($doViticulturists as $row)
-                        @php $delay = min($loop->index * 50, 300); @endphp
-                        <x-agro.card
-                            class="animate-fade-in-up flex flex-col hover:-translate-y-1"
-                            style="animation-delay: {{ $delay }}ms;"
-                            wire:key="vit-{{ $row->viticulturist->id }}"
-                        >
-                            <x-slot:header>
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center shrink-0">
-                                        <flux:icon icon="user" class="size-5 text-blue-600" />
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <h3 class="font-bold text-zinc-900 truncate">{{ $row->viticulturist->name }}</h3>
-                                        @if($row->viticulturist->email && !str_starts_with($row->viticulturist->email, 'viticultores.'))
-                                            <p class="text-xs text-zinc-500">{{ $row->viticulturist->email }}</p>
-                                        @endif
-                                    </div>
-                                </div>
-                            </x-slot:header>
+        {{-- Tab: General ────────────────────────────────────────────────── --}}
+        @if($tab === 'general')
 
-                            <div class="flex-1 space-y-4">
-                                <div class="grid grid-cols-2 gap-2">
-                                    <div class="bg-agro-50 rounded-xl p-3">
-                                        <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Parcelas</p>
-                                        <p class="text-2xl font-bold text-agro-700 leading-none">{{ $row->plot_count ?: '—' }}</p>
-                                    </div>
-                                    <div class="bg-agro-50 rounded-xl p-3">
-                                        <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Superficie</p>
-                                        <p class="text-2xl font-bold text-agro-700 leading-none">
-                                            @if($row->total_area)
-                                                {{ number_format($row->total_area, 2, ',', '.') }}
-                                            @else
-                                                —
-                                            @endif
-                                        </p>
-                                        @if($row->total_area)
-                                            <p class="text-[10px] text-agro-400">ha</p>
-                                        @endif
-                                    </div>
-                                </div>
-
-                                <div class="space-y-2 text-sm">
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-zinc-400">Última actividad</span>
-                                        <span class="text-zinc-700 font-medium">
-                                            @if($row->last_activity)
-                                                {{ \Carbon\Carbon::parse($row->last_activity)->translatedFormat('d M Y') }}
-                                            @else
-                                                Sin actividad
-                                            @endif
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </x-agro.card>
-                    @endforeach
-                </div>
-            @endif
-        </x-agro.card>
-
-        {{-- Módulos activos habilitados por la DO --}}
-        @if($grantedAbilities->isNotEmpty())
+            {{-- Viticultores asignados por la DO --}}
             <x-agro.card>
                 <x-slot:header>
                     <div class="flex items-center gap-2">
-                        <flux:icon icon="puzzle-piece" class="size-4 text-violet-500" />
-                        <span>Módulos habilitados por la DO</span>
+                        <flux:icon icon="users" class="size-4 text-blue-500" />
+                        <span>Viticultores asignados por la DO</span>
+                        <span class="ml-1 text-xs text-zinc-400">({{ $doViticulturists->count() }})</span>
                     </div>
                 </x-slot:header>
-                @php $byModule = $grantedAbilities->groupBy('module'); @endphp
-                <div class="divide-y divide-zinc-100">
-                    @foreach($byModule as $module => $abilities)
-                        <div class="px-4 py-3">
-                            <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide mb-2">{{ $module }}</p>
-                            <div class="flex flex-wrap gap-2">
-                                @foreach($abilities as $ability)
-                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-violet-50 text-violet-700 border border-violet-200">
-                                        <span class="size-1.5 rounded-full bg-violet-400"></span>
-                                        {{ $ability->name }}
-                                    </span>
-                                @endforeach
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
+
+                @if($doViticulturists->isEmpty())
+                    <x-agro.empty-state
+                        icon="users"
+                        title="Sin viticultores asignados"
+                        description="La DO no ha asignado aún viticultores a tu bodega."
+                    />
+                @else
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-1">
+                        @foreach($doViticulturists as $row)
+                            @php $delay = min($loop->index * 50, 300); @endphp
+                            <x-agro.card
+                                class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                                style="animation-delay: {{ $delay }}ms;"
+                                wire:key="vit-{{ $row->viticulturist->id }}"
+                            >
+                                <x-slot:header>
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center shrink-0">
+                                            <flux:icon icon="user" class="size-5 text-blue-600" />
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <h3 class="font-bold text-zinc-900 truncate">{{ $row->viticulturist->name }}</h3>
+                                            @if($row->viticulturist->email && !str_starts_with($row->viticulturist->email, 'viticultores.'))
+                                                <p class="text-xs text-zinc-500">{{ $row->viticulturist->email }}</p>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </x-slot:header>
+
+                                <div class="flex-1 space-y-4">
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <div class="bg-agro-50 rounded-xl p-3">
+                                            <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Parcelas</p>
+                                            <p class="text-2xl font-bold text-agro-700 leading-none">{{ $row->plot_count ?: '—' }}</p>
+                                        </div>
+                                        <div class="bg-agro-50 rounded-xl p-3">
+                                            <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Superficie</p>
+                                            <p class="text-2xl font-bold text-agro-700 leading-none">
+                                                @if($row->total_area)
+                                                    {{ number_format($row->total_area, 2, ',', '.') }}
+                                                @else
+                                                    —
+                                                @endif
+                                            </p>
+                                            @if($row->total_area)
+                                                <p class="text-[10px] text-agro-400">ha</p>
+                                            @endif
+                                        </div>
+                                    </div>
+
+                                    <div class="space-y-2 text-sm">
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-zinc-400">Última actividad</span>
+                                            <span class="text-zinc-700 font-medium">
+                                                @if($row->last_activity)
+                                                    {{ \Carbon\Carbon::parse($row->last_activity)->translatedFormat('d M Y') }}
+                                                @else
+                                                    Sin actividad
+                                                @endif
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </x-agro.card>
+                        @endforeach
+                    </div>
+                @endif
             </x-agro.card>
+
+            {{-- Módulos activos habilitados por la DO --}}
+            @if($grantedAbilities->isNotEmpty())
+                <x-agro.card>
+                    <x-slot:header>
+                        <div class="flex items-center gap-2">
+                            <flux:icon icon="puzzle-piece" class="size-4 text-violet-500" />
+                            <span>Módulos habilitados por la DO</span>
+                        </div>
+                    </x-slot:header>
+                    @php $byModule = $grantedAbilities->groupBy('module'); @endphp
+                    <div class="divide-y divide-zinc-100">
+                        @foreach($byModule as $module => $abilities)
+                            <div class="px-4 py-3">
+                                <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide mb-2">{{ $module }}</p>
+                                <div class="flex flex-wrap gap-2">
+                                    @foreach($abilities as $ability)
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-violet-50 text-violet-700 border border-violet-200">
+                                            <span class="size-1.5 rounded-full bg-violet-400"></span>
+                                            {{ $ability->name }}
+                                        </span>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </x-agro.card>
+            @endif
+
+        @elseif($tab === 'qualifications')
+            <livewire:winery.denomination.qualifications.index :embedded="true" />
+
+        @elseif($tab === 'inspections')
+            <livewire:winery.denomination.inspections.index :embedded="true" />
+
+        @elseif($tab === 'labels')
+            <livewire:winery.denomination.labels.index :embedded="true" />
+
         @endif
-
-        {{-- Accesos rápidos DO ───────────────────────────────────────────── --}}
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <a href="{{ route('winery.denomination.qualifications.index') }}"
-               class="group flex items-center gap-4 p-4 rounded-2xl bg-white border border-zinc-200 hover:border-green-300 hover:shadow-sm transition-all">
-                <div class="size-10 rounded-xl bg-green-100 flex items-center justify-center shrink-0 group-hover:bg-green-200 transition-colors">
-                    <flux:icon icon="star" class="size-5 text-green-600" />
-                </div>
-                <div class="flex-1 min-w-0">
-                    <p class="text-sm font-semibold text-zinc-800">Calificaciones</p>
-                    <p class="text-xs text-zinc-400 truncate">Vinos calificados por la DO</p>
-                </div>
-                <flux:icon icon="chevron-right" class="size-4 text-zinc-300 group-hover:text-green-400 transition-colors shrink-0" />
-            </a>
-
-            <a href="{{ route('winery.denomination.inspections.index') }}"
-               class="group flex items-center gap-4 p-4 rounded-2xl bg-white border border-zinc-200 hover:border-blue-300 hover:shadow-sm transition-all">
-                <div class="size-10 rounded-xl bg-blue-100 flex items-center justify-center shrink-0 group-hover:bg-blue-200 transition-colors">
-                    <flux:icon icon="shield-check" class="size-5 text-blue-600" />
-                </div>
-                <div class="flex-1 min-w-0">
-                    <p class="text-sm font-semibold text-zinc-800">Inspecciones</p>
-                    <p class="text-xs text-zinc-400 truncate">Inspecciones realizadas por la DO</p>
-                </div>
-                <flux:icon icon="chevron-right" class="size-4 text-zinc-300 group-hover:text-blue-400 transition-colors shrink-0" />
-            </a>
-
-            <a href="{{ route('winery.denomination.labels.index') }}"
-               class="group flex items-center gap-4 p-4 rounded-2xl bg-white border border-zinc-200 hover:border-rose-300 hover:shadow-sm transition-all">
-                <div class="size-10 rounded-xl bg-rose-100 flex items-center justify-center shrink-0 group-hover:bg-rose-200 transition-colors">
-                    <flux:icon icon="tag" class="size-5 text-rose-600" />
-                </div>
-                <div class="flex-1 min-w-0">
-                    <p class="text-sm font-semibold text-zinc-800">Etiquetas DO</p>
-                    <p class="text-xs text-zinc-400 truncate">Solicitudes de contraetiquetas</p>
-                </div>
-                <flux:icon icon="chevron-right" class="size-4 text-zinc-300 group-hover:text-rose-400 transition-colors shrink-0" />
-            </a>
-        </div>
 
     @endif
 

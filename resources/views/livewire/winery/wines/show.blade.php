@@ -70,6 +70,7 @@
                 ['id' => 'transfers',    'label' => 'Trasvases',      'icon' => 'arrows-right-left'],
                 ['id' => 'losses',       'label' => 'Mermas',         'icon' => 'minus-circle'],
                 ['id' => 'analyses',     'label' => 'Análisis',       'icon' => 'document-magnifying-glass'],
+                ['id' => 'costs',        'label' => 'Costes',         'icon' => 'currency-euro'],
                 ['id' => 'diagram',      'label' => 'Diagrama',       'icon' => 'share'],
                 ['id' => 'qr',           'label' => 'QR',             'icon' => 'qr-code'],
             ] as $t)
@@ -1004,6 +1005,153 @@
             </div>
         </div>
     </flux:modal>
+
+    {{-- ════════════════════════════════════════════════════════════════════════
+         TAB: COSTES DE PRODUCCIÓN
+    ════════════════════════════════════════════════════════════════════════════ --}}
+    <div x-show="tab === 'costs'" x-cloak>
+        @php
+            $grapeCost  = $wine->grape_cost;
+            $manualCost = $costs->sum('amount');
+            $totalCost  = $grapeCost + $manualCost;
+            $volume     = (float) $wine->volume_liters;
+            $costPerL   = $volume > 0 ? $totalCost / $volume : null;
+        @endphp
+
+        {{-- KPIs --}}
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <x-agro.card class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-emerald-50 flex items-center justify-center shrink-0">
+                    <flux:icon icon="archive-box-arrow-down" class="size-4 text-emerald-600" />
+                </div>
+                <div>
+                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">Coste uva</p>
+                    <p class="text-lg font-bold text-zinc-900 leading-none">
+                        {{ $grapeCost > 0 ? number_format($grapeCost, 2, ',', '.') . ' €' : '—' }}
+                    </p>
+                </div>
+            </x-agro.card>
+            <x-agro.card class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-violet-50 flex items-center justify-center shrink-0">
+                    <flux:icon icon="receipt-percent" class="size-4 text-violet-600" />
+                </div>
+                <div>
+                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">Costes extras</p>
+                    <p class="text-lg font-bold text-zinc-900 leading-none">
+                        {{ $manualCost > 0 ? number_format($manualCost, 2, ',', '.') . ' €' : '—' }}
+                    </p>
+                </div>
+            </x-agro.card>
+            <x-agro.card class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-zinc-100 flex items-center justify-center shrink-0">
+                    <flux:icon icon="currency-euro" class="size-4 text-zinc-600" />
+                </div>
+                <div>
+                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">Total</p>
+                    <p class="text-lg font-bold text-zinc-900 leading-none">
+                        {{ $totalCost > 0 ? number_format($totalCost, 2, ',', '.') . ' €' : '—' }}
+                    </p>
+                </div>
+            </x-agro.card>
+            <x-agro.card class="flex items-center gap-3">
+                @php
+                    $plColor = $costPerL === null ? 'zinc'
+                        : ($costPerL < 0.5 ? 'emerald' : ($costPerL < 1.5 ? 'amber' : 'red'));
+                @endphp
+                <div class="w-9 h-9 rounded-lg bg-{{ $plColor }}-50 flex items-center justify-center shrink-0">
+                    <flux:icon icon="beaker" class="size-4 text-{{ $plColor }}-600" />
+                </div>
+                <div>
+                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">€ / Litro</p>
+                    <p class="text-lg font-bold text-{{ $plColor }}-700 leading-none">
+                        {{ $costPerL !== null ? number_format($costPerL, 3, ',', '.') . ' €' : '—' }}
+                    </p>
+                </div>
+            </x-agro.card>
+        </div>
+
+        {{-- Tabla de costes manuales --}}
+        <x-agro.card>
+            <div class="flex items-center justify-between mb-4">
+                <p class="text-sm font-semibold text-zinc-700">Costes manuales registrados</p>
+                <a href="{{ roleRoute('production-costs.create', ['wineId' => $wine->id]) }}" wire:navigate>
+                    <flux:button variant="outline" icon="plus" size="sm">Añadir coste</flux:button>
+                </a>
+            </div>
+
+            @if($costs->isEmpty())
+                <x-agro.empty-state
+                    icon="receipt-percent"
+                    title="Sin costes manuales"
+                    description="Registra aditivos, análisis, embotellado, etiquetado u otros costes asociados a este vino."
+                >
+                    <x-slot:action>
+                        <a href="{{ roleRoute('production-costs.create', ['wineId' => $wine->id]) }}" wire:navigate>
+                            <flux:button variant="primary" icon="plus" size="sm">Añadir coste</flux:button>
+                        </a>
+                    </x-slot:action>
+                </x-agro.empty-state>
+            @else
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="border-b border-zinc-100 text-left text-xs font-semibold text-zinc-400 uppercase tracking-wider">
+                                <th class="py-2 px-3">Fecha</th>
+                                <th class="py-2 px-3">Categoría</th>
+                                <th class="py-2 px-3">Descripción</th>
+                                <th class="py-2 px-3">Proveedor</th>
+                                <th class="py-2 px-3 text-right">Importe</th>
+                                <th class="py-2 px-3"></th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-zinc-50">
+                            @foreach($costs as $cost)
+                                @php
+                                    $catColor = \App\Models\WineCost::CATEGORY_COLORS[$cost->category] ?? 'zinc';
+                                    $catLabel = \App\Models\WineCost::CATEGORIES[$cost->category] ?? $cost->category;
+                                @endphp
+                                <tr class="hover:bg-zinc-50 transition-colors" wire:key="cost-{{ $cost->id }}">
+                                    <td class="py-2 px-3 text-zinc-500 whitespace-nowrap">{{ $cost->cost_date->format('d/m/Y') }}</td>
+                                    <td class="py-2 px-3">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-{{ $catColor }}-100 text-{{ $catColor }}-700">
+                                            {{ $catLabel }}
+                                        </span>
+                                    </td>
+                                    <td class="py-2 px-3 text-zinc-700">{{ $cost->description }}</td>
+                                    <td class="py-2 px-3 text-zinc-500">{{ $cost->supplier ?? '—' }}</td>
+                                    <td class="py-2 px-3 text-right font-semibold text-zinc-900 whitespace-nowrap">
+                                        {{ number_format($cost->amount, 2, ',', '.') }} €
+                                    </td>
+                                    <td class="py-2 px-3 text-right">
+                                        <a href="{{ roleRoute('production-costs.edit', $cost) }}" wire:navigate
+                                           class="inline-flex items-center justify-center w-7 h-7 rounded-lg text-zinc-300 hover:text-violet-600 hover:bg-violet-50 transition-colors">
+                                            <flux:icon icon="pencil-square" class="size-3.5" />
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                        <tfoot>
+                            <tr class="border-t-2 border-zinc-200">
+                                <td colspan="4" class="py-2 px-3 text-xs font-semibold text-zinc-500 uppercase tracking-wide">Total costes manuales</td>
+                                <td class="py-2 px-3 text-right font-bold text-zinc-900">
+                                    {{ number_format($manualCost, 2, ',', '.') }} €
+                                </td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <div class="mt-4 pt-3 border-t border-zinc-100 text-right">
+                    <a href="{{ roleRoute('production-costs.index') }}" wire:navigate
+                       class="text-xs text-violet-600 hover:underline">
+                        Ver módulo de costes completo →
+                    </a>
+                </div>
+            @endif
+        </x-agro.card>
+    </div>
 
     {{-- ════════════════════════════════════════════════════════════════════════
          TAB: DIAGRAMA

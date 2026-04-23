@@ -43,13 +43,16 @@ use Illuminate\Support\Facades\DB;
  *  23.  Notas de cata
  *  24.  Subproductos
  *  25.  Previsiones de rendimiento (necesita viticultores vinculados)
+ *  25b. SILICIE/INFOVI (procesos elaboración + snapshots stock)
+ *  25c. Ciclo de vida completo de parcela demo (plot_id=1521)
+ *  25d. Aditivos enológicos
  *  26.  Cumplimiento regulatorio
  *  27.  Documentos de bodega
  *  28.  Alertas
  *  29.  Avisos a viticultores      (WineryAnnouncementsSeeder — 45 avisos)
  *  30.  Recálculo stock contenedores (WineryRecalculateContainerStockSeeder)
  */
-class WineryDemoSeeder_test extends Seeder
+class WineryDemoSeeder extends Seeder
 {
     private const WINERY_USER_ID = 1;
 
@@ -62,7 +65,6 @@ class WineryDemoSeeder_test extends Seeder
         $this->command->info('🍷 ══════════════════════════════════════════════');
         $this->command->info('');
 
-        // Verificar que el usuario winery existe
         $user = DB::table('users')->find(self::WINERY_USER_ID);
         if (!$user) {
             $this->command->error('❌ No existe el usuario con ID ' . self::WINERY_USER_ID . '. Créalo primero.');
@@ -70,81 +72,57 @@ class WineryDemoSeeder_test extends Seeder
         }
         $this->command->info("✅ Usuario: {$user->email} (role: {$user->role})");
 
-        // Paso 0: Asegurar units_of_measurement
         $this->ensureUnitsOfMeasurement();
 
-        // Paso 1: Contenedores (autónomo — limpia y recrea)
         $this->runStep('Contenedores (450: depósitos + barricas + tinas + ánforas)', WineryContainersSeeder::class);
-
-        // Paso 2: Salas de bodega
         $this->runStep('Salas de bodega (450: 10 tipos × 45 unidades)', WineryRoomsSeeder::class);
 
-        // Paso 3-6: Personas y proveedores
         $this->runStep('Enólogos (450)',           WineryOenologistsSeeder::class);
         $this->runStep('Clientes (450: 250 empresas + 200 particulares)', WineryClientsSeeder::class);
         $this->runStep('Proveedores (450)',         WinerySuppliersSeeder::class);
         $this->runStep('Suministros bodega',        WinerySuppliesSeeder::class);
 
-        // Paso 7: Core — Vinos
         $this->runStep('Vinos (450: 225 vendimias 2022–2025 + 225 vendimia 2026)', WineryWinesSeeder::class);
 
-        // Paso 8-11: Operaciones de vinificación
         $this->runStep('Controles de fermentación',  WineryFermentationControlsSeeder::class);
         $this->runStep('Traslados de vino',           WineryWineTransfersSeeder::class);
         $this->runStep('Mermas de vino',              WineryWineLossesSeeder::class);
         $this->runStep('Análisis fisicoquímicos',     WineryWineAnalysisSeeder::class);
 
-        // Paso 11b: Viticultores vinculados (crea 450 usuarios + pivot)
         $this->runStep('Viticultores vinculados (450: 300 activos + 150 ghost)', WineryViticulturistsSeeder::class);
 
-        // Paso 12: Recepciones de uva (depende de viticultores vinculados)
         $this->runStep('Recepciones de uva',         WineryGrapeReceptionsSeeder::class);
-
-        // Paso 12b: Actividades de campo (depende de viticultores + plots + campañas)
         $this->runStep('Actividades de campo',       WineryFieldActivitiesSeeder::class);
-
-        // Paso 13: Disputas (depende de recepciones)
         $this->runStep('Disputas en recepciones',    WineryDisputesSeeder::class);
 
-        // Paso 14: Mantenimiento contenedores
         $this->runStep('Mantenimientos contenedores', WineryContainerMaintenancesSeeder::class);
 
-        // Paso 15-18: Embotellado y comercialización
         $this->runStep('Embotellamientos',            WineryBottlingSeeder::class);
         $this->runStep('Lotes de etiquetas',          WineryLabelBatchesSeeder::class);
         $this->runStep('Etiquetados',                 WineryLabelingSeeder::class);
         $this->runStep('Lotes de producto',           WineryProductLotsSeeder::class);
 
-        // Paso 19-20: Operaciones y compras externas
         $this->runStep('Operaciones de bodega',       WineryCellarOperationsSeeder::class);
         $this->runStep('Compras uva/mosto externo',   WineryExternalPurchasesSeeder::class);
 
-        // Paso 21-22: Facturación
         $this->runStep('Facturas de venta (300: 150×2025 + 150×2026)', WineryInvoicesSeeder::class);
         $this->runStep('Liquidaciones de uva',        WineryGrapeInvoicesSeeder::class);
 
-        // Paso 23-25: Calidad y previsiones
         $this->runStep('Notas de cata',              WineryTastingNotesSeeder::class);
         $this->runStep('Subproductos',               WinerySubproductsSeeder::class);
         $this->runStep('Previsiones de rendimiento', WineryYieldForecastsSeeder::class);
 
-        // Paso 25c: Datos SILICIE/INFOVI (procesos elaboración + snapshots stock)
         $this->runStep('SILICIE/INFOVI (elaboración + snapshots)', WinerySilicieDataSeeder::class);
-
-        // Paso 25b: Ciclo de vida completo de parcela demo (plot_id=1521)
         $this->runStep('Ciclo de vida parcela 1521', WineryPlotLifecycleSeeder::class);
 
-        // Paso 25d: Aditivos enológicos
         $this->command->info('  ▶ Aditivos enológicos...');
         $this->seedAdditives();
 
-        // Paso 26-29: Cumplimiento, documentación y comunicación
         $this->runStep('Cumplimiento regulatorio',   WineryComplianceSeeder::class);
         $this->runStep('Documentos de bodega',       WineryDocumentsSeeder::class);
         $this->runStep('Alertas',                    WineryAlertsSeeder::class);
         $this->runStep('Avisos a viticultores (45)', WineryAnnouncementsSeeder::class);
 
-        // Paso 29: Recalcular stock de contenedores a partir de operaciones reales
         $this->runStep('Stock contenedores (recálculo)', WineryRecalculateContainerStockSeeder::class);
 
         $this->command->info('');
@@ -195,14 +173,18 @@ class WineryDemoSeeder_test extends Seeder
             ['name' => 'Carbón enológico activado',        'qty' => 25.0,  'notes' => 'Decoloración y eliminación de aromas defectuosos'],
         ];
 
+        $catalogSize = count($additivesCatalog);
         $rows = [];
         $now  = now();
 
         foreach ($wines as $idx => $wineId) {
-            // 2–4 aditivos por vino
             $count  = 2 + ($idx % 3);
-            $picked = array_slice($additivesCatalog, ($idx * 2) % count($additivesCatalog));
-            $picked = array_slice($picked, 0, $count);
+            $offset = ($idx * 2) % $catalogSize;
+
+            $picked = [];
+            for ($i = 0; $i < $count; $i++) {
+                $picked[] = $additivesCatalog[($offset + $i) % $catalogSize];
+            }
 
             foreach ($picked as $i => $add) {
                 $rows[] = [
@@ -260,6 +242,14 @@ class WineryDemoSeeder_test extends Seeder
     {
         $userId = self::WINERY_USER_ID;
 
+        $linkedViticulturistIds = DB::table('winery_viticulturist')
+            ->where('winery_id', $userId)
+            ->pluck('viticulturist_id');
+
+        $wineIds = DB::table('wines')->where('user_id', $userId)->pluck('id');
+        $containerIds = DB::table('containers')->where('user_id', $userId)->pluck('id');
+        $harvestIds = DB::table('harvests')->where('winery_id', $userId)->pluck('id');
+
         $stats = [
             // Infraestructura
             'Contenedores'               => DB::table('containers')->where('user_id', $userId)->count(),
@@ -271,29 +261,16 @@ class WineryDemoSeeder_test extends Seeder
             'Suministros de bodega'      => DB::table('winery_supplies')->where('user_id', $userId)->count(),
             // Vinos y operaciones
             'Vinos'                      => DB::table('wines')->where('user_id', $userId)->count(),
-            'Controles fermentación'     => DB::table('wine_fermentation_controls')
-                                            ->whereIn('wine_id', DB::table('wines')->where('user_id', $userId)->pluck('id'))
-                                            ->count(),
-            'Traslados'                  => DB::table('wine_transfers')
-                                            ->whereIn('wine_id', DB::table('wines')->where('user_id', $userId)->pluck('id'))
-                                            ->count(),
-            'Mermas'                     => DB::table('wine_losses')
-                                            ->whereIn('wine_id', DB::table('wines')->where('user_id', $userId)->pluck('id'))
-                                            ->count(),
+            'Controles fermentación'     => DB::table('wine_fermentation_controls')->whereIn('wine_id', $wineIds)->count(),
+            'Traslados'                  => DB::table('wine_transfers')->whereIn('wine_id', $wineIds)->count(),
+            'Mermas'                     => DB::table('wine_losses')->whereIn('wine_id', $wineIds)->count(),
             'Análisis'                   => DB::table('wine_analyses')->where('user_id', $userId)->count(),
-            'Viticultores vinculados'     => DB::table('winery_viticulturist')->where('winery_id', $userId)->count(),
-            'Campañas bodega'            => DB::table('campaigns')->where('viticulturist_id', $userId)->count(),
-            'Actividades de campo'       => DB::table('agricultural_activities')
-                                            ->whereIn('viticulturist_id',
-                                                DB::table('winery_viticulturist')->where('winery_id', $userId)->pluck('viticulturist_id')
-                                            )->count(),
+            'Viticultores vinculados'    => DB::table('winery_viticulturist')->where('winery_id', $userId)->count(),
+            'Campañas bodega'            => DB::table('campaigns')->whereIn('viticulturist_id', $linkedViticulturistIds)->count(),
+            'Actividades de campo'       => DB::table('agricultural_activities')->whereIn('viticulturist_id', $linkedViticulturistIds)->count(),
             'Recepciones de uva'         => DB::table('harvests')->where('winery_id', $userId)->whereNull('activity_id')->count(),
-            'Disputas'                   => DB::table('harvest_deliveries')
-                                            ->whereIn('harvest_id', DB::table('harvests')->where('winery_id', $userId)->pluck('id'))
-                                            ->count(),
-            'Mantenimientos contenedor'  => DB::table('container_maintenances')
-                                            ->whereIn('container_id', DB::table('containers')->where('user_id', $userId)->pluck('id'))
-                                            ->count(),
+            'Disputas'                   => DB::table('harvest_deliveries')->whereIn('harvest_id', $harvestIds)->count(),
+            'Mantenimientos contenedor'  => DB::table('container_maintenances')->whereIn('container_id', $containerIds)->count(),
             // Comercialización
             'Embotellamientos'           => DB::table('wine_bottlings')->where('user_id', $userId)->count(),
             'Lotes de etiquetas'         => DB::table('label_batches')->where('user_id', $userId)->count(),
@@ -308,14 +285,10 @@ class WineryDemoSeeder_test extends Seeder
             // Calidad
             'Notas de cata'              => DB::table('wine_tasting_notes')->where('user_id', $userId)->count(),
             'Subproductos'               => DB::table('wine_subproducts')->where('user_id', $userId)->count(),
-            'Procesos elaboración'       => DB::table('wine_process_details')
-                                            ->whereIn('wine_id', DB::table('wines')->where('user_id', $userId)->pluck('id'))
-                                            ->count(),
+            'Procesos elaboración'       => DB::table('wine_process_details')->whereIn('wine_id', $wineIds)->count(),
             'Snapshots stock'            => DB::table('wine_stock_snapshots')->where('user_id', $userId)->count(),
             'Previsiones rendimiento'    => DB::table('winery_yield_forecasts')->where('winery_id', $userId)->count(),
-            'Aforos viticultor'          => DB::table('estimated_yields')->whereIn('estimated_by',
-                                            DB::table('winery_viticulturist')->where('winery_id', $userId)->pluck('viticulturist_id')
-                                           )->count(),
+            'Aforos viticultor'          => DB::table('estimated_yields')->whereIn('estimated_by', $linkedViticulturistIds)->count(),
             // Cumplimiento y docs
             'Ecocertificaciones'         => DB::table('eco_certifications')->where('user_id', $userId)->count(),
             'Registros sanitarios'       => DB::table('sanitary_registrations')->where('user_id', $userId)->count(),

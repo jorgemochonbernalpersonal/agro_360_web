@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Plots\Plantings;
 
+use App\Models\GrapeVariety;
 use App\Models\Plot;
 use App\Models\PlotPlanting;
 use App\Livewire\Concerns\WithToastNotifications;
@@ -17,17 +18,20 @@ class Index extends Component
     public $search = '';
     public $status = '';
     public $year = '';
+    public $cropType = '';
 
     protected $queryString = [
         'currentTab' => ['as' => 'tab', 'except' => 'active'],
         'search'     => ['except' => ''],
         'status'     => ['except' => ''],
         'year'       => ['except' => ''],
+        'cropType'   => ['as' => 'crop', 'except' => ''],
     ];
 
-    public function updatingSearch() { $this->resetPage(); }
-    public function updatingStatus() { $this->resetPage(); }
-    public function updatingYear()   { $this->resetPage(); }
+    public function updatingSearch()   { $this->resetPage(); }
+    public function updatingStatus()   { $this->resetPage(); }
+    public function updatingYear()     { $this->resetPage(); }
+    public function updatingCropType() { $this->resetPage(); }
 
     public function switchTab($tab)
     {
@@ -59,9 +63,10 @@ class Index extends Component
 
     public function clearFilters()
     {
-        $this->search = '';
-        $this->status = '';
-        $this->year   = '';
+        $this->search   = '';
+        $this->status   = '';
+        $this->year     = '';
+        $this->cropType = '';
         $this->resetPage();
     }
 
@@ -70,8 +75,18 @@ class Index extends Component
         $user = Auth::user();
         $visiblePlotIds = Plot::forUser($user)->pluck('id');
 
+        // Winery puro (sin acceso de viticultor) solo ve variedades de uva/vino.
+        // Viticulturist y producer ven todos los tipos de cultivo.
+        $wineryOnly = $user->hasWineryAccess() && !$user->hasViticulturistAccess();
+
         $query = PlotPlanting::with(['plot.viticulturist', 'plot.municipality', 'grapeVariety'])
             ->whereIn('plot_id', $visiblePlotIds);
+
+        if ($wineryOnly) {
+            $query->whereHas('grapeVariety', fn($q) => $q->where('crop_type', 'wine'));
+        } elseif ($this->cropType !== '') {
+            $query->whereHas('grapeVariety', fn($q) => $q->where('crop_type', $this->cropType));
+        }
 
         if ($this->search) {
             $search = '%' . strtolower($this->search) . '%';
@@ -101,13 +116,17 @@ class Index extends Component
 
         $plantings = $query->orderByDesc('created_at')->paginate(12);
 
-        $years = PlotPlanting::whereIn('plot_id', $visiblePlotIds)
+        $baseQuery = PlotPlanting::whereIn('plot_id', $visiblePlotIds);
+        if ($wineryOnly) {
+            $baseQuery->whereHas('grapeVariety', fn($q) => $q->where('crop_type', 'wine'));
+        }
+
+        $years = (clone $baseQuery)
             ->whereNotNull('planting_year')
             ->distinct()
             ->orderByDesc('planting_year')
             ->pluck('planting_year');
 
-        $baseQuery = PlotPlanting::whereIn('plot_id', $visiblePlotIds);
         $stats = [
             'total'      => (clone $baseQuery)->count(),
             'active'     => (clone $baseQuery)->where('active', true)->count(),
@@ -115,7 +134,7 @@ class Index extends Component
             'total_area' => (clone $baseQuery)->sum('area_planted'),
         ];
 
-        return view('livewire.plots.plantings.index', compact('plantings', 'years', 'stats'))
+        return view('livewire.plots.plantings.index', compact('plantings', 'years', 'stats', 'wineryOnly'))
             ->layout('layouts.app', [
                 'title'       => 'Plantaciones - Agro365',
                 'description' => 'Gestiona las plantaciones de tus parcelas. Variedades de uva, años de plantación, hectáreas y estado de cada viñedo.',

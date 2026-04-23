@@ -198,4 +198,85 @@ class CreateTest extends TestCase
         $response = $this->get(route('plots.plantings.create', $plot));
         $response->assertStatus(403);
     }
+
+    // ── Helpers adicionales ───────────────────────────────────────────────────
+
+    private function makeWineryWithOwnViticulturistAndPlot(): array
+    {
+        $winery = User::factory()->create(['role' => 'winery', 'email_verified_at' => now()]);
+        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
+        WineryViticulturist::create([
+            'winery_id'        => $winery->id,
+            'viticulturist_id' => $viticulturist->id,
+            'source'           => WineryViticulturist::SOURCE_OWN,
+            'assigned_by'      => $winery->id,
+        ]);
+        $plot = Plot::factory()->create(['viticulturist_id' => $viticulturist->id]);
+        return [$winery, $plot];
+    }
+
+    private function makeProducerWithPlot(): array
+    {
+        $producer = User::factory()->create(['role' => 'producer', 'email_verified_at' => now()]);
+        $plot = Plot::factory()->create(['viticulturist_id' => $producer->id]);
+        return [$producer, $plot];
+    }
+
+    // ── Filtrado de variedades por crop_type según rol ────────────────────────
+
+    public function test_winery_variety_dropdown_contains_only_wine_varieties(): void
+    {
+        [$winery, $plot] = $this->makeWineryWithOwnViticulturistAndPlot();
+
+        GrapeVariety::firstOrCreate(['name' => 'Tempranillo'], ['code' => 'TEMP', 'color' => 'red', 'active' => true, 'crop_type' => 'wine']);
+        $olive = GrapeVariety::create(['name' => 'Picual', 'code' => 'PIC', 'color' => 'white', 'active' => true, 'crop_type' => 'olive']);
+
+        $this->actingAs($winery);
+
+        Livewire::test(\App\Livewire\Plots\Plantings\Create::class, ['plot' => $plot])
+            ->assertViewHas('wineryOnly', true)
+            ->assertViewHas('grapeVarieties', fn ($v) => !$v->contains('id', $olive->id));
+    }
+
+    public function test_viticulturist_variety_dropdown_contains_all_crop_types(): void
+    {
+        [$viticulturist, $plot] = $this->makeViticulturistWithPlot();
+        $olive = GrapeVariety::create(['name' => 'Picual', 'code' => 'PIC', 'color' => 'white', 'active' => true, 'crop_type' => 'olive']);
+
+        $this->actingAs($viticulturist);
+
+        Livewire::test(\App\Livewire\Plots\Plantings\Create::class, ['plot' => $plot])
+            ->assertViewHas('wineryOnly', false)
+            ->assertViewHas('grapeVarieties', fn ($v) => $v->contains('id', $olive->id));
+    }
+
+    public function test_producer_variety_dropdown_contains_all_crop_types(): void
+    {
+        [$producer, $plot] = $this->makeProducerWithPlot();
+
+        GrapeVariety::firstOrCreate(['name' => 'Tempranillo'], ['code' => 'TEMP', 'color' => 'red', 'active' => true, 'crop_type' => 'wine']);
+        $olive = GrapeVariety::create(['name' => 'Picual', 'code' => 'PIC', 'color' => 'white', 'active' => true, 'crop_type' => 'olive']);
+
+        $this->actingAs($producer);
+
+        Livewire::test(\App\Livewire\Plots\Plantings\Create::class, ['plot' => $plot])
+            ->assertViewHas('wineryOnly', false)
+            ->assertViewHas('grapeVarieties', fn ($v) => $v->contains('id', $olive->id));
+    }
+
+    public function test_winery_can_create_planting_without_vine_count_or_density(): void
+    {
+        [$winery, $plot] = $this->makeWineryWithOwnViticulturistAndPlot();
+        $variety = GrapeVariety::firstOrCreate(['name' => 'Tempranillo'], ['code' => 'TEMP', 'color' => 'red', 'active' => true, 'crop_type' => 'wine']);
+
+        $this->actingAs($winery);
+
+        Livewire::test(\App\Livewire\Plots\Plantings\Create::class, ['plot' => $plot])
+            ->set('grape_variety_id', $variety->id)
+            ->set('area_planted', '2.0')
+            ->set('vine_count', '')
+            ->set('density', '')
+            ->call('save')
+            ->assertHasNoErrors(['vine_count']);
+    }
 }

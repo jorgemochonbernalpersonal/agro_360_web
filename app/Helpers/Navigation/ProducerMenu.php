@@ -69,7 +69,7 @@ class ProducerMenu
         $menu['cellar_output'] = WineryMenu::cellarOutput('producer');
 
         // ── Bodega: Normativa ─────────────────────────────────────────────────
-        $menu['winery_compliance'] = WineryMenu::wineryCompliance('producer', silicieWip: true);
+        $menu['winery_compliance'] = WineryMenu::wineryCompliance('producer');
 
         // ── Bodega: Insumos, Proveedores y Alertas ────────────────────────────
         $menu['winery_resources'] = [
@@ -132,10 +132,8 @@ class ProducerMenu
             ['divider' => true],
             ['icon' => 'arrow-down-tray',         'label' => 'Compra de Uva',       'route' => 'producer.invoices.grape-purchase.index', 'active' => request()->routeIs('producer.invoices.grape-purchase*')],
             ['icon' => 'arrow-up-tray',           'label' => 'Venta de Productos',  'route' => 'producer.invoices.products.index',       'active' => request()->routeIs('producer.invoices.products*')],
+            ['icon' => 'calculator',              'label' => 'Costes de Producción','route' => 'producer.production-costs.index',        'active' => request()->routeIs('producer.production-costs*')],
             ['icon' => 'users',                   'label' => 'Clientes Bodega',     'route' => 'producer.winery-clients.index',          'active' => request()->routeIs('producer.winery-clients*')],
-            ['divider' => true],
-            ['icon' => 'globe-alt',               'label' => 'Exportación',         'route' => 'producer.exports.index',                 'active' => request()->routeIs('producer.exports*'), 'wip' => true],
-            ['icon' => 'sparkles',                'label' => 'Enoturismo',          'route' => 'producer.enotourism.index',              'active' => request()->routeIs('producer.enotourism*'), 'wip' => true],
         ];
 
         // ── Denominación de Origen (solo si tiene supervisor) ────────────────
@@ -155,8 +153,8 @@ class ProducerMenu
             );
 
             $menu['denomination'] = [
-                ['icon' => 'building-office-2', 'label' => 'Mi Denominación',  'route' => 'winery.denomination.index',          'active' => request()->routeIs('winery.denomination.index')],
-                ['icon' => 'document-text',     'label' => 'Solicitudes DO',   'route' => 'winery.denomination.requests.index', 'active' => request()->routeIs('winery.denomination.requests*'),
+                ['icon' => 'building-office-2', 'label' => 'Mi Denominación',  'route' => 'producer.denomination.index',          'active' => request()->routeIs('producer.denomination.index')],
+                ['icon' => 'document-text',     'label' => 'Solicitudes DO',   'route' => 'producer.denomination.requests.index', 'active' => request()->routeIs('producer.denomination.requests*'),
                     'badge' => $pendingDO ?: null],
             ];
         }

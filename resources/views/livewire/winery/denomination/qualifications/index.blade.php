@@ -1,10 +1,12 @@
 <div class="space-y-6 animate-fade-in">
 
+    @if(!$embedded)
     <x-agro.page-header
         title="Calificaciones DO"
         description="Calificaciones registradas por tu Denominación de Origen para los vinos de esta bodega."
         icon="star"
     />
+    @endif
 
     {{-- Filtros --}}
     <div class="flex flex-wrap gap-3">

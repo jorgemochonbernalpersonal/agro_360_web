@@ -15,6 +15,7 @@ use App\Models\WineHarvest;
 use App\Models\WineLoss;
 use App\Models\WineTransfer;
 use App\Models\WinerySupply;
+use App\Services\WineContainerStockService;
 use BaconQrCode\Renderer\Image\SvgImageBackEnd;
 use BaconQrCode\Renderer\ImageRenderer;
 use BaconQrCode\Renderer\RendererStyle\RendererStyle;
@@ -158,18 +159,26 @@ class Show extends Component
             'tr_notes'             => ['nullable', 'string'],
         ]);
 
-        WineTransfer::create([
-            'wine_id'                => $this->wine->id,
-            'from_container_id'      => $this->tr_from_container_id ?: null,
-            'to_container_id'        => $this->tr_to_container_id,
-            'quantity'               => $this->tr_quantity,
-            'unit_of_measurement_id' => $this->tr_unit_id,
-            'transfer_type'          => $this->tr_type,
-            'transfer_date'          => $this->tr_date,
-            'oenologist_id'          => $this->tr_oenologist_id ?: null,
-            'notes'                  => $this->tr_notes ?: null,
-            'created_by'             => Auth::id(),
-        ]);
+        try {
+            DB::transaction(function () {
+                $transfer = WineTransfer::create([
+                    'wine_id'                => $this->wine->id,
+                    'from_container_id'      => $this->tr_from_container_id ?: null,
+                    'to_container_id'        => $this->tr_to_container_id,
+                    'quantity'               => $this->tr_quantity,
+                    'unit_of_measurement_id' => $this->tr_unit_id,
+                    'transfer_type'          => $this->tr_type,
+                    'transfer_date'          => $this->tr_date,
+                    'oenologist_id'          => $this->tr_oenologist_id ?: null,
+                    'notes'                  => $this->tr_notes ?: null,
+                    'created_by'             => Auth::id(),
+                ]);
+                app(WineContainerStockService::class)->recordTransfer($transfer);
+            });
+        } catch (\RuntimeException $e) {
+            $this->addError('tr_quantity', $e->getMessage());
+            return;
+        }
 
         $this->resetTrForm();
         $this->dispatch('close-modal', id: 'modal-transfer');
@@ -178,7 +187,13 @@ class Show extends Component
 
     public function deleteTransfer(int $id): void
     {
-        WineTransfer::where('wine_id', $this->wine->id)->findOrFail($id)->delete();
+        $transfer = WineTransfer::where('wine_id', $this->wine->id)->findOrFail($id);
+
+        DB::transaction(function () use ($transfer) {
+            app(WineContainerStockService::class)->revertTransfer($transfer);
+            $transfer->delete();
+        });
+
         $this->toastSuccess('Trasvase eliminado.');
     }
 
@@ -195,16 +210,24 @@ class Show extends Component
             'lo_notes'        => ['nullable', 'string'],
         ]);
 
-        WineLoss::create([
-            'wine_id'                => $this->wine->id,
-            'container_id'           => $this->lo_container_id ?: null,
-            'loss_type'              => $this->lo_type,
-            'quantity'               => $this->lo_quantity,
-            'unit_of_measurement_id' => $this->lo_unit_id,
-            'loss_date'              => $this->lo_date,
-            'notes'                  => $this->lo_notes ?: null,
-            'created_by'             => Auth::id(),
-        ]);
+        try {
+            DB::transaction(function () {
+                $loss = WineLoss::create([
+                    'wine_id'                => $this->wine->id,
+                    'container_id'           => $this->lo_container_id ?: null,
+                    'loss_type'              => $this->lo_type,
+                    'quantity'               => $this->lo_quantity,
+                    'unit_of_measurement_id' => $this->lo_unit_id,
+                    'loss_date'              => $this->lo_date,
+                    'notes'                  => $this->lo_notes ?: null,
+                    'created_by'             => Auth::id(),
+                ]);
+                app(WineContainerStockService::class)->recordLoss($loss);
+            });
+        } catch (\RuntimeException $e) {
+            $this->addError('lo_quantity', $e->getMessage());
+            return;
+        }
 
         $this->resetLoForm();
         $this->dispatch('close-modal', id: 'modal-loss');
@@ -213,7 +236,13 @@ class Show extends Component
 
     public function deleteLoss(int $id): void
     {
-        WineLoss::where('wine_id', $this->wine->id)->findOrFail($id)->delete();
+        $loss = WineLoss::where('wine_id', $this->wine->id)->findOrFail($id);
+
+        DB::transaction(function () use ($loss) {
+            app(WineContainerStockService::class)->revertLoss($loss);
+            $loss->delete();
+        });
+
         $this->toastSuccess('Merma eliminada.');
     }
 
@@ -454,6 +483,7 @@ class Show extends Component
             ->orderByDesc('harvest_start_date')
             ->get(['id', 'harvest_start_date', 'total_weight', 'plot_planting_id', 'vintage']);
 
+        $costs    = $this->wine->costs()->orderByDesc('cost_date')->get();
         $diagram  = $this->buildDiagram($composition, $processes, $transfers, $losses, $analyses);
         $qrSvg    = $this->generateQrSvg();
         $traceUrl = route('wine.trace', $this->wine->trace_token);
@@ -463,7 +493,7 @@ class Show extends Component
             'fermentationControls', 'transfers', 'losses', 'analyses',
             'timeline', 'composition', 'availableHarvests',
             'additives', 'supplies', 'oenologists', 'processes',
-            'diagram', 'qrSvg', 'traceUrl'
+            'costs', 'diagram', 'qrSvg', 'traceUrl'
         ))->layout('layouts.app');
     }
 

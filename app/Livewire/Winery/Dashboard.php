@@ -8,6 +8,7 @@ use App\Models\GrapeReceptionBatch;
 use App\Models\Harvest;
 use App\Models\ProductLot;
 use App\Models\Wine;
+use App\Models\WineCost;
 use App\Models\WineFermentationControl;
 use App\Models\WineTransfer;
 use App\Models\WineryViticulturist;
@@ -104,6 +105,11 @@ class Dashboard extends Component
             ->whereDate('scheduled_date', '<', today())
             ->count();
 
+        // Costes de producción del año activo
+        $totalCostsYear = WineCost::where('user_id', $wineryId)
+            ->whereYear('cost_date', $vintageYear)
+            ->sum('amount');
+
         // Últimos trasvases (3)
         $recentTransfers = WineTransfer::with(['wine', 'fromContainer', 'toContainer'])
             ->whereHas('wine', fn($q) => $q->where('user_id', $wineryId))
@@ -156,6 +162,7 @@ class Dashboard extends Component
             'recentFermentations'  => $recentFermentations,
             'recentReceptions'     => $recentReceptions,
             'recentViticulturists' => $recentViticulturists,
+            'totalCostsYear'       => (float) $totalCostsYear,
         ])->layout('layouts.app');
     }
 }

@@ -1,10 +1,12 @@
 <div class="space-y-6 animate-fade-in">
 
+    @if(!$embedded)
     <x-agro.page-header
         title="Inspecciones DO"
         description="Inspecciones realizadas por tu Denominación de Origen sobre esta bodega."
         icon="shield-check"
     />
+    @endif
 
     {{-- Filtro estado --}}
     <div class="flex flex-wrap gap-3">

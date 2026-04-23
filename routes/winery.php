@@ -193,10 +193,16 @@ Route::middleware(['role:winery,producer'])
         Route::get('/fermentation-controls/create', \App\Livewire\Winery\FermentationControls\Create::class)->name('fermentation-controls.create');
         Route::get('/fermentation-controls/{control}/edit', \App\Livewire\Winery\FermentationControls\Edit::class)->name('fermentation-controls.edit');
 
-        // ── Trasvases y Coupage ───────────────────────────────────────
+        // ── Trasvases ──────────────────────────────────────────────────
         Route::get('/wine-transfers', \App\Livewire\Winery\WineTransfers\Index::class)->name('wine-transfers.index');
         Route::get('/wine-transfers/create', \App\Livewire\Winery\WineTransfers\Create::class)->name('wine-transfers.create');
         Route::get('/wine-transfers/{transfer}/edit', \App\Livewire\Winery\WineTransfers\Edit::class)->name('wine-transfers.edit');
+
+        // ── Coupage ────────────────────────────────────────────────────
+        Route::prefix('coupage')->name('coupage.')->group(function () {
+            Route::get('/', \App\Livewire\Winery\Coupage\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Winery\Coupage\Create::class)->name('create');
+        });
 
         // ── Mermas y Pérdidas ─────────────────────────────────────────
         Route::get('/wine-losses', \App\Livewire\Winery\WineLosses\Index::class)->name('wine-losses.index');
@@ -264,18 +270,6 @@ Route::middleware(['role:winery,producer'])
         Route::get('/subproducts/create', \App\Livewire\Winery\Subproducts\Create::class)->name('subproducts.create');
         Route::get('/subproducts/{subproduct}/edit', \App\Livewire\Winery\Subproducts\Edit::class)->name('subproducts.edit');
 
-        // ── Exportación (en construcción) ─────────────────────────────
-        Route::get('/exports', \App\Livewire\Winery\UnderConstruction::class)
-            ->name('exports.index')
-            ->defaults('module', 'Exportación')
-            ->defaults('icon', 'globe-alt');
-
-        // ── Enoturismo (en construcción) ──────────────────────────────
-        Route::get('/enotourism', \App\Livewire\Winery\UnderConstruction::class)
-            ->name('enotourism.index')
-            ->defaults('module', 'Enoturismo')
-            ->defaults('icon', 'sparkles');
-
         // ── Trazabilidad ──────────────────────────────────────────────
         Route::get('/traceability', \App\Livewire\Winery\Traceability\Index::class)
             ->name('traceability.index');
@@ -301,12 +295,6 @@ Route::middleware(['role:winery,producer'])
             Route::get('/verifactu', \App\Livewire\Winery\Verifactu\Dashboard::class)->name('verifactu.index');
         });
 
-        // ── Normativa bodega ──────────────────────────────────────────
-        Route::get('/aica', \App\Livewire\Winery\UnderConstruction::class)
-            ->name('aica.index')
-            ->defaults('module', 'AICA')
-            ->defaults('icon', 'document-text');
-
         // ── Registros Sanitarios ──────────────────────────────────────
         Route::get('/sanitary-registrations', \App\Livewire\Winery\SanitaryRegistrations\Index::class)->name('sanitary-registrations.index');
         Route::get('/sanitary-registrations/create', \App\Livewire\Winery\SanitaryRegistrations\Create::class)->name('sanitary-registrations.create');
@@ -322,11 +310,12 @@ Route::middleware(['role:winery,producer'])
         Route::get('/eco-certifications/create', \App\Livewire\Winery\EcoCertifications\Create::class)->name('eco-certifications.create');
         Route::get('/eco-certifications/{ecoCertification}/edit', \App\Livewire\Winery\EcoCertifications\Edit::class)->name('eco-certifications.edit');
 
-        // ── Registros y Autorizaciones ────────────────────────────────
-        Route::get('/exploitations', \App\Livewire\Winery\UnderConstruction::class)->name('exploitations.index');
-        Route::get('/commercial-authorizations', \App\Livewire\Winery\UnderConstruction::class)->name('commercial-authorizations.index');
-        Route::get('/field-applicators', \App\Livewire\Winery\UnderConstruction::class)->name('field-applicators.index');
-        Route::get('/field-equipment', \App\Livewire\Winery\UnderConstruction::class)->name('field-equipment.index');
+        // ── Costes de Producción ──────────────────────────────────────
+        Route::prefix('production-costs')->name('production-costs.')->group(function () {
+            Route::get('/', \App\Livewire\Winery\ProductionCosts\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Winery\ProductionCosts\Create::class)->name('create');
+            Route::get('/{cost}/edit', \App\Livewire\Winery\ProductionCosts\Edit::class)->name('edit');
+        });
 
         // ── Configuración ─────────────────────────────────────────────
         Route::get('/settings', \App\Livewire\Winery\Settings::class)->name('settings');

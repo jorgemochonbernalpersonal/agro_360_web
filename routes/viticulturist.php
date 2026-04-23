@@ -317,7 +317,7 @@ Route::middleware(['role:viticulturist,producer', 'check.beta'])
         });
 
         // Meteorología
-        Route::get('/meteorology', \App\Livewire\Winery\UnderConstruction::class)->name('meteorology.index');
+        Route::get('/meteorology', \App\Livewire\Winery\Meteorology\Index::class)->name('meteorology.index');
 
         // Actividades de Campo
         Route::get('/field-activities', \App\Livewire\Winery\FieldActivities\Index::class)->name('field-activities.index');

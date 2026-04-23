@@ -100,6 +100,40 @@ class ProducerRoutesTest extends ProducerTestCase
         $this->get(route('producer.financial-stats.index'))->assertOk();
     }
 
+    // ── Rutas de facturas viticulturist (lado productor) ──────────────────────
+
+    public function test_invoices_harvest_index_renders(): void
+    {
+        $this->get(route('producer.invoices.harvest.index'))->assertOk();
+    }
+
+    public function test_invoices_harvest_sale_index_renders(): void
+    {
+        $this->get(route('producer.invoices.harvest-sale.index'))->assertOk();
+    }
+
+    public function test_invoices_harvest_sale_create_renders(): void
+    {
+        $this->get(route('producer.invoices.harvest-sale.create'))->assertOk();
+    }
+
+    // ── Rutas añadidas para alineamiento winery ────────────────────────────────
+
+    public function test_denomination_index_renders(): void
+    {
+        $this->get(route('producer.denomination.index'))->assertOk();
+    }
+
+    public function test_silicie_dashboard_renders(): void
+    {
+        $this->get(route('producer.silicie.dashboard'))->assertOk();
+    }
+
+    public function test_production_costs_index_renders(): void
+    {
+        $this->get(route('producer.production-costs.index'))->assertOk();
+    }
+
     // ── Bloqueo a otros roles ──────────────────────────────────────────────
 
     public function test_winery_cannot_access_producer_routes(): void

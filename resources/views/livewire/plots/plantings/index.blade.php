@@ -89,7 +89,7 @@
             </div>
 
             {{-- Filtros button --}}
-            @php $filterCount = ($status !== '' ? 1 : 0) + ($year !== '' ? 1 : 0); @endphp
+            @php $filterCount = ($status !== '' ? 1 : 0) + ($year !== '' ? 1 : 0) + (!$wineryOnly && $cropType !== '' ? 1 : 0); @endphp
             <button
                 x-on:click="$dispatch('open-modal', 'planting-filters')"
                 class="relative inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors"
@@ -121,7 +121,7 @@
         </div>
 
         {{-- Active filter chips --}}
-        @if($search || $status !== '' || $year !== '')
+        @if($search || $status !== '' || $year !== '' || (!$wineryOnly && $cropType !== ''))
             <div class="flex flex-wrap items-center gap-2">
                 <span class="text-xs text-zinc-400">Filtros activos:</span>
 
@@ -161,6 +161,16 @@
                     </span>
                 @endif
 
+                @if(!$wineryOnly && $cropType !== '')
+                    @php $cropLabels = \App\Models\GrapeVariety::CROP_TYPES; @endphp
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
+                        Cultivo: {{ $cropLabels[$cropType] ?? $cropType }}
+                        <button wire:click="$set('cropType', '')" class="hover:text-agro-900 ml-0.5">
+                            <flux:icon icon="x-mark" class="size-3" />
+                        </button>
+                    </span>
+                @endif
+
                 <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 underline">
                     Limpiar todo
                 </button>
@@ -189,9 +199,24 @@
                 >
                     <x-slot:header>
                         <div class="flex items-center gap-3">
-                            {{-- Icono variedad --}}
-                            <div class="w-9 h-9 bg-zinc-100 rounded-full flex items-center justify-center shrink-0">
-                                <flux:icon icon="scissors" class="size-4 text-zinc-500" />
+                            {{-- Icono variedad (depende del tipo de cultivo) --}}
+                            @php
+                                $cropIcon = $planting->grapeVariety
+                                    ? \App\Models\GrapeVariety::CROP_TYPE_ICONS[$planting->grapeVariety->crop_type] ?? 'leaf'
+                                    : 'scissors';
+                                $cropBg = match($planting->grapeVariety->crop_type ?? 'wine') {
+                                    'olive' => 'bg-amber-100',
+                                    'other' => 'bg-emerald-100',
+                                    default => 'bg-zinc-100',
+                                };
+                                $cropIconColor = match($planting->grapeVariety->crop_type ?? 'wine') {
+                                    'olive' => 'text-amber-600',
+                                    'other' => 'text-emerald-600',
+                                    default => 'text-zinc-500',
+                                };
+                            @endphp
+                            <div class="w-9 h-9 {{ $cropBg }} rounded-full flex items-center justify-center shrink-0">
+                                <flux:icon icon="{{ $cropIcon }}" class="size-4 {{ $cropIconColor }}" />
                             </div>
 
                             {{-- Nombre + parcela --}}
@@ -225,11 +250,22 @@
                                 'rose'  => 'Rosado',
                                 default => null,
                             };
+                            $cropType = $planting->grapeVariety->crop_type ?? 'wine';
                         @endphp
                         <div class="flex items-center gap-2 mb-3">
                             <flux:icon icon="tag" class="size-3.5 text-zinc-400 shrink-0" />
                             <span class="text-xs text-zinc-600 truncate">{{ $planting->grapeVariety->name }}</span>
-                            @if($dotLabel)
+                            @if($cropType !== 'wine')
+                                @php
+                                    $cropBadge = match($cropType) {
+                                        'olive' => ['bg-amber-100 text-amber-700', \App\Models\GrapeVariety::CROP_TYPES['olive']],
+                                        default => ['bg-emerald-100 text-emerald-700', \App\Models\GrapeVariety::CROP_TYPES['other'] ?? 'Otro'],
+                                    };
+                                @endphp
+                                <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium {{ $cropBadge[0] }} shrink-0">
+                                    {{ $cropBadge[1] }}
+                                </span>
+                            @elseif($dotLabel)
                                 <span class="inline-flex items-center gap-1 text-xs text-zinc-500 shrink-0">
                                     <span class="w-2 h-2 rounded-full {{ $dotColor }}"></span>
                                     {{ $dotLabel }}
@@ -365,6 +401,20 @@
         </div>
 
         <div class="px-6 py-5 space-y-5">
+
+            {{-- Tipo de cultivo (solo viticultor/producer) --}}
+            @if(!$wineryOnly)
+            <div>
+                <label class="block text-sm font-medium text-zinc-700 mb-1.5">Tipo de cultivo</label>
+                <select wire:model.live="cropType"
+                        class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
+                    <option value="">Todos los cultivos</option>
+                    @foreach(\App\Models\GrapeVariety::CROP_TYPES as $key => $label)
+                        <option value="{{ $key }}">{{ $label }}</option>
+                    @endforeach
+                </select>
+            </div>
+            @endif
 
             {{-- Estado operativo --}}
             <div>

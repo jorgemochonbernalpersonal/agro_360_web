@@ -12,13 +12,18 @@ class Index extends Component
 {
     use WithPagination;
 
+    public bool   $embedded      = false;
     public string $statusFilter  = '';
     public string $vintageFilter = '';
 
-    protected $queryString = [
-        'statusFilter'  => ['except' => ''],
-        'vintageFilter' => ['except' => ''],
-    ];
+    protected function queryString(): array
+    {
+        if ($this->embedded) return [];
+        return [
+            'statusFilter'  => ['except' => ''],
+            'vintageFilter' => ['except' => ''],
+        ];
+    }
 
     public function updatingStatusFilter(): void { $this->resetPage(); }
     public function updatingVintageFilter(): void { $this->resetPage(); }

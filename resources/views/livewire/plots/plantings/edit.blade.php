@@ -18,15 +18,23 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Variedad de uva -->
+                <!-- Variedad / Cultivo -->
                 <flux:field>
-                    <flux:label for="grape_variety_id">Variedad de uva *</flux:label>
+                    <flux:label for="grape_variety_id">{{ $wineryOnly ? 'Variedad de uva' : 'Variedad / Cultivo' }} *</flux:label>
                     <flux:select wire:model="grape_variety_id" id="grape_variety_id">
                         <option value="">Seleccionar...</option>
-                        @foreach ($grapeVarieties as $variety)
-                            <option value="{{ $variety->id }}">
-                                {{ $variety->name }} @if($variety->code) ({{ $variety->code }}) @endif
-                            </option>
+                        @foreach ($grapeVarieties->groupBy('crop_type') as $type => $varieties)
+                            @if(!$wineryOnly && count($grapeVarieties->groupBy('crop_type')) > 1)
+                                <optgroup label="{{ \App\Models\GrapeVariety::CROP_TYPES[$type] ?? $type }}">
+                            @endif
+                            @foreach ($varieties as $variety)
+                                <option value="{{ $variety->id }}">
+                                    {{ $variety->name }} @if($variety->code) ({{ $variety->code }}) @endif
+                                </option>
+                            @endforeach
+                            @if(!$wineryOnly && count($grapeVarieties->groupBy('crop_type')) > 1)
+                                </optgroup>
+                            @endif
                         @endforeach
                     </flux:select>
                     <flux:error name="grape_variety_id" />

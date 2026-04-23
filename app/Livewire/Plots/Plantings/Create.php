@@ -133,9 +133,18 @@ class Create extends Component
 
     public function render()
     {
+        $user = Auth::user();
+        $wineryOnly = $user->hasWineryAccess() && !$user->hasViticulturistAccess();
+
+        $varietyQuery = GrapeVariety::active()->orderBy('name');
+        if ($wineryOnly) {
+            $varietyQuery->wine();
+        }
+
         return view('livewire.plots.plantings.create', [
-            'grapeVarieties' => GrapeVariety::active()->orderBy('name')->get(),
+            'grapeVarieties'  => $varietyQuery->get(),
             'trainingSystems' => TrainingSystem::where('active', true)->orderBy('name')->get(),
+            'wineryOnly'      => $wineryOnly,
         ])->layout('layouts.app');
     }
 }

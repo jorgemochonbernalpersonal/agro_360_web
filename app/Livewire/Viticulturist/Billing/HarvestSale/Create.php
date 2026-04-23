@@ -3,6 +3,7 @@
 namespace App\Livewire\Viticulturist\Billing\HarvestSale;
 
 use App\Livewire\Concerns\WithHarvestSaleStock;
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\AgriculturalActivity;
 use App\Models\Harvest;
@@ -18,7 +19,7 @@ use Livewire\Component;
 
 class Create extends Component
 {
-    use WithToastNotifications, WithHarvestSaleStock;
+    use WithRoleAwareRedirect, WithToastNotifications, WithHarvestSaleStock;
 
     // ── Invoice header ─────────────────────────────────────────────────────────
     public string $buyer_name        = '';
@@ -221,7 +222,7 @@ class Create extends Component
             DB::commit();
 
             $this->toastSuccess("Factura {$number} creada — Ref.: {$noteCode}");
-            return $this->redirect(route('viticulturist.invoices.harvest-sale.index'), navigate: true);
+            return $this->viticulturistRoleRedirect('invoices.harvest-sale.index');
 
         } catch (\Exception $e) {
             DB::rollBack();

@@ -88,6 +88,7 @@ class WineryMenu
             ['divider' => true, 'label' => 'Operaciones'],
             ['icon' => 'fire',                'label' => 'Controles Fermentación','route' => 'winery.fermentation-controls.index','active' => request()->routeIs('winery.fermentation-controls*')],
             ['icon' => 'arrow-path',          'label' => 'Traslados',             'route' => 'winery.wine-transfers.index',       'active' => request()->routeIs('winery.wine-transfers*')],
+            ['icon' => 'funnel',              'label' => 'Coupage',               'route' => 'winery.coupage.index',              'active' => request()->routeIs('winery.coupage*')],
             ['icon' => 'exclamation-circle',  'label' => 'Mermas',                'route' => 'winery.wine-losses.index',          'active' => request()->routeIs('winery.wine-losses*')],
             ['icon' => 'beaker',          'label' => 'Aditivos',              'route' => 'winery.wine-additives.index',       'active' => request()->routeIs('winery.wine-additives*')],
             ['divider' => true, 'label' => 'Laboratorio'],
@@ -117,13 +118,6 @@ class WineryMenu
         // ── Normativa ────────────────────────────────────────────────────
         $menu['winery_compliance'] = self::wineryCompliance('winery');
 
-        $menu['registrations'] = [
-            ['icon' => 'building-office',   'label' => 'Explotación RGSEAA',       'route' => 'winery.exploitations.index',             'active' => request()->routeIs('winery.exploitations.*')],
-            ['icon' => 'shield-check',      'label' => 'Autorizaciones Comerciales','route' => 'winery.commercial-authorizations.index', 'active' => request()->routeIs('winery.commercial-authorizations.*')],
-            ['icon' => 'identification',    'label' => 'Aplicadores ROPO',          'route' => 'winery.field-applicators.index',         'active' => request()->routeIs('winery.field-applicators.*')],
-            ['icon' => 'cog-8-tooth',       'label' => 'Equipos ITB/ITEA',          'route' => 'winery.field-equipment.index',           'active' => request()->routeIs('winery.field-equipment.*')],
-        ];
-
         // ── Negocio ──────────────────────────────────────────────────────
         $menu['billing'] = [
             ['icon' => 'chart-bar-square',        'label' => 'Resumen Económico',       'route' => 'winery.financial-summary.index',      'active' => request()->routeIs('winery.financial-summary*')],
@@ -132,9 +126,8 @@ class WineryMenu
             ['icon' => 'arrow-down-tray',         'label' => 'Compra de Uva',           'route' => 'winery.invoices.grape-purchase.index', 'active' => request()->routeIs('winery.invoices.grape-purchase*')],
             ['icon' => 'arrow-up-tray',           'label' => 'Venta de Productos',      'route' => 'winery.invoices.products.index',       'active' => request()->routeIs('winery.invoices.products*')],
             ['icon' => 'document-check',          'label' => 'VeriFactu',               'route' => 'winery.verifactu.index',               'active' => request()->routeIs('winery.verifactu*')],
+            ['icon' => 'calculator',              'label' => 'Costes de Producción',    'route' => 'winery.production-costs.index',        'active' => request()->routeIs('winery.production-costs*')],
             ['icon' => 'users',                   'label' => 'Clientes y Canales',      'route' => 'winery.clients.index',                 'active' => request()->routeIs('winery.clients*')],
-            ['icon' => 'globe-alt',               'label' => 'Exportación',             'route' => 'winery.exports.index',                 'active' => request()->routeIs('winery.exports*'), 'wip' => true],
-            ['icon' => 'sparkles',                'label' => 'Enoturismo',              'route' => 'winery.enotourism.index',              'active' => request()->routeIs('winery.enotourism*'), 'wip' => true],
         ];
 
         // ── Insumos y Proveedores ────────────────────────────────────────
@@ -186,6 +179,7 @@ class WineryMenu
             ['divider' => true, 'label' => 'Operaciones'],
             ['icon' => 'fire',                'label' => 'Controles Fermentación','route' => "{$prefix}.fermentation-controls.index",   'active' => request()->routeIs("{$prefix}.fermentation-controls*")],
             ['icon' => 'arrow-path',          'label' => 'Traslados',             'route' => "{$prefix}.wine-transfers.index",          'active' => request()->routeIs("{$prefix}.wine-transfers*")],
+            ['icon' => 'funnel',              'label' => 'Coupage',               'route' => "{$prefix}.coupage.index",                 'active' => request()->routeIs("{$prefix}.coupage*")],
             ['icon' => 'exclamation-circle',  'label' => 'Mermas',                'route' => "{$prefix}.wine-losses.index",             'active' => request()->routeIs("{$prefix}.wine-losses*")],
             ['icon' => 'beaker',          'label' => 'Aditivos',              'route' => "{$prefix}.wine-additives.index",          'active' => request()->routeIs("{$prefix}.wine-additives*")],
             ['divider' => true, 'label' => 'Laboratorio'],
@@ -230,7 +224,6 @@ class WineryMenu
             ['icon' => 'document-chart-bar', 'label' => 'SILICIE',                       'route' => "{$prefix}.silicie.dashboard",              'active' => request()->routeIs("{$prefix}.silicie.dashboard") || request()->routeIs("{$prefix}.silicie.movements*"), 'wip' => $silicieWip],
             ['icon' => 'chart-bar',          'label' => 'INFOVI (AICA)',                 'route' => "{$prefix}.silicie.infovi",                 'active' => request()->routeIs("{$prefix}.silicie.infovi"), 'wip' => $silicieWip],
             ['divider' => true],
-            ['icon' => 'document-text',      'label' => 'AICA',                          'route' => "{$prefix}.aica.index",                    'active' => request()->routeIs("{$prefix}.aica*"), 'wip' => true],
             ['icon' => 'shield-check',       'label' => 'Registros Sanitarios',          'route' => "{$prefix}.sanitary-registrations.index",  'active' => request()->routeIs("{$prefix}.sanitary-registrations*")],
             ['icon' => 'identification',     'label' => 'Autorizaciones de Embotellado', 'route' => "{$prefix}.bottling-authorizations.index", 'active' => request()->routeIs("{$prefix}.bottling-authorizations*")],
             ['icon' => 'sparkles',           'label' => 'Certificaciones Ecológicas',    'route' => "{$prefix}.eco-certifications.index",      'active' => request()->routeIs("{$prefix}.eco-certifications*")],

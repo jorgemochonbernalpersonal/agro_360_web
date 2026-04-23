@@ -138,6 +138,19 @@ Route::middleware(['role:producer', 'check.beta'])
         Route::prefix('invoices')->name('invoices.')->group(function () {
             Route::get('/', \App\Livewire\Viticulturist\Invoices\Index::class)->name('index');
             Route::get('/create', \App\Livewire\Viticulturist\Invoices\Create::class)->name('create');
+
+            // Rutas estáticas ANTES de los wildcards
+            Route::get('/harvest', \App\Livewire\Viticulturist\Invoices\Harvest\Index::class)->name('harvest.index');
+
+            Route::prefix('harvest-sale')->name('harvest-sale.')->group(function () {
+                Route::get('/', \App\Livewire\Viticulturist\Billing\HarvestSale\Index::class)->name('index');
+                Route::get('/create', \App\Livewire\Viticulturist\Billing\HarvestSale\Create::class)->name('create');
+                Route::get('/{id}/edit', \App\Livewire\Viticulturist\Billing\HarvestSale\Edit::class)->name('edit');
+                Route::get('/{id}/pdf', [\App\Http\Controllers\Viticulturist\InvoicePdfController::class, 'invoice'])->name('pdf');
+                Route::get('/{id}/albaran-pdf', [\App\Http\Controllers\Viticulturist\InvoicePdfController::class, 'deliveryNote'])->name('delivery-note-pdf');
+            });
+
+            // Wildcards al final
             Route::get('/{invoice}/edit', \App\Livewire\Viticulturist\Invoices\Edit::class)->name('edit');
             Route::get('/{invoice}/pdf', [\App\Http\Controllers\Viticulturist\InvoicePdfController::class, 'invoice'])->name('pdf');
             Route::get('/{invoice}/albaran-pdf', [\App\Http\Controllers\Viticulturist\InvoicePdfController::class, 'deliveryNote'])->name('delivery-note-pdf');
@@ -158,6 +171,13 @@ Route::middleware(['role:producer', 'check.beta'])
         // ══════════════════════════════════════════════════════════════════
         // MÓDULOS PROPIOS DE BODEGA
         // ══════════════════════════════════════════════════════════════════
+
+        // ── Denominación de Origen ────────────────────────────────────────
+        Route::get('/denomination', \App\Livewire\Winery\Denomination\Index::class)->name('denomination.index');
+        Route::get('/denomination/requests', \App\Livewire\Winery\Denomination\Requests\Index::class)->name('denomination.requests.index');
+        Route::get('/denomination/labels', \App\Livewire\Winery\Denomination\Labels\Index::class)->name('denomination.labels.index');
+        Route::get('/denomination/inspections', \App\Livewire\Winery\Denomination\Inspections\Index::class)->name('denomination.inspections.index');
+        Route::get('/denomination/qualifications', \App\Livewire\Winery\Denomination\Qualifications\Index::class)->name('denomination.qualifications.index');
 
         // ── Cuadro de mando vendimia ──────────────────────────────────────
         Route::get('/harvest-summary', \App\Livewire\Winery\Harvest\Summary\Index::class)->name('harvest-summary.index');
@@ -222,11 +242,17 @@ Route::middleware(['role:producer', 'check.beta'])
             Route::get('/{control}/edit', \App\Livewire\Winery\FermentationControls\Edit::class)->name('edit');
         });
 
-        // ── Trasvases y Coupage ───────────────────────────────────────────
+        // ── Trasvases ─────────────────────────────────────────────────────
         Route::prefix('wine-transfers')->name('wine-transfers.')->group(function () {
             Route::get('/', \App\Livewire\Winery\WineTransfers\Index::class)->name('index');
             Route::get('/create', \App\Livewire\Winery\WineTransfers\Create::class)->name('create');
             Route::get('/{transfer}/edit', \App\Livewire\Winery\WineTransfers\Edit::class)->name('edit');
+        });
+
+        // ── Coupage ────────────────────────────────────────────────────────
+        Route::prefix('coupage')->name('coupage.')->group(function () {
+            Route::get('/', \App\Livewire\Winery\Coupage\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Winery\Coupage\Create::class)->name('create');
         });
 
         // ── Mermas y Pérdidas ─────────────────────────────────────────────
@@ -322,20 +348,8 @@ Route::middleware(['role:producer', 'check.beta'])
         Route::get('/meteorology', \App\Livewire\Producer\Meteorology\Index::class)->name('meteorology.index');
 
         // ── Normativa bodega ──────────────────────────────────────────────
-        Route::get('/silicie', \App\Livewire\Winery\UnderConstruction::class)
-            ->name('silicie.dashboard')
-            ->defaults('module', 'SILICIE')
-            ->defaults('icon', 'document-chart-bar');
-
-        Route::get('/silicie/infovi', \App\Livewire\Winery\UnderConstruction::class)
-            ->name('silicie.infovi')
-            ->defaults('module', 'INFOVI (AICA)')
-            ->defaults('icon', 'chart-bar');
-
-        Route::get('/aica', \App\Livewire\Winery\UnderConstruction::class)
-            ->name('aica.index')
-            ->defaults('module', 'AICA')
-            ->defaults('icon', 'document-text');
+        Route::get('/silicie', \App\Livewire\Winery\Silicie\Dashboard::class)->name('silicie.dashboard');
+        Route::get('/silicie/infovi', \App\Livewire\Winery\Silicie\Infovi::class)->name('silicie.infovi');
 
         Route::prefix('sanitary-registrations')->name('sanitary-registrations.')->group(function () {
             Route::get('/', \App\Livewire\Winery\SanitaryRegistrations\Index::class)->name('index');
@@ -355,17 +369,12 @@ Route::middleware(['role:producer', 'check.beta'])
             Route::get('/{ecoCertification}/edit', \App\Livewire\Winery\EcoCertifications\Edit::class)->name('edit');
         });
 
-        // ── Negocio bodega ────────────────────────────────────────────────
-
-        Route::get('/exports', \App\Livewire\Winery\UnderConstruction::class)
-            ->name('exports.index')
-            ->defaults('module', 'Exportación')
-            ->defaults('icon', 'globe-alt');
-
-        Route::get('/enotourism', \App\Livewire\Winery\UnderConstruction::class)
-            ->name('enotourism.index')
-            ->defaults('module', 'Enoturismo')
-            ->defaults('icon', 'sparkles');
+        // ── Costes de Producción ──────────────────────────────────────────────
+        Route::prefix('production-costs')->name('production-costs.')->group(function () {
+            Route::get('/', \App\Livewire\Winery\ProductionCosts\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Winery\ProductionCosts\Create::class)->name('create');
+            Route::get('/{cost}/edit', \App\Livewire\Winery\ProductionCosts\Edit::class)->name('edit');
+        });
 
         // ── Sistema bodega ────────────────────────────────────────────────
         Route::prefix('winery-supplies')->name('winery-supplies.')->group(function () {

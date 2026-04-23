@@ -3,6 +3,7 @@
 namespace App\Livewire\Viticulturist\Billing\HarvestSale;
 
 use App\Livewire\Concerns\WithHarvestSaleStock;
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Harvest;
 use App\Models\HarvestStock;
@@ -17,7 +18,7 @@ use Livewire\Component;
 
 class Edit extends Component
 {
-    use WithToastNotifications, WithHarvestSaleStock;
+    use WithRoleAwareRedirect, WithToastNotifications, WithHarvestSaleStock;
 
     public Invoice $invoice;
 
@@ -249,7 +250,7 @@ class Edit extends Component
             });
 
             $this->toastSuccess('Factura actualizada correctamente.');
-            return $this->redirect(route('viticulturist.invoices.harvest-sale.index'), navigate: true);
+            return $this->viticulturistRoleRedirect('invoices.harvest-sale.index');
 
         } catch (\Exception $e) {
             Log::error('Error al editar factura de vendimia: ' . $e->getMessage(), [

@@ -137,6 +137,23 @@
             </div>
         </x-agro.card>
 
+        <x-agro.card class="flex items-center gap-4">
+            <div class="w-11 h-11 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0">
+                <flux:icon icon="calculator" class="size-5 text-emerald-600" />
+            </div>
+            <div>
+                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">Costes {{ $vintageYear }}</p>
+                @if($totalCostsYear > 0)
+                    <p class="text-2xl font-bold text-zinc-900 leading-none">
+                        {{ number_format($totalCostsYear, 0, ',', '.') }} <span class="text-sm font-medium text-zinc-400">€</span>
+                    </p>
+                @else
+                    <p class="text-2xl font-bold text-zinc-300 leading-none">—</p>
+                @endif
+                <a href="{{ roleRoute('production-costs.index') }}" wire:navigate class="text-xs text-agro-600 hover:underline">Ver desglose →</a>
+            </div>
+        </x-agro.card>
+
         <x-agro.card class="col-span-2">
             <div class="flex items-center justify-between mb-2">
                 <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">Uso de depósitos</p>

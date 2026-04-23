@@ -16,6 +16,7 @@ class WineTransfer extends Model
 
     protected $fillable = [
         'wine_id',
+        'source_wine_id',
         'from_container_id',
         'to_container_id',
         'quantity',
@@ -35,6 +36,11 @@ class WineTransfer extends Model
     public function wine(): BelongsTo
     {
         return $this->belongsTo(Wine::class);
+    }
+
+    public function sourceWine(): BelongsTo
+    {
+        return $this->belongsTo(Wine::class, 'source_wine_id');
     }
 
     public function fromContainer(): BelongsTo
