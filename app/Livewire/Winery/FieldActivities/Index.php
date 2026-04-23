@@ -33,55 +33,46 @@ class Index extends Component
 
     public function render()
     {
-        $wineryId = Auth::id();
+        $user   = Auth::user();
+        $userId = Auth::id();
+        $isViticulturistOnly = !$user->hasWineryAccess();
 
-        // Only show activities from viticulturists who have granted cuaderno access.
-        // Ghost viticulturists (can_login=false) cannot fill their own notebook,
-        // so they are excluded from this view regardless.
-        $viticulturistIds = WineryViticulturist::where('winery_id', $wineryId)
-            ->where('notebook_access', true)
-            ->pluck('viticulturist_id');
+        if ($isViticulturistOnly) {
+            // Pure viticulturist: show their own activities only
+            $viticulturistIds      = collect([$userId]);
+            $withoutCuadernoAccess = collect();
+            $linkedViticulturists  = collect();
+        } else {
+            // Winery or Producer: show linked viticulturists with cuaderno access
+            $viticulturistIds = WineryViticulturist::where('winery_id', $userId)
+                ->where('notebook_access', true)
+                ->pluck('viticulturist_id');
 
-        if (Auth::user()->isProducer()) {
-            $viticulturistIds = $viticulturistIds->push($wineryId)->unique();
-        }
+            if ($user->isProducer()) {
+                $viticulturistIds = $viticulturistIds->push($userId)->unique();
+            }
 
-        // Viticulturists linked but without cuaderno consent, for the warning banner
-        $withoutCuadernoAccess = WineryViticulturist::where('winery_id', $wineryId)
-            ->where('notebook_access', false)
-            ->whereHas('viticulturist', fn($q) => $q->where('can_login', true))
-            ->with('viticulturist:id,name')
-            ->get()
-            ->pluck('viticulturist')
-            ->filter()
-            ->values();
+            // Viticulturists linked but without cuaderno consent, for the warning banner
+            $withoutCuadernoAccess = WineryViticulturist::where('winery_id', $userId)
+                ->where('notebook_access', false)
+                ->whereHas('viticulturist', fn($q) => $q->where('can_login', true))
+                ->with('viticulturist:id,name')
+                ->get()
+                ->pluck('viticulturist')
+                ->filter()
+                ->values();
 
-        $query = AgriculturalActivity::with([
-                'viticulturist:id,name',
-                'plot:id,name',
-                'plotPlanting.grapeVariety:id,name',
-                'campaign:id,year',
-            ])
-            ->whereIn('viticulturist_id', $viticulturistIds)
-            ->when($this->viticulturistFilter, fn($q) => $q->where('viticulturist_id', $this->viticulturistFilter))
-            ->when($this->activityTypeFilter, fn($q) => $q->where('activity_type', $this->activityTypeFilter))
-            ->when($this->campaignFilter, fn($q) => $q->where('campaign_id', $this->campaignFilter))
-            ->when($this->plotFilter, fn($q) => $q->where('plot_id', $this->plotFilter));
+            $linkedViticulturists = WineryViticulturist::where('winery_id', $userId)
+                ->with('viticulturist:id,name')
+                ->get()
+                ->pluck('viticulturist')
+                ->filter()
+                ->sortBy('name')
+                ->values();
 
-        $activities = (clone $query)
-            ->orderByDesc('activity_date')
-            ->paginate(30);
-
-        $linkedViticulturists = WineryViticulturist::where('winery_id', $wineryId)
-            ->with('viticulturist:id,name')
-            ->get()
-            ->pluck('viticulturist')
-            ->filter()
-            ->sortBy('name')
-            ->values();
-
-        if (Auth::user()->isProducer()) {
-            $linkedViticulturists = collect([Auth::user()])->merge($linkedViticulturists);
+            if ($user->isProducer()) {
+                $linkedViticulturists = collect([Auth::user()])->merge($linkedViticulturists);
+            }
         }
 
         $campaigns = Campaign::whereIn('viticulturist_id', $viticulturistIds)
@@ -94,11 +85,29 @@ class Index extends Component
             ->orderBy('name')
             ->get(['id', 'name']);
 
+        $query = AgriculturalActivity::whereIn('viticulturist_id', $viticulturistIds)
+            ->with(['plot', 'plotPlanting.grapeVariety', 'viticulturist', 'campaign']);
+
+        if ($this->viticulturistFilter) {
+            $query->where('viticulturist_id', $this->viticulturistFilter);
+        }
+        if ($this->activityTypeFilter) {
+            $query->where('activity_type', $this->activityTypeFilter);
+        }
+        if ($this->campaignFilter) {
+            $query->where('campaign_id', $this->campaignFilter);
+        }
+        if ($this->plotFilter) {
+            $query->where('plot_id', $this->plotFilter);
+        }
+
         $stats = [
             'total'    => (clone $query)->count(),
             'harvest'  => (clone $query)->where('activity_type', 'harvest')->count(),
             'phyto'    => (clone $query)->where('activity_type', 'phytosanitary')->count(),
         ];
+
+        $activities = (clone $query)->orderByDesc('activity_date')->paginate(12);
 
         return view('livewire.winery.field-activities.index', [
             'activities'            => $activities,
@@ -108,6 +117,7 @@ class Index extends Component
             'stats'                 => $stats,
             'activityTypes'         => AgriculturalActivity::ACTIVITY_TYPES,
             'withoutCuadernoAccess' => $withoutCuadernoAccess,
+            'isViticulturistOnly'   => $isViticulturistOnly,
         ])->layout('layouts.app');
     }
 }

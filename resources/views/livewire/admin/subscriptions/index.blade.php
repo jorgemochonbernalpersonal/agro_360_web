@@ -30,6 +30,99 @@
         />
     </div>
 
+    {{-- Evolución mensual --}}
+    @if($monthlyStats->count() > 0)
+    <x-agro.card>
+        <x-slot:header>
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 bg-agro-50 rounded-xl flex items-center justify-center">
+                    <flux:icon icon="chart-bar" class="size-5 text-agro-600" />
+                </div>
+                <div>
+                    <h3 class="font-semibold text-zinc-900">Evolución mensual {{ now()->year }}</h3>
+                    <p class="text-xs text-zinc-400">Ingresos, nuevas suscripciones y cancelaciones por mes</p>
+                </div>
+            </div>
+        </x-slot:header>
+
+        {{-- Bar chart --}}
+        <div class="flex items-end gap-2 h-32 px-1 mb-4">
+            @foreach($monthlyStats as $row)
+                @php $pct = $maxRevenue > 0 ? round(($row['revenue'] / $maxRevenue) * 100) : 0; @endphp
+                <div class="flex-1 flex flex-col items-center gap-1 group relative">
+                    {{-- Tooltip --}}
+                    <div class="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 hidden group-hover:flex flex-col items-center z-10 pointer-events-none">
+                        <div class="bg-zinc-900 text-white text-xs rounded-lg px-2.5 py-2 whitespace-nowrap shadow-lg">
+                            <p class="font-semibold">{{ $row['label'] }}</p>
+                            <p>Ingresos: {{ number_format($row['revenue'], 2) }} €</p>
+                            <p>Nuevas: {{ $row['new_subs'] }} · Bajas: {{ $row['cancelled'] }}</p>
+                        </div>
+                        <div class="w-2 h-2 bg-zinc-900 rotate-45 -mt-1"></div>
+                    </div>
+                    {{-- Bar --}}
+                    <div
+                        class="w-full rounded-t-md bg-agro-400 transition-all"
+                        style="height: {{ max($pct, 4) }}%"
+                    ></div>
+                    {{-- Label --}}
+                    <span class="text-[10px] text-zinc-400">{{ $row['label'] }}</span>
+                </div>
+            @endforeach
+        </div>
+
+        {{-- Monthly breakdown table --}}
+        <div class="overflow-x-auto -mx-5 sm:-mx-6">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="border-t border-zinc-100 bg-zinc-50">
+                        <th class="text-left text-xs font-medium text-zinc-500 px-5 sm:px-6 py-2.5">Mes</th>
+                        <th class="text-right text-xs font-medium text-zinc-500 px-4 py-2.5">Ingresos</th>
+                        <th class="text-right text-xs font-medium text-zinc-500 px-4 py-2.5">Pagos</th>
+                        <th class="text-right text-xs font-medium text-zinc-500 px-4 py-2.5">Nuevas</th>
+                        <th class="text-right text-xs font-medium text-zinc-500 px-5 sm:px-6 py-2.5">Canceladas</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-zinc-100">
+                    @foreach($monthlyStats as $row)
+                        <tr class="hover:bg-zinc-50 transition-colors">
+                            <td class="px-5 sm:px-6 py-2.5 font-medium text-zinc-700">{{ $row['label'] }}</td>
+                            <td class="px-4 py-2.5 text-right font-semibold text-zinc-900">
+                                {{ $row['revenue'] > 0 ? number_format($row['revenue'], 2) . ' €' : '—' }}
+                            </td>
+                            <td class="px-4 py-2.5 text-right text-zinc-500">{{ $row['payments'] ?: '—' }}</td>
+                            <td class="px-4 py-2.5 text-right">
+                                @if($row['new_subs'] > 0)
+                                    <span class="text-agro-600 font-medium">+{{ $row['new_subs'] }}</span>
+                                @else
+                                    <span class="text-zinc-400">—</span>
+                                @endif
+                            </td>
+                            <td class="px-5 sm:px-6 py-2.5 text-right">
+                                @if($row['cancelled'] > 0)
+                                    <span class="text-red-500 font-medium">{{ $row['cancelled'] }}</span>
+                                @else
+                                    <span class="text-zinc-400">—</span>
+                                @endif
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+                <tfoot>
+                    <tr class="border-t-2 border-zinc-200 bg-zinc-50">
+                        <td class="px-5 sm:px-6 py-2.5 font-semibold text-zinc-700">Total {{ now()->year }}</td>
+                        <td class="px-4 py-2.5 text-right font-bold text-zinc-900">
+                            {{ number_format($monthlyStats->sum('revenue'), 2) }} €
+                        </td>
+                        <td class="px-4 py-2.5 text-right font-semibold text-zinc-700">{{ $monthlyStats->sum('payments') }}</td>
+                        <td class="px-4 py-2.5 text-right font-semibold text-agro-600">+{{ $monthlyStats->sum('new_subs') }}</td>
+                        <td class="px-5 sm:px-6 py-2.5 text-right font-semibold text-red-500">{{ $monthlyStats->sum('cancelled') }}</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </x-agro.card>
+    @endif
+
     {{-- Filtros --}}
     <x-agro.filter-bar>
         <x-agro.filter-input

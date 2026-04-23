@@ -180,14 +180,14 @@ class NotebookAccessEdgeCasesTest extends WineryTestCase
         $this->assertDatabaseHas('winery_viticulturist', [
             'winery_id'        => $this->winery->id,
             'viticulturist_id' => $secondViticulturist->id,
-            'cuaderno_access'  => false,
+            'notebook_access'  => false,
         ]);
 
         // First viticulturist should still have access
         $this->assertDatabaseHas('winery_viticulturist', [
             'winery_id'        => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'cuaderno_access'  => true,
+            'notebook_access'  => true,
         ]);
     }
 }

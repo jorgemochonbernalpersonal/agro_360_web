@@ -131,13 +131,13 @@ class NotebookAccessTest extends ViticulturistTestCase
 
         $this->assertDatabaseHas('winery_viticulturist', [
             'id'              => $relation->id,
-            'cuaderno_access' => true,
+            'notebook_access' => true,
         ]);
 
         Notification::assertSentTo($winery, NotebookAccessRespondedNotification::class);
     }
 
-    public function test_approve_sets_cuaderno_granted_at_timestamp(): void
+    public function test_approve_sets_notebook_granted_at_timestamp(): void
     {
         $viticulturist = $this->makeViticulturist();
         $winery        = $this->makeWinery();
@@ -148,7 +148,7 @@ class NotebookAccessTest extends ViticulturistTestCase
             ->test(Index::class)
             ->call('approve', $request->id);
 
-        $this->assertNotNull($relation->fresh()->cuaderno_granted_at);
+        $this->assertNotNull($relation->fresh()->notebook_granted_at);
     }
 
     // ── rechazar solicitud de bodega ──────────────────────────────────────────
@@ -175,7 +175,7 @@ class NotebookAccessTest extends ViticulturistTestCase
         Notification::assertSentTo($winery, NotebookAccessRespondedNotification::class);
     }
 
-    public function test_reject_does_not_grant_cuaderno_access(): void
+    public function test_reject_does_not_grant_notebook_access(): void
     {
         $viticulturist = $this->makeViticulturist();
         $winery        = $this->makeWinery();
@@ -186,7 +186,7 @@ class NotebookAccessTest extends ViticulturistTestCase
             ->test(Index::class)
             ->call('reject', $request->id);
 
-        $this->assertFalse((bool) $relation->fresh()->cuaderno_access);
+        $this->assertFalse((bool) $relation->fresh()->notebook_access);
     }
 
     // ── revocar acceso de bodega ──────────────────────────────────────────────
@@ -200,8 +200,8 @@ class NotebookAccessTest extends ViticulturistTestCase
         $relation      = $this->linkWineryViticulturist($winery, $viticulturist);
 
         $relation->update([
-            'cuaderno_access'    => true,
-            'cuaderno_granted_at' => now(),
+            'notebook_access'    => true,
+            'notebook_granted_at' => now(),
         ]);
 
         NotebookAccessRequest::create([
@@ -217,8 +217,8 @@ class NotebookAccessTest extends ViticulturistTestCase
             ->call('revoke', $winery->id, 'winery')
             ->assertDispatched('toast');
 
-        $this->assertFalse((bool) $relation->fresh()->cuaderno_access);
-        $this->assertNotNull($relation->fresh()->cuaderno_revoked_at);
+        $this->assertFalse((bool) $relation->fresh()->notebook_access);
+        $this->assertNotNull($relation->fresh()->notebook_revoked_at);
 
         $this->assertDatabaseHas('notebook_access_requests', [
             'winery_id'        => $winery->id,
@@ -252,7 +252,7 @@ class NotebookAccessTest extends ViticulturistTestCase
 
         $this->assertDatabaseHas('supervisor_viticulturist', [
             'id'              => $relation->id,
-            'cuaderno_access' => true,
+            'notebook_access' => true,
         ]);
 
         Notification::assertSentTo($supervisor, NotebookAccessRespondedNotification::class);
@@ -269,8 +269,8 @@ class NotebookAccessTest extends ViticulturistTestCase
         $relation      = $this->linkSupervisorViticulturist($supervisor, $viticulturist);
 
         $relation->update([
-            'cuaderno_access'    => true,
-            'cuaderno_granted_at' => now(),
+            'notebook_access'    => true,
+            'notebook_granted_at' => now(),
         ]);
 
         NotebookAccessRequest::create([
@@ -286,8 +286,8 @@ class NotebookAccessTest extends ViticulturistTestCase
             ->call('revoke', $supervisor->id, 'supervisor')
             ->assertDispatched('toast');
 
-        $this->assertFalse((bool) $relation->fresh()->cuaderno_access);
-        $this->assertNotNull($relation->fresh()->cuaderno_revoked_at);
+        $this->assertFalse((bool) $relation->fresh()->notebook_access);
+        $this->assertNotNull($relation->fresh()->notebook_revoked_at);
 
         Notification::assertSentTo($supervisor, NotebookAccessRespondedNotification::class);
     }
@@ -356,8 +356,8 @@ class NotebookAccessTest extends ViticulturistTestCase
         $relation      = $this->linkWineryViticulturist($winery, $viticulturist);
 
         $relation->update([
-            'cuaderno_access'    => true,
-            'cuaderno_granted_at' => now(),
+            'notebook_access'    => true,
+            'notebook_granted_at' => now(),
         ]);
 
         Livewire::actingAs($viticulturist)

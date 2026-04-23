@@ -41,7 +41,7 @@ class ActivityIndexTest extends SupervisorTestCase
             ->assertOk();
     }
 
-    public function test_shows_zero_access_count_when_no_cuaderno_granted(): void
+    public function test_shows_zero_access_count_when_no_notebook_granted(): void
     {
         $supervisor = $this->makeSupervisor();
 
@@ -52,7 +52,7 @@ class ActivityIndexTest extends SupervisorTestCase
 
     // ── visibilidad de actividades ────────────────────────────────────────
 
-    public function test_shows_activities_when_cuaderno_access_granted(): void
+    public function test_shows_activities_when_notebook_access_granted(): void
     {
         [$supervisor, $viticulturist] = $this->makeSetup(cuadernoAccess: true);
 
@@ -68,7 +68,7 @@ class ActivityIndexTest extends SupervisorTestCase
             ->assertSee('Poda de invierno');
     }
 
-    public function test_hides_activities_when_cuaderno_access_not_granted(): void
+    public function test_hides_activities_when_notebook_access_not_granted(): void
     {
         [$supervisor, $viticulturist] = $this->makeSetup(cuadernoAccess: false);
 

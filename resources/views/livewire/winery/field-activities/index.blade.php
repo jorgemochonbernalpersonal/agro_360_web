@@ -3,7 +3,9 @@
     {{-- Header --}}
     <x-agro.page-header
         title="Actividades de Campo"
-        description="Registro de actividades agrícolas de tus viticultores vinculados (solo lectura)"
+        :description="$isViticulturistOnly
+            ? 'Registro consolidado de todas tus actividades agrícolas'
+            : 'Registro de actividades agrícolas de tus viticultores vinculados (solo lectura)'"
     />
 
     {{-- KPIs --}}
@@ -96,7 +98,9 @@
             <x-agro.empty-state
                 icon="clipboard-document-list"
                 title="Sin actividades registradas"
-                description="Tus viticultores vinculados aún no han registrado actividades que coincidan con los filtros aplicados."
+                :description="$isViticulturistOnly
+                    ? 'Aún no has registrado actividades en tu cuaderno de campo.'
+                    : 'Tus viticultores vinculados aún no han registrado actividades que coincidan con los filtros aplicados.'"
             />
         @else
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -202,6 +206,7 @@
         </div>
 
         <div class="px-6 py-5 space-y-5">
+            @if(!$isViticulturistOnly)
             <div>
                 <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Viticultor</label>
                 <flux:select wire:model.live="viticulturistFilter">
@@ -211,6 +216,7 @@
                     @endforeach
                 </flux:select>
             </div>
+            @endif
             <div>
                 <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Tipo de actividad</label>
                 <flux:select wire:model.live="activityTypeFilter">

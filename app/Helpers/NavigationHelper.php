@@ -57,6 +57,42 @@ class NavigationHelper
                     'active' => request()->routeIs('admin.support.*'),
                     'badge'  => Cache::remember('nav_badge_admin_support', 60, fn() => \App\Models\SupportTicket::open()->count()),
                 ],
+                [
+                    'icon'   => 'credit-card',
+                    'label'  => 'Suscripciones',
+                    'route'  => 'admin.subscriptions.index',
+                    'active' => request()->routeIs('admin.subscriptions.*'),
+                ],
+                [
+                    'icon'   => 'megaphone',
+                    'label'  => 'Notificaciones',
+                    'route'  => 'admin.notifications.index',
+                    'active' => request()->routeIs('admin.notifications.*'),
+                ],
+                [
+                    'icon'   => 'shield-exclamation',
+                    'label'  => 'Log de seguridad',
+                    'route'  => 'admin.security-log.index',
+                    'active' => request()->routeIs('admin.security-log.*'),
+                ],
+                [
+                    'icon'   => 'map',
+                    'label'  => 'Parcelas',
+                    'route'  => 'admin.plots.index',
+                    'active' => request()->routeIs('admin.plots.*'),
+                ],
+                [
+                    'icon'   => 'map-pin',
+                    'label'  => 'SIGPAC',
+                    'route'  => 'admin.sigpac.index',
+                    'active' => request()->routeIs('admin.sigpac.*'),
+                ],
+                [
+                    'icon'   => 'cog-6-tooth',
+                    'label'  => 'Configuración',
+                    'route'  => 'admin.settings.index',
+                    'active' => request()->routeIs('admin.settings.*'),
+                ],
             ],
         ];
     }

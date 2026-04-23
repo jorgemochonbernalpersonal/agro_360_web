@@ -29,7 +29,7 @@ class IndexTest extends WineryTestCase
             'viticulturist_id' => $viticulturist->id,
             'source'           => WineryViticulturist::SOURCE_OWN,
             'assigned_by'      => $winery->id,
-            'cuaderno_access'  => $cuadernoAccess,
+            'notebook_access'  => $cuadernoAccess,
         ]);
     }
 
@@ -55,7 +55,7 @@ class IndexTest extends WineryTestCase
 
     // ── lógica de consentimiento cuaderno ─────────────────────────────────────
 
-    public function test_shows_activities_when_cuaderno_access_granted(): void
+    public function test_shows_activities_when_notebook_access_granted(): void
     {
         $winery        = $this->makeWinery();
         $viticulturist = $this->makeViticulturist();
@@ -70,7 +70,7 @@ class IndexTest extends WineryTestCase
             ->assertViewHas('stats', fn($s) => $s['total'] === 1);
     }
 
-    public function test_hides_activities_when_cuaderno_access_not_granted(): void
+    public function test_hides_activities_when_notebook_access_not_granted(): void
     {
         $winery        = $this->makeWinery();
         $viticulturist = $this->makeViticulturist();
@@ -102,7 +102,7 @@ class IndexTest extends WineryTestCase
 
     // ── warning de viticulturists sin acceso ──────────────────────────────────
 
-    public function test_without_cuaderno_access_list_is_populated(): void
+    public function test_without_notebook_access_list_is_populated(): void
     {
         $winery        = $this->makeWinery();
         $viticulturist = $this->makeViticulturist();
@@ -115,7 +115,7 @@ class IndexTest extends WineryTestCase
             );
     }
 
-    public function test_without_cuaderno_access_list_excludes_ghost_viticulturists(): void
+    public function test_without_notebook_access_list_excludes_ghost_viticulturists(): void
     {
         $winery = $this->makeWinery();
         $ghost  = User::factory()->create([

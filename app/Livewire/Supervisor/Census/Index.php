@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Supervisor\Census;
 
+use App\Models\SupervisorViticulturist;
 use App\Models\SupervisorWinery;
 use App\Models\WineryViticulturist;
 use App\Models\User;
@@ -90,10 +91,7 @@ class Index extends Component
 
         $wineryCount = SupervisorWinery::where('supervisor_id', $doId)->count();
 
-        $viticulturistCount = WineryViticulturist::where('supervisor_id', $doId)
-            ->where('source', WineryViticulturist::SOURCE_SUPERVISOR)
-            ->distinct('viticulturist_id')
-            ->count('viticulturist_id');
+        $viticulturistCount = SupervisorViticulturist::where('supervisor_id', $doId)->count();
 
         if ($this->currentTab === 'wineries') {
             $wineryIds = SupervisorWinery::where('supervisor_id', $doId)->pluck('winery_id');
@@ -116,10 +114,8 @@ class Index extends Component
 
             $items = $query->orderBy('name')->paginate(15);
         } else {
-            $viticulturistIds = WineryViticulturist::where('supervisor_id', $doId)
-                ->where('source', WineryViticulturist::SOURCE_SUPERVISOR)
-                ->pluck('viticulturist_id')
-                ->unique();
+            $viticulturistIds = SupervisorViticulturist::where('supervisor_id', $doId)
+                ->pluck('viticulturist_id');
 
             $query = User::whereIn('id', $viticulturistIds)->withCount('plots');
 

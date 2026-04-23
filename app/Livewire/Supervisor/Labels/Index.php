@@ -104,6 +104,11 @@ class Index extends Component
 
     public function issue(int $labelId): void
     {
+        if (!RateLimiter::attempt('label-issue:' . Auth::id(), 10, fn() => null, 60)) {
+            $this->toastError('Demasiadas emisiones. Espera un minuto antes de continuar.');
+            return;
+        }
+
         $label = DoLabel::forSupervisor(Auth::id())->findOrFail($labelId);
         Gate::authorize('update', $label);
 
@@ -125,6 +130,11 @@ class Index extends Component
 
     public function approve(int $labelId): void
     {
+        if (!RateLimiter::attempt('label-approve:' . Auth::id(), 30, fn() => null, 60)) {
+            $this->toastError('Demasiadas solicitudes. Espera un minuto antes de continuar.');
+            return;
+        }
+
         $label = DoLabel::forSupervisor(Auth::id())->findOrFail($labelId);
         Gate::authorize('update', $label);
         $label->update(['status' => DoLabel::STATUS_APPROVED]);
@@ -133,6 +143,11 @@ class Index extends Component
 
     public function cancel(int $labelId): void
     {
+        if (!RateLimiter::attempt('label-cancel:' . Auth::id(), 30, fn() => null, 60)) {
+            $this->toastError('Demasiadas solicitudes. Espera un minuto antes de continuar.');
+            return;
+        }
+
         $label = DoLabel::forSupervisor(Auth::id())->findOrFail($labelId);
         Gate::authorize('update', $label);
         $label->update(['status' => DoLabel::STATUS_CANCELLED]);

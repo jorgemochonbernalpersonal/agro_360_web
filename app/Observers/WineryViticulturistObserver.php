@@ -3,14 +3,14 @@
 namespace App\Observers;
 
 use App\Models\User;
-use App\Models\ViticultoristAssignment;
+use App\Models\ViticulturistAssignment;
 use App\Models\WineryViticulturist;
 use Illuminate\Support\Facades\Cache;
 
 class WineryViticulturistObserver
 {
     /**
-     * Dual-write to viticultor_assignments when a winery-viticulturist link is created.
+     * Dual-write to viticulturist_assignments when a winery-viticulturist link is created.
      */
     public function created(WineryViticulturist $rel): void
     {
@@ -24,9 +24,9 @@ class WineryViticulturistObserver
             return;
         }
 
-        ViticultoristAssignment::updateOrCreate(
+        ViticulturistAssignment::updateOrCreate(
             [
-                'viticultor_id'   => $rel->viticulturist_id,
+                'viticulturist_id'   => $rel->viticulturist_id,
                 'organization_id' => $orgId,
             ],
             [
@@ -37,7 +37,7 @@ class WineryViticulturistObserver
     }
 
     /**
-     * Sync changes to viticultor_assignments:
+     * Sync changes to viticulturist_assignments:
      * - winery_id null→value: self-registered viticulturist linked to a winery for the first time
      * - notebook_access/granted_at/revoked_at: notebook access changes
      */
@@ -48,9 +48,9 @@ class WineryViticulturistObserver
             $winery = User::find($rel->winery_id);
 
             if ($winery?->organization_id) {
-                ViticultoristAssignment::updateOrCreate(
+                ViticulturistAssignment::updateOrCreate(
                     [
-                        'viticultor_id'   => $rel->viticulturist_id,
+                        'viticulturist_id'   => $rel->viticulturist_id,
                         'organization_id' => $winery->organization_id,
                     ],
                     [
@@ -73,7 +73,7 @@ class WineryViticulturistObserver
             return;
         }
 
-        $assignment = ViticultoristAssignment::where('viticultor_id', $rel->viticulturist_id)
+        $assignment = ViticulturistAssignment::where('viticulturist_id', $rel->viticulturist_id)
             ->where('organization_id', $orgId)
             ->first();
 
@@ -103,7 +103,7 @@ class WineryViticulturistObserver
             return;
         }
 
-        ViticultoristAssignment::where('viticultor_id', $rel->viticulturist_id)
+        ViticulturistAssignment::where('viticulturist_id', $rel->viticulturist_id)
             ->where('organization_id', $orgId)
             ->delete();
     }

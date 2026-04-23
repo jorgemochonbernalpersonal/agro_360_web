@@ -23,11 +23,14 @@ class SupervisorWinery extends Model
         });
 
         static::deleting(function (SupervisorWinery $sw) {
-            // Remove viticulturists this supervisor assigned to this winery
+            // Convert DO-assigned viticulturists to own — winery keeps them after DO unlinks
             WineryViticulturist::where('winery_id', $sw->winery_id)
                 ->where('supervisor_id', $sw->supervisor_id)
                 ->where('source', WineryViticulturist::SOURCE_SUPERVISOR)
-                ->delete();
+                ->update([
+                    'source'      => WineryViticulturist::SOURCE_OWN,
+                    'supervisor_id' => null,
+                ]);
         });
 
         static::deleted(function (SupervisorWinery $sw) {

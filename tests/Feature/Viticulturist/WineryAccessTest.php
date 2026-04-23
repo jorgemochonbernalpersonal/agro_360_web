@@ -61,7 +61,7 @@ class WineryAccessTest extends ViticulturistTestCase
         $this->assertDatabaseHas('winery_viticulturist', [
             'winery_id'        => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'cuaderno_access'  => true,
+            'notebook_access'  => true,
         ]);
     }
 
@@ -214,7 +214,7 @@ class WineryAccessTest extends ViticulturistTestCase
         $this->assertDatabaseHas('winery_viticulturist', [
             'winery_id'        => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'cuaderno_access'  => false,
+            'notebook_access'  => false,
         ]);
     }
 
@@ -261,7 +261,7 @@ class WineryAccessTest extends ViticulturistTestCase
         $this->assertDatabaseHas('winery_viticulturist', [
             'winery_id'        => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'cuaderno_access'  => false,
+            'notebook_access'  => false,
         ]);
     }
 
@@ -290,7 +290,7 @@ class WineryAccessTest extends ViticulturistTestCase
     {
         $otherWinery = User::factory()->create(['role' => 'winery']);
 
-        // No relation with cuaderno_access=true exists — component guards with firstOrFail
+        // No relation with notebook_access=true exists — component guards with firstOrFail
         $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
 
         Livewire::test(Index::class)->call('revoke', $otherWinery->id);

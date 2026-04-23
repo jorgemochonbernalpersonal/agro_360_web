@@ -137,6 +137,7 @@ class ClaimAccount extends Component
                     ->update([
                         'notebook_access'     => true,
                         'notebook_granted_at' => now(),
+                        'notebook_revoked_at' => null,
                     ]);
             }
         }

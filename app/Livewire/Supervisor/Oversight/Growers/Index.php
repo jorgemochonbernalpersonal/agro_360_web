@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Supervisor\Oversight\Growers;
 
-use App\Models\WineryViticulturist;
+use App\Models\SupervisorViticulturist;
 use App\Models\User;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -36,10 +36,8 @@ class Index extends Component
     {
         $doId = Auth::id();
 
-        $viticulturistIds = WineryViticulturist::where('supervisor_id', $doId)
-            ->where('source', WineryViticulturist::SOURCE_SUPERVISOR)
-            ->pluck('viticulturist_id')
-            ->unique();
+        $viticulturistIds = SupervisorViticulturist::where('supervisor_id', $doId)
+            ->pluck('viticulturist_id');
 
         // Last activity date per viticulturist
         $lastActivityByVit = DB::table('agricultural_activities')

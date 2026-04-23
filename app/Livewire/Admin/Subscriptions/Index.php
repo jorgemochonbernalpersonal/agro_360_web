@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\Subscriptions;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Payment;
 use App\Models\Subscription;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -94,9 +95,56 @@ class Index extends Component
                 ->sum('amount'),
         ];
 
+        // Monthly revenue breakdown for current year
+        $monthlyRevenue = Payment::where('status', Payment::STATUS_COMPLETED)
+            ->whereYear('paid_at', now()->year)
+            ->select(
+                DB::raw('MONTH(paid_at) as month'),
+                DB::raw('SUM(amount) as revenue'),
+                DB::raw('COUNT(*) as payments')
+            )
+            ->groupBy(DB::raw('MONTH(paid_at)'))
+            ->orderBy('month')
+            ->get()
+            ->keyBy('month');
+
+        $monthlyNewSubs = Subscription::whereYear('created_at', now()->year)
+            ->select(
+                DB::raw('MONTH(created_at) as month'),
+                DB::raw('COUNT(*) as new_subs')
+            )
+            ->groupBy(DB::raw('MONTH(created_at)'))
+            ->orderBy('month')
+            ->get()
+            ->keyBy('month');
+
+        $monthlyCancelled = Subscription::whereYear('cancelled_at', now()->year)
+            ->whereNotNull('cancelled_at')
+            ->select(
+                DB::raw('MONTH(cancelled_at) as month'),
+                DB::raw('COUNT(*) as cancelled')
+            )
+            ->groupBy(DB::raw('MONTH(cancelled_at)'))
+            ->orderBy('month')
+            ->get()
+            ->keyBy('month');
+
+        $monthlyStats = collect(range(1, now()->month))->map(fn($m) => [
+            'month'     => $m,
+            'label'     => now()->setMonth($m)->translatedFormat('M'),
+            'revenue'   => (float) ($monthlyRevenue[$m]->revenue ?? 0),
+            'payments'  => (int) ($monthlyRevenue[$m]->payments ?? 0),
+            'new_subs'  => (int) ($monthlyNewSubs[$m]->new_subs ?? 0),
+            'cancelled' => (int) ($monthlyCancelled[$m]->cancelled ?? 0),
+        ]);
+
+        $maxRevenue = $monthlyStats->max('revenue') ?: 1;
+
         return view('livewire.admin.subscriptions.index', [
             'subscriptions' => $subscriptions,
             'stats'         => $stats,
+            'monthlyStats'  => $monthlyStats,
+            'maxRevenue'    => $maxRevenue,
         ]);
     }
 }

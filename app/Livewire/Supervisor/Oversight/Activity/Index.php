@@ -7,7 +7,6 @@ use App\Models\Observation;
 use App\Models\Plot;
 use App\Models\SupervisorViticulturist;
 use App\Models\User;
-use App\Models\WineryViticulturist;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
@@ -52,11 +51,9 @@ class Index extends Component
         $supervisorId = Auth::id();
 
         // Viticultores con cuaderno accesible
-        $accessibleVitIds = WineryViticulturist::where('supervisor_id', $supervisorId)
-            ->where('source', WineryViticulturist::SOURCE_SUPERVISOR)
+        $accessibleVitIds = SupervisorViticulturist::where('supervisor_id', $supervisorId)
             ->where('notebook_access', true)
-            ->pluck('viticulturist_id')
-            ->unique();
+            ->pluck('viticulturist_id');
 
         // Todos los viticultores del DO (para filtro)
         $allVitIds = SupervisorViticulturist::where('supervisor_id', $supervisorId)

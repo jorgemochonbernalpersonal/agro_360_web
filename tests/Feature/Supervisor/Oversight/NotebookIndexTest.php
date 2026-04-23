@@ -41,7 +41,7 @@ class NotebookIndexTest extends SupervisorTestCase
             ->assertOk();
     }
 
-    public function test_index_shows_zero_access_when_no_cuaderno_granted(): void
+    public function test_index_shows_zero_access_when_no_notebook_granted(): void
     {
         [$supervisor] = $this->makeSetup(cuadernoAccess: false);
 
@@ -52,7 +52,7 @@ class NotebookIndexTest extends SupervisorTestCase
 
     // ── visibilidad de actividades ────────────────────────────────────────
 
-    public function test_activities_visible_when_cuaderno_access_granted(): void
+    public function test_activities_visible_when_notebook_access_granted(): void
     {
         [$supervisor, $viticulturist] = $this->makeSetup(cuadernoAccess: true);
 
@@ -68,7 +68,7 @@ class NotebookIndexTest extends SupervisorTestCase
             ->assertSee('Riego de prueba');
     }
 
-    public function test_activities_hidden_when_cuaderno_access_not_granted(): void
+    public function test_activities_hidden_when_notebook_access_not_granted(): void
     {
         [$supervisor, $viticulturist] = $this->makeSetup(cuadernoAccess: false);
 

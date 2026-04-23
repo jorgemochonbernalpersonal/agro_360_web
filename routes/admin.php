@@ -43,5 +43,8 @@ Route::middleware(['role:admin'])
         Route::prefix('organizations')->name('organizations.')->group(function () {
             Route::get('/', \App\Livewire\Admin\Organizations\Index::class)->name('index');
         });
+
+        // Configuración global
+        Route::get('/settings', \App\Livewire\Admin\Settings\Index::class)->name('settings.index');
     });
 

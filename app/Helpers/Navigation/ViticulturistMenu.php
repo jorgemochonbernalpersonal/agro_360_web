@@ -4,6 +4,7 @@ namespace App\Helpers\Navigation;
 
 use App\Models\NotebookAccessRequest;
 use App\Models\SupervisorViticulturist;
+use App\Models\WineryViticulturist;
 use Illuminate\Support\Facades\Cache;
 
 class ViticulturistMenu
@@ -29,15 +30,21 @@ class ViticulturistMenu
             ['icon' => 'chart-bar-square',        'label' => 'Comparativa de Campañas', 'route' => 'viticulturist.campaign-comparison',        'active' => request()->routeIs('viticulturist.campaign-comparison')],
         ];
 
-        // ── Relación con Bodega ───────────────────────────────────────────────
-        $menu['winery_rel'] = [
-            ['icon' => 'megaphone',              'label' => 'Avisos de Bodegas',          'route' => 'viticulturist.announcements',         'active' => request()->routeIs('viticulturist.announcements')],
-            ['icon' => 'chat-bubble-left-right', 'label' => 'Comunicación con Bodega',    'route' => 'viticulturist.winery-messages.index', 'active' => request()->routeIs('viticulturist.winery-messages*')],
-            ['icon' => 'lock-closed',            'label' => 'Acceso Bodegas al Cuaderno', 'route' => 'viticulturist.winery-access.index',  'active' => request()->routeIs('viticulturist.winery-access*'),
-             'badge' => Cache::remember("nav_badge_notebook_access_{$user->id}", 120, fn() =>
-                NotebookAccessRequest::where('viticulturist_id', $user->id)->where('status', NotebookAccessRequest::STATUS_PENDING)->count()
-             )],
-        ];
+        // ── Relación con Bodega (solo si tiene bodegas vinculadas) ───────────
+        $hasWinery = Cache::remember("viticulturist:{$user->id}:has_winery", 300,
+            fn () => WineryViticulturist::where('viticulturist_id', $user->id)->exists()
+        );
+
+        if ($hasWinery) {
+            $menu['winery_rel'] = [
+                ['icon' => 'megaphone',              'label' => 'Avisos de Bodegas',          'route' => 'viticulturist.announcements',         'active' => request()->routeIs('viticulturist.announcements')],
+                ['icon' => 'chat-bubble-left-right', 'label' => 'Comunicación con Bodega',    'route' => 'viticulturist.winery-messages.index', 'active' => request()->routeIs('viticulturist.winery-messages*')],
+                ['icon' => 'lock-closed',            'label' => 'Acceso Bodegas al Cuaderno', 'route' => 'viticulturist.winery-access.index',  'active' => request()->routeIs('viticulturist.winery-access*'),
+                 'badge' => Cache::remember("nav_badge_notebook_access_{$user->id}", 120, fn() =>
+                    NotebookAccessRequest::where('viticulturist_id', $user->id)->where('status', NotebookAccessRequest::STATUS_PENDING)->count()
+                 )],
+            ];
+        }
 
         // ── Denominación (solo si está adscrito) ──────────────────────────────
         $hasSupervisor = Cache::remember("viticulturist:{$user->id}:has_supervisor", 300,

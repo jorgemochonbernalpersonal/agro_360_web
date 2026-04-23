@@ -5,12 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class ViticultoristAssignment extends Model
+class ViticulturistAssignment extends Model
 {
-    protected $table = 'viticultor_assignments';
+    protected $table = 'viticulturist_assignments';
 
     protected $fillable = [
-        'viticultor_id',
+        'viticulturist_id',
         'organization_id',
         'assigned_by_org_id',
         'assigned_by_user_id',
@@ -29,7 +29,7 @@ class ViticultoristAssignment extends Model
 
     public function viticulturist(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'viticultor_id');
+        return $this->belongsTo(User::class, 'viticulturist_id');
     }
 
     public function organization(): BelongsTo
@@ -47,7 +47,7 @@ class ViticultoristAssignment extends Model
         return $this->belongsTo(User::class, 'assigned_by_user_id');
     }
 
-    // ── Cuaderno access ──────────────────────────────────────────────────────
+    // ── Notebook access ──────────────────────────────────────────────────────
 
     public function grantNotebookAccess(): void
     {
@@ -73,9 +73,6 @@ class ViticultoristAssignment extends Model
         return $this->notebook_access;
     }
 
-    /**
-     * Whether assignment was made by a DO (denomination of origin) organisation.
-     */
     public function isAssignedByDO(): bool
     {
         return $this->assignedByOrg?->isDenomination() ?? false;

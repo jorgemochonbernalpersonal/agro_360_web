@@ -4,7 +4,7 @@ namespace Tests\Feature\Observers;
 
 use App\Models\Organization;
 use App\Models\User;
-use App\Models\ViticultoristAssignment;
+use App\Models\ViticulturistAssignment;
 use App\Models\WineryViticulturist;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -129,8 +129,8 @@ class OrganizationsObserverTest extends TestCase
             'assigned_by'      => $winery->id,
         ]);
 
-        $this->assertDatabaseHas('viticultor_assignments', [
-            'viticultor_id'      => $viticulturist->id,
+        $this->assertDatabaseHas('viticulturist_assignments', [
+            'viticulturist_id'      => $viticulturist->id,
             'organization_id'    => $winery->organization_id,
             'assigned_by_org_id' => $winery->organization_id,
             'assigned_by_user_id'=> $winery->id,
@@ -149,7 +149,7 @@ class OrganizationsObserverTest extends TestCase
             'assigned_by'      => $viticulturist->id,
         ]);
 
-        $this->assertDatabaseCount('viticultor_assignments', 0);
+        $this->assertDatabaseCount('viticulturist_assignments', 0);
     }
 
     public function test_does_not_create_assignment_when_winery_has_no_organization(): void
@@ -170,10 +170,10 @@ class OrganizationsObserverTest extends TestCase
             'assigned_by'      => $winery->id,
         ]);
 
-        $this->assertDatabaseCount('viticultor_assignments', 0);
+        $this->assertDatabaseCount('viticulturist_assignments', 0);
     }
 
-    public function test_syncs_cuaderno_access_grant_to_assignment(): void
+    public function test_syncs_notebook_access_grant_to_assignment(): void
     {
         $winery        = User::factory()->create(['role' => 'winery']);
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
@@ -187,16 +187,16 @@ class OrganizationsObserverTest extends TestCase
 
         $relation->grantNotebookAccess();
 
-        $assignment = ViticultoristAssignment::where('viticultor_id', $viticulturist->id)
+        $assignment = ViticulturistAssignment::where('viticulturist_id', $viticulturist->id)
             ->where('organization_id', $winery->fresh()->organization_id)
             ->first();
 
         $this->assertNotNull($assignment);
-        $this->assertTrue($assignment->cuaderno_access);
-        $this->assertNotNull($assignment->cuaderno_granted_at);
+        $this->assertTrue($assignment->notebook_access);
+        $this->assertNotNull($assignment->notebook_granted_at);
     }
 
-    public function test_syncs_cuaderno_access_revoke_to_assignment(): void
+    public function test_syncs_notebook_access_revoke_to_assignment(): void
     {
         $winery        = User::factory()->create(['role' => 'winery']);
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
@@ -211,13 +211,13 @@ class OrganizationsObserverTest extends TestCase
         $relation->grantNotebookAccess();
         $relation->revokeNotebookAccess();
 
-        $assignment = ViticultoristAssignment::where('viticultor_id', $viticulturist->id)
+        $assignment = ViticulturistAssignment::where('viticulturist_id', $viticulturist->id)
             ->where('organization_id', $winery->fresh()->organization_id)
             ->first();
 
         $this->assertNotNull($assignment);
-        $this->assertFalse($assignment->cuaderno_access);
-        $this->assertNotNull($assignment->cuaderno_revoked_at);
+        $this->assertFalse($assignment->notebook_access);
+        $this->assertNotNull($assignment->notebook_revoked_at);
     }
 
     public function test_deletes_assignment_when_winery_viticulturist_link_is_deleted(): void
@@ -233,15 +233,15 @@ class OrganizationsObserverTest extends TestCase
         ]);
 
         $orgId = $winery->fresh()->organization_id;
-        $this->assertDatabaseHas('viticultor_assignments', [
-            'viticultor_id'   => $viticulturist->id,
+        $this->assertDatabaseHas('viticulturist_assignments', [
+            'viticulturist_id'   => $viticulturist->id,
             'organization_id' => $orgId,
         ]);
 
         $relation->delete();
 
-        $this->assertDatabaseMissing('viticultor_assignments', [
-            'viticultor_id'   => $viticulturist->id,
+        $this->assertDatabaseMissing('viticulturist_assignments', [
+            'viticulturist_id'   => $viticulturist->id,
             'organization_id' => $orgId,
         ]);
     }
@@ -264,11 +264,11 @@ class OrganizationsObserverTest extends TestCase
             ->where('viticulturist_id', $viticulturist->id)
             ->update(['notes' => 'Test notes']);
 
-        $this->assertDatabaseCount('viticultor_assignments', 1);
+        $this->assertDatabaseCount('viticulturist_assignments', 1);
     }
 
     // ══════════════════════════════════════════════════════════════════════
-    // Gap 1 — Producer Organization + viticultor_assignments
+    // Gap 1 — Producer Organization + viticulturist_assignments
     // ══════════════════════════════════════════════════════════════════════
 
     public function test_producer_assignment_is_created_when_producer_adds_viticulturist(): void
@@ -286,14 +286,14 @@ class OrganizationsObserverTest extends TestCase
             'assigned_by'      => $producer->id,
         ]);
 
-        $this->assertDatabaseHas('viticultor_assignments', [
-            'viticultor_id'      => $viticulturist->id,
+        $this->assertDatabaseHas('viticulturist_assignments', [
+            'viticulturist_id'      => $viticulturist->id,
             'organization_id'    => $producer->organization_id,
             'assigned_by_org_id' => $producer->organization_id,
         ]);
     }
 
-    public function test_producer_cuaderno_access_syncs_to_assignment(): void
+    public function test_producer_notebook_access_syncs_to_assignment(): void
     {
         $producer      = User::factory()->create(['role' => 'producer']);
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
@@ -307,12 +307,12 @@ class OrganizationsObserverTest extends TestCase
 
         $relation->grantNotebookAccess();
 
-        $assignment = ViticultoristAssignment::where('viticultor_id', $viticulturist->id)
+        $assignment = ViticulturistAssignment::where('viticulturist_id', $viticulturist->id)
             ->where('organization_id', $producer->fresh()->organization_id)
             ->first();
 
         $this->assertNotNull($assignment);
-        $this->assertTrue($assignment->cuaderno_access);
+        $this->assertTrue($assignment->notebook_access);
     }
 
     // ══════════════════════════════════════════════════════════════════════
@@ -332,7 +332,7 @@ class OrganizationsObserverTest extends TestCase
             'assigned_by'      => $viticulturist->id,
         ]);
 
-        $this->assertDatabaseCount('viticultor_assignments', 0);
+        $this->assertDatabaseCount('viticulturist_assignments', 0);
 
         // Winery accepts / links the viticulturist
         $relation->update([
@@ -342,8 +342,8 @@ class OrganizationsObserverTest extends TestCase
         ]);
 
         $winery->refresh();
-        $this->assertDatabaseHas('viticultor_assignments', [
-            'viticultor_id'   => $viticulturist->id,
+        $this->assertDatabaseHas('viticulturist_assignments', [
+            'viticulturist_id'   => $viticulturist->id,
             'organization_id' => $winery->organization_id,
         ]);
     }
@@ -370,7 +370,7 @@ class OrganizationsObserverTest extends TestCase
         // Simulate a second spurious update (e.g., notes change)
         $relation->fresh()->update(['notes' => 'segunda actualización']);
 
-        $this->assertDatabaseCount('viticultor_assignments', 1);
+        $this->assertDatabaseCount('viticulturist_assignments', 1);
     }
 
     // ══════════════════════════════════════════════════════════════════════
@@ -456,8 +456,8 @@ class OrganizationsObserverTest extends TestCase
             'assigned_by'             => $producer->id,
         ]);
 
-        $this->assertDatabaseHas('viticultor_assignments', [
-            'viticultor_id'      => $viticulturist->id,
+        $this->assertDatabaseHas('viticulturist_assignments', [
+            'viticulturist_id'      => $viticulturist->id,
             'organization_id'    => $producer->organization_id,
             'assigned_by_org_id' => $producer->organization_id,
         ]);
@@ -477,7 +477,7 @@ class OrganizationsObserverTest extends TestCase
             'assigned_by'             => $parentVit->id,
         ]);
 
-        $this->assertDatabaseCount('viticultor_assignments', 0);
+        $this->assertDatabaseCount('viticulturist_assignments', 0);
     }
 
     public function test_deletes_assignment_when_producer_removes_sub_viticulturist_link(): void
@@ -494,20 +494,20 @@ class OrganizationsObserverTest extends TestCase
         ]);
 
         $orgId = $producer->fresh()->organization_id;
-        $this->assertDatabaseHas('viticultor_assignments', [
-            'viticultor_id'   => $viticulturist->id,
+        $this->assertDatabaseHas('viticulturist_assignments', [
+            'viticulturist_id'   => $viticulturist->id,
             'organization_id' => $orgId,
         ]);
 
         $relation->delete();
 
-        $this->assertDatabaseMissing('viticultor_assignments', [
-            'viticultor_id'   => $viticulturist->id,
+        $this->assertDatabaseMissing('viticulturist_assignments', [
+            'viticulturist_id'   => $viticulturist->id,
             'organization_id' => $orgId,
         ]);
     }
 
-    public function test_syncs_cuaderno_access_for_producer_sub_viticulturist(): void
+    public function test_syncs_notebook_access_for_producer_sub_viticulturist(): void
     {
         $producer      = User::factory()->create(['role' => 'producer']);
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
@@ -522,13 +522,13 @@ class OrganizationsObserverTest extends TestCase
 
         $relation->grantNotebookAccess();
 
-        $assignment = ViticultoristAssignment::where('viticultor_id', $viticulturist->id)
+        $assignment = ViticulturistAssignment::where('viticulturist_id', $viticulturist->id)
             ->where('organization_id', $producer->fresh()->organization_id)
             ->first();
 
         $this->assertNotNull($assignment);
-        $this->assertTrue($assignment->cuaderno_access);
-        $this->assertNotNull($assignment->cuaderno_granted_at);
+        $this->assertTrue($assignment->notebook_access);
+        $this->assertNotNull($assignment->notebook_granted_at);
     }
 
     public function test_winery_id_change_without_organization_does_not_create_assignment(): void
@@ -552,6 +552,6 @@ class OrganizationsObserverTest extends TestCase
             'assigned_by' => $winery->id,
         ]);
 
-        $this->assertDatabaseCount('viticultor_assignments', 0);
+        $this->assertDatabaseCount('viticulturist_assignments', 0);
     }
 }

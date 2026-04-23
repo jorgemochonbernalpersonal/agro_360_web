@@ -87,7 +87,7 @@ class NotebookAccessTest extends WineryTestCase
 
         WineryViticulturist::where('winery_id', $winery->id)
             ->where('viticulturist_id', $viticulturist->id)
-            ->update(['cuaderno_access' => true]);
+            ->update(['notebook_access' => true]);
 
         Livewire::actingAs($winery)
             ->test(Show::class, ['viticulturist' => $viticulturist])

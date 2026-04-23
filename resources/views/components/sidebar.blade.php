@@ -15,6 +15,7 @@
         'pac'        => ['accent' => '#f59e0b', 'bg' => 'rgba(245,158,11,0.12)',  'border' => 'rgba(245,158,11,0.5)'],   // ámbar
         'monitoring'    => ['accent' => '#fb7185', 'bg' => 'rgba(251,113,133,0.12)', 'border' => 'rgba(251,113,133,0.5)'],  // rosa
         'environmental' => ['accent' => '#34d399', 'bg' => 'rgba(52,211,153,0.12)',  'border' => 'rgba(52,211,153,0.5)'],   // esmeralda
+        'medioambiente' => ['accent' => '#34d399', 'bg' => 'rgba(52,211,153,0.12)',  'border' => 'rgba(52,211,153,0.5)'],   // esmeralda (monitoring+environmental)
         'declarations'  => ['accent' => '#818cf8', 'bg' => 'rgba(129,140,248,0.12)', 'border' => 'rgba(129,140,248,0.5)'],  // índigo
         'analytics'     => ['accent' => '#38bdf8', 'bg' => 'rgba(56,189,248,0.12)',  'border' => 'rgba(56,189,248,0.5)'],   // sky
         'business'   => ['accent' => '#2dd4bf', 'bg' => 'rgba(45,212,191,0.12)',  'border' => 'rgba(45,212,191,0.5)'],   // teal
@@ -53,18 +54,15 @@
     $chapterColors['output']       = ['accent' => '#c084fc', 'bg' => 'rgba(192,132,252,0.12)', 'border' => 'rgba(192,132,252,0.5)'];  // violeta (producto)
 
     $viticulturistChapters = [
-        ['key' => 'campaign',      'icon' => 'pencil-square',            'label' => 'Campaña',              'sections' => ['campaigns']],
-        ['key' => 'winery_rel',    'icon' => 'building-office-2',        'label' => 'Bodega',               'sections' => ['winery_rel', 'denomination'], 'section_labels' => ['winery_rel' => 'Comunicación', 'denomination' => 'Denominación']],
-        ['key' => 'notebook',      'icon' => 'document-text',            'label' => 'Cuaderno de Campo',    'sections' => ['notebook_inputs']],
-        ['key' => 'monitoring',    'icon' => 'shield-exclamation',       'label' => 'Seguimiento',          'sections' => ['monitoring']],
-        ['key' => 'environmental', 'icon' => 'globe-europe-africa',        'label' => 'Medioambiente',        'sections' => ['environmental']],
-        ['key' => 'declarations',  'icon' => 'clipboard-document-check', 'label' => 'Declaraciones',        'sections' => ['declarations']],
-        ['key' => 'estate',        'icon' => 'map',                      'label' => 'Finca',                'sections' => ['estate']],
-        ['key' => 'analytics',     'icon' => 'chart-bar-square',         'label' => 'Análisis',             'sections' => ['analytics']],
-        ['key' => 'resources',     'icon' => 'wrench-screwdriver',       'label' => 'Recursos',             'sections' => ['resources']],
-        ['key' => 'compliance',    'icon' => 'shield-check',             'label' => 'Normativa',            'sections' => ['compliance']],
-        ['key' => 'pac',           'icon' => 'document-chart-bar',       'label' => 'PAC',                  'sections' => ['pac']],
-        ['key' => 'business',      'icon' => 'calculator',               'label' => 'Negocio',              'sections' => ['billing']],
+        ['key' => 'campaign',    'icon' => 'pencil-square',            'label' => 'Campaña',           'sections' => ['campaigns']],
+        ['key' => 'winery_rel',  'icon' => 'building-office-2',        'label' => 'Bodega',            'sections' => ['winery_rel', 'denomination'], 'section_labels' => ['winery_rel' => 'Comunicación', 'denomination' => 'Denominación']],
+        ['key' => 'notebook',    'icon' => 'document-text',            'label' => 'Cuaderno de Campo', 'sections' => ['notebook_inputs']],
+        ['key' => 'estate',      'icon' => 'map',                      'label' => 'Finca',             'sections' => ['estate', 'analytics'],        'section_labels' => ['estate' => 'Parcelas', 'analytics' => 'Análisis']],
+        ['key' => 'medioambiente','icon' => 'globe-europe-africa',      'label' => 'Medioambiente',     'sections' => ['monitoring', 'environmental'], 'section_labels' => ['monitoring' => 'Seguimiento', 'environmental' => 'Medioambiente']],
+        ['key' => 'declarations','icon' => 'clipboard-document-check', 'label' => 'Declaraciones',     'sections' => ['declarations']],
+        ['key' => 'resources',   'icon' => 'wrench-screwdriver',       'label' => 'Recursos',          'sections' => ['resources']],
+        ['key' => 'compliance',  'icon' => 'shield-check',             'label' => 'Normativa',         'sections' => ['compliance', 'pac'],          'section_labels' => ['compliance' => 'Normativa', 'pac' => 'PAC']],
+        ['key' => 'business',    'icon' => 'calculator',               'label' => 'Negocio',           'sections' => ['billing']],
     ];
 
     $wineryChapters = [
@@ -79,19 +77,16 @@
         ['key' => 'system',       'icon' => 'cog-6-tooth',            'label' => 'Sistema',       'sections' => ['system']],
     ];
 
-    // ── Producer: capítulos viñedo (alineado con viticulturist: 11 capítulos) ─
+    // ── Producer: capítulos viñedo (alineado con viticulturist: 8 capítulos) ─
     $producerViticulturistChapters = [
-        ['key' => 'estate',        'icon' => 'map',                      'label' => 'Finca',           'sections' => ['estate']],
-        ['key' => 'campaign',      'icon' => 'pencil-square',            'label' => 'Campaña',         'sections' => ['campaigns']],
-        ['key' => 'notebook',      'icon' => 'document-text',            'label' => 'Cuaderno de Campo','sections' => ['notebook_inputs']],
-        ['key' => 'monitoring',    'icon' => 'shield-exclamation',       'label' => 'Seguimiento',     'sections' => ['monitoring']],
-        ['key' => 'environmental', 'icon' => 'globe-europe-africa',        'label' => 'Medioambiente',   'sections' => ['environmental']],
-        ['key' => 'declarations',  'icon' => 'clipboard-document-check', 'label' => 'Declaraciones',   'sections' => ['declarations']],
-        ['key' => 'analytics',     'icon' => 'chart-bar-square',         'label' => 'Análisis',        'sections' => ['analytics']],
-        ['key' => 'recursos',      'icon' => 'wrench-screwdriver',       'label' => 'Recursos',        'sections' => ['resources']],
-        ['key' => 'compliance',    'icon' => 'shield-check',             'label' => 'Normativa',       'sections' => ['compliance']],
-        ['key' => 'pac',           'icon' => 'document-chart-bar',       'label' => 'PAC',             'sections' => ['pac']],
-        ['key' => 'business',      'icon' => 'calculator',               'label' => 'Negocio Viñedo',  'sections' => ['billing']],
+        ['key' => 'estate',      'icon' => 'map',                      'label' => 'Finca',            'sections' => ['estate', 'analytics'],         'section_labels' => ['estate' => 'Parcelas', 'analytics' => 'Análisis']],
+        ['key' => 'campaign',    'icon' => 'pencil-square',            'label' => 'Campaña',          'sections' => ['campaigns']],
+        ['key' => 'notebook',    'icon' => 'document-text',            'label' => 'Cuaderno de Campo', 'sections' => ['notebook_inputs']],
+        ['key' => 'medioambiente','icon' => 'globe-europe-africa',      'label' => 'Medioambiente',    'sections' => ['monitoring', 'environmental'],  'section_labels' => ['monitoring' => 'Seguimiento', 'environmental' => 'Medioambiente']],
+        ['key' => 'declarations','icon' => 'clipboard-document-check', 'label' => 'Declaraciones',    'sections' => ['declarations']],
+        ['key' => 'resources',   'icon' => 'wrench-screwdriver',       'label' => 'Recursos',         'sections' => ['resources']],
+        ['key' => 'compliance',  'icon' => 'shield-check',             'label' => 'Normativa',        'sections' => ['compliance', 'pac'],           'section_labels' => ['compliance' => 'Normativa', 'pac' => 'PAC']],
+        ['key' => 'business',    'icon' => 'calculator',               'label' => 'Negocio Viñedo',   'sections' => ['billing']],
     ];
 
     // ── Producer: capítulos bodega (7 capítulos, denominación condicional) ───
@@ -168,11 +163,20 @@
         default         => [],
     };
 
+    // Hide chapters whose sections are all absent from the menu (e.g. winery_rel for standalone viticulturist)
+    $chapters = array_values(array_filter($chapters, function ($ch) use ($menu) {
+        foreach ($ch['sections'] as $sectionKey) {
+            if (isset($menu[$sectionKey])) return true;
+        }
+        return false;
+    }));
+
     $dashboardRoute = match($user->role) {
-        'winery'    => 'winery.dashboard',
-        'producer'  => 'producer.dashboard',
+        'admin'      => 'admin.dashboard',
+        'winery'     => 'winery.dashboard',
+        'producer'   => 'producer.dashboard',
         'supervisor' => 'supervisor.dashboard',
-        default     => 'viticulturist.dashboard',
+        default      => 'viticulturist.dashboard',
     };
 
     // Detectar capítulo activo

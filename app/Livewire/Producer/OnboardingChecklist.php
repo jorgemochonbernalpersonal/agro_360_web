@@ -153,7 +153,7 @@ class OnboardingChecklist extends Component
     {
         return match ($step) {
             OnboardingProgress::STEP_PRODUCER_FISCAL    => route('producer.settings', ['tab' => 'fiscal']),
-            OnboardingProgress::STEP_PRODUCER_PLOT      => route('plots.create'),
+            OnboardingProgress::STEP_PRODUCER_PLOT      => route('producer.plots.create'),
             OnboardingProgress::STEP_PRODUCER_CONTAINER => route('producer.containers.create'),
             OnboardingProgress::STEP_PRODUCER_ACTIVITY  => route('producer.digital-notebook'),
             OnboardingProgress::STEP_PRODUCER_RECEPTION => route('producer.grape-reception.create'),

@@ -5,7 +5,7 @@ namespace App\Livewire\Supervisor\Oversight\Notebook;
 use App\Models\AgriculturalActivity;
 use App\Models\Plot;
 use App\Models\User;
-use App\Models\WineryViticulturist;
+use App\Models\SupervisorViticulturist;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -50,11 +50,9 @@ class Index extends Component
         $supervisorId = Auth::id();
 
         // Viticultores con acceso al cuaderno concedido por este supervisor
-        $accessibleVitIds = WineryViticulturist::where('supervisor_id', $supervisorId)
-            ->where('source', WineryViticulturist::SOURCE_SUPERVISOR)
+        $accessibleVitIds = SupervisorViticulturist::where('supervisor_id', $supervisorId)
             ->where('notebook_access', true)
-            ->pluck('viticulturist_id')
-            ->unique();
+            ->pluck('viticulturist_id');
 
         $viticulturists = User::whereIn('id', $accessibleVitIds)
             ->orderBy('name')

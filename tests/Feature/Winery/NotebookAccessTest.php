@@ -194,9 +194,9 @@ class NotebookAccessTest extends WineryTestCase
         $this->relation->grantNotebookAccess();
         $this->relation->refresh();
 
-        $this->assertTrue($this->relation->cuaderno_access);
-        $this->assertNotNull($this->relation->cuaderno_granted_at);
-        $this->assertNull($this->relation->cuaderno_revoked_at);
+        $this->assertTrue($this->relation->notebook_access);
+        $this->assertNotNull($this->relation->notebook_granted_at);
+        $this->assertNull($this->relation->notebook_revoked_at);
     }
 
     public function test_revoke_notebook_access_sets_correct_fields(): void
@@ -205,17 +205,17 @@ class NotebookAccessTest extends WineryTestCase
         $this->relation->revokeNotebookAccess();
         $this->relation->refresh();
 
-        $this->assertFalse($this->relation->cuaderno_access);
-        $this->assertNotNull($this->relation->cuaderno_revoked_at);
+        $this->assertFalse($this->relation->notebook_access);
+        $this->assertNotNull($this->relation->notebook_revoked_at);
     }
 
     public function test_grant_clears_revoked_at(): void
     {
-        $this->relation->update(['cuaderno_revoked_at' => now()->subDay()]);
+        $this->relation->update(['notebook_revoked_at' => now()->subDay()]);
         $this->relation->grantNotebookAccess();
         $this->relation->refresh();
 
-        $this->assertNull($this->relation->cuaderno_revoked_at);
+        $this->assertNull($this->relation->notebook_revoked_at);
     }
 
     // ── NotebookAccessRequest model helpers ───────────────────────────────────

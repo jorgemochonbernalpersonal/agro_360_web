@@ -143,47 +143,6 @@ Route::middleware(['role:viticulturist,producer', 'check.beta'])
             Route::get('/{pest}', \App\Livewire\Viticulturist\PestManagement\Show::class)->name('show');
         });
 
-        // Campañas
-        Route::prefix('campaign')->name('campaign.')->group(function () {
-            Route::get('/', CampaignIndex::class)->name('index');
-            Route::get('/create', CampaignCreate::class)->name('create');
-            Route::get('/{campaign}', CampaignShow::class)->name('show');
-            Route::get('/{campaign}/edit', CampaignEdit::class)->name('edit');
-        });
-
-        // Cuaderno Digital
-        Route::get('/digital-notebook', DigitalNotebook::class)->name('digital-notebook');
-        Route::prefix('digital-notebook')->name('digital-notebook.')->group(function () {
-            Route::get('/treatment/create', CreatePhytosanitaryTreatment::class)->name('treatment.create');
-            Route::get('/treatment/{activity}/edit', \App\Livewire\Viticulturist\DigitalNotebook\EditPhytosanitaryTreatment::class)->name('treatment.edit');
-            Route::get('/fertilization/create', CreateFertilization::class)->name('fertilization.create');
-            Route::get('/fertilization/{activity}/edit', \App\Livewire\Viticulturist\DigitalNotebook\EditFertilization::class)->name('fertilization.edit');
-            Route::get('/irrigation/create', CreateIrrigation::class)->name('irrigation.create');
-            Route::get('/irrigation/{activity}/edit', \App\Livewire\Viticulturist\DigitalNotebook\EditIrrigation::class)->name('irrigation.edit');
-            Route::get('/cultural/create', CreateCulturalWork::class)->name('cultural.create');
-            Route::get('/cultural/{activity}/edit', \App\Livewire\Viticulturist\DigitalNotebook\EditCulturalWork::class)->name('cultural.edit');
-            Route::get('/observation/create', CreateObservation::class)->name('observation.create');
-            Route::get('/observation/{activity}/edit', \App\Livewire\Viticulturist\DigitalNotebook\EditObservation::class)->name('observation.edit');
-            Route::get('/harvest/create', CreateHarvest::class)->name('harvest.create');
-            Route::get('/harvest/{harvest}', ShowHarvest::class)->name('harvest.show');
-            Route::get('/harvest/{harvest}/edit', EditHarvest::class)->name('harvest.edit');
-            
-            // Poda
-            Route::get('/pruning/create', CreatePruning::class)->name('pruning.create');
-            Route::get('/pruning/{activity}/edit', EditPruning::class)->name('pruning.edit');
-
-            // Tratamiento Post-Vendimia
-            Route::get('/post-harvest/create', CreatePostHarvest::class)->name('post-harvest.create');
-            Route::get('/post-harvest/{activity}/edit', EditPostHarvest::class)->name('post-harvest.edit');
-
-            // Rendimientos Estimados
-            Route::prefix('estimated-yields')->name('estimated-yields.')->group(function () {
-                Route::get('/', \App\Livewire\Viticulturist\DigitalNotebook\EstimatedYields\Index::class)->name('index');
-                Route::get('/create', \App\Livewire\Viticulturist\DigitalNotebook\EstimatedYields\Create::class)->name('create');
-                Route::get('/{estimatedYield}/edit', \App\Livewire\Viticulturist\DigitalNotebook\EstimatedYields\Edit::class)->name('edit');
-            });
-        });
-
         // Mis Entregas a Bodega (cuadro de vendimia del viticulturist)
         Route::get('/harvests', \App\Livewire\Viticulturist\Harvests\Index::class)->name('harvests.index');
         Route::get('/harvests/export/pdf', \App\Http\Controllers\Viticulturist\HarvestsPdfController::class . '@export')->name('harvests.export-pdf');
