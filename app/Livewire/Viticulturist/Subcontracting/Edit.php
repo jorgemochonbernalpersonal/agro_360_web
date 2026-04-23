@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Viticulturist\Subcontracting;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Campaign;
 use App\Models\Plot;
@@ -11,7 +12,7 @@ use Livewire\Component;
 
 class Edit extends Component
 {
-    use WithToastNotifications;
+    use WithRoleAwareRedirect, WithToastNotifications;
 
     public Subcontracting $record;
 
@@ -92,7 +93,7 @@ class Edit extends Component
 
         $this->toastSuccess('Subcontratación actualizada correctamente.');
 
-        return $this->redirect(route('viticulturist.subcontracting.index'), navigate: true);
+        return $this->viticulturistRoleRedirect('subcontracting.index');
     }
 
     public function render()

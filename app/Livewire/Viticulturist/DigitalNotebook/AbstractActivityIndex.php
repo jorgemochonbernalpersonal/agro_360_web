@@ -32,7 +32,13 @@ abstract class AbstractActivityIndex extends Component
     abstract protected function pageTitle(): string;
     abstract protected function pageDescription(): string;
     abstract protected function createRoute(): string;
-    abstract protected function editRouteName(): string;
+    abstract protected function editRouteSuffix(): string;
+
+    protected function editRouteName(): string
+    {
+        $prefix = Auth::user()?->isProducer() ? 'producer' : 'viticulturist';
+        return "{$prefix}.{$this->editRouteSuffix()}";
+    }
     abstract protected function typeIcon(): string;
     abstract protected function typeBadgeColor(): string;
 

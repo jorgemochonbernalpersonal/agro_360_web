@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Viticulturist\Phenology;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Campaign;
 use App\Models\PhenologyObservation;
@@ -11,7 +12,7 @@ use Livewire\Component;
 
 class Create extends Component
 {
-    use WithToastNotifications;
+    use WithRoleAwareRedirect, WithToastNotifications;
 
     public $plot_planting_id = '';
     public $campaign_id = '';
@@ -90,10 +91,7 @@ class Create extends Component
 
         $this->toastSuccess('Observación fenológica guardada correctamente.');
 
-        return $this->redirect(
-            route('viticulturist.phenology.index', $this->plot_planting_id ? ['filter_planting_id' => $this->plot_planting_id] : []),
-            navigate: true
-        );
+        return $this->viticulturistRoleRedirect('phenology.index', $this->plot_planting_id ? ['filter_planting_id' => $this->plot_planting_id] : []);
     }
 
     public function render()

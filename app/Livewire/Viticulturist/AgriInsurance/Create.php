@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Viticulturist\AgriInsurance;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\AgriInsurance;
 use Illuminate\Support\Facades\Auth;
@@ -9,7 +10,7 @@ use Livewire\Component;
 
 class Create extends Component
 {
-    use WithToastNotifications;
+    use WithRoleAwareRedirect, WithToastNotifications;
 
     public string $policy_number = '';
     public string $insurance_company = '';
@@ -73,7 +74,7 @@ class Create extends Component
 
         $this->toastSuccess('Seguro agrario registrado correctamente.');
 
-        return $this->redirect(route('viticulturist.agri-insurance.index'), navigate: true);
+        return $this->viticulturistRoleRedirect('agri-insurance.index');
     }
 
     public function render()

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Viticulturist\Personal;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Models\Crew;
 use App\Models\WineryViticulturist;
 use Illuminate\Support\Facades\Auth;
@@ -14,7 +15,7 @@ use Livewire\Component;
 
 class Create extends Component
 {
-    use WithToastNotifications;
+    use WithRoleAwareRedirect, WithToastNotifications;
     public $name = '';
     public $description = '';
     public $winery_id = '';
@@ -78,7 +79,7 @@ class Create extends Component
             });
 
             $this->toastSuccess('Cuadrilla creada correctamente.');
-            return $this->redirect(route('viticulturist.personal.index'), navigate: true);
+            return $this->viticulturistRoleRedirect('personal.index');
         } catch (\Exception $e) {
             Log::error('Error al crear cuadrilla', [
                 'error' => $e->getMessage(),

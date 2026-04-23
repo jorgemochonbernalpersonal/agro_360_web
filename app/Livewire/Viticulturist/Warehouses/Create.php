@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Viticulturist\Warehouses;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Warehouse;
 use Livewire\Component;
@@ -9,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class Create extends Component
 {
-    use WithToastNotifications;
+    use WithRoleAwareRedirect, WithToastNotifications;
 
     public string $name        = '';
     public string $location    = '';
@@ -45,7 +46,7 @@ class Create extends Component
 
         $this->toastSuccess('Almacén creado correctamente.');
 
-        return $this->redirect(route('viticulturist.warehouse.index', ['tab' => 'almacenes']), navigate: true);
+        return $this->viticulturistRoleRedirect('warehouse.index', ['tab' => 'almacenes']);
     }
 
     public function render()

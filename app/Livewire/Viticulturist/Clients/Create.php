@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Viticulturist\Clients;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Models\Client;
 use App\Models\AutonomousCommunity;
 use App\Models\Province;
@@ -15,7 +16,7 @@ use Livewire\Attributes\Layout;
 
 class Create extends Component
 {
-    use WithFileUploads, WithToastNotifications;
+    use WithFileUploads, WithRoleAwareRedirect, WithToastNotifications;
 
     public $client_type = 'individual';
     public $first_name = '';
@@ -228,7 +229,7 @@ class Create extends Component
             });
 
             $this->toastSuccess('Cliente creado exitosamente.');
-            return $this->redirect(route('viticulturist.clients.index'), navigate: true);
+            return $this->viticulturistRoleRedirect('clients.index');
         } catch (\Exception $e) {
             $this->toastError($e instanceof RuntimeException ? $e->getMessage() : 'Error al crear el cliente. Inténtalo de nuevo.');
         }

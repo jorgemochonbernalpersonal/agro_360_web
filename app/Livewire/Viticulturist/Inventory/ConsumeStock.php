@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Viticulturist\Inventory;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Models\ProductStock;
 use App\Livewire\Concerns\WithToastNotifications;
 use Livewire\Component;
@@ -9,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class ConsumeStock extends Component
 {
-    use WithToastNotifications;
+    use WithRoleAwareRedirect, WithToastNotifications;
 
     public ProductStock $stock;
     
@@ -75,7 +76,7 @@ class ConsumeStock extends Component
         $this->stock->consume($this->quantity, null, $note);
 
         $this->toastSuccess('Consumo registrado correctamente');
-        return $this->redirect(route('viticulturist.warehouse.index', ['tab' => 'fitosanitarios']), navigate: true);
+        return $this->viticulturistRoleRedirect('warehouse.index', ['tab' => 'fitosanitarios']);
     }
 
     public function render()

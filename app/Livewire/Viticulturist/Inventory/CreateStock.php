@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Viticulturist\Inventory;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Models\ProductStock;
 use App\Models\PhytosanitaryProduct;
 use App\Models\Unit;
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\Auth;
 
 class CreateStock extends Component
 {
-    use WithToastNotifications;
+    use WithRoleAwareRedirect, WithToastNotifications;
 
     public $product_id = '';
     public $warehouse_id = '';
@@ -78,7 +79,7 @@ class CreateStock extends Component
         ]);
 
         $this->toastSuccess('Stock registrado correctamente');
-        return $this->redirect(route('viticulturist.warehouse.index', ['tab' => 'fitosanitarios']), navigate: true);
+        return $this->viticulturistRoleRedirect('warehouse.index', ['tab' => 'fitosanitarios']);
     }
 
     public function render()

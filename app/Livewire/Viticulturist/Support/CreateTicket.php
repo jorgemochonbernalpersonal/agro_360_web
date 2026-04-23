@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Viticulturist\Support;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\SupportTicket;
 use App\Notifications\SupportTicketCreatedNotification;
@@ -11,7 +12,7 @@ use Livewire\WithFileUploads;
 
 class CreateTicket extends Component
 {
-    use WithToastNotifications, WithFileUploads;
+    use WithRoleAwareRedirect, WithToastNotifications, WithFileUploads;
 
     public $title = '';
     public $description = '';
@@ -100,7 +101,7 @@ class CreateTicket extends Component
 
         $this->toastSuccess('Ticket creado exitosamente. Te contactaremos pronto.');
 
-        return $this->redirect(route('viticulturist.support.index'), navigate: true);
+        return $this->viticulturistRoleRedirect('support.index');
     }
 
     public function render()

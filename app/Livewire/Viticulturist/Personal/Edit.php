@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Viticulturist\Personal;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Crew;
 use App\Models\WineryViticulturist;
@@ -13,7 +14,7 @@ use Illuminate\Support\Facades\Log;
 
 class Edit extends Component
 {
-    use WithToastNotifications;
+    use WithRoleAwareRedirect, WithToastNotifications;
     public Crew $crew;
 
     public $name = '';
@@ -72,7 +73,7 @@ class Edit extends Component
             });
 
             $this->toastSuccess('Cuadrilla actualizada correctamente.');
-            return $this->redirect(route('viticulturist.personal.show', $this->crew), navigate: true);
+            return $this->viticulturistRoleRedirect('personal.show', $this->crew);
         } catch (\Exception $e) {
             Log::error('Error al actualizar cuadrilla', [
                 'error' => $e->getMessage(),

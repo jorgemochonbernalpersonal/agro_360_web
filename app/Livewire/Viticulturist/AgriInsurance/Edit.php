@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Viticulturist\AgriInsurance;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\AgriInsurance;
 use Illuminate\Support\Facades\Auth;
@@ -9,7 +10,7 @@ use Livewire\Component;
 
 class Edit extends Component
 {
-    use WithToastNotifications;
+    use WithRoleAwareRedirect, WithToastNotifications;
 
     public AgriInsurance $insurance;
 
@@ -90,7 +91,7 @@ class Edit extends Component
 
         $this->toastSuccess('Seguro actualizado correctamente.');
 
-        return $this->redirect(route('viticulturist.agri-insurance.index'), navigate: true);
+        return $this->viticulturistRoleRedirect('agri-insurance.index');
     }
 
     public function render()

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Viticulturist\Machinery;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Models\Machinery;
 use App\Models\MachineryType;
 use App\Livewire\Concerns\WithToastNotifications;
@@ -12,7 +13,7 @@ use Livewire\WithFileUploads;
 
 class Create extends Component
 {
-    use WithFileUploads, WithToastNotifications;
+    use WithFileUploads, WithRoleAwareRedirect, WithToastNotifications;
 
     public $name = '';
     public $machinery_type_id = '';
@@ -106,7 +107,7 @@ class Create extends Component
             });
 
             $this->toastSuccess('Maquinaria creada correctamente.');
-            return $this->redirect(route('viticulturist.machinery.index'), navigate: true);
+            return $this->viticulturistRoleRedirect('machinery.index');
         } catch (\Exception $e) {
             \Log::error('Error al crear maquinaria', [
                 'error' => $e->getMessage(),

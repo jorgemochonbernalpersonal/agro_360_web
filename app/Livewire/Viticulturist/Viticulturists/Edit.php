@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Viticulturist\Viticulturists;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\User;
 use App\Models\WineryViticulturist;
@@ -12,7 +13,7 @@ use Livewire\Component;
 
 class Edit extends Component
 {
-    use WithToastNotifications;
+    use WithRoleAwareRedirect, WithToastNotifications;
 
     public User $viticulturist;
 
@@ -63,10 +64,7 @@ class Edit extends Component
         ]);
 
         $this->toastSuccess('Viticultor actualizado correctamente.');
-        $this->redirect(
-            route('viticulturist.personal.index', ['viewMode' => 'personal']),
-            navigate: true
-        );
+        $this->viticulturistRoleRedirect('personal.index', ['viewMode' => 'personal']);
     }
 
     #[Layout('layouts.app')]
