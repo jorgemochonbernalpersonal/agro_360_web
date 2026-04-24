@@ -145,7 +145,6 @@ class WineryDemoSeeder extends Seeder
         $containerIds = DB::table('containers')->where('user_id', $uid)->pluck('id');
         $harvestIds   = DB::table('harvests')->where('winery_id', $uid)->pluck('id');
         $linkedVitIds = DB::table('winery_viticulturist')->where('winery_id', $uid)->pluck('viticulturist_id');
-        $bottlingIds  = DB::table('wine_bottlings')->where('user_id', $uid)->pluck('id');
         $invoiceIds   = DB::table('invoices')->where('user_id', $uid)->pluck('id');
 
         // ── Avisos & alertas & documentos ─────────────────────────────────
@@ -187,10 +186,7 @@ class WineryDemoSeeder extends Seeder
         // ── Operaciones de bodega ─────────────────────────────────────────
         DB::table('cellar_operations')->where('user_id', $uid)->delete();
 
-        // ── Lotes de producto (hijos de bottling primero) ─────────────────
-        if ($bottlingIds->isNotEmpty()) {
-            DB::table('wine_lots')->whereIn('bottling_id', $bottlingIds)->delete();
-        }
+        // ── Lotes de producto ─────────────────────────────────────────────
         DB::table('wine_lots')->where('user_id', $uid)->delete();
 
         // ── Etiquetados, lotes etiquetas, embotellamientos ────────────────
