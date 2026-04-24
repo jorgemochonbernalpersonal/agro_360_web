@@ -457,8 +457,8 @@ class DemoBulkFillSeeder extends Seeder
         });
 
         $this->fillTo('harvest_byproducts', 'viticulturist_id', function ($i) use ($campaigns, $now) {
-            $types = ['pomace','stem','lees','other'];
-            $dests = ['distillery','composting','cooperative','sale','biogas','authorized_landfill'];
+            $types = ['orujo','raspon','lia','otro'];
+            $dests = ['destileria','compostaje','cooperativa','bodega','vertedero_autorizado','otro'];
             $cId   = $campaigns[min($i % 3, count($campaigns) - 1)] ?? end($campaigns);
             $m     = str_pad((($i % 4) + 9), 2, '0', STR_PAD_LEFT);
             $d     = str_pad(($i % 26) + 1, 2, '0', STR_PAD_LEFT);
