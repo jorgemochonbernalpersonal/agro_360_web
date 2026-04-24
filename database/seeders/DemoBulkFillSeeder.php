@@ -248,36 +248,41 @@ class DemoBulkFillSeeder extends Seeder
 
         // ── Documentos y entorno ──────────────────────────────────────────────
         $this->fillTo('campaign_documents', 'viticulturist_id', function ($i) use ($campaigns, $now) {
-            $types = ['planting_certificate','soil_analysis','phytosanitary_report','harvest_declaration','campaign_summary','invoice','insurance_policy','certification'];
+            $types = ['invoice','certificate','lab_report','authorization','map','analysis','other'];
             $cId   = $campaigns[min($i % 3, count($campaigns) - 1)] ?? end($campaigns);
+            $t     = $i % 7;
             return [
                 'viticulturist_id' => $this->uid,
                 'campaign_id'      => $cId,
-                'document_type'    => $types[$i % 8],
-                'title'            => ucfirst(str_replace('_', ' ', $types[$i % 8])) . ' — Doc #' . ($i + 1),
-                'description'      => 'Documento campaña 2026. ' . ucfirst(str_replace('_', ' ', $types[$i % 8])) . '.',
-                'file_path'        => null,
+                'name'             => ucfirst(str_replace('_', ' ', $types[$t])) . ' — Documento #' . ($i + 1),
+                'document_type'    => $types[$t],
+                'file_path'        => 'campaign_docs/doc_' . ($i + 1) . '.pdf',
+                'original_filename'=> 'documento_' . ($i + 1) . '.pdf',
+                'mime_type'        => 'application/pdf',
+                'file_size_kb'     => 100 + ($i % 500),
                 'notes'            => null,
                 'created_at'       => $now, 'updated_at' => $now,
             ];
         });
 
-        $this->fillTo('plot_environments', 'viticulturist_id', function ($i) use ($plotIds, $pc, $campaigns, $now) {
-            $cId = $campaigns[min($i % 3, count($campaigns) - 1)] ?? end($campaigns);
-            $orientations = ['norte','sur','este','oeste','noreste','noroeste','sureste','suroeste'];
-            $soils        = ['franco-arcilloso','franco','volcánico','arcilloso','franco-arenoso'];
+        $this->fillTo('plot_environments', 'viticulturist_id', function ($i) use ($plotIds, $pc, $plantingIds, $plc, $campaigns, $now) {
+            $cId  = $campaigns[min($i % 3, count($campaigns) - 1)] ?? end($campaigns);
+            $zones = [null, 'N2000', 'LIC', 'ZEPA', 'Parque Natural', 'ZEC'];
             return [
-                'viticulturist_id' => $this->uid,
-                'plot_id'          => $plotIds[$i % $pc],
-                'campaign_id'      => $cId,
-                'altitude_m'       => 200 + ($i % 600),
-                'slope_pct'        => round(2 + ($i % 30) * 0.5, 1),
-                'orientation'      => $orientations[$i % 8],
-                'soil_type'        => $soils[$i % 5],
-                'nearby_vegetation'=> ['Bosque termófilo','Matorral costero','Cardonal-tabaibal','Frutales subtropicales','Cultivos hortícolas'][$i % 5],
-                'water_source'     => ['pozo','acequia','embalse','lluvia','goteo'][$i % 5],
-                'notes'            => null,
-                'created_at'       => $now, 'updated_at' => $now,
+                'viticulturist_id'       => $this->uid,
+                'plot_id'                => $plotIds[$i % $pc],
+                'plot_planting_id'       => $plantingIds[$i % $plc] ?? null,
+                'campaign_id'            => $cId,
+                'water_intake_nearby'    => $i % 5 === 0,
+                'water_intake_distance_m'=> $i % 5 === 0 ? round(50 + ($i % 200), 2) : null,
+                'protected_zone_total'   => $i % 20 === 0,
+                'protected_zone_partial' => $i % 8 === 0,
+                'protection_zone_type'   => $i % 8 === 0 ? $zones[$i % 6] : null,
+                'buffer_zone_m'          => $i % 8 === 0 ? round(5 + ($i % 20), 2) : null,
+                'slope_pct'              => round(2 + ($i % 30) * 0.5, 2),
+                'erosion_risk'           => $i % 6 === 0,
+                'notes'                  => null,
+                'created_at'             => $now, 'updated_at' => $now,
             ];
         });
 
@@ -536,24 +541,36 @@ class DemoBulkFillSeeder extends Seeder
             ];
         });
 
-        $this->fillTo('marketed_harvests', 'viticulturist_id', function ($i) use ($now) {
-            $varieties = ['Listán Negro','Listán Blanco','Negramoll','Moscatel','Malvasía','Tintilla'];
-            $buyers    = ['Bodega Agaete','Coop. Vitivinícola GC','Bodegas Bentayga','Bodega Los Berrazales','Particular'];
-            return [
-                'viticulturist_id' => $this->uid,
-                'harvest_id'       => null,
-                'buyer_name'       => $buyers[$i % 5],
-                'variety'          => $varieties[$i % 6],
-                'quantity_kg'      => round(200 + ($i % 80) * 50, 1),
-                'price_per_kg'     => round(1.2 + ($i % 15) * 0.1, 2),
-                'total_amount'     => round((200 + ($i % 80) * 50) * (1.2 + ($i % 15) * 0.1), 2),
-                'sale_date'        => '2026-09-' . str_pad(($i % 28) + 1, 2, '0', STR_PAD_LEFT),
-                'delivery_note'    => $i % 3 === 0 ? sprintf('ALB-2026-%04d', $i) : null,
-                'notes'            => null,
-                'active'           => true,
-                'created_at'       => $now, 'updated_at' => $now,
-            ];
-        });
+        // marketed_harvests requiere harvest_id (FK) — solo rellenar si hay harvests
+        $harvestIds = DB::table('harvests')
+            ->whereIn('activity_id', DB::table('agricultural_activities')->where('viticulturist_id', $this->uid)->pluck('id'))
+            ->pluck('id')->toArray();
+        if (!empty($harvestIds)) {
+            $hc = count($harvestIds);
+            $this->fillTo('marketed_harvests', 'viticulturist_id', function ($i) use ($harvestIds, $hc, $campaignId, $now) {
+                $dests  = ['own_winery','cooperative','third_party','other'];
+                $buyers = ['Bodega Agaete','Coop. Vitivinícola GC','Bodegas Bentayga','Bodega Los Berrazales'];
+                $qty    = round(200 + ($i % 80) * 50, 2);
+                $price  = round(1.2 + ($i % 15) * 0.1, 4);
+                return [
+                    'viticulturist_id'   => $this->uid,
+                    'harvest_id'         => $harvestIds[$i % $hc],
+                    'campaign_id'        => $campaignId,
+                    'delivery_date'      => '2026-09-' . str_pad(($i % 28) + 1, 2, '0', STR_PAD_LEFT),
+                    'quantity_kg'        => $qty,
+                    'destination_type'   => $dests[$i % 4],
+                    'buyer_name'         => $buyers[$i % 4],
+                    'buyer_rega_code'    => $i % 3 === 0 ? sprintf('REGA-GC-%04d', $i) : null,
+                    'transport_document' => $i % 4 === 0 ? sprintf('ALB-2026-%04d', $i) : null,
+                    'vehicle_plate'      => $i % 5 === 0 ? sprintf('GC-%04d-XX', 1000 + $i) : null,
+                    'price_per_kg'       => $price,
+                    'total_value'        => round($qty * $price, 2),
+                    'notes'              => null,
+                    'active'             => true,
+                    'created_at'         => $now, 'updated_at' => $now,
+                ];
+            });
+        }
     }
 
     // ── Helper ────────────────────────────────────────────────────────────────
