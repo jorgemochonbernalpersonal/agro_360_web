@@ -468,7 +468,7 @@ class DemoBulkFillSeeder extends Seeder
                 'date'               => "2026-{$m}-{$d}",
                 'byproduct_type'     => $types[$i % 4],
                 'quantity_kg'        => round(100 + ($i % 60) * 80, 1),
-                'destination_type'   => $dests[$i % 6],
+                'destination_type'   => $dests[$i % 4],
                 'destination_name'   => ['Destilados GC SL','Compostería Agaete','Coop. Vitivinícola','Vertedero Municipal'][$i % 4],
                 'document_reference' => $i % 3 === 0 ? sprintf('DES-2026-%04d', $i) : null,
                 'notes'              => null,
