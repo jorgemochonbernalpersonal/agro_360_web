@@ -497,15 +497,15 @@ class DemoBulkFillSeeder extends Seeder
         });
 
         $this->fillTo('commercial_authorizations', 'viticulturist_id', function ($i) use ($expId, $now) {
-            $types = ['do_registration','organic_certification','integrated_production','planting_right','replanting_right','export_authorization'];
-            $t     = $i % 6;
+            $types = ['do_registration','organic_certification','integrated_production','planting_right','replanting_right'];
+            $t     = $i % 5;
             return [
                 'viticulturist_id'     => $this->uid,
                 'exploitation_id'      => $expId,
                 'authorization_type'   => $types[$t],
                 'authorization_code'   => sprintf('%s-GC-2026-%04d', strtoupper(substr($types[$t], 0, 3)), 100 + $i),
                 'description'          => ucfirst(str_replace('_', ' ', $types[$t])) . " — autorización #{$i}",
-                'issuing_body'         => ['Consejo Regulador DOP GC','CAAE Canarias','Gobierno de Canarias','FEGA','SGRA','Aduanas'][$t],
+                'issuing_body'         => ['Consejo Regulador DOP GC','CAAE Canarias','Gobierno de Canarias','FEGA','Gobierno de Canarias'][$t],
                 'issue_date'           => '2026-' . str_pad(($i % 12) + 1, 2, '0', STR_PAD_LEFT) . '-15',
                 'expiry_date'          => $i % 3 === 0 ? null : '2028-12-31',
                 'document_file'        => null,
