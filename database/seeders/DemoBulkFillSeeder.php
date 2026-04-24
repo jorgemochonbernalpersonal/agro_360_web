@@ -34,8 +34,8 @@ class DemoBulkFillSeeder extends Seeder
         $now         = now();
         $plotIds     = DB::table('plots')->where('viticulturist_id', $this->uid)->pluck('id')->toArray();
         $plantingIds = DB::table('plot_plantings')->whereIn('plot_id', array_slice($plotIds, 0, 200))->pluck('id')->toArray();
-        $campaigns   = DB::table('campaigns')->where('viticulturist_id', $this->uid)->orderBy('harvest_year')->pluck('id')->toArray();
-        $campaignId  = DB::table('campaigns')->where('viticulturist_id', $this->uid)->where('status', 'active')->value('id') ?? end($campaigns) ?: null;
+        $campaigns   = DB::table('campaigns')->where('viticulturist_id', $this->uid)->orderBy('year')->pluck('id')->toArray();
+        $campaignId  = DB::table('campaigns')->where('viticulturist_id', $this->uid)->where('active', true)->value('id') ?? end($campaigns) ?: null;
         $expId       = DB::table('exploitations')->where('viticulturist_id', $this->uid)->value('id');
         $productIds  = DB::table('phytosanitary_products')->where('viticulturist_id', $this->uid)->pluck('id')->toArray();
 
