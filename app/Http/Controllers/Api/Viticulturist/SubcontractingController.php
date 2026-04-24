@@ -61,4 +61,33 @@ class SubcontractingController extends Controller
             ],
         ]);
     }
+
+    public function store(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasViticulturistAccess(), 403);
+
+        $validated = $request->validate([
+            'plot_id'        => 'nullable|integer|exists:plots,id',
+            'campaign_id'    => 'nullable|integer|exists:campaigns,id',
+            'service_type'   => 'required|string|max:100',
+            'company_name'   => 'required|string|max:255',
+            'service_date'   => 'required|date',
+            'amount'         => 'nullable|numeric|min:0',
+            'invoiced'       => 'nullable|boolean',
+            'description'    => 'nullable|string|max:1000',
+            'notes'          => 'nullable|string|max:2000',
+        ]);
+
+        if (isset($validated['plot_id'])) {
+            \App\Models\Plot::where('user_id', $user->id)->findOrFail($validated['plot_id']);
+        }
+
+        $record = \App\Models\Subcontracting::create([...$validated, 'viticulturist_id' => $user->id]);
+
+        return response()->json([
+            'data'    => new \App\Http\Resources\Api\SubcontractingResource($record),
+            'message' => 'Subcontratación registrada correctamente.',
+        ], 201);
+    }
 }

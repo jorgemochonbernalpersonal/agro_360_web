@@ -46,7 +46,7 @@ class BotDefense
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $path = $request->path();
+        $path = urldecode($request->path());
 
         // Allow critical well-known paths before bot detection
         foreach ($this->allowedWellKnown as $allowed) {

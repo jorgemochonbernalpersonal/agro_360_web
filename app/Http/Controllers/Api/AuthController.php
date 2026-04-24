@@ -42,18 +42,16 @@ class AuthController extends Controller
 
         $user->notify(new \App\Notifications\MobileVerifyEmailNotification());
 
-        $device = $validated['device_name'] ?? 'mobile';
-        $token  = $user->createToken($device, [$user->role], now()->addDays(30))->plainTextToken;
-
         SecurityLogger::logSecurityEvent('register_success', [
             'user_id' => $user->id,
             'role'    => $user->role,
         ]);
 
+        // No emitir token hasta que el email esté verificado
         return response()->json([
-            'token'      => $token,
-            'expires_in' => 30 * 24 * 60 * 60, // segundos (estándar OAuth2)
-            'user'       => new UserResource($user),
+            'message'          => 'Cuenta creada. Verifica tu email para continuar.',
+            'email_unverified' => true,
+            'user'             => new UserResource($user),
         ], 201);
     }
 
@@ -103,15 +101,15 @@ class AuthController extends Controller
             ], 403);
         }
 
-        // Login exitoso → limpiar contador de intentos
-        $hadFailures = RateLimiter::attempts($throttleKey) > 0;
+        // Login exitoso → guardar contador antes de limpiar
+        $failedAttempts = RateLimiter::attempts($throttleKey);
         RateLimiter::clear($throttleKey);
 
-        if ($hadFailures) {
+        if ($failedAttempts > 0) {
             SecurityLogger::logSuccessfulLoginAfterFailures(
                 $user->id,
                 $user->email,
-                RateLimiter::attempts($throttleKey)
+                $failedAttempts
             );
         }
 
@@ -128,11 +126,11 @@ class AuthController extends Controller
         // Revocar token previo del mismo dispositivo para no acumular
         $user->tokens()->where('name', $device)->delete();
 
-        $token = $user->createToken($device, [$user->role], now()->addDays(30))->plainTextToken;
+        $token = $user->createToken($device, [$user->role], $this->tokenExpiresAt())->plainTextToken;
 
         return response()->json([
             'token'      => $token,
-            'expires_in' => 30 * 24 * 60 * 60, // segundos (estándar OAuth2)
+            'expires_in' => $this->tokenExpiresIn(),
             'user'       => new UserResource($user->load('profile')),
         ]);
     }
@@ -167,13 +165,11 @@ class AuthController extends Controller
             'device_name' => ['sometimes', 'string', 'max:255', 'regex:/^[a-zA-Z0-9\-_. ]+$/'],
         ]);
 
-        // Búsqueda: obtener usuarios ghost con invitación pendiente
-        $candidates = User::where('can_login', false)
+        // Búsqueda directa por hash SHA-256 (O(1) vs O(n) bcrypt)
+        $user = User::where('can_login', false)
             ->where('invitation_expires_at', '>', now())
-            ->get();
-
-        // Verificación segura: validar token contra hash usando Hash::check()
-        $user = $candidates->first(fn($u) => Hash::check($validated['token'], $u->invitation_token));
+            ->where('invitation_token', hash('sha256', $validated['token']))
+            ->first();
 
         if (! $user) {
             return response()->json(['message' => 'El token de invitación no es válido o ha expirado.'], 422);
@@ -195,11 +191,11 @@ class AuthController extends Controller
         ]);
 
         $device = $validated['device_name'] ?? 'mobile';
-        $token  = $user->fresh()->createToken($device, [$user->role], now()->addDays(30))->plainTextToken;
+        $token  = $user->fresh()->createToken($device, [$user->role], $this->tokenExpiresAt())->plainTextToken;
 
         return response()->json([
             'token'      => $token,
-            'expires_in' => 30 * 24 * 60 * 60, // segundos (estándar OAuth2)
+            'expires_in' => $this->tokenExpiresIn(),
             'user'       => new UserResource($user->fresh()),
         ], 201);
     }
@@ -306,11 +302,11 @@ class AuthController extends Controller
 
         $currentToken->delete();
 
-        $token = $user->createToken($device, [$user->role], now()->addDays(30))->plainTextToken;
+        $token = $user->createToken($device, [$user->role], $this->tokenExpiresAt())->plainTextToken;
 
         return response()->json([
             'token'      => $token,
-            'expires_in' => 30 * 24 * 60 * 60, // segundos (estándar OAuth2)
+            'expires_in' => $this->tokenExpiresIn(),
         ]);
     }
 
@@ -397,6 +393,23 @@ class AuthController extends Controller
 
         $payload = $response->json();
 
+        // Verificar issuer válido de Google
+        $validIssuers = ['accounts.google.com', 'https://accounts.google.com'];
+        if (! in_array($payload['iss'] ?? '', $validIssuers, true)) {
+            return response()->json(['message' => 'Token de Google inválido.'], 422);
+        }
+
+        // Verificar que el token no ha expirado (defensa en profundidad)
+        if ((int) ($payload['exp'] ?? 0) < time()) {
+            return response()->json(['message' => 'Token de Google expirado.'], 422);
+        }
+
+        // Verificar que el email está verificado por Google
+        $emailVerified = $payload['email_verified'] ?? false;
+        if ($emailVerified !== true && $emailVerified !== 'true') {
+            return response()->json(['message' => 'El email de Google no está verificado.'], 422);
+        }
+
         // Verificar que el token es para esta app
         $clientId = config('services.google.client_id');
         if ($clientId && ($payload['aud'] ?? '') !== $clientId) {
@@ -453,15 +466,27 @@ class AuthController extends Controller
 
         $device = $request->device_name ?? 'mobile';
         $user->tokens()->where('name', $device)->delete();
-        $token = $user->createToken($device, [$user->role], now()->addDays(30))->plainTextToken;
+        $token = $user->createToken($device, [$user->role], $this->tokenExpiresAt())->plainTextToken;
 
         SecurityLogger::logSecurityEvent('login_google', ['user_id' => $user->id]);
 
         return response()->json([
             'token'      => $token,
-            'expires_in' => 30 * 24 * 60 * 60,
+            'expires_in' => $this->tokenExpiresIn(),
             'user'       => new UserResource($user->fresh()->load('profile')),
         ]);
+    }
+
+    // ─── Helpers ──────────────────────────────────────────────────────────────
+
+    private function tokenExpiresAt(): \Illuminate\Support\Carbon
+    {
+        return now()->addMinutes((int) config('sanctum.expiration', 43200));
+    }
+
+    private function tokenExpiresIn(): int
+    {
+        return (int) config('sanctum.expiration', 43200) * 60;
     }
 
     // ─── POST /reset-password ─────────────────────────────────────────────────

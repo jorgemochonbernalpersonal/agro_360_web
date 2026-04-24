@@ -243,10 +243,9 @@ class Index extends Component
         }
 
         $plainToken = Str::random(64);
-        $hashedToken = Hash::make($plainToken);
 
         $updates = [
-            'invitation_token'      => $hashedToken,
+            'invitation_token'      => hash('sha256', $plainToken),
             'invitation_sent_at'    => now(),
             'invitation_expires_at' => now()->addDays(7),
         ];

@@ -52,4 +52,33 @@ class SoilAnalysisController extends Controller
             ],
         ]);
     }
+
+    public function store(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasViticulturistAccess(), 403);
+
+        $validated = $request->validate([
+            'plot_id'         => 'nullable|integer|exists:plots,id',
+            'campaign_id'     => 'nullable|integer|exists:campaigns,id',
+            'analysis_date'   => 'required|date',
+            'laboratory'      => 'required|string|max:255',
+            'ph'              => 'nullable|numeric|min:0|max:14',
+            'organic_matter'  => 'nullable|numeric|min:0',
+            'texture_class'   => 'nullable|string|max:100',
+            'notes'           => 'nullable|string|max:2000',
+        ]);
+
+        if (isset($validated['plot_id'])) {
+            \App\Models\Plot::where('user_id', $user->id)->findOrFail($validated['plot_id']);
+        }
+
+        $record = \App\Models\SoilAnalysis::create([...$validated, 'viticulturist_id' => $user->id]);
+        $record->load(['plot']);
+
+        return response()->json([
+            'data'    => new \App\Http\Resources\Api\SoilAnalysisResource($record),
+            'message' => 'Análisis de suelo registrado correctamente.',
+        ], 201);
+    }
 }

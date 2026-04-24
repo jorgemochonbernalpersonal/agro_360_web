@@ -10,7 +10,6 @@ use App\Notifications\NotebookAccessRequestedNotification;
 use App\Notifications\ViticulturistInvitationNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
@@ -74,10 +73,9 @@ class Show extends Component
         }
 
         $plainToken = Str::random(64);
-        $hashedToken = Hash::make($plainToken);
 
         $updates = [
-            'invitation_token'      => $hashedToken,
+            'invitation_token'      => hash('sha256', $plainToken),
             'invitation_sent_at'    => now(),
             'invitation_expires_at' => now()->addDays(7),
         ];

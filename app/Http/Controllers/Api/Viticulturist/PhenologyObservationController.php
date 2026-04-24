@@ -52,4 +52,30 @@ class PhenologyObservationController extends Controller
             ],
         ]);
     }
+
+    public function store(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasViticulturistAccess(), 403);
+
+        $validated = $request->validate([
+            'plot_planting_id'        => 'nullable|integer|exists:plot_plantings,id',
+            'campaign_id'             => 'nullable|integer|exists:campaigns,id',
+            'event'                   => 'required|string|max:100',
+            'obs_date'                => 'required|date',
+            'source'                  => 'nullable|string|in:manual,sensor,model,auto',
+            'confidence'              => 'nullable|integer|min:0|max:100',
+            'degree_days_accumulated' => 'nullable|numeric|min:0',
+            'bbch_code'               => 'nullable|integer|min:0|max:99',
+            'notes'                   => 'nullable|string|max:2000',
+        ]);
+
+        $record = PhenologyObservation::create([...$validated, 'viticulturist_id' => $user->id, 'active' => true]);
+        $record->load(['plotPlanting.plot', 'plotPlanting.grapeVariety', 'campaign']);
+
+        return response()->json([
+            'data'    => new PhenologyObservationResource($record),
+            'message' => 'Observación fenológica registrada correctamente.',
+        ], 201);
+    }
 }

@@ -48,4 +48,26 @@ class ResidueAnalysisController extends Controller
             ],
         ]);
     }
+
+    public function store(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasViticulturistAccess(), 403);
+
+        $validated = $request->validate([
+            'campaign_id'       => 'nullable|integer|exists:campaigns,id',
+            'analysis_date'     => 'required|date',
+            'laboratory_name'   => 'required|string|max:255',
+            'sample_type'       => 'nullable|string|max:100',
+            'overall_compliant' => 'nullable|boolean',
+            'notes'             => 'nullable|string|max:2000',
+        ]);
+
+        $record = \App\Models\ResidueAnalysis::create([...$validated, 'viticulturist_id' => $user->id, 'active' => true]);
+
+        return response()->json([
+            'data'    => new \App\Http\Resources\Api\ResidueAnalysisResource($record),
+            'message' => 'Análisis de residuos registrado correctamente.',
+        ], 201);
+    }
 }

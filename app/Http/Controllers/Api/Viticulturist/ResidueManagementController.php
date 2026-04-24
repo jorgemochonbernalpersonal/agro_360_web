@@ -53,4 +53,32 @@ class ResidueManagementController extends Controller
             ],
         ]);
     }
+
+    public function store(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasViticulturistAccess(), 403);
+
+        $validated = $request->validate([
+            'campaign_id'         => 'nullable|integer|exists:campaigns,id',
+            'plot_id'             => 'nullable|integer|exists:plots,id',
+            'date'                => 'required|date',
+            'practice_type'       => 'required|string|max:100',
+            'material_type'       => 'required|string|max:100',
+            'estimated_quantity'  => 'nullable|numeric|min:0',
+            'quantity_unit'       => 'nullable|string|max:50',
+            'notes'               => 'nullable|string|max:2000',
+        ]);
+
+        if (isset($validated['plot_id'])) {
+            \App\Models\Plot::where('user_id', $user->id)->findOrFail($validated['plot_id']);
+        }
+
+        $record = \App\Models\ResidueManagement::create([...$validated, 'viticulturist_id' => $user->id, 'active' => true]);
+
+        return response()->json([
+            'data'    => new \App\Http\Resources\Api\ResidueManagementResource($record),
+            'message' => 'Gestión de residuos registrada correctamente.',
+        ], 201);
+    }
 }

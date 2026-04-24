@@ -52,4 +52,24 @@ class CampaignDocumentController extends Controller
             ],
         ]);
     }
+
+    public function store(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasViticulturistAccess(), 403);
+
+        $validated = $request->validate([
+            'campaign_id'    => 'required|integer|exists:campaigns,id',
+            'name'           => 'required|string|max:255',
+            'document_type'  => 'required|string|max:100',
+            'notes'          => 'nullable|string|max:2000',
+        ]);
+
+        $record = \App\Models\CampaignDocument::create([...$validated, 'viticulturist_id' => $user->id]);
+
+        return response()->json([
+            'data'    => new \App\Http\Resources\Api\CampaignDocumentResource($record),
+            'message' => 'Documento registrado correctamente.',
+        ], 201);
+    }
 }

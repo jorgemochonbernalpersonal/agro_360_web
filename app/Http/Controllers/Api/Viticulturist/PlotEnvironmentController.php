@@ -44,4 +44,30 @@ class PlotEnvironmentController extends Controller
             ],
         ]);
     }
+
+    public function store(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasViticulturistAccess(), 403);
+
+        $validated = $request->validate([
+            'campaign_id'             => 'nullable|integer|exists:campaigns,id',
+            'plot_id'                 => 'required|integer|exists:plots,id',
+            'water_intake_nearby'     => 'nullable|boolean',
+            'water_intake_distance_m' => 'nullable|numeric|min:0',
+            'slope_pct'              => 'nullable|numeric|min:0|max:100',
+            'erosion_risk'            => 'nullable|boolean',
+            'notes'                   => 'nullable|string|max:2000',
+        ]);
+
+        \App\Models\Plot::where('user_id', $user->id)->findOrFail($validated['plot_id']);
+
+        $record = \App\Models\PlotEnvironment::create([...$validated, 'viticulturist_id' => $user->id]);
+        $record->load(['plot']);
+
+        return response()->json([
+            'data'    => new \App\Http\Resources\Api\PlotEnvironmentResource($record),
+            'message' => 'Entorno de parcela registrado correctamente.',
+        ], 201);
+    }
 }

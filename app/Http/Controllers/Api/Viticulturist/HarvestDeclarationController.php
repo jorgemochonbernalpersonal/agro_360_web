@@ -49,4 +49,29 @@ class HarvestDeclarationController extends Controller
             ],
         ]);
     }
+
+    public function store(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasViticulturistAccess(), 403);
+
+        $validated = $request->validate([
+            'campaign_id'       => 'nullable|integer|exists:campaigns,id',
+            'declaration_year'  => 'required|integer|min:2000|max:2100',
+            'declaration_date'  => 'required|date',
+            'authority'         => 'nullable|string|max:255',
+            'reference_number'  => 'nullable|string|max:100',
+            'total_surface_ha'  => 'nullable|numeric|min:0',
+            'total_kg'          => 'nullable|numeric|min:0',
+            'status'            => 'nullable|string|max:50',
+            'notes'             => 'nullable|string|max:2000',
+        ]);
+
+        $record = \App\Models\HarvestDeclaration::create([...$validated, 'viticulturist_id' => $user->id, 'status' => $validated['status'] ?? 'draft', 'active' => true]);
+
+        return response()->json([
+            'data'    => new \App\Http\Resources\Api\HarvestDeclarationResource($record),
+            'message' => 'Declaración de cosecha registrada correctamente.',
+        ], 201);
+    }
 }

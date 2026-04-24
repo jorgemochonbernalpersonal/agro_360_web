@@ -593,66 +593,87 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
 
         // ── Fenología ────────────────────────────────────────────────────────
         Route::get('/phenology', [PhenologyObservationController::class, 'index'])->middleware('throttle:60,1');
+        Route::post('/phenology', [PhenologyObservationController::class, 'store'])->middleware('throttle:30,1');
 
         // ── Costes parcela ───────────────────────────────────────────────────
         Route::get('/plot-costs', [PlotCostController::class, 'index'])->middleware('throttle:60,1');
+        Route::post('/plot-costs', [PlotCostController::class, 'store'])->middleware('throttle:30,1');
 
         // ── Consumo energía ──────────────────────────────────────────────────
         Route::get('/energy-usages', [EnergyUsageController::class, 'index'])->middleware('throttle:60,1');
+        Route::post('/energy-usages', [EnergyUsageController::class, 'store'])->middleware('throttle:30,1');
 
         // ── Declaraciones cosecha ────────────────────────────────────────────
         Route::get('/harvest-declarations', [HarvestDeclarationController::class, 'index'])->middleware('throttle:60,1');
+        Route::post('/harvest-declarations', [HarvestDeclarationController::class, 'store'])->middleware('throttle:30,1');
 
         // ── Documentos campaña ───────────────────────────────────────────────
         Route::get('/campaign-documents', [CampaignDocumentController::class, 'index'])->middleware('throttle:60,1');
+        Route::post('/campaign-documents', [CampaignDocumentController::class, 'store'])->middleware('throttle:30,1');
 
         // ── Análisis suelo ───────────────────────────────────────────────────
         Route::get('/soil-analyses', [SoilAnalysisController::class, 'index'])->middleware('throttle:60,1');
+        Route::post('/soil-analyses', [SoilAnalysisController::class, 'store'])->middleware('throttle:30,1');
 
         // ── Biodiversidad ────────────────────────────────────────────────────
         Route::get('/biodiversity-records', [BiodiversityRecordController::class, 'index'])->middleware('throttle:60,1');
+        Route::post('/biodiversity-records', [BiodiversityRecordController::class, 'store'])->middleware('throttle:30,1');
 
         // ── Gestión residuos ─────────────────────────────────────────────────
         Route::get('/residue-managements', [ResidueManagementController::class, 'index'])->middleware('throttle:60,1');
+        Route::post('/residue-managements', [ResidueManagementController::class, 'store'])->middleware('throttle:30,1');
 
         // ── Análisis residuos ────────────────────────────────────────────────
         Route::get('/residue-analyses', [ResidueAnalysisController::class, 'index'])->middleware('throttle:60,1');
+        Route::post('/residue-analyses', [ResidueAnalysisController::class, 'store'])->middleware('throttle:30,1');
 
         // ── Trabajos planeados ───────────────────────────────────────────────
         Route::get('/planned-works', [PlannedWorkController::class, 'index'])->middleware('throttle:60,1');
+        Route::post('/planned-works', [PlannedWorkController::class, 'store'])->middleware('throttle:30,1');
 
         // ── Planes fertilización ─────────────────────────────────────────────
         Route::get('/fertilization-plans', [FertilizationPlanController::class, 'index'])->middleware('throttle:60,1');
+        Route::post('/fertilization-plans', [FertilizationPlanController::class, 'store'])->middleware('throttle:30,1');
 
         // ── Alertas fitosanitarias ───────────────────────────────────────────
         Route::get('/phytosanitary-alerts', [PhytosanitaryAlertController::class, 'index'])->middleware('throttle:60,1');
+        Route::post('/phytosanitary-alerts', [PhytosanitaryAlertController::class, 'store'])->middleware('throttle:30,1');
 
         // ── Concesiones agua ─────────────────────────────────────────────────
         Route::get('/water-concessions', [WaterConcessionController::class, 'index'])->middleware('throttle:60,1');
+        Route::post('/water-concessions', [WaterConcessionController::class, 'store'])->middleware('throttle:30,1');
 
         // ── Subcontratación ──────────────────────────────────────────────────
         Route::get('/subcontracting', [SubcontractingController::class, 'index'])->middleware('throttle:60,1');
+        Route::post('/subcontracting', [SubcontractingController::class, 'store'])->middleware('throttle:30,1');
 
         // ── Entorno parcelas ─────────────────────────────────────────────────
         Route::get('/plot-environments', [PlotEnvironmentController::class, 'index'])->middleware('throttle:60,1');
+        Route::post('/plot-environments', [PlotEnvironmentController::class, 'store'])->middleware('throttle:30,1');
 
         // ── Almacén / Stock ──────────────────────────────────────────────────
         Route::get('/warehouse', [WarehouseController::class, 'index'])->middleware('throttle:60,1');
+        Route::post('/warehouse', [WarehouseController::class, 'store'])->middleware('throttle:30,1');
 
         // ── Maquinaria ───────────────────────────────────────────────────────
         Route::get('/machinery', [MachineryController::class, 'index'])->middleware('throttle:60,1');
+        Route::post('/machinery', [MachineryController::class, 'store'])->middleware('throttle:30,1');
 
         // ── Productos fitosanitarios ─────────────────────────────────────────
         Route::get('/phytosanitary-products', [PhytosanitaryProductController::class, 'index'])->middleware('throttle:60,1');
+        Route::post('/phytosanitary-products', [PhytosanitaryProductController::class, 'store'])->middleware('throttle:30,1');
 
         // ── Cuadrillas / Personal ────────────────────────────────────────────
         Route::get('/crews', [CrewController::class, 'index'])->middleware('throttle:60,1');
+        Route::post('/crews', [CrewController::class, 'store'])->middleware('throttle:30,1');
 
         // ── Aplicadores ROPO ─────────────────────────────────────────────────
         Route::get('/field-applicators', [FieldApplicatorController::class, 'index'])->middleware('throttle:60,1');
+        Route::post('/field-applicators', [FieldApplicatorController::class, 'store'])->middleware('throttle:30,1');
 
         // ── Equipos campo ────────────────────────────────────────────────────
         Route::get('/field-equipment', [FieldEquipmentController::class, 'index'])->middleware('throttle:60,1');
+        Route::post('/field-equipment', [FieldEquipmentController::class, 'store'])->middleware('throttle:30,1');
     });
 
     // ── Producer (endpoints exclusivos) ──────────────────────────────────────

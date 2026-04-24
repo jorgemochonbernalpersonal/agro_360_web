@@ -55,8 +55,8 @@ class GrapePurchaseInvoiceController extends Controller
                 COUNT(*) as total,
                 SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) as draft_count,
                 SUM(CASE WHEN payment_status = ? THEN 1 ELSE 0 END) as unpaid_count,
-                SUM(CASE WHEN status NOT IN (?) THEN total_amount ELSE 0 END) as total_paid_amount
-            ', ['draft', 'unpaid', 'cancelled'])
+                SUM(CASE WHEN status NOT IN (?, ?) THEN total_amount ELSE 0 END) as total_paid_amount
+            ', ['draft', 'unpaid', 'draft', 'cancelled'])
             ->first();
 
         return response()->json([

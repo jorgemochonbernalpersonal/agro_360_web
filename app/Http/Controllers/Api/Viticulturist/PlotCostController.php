@@ -61,4 +61,34 @@ class PlotCostController extends Controller
             ],
         ]);
     }
+
+    public function store(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasViticulturistAccess(), 403);
+
+        $validated = $request->validate([
+            'plot_id'           => 'nullable|integer|exists:plots,id',
+            'campaign_id'       => 'nullable|integer|exists:campaigns,id',
+            'category'          => 'required|string|max:100',
+            'description'       => 'required|string|max:255',
+            'amount'            => 'required|numeric|min:0.01',
+            'cost_date'         => 'required|date',
+            'supplier'          => 'nullable|string|max:255',
+            'invoice_reference' => 'nullable|string|max:100',
+            'notes'             => 'nullable|string|max:2000',
+        ]);
+
+        if (isset($validated['plot_id'])) {
+            \App\Models\Plot::where('user_id', $user->id)->findOrFail($validated['plot_id']);
+        }
+
+        $record = PlotCost::create([...$validated, 'viticulturist_id' => $user->id]);
+        $record->load(['plot']);
+
+        return response()->json([
+            'data'    => new PlotCostResource($record),
+            'message' => 'Coste registrado correctamente.',
+        ], 201);
+    }
 }

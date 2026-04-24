@@ -49,4 +49,23 @@ class WarehouseController extends Controller
             ],
         ]);
     }
+
+    public function store(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasViticulturistAccess(), 403);
+
+        $validated = $request->validate([
+            'name'        => 'required|string|max:255',
+            'location'    => 'nullable|string|max:255',
+            'description' => 'nullable|string|max:500',
+        ]);
+
+        $record = \App\Models\Warehouse::create([...$validated, 'user_id' => $user->id, 'active' => true]);
+
+        return response()->json([
+            'data'    => $record,
+            'message' => 'Almacén registrado correctamente.',
+        ], 201);
+    }
 }

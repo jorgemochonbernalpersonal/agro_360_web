@@ -56,4 +56,27 @@ class PhytosanitaryAlertController extends Controller
             ],
         ]);
     }
+
+    public function store(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasViticulturistAccess(), 403);
+
+        $validated = $request->validate([
+            'title'       => 'required|string|max:255',
+            'source'      => 'nullable|string|max:100',
+            'alert_type'  => 'nullable|string|max:100',
+            'severity'    => 'nullable|string|max:50',
+            'description' => 'nullable|string|max:2000',
+            'alert_date'  => 'required|date',
+            'expiry_date' => 'nullable|date|after_or_equal:alert_date',
+        ]);
+
+        $record = \App\Models\PhytosanitaryAlert::create([...$validated, 'viticulturist_id' => $user->id, 'active' => true]);
+
+        return response()->json([
+            'data'    => new \App\Http\Resources\Api\PhytosanitaryAlertResource($record),
+            'message' => 'Alerta fitosanitaria registrada correctamente.',
+        ], 201);
+    }
 }

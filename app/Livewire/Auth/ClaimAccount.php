@@ -29,13 +29,11 @@ class ClaimAccount extends Component
     {
         $this->token = $token;
 
-        // Búsqueda: obtener usuarios ghost con invitación pendiente
-        $candidates = User::where('can_login', false)
+        // Búsqueda directa por hash SHA-256 (O(1) vs O(n) bcrypt)
+        $user = User::where('can_login', false)
             ->where('invitation_expires_at', '>', now())
-            ->get();
-
-        // Verificación segura: validar token contra hash usando Hash::check()
-        $user = $candidates->first(fn($u) => Hash::check($token, $u->invitation_token));
+            ->where('invitation_token', hash('sha256', $token))
+            ->first();
 
         if (!$user) {
             $this->tokenValid = false;

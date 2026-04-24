@@ -58,14 +58,14 @@ class SecurityHeaders
                "frame-ancestors 'self'; " .
                "object-src 'none'; " .
                "base-uri 'self'; " .
-               "form-action 'self';";
-        
+               "form-action 'self'";
+
         // Solo agregar upgrade-insecure-requests en producción con HTTPS
         if (!$isDevelopment && $request->secure()) {
-            $csp .= " upgrade-insecure-requests;";
-        } else {
-            $csp .= ";";
+            $csp .= "; upgrade-insecure-requests";
         }
+
+        $csp .= ";";
         
         $response->headers->set('Content-Security-Policy', $csp);
 

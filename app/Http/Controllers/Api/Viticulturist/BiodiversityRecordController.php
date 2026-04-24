@@ -61,4 +61,33 @@ class BiodiversityRecordController extends Controller
             ],
         ]);
     }
+
+    public function store(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasViticulturistAccess(), 403);
+
+        $validated = $request->validate([
+            'plot_id'     => 'nullable|integer|exists:plots,id',
+            'campaign_id' => 'nullable|integer|exists:campaigns,id',
+            'record_type' => 'required|string|max:100',
+            'description' => 'required|string|max:500',
+            'area_m2'     => 'nullable|numeric|min:0',
+            'species'     => 'nullable|string|max:255',
+            'record_date' => 'required|date',
+            'notes'       => 'nullable|string|max:2000',
+        ]);
+
+        if (isset($validated['plot_id'])) {
+            \App\Models\Plot::where('user_id', $user->id)->findOrFail($validated['plot_id']);
+        }
+
+        $record = \App\Models\BiodiversityRecord::create([...$validated, 'viticulturist_id' => $user->id]);
+        $record->load(['plot']);
+
+        return response()->json([
+            'data'    => new \App\Http\Resources\Api\BiodiversityRecordResource($record),
+            'message' => 'Registro de biodiversidad creado correctamente.',
+        ], 201);
+    }
 }

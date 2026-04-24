@@ -48,4 +48,29 @@ class FertilizationPlanController extends Controller
             ],
         ]);
     }
+
+    public function store(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasViticulturistAccess(), 403);
+
+        $validated = $request->validate([
+            'campaign_id'      => 'nullable|integer|exists:campaigns,id',
+            'plan_year'        => 'required|integer|min:2000|max:2100',
+            'nitrate_zone'     => 'nullable|boolean',
+            'total_surface_ha' => 'nullable|numeric|min:0',
+            'total_n_kg_ha'    => 'nullable|numeric|min:0',
+            'total_p_kg_ha'    => 'nullable|numeric|min:0',
+            'total_k_kg_ha'    => 'nullable|numeric|min:0',
+            'status'           => 'nullable|string|max:50',
+            'notes'            => 'nullable|string|max:2000',
+        ]);
+
+        $record = \App\Models\FertilizationPlan::create([...$validated, 'viticulturist_id' => $user->id, 'status' => $validated['status'] ?? 'draft', 'active' => true]);
+
+        return response()->json([
+            'data'    => new \App\Http\Resources\Api\FertilizationPlanResource($record),
+            'message' => 'Plan de fertilización registrado correctamente.',
+        ], 201);
+    }
 }

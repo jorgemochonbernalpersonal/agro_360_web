@@ -269,9 +269,9 @@ class ViticulturistController extends Controller
             return response()->json(['message' => 'Este email ya está registrado en el sistema.'], 422);
         }
 
-        $token   = Str::random(64);
-        $updates = [
-            'invitation_token'      => $token,
+        $plainToken = Str::random(64);
+        $updates    = [
+            'invitation_token'      => hash('sha256', $plainToken),
             'invitation_sent_at'    => now(),
             'invitation_expires_at' => now()->addDays(7),
         ];
@@ -283,7 +283,7 @@ class ViticulturistController extends Controller
         $vit->update($updates);
         $vit->refresh();
 
-        $vit->notify(new ViticulturistInvitationNotification($winery, $token));
+        $vit->notify(new ViticulturistInvitationNotification($winery, $plainToken));
 
         return response()->json([
             'message' => "Invitación enviada a {$validated['email']}.",

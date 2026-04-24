@@ -39,4 +39,22 @@ class CrewController extends Controller
             ],
         ]);
     }
+
+    public function store(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasViticulturistAccess(), 403);
+
+        $validated = $request->validate([
+            'name'        => 'required|string|max:255',
+            'description' => 'nullable|string|max:500',
+        ]);
+
+        $record = \App\Models\Crew::create([...$validated, 'viticulturist_id' => $user->id]);
+
+        return response()->json([
+            'data'    => $record,
+            'message' => 'Cuadrilla registrada correctamente.',
+        ], 201);
+    }
 }

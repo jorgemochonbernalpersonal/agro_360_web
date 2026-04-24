@@ -48,4 +48,28 @@ class WaterConcessionController extends Controller
             ],
         ]);
     }
+
+    public function store(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasViticulturistAccess(), 403);
+
+        $validated = $request->validate([
+            'campaign_id'        => 'nullable|integer|exists:campaigns,id',
+            'concession_type'    => 'required|string|max:100',
+            'concession_number'  => 'nullable|string|max:100',
+            'water_body'         => 'nullable|string|max:255',
+            'authority'          => 'nullable|string|max:255',
+            'expiry_date'        => 'nullable|date',
+            'max_volume_m3'      => 'nullable|numeric|min:0',
+            'notes'              => 'nullable|string|max:2000',
+        ]);
+
+        $record = \App\Models\WaterConcession::create([...$validated, 'viticulturist_id' => $user->id, 'active' => true]);
+
+        return response()->json([
+            'data'    => new \App\Http\Resources\Api\WaterConcessionResource($record),
+            'message' => 'Concesión de agua registrada correctamente.',
+        ], 201);
+    }
 }

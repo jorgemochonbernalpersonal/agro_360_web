@@ -50,4 +50,28 @@ class MachineryController extends Controller
             ],
         ]);
     }
+
+    public function store(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasViticulturistAccess(), 403);
+
+        $validated = $request->validate([
+            'name'               => 'required|string|max:255',
+            'type'               => 'required|string|max:100',
+            'brand'              => 'nullable|string|max:255',
+            'model'              => 'nullable|string|max:255',
+            'year'               => 'nullable|integer|min:1900|max:2100',
+            'is_rented'          => 'nullable|boolean',
+            'last_revision_date' => 'nullable|date',
+            'notes'              => 'nullable|string|max:2000',
+        ]);
+
+        $record = Machinery::create([...$validated, 'viticulturist_id' => $user->id, 'active' => true]);
+
+        return response()->json([
+            'data'    => new MachineryResource($record),
+            'message' => 'Maquinaria registrada correctamente.',
+        ], 201);
+    }
 }

@@ -53,4 +53,28 @@ class FieldApplicatorController extends Controller
             ],
         ]);
     }
+
+    public function store(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasViticulturistAccess(), 403);
+
+        $validated = $request->validate([
+            'campaign_id'       => 'nullable|integer|exists:campaigns,id',
+            'name'              => 'required|string|max:255',
+            'ropo_number'       => 'nullable|string|max:50',
+            'ropo_category'     => 'nullable|string|max:50',
+            'ropo_expiry_date'  => 'nullable|date',
+            'is_advisor'        => 'nullable|boolean',
+            'phone'             => 'nullable|string|max:50',
+            'email'             => 'nullable|email|max:255',
+        ]);
+
+        $record = \App\Models\FieldApplicator::create([...$validated, 'viticulturist_id' => $user->id, 'active' => true]);
+
+        return response()->json([
+            'data'    => new \App\Http\Resources\Api\FieldApplicatorResource($record),
+            'message' => 'Aplicador ROPO registrado correctamente.',
+        ], 201);
+    }
 }

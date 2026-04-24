@@ -107,7 +107,7 @@ class InvoiceController extends Controller
         $invoice = Invoice::where('user_id', $user->id)->findOrFail($id);
 
         $validated = $request->validate([
-            'client_id'      => 'nullable|integer',
+            'client_id'      => ['nullable', 'integer', Rule::exists('clients', 'id')->where('user_id', $user->id)],
             'invoice_number' => 'nullable|string|max:50',
             'invoice_date'   => 'nullable|date',
             'invoice_type'   => 'nullable|string|in:standard,corrective,receipt',

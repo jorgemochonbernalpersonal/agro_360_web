@@ -53,4 +53,30 @@ class EnergyUsageController extends Controller
             ],
         ]);
     }
+
+    public function store(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasViticulturistAccess(), 403);
+
+        $validated = $request->validate([
+            'campaign_id'       => 'nullable|integer|exists:campaigns,id',
+            'machinery_id'      => 'nullable|integer|exists:machinery,id',
+            'date'              => 'required|date',
+            'energy_type'       => 'required|string|max:100',
+            'unit'              => 'required|string|max:50',
+            'quantity'          => 'required|numeric|min:0',
+            'total_cost'        => 'nullable|numeric|min:0',
+            'co2_kg_equivalent' => 'nullable|numeric|min:0',
+            'usage_description' => 'nullable|string|max:500',
+            'notes'             => 'nullable|string|max:2000',
+        ]);
+
+        $record = \App\Models\EnergyUsage::create([...$validated, 'viticulturist_id' => $user->id, 'active' => true]);
+
+        return response()->json([
+            'data'    => new \App\Http\Resources\Api\EnergyUsageResource($record),
+            'message' => 'Consumo energético registrado correctamente.',
+        ], 201);
+    }
 }

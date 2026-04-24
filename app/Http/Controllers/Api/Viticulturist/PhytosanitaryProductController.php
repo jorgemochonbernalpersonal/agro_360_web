@@ -49,4 +49,27 @@ class PhytosanitaryProductController extends Controller
             ],
         ]);
     }
+
+    public function store(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasViticulturistAccess(), 403);
+
+        $validated = $request->validate([
+            'name'                     => 'required|string|max:255',
+            'active_ingredient'        => 'nullable|string|max:255',
+            'registration_number'      => 'required|string|max:100',
+            'registration_status'      => 'nullable|string|in:active,expired,revoked',
+            'type'                     => 'nullable|string|max:100',
+            'withdrawal_period_days'   => 'required|integer|min:0',
+            'description'              => 'nullable|string|max:1000',
+        ]);
+
+        $record = \App\Models\PhytosanitaryProduct::create([...$validated, 'user_id' => $user->id, 'active' => true]);
+
+        return response()->json([
+            'data'    => new \App\Http\Resources\Api\PhytosanitaryProductResource($record),
+            'message' => 'Producto fitosanitario registrado correctamente.',
+        ], 201);
+    }
 }

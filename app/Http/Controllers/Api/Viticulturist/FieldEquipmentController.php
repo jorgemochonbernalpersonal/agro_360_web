@@ -48,4 +48,27 @@ class FieldEquipmentController extends Controller
             ],
         ]);
     }
+
+    public function store(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasViticulturistAccess(), 403);
+
+        $validated = $request->validate([
+            'name'                 => 'required|string|max:255',
+            'equipment_type'       => 'required|string|max:100',
+            'registration_number'  => 'nullable|string|max:100',
+            'purchase_date'        => 'nullable|date',
+            'next_inspection_date' => 'nullable|date',
+            'inspection_entity'    => 'nullable|string|max:255',
+            'notes'                => 'nullable|string|max:2000',
+        ]);
+
+        $record = \App\Models\FieldEquipment::create([...$validated, 'viticulturist_id' => $user->id, 'active' => true]);
+
+        return response()->json([
+            'data'    => new \App\Http\Resources\Api\FieldEquipmentResource($record),
+            'message' => 'Equipo de campo registrado correctamente.',
+        ], 201);
+    }
 }

@@ -61,10 +61,10 @@ class CustomCors
         $response->headers->set('Access-Control-Allow-Origin', $allowedOrigin);
         $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
         $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept');
-        $response->headers->set('Access-Control-Allow-Credentials', 'true');
 
-        // Vary: Origin para que CDNs/proxies no cacheen la respuesta de un origen para otro
+        // Allow-Credentials: true es incompatible con wildcard según la spec CORS
         if ($allowedOrigin !== '*') {
+            $response->headers->set('Access-Control-Allow-Credentials', 'true');
             $response->headers->set('Vary', 'Origin');
         }
     }

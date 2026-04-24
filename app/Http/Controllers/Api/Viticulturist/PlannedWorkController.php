@@ -71,4 +71,33 @@ class PlannedWorkController extends Controller
             ],
         ]);
     }
+
+    public function store(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasViticulturistAccess(), 403);
+
+        $validated = $request->validate([
+            'campaign_id'  => 'nullable|integer|exists:campaigns,id',
+            'plot_id'      => 'nullable|integer|exists:plots,id',
+            'category'     => 'required|string|max:100',
+            'title'        => 'required|string|max:255',
+            'description'  => 'nullable|string|max:1000',
+            'planned_date' => 'required|date',
+            'priority'     => 'nullable|string|max:50',
+            'status'       => 'nullable|string|max:50',
+            'notes'        => 'nullable|string|max:2000',
+        ]);
+
+        if (isset($validated['plot_id'])) {
+            \App\Models\Plot::where('user_id', $user->id)->findOrFail($validated['plot_id']);
+        }
+
+        $record = \App\Models\PlannedWork::create([...$validated, 'viticulturist_id' => $user->id, 'status' => $validated['status'] ?? 'pendiente', 'priority' => $validated['priority'] ?? 'media']);
+
+        return response()->json([
+            'data'    => new \App\Http\Resources\Api\PlannedWorkResource($record),
+            'message' => 'Trabajo planeado registrado correctamente.',
+        ], 201);
+    }
 }
