@@ -72,6 +72,9 @@ class WineryDemoSeeder extends Seeder
         }
         $this->command->info("✅ Usuario: {$user->email} (role: {$user->role})");
 
+        $this->command->info('  ▶ Limpieza previa...');
+        $this->cleanup();
+
         $this->ensureUnitsOfMeasurement();
 
         $this->runStep('Contenedores (450: depósitos + barricas + tinas + ánforas)', WineryContainersSeeder::class);
@@ -131,6 +134,121 @@ class WineryDemoSeeder extends Seeder
         $this->printSummary();
         $this->command->info('🍷 ══════════════════════════════════════════════');
         $this->command->info('');
+    }
+
+    private function cleanup(): void
+    {
+        $uid = self::WINERY_USER_ID;
+
+        // ── IDs auxiliares ────────────────────────────────────────────────
+        $wineIds      = DB::table('wines')->where('user_id', $uid)->pluck('id');
+        $containerIds = DB::table('containers')->where('user_id', $uid)->pluck('id');
+        $harvestIds   = DB::table('harvests')->where('winery_id', $uid)->pluck('id');
+        $linkedVitIds = DB::table('winery_viticulturist')->where('winery_id', $uid)->pluck('viticulturist_id');
+        $bottlingIds  = DB::table('wine_bottlings')->where('user_id', $uid)->pluck('id');
+        $invoiceIds   = DB::table('invoices')->where('user_id', $uid)->pluck('id');
+
+        // ── Avisos & alertas & documentos ─────────────────────────────────
+        DB::table('winery_announcements')->where('winery_id', $uid)->delete();
+        DB::table('winery_alerts')->where('user_id', $uid)->delete();
+        DB::table('winery_documents')->where('user_id', $uid)->delete();
+
+        // ── Cumplimiento regulatorio ──────────────────────────────────────
+        DB::table('eco_certifications')->where('user_id', $uid)->delete();
+        DB::table('sanitary_registrations')->where('user_id', $uid)->delete();
+        DB::table('bottling_authorizations')->where('user_id', $uid)->delete();
+
+        // ── Aditivos, procesos, snapshots ─────────────────────────────────
+        if ($wineIds->isNotEmpty()) {
+            DB::table('wine_additives')->whereIn('wine_id', $wineIds)->delete();
+            DB::table('wine_process_details')->whereIn('wine_id', $wineIds)->delete();
+        }
+        DB::table('wine_stock_snapshots')->where('user_id', $uid)->delete();
+
+        // ── Previsiones & aforos ───────────────────────────────────────────
+        DB::table('winery_yield_forecasts')->where('winery_id', $uid)->delete();
+        if ($linkedVitIds->isNotEmpty()) {
+            DB::table('estimated_yields')->whereIn('estimated_by', $linkedVitIds)->delete();
+        }
+
+        // ── Calidad & cata ────────────────────────────────────────────────
+        DB::table('wine_subproducts')->where('user_id', $uid)->delete();
+        DB::table('wine_tasting_notes')->where('user_id', $uid)->delete();
+
+        // ── Facturación (hijos primero) ───────────────────────────────────
+        if ($invoiceIds->isNotEmpty()) {
+            DB::table('invoice_items')->whereIn('invoice_id', $invoiceIds)->delete();
+        }
+        DB::table('invoices')->where('user_id', $uid)->delete();
+
+        // ── Compras externas ──────────────────────────────────────────────
+        DB::table('external_grape_purchases')->where('user_id', $uid)->delete();
+
+        // ── Operaciones de bodega ─────────────────────────────────────────
+        DB::table('cellar_operations')->where('user_id', $uid)->delete();
+
+        // ── Lotes de producto (hijos de bottling primero) ─────────────────
+        if ($bottlingIds->isNotEmpty()) {
+            DB::table('wine_lots')->whereIn('bottling_id', $bottlingIds)->delete();
+        }
+        DB::table('wine_lots')->where('user_id', $uid)->delete();
+
+        // ── Etiquetados, lotes etiquetas, embotellamientos ────────────────
+        DB::table('wine_labelings')->where('user_id', $uid)->delete();
+        DB::table('label_batches')->where('user_id', $uid)->delete();
+        DB::table('wine_bottlings')->where('user_id', $uid)->delete();
+
+        // ── Mantenimientos contenedores ───────────────────────────────────
+        if ($containerIds->isNotEmpty()) {
+            DB::table('container_maintenances')->whereIn('container_id', $containerIds)->delete();
+        }
+
+        // ── Disputas & recepciones ────────────────────────────────────────
+        if ($harvestIds->isNotEmpty()) {
+            DB::table('harvest_deliveries')->whereIn('harvest_id', $harvestIds)->delete();
+        }
+        DB::table('harvests')->where('winery_id', $uid)->delete();
+
+        // ── Actividades de campo de viticultores vinculados ───────────────
+        if ($linkedVitIds->isNotEmpty()) {
+            $activityIds = DB::table('agricultural_activities')
+                ->whereIn('viticulturist_id', $linkedVitIds)
+                ->pluck('id');
+            if ($activityIds->isNotEmpty()) {
+                DB::table('phytosanitary_treatments')->whereIn('activity_id', $activityIds)->delete();
+                DB::table('fertilizations')->whereIn('activity_id', $activityIds)->delete();
+                DB::table('irrigations')->whereIn('activity_id', $activityIds)->delete();
+                DB::table('cultural_works')->whereIn('activity_id', $activityIds)->delete();
+                DB::table('observations')->whereIn('activity_id', $activityIds)->delete();
+                DB::table('post_harvest_treatments')->whereIn('activity_id', $activityIds)->delete();
+                DB::table('agricultural_activities')->whereIn('id', $activityIds)->delete();
+            }
+            DB::table('campaigns')->whereIn('viticulturist_id', $linkedVitIds)->delete();
+        }
+
+        // ── Viticultores vinculados (pivot) ───────────────────────────────
+        DB::table('winery_viticulturist')->where('winery_id', $uid)->delete();
+
+        // ── Vinos y dependencias ──────────────────────────────────────────
+        if ($wineIds->isNotEmpty()) {
+            DB::table('wine_analyses')->where('user_id', $uid)->delete();
+            DB::table('wine_losses')->whereIn('wine_id', $wineIds)->delete();
+            DB::table('wine_transfers')->whereIn('wine_id', $wineIds)->delete();
+            DB::table('wine_fermentation_controls')->whereIn('wine_id', $wineIds)->delete();
+        }
+        DB::table('wines')->where('user_id', $uid)->delete();
+
+        // ── Personal & suministros ────────────────────────────────────────
+        DB::table('winery_supplies')->where('user_id', $uid)->delete();
+        DB::table('suppliers')->where('user_id', $uid)->delete();
+        DB::table('clients')->where('user_id', $uid)->delete();
+        DB::table('oenologists')->where('user_id', $uid)->delete();
+
+        // ── Infraestructura (último) ──────────────────────────────────────
+        DB::table('container_rooms')->where('user_id', $uid)->delete();
+        DB::table('containers')->where('user_id', $uid)->delete();
+
+        $this->command->info('  ✅ Limpieza previa completada');
     }
 
     private function seedAdditives(): void
