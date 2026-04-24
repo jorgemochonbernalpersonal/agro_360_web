@@ -148,7 +148,7 @@ class WineryAlertsSeeder extends Seeder
         DB::table('winery_alerts')->insert($rows);
 
         // ── Relleno masivo hasta 450 ──────────────────────────────────────────
-        $alertTypes  = ['maintenance','expiry','fermentation','dispute','stock','label','certification','custom','quality','deadline'];
+        $alertTypes  = ['maintenance','expiry','fermentation','dispute','stock','label','certification','custom'];
         $severities  = ['info','warning','critical','info','warning'];
         $bulkRows    = [];
         $baseCount   = count($rows);
