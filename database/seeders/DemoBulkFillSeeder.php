@@ -478,9 +478,9 @@ class DemoBulkFillSeeder extends Seeder
         });
 
         $this->fillTo('certifications', 'viticulturist_id', function ($i) use ($now) {
-            $types  = ['ecologico','produccion_integrada','denominacion_origen','globalgap','vegan','biodynamic'];
-            $bodies = ['CAAE — Canarias','Gobierno de Canarias','Consejo Regulador DOP GC','Bureau Veritas España','V-Label','Demeter'];
-            $t      = $i % 6;
+            $types  = ['ecologico','produccion_integrada','denominacion_origen','globalgap'];
+            $bodies = ['CAAE — Canarias','Gobierno de Canarias','Consejo Regulador DOP GC','Bureau Veritas España'];
+            $t      = $i % 4;
             return [
                 'viticulturist_id'   => $this->uid,
                 'certification_type' => $types[$t],
