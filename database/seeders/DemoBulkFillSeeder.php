@@ -37,7 +37,7 @@ class DemoBulkFillSeeder extends Seeder
         $campaigns   = DB::table('campaigns')->where('viticulturist_id', $this->uid)->orderBy('year')->pluck('id')->toArray();
         $campaignId  = DB::table('campaigns')->where('viticulturist_id', $this->uid)->where('active', true)->value('id') ?? end($campaigns) ?: null;
         $expId       = DB::table('exploitations')->where('viticulturist_id', $this->uid)->value('id');
-        $productIds  = DB::table('phytosanitary_products')->where('viticulturist_id', $this->uid)->pluck('id')->toArray();
+        $productIds  = DB::table('phytosanitary_products')->pluck('id')->toArray();
 
         if (empty($plotIds) || !$campaignId) {
             $this->command->info('  ⚠️  Sin parcelas o campaña — omitiendo relleno masivo');
