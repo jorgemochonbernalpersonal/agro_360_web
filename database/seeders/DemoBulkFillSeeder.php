@@ -312,8 +312,8 @@ class DemoBulkFillSeeder extends Seeder
         });
 
         $this->fillTo('residue_managements', 'viticulturist_id', function ($i) use ($plotIds, $pc, $campaigns, $now) {
-            $materials = ['pruning_wood','grape_marc','stem','vine_leaves','grass','lees','other'];
-            $practices = ['incorporation','composting','removal','sale','biogas','authorized_landfill'];
+            $materials = ['pruning_wood','grape_marc','vine_leaves','grass','other'];
+            $practices = ['incorporation','composting','removal','sale','biogas','burning','other'];
             $cId       = $campaigns[min($i % 3, count($campaigns) - 1)] ?? end($campaigns);
             $m         = str_pad((($i % 10) + 1), 2, '0', STR_PAD_LEFT);
             $d         = str_pad(($i % 26) + 1, 2, '0', STR_PAD_LEFT);
@@ -323,8 +323,8 @@ class DemoBulkFillSeeder extends Seeder
                 'plot_planting_id'   => null,
                 'viticulturist_id'   => $this->uid,
                 'date'               => "2026-{$m}-{$d}",
-                'practice_type'      => $practices[$i % 6],
-                'material_type'      => $materials[$i % 7],
+                'practice_type'      => $practices[$i % 7],
+                'material_type'      => $materials[$i % 5],
                 'estimated_quantity' => round(100 + ($i % 50) * 80, 1),
                 'quantity_unit'      => 'kg',
                 'justification'      => null,
