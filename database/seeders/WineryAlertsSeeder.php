@@ -146,7 +146,42 @@ class WineryAlertsSeeder extends Seeder
         ];
 
         DB::table('winery_alerts')->insert($rows);
-        $this->command->info('✅ Alertas: ' . count($rows) . ' registros (' . collect($rows)->where('is_read', false)->count() . ' sin leer)');
+
+        // ── Relleno masivo hasta 450 ──────────────────────────────────────────
+        $alertTypes  = ['maintenance','expiry','fermentation','dispute','stock','label','certification','custom','quality','deadline'];
+        $severities  = ['info','warning','critical','info','warning'];
+        $bulkRows    = [];
+        $baseCount   = count($rows);
+
+        for ($i = $baseCount; $i < 450; $i++) {
+            $t   = $i % count($alertTypes);
+            $s   = $i % count($severities);
+            $d   = $i % 90;
+            $read = $i % 3 === 0;
+            $bulkRows[] = [
+                'user_id'        => self::WINERY_USER_ID,
+                'alert_type'     => $alertTypes[$t],
+                'severity'       => $severities[$s],
+                'title'          => ucfirst($alertTypes[$t]) . " — Alerta #{$i}",
+                'message'        => "Alerta automática tipo {$alertTypes[$t]}. Revisar y actuar según protocolo. Referencia interna #{$i}.",
+                'reference_type' => null,
+                'reference_id'   => null,
+                'is_read'        => $read,
+                'read_at'        => $read ? now()->subDays($d)->toDateTimeString() : null,
+                'auto_generated' => $i % 2 === 0,
+                'triggered_at'   => now()->subDays($d)->toDateTimeString(),
+                'expires_at'     => $i % 4 === 0 ? now()->addDays(30 - ($d % 30))->toDateTimeString() : null,
+                'created_at'     => $now,
+                'updated_at'     => $now,
+            ];
+        }
+
+        foreach (array_chunk($bulkRows, 100) as $chunk) {
+            DB::table('winery_alerts')->insert($chunk);
+        }
+
+        $total = $baseCount + count($bulkRows);
+        $this->command->info("✅ Alertas: {$total} registros (" . collect(array_merge($rows, $bulkRows))->where('is_read', false)->count() . ' sin leer)');
     }
 
     private function cleanup(): void

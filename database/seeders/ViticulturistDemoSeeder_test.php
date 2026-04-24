@@ -179,6 +179,12 @@ class ViticulturistDemoSeeder_test extends Seeder
             $this->createTerritorial($now);
         });
 
+        $this->step('Relleno masivo → 450 (cumplimiento, recursos, registros)', function () {
+            $seeder = new DemoBulkFillSeeder(self::VIT_USER_ID, 1);
+            $seeder->setCommand($this->command);
+            $seeder->run();
+        });
+
         $this->command->info('');
         $this->command->info('✅ ViticulturistDemoSeeder completado.');
         $this->command->info('   Viticultor: demo_viticulturist@agro365.es');

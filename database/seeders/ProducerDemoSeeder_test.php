@@ -366,6 +366,12 @@ class ProducerDemoSeeder_test extends Seeder
             $this->createSupplierPurchases($supplierIds, $wineIds, $wineryContainerIds, $now);
         });
 
+        $this->step('Relleno masivo → 450 (cumplimiento, recursos, registros)', function () {
+            $seeder = new DemoBulkFillSeeder(self::PRODUCER_USER_ID, self::PRODUCER_USER_ID);
+            $seeder->setCommand($this->command);
+            $seeder->run();
+        });
+
         $this->command->info('');
         $this->command->info('✅ ProducerDemoSeeder completado.');
         $this->command->info("   Producer: " . self::EMAIL);
