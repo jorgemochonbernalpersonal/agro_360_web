@@ -491,7 +491,7 @@ class DemoBulkFillSeeder extends Seeder
                 'scope'              => 'Certificación ' . str_replace('_', ' ', $types[$t]) . " — parcelas viñedo #{$i}",
                 'audit_date'         => null,
                 'notes'              => null,
-                'status'             => ['active','active','active','expired','pending','suspended'][$i % 6],
+                'active'             => $i % 8 !== 0,
                 'created_at'         => $now, 'updated_at' => $now,
             ];
         });
