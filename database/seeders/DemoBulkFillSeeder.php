@@ -258,7 +258,6 @@ class DemoBulkFillSeeder extends Seeder
                 'description'      => 'Documento campaña 2026. ' . ucfirst(str_replace('_', ' ', $types[$i % 8])) . '.',
                 'file_path'        => null,
                 'notes'            => null,
-                'active'           => true,
                 'created_at'       => $now, 'updated_at' => $now,
             ];
         });
@@ -278,7 +277,6 @@ class DemoBulkFillSeeder extends Seeder
                 'nearby_vegetation'=> ['Bosque termófilo','Matorral costero','Cardonal-tabaibal','Frutales subtropicales','Cultivos hortícolas'][$i % 5],
                 'water_source'     => ['pozo','acequia','embalse','lluvia','goteo'][$i % 5],
                 'notes'            => null,
-                'active'           => true,
                 'created_at'       => $now, 'updated_at' => $now,
             ];
         });
@@ -488,7 +486,7 @@ class DemoBulkFillSeeder extends Seeder
                 'scope'              => 'Certificación ' . str_replace('_', ' ', $types[$t]) . " — parcelas viñedo #{$i}",
                 'audit_date'         => null,
                 'notes'              => null,
-                'active'             => $i % 8 !== 0,
+                'status'             => ['active','active','active','expired','pending','suspended'][$i % 6],
                 'created_at'         => $now, 'updated_at' => $now,
             ];
         });
