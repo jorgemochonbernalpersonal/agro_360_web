@@ -14,9 +14,10 @@ class ProducerMenu
 
         // ── Sección principal ─────────────────────────────────────────────────
         $menu['main'] = [
-            ['icon' => 'squares-2x2',  'label' => 'Vista general',  'route' => 'producer.dashboard',            'active' => request()->routeIs('producer.dashboard')],
-            ['icon' => 'calendar-days','label' => 'Calendario',     'route' => 'producer.calendar',             'active' => request()->routeIs('producer.calendar')],
-            ['icon' => 'bolt',         'label' => 'Entrada Rápida', 'route' => 'producer.quick-entry',          'active' => request()->routeIs('producer.quick-entry')],
+            ['icon' => 'squares-2x2',          'label' => 'Vista general',        'route' => 'producer.dashboard',        'active' => request()->routeIs('producer.dashboard')],
+            ['icon' => 'calendar-days',        'label' => 'Calendario',           'route' => 'producer.calendar',         'active' => request()->routeIs('producer.calendar')],
+            ['icon' => 'bolt',                 'label' => 'Entrada Rápida',       'route' => 'producer.quick-entry',      'active' => request()->routeIs('producer.quick-entry')],
+            ['icon' => 'arrow-trending-up',    'label' => 'Trazabilidad Completa','route' => 'producer.full-traceability','active' => request()->routeIs('producer.full-traceability')],
         ];
 
         // ── Viñedo: Campaña ───────────────────────────────────────────────────
@@ -46,7 +47,6 @@ class ProducerMenu
         $harvestItems = [
             ['icon' => 'chart-bar',               'label' => 'Cuadro de Mando',        'route' => 'producer.harvest-summary.index',    'active' => request()->routeIs('producer.harvest-summary*')],
             ['icon' => 'eye',                     'label' => 'Panel Visual',           'route' => 'producer.visual',                   'active' => request()->routeIs('producer.visual')],
-            ['icon' => 'arrow-trending-up',       'label' => 'Trazabilidad Completa', 'route' => 'producer.full-traceability',        'active' => request()->routeIs('producer.full-traceability')],
             ['icon' => 'clipboard-document-list', 'label' => 'Campañas Bodega',   'route' => 'producer.winery-campaigns.index',   'active' => request()->routeIs('producer.winery-campaigns*')],
             ['icon' => 'clipboard-document-list', 'label' => 'Previsiones',        'route' => 'producer.harvest-forecasts.index',  'active' => request()->routeIs('producer.harvest-forecasts*')],
             ['icon' => 'archive-box-arrow-down',  'label' => 'Recepciones',        'route' => 'producer.grape-reception.index',    'active' => request()->routeIs('producer.grape-reception*') && !request()->routeIs('producer.grape-reception.disputes')],

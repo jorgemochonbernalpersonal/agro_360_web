@@ -59,9 +59,8 @@
         ['key' => 'notebook',    'icon' => 'document-text',            'label' => 'Cuaderno de Campo', 'sections' => ['notebook_inputs']],
         ['key' => 'estate',      'icon' => 'map',                      'label' => 'Finca',             'sections' => ['estate', 'analytics'],        'section_labels' => ['estate' => 'Parcelas', 'analytics' => 'Análisis']],
         ['key' => 'medioambiente','icon' => 'globe-europe-africa',      'label' => 'Medioambiente',     'sections' => ['monitoring', 'environmental'], 'section_labels' => ['monitoring' => 'Seguimiento', 'environmental' => 'Medioambiente']],
-        ['key' => 'declarations','icon' => 'clipboard-document-check', 'label' => 'Declaraciones',     'sections' => ['declarations']],
         ['key' => 'resources',   'icon' => 'wrench-screwdriver',       'label' => 'Recursos',          'sections' => ['resources']],
-        ['key' => 'compliance',  'icon' => 'shield-check',             'label' => 'Normativa',         'sections' => ['compliance', 'pac'],          'section_labels' => ['compliance' => 'Normativa', 'pac' => 'PAC']],
+        ['key' => 'compliance',  'icon' => 'shield-check',             'label' => 'Regulatorio',       'sections' => ['declarations', 'compliance', 'pac'], 'section_labels' => ['declarations' => 'Declaraciones', 'compliance' => 'Normativa', 'pac' => 'PAC']],
         ['key' => 'business',    'icon' => 'calculator',               'label' => 'Negocio',           'sections' => ['billing']],
     ];
 
@@ -73,19 +72,21 @@
         ['key' => 'territory',    'icon' => 'map',                    'label' => 'Parcelas',      'sections' => ['territory', 'analytics'], 'section_labels' => ['territory' => 'Parcelas', 'analytics' => 'Análisis de Finca']],
         ['key' => 'compliance',   'icon' => 'shield-check',           'label' => 'Normativa',     'sections' => ['winery_compliance', 'registrations'], 'section_labels' => ['winery_compliance' => 'Normativa Bodega', 'registrations' => 'Registros y Autorizaciones']],
         ['key' => 'business',     'icon' => 'calculator',             'label' => 'Negocio',       'sections' => ['billing']],
-        ['key' => 'winery_res',   'icon' => 'building-storefront',    'label' => 'Insumos',       'sections' => ['winery_resources', 'winery_docs'], 'section_labels' => ['winery_resources' => 'Insumos y Proveedores', 'winery_docs' => 'Documentos']],
-        ['key' => 'system',       'icon' => 'cog-6-tooth',            'label' => 'Sistema',       'sections' => ['system']],
+        ['key' => 'system',       'icon' => 'cog-6-tooth',            'label' => 'Recursos y Sistema', 'sections' => ['winery_resources', 'winery_docs', 'system'], 'section_labels' => ['winery_resources' => 'Insumos y Proveedores', 'winery_docs' => 'Documentos', 'system' => 'Sistema']],
     ];
 
     // ── Producer: capítulos viñedo (alineado con viticulturist: 8 capítulos) ─
-    $producerViticulturistChapters = [
+    // Finca es transversal — visible en ambos tabs
+    $producerFixedChapters = [
         ['key' => 'estate',      'icon' => 'map',                      'label' => 'Finca',            'sections' => ['estate', 'analytics'],         'section_labels' => ['estate' => 'Parcelas', 'analytics' => 'Análisis']],
+    ];
+
+    $producerViticulturistChapters = [
         ['key' => 'campaign',    'icon' => 'pencil-square',            'label' => 'Campaña',          'sections' => ['campaigns']],
         ['key' => 'notebook',    'icon' => 'document-text',            'label' => 'Cuaderno de Campo', 'sections' => ['notebook_inputs']],
         ['key' => 'medioambiente','icon' => 'globe-europe-africa',      'label' => 'Medioambiente',    'sections' => ['monitoring', 'environmental'],  'section_labels' => ['monitoring' => 'Seguimiento', 'environmental' => 'Medioambiente']],
-        ['key' => 'declarations','icon' => 'clipboard-document-check', 'label' => 'Declaraciones',    'sections' => ['declarations']],
         ['key' => 'resources',   'icon' => 'wrench-screwdriver',       'label' => 'Recursos',         'sections' => ['resources']],
-        ['key' => 'compliance',  'icon' => 'shield-check',             'label' => 'Normativa',        'sections' => ['compliance', 'pac'],           'section_labels' => ['compliance' => 'Normativa', 'pac' => 'PAC']],
+        ['key' => 'compliance',  'icon' => 'shield-check',             'label' => 'Regulatorio',      'sections' => ['declarations', 'compliance', 'pac'], 'section_labels' => ['declarations' => 'Declaraciones', 'compliance' => 'Normativa', 'pac' => 'PAC']],
         ['key' => 'business',    'icon' => 'calculator',               'label' => 'Negocio Viñedo',   'sections' => ['billing']],
     ];
 
@@ -93,8 +94,7 @@
     $producerWineryChapters = [
         ['key' => 'harvest',       'icon' => 'archive-box-arrow-down', 'label' => 'Vendimia',         'sections' => ['harvest', 'denomination'], 'section_labels' => ['harvest' => 'Vendimia', 'denomination' => 'Denominación de Origen']],
         ['key' => 'bodega',        'icon' => 'beaker',                 'label' => 'Bodega',           'sections' => ['cellar_elaboration', 'cellar_output'], 'section_labels' => ['cellar_elaboration' => 'Elaboración', 'cellar_output' => 'Salida']],
-        ['key' => 'winery_res',    'icon' => 'building-storefront',    'label' => 'Insumos',          'sections' => ['winery_resources', 'winery_docs'], 'section_labels' => ['winery_resources' => 'Insumos y Proveedores', 'winery_docs' => 'Documentos']],
-        ['key' => 'compliance_w',  'icon' => 'shield-check',           'label' => 'Normativa Bodega', 'sections' => ['winery_compliance']],
+        ['key' => 'compliance_w',  'icon' => 'shield-check',           'label' => 'Normativa y Recursos', 'sections' => ['winery_compliance', 'winery_resources', 'winery_docs'], 'section_labels' => ['winery_compliance' => 'Normativa Bodega', 'winery_resources' => 'Insumos y Proveedores', 'winery_docs' => 'Documentos']],
         ['key' => 'business_w',    'icon' => 'calculator',             'label' => 'Negocio Bodega',   'sections' => ['winery_billing']],
     ];
 
@@ -157,8 +157,8 @@
     $chapters = match($user->role) {
         'viticulturist' => $viticulturistChapters,
         'winery'        => $wineryChapters,
-        // Producer: viñedo + bodega (sin capítulos fijos — todo bajo tabs)
-        'producer'      => array_merge($producerViticulturistChapters, $producerWineryChapters),
+        // Producer: fijos + viñedo + bodega
+        'producer'      => array_merge($producerFixedChapters, $producerViticulturistChapters, $producerWineryChapters),
         'supervisor'    => $doChapters,
         default         => [],
     };
@@ -337,6 +337,20 @@
                 <span class="rail-tooltip" style="border-left: 2px solid #f59e0b">Frecuentes</span>
             </button>
         </template>
+
+        {{-- Producer: capítulos fijos (visibles en ambos tabs) --}}
+        @foreach($producerFixedChapters as $ch)
+            @php $color = $chapterColors[$ch['key']] ?? $chapterColors['system']; $isActive = ($activeChapterKey === $ch['key']); @endphp
+            <button type="button" x-on:click="$store.nav.toggle('{{ $ch['key'] }}')" title="{{ $ch['label'] }}"
+                class="notebook-tab flex-shrink-0 relative group flex items-center justify-center w-11 h-11 rounded-xl transition-all duration-200"
+                :class="$store.nav.open === '{{ $ch['key'] }}' ? 'tab-open' : ''"
+                data-key="{{ $ch['key'] }}" data-active="{{ $isActive ? 'true' : 'false' }}"
+                style="--tab-accent: {{ $color['accent'] }}; --tab-bg: {{ $color['bg'] }}; --tab-border: {{ $color['border'] }};">
+                <flux:icon icon="{{ $ch['icon'] }}" class="w-5 h-5 tab-icon transition-colors duration-150" />
+                <span class="rail-tooltip" style="border-left: 2px solid {{ $color['accent'] }}">{{ $ch['label'] }}</span>
+            </button>
+        @endforeach
+        <div class="w-8 mx-auto border-t border-white/10 my-0.5 flex-shrink-0"></div>
 
         {{-- Producer: tab switcher Viñedo / Bodega --}}
         <div class="flex w-full px-2 gap-1 mb-0.5 flex-shrink-0">
