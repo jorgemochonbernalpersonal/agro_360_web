@@ -2,7 +2,7 @@ services:
 
   # ── Base de datos desarrollo ───────────────────────────────────────────────
   mariadb:
-    image: mariadb:11.8.3
+    image: mariadb:11.4
     container_name: agro365_mariadb
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
@@ -18,7 +18,7 @@ services:
     restart: unless-stopped
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 
-  # ── Base de datos tests (MariaDB 11.4 LTS — sin ghost table bug) ───────────
+  # ── Base de datos tests (MariaDB 10.11 LTS — sin ghost table bug) ──────────
   mariadb_test:
     image: mariadb:10.11
     container_name: agro365_mariadb_test
