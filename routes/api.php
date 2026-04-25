@@ -90,6 +90,12 @@ use App\Http\Controllers\Api\Supervisor\OversightController;
 use App\Http\Controllers\Api\FeedbackController;
 use Illuminate\Support\Facades\Route;
 
+// ─── Refresh — acepta tokens expirados dentro de la ventana de gracia (7 días) ─
+// Usa auth.refresh en lugar de auth:sanctum para no bloquear tokens recién expirados.
+
+Route::post('/refresh', [AuthController::class, 'refresh'])
+    ->middleware(['auth.refresh', 'check.can_login', 'throttle:10,1']);
+
 // ─── Public: Auth (rate limited) ──────────────────────────────────────────────
 
 Route::post('/register',        [AuthController::class, 'register'])->middleware('throttle:5,1');
@@ -115,7 +121,6 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
     Route::post('/logout',          [AuthController::class, 'logout'])->middleware('throttle:10,1');
     Route::post('/logout-all',      [AuthController::class, 'logoutAll'])->middleware('throttle:10,1');
     Route::delete('/account',       [AuthController::class, 'deleteAccount'])->middleware('throttle:5,1');
-    Route::post('/refresh',         [AuthController::class, 'refresh'])->middleware('throttle:10,1');
     Route::post('/email/resend',    [AuthController::class, 'resendVerification'])->middleware('throttle:6,1');
     Route::post('/feedback',        [FeedbackController::class, 'store'])->middleware('throttle:10,1');
 

@@ -34,6 +34,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'role'             => \App\Http\Middleware\CheckRole::class,
             'api.role'         => \App\Http\Middleware\ApiRole::class,
             'check.can_login'  => \App\Http\Middleware\CheckCanLogin::class,
+            'auth.refresh'     => \App\Http\Middleware\AuthWithRefreshGrace::class,
             'require.password.change' => \App\Http\Middleware\RequirePasswordChange::class,
             'password.changed' => \App\Http\Middleware\EnsurePasswordIsChanged::class,
             'check.beta'       => \App\Http\Middleware\CheckBetaAccess::class,
