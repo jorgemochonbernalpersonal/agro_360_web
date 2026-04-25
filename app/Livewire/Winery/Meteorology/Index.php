@@ -115,7 +115,7 @@ class Index extends Component
         $plots = Plot::with('municipality:id,name')
             ->where('viticulturist_id', Auth::id())
             ->orderBy('name')
-            ->get(['id', 'name', 'municipality_id', 'surface_area']);
+            ->get(['id', 'name', 'municipality_id', 'area']);
 
         $plotSummaries = [];
         if ($plots->count() <= 12) {
