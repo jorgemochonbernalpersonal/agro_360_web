@@ -83,8 +83,11 @@ use App\Http\Controllers\Api\Producer\IntegratedCampaignController;
 use App\Http\Controllers\Api\Producer\FullTraceabilityController;
 use App\Http\Controllers\Api\Producer\FinancialSummaryController;
 use App\Http\Controllers\Api\Producer\CampaignComparisonController;
+use App\Http\Controllers\Api\Producer\InvoiceController as ProducerInvoiceController;
+use App\Http\Controllers\Api\Producer\HarvestDeliveryController as ProducerHarvestDeliveryController;
 use App\Http\Controllers\Api\Supervisor\DashboardController as SupervisorDashboard;
 use App\Http\Controllers\Api\Supervisor\OversightController;
+use App\Http\Controllers\Api\FeedbackController;
 use Illuminate\Support\Facades\Route;
 
 // ─── Public: Auth (rate limited) ──────────────────────────────────────────────
@@ -92,6 +95,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('/register',        [AuthController::class, 'register'])->middleware('throttle:5,1');
 Route::post('/login',           [AuthController::class, 'login'])->middleware('throttle:10,1');
 Route::post('/auth/google',     [AuthController::class, 'loginWithGoogle'])->middleware('throttle:10,1');
+Route::post('/auth/apple',      [AuthController::class, 'loginWithApple'])->middleware('throttle:10,1');
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->middleware('throttle:5,1');
 Route::post('/reset-password',  [AuthController::class, 'resetPassword'])->middleware('throttle:5,1');
 Route::post('/claim-account',   [AuthController::class, 'claimAccount'])->middleware('throttle:5,1');
@@ -113,6 +117,7 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
     Route::delete('/account',       [AuthController::class, 'deleteAccount'])->middleware('throttle:5,1');
     Route::post('/refresh',         [AuthController::class, 'refresh'])->middleware('throttle:10,1');
     Route::post('/email/resend',    [AuthController::class, 'resendVerification'])->middleware('throttle:6,1');
+    Route::post('/feedback',        [FeedbackController::class, 'store'])->middleware('throttle:10,1');
 
     // ── Winery / Producer ─────────────────────────────────────────────────────
     Route::prefix('winery')->middleware('api.role:winery,producer')->group(function () {
@@ -685,6 +690,13 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
         Route::get('/full-traceability/{campaignId}',     FullTraceabilityController::class)->middleware('throttle:30,1');
         Route::get('/financial-summary',                  FinancialSummaryController::class)->middleware('throttle:30,1');
         Route::get('/campaign-comparison',                CampaignComparisonController::class)->middleware('throttle:30,1');
+
+        // ── Facturas de venta (productor como bodega) ─────────────────────────
+        Route::get('/invoices/summary', [ProducerInvoiceController::class, 'summary'])->middleware('throttle:30,1');
+        Route::get('/invoices',         [ProducerInvoiceController::class, 'index'])->middleware('throttle:60,1');
+
+        // ── Entregas de cosecha (productor como viticultor) ───────────────────
+        Route::get('/harvest-deliveries', [ProducerHarvestDeliveryController::class, 'index'])->middleware('throttle:60,1');
     });
 
     // ── Supervisor ────────────────────────────────────────────────────────────

@@ -477,6 +477,110 @@ class AuthController extends Controller
         ]);
     }
 
+    // ─── POST /auth/apple ─────────────────────────────────────────────────────
+
+    public function loginWithApple(Request $request): JsonResponse
+    {
+        $request->validate([
+            'identity_token' => 'required|string',
+            'device_name'    => ['sometimes', 'string', 'max:255', 'regex:/^[a-zA-Z0-9\-_. ]+$/'],
+        ]);
+
+        // Decodificar el JWT de Apple sin verificar la firma (Apple verifica en su servidor)
+        $parts = explode('.', $request->identity_token);
+        if (count($parts) !== 3) {
+            return response()->json(['message' => 'Token de Apple inválido.'], 422);
+        }
+
+        $payload = json_decode(base64_decode(str_pad(
+            strtr($parts[1], '-_', '+/'),
+            strlen($parts[1]) % 4 === 0 ? 0 : 4 - strlen($parts[1]) % 4,
+            '='
+        )), true);
+
+        if (! $payload) {
+            return response()->json(['message' => 'Token de Apple inválido.'], 422);
+        }
+
+        // Verificar issuer
+        if (($payload['iss'] ?? '') !== 'https://appleid.apple.com') {
+            return response()->json(['message' => 'Token de Apple inválido.'], 422);
+        }
+
+        // Verificar expiración
+        if ((int) ($payload['exp'] ?? 0) < time()) {
+            return response()->json(['message' => 'Token de Apple expirado.'], 422);
+        }
+
+        // Verificar audience (bundle ID de la app)
+        $bundleId = config('services.apple.bundle_id');
+        if ($bundleId && ($payload['aud'] ?? '') !== $bundleId) {
+            return response()->json(['message' => 'Token de Apple inválido.'], 422);
+        }
+
+        $appleId = $payload['sub'] ?? null;
+        $email   = $payload['email'] ?? null;  // solo disponible en el primer login
+
+        if (! $appleId) {
+            return response()->json(['message' => 'No se pudo obtener la información del perfil de Apple.'], 422);
+        }
+
+        // Buscar usuario por apple_id o email
+        $user = User::where('apple_id', $appleId)->first()
+            ?? ($email ? User::where('email', $email)->first() : null);
+
+        if ($user) {
+            if (! $user->can_login) {
+                return response()->json(['message' => 'Cuenta desactivada. Contacta con soporte.'], 403);
+            }
+
+            if (! $user->apple_id) {
+                $user->update(['apple_id' => $appleId]);
+            }
+        } else {
+            if (! $email) {
+                // Apple solo envía el email la primera vez — si no hay cuenta previa, no podemos crear una
+                return response()->json([
+                    'message' => 'No se encontró una cuenta asociada. Inicia sesión con tu email o regístrate.',
+                ], 422);
+            }
+
+            $user = User::create([
+                'name'              => $email,  // Apple no siempre provee nombre
+                'email'             => $email,
+                'apple_id'          => $appleId,
+                'password'          => Hash::make(str()->random(32)),
+                'role'              => 'winery',
+                'can_login'         => true,
+                'email_verified_at' => now(),
+            ]);
+
+            SecurityLogger::logSecurityEvent('register_apple', [
+                'user_id' => $user->id,
+                'email'   => $email,
+            ]);
+        }
+
+        if ($user->betaExpired() && ! $user->hasBasicFreeAccess()) {
+            return response()->json([
+                'message'      => 'Tu periodo de prueba ha finalizado. Renueva tu suscripción para continuar usando Agro365.',
+                'beta_expired' => true,
+            ], 403);
+        }
+
+        $device = $request->device_name ?? 'mobile';
+        $user->tokens()->where('name', $device)->delete();
+        $token = $user->createToken($device, [$user->role], $this->tokenExpiresAt())->plainTextToken;
+
+        SecurityLogger::logSecurityEvent('login_apple', ['user_id' => $user->id]);
+
+        return response()->json([
+            'token'      => $token,
+            'expires_in' => $this->tokenExpiresIn(),
+            'user'       => new UserResource($user->fresh()->load('profile')),
+        ]);
+    }
+
     // ─── Helpers ──────────────────────────────────────────────────────────────
 
     private function tokenExpiresAt(): \Illuminate\Support\Carbon

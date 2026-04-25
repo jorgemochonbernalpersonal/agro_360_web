@@ -51,6 +51,11 @@ return [
         'redirect'      => env('GOOGLE_REDIRECT_URI', '/auth/google/callback'),
     ],
 
+    'apple' => [
+        // Bundle ID de la app iOS — se verifica en el campo 'aud' del JWT de Apple
+        'bundle_id' => env('APPLE_BUNDLE_ID', 'com.agro365.mobile'),
+    ],
+
     'recaptcha' => [
         'enabled' => env('RECAPTCHA_ENABLED', false),
         'site_key' => env('RECAPTCHA_SITE_KEY', '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'), // Clave de prueba
