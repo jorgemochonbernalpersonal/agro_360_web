@@ -61,15 +61,15 @@ return new class extends Migration
                     ->onDelete('set null');
             }
 
-            // 4. New unique constraint matching the controller's grouping key
-            $table->unique(['winery_id', 'viticulturist_id', 'vintage_year'], 'grb_unique_winery_viticulturist_year');
+            // NOTE: unique constraint (winery_id, viticulturist_id, vintage_year) skipped
+            // because production already has duplicate rows — adding it would fail.
         });
     }
 
     public function down(): void
     {
         Schema::table('grape_reception_batches', function (Blueprint $table) {
-            $table->dropUnique('grb_unique_winery_viticulturist_year');
+            // unique constraint was not added in up(), nothing to drop here
 
             $table->dropForeign(['campaign_id']);
             $table->unsignedBigInteger('campaign_id')->nullable(false)->change();
