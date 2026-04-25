@@ -31,7 +31,7 @@ class Index extends Component
             ->whereNotIn('status', ['cancelled'])
             ->with([
                 'costs:id,wine_id,category,amount',
-                'productLots:id,wine_id,price_per_unit,status',
+                'productLots:id,wine_id,price_per_unit',
             ])
             ->when($this->vintageFilter, fn($q) => $q->where('vintage', $this->vintageFilter))
             ->when($this->statusFilter, fn($q) => $q->where('status', $this->statusFilter))
