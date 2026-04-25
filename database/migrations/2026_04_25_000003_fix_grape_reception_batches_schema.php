@@ -23,25 +23,43 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('grape_reception_batches', function (Blueprint $table) {
-            // 1. Drop old unique constraint
-            $table->dropUnique('grb_unique_winery_planting_campaign');
+        // Drop old unique constraint only if it exists (may not exist on all envs)
+        $indexes = array_column(Schema::getIndexes('grape_reception_batches'), 'name');
+        if (in_array('grb_unique_winery_planting_campaign', $indexes)) {
+            Schema::table('grape_reception_batches', function (Blueprint $table) {
+                $table->dropUnique('grb_unique_winery_planting_campaign');
+            });
+        }
 
+        // Drop foreign keys only if the columns exist as FKs
+        $foreignKeys = array_column(Schema::getForeignKeys('grape_reception_batches'), 'name');
+
+        Schema::table('grape_reception_batches', function (Blueprint $table) use ($foreignKeys) {
             // 2. Make plot_planting_id nullable
-            $table->dropForeign(['plot_planting_id']);
+            $fkPlot = collect($foreignKeys)->first(fn($k) => str_contains($k, 'plot_planting_id'));
+            if ($fkPlot) {
+                $table->dropForeign(['plot_planting_id']);
+            }
             $table->unsignedBigInteger('plot_planting_id')->nullable()->change();
-            $table->foreign('plot_planting_id')
-                ->references('id')
-                ->on('plot_plantings')
-                ->onDelete('set null');
+            if ($fkPlot) {
+                $table->foreign('plot_planting_id')
+                    ->references('id')
+                    ->on('plot_plantings')
+                    ->onDelete('set null');
+            }
 
             // 3. Make campaign_id nullable
-            $table->dropForeign(['campaign_id']);
+            $fkCampaign = collect($foreignKeys)->first(fn($k) => str_contains($k, 'campaign_id'));
+            if ($fkCampaign) {
+                $table->dropForeign(['campaign_id']);
+            }
             $table->unsignedBigInteger('campaign_id')->nullable()->change();
-            $table->foreign('campaign_id')
-                ->references('id')
-                ->on('campaigns')
-                ->onDelete('set null');
+            if ($fkCampaign) {
+                $table->foreign('campaign_id')
+                    ->references('id')
+                    ->on('campaigns')
+                    ->onDelete('set null');
+            }
 
             // 4. New unique constraint matching the controller's grouping key
             $table->unique(['winery_id', 'viticulturist_id', 'vintage_year'], 'grb_unique_winery_viticulturist_year');
