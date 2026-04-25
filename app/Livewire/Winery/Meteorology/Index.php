@@ -112,9 +112,10 @@ class Index extends Component
 
     public function render()
     {
-        $plots = Plot::where('viticulturist_id', Auth::id())
+        $plots = Plot::with('municipality:id,name')
+            ->where('viticulturist_id', Auth::id())
             ->orderBy('name')
-            ->get(['id', 'name', 'municipality', 'surface_area']);
+            ->get(['id', 'name', 'municipality_id', 'surface_area']);
 
         $plotSummaries = [];
         if ($plots->count() <= 12) {
