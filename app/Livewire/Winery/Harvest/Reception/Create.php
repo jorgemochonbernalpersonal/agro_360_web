@@ -472,21 +472,34 @@ class Create extends Component
     {
         $wineryId = Auth::id();
 
+        // Solo viticultores que tienen parcelas activas con plantaciones activas
         $linkedViticulturists = WineryViticulturist::where('winery_id', $wineryId)
             ->with('viticulturist:id,name')
+            ->whereHas('viticulturist.plots', fn ($q) =>
+                $q->where('active', true)
+                  ->whereHas('plantings', fn ($p) => $p->where('status', 'active'))
+            )
             ->get()
             ->pluck('viticulturist')
             ->sortBy('name')
             ->values();
 
-        // Producer: add themselves at the top of the viticulturist list
+        // Producer: add themselves at the top if they have plots with plantings
         if (Auth::user()->isProducer()) {
-            $linkedViticulturists = collect([Auth::user()])->merge($linkedViticulturists);
+            $hasPlotsWithPlantings = Plot::where('viticulturist_id', $wineryId)
+                ->where('active', true)
+                ->whereHas('plantings', fn ($p) => $p->where('status', 'active'))
+                ->exists();
+            if ($hasPlotsWithPlantings) {
+                $linkedViticulturists = collect([Auth::user()])->merge($linkedViticulturists);
+            }
         }
 
+        // Solo depósitos de kg con capacidad disponible
         $availableContainers = Container::where('user_id', $wineryId)
             ->where('archived', false)
             ->where('unit', 'kg')
+            ->whereRaw('used_capacity < capacity')
             ->orderBy('name')
             ->get(['id', 'name', 'capacity', 'used_capacity']);
 

@@ -17,13 +17,16 @@ class WineryContainersSeeder extends Seeder
 
     private const DISTRIBUTION = [
         // [type_id, material_id, unit, capacity_range, qty, prefix, description]
-        [2, 4, 'litros', [10000, 50000], 126, 'Depósito', 'Depósito de acero inoxidable para fermentación y almacenamiento'],
+        // ── Contenedores de vino (litros) ──
+        [2, 4, 'litros', [10000, 50000], 116, 'Depósito', 'Depósito de acero inoxidable para fermentación y almacenamiento'],
         [3, 4, 'litros', [2000,  10000],  99, 'Tanque',   'Tanque de fermentación de acero inoxidable'],
         [1, 1, 'litros', [225,     500],  90, 'Barrica',  'Barrica de roble francés para crianza'],
         [1, 2, 'litros', [225,     300],  45, 'Barrica',  'Barrica de roble americano para crianza'],
         [4, 5, 'litros', [3000,  20000],  36, 'Tina',     'Tina de hormigón para fermentación tradicional'],
         [5, 6, 'litros', [300,     600],  31, 'Ánfora',   'Ánfora de cerámica para crianza en barro'],
         [3, 7, 'litros', [5000,  15000],  23, 'Tanque',   'Tanque de fibra de vidrio para almacenamiento'],
+        // ── Contenedores de recepción de uva (kg) ──
+        [2, 4, 'kg', [5000, 20000], 10, 'Tolva', 'Tolva de acero inoxidable para recepción de uva'],
     ];
 
     public function run(): void
@@ -72,7 +75,7 @@ class WineryContainersSeeder extends Seeder
         $containerIds = DB::table('containers')
             ->where('user_id', self::WINERY_USER_ID)
             ->where('archived', false)
-            ->whereRaw("name REGEXP '^(Depósito|Tanque|Barrica|Tina|Ánfora) [0-9]'")
+            ->whereRaw("name REGEXP '^(Depósito|Tanque|Barrica|Tina|Ánfora|Tolva) [0-9]'")
             ->pluck('id');
 
         if ($containerIds->isEmpty()) {
