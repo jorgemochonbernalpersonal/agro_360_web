@@ -450,11 +450,8 @@ class Create extends Component
                 }
             });
 
-            $this->toastSuccess('Recepción registrada. Puedes continuar con el mismo viticultor.');
-            return $this->roleRedirect('grape-reception.create', array_filter([
-                'viticulturist_id' => $this->viticulturist_id,
-                'plot_id'          => $this->plot_id,
-            ]));
+            $this->toastSuccess('Recepción registrada correctamente.');
+            return $this->roleRedirect('grape-reception.index');
 
         } catch (\Exception $e) {
             \Log::error('Error al registrar recepción de uva', [

@@ -314,6 +314,7 @@ class Edit extends Component
         $availableContainers = Container::where('user_id', Auth::id())
             ->where('archived', false)
             ->where('unit', 'kg')
+            ->whereRaw('used_capacity < capacity')
             ->orderBy('name')
             ->get(['id', 'name', 'capacity', 'used_capacity']);
 
