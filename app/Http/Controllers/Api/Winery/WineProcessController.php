@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\LossResource;
 use App\Http\Resources\Api\TransferResource;
 use App\Models\Container;
+use App\Models\UnitOfMeasurement;
 use App\Models\Wine;
 use App\Models\WineLoss;
 use App\Models\WineTransfer;
@@ -66,22 +67,28 @@ class WineProcessController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
-            'wine_id'           => 'required|integer|exists:wines,id',
-            'from_container_id' => 'required|integer|exists:containers,id',
-            'to_container_id'   => 'required|integer|exists:containers,id|different:from_container_id',
-            'quantity'          => 'required|numeric|min:0.001',
-            'transfer_type'     => 'required|string|in:racking,blending,top_up,other',
-            'transfer_date'     => 'required|date',
-            'notes'             => 'nullable|string|max:1000',
+            'wine_id'                => 'required|integer|exists:wines,id',
+            'from_container_id'      => 'required|integer|exists:containers,id',
+            'to_container_id'        => 'required|integer|exists:containers,id|different:from_container_id',
+            'quantity'               => 'required|numeric|min:0.001',
+            'unit_of_measurement_id' => 'nullable|integer|exists:units_of_measurement,id',
+            'transfer_type'          => 'required|string|in:racking,blending,top_up,other',
+            'transfer_date'          => 'required|date',
+            'notes'                  => 'nullable|string|max:1000',
         ]);
 
         Wine::forUser($user->id)->findOrFail($validated['wine_id']);
         Container::where('user_id', $user->id)->findOrFail($validated['from_container_id']);
         Container::where('user_id', $user->id)->findOrFail($validated['to_container_id']);
 
+        // Default to Litros when the mobile client does not send a unit
+        $unitId = $validated['unit_of_measurement_id']
+            ?? UnitOfMeasurement::where('symbol', 'L')->value('id');
+
         $transfer = WineTransfer::create([
             ...$validated,
-            'created_by' => $user->id,
+            'unit_of_measurement_id' => $unitId,
+            'created_by'             => $user->id,
         ]);
 
         $transfer->load(['wine', 'fromContainer', 'toContainer']);

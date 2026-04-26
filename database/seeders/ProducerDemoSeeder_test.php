@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\DB;
  *
  * Vínculos winery_viticulturist que se crean:
  *   · Auto-vínculo:  winery_id=339 ↔ viticulturist_id=339  (producer gestiona su propia bodega)
- *   · Vínculo winery: winery_id=1  ↔ viticulturist_id=339  (bodega demo ve las parcelas del producer)
  *
  * LADO VITICULTOR (cuaderno de campo):
  *   · 460 parcelas con datos SIGPAC reales (Gran Canaria)
@@ -84,11 +83,6 @@ class ProducerDemoSeeder_test extends Seeder
         $wvId = 0;
         $this->step('Auto-vínculo bodega↔viticultor (339↔339)', function () use ($now, &$wvId) {
             $wvId = $this->createSelfLink($now);
-        });
-
-        // 3b. Vínculo con bodega demo (igual que ViticulturistDemoSeeder)
-        $this->step('Vínculo con bodega demo (winery_id=1 ↔ viticulturist_id=339)', function () use ($now) {
-            $this->linkToWinery($now);
         });
 
         // 4. Parcelas + SIGPAC + Geometría (JSON completo)
@@ -661,21 +655,6 @@ class ProducerDemoSeeder_test extends Seeder
             'notebook_granted_at' => $now,
             'assigned_by'         => self::PRODUCER_USER_ID,
             'notes'               => 'Auto-vínculo: productor que es su propia bodega.',
-            'created_at'          => $now,
-            'updated_at'          => $now,
-        ]);
-    }
-
-    private function linkToWinery($now): int
-    {
-        return DB::table('winery_viticulturist')->insertGetId([
-            'winery_id'           => self::WINERY_USER_ID,
-            'viticulturist_id'    => self::PRODUCER_USER_ID,
-            'source'              => 'own',
-            'notebook_access'     => true,
-            'notebook_granted_at' => $now,
-            'assigned_by'         => self::WINERY_USER_ID,
-            'notes'               => 'Productor Gran Canaria vinculado a bodega demo.',
             'created_at'          => $now,
             'updated_at'          => $now,
         ]);

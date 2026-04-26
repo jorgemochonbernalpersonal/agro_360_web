@@ -4,9 +4,12 @@ namespace App\Http\Controllers\Api\Winery;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\HarvestResource;
+use App\Models\Campaign;
 use App\Models\Container;
 use App\Models\GrapeReceptionBatch;
 use App\Models\Harvest;
+use App\Models\Plot;
+use App\Models\PlotPlanting;
 use App\Models\User;
 use App\Models\WineryViticulturist;
 use Illuminate\Http\JsonResponse;
@@ -65,53 +68,71 @@ class GrapeReceptionController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
-            'viticulturist_id'     => 'required|integer|exists:users,id',
-            'total_weight'         => 'required|numeric|min:0.1',
-            'harvest_start_date'   => 'required|date',
-            'container_id'         => 'nullable|integer|exists:containers,id',
-            'baume_degree'         => 'nullable|numeric|between:0,25',
-            'brix_degree'          => 'nullable|numeric|between:0,40',
-            'ph_level'             => 'nullable|numeric|between:2,5',
-            'acidity_level'        => 'nullable|numeric|between:0,20',
-            'price_per_kg'         => 'nullable|numeric|min:0',
-            'notes'                => 'nullable|string|max:1000',
+            'viticulturist_id'      => 'required|integer|exists:users,id',
+            'total_weight'          => 'required|numeric|min:0.1',
+            'harvest_start_date'    => 'required|date',
+            'plot_planting_id'      => 'nullable|integer|exists:plot_plantings,id',
+            'container_id'          => 'nullable|integer|exists:containers,id',
+            'baume_degree'          => 'nullable|numeric|between:0,25',
+            'brix_degree'           => 'nullable|numeric|between:0,40',
+            'ph_level'              => 'nullable|numeric|between:2,5',
+            'acidity_level'         => 'nullable|numeric|between:0,20',
+            'price_per_kg'          => 'nullable|numeric|min:0',
+            'notes'                 => 'nullable|string|max:1000',
             'harvest_ticket_number' => 'nullable|string|max:100',
-            'vehicle_plate'        => 'nullable|string|max:20',
+            'vehicle_plate'         => 'nullable|string|max:20',
         ]);
 
         if (isset($validated['container_id'])) {
             Container::where('user_id', $user->id)->findOrFail($validated['container_id']);
         }
 
-        $harvest = DB::transaction(function () use ($validated, $user) {
-            $campaignYear = now()->year;
+        // Validate planting belongs to the viticulturist
+        $planting = null;
+        if (isset($validated['plot_planting_id'])) {
+            $planting = PlotPlanting::whereHas('plot', fn ($q) =>
+                $q->where('viticulturist_id', $validated['viticulturist_id'])
+            )->findOrFail($validated['plot_planting_id']);
+        }
 
-            // Find or create batch for this viticulturist + winery + year
-            $batch = GrapeReceptionBatch::firstOrCreate([
+        $harvest = DB::transaction(function () use ($validated, $user, $planting) {
+            $campaignYear = now()->year;
+            $campaign     = Campaign::getOrCreateActiveForYear($user->id, $campaignYear);
+
+            // Find or create batch — include planting + campaign when available
+            $batchKey = [
                 'winery_id'        => $user->id,
                 'viticulturist_id' => $validated['viticulturist_id'],
                 'vintage_year'     => $campaignYear,
-            ], [
-                'status'           => 'open',
-                'total_weight_kg'  => 0,
+            ];
+            if ($planting && $campaign) {
+                $batchKey['plot_planting_id'] = $planting->id;
+                $batchKey['campaign_id']      = $campaign->id;
+            }
+
+            $batch = GrapeReceptionBatch::firstOrCreate($batchKey, [
+                'status'                => 'open',
+                'total_weight_kg'       => 0,
+                'designation_of_origin' => $planting?->designation_of_origin,
             ]);
 
             $harvest = Harvest::create([
-                'winery_id'            => $user->id,
-                'batch_id'             => $batch->id,
-                'harvest_start_date'   => $validated['harvest_start_date'],
-                'total_weight'         => $validated['total_weight'],
-                'container_id'         => $validated['container_id'] ?? null,
-                'baume_degree'         => $validated['baume_degree'] ?? null,
-                'brix_degree'          => $validated['brix_degree'] ?? null,
-                'ph_level'             => $validated['ph_level'] ?? null,
-                'acidity_level'        => $validated['acidity_level'] ?? null,
-                'price_per_kg'         => $validated['price_per_kg'] ?? null,
-                'notes'                => $validated['notes'] ?? null,
+                'winery_id'             => $user->id,
+                'batch_id'              => $batch->id,
+                'plot_planting_id'      => $planting?->id,
+                'harvest_start_date'    => $validated['harvest_start_date'],
+                'total_weight'          => $validated['total_weight'],
+                'container_id'          => $validated['container_id'] ?? null,
+                'baume_degree'          => $validated['baume_degree'] ?? null,
+                'brix_degree'           => $validated['brix_degree'] ?? null,
+                'ph_level'              => $validated['ph_level'] ?? null,
+                'acidity_level'         => $validated['acidity_level'] ?? null,
+                'price_per_kg'          => $validated['price_per_kg'] ?? null,
+                'notes'                 => $validated['notes'] ?? null,
                 'harvest_ticket_number' => $validated['harvest_ticket_number'] ?? null,
-                'vehicle_plate'        => $validated['vehicle_plate'] ?? null,
-                'status'               => 'active',
-                'vintage'              => $campaignYear,
+                'vehicle_plate'         => $validated['vehicle_plate'] ?? null,
+                'status'                => 'active',
+                'vintage'               => $campaignYear,
             ]);
 
             $batch->recalculateTotal();
