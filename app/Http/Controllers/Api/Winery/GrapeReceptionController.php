@@ -83,6 +83,14 @@ class GrapeReceptionController extends Controller
             'vehicle_plate'         => 'nullable|string|max:20',
         ]);
 
+        // Validate viticulturist is linked to this winery
+        $isSelf = $user->isProducer() && (int) $validated['viticulturist_id'] === $user->id;
+        if (!$isSelf) {
+            WineryViticulturist::where('winery_id', $user->id)
+                ->where('viticulturist_id', $validated['viticulturist_id'])
+                ->firstOrFail();
+        }
+
         if (isset($validated['container_id'])) {
             Container::where('user_id', $user->id)->findOrFail($validated['container_id']);
         }
@@ -205,7 +213,12 @@ class GrapeReceptionController extends Controller
         $user = $request->user();
         abort_unless($user->hasWineryAccess(), 403);
 
+        // Solo viticultores con parcelas activas que tengan plantaciones activas
         $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)
+            ->whereHas('viticulturist.plots', fn ($q) =>
+                $q->where('active', true)
+                  ->whereHas('plantings', fn ($p) => $p->where('status', 'active'))
+            )
             ->pluck('viticulturist_id');
 
         $viticulturists = User::whereIn('id', $viticulturistIds)

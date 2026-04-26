@@ -20,6 +20,7 @@ class ContainerController extends Controller
         $request->validate([
             'room_id'  => 'nullable|integer|min:1',
             'status'   => 'nullable|string|in:empty,full,critical',
+            'unit'     => 'nullable|string|in:kg,litros',
             'per_page' => 'nullable|string|max:10',
         ]);
 
@@ -28,6 +29,9 @@ class ContainerController extends Controller
 
         if ($request->filled('room_id')) {
             $base->where('container_room_id', (int) $request->room_id);
+        }
+        if ($request->filled('unit')) {
+            $base->where('unit', $request->unit);
         }
         if ($request->filled('status')) {
             match ($request->status) {

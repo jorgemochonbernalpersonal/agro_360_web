@@ -13,6 +13,7 @@ class ContainerResource extends JsonResource
             'id'               => $this->id,
             'name'             => $this->name,
             'serial_number'    => $this->serial_number,
+            'unit'             => $this->unit,
             'capacity'         => (float) $this->capacity,
             'used_capacity'    => (float) $this->used_capacity,
             'wine_volume_liters' => (float) $this->wine_volume_liters,
