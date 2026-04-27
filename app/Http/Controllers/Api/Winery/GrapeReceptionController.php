@@ -71,8 +71,9 @@ class GrapeReceptionController extends Controller
             'viticulturist_id'      => 'required|integer|exists:users,id',
             'total_weight'          => 'required|numeric|min:0.1',
             'harvest_start_date'    => 'required|date',
-            'plot_planting_id'      => 'nullable|integer|exists:plot_plantings,id',
-            'container_id'          => 'nullable|integer|exists:containers,id',
+            'vintage_year'          => 'required|integer|min:2000|max:' . (now()->year + 1),
+            'plot_planting_id'      => 'required|integer|exists:plot_plantings,id',
+            'container_id'          => 'required|integer|exists:containers,id',
             'baume_degree'          => 'nullable|numeric|between:0,25',
             'brix_degree'           => 'nullable|numeric|between:0,40',
             'ph_level'              => 'nullable|numeric|between:2,5',
@@ -96,41 +97,34 @@ class GrapeReceptionController extends Controller
         }
 
         // Validate planting belongs to the viticulturist
-        $planting = null;
-        if (isset($validated['plot_planting_id'])) {
-            $planting = PlotPlanting::whereHas('plot', fn ($q) =>
-                $q->where('viticulturist_id', $validated['viticulturist_id'])
-            )->findOrFail($validated['plot_planting_id']);
-        }
+        // Validate planting belongs to the viticulturist
+        $planting = PlotPlanting::whereHas('plot', fn ($q) =>
+            $q->where('viticulturist_id', $validated['viticulturist_id'])
+        )->findOrFail($validated['plot_planting_id']);
 
         $harvest = DB::transaction(function () use ($validated, $user, $planting) {
-            $campaignYear = now()->year;
+            $campaignYear = (int) $validated['vintage_year'];
             $campaign     = Campaign::getOrCreateActiveForYear($user->id, $campaignYear);
 
-            // Find or create batch — include planting + campaign when available
-            $batchKey = [
+            $batch = GrapeReceptionBatch::firstOrCreate([
                 'winery_id'        => $user->id,
                 'viticulturist_id' => $validated['viticulturist_id'],
                 'vintage_year'     => $campaignYear,
-            ];
-            if ($planting && $campaign) {
-                $batchKey['plot_planting_id'] = $planting->id;
-                $batchKey['campaign_id']      = $campaign->id;
-            }
-
-            $batch = GrapeReceptionBatch::firstOrCreate($batchKey, [
+                'plot_planting_id' => $planting->id,
+                'campaign_id'      => $campaign?->id,
+            ], [
                 'status'                => 'open',
                 'total_weight_kg'       => 0,
-                'designation_of_origin' => $planting?->designation_of_origin,
+                'designation_of_origin' => $planting->designation_of_origin,
             ]);
 
             $harvest = Harvest::create([
                 'winery_id'             => $user->id,
                 'batch_id'              => $batch->id,
-                'plot_planting_id'      => $planting?->id,
+                'plot_planting_id'      => $planting->id,
                 'harvest_start_date'    => $validated['harvest_start_date'],
                 'total_weight'          => $validated['total_weight'],
-                'container_id'          => $validated['container_id'] ?? null,
+                'container_id'          => $validated['container_id'],
                 'baume_degree'          => $validated['baume_degree'] ?? null,
                 'brix_degree'           => $validated['brix_degree'] ?? null,
                 'ph_level'              => $validated['ph_level'] ?? null,
