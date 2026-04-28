@@ -135,6 +135,12 @@ class GrapePurchaseInvoiceController extends Controller
         $itemsData = $validated['items'];
         unset($validated['items']);
 
+        // Auto-assign invoice number if not provided
+        if (empty($validated['invoice_number'])) {
+            $settings = \App\Models\InvoicingSetting::getOrCreateForUser($user->id);
+            $validated['invoice_number'] = $settings->generateAndIncrementInvoiceCode();
+        }
+
         $invoice = DB::transaction(function () use ($validated, $itemsData, $user) {
             $invoice = Invoice::create([
                 ...$validated,

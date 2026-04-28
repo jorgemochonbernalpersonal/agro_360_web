@@ -66,7 +66,7 @@ class InvoiceController extends Controller
 
         $validated = $request->validate([
             'client_id'      => ['required', 'integer', Rule::exists('clients', 'id')->where('user_id', $user->id)],
-            'invoice_number' => 'required|string|max:50',
+            'invoice_number' => 'nullable|string|max:50',
             'invoice_date'   => 'required|date',
             'invoice_type'   => 'nullable|string|in:standard,corrective,receipt',
             'status'         => 'nullable|string|in:draft,sent,paid,cancelled',
@@ -77,6 +77,12 @@ class InvoiceController extends Controller
             'gift'           => 'nullable|boolean',
             'observations'   => 'nullable|string|max:2000',
         ]);
+
+        // Auto-assign invoice number if not provided
+        if (empty($validated['invoice_number'])) {
+            $settings = \App\Models\InvoicingSetting::getOrCreateForUser($user->id);
+            $validated['invoice_number'] = $settings->generateAndIncrementInvoiceCode();
+        }
 
         // Compute tax_amount from subtotal + tax_rate when not provided
         if (isset($validated['subtotal']) && isset($validated['tax_rate']) && !isset($validated['total_amount'])) {

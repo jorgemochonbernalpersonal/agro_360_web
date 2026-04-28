@@ -47,9 +47,18 @@ class ViticulturistController extends Controller
         $winery = $request->user();
         abort_unless($winery->hasWineryAccess(), 403);
 
-        $relations = WineryViticulturist::where('winery_id', $winery->id)
-            ->with('viticulturist')
-            ->get();
+        $query = WineryViticulturist::where('winery_id', $winery->id)
+            ->with('viticulturist');
+
+        // ?with_active_plantings=1 — only viticulturists that have active plots with active plantings
+        if ($request->boolean('with_active_plantings')) {
+            $query->whereHas('viticulturist.plots', fn ($q) =>
+                $q->where('active', true)
+                  ->whereHas('plantings', fn ($p) => $p->where('status', 'active'))
+            );
+        }
+
+        $relations = $query->get();
 
         $data = $relations
             ->filter(fn ($r) => $r->viticulturist !== null)

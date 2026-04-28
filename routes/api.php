@@ -124,6 +124,9 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
     Route::post('/email/resend',    [AuthController::class, 'resendVerification'])->middleware('throttle:6,1');
     Route::post('/feedback',        [FeedbackController::class, 'store'])->middleware('throttle:10,1');
 
+    // ── Catálogos compartidos ────────────────────────────────────────────────
+    Route::get('/grape-varieties',  \App\Http\Controllers\Api\GrapeVarietyController::class)->middleware('throttle:60,1');
+
     // ── Winery / Producer ─────────────────────────────────────────────────────
     Route::prefix('winery')->middleware('api.role:winery,producer')->group(function () {
 
