@@ -33,6 +33,14 @@ class GrapeReceptionController extends Controller
             $query->whereHas('batch', fn ($q) => $q->where('viticulturist_id', $viticulturistId));
         }
 
+        // ?uninvoiced=1 — exclude harvests already linked to an active (non-cancelled) invoice
+        if ($request->boolean('uninvoiced')) {
+            $query->whereDoesntHave('invoiceItems', function ($q) {
+                $q->where('concept_type', 'harvest')
+                  ->whereHas('invoice', fn ($q2) => $q2->where('status', '!=', 'cancelled'));
+            });
+        }
+
         $harvests = $query->orderByDesc('harvest_start_date')
             ->paginate($request->integer('per_page', 20));
 
