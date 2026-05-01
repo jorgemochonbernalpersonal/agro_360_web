@@ -12,6 +12,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (!app()->environment('testing')) {
+            return;
+        }
+
         // Make Plot fields nullable for easier testing
         Schema::table('plots', function (Blueprint $table) {
             $table->unsignedBigInteger('autonomous_community_id')->nullable()->change();

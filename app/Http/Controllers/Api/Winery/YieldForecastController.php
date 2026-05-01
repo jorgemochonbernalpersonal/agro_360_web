@@ -60,9 +60,9 @@ class YieldForecastController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
-            'viticulturist_id' => 'nullable|integer|exists:users,id',
-            'plot_planting_id' => 'nullable|integer|exists:plot_plantings,id',
-            'campaign_id'      => 'nullable|integer|exists:campaigns,id',
+            'viticulturist_id' => 'required|integer|exists:users,id',
+            'plot_planting_id' => 'required|integer|exists:plot_plantings,id',
+            'campaign_id'      => 'required|integer|exists:campaigns,id',
             'vintage_year'     => 'required|integer|min:1900|max:2100',
             'estimated_kg'     => 'required|numeric|min:0',
             'estimation_date'  => 'required|date',
