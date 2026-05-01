@@ -61,8 +61,8 @@
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Volumen (litros)</flux:label>
-                    <flux:input wire:model="volume_liters" type="number" step="0.01" min="0" placeholder="0.00" />
+                    <flux:label required>Volumen (litros)</flux:label>
+                    <flux:input wire:model="volume_liters" type="number" step="0.01" min="0" placeholder="0.00" required />
                     <flux:error name="volume_liters" />
                 </flux:field>
             </div>
