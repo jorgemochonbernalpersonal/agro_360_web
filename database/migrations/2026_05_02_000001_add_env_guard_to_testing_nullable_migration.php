@@ -8,18 +8,21 @@ return new class extends Migration
 {
     /**
      * Revert the nullable changes that 2099_99_99_999999_make_fields_nullable_for_testing
-     * applied in production by mistake. Restore columns to NOT NULL.
+     * applied in production by mistake. Restore columns to NOT NULL where safe.
+     *
+     * NOTE: harvests.activity_id and harvests.plot_planting_id are intentionally
+     * left nullable — grape receptions create harvests without an activity or
+     * specific planting, so NULL is a valid state for those columns.
      */
     public function up(): void
     {
-        // Abort if there are NULL values — they need manual cleanup first
+        // Safety check: abort if there are NULL values in columns we are reverting
         $nullPlots = \DB::table('plots')->whereNull('autonomous_community_id')->orWhereNull('province_id')->orWhereNull('municipality_id')->count();
         $nullActivities = \DB::table('agricultural_activities')->whereNull('plot_id')->count();
-        $nullHarvests = \DB::table('harvests')->whereNull('activity_id')->orWhereNull('plot_planting_id')->count();
 
-        if ($nullPlots + $nullActivities + $nullHarvests > 0) {
+        if ($nullPlots + $nullActivities > 0) {
             throw new \RuntimeException(
-                "Cannot revert to NOT NULL: found {$nullPlots} plots, {$nullActivities} activities, {$nullHarvests} harvests with NULL values. Clean up manually first."
+                "Cannot revert to NOT NULL: found {$nullPlots} plots, {$nullActivities} activities with NULL values. Clean up manually first."
             );
         }
 
@@ -33,10 +36,8 @@ return new class extends Migration
             $table->unsignedBigInteger('plot_id')->nullable(false)->change();
         });
 
-        Schema::table('harvests', function (Blueprint $table) {
-            $table->unsignedBigInteger('activity_id')->nullable(false)->change();
-            $table->unsignedBigInteger('plot_planting_id')->nullable(false)->change();
-        });
+        // harvests.activity_id and harvests.plot_planting_id stay nullable:
+        // grape receptions create harvests without an agricultural activity.
     }
 
     /**
@@ -52,11 +53,6 @@ return new class extends Migration
 
         Schema::table('agricultural_activities', function (Blueprint $table) {
             $table->unsignedBigInteger('plot_id')->nullable()->change();
-        });
-
-        Schema::table('harvests', function (Blueprint $table) {
-            $table->unsignedBigInteger('activity_id')->nullable()->change();
-            $table->unsignedBigInteger('plot_planting_id')->nullable()->change();
         });
     }
 };
