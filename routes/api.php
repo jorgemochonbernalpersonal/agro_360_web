@@ -131,6 +131,9 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
     // ── Catálogos compartidos ────────────────────────────────────────────────
     Route::get('/grape-varieties',       \App\Http\Controllers\Api\GrapeVarietyController::class)->middleware('throttle:60,1');
     Route::get('/units-of-measurement',  \App\Http\Controllers\Api\UnitOfMeasurementController::class)->middleware('throttle:60,1');
+    Route::get('/autonomous-communities', \App\Http\Controllers\Api\AutonomousCommunityController::class)->middleware('throttle:60,1');
+    Route::get('/provinces',              \App\Http\Controllers\Api\ProvinceController::class)->middleware('throttle:60,1');
+    Route::get('/municipalities',         \App\Http\Controllers\Api\MunicipalityController::class)->middleware('throttle:120,1');
 
     // ── Winery / Producer ─────────────────────────────────────────────────────
     Route::prefix('winery')->middleware('api.role:winery,producer')->group(function () {

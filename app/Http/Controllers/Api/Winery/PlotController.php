@@ -289,11 +289,13 @@ class PlotController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $data = $request->validate([
-            'viticulturist_id' => 'required|integer|exists:users,id',
-            'name'             => 'required|string|max:255',
-            'area'             => 'required|numeric|min:0.001',
-            'municipality_id'  => 'nullable|integer|exists:municipalities,id',
-            'is_organic'       => 'nullable|boolean',
+            'viticulturist_id'        => 'required|integer|exists:users,id',
+            'name'                    => 'required|string|max:255',
+            'area'                    => 'required|numeric|min:0.001',
+            'autonomous_community_id' => 'required|integer|exists:autonomous_communities,id',
+            'province_id'             => 'required|integer|exists:provinces,id',
+            'municipality_id'         => 'required|integer|exists:municipalities,id',
+            'is_organic'              => 'nullable|boolean',
         ]);
 
         abort_unless(
@@ -304,12 +306,14 @@ class PlotController extends Controller
         );
 
         $plot = Plot::create([
-            'viticulturist_id' => $data['viticulturist_id'],
-            'name'             => $data['name'],
-            'area'             => $data['area'],
-            'municipality_id'  => $data['municipality_id'] ?? null,
-            'is_organic'       => $data['is_organic'] ?? false,
-            'active'           => true,
+            'viticulturist_id'        => $data['viticulturist_id'],
+            'name'                    => $data['name'],
+            'area'                    => $data['area'],
+            'autonomous_community_id' => $data['autonomous_community_id'],
+            'province_id'             => $data['province_id'],
+            'municipality_id'         => $data['municipality_id'],
+            'is_organic'              => $data['is_organic'] ?? false,
+            'active'                  => true,
         ]);
 
         $plot->load(['province', 'municipality', 'plantings.grapeVariety']);
