@@ -77,6 +77,10 @@ use App\Http\Controllers\Api\Viticulturist\PhytosanitaryProductController;
 use App\Http\Controllers\Api\Viticulturist\CrewController;
 use App\Http\Controllers\Api\Viticulturist\FieldApplicatorController;
 use App\Http\Controllers\Api\Viticulturist\FieldEquipmentController;
+use App\Http\Controllers\Api\Viticulturist\MarketedHarvestController;
+use App\Http\Controllers\Api\Viticulturist\HarvestByproductController;
+use App\Http\Controllers\Api\Viticulturist\CertificationController;
+use App\Http\Controllers\Api\Viticulturist\CommercialAuthorizationController;
 use App\Http\Controllers\Api\Producer\DashboardController as ProducerDashboard;
 use App\Http\Controllers\Api\Producer\IntegratedEstateController;
 use App\Http\Controllers\Api\Producer\IntegratedCampaignController;
@@ -688,6 +692,22 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
         // ── Equipos campo ────────────────────────────────────────────────────
         Route::get('/field-equipment', [FieldEquipmentController::class, 'index'])->middleware('throttle:60,1');
         Route::post('/field-equipment', [FieldEquipmentController::class, 'store'])->middleware('throttle:30,1');
+
+        // ── Cosechas comercializadas ─────────────────────────────────────────
+        Route::get('/marketed-harvests', [MarketedHarvestController::class, 'index'])->middleware('throttle:60,1');
+        Route::post('/marketed-harvests', [MarketedHarvestController::class, 'store'])->middleware('throttle:30,1');
+
+        // ── Subproductos cosecha ─────────────────────────────────────────────
+        Route::get('/harvest-byproducts', [HarvestByproductController::class, 'index'])->middleware('throttle:60,1');
+        Route::post('/harvest-byproducts', [HarvestByproductController::class, 'store'])->middleware('throttle:30,1');
+
+        // ── Certificaciones ─────────────────────────────────────────────────
+        Route::get('/certifications', [CertificationController::class, 'index'])->middleware('throttle:60,1');
+        Route::post('/certifications', [CertificationController::class, 'store'])->middleware('throttle:30,1');
+
+        // ── Autorizaciones comerciales ───────────────────────────────────────
+        Route::get('/commercial-authorizations', [CommercialAuthorizationController::class, 'index'])->middleware('throttle:60,1');
+        Route::post('/commercial-authorizations', [CommercialAuthorizationController::class, 'store'])->middleware('throttle:30,1');
     });
 
     // ── Producer (endpoints exclusivos) ──────────────────────────────────────
