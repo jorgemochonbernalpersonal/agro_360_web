@@ -435,6 +435,8 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
         Route::get('/plots/{id}/harvest-quality', [WineryPlotController::class, 'harvestQuality'])->middleware('throttle:60,1');
         Route::get('/plots/{id}/notebook',        [WineryPlotController::class, 'notebook'])->middleware('throttle:60,1');
         Route::get('/plots/{id}/plantings',       [WineryPlotController::class, 'plantings'])->middleware('throttle:60,1');
+        Route::post('/plots',                     [WineryPlotController::class, 'store'])->middleware('throttle:30,1');
+        Route::post('/plots/{id}/plantings',      [WineryPlotController::class, 'storePlanting'])->middleware('throttle:30,1');
 
         // Fichas técnicas de vino (datos agregados)
         Route::get('/wines/{id}/technical-sheet', [WineController::class, 'technicalSheet'])->middleware('throttle:60,1');

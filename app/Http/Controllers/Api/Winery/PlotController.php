@@ -281,6 +281,87 @@ class PlotController extends Controller
         return response()->json(['data' => $plantings]);
     }
 
+    // ─── POST /winery/plots ───────────────────────────────────────────────────
+
+    public function store(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasWineryAccess(), 403);
+
+        $data = $request->validate([
+            'viticulturist_id' => 'required|integer|exists:users,id',
+            'name'             => 'required|string|max:255',
+            'area'             => 'required|numeric|min:0.001',
+            'municipality_id'  => 'nullable|integer|exists:municipalities,id',
+            'is_organic'       => 'nullable|boolean',
+        ]);
+
+        abort_unless(
+            WineryViticulturist::where('winery_id', $user->id)
+                ->where('viticulturist_id', $data['viticulturist_id'])
+                ->exists(),
+            403
+        );
+
+        $plot = Plot::create([
+            'viticulturist_id' => $data['viticulturist_id'],
+            'name'             => $data['name'],
+            'area'             => $data['area'],
+            'municipality_id'  => $data['municipality_id'] ?? null,
+            'is_organic'       => $data['is_organic'] ?? false,
+            'active'           => true,
+        ]);
+
+        $plot->load(['province', 'municipality', 'plantings.grapeVariety']);
+        $plot->centroid_data = null;
+        $plot->has_geometry  = false;
+
+        return response()->json(['data' => new PlotResource($plot)], 201);
+    }
+
+    // ─── POST /winery/plots/{id}/plantings ────────────────────────────────────
+
+    public function storePlanting(Request $request, int $id): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasWineryAccess(), 403);
+
+        $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)
+            ->pluck('viticulturist_id');
+
+        $plot = Plot::whereIn('viticulturist_id', $viticulturistIds)->findOrFail($id);
+
+        $data = $request->validate([
+            'grape_variety_id' => 'required|integer|exists:grape_varieties,id',
+            'area_planted'     => 'required|numeric|min:0.001',
+            'planting_year'    => 'required|integer|min:1900|max:2100',
+            'name'             => 'nullable|string|max:255',
+            'irrigated'        => 'nullable|boolean',
+        ]);
+
+        $planting = $plot->plantings()->create([
+            'grape_variety_id' => $data['grape_variety_id'],
+            'area_planted'     => $data['area_planted'],
+            'planting_year'    => $data['planting_year'],
+            'name'             => $data['name'] ?? null,
+            'irrigated'        => $data['irrigated'] ?? false,
+            'status'           => 'active',
+            'active'           => true,
+        ]);
+
+        $planting->load(['grapeVariety', 'trainingSystem']);
+
+        return response()->json(['data' => [
+            'id'              => $planting->id,
+            'name'            => $planting->name,
+            'grape_variety'   => $planting->grapeVariety?->name,
+            'planted_area'    => (float) $planting->area_planted,
+            'planting_year'   => $planting->planting_year,
+            'irrigated'       => (bool) $planting->irrigated,
+            'status'          => $planting->status,
+        ]], 201);
+    }
+
     // ─── GET /winery/plots/{id}/harvest-quality ───────────────────────────────
 
     public function harvestQuality(Request $request, int $id): JsonResponse
