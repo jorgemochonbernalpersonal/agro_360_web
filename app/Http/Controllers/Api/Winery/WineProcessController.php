@@ -110,9 +110,10 @@ class WineProcessController extends Controller
             'wine_id'              => 'required|integer|exists:wines,id',
             'container_id'         => 'required|integer|exists:containers,id',
             'loss_type'            => 'required|string|in:evaporation,filtration,sampling,spillage,other',
-            'loss_authorization'   => 'required|string|in:authorized,processing,extraordinary,quality',
-            'quantity'             => 'required|numeric|min:0.001',
-            'loss_date'            => 'required|date',
+            'loss_authorization'      => 'required|string|in:authorized,processing,extraordinary,quality',
+            'unit_of_measurement_id'  => 'required|integer|exists:units_of_measurement,id',
+            'quantity'                => 'required|numeric|min:0.001',
+            'loss_date'               => 'required|date',
             'regulatory_reference' => 'nullable|string|max:255',
             'notes'                => 'nullable|string|max:1000',
         ]);
@@ -120,12 +121,9 @@ class WineProcessController extends Controller
         Wine::forUser($user->id)->findOrFail($validated['wine_id']);
         Container::where('user_id', $user->id)->findOrFail($validated['container_id']);
 
-        $litersUnit = UnitOfMeasurement::where('symbol', 'L')->firstOrFail();
-
         $loss = WineLoss::create([
             ...$validated,
-            'unit_of_measurement_id' => $litersUnit->id,
-            'created_by'             => $user->id,
+            'created_by' => $user->id,
         ]);
 
         $loss->load(['wine', 'container']);
