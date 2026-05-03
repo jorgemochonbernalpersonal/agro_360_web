@@ -120,9 +120,12 @@ class WineProcessController extends Controller
         Wine::forUser($user->id)->findOrFail($validated['wine_id']);
         Container::where('user_id', $user->id)->findOrFail($validated['container_id']);
 
+        $litersUnit = UnitOfMeasurement::where('symbol', 'L')->firstOrFail();
+
         $loss = WineLoss::create([
             ...$validated,
-            'created_by' => $user->id,
+            'unit_of_measurement_id' => $litersUnit->id,
+            'created_by'             => $user->id,
         ]);
 
         $loss->load(['wine', 'container']);
