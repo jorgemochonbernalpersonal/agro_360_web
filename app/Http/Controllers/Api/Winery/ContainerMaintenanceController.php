@@ -94,7 +94,7 @@ class ContainerMaintenanceController extends Controller
         $validated = $request->validate([
             'container_id'          => 'required|integer|exists:containers,id',
             'maintenance_type'      => 'required|string|in:' . implode(',', array_keys(ContainerMaintenance::TYPES)),
-            'maintenance_name'      => 'nullable|string|max:255',
+            'maintenance_name'      => 'required|string|max:255',
             'scheduled_date'        => 'nullable|date',
             'performed_date'        => 'nullable|date',
             'next_maintenance_date' => 'nullable|date',
@@ -184,7 +184,7 @@ class ContainerMaintenanceController extends Controller
 
         $validated = $request->validate([
             'maintenance_type'      => 'sometimes|string|in:' . implode(',', array_keys(ContainerMaintenance::TYPES)),
-            'maintenance_name'      => 'sometimes|nullable|string|max:255',
+            'maintenance_name'      => 'sometimes|string|max:255',
             'scheduled_date'        => 'sometimes|nullable|date',
             'performed_date'        => 'sometimes|nullable|date',
             'next_maintenance_date' => 'sometimes|nullable|date',

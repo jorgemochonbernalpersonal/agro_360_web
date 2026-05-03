@@ -94,7 +94,7 @@ class WineAdditiveController extends Controller
             'oenologist_id'          => 'nullable|integer|exists:oenologists,id',
             'unit_of_measurement_id' => 'nullable|integer|exists:unit_of_measurements,id',
             'additive_name'          => 'required|string|max:255',
-            'quantity'               => 'nullable|numeric|min:0',
+            'quantity'               => 'required|numeric|min:0',
             'application_date'       => 'required|date',
             'notes'                  => 'nullable|string|max:1000',
         ]);
@@ -126,7 +126,7 @@ class WineAdditiveController extends Controller
             'oenologist_id'          => 'sometimes|nullable|integer|exists:oenologists,id',
             'unit_of_measurement_id' => 'sometimes|nullable|integer|exists:unit_of_measurements,id',
             'additive_name'          => 'sometimes|string|max:255',
-            'quantity'               => 'sometimes|nullable|numeric|min:0',
+            'quantity'               => 'sometimes|numeric|min:0',
             'application_date'       => 'sometimes|date',
             'notes'                  => 'sometimes|nullable|string|max:1000',
         ]);
