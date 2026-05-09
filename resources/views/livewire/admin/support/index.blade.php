@@ -96,8 +96,8 @@
                     </x-agro.table-cell>
 
                     <x-agro.table-cell>
-                        <p class="text-sm font-semibold text-zinc-900">{{ $ticket->user->name }}</p>
-                        <p class="text-xs text-zinc-400">{{ $ticket->user->email }}</p>
+                        <p class="text-sm font-semibold text-zinc-900">{{ $ticket->user?->name ?? 'Usuario eliminado' }}</p>
+                        <p class="text-xs text-zinc-400">{{ $ticket->user?->email ?? '' }}</p>
                     </x-agro.table-cell>
 
                     <x-agro.table-cell>
@@ -171,7 +171,7 @@
                                 {{ $selectedTicket->getPriorityLabel() }}
                             </flux:badge>
                             <span class="text-sm text-zinc-500">{{ $selectedTicket->getTypeLabel() }}</span>
-                            <span class="text-sm text-zinc-400">por {{ $selectedTicket->user->name }}</span>
+                            <span class="text-sm text-zinc-400">por {{ $selectedTicket->user?->name ?? 'Usuario eliminado' }}</span>
                         </div>
                     </div>
                     <flux:button

@@ -101,7 +101,10 @@ class ContainerController extends Controller
             'notes'              => 'nullable|string|max:1000',
         ]);
 
-        $container = Container::create(array_merge($validated, [
+        // Strip nulls so DB column defaults (type_id, material_id) kick in
+        $filtered = array_filter($validated, fn($v) => !is_null($v));
+
+        $container = Container::create(array_merge($filtered, [
             'user_id'       => $user->id,
             'used_capacity' => 0,
             'archived'      => false,
