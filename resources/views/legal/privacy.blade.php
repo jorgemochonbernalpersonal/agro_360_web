@@ -106,6 +106,14 @@
                                 <li>Logs de actividad para seguridad del servicio</li>
                             </ul>
                         </div>
+                        <div>
+                            <h3 class="font-semibold text-lg mb-2">3.4 Permisos de la Aplicación Móvil</h3>
+                            <ul class="list-disc list-inside space-y-1 ml-4">
+                                <li><strong>Ubicación GPS</strong>: usada exclusivamente para centrar el mapa en tu posición actual dentro de la app. No se almacena ni se transmite a nuestros servidores.</li>
+                                <li><strong>Cámara</strong>: usada para adjuntar fotografías en el cuaderno de campo. Las imágenes solo se guardan si el usuario las sube explícitamente.</li>
+                                <li><strong>Biometría</strong> (huella dactilar / Face ID): usada para desbloquear la sesión de forma segura. Los datos biométricos nunca salen del dispositivo; son gestionados exclusivamente por el sistema operativo del dispositivo, no por Agro365.</li>
+                            </ul>
+                        </div>
                     </div>
                 </section>
 
