@@ -125,7 +125,7 @@ class User extends Authenticatable implements MustVerifyEmail
     public const ROLE_DO                 = 'supervisor';
 
     /**
-     * Scope: excluir usuarios demo/test/placeholder.
+     * Scope: excluir usuarios demo/test/placeholder/internos.
      */
     public function scopeExcludeDemo($query)
     {
@@ -133,8 +133,12 @@ class User extends Authenticatable implements MustVerifyEmail
             $q->where('email', 'not like', '%demo%')
               ->where('email', 'not like', '%test%')
               ->where('email', 'not like', '%@noemail.agro365.es')
+              ->where('email', 'not like', '%bernalmochonjorge%')
+              ->where('email', 'not like', '%bernhshsj%')
+              ->where('email', 'not like', '%jorgemochonb%')
               ->where('name', 'not like', '%demo%')
-              ->where('name', 'not like', '%test%');
+              ->where('name', 'not like', '%test%')
+              ->where('name', 'not like', '%maestro%');
         });
     }
 
