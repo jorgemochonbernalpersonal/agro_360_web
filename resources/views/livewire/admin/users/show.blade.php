@@ -159,10 +159,32 @@
                 <p class="text-xs text-zinc-400 mt-1">Módulos: viticultores externos, aforos, disputas, facturas de uva</p>
             </div>
             @endif
+            @if($user->dni)
+            <div>
+                <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">DNI/NIF</p>
+                <p class="text-sm font-semibold text-zinc-900 mt-0.5">{{ $user->dni }}</p>
+            </div>
+            @endif
+            @if($user->organization)
+            <div>
+                <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">Organización</p>
+                <p class="text-sm font-semibold text-zinc-900 mt-0.5">{{ $user->organization->name }}</p>
+                <p class="text-xs text-zinc-400">{{ $user->organization->type === 'denomination_of_origin' ? 'DO' : 'Bodega' }}</p>
+            </div>
+            @endif
             <div>
                 <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">Fecha de Registro</p>
                 <p class="text-sm font-semibold text-zinc-900 mt-0.5">{{ $user->created_at->format('d/m/Y H:i') }}</p>
                 <p class="text-xs text-zinc-400">{{ $user->created_at->diffForHumans() }}</p>
+            </div>
+            <div>
+                <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">Última Conexión</p>
+                @if($user->last_login_at)
+                    <p class="text-sm font-semibold text-zinc-900 mt-0.5">{{ $user->last_login_at->format('d/m/Y H:i') }}</p>
+                    <p class="text-xs text-zinc-400">{{ $user->last_login_at->diffForHumans() }}</p>
+                @else
+                    <p class="text-sm text-zinc-400 mt-0.5">Nunca</p>
+                @endif
             </div>
             @if($user->email_verified_at)
                 <div>

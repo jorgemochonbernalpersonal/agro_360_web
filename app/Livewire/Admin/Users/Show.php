@@ -41,7 +41,7 @@ class Show extends Component
             $this->user_id = $user->id;
         } else {
             $this->user_id = $user;
-            $this->user    = User::findOrFail($this->user_id);
+            $this->user    = User::with('organization')->findOrFail($this->user_id);
         }
 
         $this->loadStats();
