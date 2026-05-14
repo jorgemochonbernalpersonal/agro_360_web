@@ -5,6 +5,8 @@ namespace App\Livewire\Admin\Subscriptions;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Payment;
 use App\Models\Subscription;
+use App\Services\SecurityLogger;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -26,12 +28,21 @@ class Index extends Component
 
     public function cancelSubscription(int $id): void
     {
-        $subscription = Subscription::findOrFail($id);
+        $subscription = Subscription::with('user')->findOrFail($id);
 
         if ($subscription->status === Subscription::STATUS_CANCELLED) {
             $this->toastError('La suscripción ya está cancelada.');
             return;
         }
+
+        SecurityLogger::logSecurityEvent('subscription_cancelled_by_admin', [
+            'admin_id'        => Auth::id(),
+            'subscription_id' => $subscription->id,
+            'user_id'         => $subscription->user_id,
+            'user_email'      => $subscription->user?->email,
+            'plan_type'       => $subscription->plan_type,
+            'amount'          => $subscription->amount,
+        ]);
 
         $subscription->cancel();
         $this->toastSuccess('Suscripción cancelada correctamente.');

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Users;
 
+use App\Models\AppSetting;
 use App\Models\User;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Services\SecurityLogger;
@@ -31,8 +32,13 @@ class Index extends Component
     public $createForceReset = false;
     public $createSendVerification = true;
 
-    // Beta date (replaces hardcoded value)
-    public $betaEndsAt = '2026-06-30';
+    // Beta date from settings
+    public $betaEndsAt = '';
+
+    public function mount(): void
+    {
+        $this->betaEndsAt = AppSetting::get('beta_end_date', '2026-06-30');
+    }
 
     // Bulk operations
     public $selectedUsers = [];
@@ -233,6 +239,7 @@ class Index extends Component
         session()->put('impersonating', true);
         session()->put('admin_id', Auth::id());
         session()->put('admin_name', Auth::user()->name);
+        session()->put('impersonation_started_at', now()->timestamp);
 
         SecurityLogger::logImpersonation(Auth::id(), $targetUser->id);
 

@@ -265,6 +265,7 @@ class Show extends Component
         session()->put('impersonating', true);
         session()->put('admin_id', Auth::id());
         session()->put('admin_name', Auth::user()->name);
+        session()->put('impersonation_started_at', now()->timestamp);
 
         SecurityLogger::logImpersonation(Auth::id(), $this->user->id);
 

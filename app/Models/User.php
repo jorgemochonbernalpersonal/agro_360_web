@@ -125,11 +125,16 @@ class User extends Authenticatable implements MustVerifyEmail
     public const ROLE_DO                 = 'supervisor';
 
     /**
-     * Scope: excluir usuarios demo/test (email contiene "demo").
+     * Scope: excluir usuarios demo/test (email o nombre contiene "demo" o "test").
      */
     public function scopeExcludeDemo($query)
     {
-        return $query->where('email', 'not like', '%demo%');
+        return $query->where(function ($q) {
+            $q->where('email', 'not like', '%demo%')
+              ->where('email', 'not like', '%test%')
+              ->where('name', 'not like', '%demo%')
+              ->where('name', 'not like', '%test%');
+        });
     }
 
     /**

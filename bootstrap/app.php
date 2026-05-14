@@ -30,6 +30,9 @@ return Application::configure(basePath: dirname(__DIR__))
             '/logout',
         ]);
 
+        // Timeout automático de impersonación (60 min)
+        $middleware->append(\App\Http\Middleware\ImpersonationTimeout::class);
+
         $middleware->alias([
             'role'             => \App\Http\Middleware\CheckRole::class,
             'api.role'         => \App\Http\Middleware\ApiRole::class,

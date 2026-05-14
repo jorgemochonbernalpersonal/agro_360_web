@@ -68,16 +68,33 @@
 
         {{-- Impersonation banner --}}
         @if(session('impersonating'))
-            <div class="fixed top-16 left-0 right-0 z-50 bg-red-600 text-white shadow-lg">
-                <div class="container mx-auto px-4 py-3 flex items-center justify-between">
-                    <span class="font-semibold">
-                        Estás viendo como: <strong>{{ auth()->user()->name }}</strong> ({{ auth()->user()->email }})
-                    </span>
-                    <form method="POST" action="{{ route('admin.users.stop-impersonate') }}" class="inline">
+            <div class="fixed top-16 left-0 right-0 z-50 bg-amber-500 text-amber-950 shadow-md lg:left-16"
+                 x-data="{ elapsed: '' }"
+                 x-init="
+                    const start = {{ session('impersonation_started_at', now()->timestamp) }};
+                    setInterval(() => {
+                        const diff = Math.floor(Date.now() / 1000) - start;
+                        const m = Math.floor(diff / 60);
+                        const s = diff % 60;
+                        elapsed = m + ':' + String(s).padStart(2, '0');
+                    }, 1000);
+                 "
+            >
+                <div class="px-4 py-2 flex items-center justify-between gap-4">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <flux:icon icon="eye" class="size-4 flex-shrink-0" />
+                        <span class="text-sm font-medium truncate">
+                            Viendo como <strong>{{ auth()->user()->name }}</strong>
+                            <span class="hidden sm:inline text-amber-800">({{ auth()->user()->email }})</span>
+                        </span>
+                        <span class="text-xs font-mono bg-amber-600/30 rounded px-1.5 py-0.5 flex-shrink-0" x-text="elapsed"></span>
+                    </div>
+                    <form method="POST" action="{{ route('admin.users.stop-impersonate') }}">
                         @csrf
-                        <flux:button type="submit" variant="outline" size="sm" class="!bg-white !text-red-600 !border-white">
+                        <button type="submit" class="flex items-center gap-1.5 px-3 py-1.5 text-sm font-semibold bg-white text-amber-900 rounded-lg hover:bg-amber-50 transition-colors shadow-sm">
+                            <flux:icon icon="arrow-uturn-left" class="size-3.5" />
                             Volver a Admin
-                        </flux:button>
+                        </button>
                     </form>
                 </div>
             </div>

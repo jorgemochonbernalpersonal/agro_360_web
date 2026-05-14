@@ -15,11 +15,18 @@ class StopImpersonationController extends Controller
         $adminId = session()->get('admin_id');
         $targetUserId = Auth::id();
 
-        if (!$adminId) {
-            return redirect()->route('admin.dashboard');
+        // Solo funciona si hay una sesión de impersonación activa
+        if (!$adminId || !session()->has('impersonating')) {
+            abort(403);
         }
 
-        $admin = User::findOrFail($adminId);
+        $admin = User::find($adminId);
+
+        if (!$admin || !$admin->isAdmin()) {
+            session()->forget(['impersonating', 'admin_id', 'admin_name', 'impersonation_started_at']);
+            Auth::logout();
+            return redirect()->route('login');
+        }
 
         // Log de seguridad
         SecurityLogger::logImpersonationEnded($adminId, $targetUserId);
@@ -29,10 +36,9 @@ class StopImpersonationController extends Controller
         session()->regenerate();
 
         // Limpiar datos de impersonación
-        session()->forget(['impersonating', 'admin_id', 'admin_name']);
+        session()->forget(['impersonating', 'admin_id', 'admin_name', 'impersonation_started_at']);
 
         return redirect()->route('admin.users.index')
             ->with('success', 'Has vuelto a tu sesión de administrador.');
     }
 }
-

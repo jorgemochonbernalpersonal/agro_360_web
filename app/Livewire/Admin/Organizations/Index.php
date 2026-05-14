@@ -6,6 +6,8 @@ use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Organization;
 use App\Models\Province;
 use App\Models\User;
+use App\Services\SecurityLogger;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -129,6 +131,13 @@ class Index extends Component
                 $org->update(['slug' => Str::slug($this->name) . '-' . $org->id]);
             }
 
+            SecurityLogger::logSecurityEvent('organization_updated', [
+                'admin_id'        => Auth::id(),
+                'organization_id' => $org->id,
+                'org_name'        => $org->name,
+                'changes'         => $org->getChanges(),
+            ]);
+
             $this->toastSuccess('Organización actualizada correctamente.');
         } else {
             $data['slug'] = $this->uniqueSlug($this->name);
@@ -141,6 +150,13 @@ class Index extends Component
                     ->update(['organization_id' => $org->id]);
             }
 
+            SecurityLogger::logSecurityEvent('organization_created', [
+                'admin_id'        => Auth::id(),
+                'organization_id' => $org->id,
+                'org_name'        => $org->name,
+                'type'            => $org->type,
+            ]);
+
             $this->toastSuccess('Organización creada correctamente.');
         }
 
@@ -152,10 +168,19 @@ class Index extends Component
     public function delete(int $id): void
     {
         $org = Organization::findOrFail($id);
+        $orgName = $org->name;
+        $memberCount = User::where('organization_id', $id)->count();
 
         // Unlink members before deleting
         User::where('organization_id', $id)->update(['organization_id' => null]);
         $org->delete();
+
+        SecurityLogger::logSecurityEvent('organization_deleted', [
+            'admin_id'        => Auth::id(),
+            'organization_id' => $id,
+            'org_name'        => $orgName,
+            'members_unlinked' => $memberCount,
+        ]);
 
         $this->toastSuccess('Organización eliminada.');
     }

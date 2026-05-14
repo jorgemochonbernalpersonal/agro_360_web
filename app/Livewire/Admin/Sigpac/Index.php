@@ -4,6 +4,8 @@ namespace App\Livewire\Admin\Sigpac;
 
 use App\Models\SigpacCode;
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Services\SecurityLogger;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -29,6 +31,12 @@ class Index extends Component
         }
 
         SigpacCode::doesntHave('plots')->delete();
+
+        SecurityLogger::logSecurityEvent('sigpac_orphaned_deleted', [
+            'admin_id' => Auth::id(),
+            'count'    => $count,
+        ]);
+
         $this->toastSuccess("{$count} código(s) SIGPAC huérfanos eliminados.");
     }
 
@@ -36,6 +44,13 @@ class Index extends Component
     {
         $sigpac = SigpacCode::findOrFail($sigpacId);
         $code   = $sigpac->code;
+
+        SecurityLogger::logSecurityEvent('sigpac_deleted', [
+            'admin_id'  => Auth::id(),
+            'sigpac_id' => $sigpacId,
+            'code'      => $code,
+        ]);
+
         $sigpac->delete();
         $this->toastSuccess("Código SIGPAC {$code} eliminado.");
     }

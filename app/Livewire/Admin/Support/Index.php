@@ -5,6 +5,8 @@ namespace App\Livewire\Admin\Support;
 use App\Models\SupportTicket;
 use App\Models\User;
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Services\SecurityLogger;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -49,8 +51,18 @@ class Index extends Component
             return;
         }
 
+        $previousAssignee = $this->selectedTicket->assigned_to;
         $this->selectedTicket->update(['assigned_to' => $this->assignTo ?: null]);
         $this->selectedTicket = $this->selectedTicket->fresh(['assignedTo']);
+
+        SecurityLogger::logSecurityEvent('support_ticket_assigned', [
+            'admin_id'      => Auth::id(),
+            'ticket_id'     => $this->selectedTicket->id,
+            'ticket_title'  => $this->selectedTicket->title,
+            'from_user_id'  => $previousAssignee,
+            'to_user_id'    => $this->assignTo ?: null,
+        ]);
+
         $this->toastSuccess('Ticket asignado correctamente.');
     }
 
@@ -61,6 +73,7 @@ class Index extends Component
             return;
         }
 
+        $previousStatus = $this->selectedTicket->status;
         $this->selectedTicket->update(['status' => $status]);
 
         if ($status === 'resolved') {
@@ -70,6 +83,15 @@ class Index extends Component
         }
 
         $this->selectedTicket = $this->selectedTicket->fresh();
+
+        SecurityLogger::logSecurityEvent('support_ticket_status_changed', [
+            'admin_id'     => Auth::id(),
+            'ticket_id'    => $this->selectedTicket->id,
+            'ticket_title' => $this->selectedTicket->title,
+            'from_status'  => $previousStatus,
+            'to_status'    => $status,
+        ]);
+
         $this->toastSuccess('Estado del ticket actualizado.');
     }
 
@@ -81,6 +103,13 @@ class Index extends Component
         if ($this->selectedTicket && $this->selectedTicket->id === $ticketId) {
             $this->closeTicketDetail();
         }
+
+        SecurityLogger::logSecurityEvent('support_ticket_deleted', [
+            'admin_id'     => Auth::id(),
+            'ticket_id'    => $ticketId,
+            'ticket_title' => $title,
+            'user_id'      => $ticket->user_id,
+        ]);
 
         $ticket->delete();
         $this->toastSuccess("Ticket \"{$title}\" eliminado.");

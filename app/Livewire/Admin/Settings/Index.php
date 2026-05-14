@@ -4,6 +4,8 @@ namespace App\Livewire\Admin\Settings;
 
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\AppSetting;
+use App\Services\SecurityLogger;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -49,9 +51,31 @@ class Index extends Component
     {
         $this->validateOnly('support_email');
 
+        $changes = [];
+        $oldRegistration = AppSetting::getBool('registration_open', true);
+        $oldMaintenance  = AppSetting::getBool('maintenance_mode', false);
+        $oldEmail        = AppSetting::get('support_email', '');
+
+        if ($oldRegistration !== $this->registration_open) {
+            $changes['registration_open'] = ['from' => $oldRegistration, 'to' => $this->registration_open];
+        }
+        if ($oldMaintenance !== $this->maintenance_mode) {
+            $changes['maintenance_mode'] = ['from' => $oldMaintenance, 'to' => $this->maintenance_mode];
+        }
+        if ($oldEmail !== $this->support_email) {
+            $changes['support_email'] = ['from' => $oldEmail, 'to' => $this->support_email];
+        }
+
         AppSetting::set('registration_open', $this->registration_open ? '1' : '0');
         AppSetting::set('maintenance_mode',  $this->maintenance_mode  ? '1' : '0');
         AppSetting::set('support_email',     $this->support_email);
+
+        if (!empty($changes)) {
+            SecurityLogger::logSecurityEvent('settings_platform_changed', [
+                'admin_id' => Auth::id(),
+                'changes'  => $changes,
+            ]);
+        }
 
         $this->toastSuccess('Configuración de plataforma guardada.');
     }
@@ -60,7 +84,17 @@ class Index extends Component
     {
         $this->validateOnly('beta_end_date');
 
+        $oldDate = AppSetting::get('beta_end_date', '');
+
         AppSetting::set('beta_end_date', $this->beta_end_date);
+
+        if ($oldDate !== $this->beta_end_date) {
+            SecurityLogger::logSecurityEvent('settings_beta_date_changed', [
+                'admin_id' => Auth::id(),
+                'from'     => $oldDate,
+                'to'       => $this->beta_end_date,
+            ]);
+        }
 
         $this->toastSuccess('Fecha beta actualizada.');
     }

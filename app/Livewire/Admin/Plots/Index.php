@@ -5,6 +5,8 @@ namespace App\Livewire\Admin\Plots;
 use App\Models\Plot;
 use App\Models\User;
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Services\SecurityLogger;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -58,10 +60,21 @@ class Index extends Component
         ]);
 
         $plot = Plot::findOrFail($this->reassignPlotId);
+        $previousOwnerId = $plot->viticulturist_id;
         $plot->viticulturist_id = $this->reassignViticulturistId;
         $plot->save();
 
         $newOwner = User::find($this->reassignViticulturistId);
+
+        SecurityLogger::logSecurityEvent('plot_reassigned', [
+            'admin_id'          => Auth::id(),
+            'plot_id'           => $plot->id,
+            'plot_name'         => $plot->name,
+            'from_user_id'      => $previousOwnerId,
+            'to_user_id'        => (int) $this->reassignViticulturistId,
+            'to_user_name'      => $newOwner->name,
+        ]);
+
         $this->closeReassignModal();
         $this->toastSuccess("Parcela \"{$plot->name}\" reasignada a {$newOwner->name}.");
     }

@@ -8,19 +8,20 @@ use App\Models\Client;
 use App\Models\Invoice;
 use App\Models\AgriculturalActivity;
 use App\Models\SupportTicket;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class Dashboard extends Component
 {
     public function exportCsv()
     {
-        $users    = User::orderBy('created_at', 'desc')->get();
+        $users    = User::excludeDemo()->orderBy('created_at', 'desc')->get();
         $filename = 'usuarios_' . now()->format('Y-m-d_H-i-s') . '.csv';
 
         return response()->streamDownload(function () use ($users) {
             $handle = fopen('php://output', 'w');
             fputs($handle, "\xEF\xBB\xBF"); // UTF-8 BOM for Excel
-            fputcsv($handle, ['ID', 'Nombre', 'Email', 'Rol', 'Estado', 'Email Verificado', 'Beta', 'Fin Beta', 'Registro']);
+            fputcsv($handle, ['ID', 'Nombre', 'Email', 'Rol', 'Estado', 'Email Verificado', 'Beta', 'Fin Beta', 'Última Conexión', 'Registro']);
 
             foreach ($users as $user) {
                 fputcsv($handle, [
@@ -32,6 +33,7 @@ class Dashboard extends Component
                     $user->email_verified_at ? 'Sí' : 'No',
                     $user->is_beta_user ? 'Sí' : 'No',
                     $user->beta_ends_at ? $user->beta_ends_at->format('d/m/Y') : '',
+                    $user->last_login_at ? $user->last_login_at->format('d/m/Y H:i') : 'Nunca',
                     $user->created_at->format('d/m/Y H:i'),
                 ]);
             }
@@ -42,56 +44,104 @@ class Dashboard extends Component
 
     public function render()
     {
+        $now = now();
+        $year = $now->year;
+        $month = $now->month;
+
+        // Optimized: batch user counts in a single query
+        $userStats = DB::table('users')
+            ->selectRaw("COUNT(*) as total")
+            ->selectRaw("SUM(CASE WHEN role = 'admin' THEN 1 ELSE 0 END) as admin")
+            ->selectRaw("SUM(CASE WHEN role = 'supervisor' THEN 1 ELSE 0 END) as supervisor")
+            ->selectRaw("SUM(CASE WHEN role = 'winery' THEN 1 ELSE 0 END) as winery")
+            ->selectRaw("SUM(CASE WHEN role = 'viticulturist' THEN 1 ELSE 0 END) as viticulturist")
+            ->selectRaw("SUM(CASE WHEN role = 'producer' THEN 1 ELSE 0 END) as producer")
+            ->selectRaw("SUM(CASE WHEN can_login = 1 THEN 1 ELSE 0 END) as active")
+            ->selectRaw("SUM(CASE WHEN email_verified_at IS NOT NULL THEN 1 ELSE 0 END) as verified")
+            ->selectRaw("SUM(CASE WHEN MONTH(created_at) = ? AND YEAR(created_at) = ? THEN 1 ELSE 0 END) as new_this_month", [$month, $year])
+            ->first();
+
+        // Optimized: batch plot counts
+        $plotStats = DB::table('plots')
+            ->selectRaw("COUNT(*) as total")
+            ->selectRaw("COALESCE(SUM(area), 0) as total_area")
+            ->selectRaw("SUM(CASE WHEN MONTH(created_at) = ? AND YEAR(created_at) = ? THEN 1 ELSE 0 END) as new_this_month", [$month, $year])
+            ->first();
+
+        // Optimized: batch client counts
+        $clientStats = DB::table('clients')
+            ->selectRaw("COUNT(*) as total")
+            ->selectRaw("SUM(CASE WHEN active = 1 THEN 1 ELSE 0 END) as active")
+            ->selectRaw("SUM(CASE WHEN client_type = 'individual' THEN 1 ELSE 0 END) as individual")
+            ->selectRaw("SUM(CASE WHEN client_type = 'company' THEN 1 ELSE 0 END) as company")
+            ->first();
+
+        // Optimized: batch invoice counts
+        $invoiceStats = DB::table('invoices')
+            ->selectRaw("COUNT(*) as total")
+            ->selectRaw("SUM(CASE WHEN YEAR(invoice_date) = ? THEN 1 ELSE 0 END) as this_year", [$year])
+            ->selectRaw("COALESCE(SUM(CASE WHEN YEAR(invoice_date) = ? THEN total_amount ELSE 0 END), 0) as this_year_amount", [$year])
+            ->selectRaw("SUM(CASE WHEN payment_status = 'unpaid' AND status != 'cancelled' THEN 1 ELSE 0 END) as pending")
+            ->first();
+
+        // Optimized: batch activity counts
+        $activityStats = DB::table('agricultural_activities')
+            ->selectRaw("COUNT(*) as total")
+            ->selectRaw("SUM(CASE WHEN YEAR(activity_date) = ? THEN 1 ELSE 0 END) as this_year", [$year])
+            ->selectRaw("SUM(CASE WHEN YEAR(activity_date) = ? AND MONTH(activity_date) = ? THEN 1 ELSE 0 END) as this_month", [$year, $month])
+            ->first();
+
+        // Optimized: batch support ticket counts
+        $supportStats = DB::table('support_tickets')
+            ->selectRaw("COUNT(*) as total")
+            ->selectRaw("SUM(CASE WHEN status IN ('open', 'in_progress') THEN 1 ELSE 0 END) as open")
+            ->selectRaw("SUM(CASE WHEN status = 'in_progress' THEN 1 ELSE 0 END) as in_progress")
+            ->selectRaw("SUM(CASE WHEN status = 'resolved' THEN 1 ELSE 0 END) as resolved")
+            ->selectRaw("SUM(CASE WHEN created_at >= ? THEN 1 ELSE 0 END) as new_this_week", [$now->subWeek()])
+            ->first();
+
         $stats = [
             'users' => [
-                'total' => User::count(),
-                'by_role' => [
-                    'admin'         => User::where('role', 'admin')->count(),
-                    'supervisor'    => User::where('role', 'supervisor')->count(),
-                    'winery'        => User::where('role', 'winery')->count(),
-                    'viticulturist' => User::where('role', 'viticulturist')->count(),
-                    'producer'      => User::where('role', 'producer')->count(),
+                'total'          => (int) $userStats->total,
+                'by_role'        => [
+                    'admin'         => (int) $userStats->admin,
+                    'supervisor'    => (int) $userStats->supervisor,
+                    'winery'        => (int) $userStats->winery,
+                    'viticulturist' => (int) $userStats->viticulturist,
+                    'producer'      => (int) $userStats->producer,
                 ],
-                'active'         => User::where('can_login', true)->count(),
-                'verified'       => User::whereNotNull('email_verified_at')->count(),
-                'new_this_month' => User::whereMonth('created_at', now()->month)
-                    ->whereYear('created_at', now()->year)
-                    ->count(),
+                'active'         => (int) $userStats->active,
+                'verified'       => (int) $userStats->verified,
+                'new_this_month' => (int) $userStats->new_this_month,
             ],
             'plots' => [
-                'total'          => Plot::count(),
-                'total_area'     => Plot::sum('area') ?? 0,
-                'new_this_month' => Plot::whereMonth('created_at', now()->month)
-                    ->whereYear('created_at', now()->year)
-                    ->count(),
+                'total'          => (int) $plotStats->total,
+                'total_area'     => (float) $plotStats->total_area,
+                'new_this_month' => (int) $plotStats->new_this_month,
             ],
             'clients' => [
-                'total'      => Client::count(),
-                'active'     => Client::where('active', true)->count(),
-                'individual' => Client::where('client_type', 'individual')->count(),
-                'company'    => Client::where('client_type', 'company')->count(),
+                'total'      => (int) $clientStats->total,
+                'active'     => (int) $clientStats->active,
+                'individual' => (int) $clientStats->individual,
+                'company'    => (int) $clientStats->company,
             ],
             'invoices' => [
-                'total'           => Invoice::count(),
-                'this_year'       => Invoice::whereYear('invoice_date', now()->year)->count(),
-                'this_year_amount'=> Invoice::whereYear('invoice_date', now()->year)->sum('total_amount') ?? 0,
-                'pending'         => Invoice::where('payment_status', 'unpaid')
-                    ->where('status', '!=', 'cancelled')
-                    ->count(),
+                'total'            => (int) $invoiceStats->total,
+                'this_year'        => (int) $invoiceStats->this_year,
+                'this_year_amount' => (float) $invoiceStats->this_year_amount,
+                'pending'          => (int) $invoiceStats->pending,
             ],
             'activities' => [
-                'total'      => AgriculturalActivity::count(),
-                'this_year'  => AgriculturalActivity::whereYear('activity_date', now()->year)->count(),
-                'this_month' => AgriculturalActivity::whereYear('activity_date', now()->year)
-                    ->whereMonth('activity_date', now()->month)
-                    ->count(),
+                'total'      => (int) $activityStats->total,
+                'this_year'  => (int) $activityStats->this_year,
+                'this_month' => (int) $activityStats->this_month,
             ],
             'support' => [
-                'total'         => SupportTicket::count(),
-                'open'          => SupportTicket::open()->count(),
-                'in_progress'   => SupportTicket::where('status', 'in_progress')->count(),
-                'resolved'      => SupportTicket::where('status', 'resolved')->count(),
-                'new_this_week' => SupportTicket::where('created_at', '>=', now()->subWeek())->count(),
+                'total'         => (int) $supportStats->total,
+                'open'          => (int) $supportStats->open,
+                'in_progress'   => (int) $supportStats->in_progress,
+                'resolved'      => (int) $supportStats->resolved,
+                'new_this_week' => (int) $supportStats->new_this_week,
             ],
         ];
 

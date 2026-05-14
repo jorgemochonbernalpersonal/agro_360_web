@@ -287,7 +287,7 @@
                         </x-agro.table-row>
                     @empty
                         <tr>
-                            <td colspan="7">
+                            <td colspan="8">
                                 <x-agro.empty-state
                                     icon="users"
                                     message="No se encontraron usuarios"

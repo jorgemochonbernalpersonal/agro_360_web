@@ -2,6 +2,15 @@
 
 use Illuminate\Support\Facades\Route;
 
+// Ruta de stop-impersonate FUERA del middleware role:admin
+// porque durante la impersonación el usuario actual NO es admin
+Route::middleware(['auth'])
+    ->prefix('admin/users')
+    ->name('admin.users.')
+    ->group(function () {
+        Route::post('/stop-impersonate', \App\Http\Controllers\Admin\StopImpersonationController::class)->name('stop-impersonate');
+    });
+
 Route::middleware(['role:admin'])
     ->prefix('admin')
     ->name('admin.')
@@ -12,7 +21,6 @@ Route::middleware(['role:admin'])
         Route::prefix('users')->name('users.')->group(function () {
             Route::get('/', \App\Livewire\Admin\Users\Index::class)->name('index');
             Route::get('/{user}', \App\Livewire\Admin\Users\Show::class)->name('show');
-            Route::post('/stop-impersonate', \App\Http\Controllers\Admin\StopImpersonationController::class)->name('stop-impersonate');
         });
 
         // Soporte
@@ -47,4 +55,3 @@ Route::middleware(['role:admin'])
         // Configuración global
         Route::get('/settings', \App\Livewire\Admin\Settings\Index::class)->name('settings.index');
     });
-
