@@ -328,7 +328,7 @@ class Index extends Component
 
     public function exportCsv()
     {
-        $users    = User::orderBy('created_at', 'desc')->get();
+        $users    = User::excludeDemo()->orderBy('created_at', 'desc')->get();
         $filename = 'usuarios_' . now()->format('Y-m-d_H-i-s') . '.csv';
 
         return response()->streamDownload(function () use ($users) {
@@ -358,7 +358,7 @@ class Index extends Component
 
     public function render()
     {
-        $query = User::query();
+        $query = User::excludeDemo();
 
         if ($this->currentTab !== 'all') {
             $query->where('role', $this->currentTab);
@@ -401,23 +401,23 @@ class Index extends Component
         $users = $query->orderBy('created_at', 'desc')->paginate(20);
 
         $stats = [
-            'total'   => User::count(),
+            'total'   => User::excludeDemo()->count(),
             'by_role' => [
-                'admin'         => User::where('role', 'admin')->count(),
-                'supervisor'    => User::where('role', 'supervisor')->count(),
-                'winery'        => User::where('role', 'winery')->count(),
-                'viticulturist' => User::where('role', 'viticulturist')->count(),
-                'producer'      => User::where('role', 'producer')->count(),
+                'admin'         => User::excludeDemo()->where('role', 'admin')->count(),
+                'supervisor'    => User::excludeDemo()->where('role', 'supervisor')->count(),
+                'winery'        => User::excludeDemo()->where('role', 'winery')->count(),
+                'viticulturist' => User::excludeDemo()->where('role', 'viticulturist')->count(),
+                'producer'      => User::excludeDemo()->where('role', 'producer')->count(),
             ],
-            'active'       => User::where('can_login', true)->count(),
-            'inactive'     => User::where('can_login', false)->count(),
-            'verified'     => User::whereNotNull('email_verified_at')->count(),
-            'unverified'   => User::whereNull('email_verified_at')->count(),
-            'beta_active'  => User::where('is_beta_user', true)
+            'active'       => User::excludeDemo()->where('can_login', true)->count(),
+            'inactive'     => User::excludeDemo()->where('can_login', false)->count(),
+            'verified'     => User::excludeDemo()->whereNotNull('email_verified_at')->count(),
+            'unverified'   => User::excludeDemo()->whereNull('email_verified_at')->count(),
+            'beta_active'  => User::excludeDemo()->where('is_beta_user', true)
                 ->where(function ($q) {
                     $q->whereNull('beta_ends_at')->orWhere('beta_ends_at', '>', now());
                 })->count(),
-            'beta_expired' => User::where('is_beta_user', true)
+            'beta_expired' => User::excludeDemo()->where('is_beta_user', true)
                 ->where('beta_ends_at', '<=', now())->count(),
         ];
 

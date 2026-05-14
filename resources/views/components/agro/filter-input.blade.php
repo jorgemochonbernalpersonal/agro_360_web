@@ -1,3 +1,3 @@
 @props(['placeholder' => 'Buscar...'])
 
-<flux:input icon="magnifying-glass" :placeholder="$placeholder" {{ $attributes }} />
+<flux:input icon="magnifying-glass" :placeholder="$placeholder" autocomplete="off" {{ $attributes }} />

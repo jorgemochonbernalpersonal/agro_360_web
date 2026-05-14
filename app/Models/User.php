@@ -46,6 +46,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'organization_id',
         'preferences',
         'notification_preferences',
+        'last_login_at',
     ];
 
     /**
@@ -79,6 +80,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'compra_uva_externa' => 'boolean',
             'preferences' => 'array',
             'notification_preferences' => 'array',
+            'last_login_at' => 'datetime',
         ];
     }
 
@@ -121,6 +123,14 @@ class User extends Authenticatable implements MustVerifyEmail
     public const ROLE_PRODUCER           = 'producer';
     // ROLE_DO is an alias for ROLE_SUPERVISOR — denomination_of_origin uses 'supervisor' in DB
     public const ROLE_DO                 = 'supervisor';
+
+    /**
+     * Scope: excluir usuarios demo/test (email contiene "demo").
+     */
+    public function scopeExcludeDemo($query)
+    {
+        return $query->where('email', 'not like', '%demo%');
+    }
 
     /**
      * Verificar si el usuario es admin

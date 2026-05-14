@@ -121,6 +121,9 @@ class AuthController extends Controller
             ], 403);
         }
 
+        // Registrar última conexión real
+        $user->update(['last_login_at' => now()]);
+
         $device = $request->device_name ?? 'mobile';
 
         // Revocar token previo del mismo dispositivo para no acumular

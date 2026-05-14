@@ -137,6 +137,9 @@ class Login extends Component
 
         session()->regenerate();
 
+        // Registrar última conexión real (no se actualiza en impersonación)
+        $user->update(['last_login_at' => now()]);
+
         // Si fue creado por otro usuario y no ha verificado email, forzar cambio de contraseña
         if ($user->needsPasswordChange()) {
             return $this->redirect(route('auth.change-password-required'), navigate: true);

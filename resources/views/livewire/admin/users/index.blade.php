@@ -146,6 +146,7 @@
                         <th class="px-6 py-3 text-left text-xs font-semibold text-zinc-600 uppercase tracking-wider">Email</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold text-zinc-600 uppercase tracking-wider">Estado</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold text-zinc-600 uppercase tracking-wider">Registro</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-zinc-600 uppercase tracking-wider">Última conexión</th>
                         <th class="px-6 py-3 text-right text-xs font-semibold text-zinc-600 uppercase tracking-wider">Acciones</th>
                     </tr>
                 </thead>
@@ -221,6 +222,15 @@
                             <x-agro.table-cell>
                                 <p class="text-sm text-zinc-700">{{ $user->created_at->format('d/m/Y') }}</p>
                                 <p class="text-xs text-zinc-400">{{ $user->created_at->diffForHumans() }}</p>
+                            </x-agro.table-cell>
+
+                            <x-agro.table-cell>
+                                @if($user->last_login_at)
+                                    <p class="text-sm text-zinc-700">{{ $user->last_login_at->format('d/m/Y H:i') }}</p>
+                                    <p class="text-xs text-zinc-400">{{ $user->last_login_at->diffForHumans() }}</p>
+                                @else
+                                    <p class="text-xs text-zinc-400">Nunca</p>
+                                @endif
                             </x-agro.table-cell>
 
                             <x-agro.table-cell align="right">
