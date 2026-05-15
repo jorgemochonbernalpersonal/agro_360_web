@@ -26,6 +26,7 @@
         <x-agro.tabs
             :tabs="['info' => 'Información', 'entorno' => 'Entorno (RD 1311/2012)']"
             :active="$currentTab"
+            wireMethod="switchTab"
         />
     @endif
 
