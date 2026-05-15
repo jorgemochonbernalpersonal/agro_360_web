@@ -131,6 +131,9 @@
                                     <h3 class="font-bold text-zinc-900 truncate">{{ $entry->plot->name ?? '—' }}</h3>
                                     <p class="text-xs text-zinc-400">{{ $entry->analysis_date->format('d/m/Y') }}</p>
                                 </div>
+                                @if ($entry->campaign)
+                                    <flux:badge color="zinc" size="sm" class="shrink-0">{{ $entry->campaign->year }}</flux:badge>
+                                @endif
                             </div>
                         </x-slot:header>
 
@@ -186,9 +189,15 @@
 
                             {{-- Laboratorio --}}
                             @if ($entry->laboratory)
-                                <p class="text-xs text-zinc-500 truncate" title="{{ $entry->laboratory }}">
-                                    {{ Str::limit($entry->laboratory, 40) }}
-                                </p>
+                                <div class="flex items-center gap-2 text-xs text-zinc-500">
+                                    <flux:icon icon="building-office" class="size-3.5 text-zinc-400 shrink-0" />
+                                    <span class="truncate">{{ $entry->laboratory }}</span>
+                                </div>
+                            @endif
+
+                            {{-- Notas --}}
+                            @if ($entry->notes)
+                                <p class="text-xs text-zinc-400 italic leading-relaxed line-clamp-2">{{ $entry->notes }}</p>
                             @endif
 
                         </div>
@@ -214,9 +223,9 @@
                 @endforeach
             </div>
 
-            @if ($entries->hasPages())
-                <div class="mt-6">{{ $entries->links() }}</div>
-            @endif
+            <div class="mt-6">
+                <x-agro.pagination :paginator="$entries" />
+            </div>
         @endif
     </div>
 

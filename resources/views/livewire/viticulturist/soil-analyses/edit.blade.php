@@ -39,7 +39,7 @@
 
                 <flux:field>
                     <flux:label>Laboratorio</flux:label>
-                    <flux:input wire:model="laboratory" type="text" />
+                    <flux:input wire:model="laboratory" type="text" placeholder="Ej: Laboratorio Agroalimentario" />
                     <flux:error name="laboratory" />
                 </flux:field>
 
@@ -58,34 +58,34 @@
 
                 <flux:field>
                     <flux:label>pH</flux:label>
-                    <flux:input wire:model="ph" type="number" step="0.01" min="0" max="14" />
+                    <flux:input wire:model="ph" type="number" step="0.01" min="0" max="14" placeholder="0 - 14" />
                     <flux:error name="ph" />
                 </flux:field>
 
                 <flux:field>
                     <flux:label>Materia orgánica</flux:label>
-                    <flux:input wire:model="organic_matter" type="number" step="0.01" min="0" />
+                    <flux:input wire:model="organic_matter" type="number" step="0.01" min="0" placeholder="Ej: 2.50" />
                     <flux:description>%</flux:description>
                     <flux:error name="organic_matter" />
                 </flux:field>
 
                 <flux:field>
                     <flux:label>Nitrógeno total</flux:label>
-                    <flux:input wire:model="nitrogen_total" type="number" step="0.01" min="0" />
+                    <flux:input wire:model="nitrogen_total" type="number" step="0.01" min="0" placeholder="Ej: 1.20" />
                     <flux:description>mg/kg</flux:description>
                     <flux:error name="nitrogen_total" />
                 </flux:field>
 
                 <flux:field>
                     <flux:label>Fósforo</flux:label>
-                    <flux:input wire:model="phosphorus" type="number" step="0.01" min="0" />
+                    <flux:input wire:model="phosphorus" type="number" step="0.01" min="0" placeholder="Ej: 15.00" />
                     <flux:description>mg/kg Olsen</flux:description>
                     <flux:error name="phosphorus" />
                 </flux:field>
 
                 <flux:field>
                     <flux:label>Potasio</flux:label>
-                    <flux:input wire:model="potassium" type="number" step="0.01" min="0" />
+                    <flux:input wire:model="potassium" type="number" step="0.01" min="0" placeholder="Ej: 200.00" />
                     <flux:description>mg/kg</flux:description>
                     <flux:error name="potassium" />
                 </flux:field>
@@ -99,14 +99,14 @@
 
                 <flux:field>
                     <flux:label>Calcio</flux:label>
-                    <flux:input wire:model="calcium" type="number" step="0.01" min="0" />
+                    <flux:input wire:model="calcium" type="number" step="0.01" min="0" placeholder="Ej: 3000.00" />
                     <flux:description>mg/kg</flux:description>
                     <flux:error name="calcium" />
                 </flux:field>
 
                 <flux:field>
                     <flux:label>Magnesio</flux:label>
-                    <flux:input wire:model="magnesium" type="number" step="0.01" min="0" />
+                    <flux:input wire:model="magnesium" type="number" step="0.01" min="0" placeholder="Ej: 250.00" />
                     <flux:description>mg/kg</flux:description>
                     <flux:error name="magnesium" />
                 </flux:field>
@@ -124,14 +124,14 @@
 
                 <flux:field>
                     <flux:label>Conductividad eléctrica</flux:label>
-                    <flux:input wire:model="electrical_conductivity" type="number" step="0.01" min="0" />
+                    <flux:input wire:model="electrical_conductivity" type="number" step="0.01" min="0" placeholder="Ej: 0.85" />
                     <flux:description>dS/m</flux:description>
                     <flux:error name="electrical_conductivity" />
                 </flux:field>
 
                 <flux:field>
                     <flux:label>Caliza activa</flux:label>
-                    <flux:input wire:model="limestone" type="number" step="0.01" min="0" max="100" />
+                    <flux:input wire:model="limestone" type="number" step="0.01" min="0" max="100" placeholder="Ej: 12.50" />
                     <flux:description>% caliza activa</flux:description>
                     <flux:error name="limestone" />
                 </flux:field>
@@ -148,6 +148,7 @@
                     <flux:textarea
                         wire:model="notes"
                         rows="3"
+                        placeholder="Observaciones, recomendaciones del laboratorio, etc."
                     />
                     <flux:error name="notes" />
                 </flux:field>
