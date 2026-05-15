@@ -20,12 +20,12 @@
 
                 <flux:field>
                     <flux:label required>Campaña</flux:label>
-                    <flux:select wire:model="campaign_id">
-                        <option value="">Selecciona campaña</option>
-                        @foreach($campaigns as $campaign)
-                            <option value="{{ $campaign->id }}">Campaña {{ $campaign->year }}</option>
-                        @endforeach
-                    </flux:select>
+                    @php $lockedCampaign = $campaigns->firstWhere('id', $campaign_id); @endphp
+                    <div class="flex items-center gap-2 px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-lg text-sm text-zinc-700">
+                        <flux:icon icon="calendar" class="size-4 text-zinc-400 shrink-0" />
+                        <span>Campaña {{ $lockedCampaign?->year ?? '—' }}</span>
+                    </div>
+                    <input type="hidden" wire:model="campaign_id" />
                     <flux:error name="campaign_id" />
                 </flux:field>
 

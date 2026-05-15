@@ -71,6 +71,11 @@ class Create extends Component
     {
         $this->validate();
 
+        $existing = PhenologyObservation::where('plot_planting_id', $this->plot_planting_id)
+            ->where('campaign_id', $this->campaign_id)
+            ->where('event', $this->event)
+            ->exists();
+
         PhenologyObservation::updateOrCreate(
             [
                 'plot_planting_id' => $this->plot_planting_id,
@@ -89,7 +94,11 @@ class Create extends Component
             ]
         );
 
-        $this->toastSuccess('Observación fenológica guardada correctamente.');
+        $this->toastSuccess(
+            $existing
+                ? 'Registro actualizado — ya existía un estadio para esta plantación y campaña.'
+                : 'Observación fenológica guardada correctamente.'
+        );
 
         return $this->viticulturistRoleRedirect('phenology.index', $this->plot_planting_id ? ['filter_planting_id' => $this->plot_planting_id] : []);
     }

@@ -33,28 +33,28 @@
                 <x-agro.stat-card
                     label="Total plantaciones"
                     :value="$stats['total']"
-                    description="$stats['active'] . ' activas · ' . $stats['inactive'] . ' inactivas'"
+                    :description="$stats['active'] . ' activas · ' . $stats['inactive'] . ' inactivas'"
                     icon="scissors"
                     color="agro"
                 />
                 <x-agro.stat-card
                     label="Superficie total"
                     :value="number_format($stats['total_area'], 2) . ' ha'"
-                    description="'Área plantada declarada'"
+                    description="Área plantada declarada"
                     icon="square-2-stack"
                     color="blue"
                 />
                 <x-agro.stat-card
                     label="Activas"
                     :value="$stats['active']"
-                    description="'En producción'"
+                    description="En producción"
                     icon="check-circle"
                     color="agro"
                 />
                 <x-agro.stat-card
                     label="Inactivas"
                     :value="$stats['inactive']"
-                    description="$stats['inactive'] > 0 ? 'Archivadas' : 'Todas activas'"
+                    :description="$stats['inactive'] > 0 ? 'Archivadas' : 'Todas activas'"
                     icon="archive-box"
                     color="zinc"
                 />

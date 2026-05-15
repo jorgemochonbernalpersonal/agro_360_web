@@ -5,13 +5,15 @@
         description="Registro de estadios fenológicos por plantación y campaña"
         icon="sun"
     >
-        @unless($filter_planting_id)
-            <x-slot:actions>
-                <flux:button href="{{ roleRoute('viticulturist.phenology.create') }}" variant="primary" icon="plus">
-                    Registrar Estadio
-                </flux:button>
-            </x-slot:actions>
-        @endunless
+        <x-slot:actions>
+            <flux:button
+                href="{{ roleRoute('viticulturist.phenology.create', $filter_planting_id ? ['planting_id' => $filter_planting_id] : []) }}"
+                variant="primary"
+                icon="plus"
+            >
+                Registrar Estadio
+            </flux:button>
+        </x-slot:actions>
     </x-agro.page-header>
 
     {{-- Contexto de plantación cuando se filtra por ella --}}
@@ -30,8 +32,8 @@
         </div>
     @endif
 
-    {{-- Filtro de campaña: solo en vista general --}}
-    @unless($filter_planting_id)
+    {{-- Filtro de campaña --}}
+    @if($campaigns->count() > 1)
         <div class="flex items-center gap-3">
             <flux:select wire:model.live="filter_campaign_id" class="w-48">
                 <flux:select.option value="">Todas las campañas</flux:select.option>
@@ -43,7 +45,7 @@
                 <flux:button wire:click="$set('filter_campaign_id', '')" variant="ghost" size="sm" icon="x-mark">Limpiar</flux:button>
             @endif
         </div>
-    @endunless
+    @endif
 
     {{-- Grid de cards --}}
     @if($observations->isEmpty())
