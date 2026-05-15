@@ -1,6 +1,6 @@
 <x-agro.form-card
-    title="Editar Análisis de Suelo"
-    :description="'Modifica los datos del análisis de ' . ($soilAnalysis->plot->name ?? 'parcela')"
+    :title="'Editar Análisis — ' . ($soilAnalysis->plot->name ?? 'Parcela')"
+    description="Modifica los datos del análisis edafológico"
     :back-url="roleRoute('viticulturist.soil-analyses.index')"
 >
     <form wire:submit="save" class="space-y-8">
