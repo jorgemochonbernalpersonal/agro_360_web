@@ -5,13 +5,7 @@
         title="Análisis de Suelo"
         description="Registro de análisis edafológicos: pH, materia orgánica, nutrientes y textura de tus parcelas"
         icon="beaker"
-    >
-        <x-slot:actions>
-            <flux:button href="{{ roleRoute('viticulturist.soil-analyses.create') }}" variant="primary" icon="plus">
-                Nuevo Análisis
-            </flux:button>
-        </x-slot:actions>
-    </x-agro.page-header>
+    />
 
     {{-- Stats (colapsables) --}}
     <x-agro.stats-section key="soil-analyses" columns="4">
