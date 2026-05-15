@@ -628,7 +628,6 @@
         </div>
     @endif
     @endif
-</div>
 
 @push('scripts')
 @if($hasGeometry && count($plotGeometries) > 0)
@@ -900,3 +899,4 @@
     </script>
 @endif
 @endpush
+</div>
