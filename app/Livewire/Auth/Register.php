@@ -7,6 +7,7 @@ use App\Models\SupervisorWinery;
 use App\Models\WineryViticulturist;
 use App\Livewire\Concerns\WithToastNotifications;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -59,8 +60,8 @@ class Register extends Component
             $allowedRoles = $this->getAllowedRoles($user);
             $rules['role'] = 'required|in:' . implode(',', $allowedRoles);
         } else {
-            // Registro público: viticulturist, winery, producer y supervisor (DO)
-            $rules['role'] = 'required|in:viticulturist,winery,producer,supervisor';
+            // Registro público: viticulturist, winery, producer (supervisor solo por invitación/admin)
+            $rules['role'] = 'required|in:viticulturist,winery,producer';
         }
 
         return $rules;
@@ -87,7 +88,7 @@ class Register extends Component
     public function getAllowedRoles(?User $user = null): array
     {
         if (!$user) {
-            return ['viticulturist', 'winery', 'producer', 'supervisor']; // Registro público
+            return ['viticulturist', 'winery', 'producer']; // Registro público (supervisor solo por invitación/admin)
         }
 
         return match($user->role) {
@@ -199,15 +200,58 @@ class Register extends Component
         }
 
         try {
-            $user = User::create([
-                'name'                => $this->name,
-                'email'               => $this->email,
-                'password'            => $password,
-                'role'                => $this->role,
-                'dni'                 => $normalizedDni ?? null,
-                'password_must_reset' => $isViticulturistCreatingViticulturist,
-                'can_login'           => true,
-            ]);
+            $user = DB::transaction(function () use ($password, $normalizedDni, $isViticulturistCreatingViticulturist) {
+                $user = User::create([
+                    'name'                => $this->name,
+                    'email'               => $this->email,
+                    'password'            => $password,
+                    'role'                => $this->role,
+                    'dni'                 => $normalizedDni ?? null,
+                    'password_must_reset' => $isViticulturistCreatingViticulturist,
+                    'can_login'           => true,
+                ]);
+
+                // Crear relaciones automáticas si está autenticado
+                if (Auth::check()) {
+                    $creator = Auth::user();
+
+                    // Si supervisor crea winery
+                    if ($creator->isSupervisor() && $this->role === 'winery') {
+                        SupervisorWinery::create([
+                            'supervisor_id' => $creator->id,
+                            'winery_id' => $user->id,
+                            'assigned_by' => $creator->id,
+                        ]);
+                    }
+
+                    // Si winery crea viticulturist
+                    if ($creator->hasWineryAccess() && $this->role === 'viticulturist') {
+                        WineryViticulturist::create([
+                            'winery_id' => $creator->id,
+                            'viticulturist_id' => $user->id,
+                            'source' => 'own',
+                            'assigned_by' => $creator->id,
+                        ]);
+                    }
+
+                    // Si viticultor crea viticultor — solo vincular si el creador tiene bodega real
+                    if ($creator->hasViticulturistAccess() && $this->role === 'viticulturist') {
+                        $creatorWinery = $creator->wineries->first();
+
+                        if ($creatorWinery) {
+                            WineryViticulturist::create([
+                                'winery_id' => $creatorWinery->id,
+                                'viticulturist_id' => $user->id,
+                                'source' => WineryViticulturist::SOURCE_VITICULTURIST,
+                                'parent_viticulturist_id' => $creator->id,
+                                'assigned_by' => $creator->id,
+                            ]);
+                        }
+                    }
+                }
+
+                return $user;
+            });
         } catch (QueryException $e) {
             if (str_contains($e->getMessage(), 'users_email_unique')) {
                 $this->addError('email', 'Este email ya está registrado.');
@@ -220,49 +264,9 @@ class Register extends Component
             throw $e;
         }
 
-        // Crear relaciones automáticas si está autenticado
+        // Enviar emails FUERA de la transacción (no deben hacer rollback)
         if (Auth::check()) {
             $creator = Auth::user();
-
-            // Si supervisor crea winery
-            if ($creator->isSupervisor() && $this->role === 'winery') {
-                SupervisorWinery::create([
-                    'supervisor_id' => $creator->id,
-                    'winery_id' => $user->id,
-                    'assigned_by' => $creator->id,
-                ]);
-            }
-
-            // Si supervisor crea viticulturist
-            if ($creator->isSupervisor() && $this->role === 'viticulturist') {
-                // El viticulturist queda en el pool del supervisor
-                // Se asignará a winery cuando corresponda
-            }
-
-            // Si winery crea viticulturist
-            if ($creator->hasWineryAccess() && $this->role === 'viticulturist') {
-                WineryViticulturist::create([
-                    'winery_id' => $creator->id,
-                    'viticulturist_id' => $user->id,
-                    'source' => 'own',
-                    'assigned_by' => $creator->id,
-                ]);
-            }
-
-            // Si viticultor crea viticultor — solo vincular si el creador tiene bodega real
-            if ($creator->hasViticulturistAccess() && $this->role === 'viticulturist') {
-                $creatorWinery = $creator->wineries->first();
-
-                if ($creatorWinery) {
-                    WineryViticulturist::create([
-                        'winery_id' => $creatorWinery->id,
-                        'viticulturist_id' => $user->id,
-                        'source' => WineryViticulturist::SOURCE_VITICULTURIST,
-                        'parent_viticulturist_id' => $creator->id,
-                        'assigned_by' => $creator->id,
-                    ]);
-                }
-            }
 
             // Enviar email según el tipo de usuario creado
             if ($isViticulturistCreatingViticulturist) {
