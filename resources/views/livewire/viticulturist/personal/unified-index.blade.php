@@ -172,18 +172,16 @@
                         </div>
 
                         {{-- Bodegas + Actividad --}}
-                        <div class="grid grid-cols-2 gap-2">
-                            <div class="bg-zinc-50 rounded-xl p-2.5">
-                                <p class="text-[10px] text-zinc-500 font-medium uppercase tracking-wide mb-1">Bodega</p>
-                                @if($vWineries->count() > 0)
+                        <div class="grid {{ $vWineries->count() > 0 ? 'grid-cols-2' : 'grid-cols-1' }} gap-2">
+                            @if($vWineries->count() > 0)
+                                <div class="bg-zinc-50 rounded-xl p-2.5">
+                                    <p class="text-[10px] text-zinc-500 font-medium uppercase tracking-wide mb-1">Bodega</p>
                                     <p class="text-xs font-semibold text-zinc-700 truncate">{{ $vWineries->first()->name }}</p>
                                     @if($vWineries->count() > 1)
                                         <p class="text-[10px] text-zinc-400">+{{ $vWineries->count() - 1 }} más</p>
                                     @endif
-                                @else
-                                    <p class="text-xs text-zinc-400 italic">Sin bodega</p>
-                                @endif
-                            </div>
+                                </div>
+                            @endif
                             <div class="bg-agro-50 rounded-xl p-2.5">
                                 <p class="text-[10px] text-agro-600 font-medium uppercase tracking-wide mb-0.5">Actividad 30d</p>
                                 <p class="text-sm font-bold text-agro-700">{{ $recentActivities }}</p>
