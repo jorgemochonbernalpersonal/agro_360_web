@@ -60,24 +60,6 @@
         {{-- Filtros --}}
         <x-agro.filter-button modal="plot-filters" :count="$filterCount" />
 
-        {{-- Toggle vista lista / mapa --}}
-        <div class="flex items-center gap-0.5 bg-zinc-100 rounded-xl p-0.5">
-            <button
-                wire:click="toggleViewMode"
-                title="Vista lista"
-                class="inline-flex items-center justify-center w-9 h-9 rounded-[10px] transition-colors {{ $viewMode === 'list' ? 'bg-white shadow-sm text-zinc-800' : 'text-zinc-400 hover:text-zinc-600' }}"
-            >
-                <flux:icon icon="squares-2x2" class="size-4" />
-            </button>
-            <button
-                wire:click="toggleViewMode"
-                title="Vista mapa"
-                class="inline-flex items-center justify-center w-9 h-9 rounded-[10px] transition-colors {{ $viewMode === 'map' ? 'bg-white shadow-sm text-agro-700' : 'text-zinc-400 hover:text-zinc-600' }}"
-            >
-                <flux:icon icon="map" class="size-4" />
-            </button>
-        </div>
-
         {{-- Separador --}}
         <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 

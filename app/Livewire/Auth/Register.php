@@ -249,18 +249,19 @@ class Register extends Component
                 ]);
             }
 
-            // Si viticultor crea viticultor
+            // Si viticultor crea viticultor — solo vincular si el creador tiene bodega real
             if ($creator->hasViticulturistAccess() && $this->role === 'viticulturist') {
-                // Obtener winery del viticultor creador (si tiene)
                 $creatorWinery = $creator->wineries->first();
-                
-                WineryViticulturist::create([
-                    'winery_id' => $creatorWinery?->id, // Puede ser NULL si no tiene winery
-                    'viticulturist_id' => $user->id,
-                    'source' => WineryViticulturist::SOURCE_VITICULTURIST,
-                    'parent_viticulturist_id' => $creator->id,
-                    'assigned_by' => $creator->id,
-                ]);
+
+                if ($creatorWinery) {
+                    WineryViticulturist::create([
+                        'winery_id' => $creatorWinery->id,
+                        'viticulturist_id' => $user->id,
+                        'source' => WineryViticulturist::SOURCE_VITICULTURIST,
+                        'parent_viticulturist_id' => $creator->id,
+                        'assigned_by' => $creator->id,
+                    ]);
+                }
             }
 
             // Enviar email según el tipo de usuario creado
@@ -305,29 +306,8 @@ class Register extends Component
         // El beta de 3 meses se activa automáticamente al confirmar el email (evento Verified)
         $user->sendEmailVerificationNotification();
         
-        // Si es viticultor, crear registro en WineryViticulturist para que aparezca en listas
-        if ($this->role === 'viticulturist') {
-            try {
-                WineryViticulturist::create([
-                    'winery_id' => null, // Viticultor independiente
-                    'viticulturist_id' => $user->id,
-                    'source' => WineryViticulturist::SOURCE_SELF, // Se registró él mismo
-                    'parent_viticulturist_id' => null,
-                    'assigned_by' => $user->id, // Se asignó a sí mismo
-                ]);
-                
-                \Illuminate\Support\Facades\Log::info('WineryViticulturist created during public registration', [
-                    'user_id' => $user->id,
-                    'email' => $user->email,
-                ]);
-            } catch (\Exception $e) {
-                \Illuminate\Support\Facades\Log::error('Failed to create WineryViticulturist during registration', [
-                    'user_id' => $user->id,
-                    'email' => $user->email,
-                    'error' => $e->getMessage(),
-                ]);
-            }
-        }
+        // Viticultor independiente: NO crear WineryViticulturist con winery_id=null.
+        // El registro se crea solo cuando una bodega real lo vincula.
         
         Auth::login($user);
         session()->regenerate();

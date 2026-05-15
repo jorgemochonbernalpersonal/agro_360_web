@@ -10,29 +10,7 @@ class EnsureViticulturistSelfRecord
 {
     public function handle(Login $event): void
     {
-        $user = $event->user;
-
-        if (!$user->hasViticulturistAccess()) {
-            return;
-        }
-
-        $exists = WineryViticulturist::where('viticulturist_id', $user->id)->exists();
-
-        if ($exists) {
-            return;
-        }
-
-        WineryViticulturist::create([
-            'winery_id'               => null,
-            'viticulturist_id'        => $user->id,
-            'source'                  => WineryViticulturist::SOURCE_SELF,
-            'parent_viticulturist_id' => null,
-            'assigned_by'             => $user->id,
-        ]);
-
-        Log::info('Auto-registered viticulturist self record on login', [
-            'user_id' => $user->id,
-            'email'   => $user->email,
-        ]);
+        // No crear WineryViticulturist con winery_id=null.
+        // El registro se crea solo cuando una bodega real vincula al viticultor.
     }
 }
