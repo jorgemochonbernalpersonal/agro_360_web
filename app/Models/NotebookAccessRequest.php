@@ -12,11 +12,15 @@ class NotebookAccessRequest extends Model
 
     protected static function booted(): void
     {
-        static::saved(function (NotebookAccessRequest $request) {
+        $flush = fn (self $r) => Cache::forget("nav_badge_notebook_access_{$r->viticulturist_id}");
+
+        static::saved(function (NotebookAccessRequest $request) use ($flush) {
             if ($request->wasRecentlyCreated || $request->wasChanged('status')) {
-                Cache::forget("nav_badge_notebook_access_{$request->viticulturist_id}");
+                $flush($request);
             }
         });
+
+        static::deleted($flush);
     }
 
     public const STATUS_PENDING  = 'pending';

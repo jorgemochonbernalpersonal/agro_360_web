@@ -3,8 +3,6 @@
 namespace App\Helpers\Navigation;
 
 use App\Models\NotebookAccessRequest;
-use App\Models\SupervisorViticulturist;
-use App\Models\WineryViticulturist;
 use Illuminate\Support\Facades\Cache;
 
 class ViticulturistMenu
@@ -31,9 +29,7 @@ class ViticulturistMenu
         ];
 
         // ── Relación con Bodega (solo si tiene bodegas vinculadas) ───────────
-        $hasWinery = Cache::remember("viticulturist:{$user->id}:has_winery", 300,
-            fn () => WineryViticulturist::where('viticulturist_id', $user->id)->exists()
-        );
+        $hasWinery = $user->hasWinery();
 
         if ($hasWinery) {
             $menu['winery_rel'] = [
@@ -47,9 +43,7 @@ class ViticulturistMenu
         }
 
         // ── Denominación (solo si está adscrito) ──────────────────────────────
-        $hasSupervisor = Cache::remember("viticulturist:{$user->id}:has_supervisor", 300,
-            fn () => SupervisorViticulturist::where('viticulturist_id', $user->id)->exists()
-        );
+        $hasSupervisor = $user->hasSupervisor();
 
         if ($hasSupervisor) {
             $menu['denomination'] = [

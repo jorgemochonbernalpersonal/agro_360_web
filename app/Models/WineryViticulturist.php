@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Cache;
 
 class WineryViticulturist extends Model
 {
@@ -31,6 +32,15 @@ class WineryViticulturist extends Model
     /**
      * Fuentes posibles
      */
+    protected static function booted(): void
+    {
+        $flush = fn (self $wv) => Cache::forget("user_{$wv->viticulturist_id}_has_winery");
+
+        static::created($flush);
+        static::updated($flush);
+        static::deleted($flush);
+    }
+
     public const SOURCE_OWN = 'own';
     public const SOURCE_SUPERVISOR = 'supervisor';
     public const SOURCE_VITICULTURIST = 'viticulturist';

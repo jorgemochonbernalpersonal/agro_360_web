@@ -3,7 +3,6 @@
 namespace App\Helpers\Navigation;
 
 use App\Models\SupervisorRequest;
-use App\Models\SupervisorWinery;
 use Illuminate\Support\Facades\Cache;
 
 class ProducerMenu
@@ -137,11 +136,7 @@ class ProducerMenu
         ];
 
         // ── Denominación de Origen (solo si tiene supervisor) ────────────────
-        $hasSupervisor = Cache::remember(
-            "winery:{$user->id}:has_supervisor",
-            300,
-            fn () => SupervisorWinery::where('winery_id', $user->id)->exists()
-        );
+        $hasSupervisor = $user->hasWinerySupervisor();
 
         if ($hasSupervisor) {
             $pendingDO = Cache::remember(

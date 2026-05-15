@@ -16,6 +16,9 @@ trait HasHierarchy
      */
     protected $_wineries_cache;
     protected $_supervisor_cache;
+    protected $_has_winery_cache;
+    protected $_has_supervisor_cache;
+    protected $_has_winery_supervisor_cache;
     protected $_was_created_by_another_cache;
     protected $_needs_password_change_cache;
 
@@ -106,7 +109,8 @@ trait HasHierarchy
     }
 
     /**
-     * Verificar si tiene supervisor
+     * Verificar si tiene supervisor.
+     * Cached: in-memory + Laravel Cache 5 min.
      */
     public function hasSupervisor(): bool
     {
@@ -114,10 +118,18 @@ trait HasHierarchy
             return false;
         }
 
-        return WineryViticulturist::where('viticulturist_id', $this->id)
-            ->where('source', WineryViticulturist::SOURCE_SUPERVISOR)
-            ->whereNotNull('supervisor_id')
-            ->exists();
+        if (!isset($this->_has_supervisor_cache)) {
+            $this->_has_supervisor_cache = \Illuminate\Support\Facades\Cache::remember(
+                "user_{$this->id}_has_supervisor",
+                300,
+                fn () => WineryViticulturist::where('viticulturist_id', $this->id)
+                    ->where('source', WineryViticulturist::SOURCE_SUPERVISOR)
+                    ->whereNotNull('supervisor_id')
+                    ->exists()
+            );
+        }
+
+        return $this->_has_supervisor_cache;
     }
 
     /**
@@ -154,12 +166,47 @@ trait HasHierarchy
     }
 
     /**
-     * Verificar si tiene winery
+     * Verificar si tiene winery (vinculado con winery_id NOT NULL).
+     * Cached: in-memory + Laravel Cache 5 min.
      */
     public function hasWinery(): bool
     {
-        return $this->hasViticulturistAccess()
-            && $this->wineryRelationsAsViticulturist()->whereNotNull('winery_id')->exists();
+        if (!$this->hasViticulturistAccess()) {
+            return false;
+        }
+
+        if (!isset($this->_has_winery_cache)) {
+            $this->_has_winery_cache = \Illuminate\Support\Facades\Cache::remember(
+                "user_{$this->id}_has_winery",
+                300,
+                fn () => $this->wineryRelationsAsViticulturist()
+                    ->whereNotNull('winery_id')
+                    ->exists()
+            );
+        }
+
+        return $this->_has_winery_cache;
+    }
+
+    /**
+     * Verificar si esta bodega tiene supervisor (DO) vinculado.
+     * Cached: in-memory + Laravel Cache 5 min.
+     */
+    public function hasWinerySupervisor(): bool
+    {
+        if (!$this->hasWineryAccess()) {
+            return false;
+        }
+
+        if (!isset($this->_has_winery_supervisor_cache)) {
+            $this->_has_winery_supervisor_cache = \Illuminate\Support\Facades\Cache::remember(
+                "user_{$this->id}_has_winery_supervisor",
+                300,
+                fn () => SupervisorWinery::where('winery_id', $this->id)->exists()
+            );
+        }
+
+        return $this->_has_winery_supervisor_cache;
     }
 
     /**
@@ -257,10 +304,16 @@ trait HasHierarchy
     {
         unset($this->_wineries_cache);
         unset($this->_supervisor_cache);
+        unset($this->_has_winery_cache);
+        unset($this->_has_supervisor_cache);
+        unset($this->_has_winery_supervisor_cache);
         unset($this->_was_created_by_another_cache);
         unset($this->_needs_password_change_cache);
 
         \Illuminate\Support\Facades\Cache::forget("user_{$this->id}_supervisor");
         \Illuminate\Support\Facades\Cache::forget("user_{$this->id}_wineries");
+        \Illuminate\Support\Facades\Cache::forget("user_{$this->id}_has_winery");
+        \Illuminate\Support\Facades\Cache::forget("user_{$this->id}_has_supervisor");
+        \Illuminate\Support\Facades\Cache::forget("user_{$this->id}_has_winery_supervisor");
     }
 }

@@ -18,9 +18,13 @@ class SupervisorWinery extends Model
 
     protected static function booted(): void
     {
-        static::created(function (SupervisorWinery $sw) {
-            Cache::forget("winery:{$sw->winery_id}:has_supervisor");
-        });
+        $flush = function (SupervisorWinery $sw) {
+            Cache::forget("user_{$sw->winery_id}_has_winery_supervisor");
+            Cache::forget("winery:{$sw->winery_id}:pending_do_requests");
+        };
+
+        static::created($flush);
+        static::updated($flush);
 
         static::deleting(function (SupervisorWinery $sw) {
             // Convert DO-assigned viticulturists to own — winery keeps them after DO unlinks
@@ -33,10 +37,7 @@ class SupervisorWinery extends Model
                 ]);
         });
 
-        static::deleted(function (SupervisorWinery $sw) {
-            Cache::forget("winery:{$sw->winery_id}:has_supervisor");
-            Cache::forget("winery:{$sw->winery_id}:pending_do_requests");
-        });
+        static::deleted($flush);
     }
 
     public function supervisor(): BelongsTo
