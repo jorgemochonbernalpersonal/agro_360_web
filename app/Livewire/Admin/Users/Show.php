@@ -328,8 +328,8 @@ class Show extends Component
     {
         return [
             'plots' => [
-                'total'      => Plot::forUser($user->id)->count(),
-                'total_area' => Plot::forUser($user->id)->sum('area') ?? 0,
+                'total'      => Plot::forUser($user)->count(),
+                'total_area' => Plot::forUser($user)->sum('area') ?? 0,
             ],
             'clients' => [
                 'total'      => Client::forUser($user->id)->count(),

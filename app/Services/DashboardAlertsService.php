@@ -8,6 +8,7 @@ use App\Models\NotebookAccessRequest;
 use App\Models\Plot;
 use App\Models\PlotRemoteSensing;
 use App\Models\User;
+use App\Models\WineryViticulturist;
 use App\Models\WineStockSnapshot;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -184,6 +185,11 @@ class DashboardAlertsService
      */
     private function checkContainerAlerts(User $user, Collection $alerts): void
     {
+        // Solo mostrar alertas de contenedores si el viticultor tiene bodega vinculada
+        if ($user->isViticulturist() && !WineryViticulturist::where('viticulturist_id', $user->id)->exists()) {
+            return;
+        }
+
         $availableContainers = Container::where('user_id', $user->id)
             ->whereDoesntHave('harvests')
             ->where('archived', false)

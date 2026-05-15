@@ -58,7 +58,7 @@ class Index extends Component
     public function render()
     {
         $query = SigpacCode::query()
-            ->with(['plots.viticulturist:id,name,email,role', 'use:id,name'])
+            ->with(['plots.viticulturist:id,name,email,role'])
             ->withCount('plots');
 
         if ($this->search) {
