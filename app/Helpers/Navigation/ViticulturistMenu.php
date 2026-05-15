@@ -67,7 +67,13 @@ class ViticulturistMenu
         $menu['environmental'] = self::environmental('viticulturist');
 
         // ── Declaraciones y Certificaciones ───────────────────────────────────
-        $menu['declarations'] = self::officialDeclarations('viticulturist');
+        $declarations = self::officialDeclarations('viticulturist');
+        if (!$hasWinery) {
+            $declarations = array_values(array_filter($declarations, fn($item) =>
+                !isset($item['label']) || $item['label'] !== 'Trazabilidad de Uva'
+            ));
+        }
+        $menu['declarations'] = $declarations;
 
         // ── Finca (geografía + actividades) ───────────────────────────────────
         $menu['estate'] = [
@@ -89,7 +95,7 @@ class ViticulturistMenu
         ];
 
         // ── Recursos ──────────────────────────────────────────────────────────
-        $menu['resources'] = self::resources('viticulturist', includeContainers: true);
+        $menu['resources'] = self::resources('viticulturist', includeContainers: $hasWinery);
 
         // ── Normativa regulatoria ─────────────────────────────────────────────
         $menu['compliance'] = self::compliance('viticulturist');
@@ -98,17 +104,29 @@ class ViticulturistMenu
         $menu['pac'] = self::pac('viticulturist');
 
         // ── Negocio ───────────────────────────────────────────────────────────
-        $menu['billing'] = [
-            ['icon' => 'document-arrow-up',      'label' => 'Facturas Venta Cosecha',   'route' => 'viticulturist.invoices.harvest-sale.index',   'active' => request()->routeIs('viticulturist.invoices.harvest-sale*')],
-            ['icon' => 'document-arrow-down',    'label' => 'Liquidaciones de Bodega',  'route' => 'viticulturist.invoices.grape-purchase.index', 'active' => request()->routeIs('viticulturist.invoices.grape-purchase*')],
-            ['divider' => true],
-            ['icon' => 'shopping-cart',          'label' => 'Cosecha Comercializada',   'route' => 'viticulturist.marketed-harvests.index',       'active' => request()->routeIs('viticulturist.marketed-harvests.*')],
-            ['icon' => 'table-cells',            'label' => 'Costes por Parcela',       'route' => 'viticulturist.plot-costs.index',              'active' => request()->routeIs('viticulturist.plot-costs*')],
-            ['icon' => 'users',                  'label' => 'Clientes',                 'route' => 'viticulturist.clients.index',                 'active' => request()->routeIs('viticulturist.clients.*')],
-            ['divider' => true],
-            ['icon' => 'presentation-chart-bar', 'label' => 'Estadísticas Financieras', 'route' => 'viticulturist.financial-stats',               'active' => request()->routeIs('viticulturist.financial-stats')],
-            ['icon' => 'document-check',         'label' => 'VeriFactu',                'route' => 'viticulturist.verifactu.index',               'active' => request()->routeIs('viticulturist.verifactu*'), 'wip' => true],
+        $billingItems = [
+            ['icon' => 'document-arrow-up', 'label' => 'Facturas Venta Cosecha', 'route' => 'viticulturist.invoices.harvest-sale.index', 'active' => request()->routeIs('viticulturist.invoices.harvest-sale*')],
         ];
+
+        if ($hasWinery) {
+            $billingItems[] = ['icon' => 'document-arrow-down', 'label' => 'Liquidaciones de Bodega', 'route' => 'viticulturist.invoices.grape-purchase.index', 'active' => request()->routeIs('viticulturist.invoices.grape-purchase*')];
+        }
+
+        $billingItems[] = ['divider' => true];
+
+        if ($hasWinery) {
+            $billingItems[] = ['icon' => 'shopping-cart', 'label' => 'Cosecha Comercializada', 'route' => 'viticulturist.marketed-harvests.index', 'active' => request()->routeIs('viticulturist.marketed-harvests.*')];
+        }
+
+        $billingItems = array_merge($billingItems, [
+            ['icon' => 'table-cells',            'label' => 'Costes por Parcela',       'route' => 'viticulturist.plot-costs.index',  'active' => request()->routeIs('viticulturist.plot-costs*')],
+            ['icon' => 'users',                  'label' => 'Clientes',                 'route' => 'viticulturist.clients.index',     'active' => request()->routeIs('viticulturist.clients.*')],
+            ['divider' => true],
+            ['icon' => 'presentation-chart-bar', 'label' => 'Estadísticas Financieras', 'route' => 'viticulturist.financial-stats',   'active' => request()->routeIs('viticulturist.financial-stats')],
+            ['icon' => 'document-check',         'label' => 'VeriFactu',                'route' => 'viticulturist.verifactu.index',   'active' => request()->routeIs('viticulturist.verifactu*'), 'wip' => true],
+        ]);
+
+        $menu['billing'] = $billingItems;
 
         // ── Rail bottom ───────────────────────────────────────────────────────
         $menu['rail_bottom'] = [
