@@ -80,23 +80,58 @@
                         </div>
                     @endif
 
-                    @if($plot->soil_type)
+                    @if($plot->soilType)
                         <div>
                             <label class="text-sm font-semibold text-zinc-500">Tipo de Suelo</label>
-                            <p class="text-zinc-900 capitalize">{{ str_replace('-', ' ', $plot->soil_type) }}</p>
+                            <p class="text-zinc-900">{{ $plot->soilType->name }}</p>
+                        </div>
+                    @endif
+
+                    @if($plot->topography)
+                        <div>
+                            <label class="text-sm font-semibold text-zinc-500">Topografía</label>
+                            <p class="text-zinc-900">{{ $plot->topography->name }}</p>
                         </div>
                     @endif
 
                     @if($plot->orientation)
                         <div>
                             <label class="text-sm font-semibold text-zinc-500">Orientación</label>
-                            <p class="text-zinc-900">{{ $plot->orientation }}</p>
+                            <p class="text-zinc-900">{{ $plot->orientation->name }} ({{ $plot->orientation->abbreviation }})</p>
+                        </div>
+                    @endif
+
+                    @if($plot->slope)
+                        <div>
+                            <label class="text-sm font-semibold text-zinc-500">Pendiente</label>
+                            <p class="text-zinc-900">{{ $plot->slope }}%</p>
+                        </div>
+                    @endif
+
+                    @if($plot->code_parcel)
+                        <div>
+                            <label class="text-sm font-semibold text-zinc-500">Código Catastral</label>
+                            <p class="text-zinc-900 font-mono text-sm">{{ $plot->code_parcel }}</p>
+                        </div>
+                    @endif
+
+                    @if($plot->number_of_vines)
+                        <div>
+                            <label class="text-sm font-semibold text-zinc-500">Número de Cepas</label>
+                            <p class="text-zinc-900">{{ number_format($plot->number_of_vines, 0, ',', '.') }}</p>
+                        </div>
+                    @endif
+
+                    @if($plot->plantation_year)
+                        <div>
+                            <label class="text-sm font-semibold text-zinc-500">Año de Plantación</label>
+                            <p class="text-zinc-900">{{ $plot->plantation_year }}</p>
                         </div>
                     @endif
 
                     @if($plot->description)
                         <div class="md:col-span-2">
-                            <label class="text-sm font-semibold text-zinc-500">Descripcion</label>
+                            <label class="text-sm font-semibold text-zinc-500">Descripción</label>
                             <p class="text-zinc-900">{{ $plot->description }}</p>
                         </div>
                     @endif
