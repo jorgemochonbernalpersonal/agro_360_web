@@ -45,10 +45,7 @@ class Plot extends Model
         // Tipo de propiedad
         'property_type_id',
         // Plantación
-        'plantation_year',
-        'training_system_id',
         'planting_pattern',
-        'number_of_vines',
         'is_organic',
         // Vendimia
         'maximum_yield_kg_ha',
@@ -76,10 +73,8 @@ class Plot extends Model
         'maximum_yield_kg_ha' => 'decimal:3',
         'degree_day_base' => 'decimal:1',
         'cadastral_area' => 'decimal:4',
-        'plantation_year' => 'integer',
         'is_organic' => 'boolean',
         'slope' => 'decimal:2',
-        'number_of_vines' => 'integer',
     ];
 
     protected static function booted(): void
@@ -148,11 +143,6 @@ class Plot extends Model
     public function site(): BelongsTo
     {
         return $this->belongsTo(Site::class);
-    }
-
-    public function trainingSystem(): BelongsTo
-    {
-        return $this->belongsTo(TrainingSystem::class);
     }
 
     /**

@@ -139,6 +139,81 @@
                 </div>
             </x-agro.card>
 
+            <!-- Plantaciones -->
+            <x-agro.card>
+                <x-slot:header>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <div class="p-1.5 rounded-lg bg-agro-50">
+                                <flux:icon icon="book-open" class="size-4 text-agro-600" />
+                            </div>
+                            <span class="font-semibold text-zinc-900 text-sm">Plantaciones</span>
+                            @if($plot->plantings->where('status', 'active')->count() > 0)
+                                <span class="text-xs text-zinc-400">({{ $plot->plantings->where('status', 'active')->count() }} activas)</span>
+                            @endif
+                        </div>
+                        @can('update', $plot)
+                            <a href="{{ route('plots.plantings.create', $plot) }}"
+                               class="inline-flex items-center gap-1 text-xs font-medium text-agro-600 hover:text-agro-700">
+                                <flux:icon icon="plus" class="size-3.5" />
+                                Nueva
+                            </a>
+                        @endcan
+                    </div>
+                </x-slot:header>
+
+                @if($plot->plantings->isNotEmpty())
+                    <div class="divide-y divide-zinc-100">
+                        @foreach($plot->plantings->sortByDesc('status') as $planting)
+                            <div class="flex items-center justify-between py-2.5 {{ $planting->status !== 'active' ? 'opacity-50' : '' }}">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <div class="w-2 h-2 rounded-full shrink-0 {{ $planting->status === 'active' ? 'bg-agro-500' : ($planting->status === 'removed' ? 'bg-red-400' : 'bg-amber-400') }}"></div>
+                                    <div class="min-w-0">
+                                        <p class="text-sm font-medium text-zinc-800 truncate">
+                                            {{ $planting->grapeVariety?->name ?? $planting->name ?? 'Sin variedad' }}
+                                        </p>
+                                        <p class="text-xs text-zinc-500">
+                                            {{ number_format($planting->area_planted, 3) }} ha
+                                            @if($planting->planting_year) · {{ $planting->planting_year }} @endif
+                                            @if($planting->vine_count) · {{ number_format($planting->vine_count, 0, ',', '.') }} cepas @endif
+                                            @if($planting->harvest_limit_kg) · Límite: {{ number_format($planting->harvest_limit_kg, 0, ',', '.') }} kg @endif
+                                        </p>
+                                    </div>
+                                </div>
+                                <span class="text-[10px] font-medium uppercase tracking-wide px-2 py-0.5 rounded-full shrink-0
+                                    {{ match($planting->status) {
+                                        'active' => 'bg-agro-50 text-agro-700',
+                                        'removed' => 'bg-red-50 text-red-600',
+                                        'experimental' => 'bg-amber-50 text-amber-700',
+                                        'replanting' => 'bg-blue-50 text-blue-600',
+                                        default => 'bg-zinc-100 text-zinc-500',
+                                    } }}">
+                                    {{ match($planting->status) {
+                                        'active' => 'Activa',
+                                        'removed' => 'Arrancada',
+                                        'experimental' => 'Experimental',
+                                        'replanting' => 'Replantación',
+                                        default => $planting->status,
+                                    } }}
+                                </span>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="text-center py-6">
+                        <flux:icon icon="book-open" class="size-8 text-zinc-300 mx-auto mb-2" />
+                        <p class="text-sm text-zinc-500">No hay plantaciones en esta parcela.</p>
+                        @can('update', $plot)
+                            <a href="{{ route('plots.plantings.create', $plot) }}"
+                               class="inline-flex items-center gap-1 text-sm font-medium text-agro-600 hover:text-agro-700 mt-2">
+                                <flux:icon icon="plus" class="size-4" />
+                                Crear primera plantación
+                            </a>
+                        @endcan
+                    </div>
+                @endif
+            </x-agro.card>
+
             <!-- Asignaciones -->
             <x-agro.card>
                 <x-slot:header>

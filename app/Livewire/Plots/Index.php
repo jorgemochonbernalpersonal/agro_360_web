@@ -95,7 +95,9 @@ class Index extends Component
             ])
             ->withMin(['plantings as oldest_planting_year' => fn ($q) => $q->where('status', 'active')], 'planting_year')
             ->withSum(['plantings as total_vines' => fn ($q) => $q->where('status', 'active')], 'vine_count')
+            ->withCount(['plantings as active_plantings_count' => fn ($q) => $q->where('status', 'active')])
             ->with([
+                'plantings' => fn ($q) => $q->where('status', 'active')->with('grapeVariety:id,name')->select('id', 'plot_id', 'grape_variety_id'),
                 'viticulturist:id,name',
                 'autonomousCommunity:id,name',
                 'province:id,name',

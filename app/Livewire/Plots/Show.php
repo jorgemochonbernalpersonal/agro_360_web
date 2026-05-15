@@ -53,6 +53,7 @@ class Show extends Component
             'sigpacCodes',
             'multiplePlotSigpacs.sigpacCode',
             'multiplePlotSigpacs.plotGeometry',
+            'plantings.grapeVariety',
         ]);
 
         if (Auth::user()->hasViticulturistAccess()) {

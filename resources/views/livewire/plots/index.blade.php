@@ -272,6 +272,18 @@
                                         </span>
                                     </div>
                                 @endif
+                                @if ($plot->active_plantings_count > 0)
+                                    <div class="flex items-center gap-2 text-zinc-600">
+                                        <flux:icon icon="book-open" class="size-4 text-zinc-400 shrink-0" />
+                                        <span class="truncate">
+                                            {{ $plot->active_plantings_count }} {{ $plot->active_plantings_count === 1 ? 'plantación' : 'plantaciones' }}
+                                            @php $varieties = $plot->plantings->pluck('grapeVariety.name')->filter()->unique()->take(3); @endphp
+                                            @if ($varieties->isNotEmpty())
+                                                · {{ $varieties->implode(', ') }}{{ $plot->plantings->pluck('grapeVariety.name')->filter()->unique()->count() > 3 ? '…' : '' }}
+                                            @endif
+                                        </span>
+                                    </div>
+                                @endif
                                 <div class="flex items-center gap-2 text-zinc-600">
                                     <flux:icon icon="user" class="size-4 text-zinc-400 shrink-0" />
                                     <span class="truncate">

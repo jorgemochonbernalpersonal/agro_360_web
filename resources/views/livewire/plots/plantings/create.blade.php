@@ -150,8 +150,8 @@
             </div>
         </x-agro.form-section>
 
-        {{-- Autorizacion PAC (Obligatorio para plantaciones post-2016) --}}
-        @if(!auth()->user()->isWinery())
+        {{-- Autorizacion PAC (solo viticultores vinculados a DO/bodega) --}}
+        @if(!auth()->user()->isWinery() && auth()->user()->hasSupervisor())
         <x-agro.form-section title="Autorizacion de Plantacion PAC">
             <flux:callout variant="warning" icon="exclamation-triangle">
                 <flux:callout.heading>Obligatorio para plantaciones desde 2016</flux:callout.heading>

@@ -29,7 +29,7 @@ class PlotResource extends JsonResource
                     'id'           => $p->id,
                     'grape_variety' => $p->grapeVariety?->name,
                     'area'          => (float) $p->area,
-                    'plantation_year' => $p->plantation_year,
+                    'planting_year' => $p->planting_year,
                 ])
             ),
             'has_geometry' => (bool) ($this->has_geometry ?? false),

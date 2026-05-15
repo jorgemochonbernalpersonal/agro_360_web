@@ -230,8 +230,23 @@
                                 </a>
                             </div>
 
-                            {{-- Status dot --}}
-                            <x-agro.status-badge :status="$planting->active" />
+                            {{-- Status badge --}}
+                            <span class="text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full shrink-0
+                                {{ match($planting->status) {
+                                    'active' => 'bg-agro-50 text-agro-700',
+                                    'removed' => 'bg-red-50 text-red-600',
+                                    'experimental' => 'bg-amber-50 text-amber-700',
+                                    'replanting' => 'bg-blue-50 text-blue-600',
+                                    default => 'bg-zinc-100 text-zinc-500',
+                                } }}">
+                                {{ match($planting->status) {
+                                    'active' => 'Activa',
+                                    'removed' => 'Arrancada',
+                                    'experimental' => 'Experimental',
+                                    'replanting' => 'Replantación',
+                                    default => $planting->status,
+                                } }}
+                            </span>
                         </div>
                     </x-slot:header>
 
@@ -280,14 +295,18 @@
                     @endif
 
                     {{-- Metric tiles --}}
-                    <div class="grid grid-cols-2 gap-2 mb-3">
+                    <div class="grid grid-cols-3 gap-2 mb-3">
                         <div class="bg-agro-50 rounded-xl p-2.5">
                             <p class="text-[10px] text-agro-600 font-medium uppercase tracking-wide mb-0.5">Superficie</p>
                             <p class="text-sm font-bold text-agro-700">{{ number_format($planting->area_planted, 3) }} ha</p>
                         </div>
                         <div class="bg-zinc-50 rounded-xl p-2.5">
-                            <p class="text-[10px] text-zinc-500 font-medium uppercase tracking-wide mb-0.5">Año plantación</p>
+                            <p class="text-[10px] text-zinc-500 font-medium uppercase tracking-wide mb-0.5">Plantación</p>
                             <p class="text-sm font-bold text-zinc-700">{{ $planting->planting_year ?? '—' }}</p>
+                        </div>
+                        <div class="bg-amber-50 rounded-xl p-2.5">
+                            <p class="text-[10px] text-amber-600 font-medium uppercase tracking-wide mb-0.5">Límite</p>
+                            <p class="text-sm font-bold text-amber-700">{{ $planting->harvest_limit_kg ? number_format($planting->harvest_limit_kg, 0, ',', '.') . ' kg' : '—' }}</p>
                         </div>
                     </div>
 

@@ -150,8 +150,8 @@
             </div>
         </x-agro.form-section>
 
-        {{-- Autorizacion de Plantacion PAC --}}
-        @if(!auth()->user()->isWinery())
+        {{-- Autorizacion de Plantacion PAC (solo viticultores vinculados a DO/bodega) --}}
+        @if(!auth()->user()->isWinery() && auth()->user()->hasSupervisor())
         <x-agro.form-section title="Autorizacion de Plantacion PAC">
             <flux:callout variant="info" icon="information-circle">
                 <flux:callout.heading>Autorizacion de Plantacion</flux:callout.heading>

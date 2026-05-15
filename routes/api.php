@@ -90,6 +90,7 @@ use App\Http\Controllers\Api\Viticulturist\SupportTicketController;
 use App\Http\Controllers\Api\Viticulturist\ClientController as VitClientController;
 use App\Http\Controllers\Api\Viticulturist\HarvestSaleInvoiceController;
 use App\Http\Controllers\Api\Viticulturist\GrapePurchaseInvoiceController as VitGrapePurchaseInvoiceController;
+use App\Http\Controllers\Api\Viticulturist\DenominationController;
 use App\Http\Controllers\Api\Viticulturist\WineryAccessController;
 use App\Http\Controllers\Api\Viticulturist\FinancialStatsController;
 use App\Http\Controllers\Api\Viticulturist\GrapeTraceabilityController;
@@ -761,6 +762,8 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
 
         // ── Acceso bodegas ──────────────────────────────────────────────────
         Route::get('/winery-access', [WineryAccessController::class, 'index'])->middleware('throttle:60,1');
+
+        Route::get('/denomination', [DenominationController::class, 'index'])->middleware('throttle:60,1');
 
         // ── Tickets soporte ─────────────────────────────────────────────────
         Route::get('/support-tickets', [SupportTicketController::class, 'index'])->middleware('throttle:60,1');
