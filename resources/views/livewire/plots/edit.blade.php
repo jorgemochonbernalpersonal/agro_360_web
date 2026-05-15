@@ -114,11 +114,11 @@
                     <flux:label for="province_id">Provincia *</flux:label>
                     <flux:select wire:model="province_id" id="province_id" data-cy="plot-province-id" required
                         x-bind:disabled="!communityId"
-                        x-bind:value="provinceId"
-                        x-on:change="onProvinceChange($event.target.value)">
+                        x-on:change="onProvinceChange($event.target.value)"
+                        x-init="$nextTick(() => { if (provinceId) $el.value = provinceId })">
                         <option value="">Seleccionar...</option>
                         <template x-for="province in filteredProvinces" :key="province.id">
-                            <option :value="province.id" x-text="province.name"></option>
+                            <option :value="province.id" x-text="province.name" :selected="String(province.id) === String(provinceId)"></option>
                         </template>
                     </flux:select>
                     <flux:error name="province_id" />
@@ -128,10 +128,10 @@
                     <flux:label for="municipality_id">Municipio *</flux:label>
                     <flux:select wire:model="municipality_id" id="municipality_id" data-cy="plot-municipality-id" required
                         x-bind:disabled="!provinceId"
-                        x-bind:value="municipalityId">
+                        x-init="$nextTick(() => { if (municipalityId) $el.value = municipalityId })">
                         <option value="">Seleccionar...</option>
                         <template x-for="mun in municipalities" :key="mun.id">
-                            <option :value="mun.id" x-text="mun.name"></option>
+                            <option :value="mun.id" x-text="mun.name" :selected="String(mun.id) === String(municipalityId)"></option>
                         </template>
                     </flux:select>
                     <flux:error name="municipality_id" />
