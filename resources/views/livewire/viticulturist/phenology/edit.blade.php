@@ -9,14 +9,12 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <flux:field>
                     <flux:label required>Plantación</flux:label>
-                    <flux:select wire:model.live="plot_planting_id">
-                        <option value="">Selecciona plantación</option>
-                        @foreach($plantings as $planting)
-                            <option value="{{ $planting->id }}">
-                                {{ $planting->plot->name }} — {{ $planting->grapeVariety->name ?? $planting->name ?? 'Sin nombre' }}
-                            </option>
-                        @endforeach
-                    </flux:select>
+                    @php $lockedPlanting = $plantings->firstWhere('id', $plot_planting_id); @endphp
+                    <div class="flex items-center gap-2 px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-lg text-sm text-zinc-700">
+                        <flux:icon icon="scissors" class="size-4 text-zinc-400 shrink-0" />
+                        <span>{{ $lockedPlanting?->plot->name }} — {{ $lockedPlanting?->grapeVariety->name ?? $lockedPlanting?->name ?? 'Sin nombre' }}</span>
+                    </div>
+                    <input type="hidden" wire:model="plot_planting_id" />
                     <flux:error name="plot_planting_id" />
                 </flux:field>
 

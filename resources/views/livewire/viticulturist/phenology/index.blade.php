@@ -105,8 +105,15 @@
                             </div>
                         @endif
 
+                        @if($obs->campaign)
+                            <div class="flex items-center gap-2 text-xs text-zinc-500">
+                                <flux:icon icon="calendar" class="size-3.5 text-zinc-400 shrink-0" />
+                                <span>Campaña {{ $obs->campaign->year }}</span>
+                            </div>
+                        @endif
+
                         <div class="grid grid-cols-2 gap-2">
-                            <div class="bg-zinc-50 rounded-xl p-3">
+                            <div class="bg-zinc-50 rounded-xl p-3 {{ $obs->degree_days_accumulated ? '' : 'col-span-2' }}">
                                 <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">Confianza</p>
                                 <p class="text-xl font-bold {{ $confidenceColor }} leading-none">{{ $obs->confidence }}<span class="text-xs font-normal text-zinc-400 ml-0.5">%</span></p>
                             </div>
@@ -124,6 +131,10 @@
                                 <code class="text-xs bg-zinc-100 px-2 py-0.5 rounded font-mono">BBCH: {{ $obs->bbch_code }}</code>
                             @endif
                         </div>
+
+                        @if($obs->notes)
+                            <p class="text-xs text-zinc-400 italic leading-relaxed line-clamp-2">{{ $obs->notes }}</p>
+                        @endif
                     </div>
 
                     <x-slot:footer>
