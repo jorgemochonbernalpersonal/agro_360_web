@@ -421,14 +421,22 @@
     {{-- Modal: Elegir parcela para nueva plantación --}}
     <x-agro.modal name="pick-plot-for-planting" maxWidth="sm">
         <div class="px-6 py-4 border-b border-zinc-200">
-            <div class="flex items-center gap-3">
-                <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
-                    <flux:icon icon="map" class="size-4 text-agro-600" />
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
+                        <flux:icon icon="map" class="size-4 text-agro-600" />
+                    </div>
+                    <div>
+                        <h3 class="text-base font-semibold text-zinc-900">Nueva plantación</h3>
+                        <p class="text-xs text-zinc-500">Elige la parcela donde añadir la plantación</p>
+                    </div>
                 </div>
-                <div>
-                    <h3 class="text-base font-semibold text-zinc-900">Nueva plantación</h3>
-                    <p class="text-xs text-zinc-500">Elige la parcela donde añadir la plantación</p>
-                </div>
+                <flux:button
+                    x-on:click="$dispatch('close-modal', 'pick-plot-for-planting')"
+                    variant="ghost"
+                    size="sm"
+                    icon="x-mark"
+                />
             </div>
         </div>
 

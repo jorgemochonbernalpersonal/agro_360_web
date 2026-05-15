@@ -90,6 +90,7 @@ use App\Http\Controllers\Api\Viticulturist\SupportTicketController;
 use App\Http\Controllers\Api\Viticulturist\ClientController as VitClientController;
 use App\Http\Controllers\Api\Viticulturist\HarvestSaleInvoiceController;
 use App\Http\Controllers\Api\Viticulturist\GrapePurchaseInvoiceController as VitGrapePurchaseInvoiceController;
+use App\Http\Controllers\Api\Viticulturist\AdvisoryMembershipController;
 use App\Http\Controllers\Api\Viticulturist\DenominationController;
 use App\Http\Controllers\Api\Viticulturist\WineryAccessController;
 use App\Http\Controllers\Api\Viticulturist\FinancialStatsController;
@@ -763,7 +764,12 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
         // ── Acceso bodegas ──────────────────────────────────────────────────
         Route::get('/winery-access', [WineryAccessController::class, 'index'])->middleware('throttle:60,1');
 
+        // ── Denominación de Origen ─────────────────────────────────────────
         Route::get('/denomination', [DenominationController::class, 'index'])->middleware('throttle:60,1');
+
+        // ── Asesorías Técnicas ──────────────────────────────────────────────
+        Route::get('/advisory-memberships',  [AdvisoryMembershipController::class, 'index'])->middleware('throttle:60,1');
+        Route::post('/advisory-memberships', [AdvisoryMembershipController::class, 'store'])->middleware('throttle:30,1');
 
         // ── Tickets soporte ─────────────────────────────────────────────────
         Route::get('/support-tickets', [SupportTicketController::class, 'index'])->middleware('throttle:60,1');

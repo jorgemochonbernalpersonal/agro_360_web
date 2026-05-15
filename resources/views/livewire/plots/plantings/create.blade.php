@@ -2,7 +2,7 @@
 <x-agro.form-card
     :title="'Nueva Plantacion en ' . $plot->name"
     description="Registra una plantacion de variedad de uva en esta parcela"
-    :back-url="route('plots.show', $plot)"
+    :back-url="route('plots.plantings.index')"
 >
     <form wire:submit.prevent="save" class="space-y-8">
         <x-agro.form-section title="Datos de la Plantacion">
@@ -213,7 +213,7 @@
         </x-agro.form-section>
         @endif
 
-        <x-agro.form-actions :cancel-url="route('plots.show', $plot)" submit-label="Guardar Plantacion" />
+        <x-agro.form-actions :cancel-url="route('plots.plantings.index')" submit-label="Guardar Plantacion" />
     </form>
 </x-agro.form-card>
 </div>
