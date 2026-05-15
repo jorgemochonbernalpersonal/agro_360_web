@@ -236,11 +236,41 @@ class Plot extends Model
     {
         return $this->hasMany(PlotPlanting::class);
     }
-    
+
+    // ── Datos agregados desde plantaciones ───────────────────────────────
+
     /**
-     * Historial de auditoría de la parcela (gestionado por trait Auditable)
-     * El trait Auditable proporciona auditLogs() via MorphMany
+     * Año de plantación más antiguo entre todas las plantaciones activas.
      */
+    public function getOldestPlantingYearAttribute(): ?int
+    {
+        return $this->plantings()->where('status', 'active')->min('planting_year');
+    }
+
+    /**
+     * Total de cepas sumando todas las plantaciones activas.
+     */
+    public function getTotalVinesAttribute(): ?int
+    {
+        $sum = $this->plantings()->where('status', 'active')->sum('vine_count');
+        return $sum > 0 ? (int) $sum : null;
+    }
+
+    /**
+     * Sistemas de conducción únicos de las plantaciones activas.
+     */
+    public function getTrainingSystemNamesAttribute(): string
+    {
+        return $this->plantings()
+            ->where('status', 'active')
+            ->whereNotNull('training_system_id')
+            ->with('trainingSystem')
+            ->get()
+            ->pluck('trainingSystem.name')
+            ->unique()
+            ->implode(', ');
+    }
+
     // ELIMINADO - ahora se usa el trait Auditable
 
     /**

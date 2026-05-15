@@ -14,6 +14,7 @@ class UserResource extends JsonResource
             'name'                => $this->name,
             'email'               => $this->email,
             'role'                => $this->role,
+            'has_winery'          => (bool) $this->hasWinery(),
             'password_must_reset' => (bool) $this->password_must_reset,
             'email_verified_at'   => $this->email_verified_at?->toIso8601String(),
             'beta_expired'        => (bool) ($this->betaExpired() && !$this->hasBasicFreeAccess()),

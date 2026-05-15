@@ -81,6 +81,20 @@ use App\Http\Controllers\Api\Viticulturist\MarketedHarvestController;
 use App\Http\Controllers\Api\Viticulturist\HarvestByproductController;
 use App\Http\Controllers\Api\Viticulturist\CertificationController;
 use App\Http\Controllers\Api\Viticulturist\CommercialAuthorizationController;
+use App\Http\Controllers\Api\Viticulturist\AgriInsuranceController;
+use App\Http\Controllers\Api\Viticulturist\ExploitationController;
+use App\Http\Controllers\Api\Viticulturist\OfficialReportController;
+use App\Http\Controllers\Api\Viticulturist\ContainerReturnController;
+use App\Http\Controllers\Api\Viticulturist\AnnouncementController;
+use App\Http\Controllers\Api\Viticulturist\SupportTicketController;
+use App\Http\Controllers\Api\Viticulturist\ClientController as VitClientController;
+use App\Http\Controllers\Api\Viticulturist\HarvestSaleInvoiceController;
+use App\Http\Controllers\Api\Viticulturist\GrapePurchaseInvoiceController as VitGrapePurchaseInvoiceController;
+use App\Http\Controllers\Api\Viticulturist\WineryAccessController;
+use App\Http\Controllers\Api\Viticulturist\FinancialStatsController;
+use App\Http\Controllers\Api\Viticulturist\GrapeTraceabilityController;
+use App\Http\Controllers\Api\Viticulturist\WineryMessageController;
+use App\Http\Controllers\Api\Viticulturist\NotificationController as VitNotificationController;
 use App\Http\Controllers\Api\Producer\DashboardController as ProducerDashboard;
 use App\Http\Controllers\Api\Producer\IntegratedEstateController;
 use App\Http\Controllers\Api\Producer\IntegratedCampaignController;
@@ -713,6 +727,57 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
         // ── Autorizaciones comerciales ───────────────────────────────────────
         Route::get('/commercial-authorizations', [CommercialAuthorizationController::class, 'index'])->middleware('throttle:60,1');
         Route::post('/commercial-authorizations', [CommercialAuthorizationController::class, 'store'])->middleware('throttle:30,1');
+
+        // ── Seguros agrarios ────────────────────────────────────────────────
+        Route::get('/agri-insurances', [AgriInsuranceController::class, 'index'])->middleware('throttle:60,1');
+        Route::post('/agri-insurances', [AgriInsuranceController::class, 'store'])->middleware('throttle:30,1');
+
+        // ── Explotaciones SIEX/REA ──────────────────────────────────────────
+        Route::get('/exploitations', [ExploitationController::class, 'index'])->middleware('throttle:60,1');
+        Route::post('/exploitations', [ExploitationController::class, 'store'])->middleware('throttle:30,1');
+
+        // ── Informes oficiales ──────────────────────────────────────────────
+        Route::get('/official-reports', [OfficialReportController::class, 'index'])->middleware('throttle:60,1');
+
+        // ── Envases SIGFITO ─────────────────────────────────────────────────
+        Route::get('/container-returns', [ContainerReturnController::class, 'index'])->middleware('throttle:60,1');
+        Route::post('/container-returns', [ContainerReturnController::class, 'store'])->middleware('throttle:30,1');
+
+        // ── Clientes ────────────────────────────────────────────────────────
+        Route::get('/clients', [VitClientController::class, 'index'])->middleware('throttle:60,1');
+        Route::post('/clients', [VitClientController::class, 'store'])->middleware('throttle:30,1');
+
+        // ── Facturas venta cosecha ──────────────────────────────────────────
+        Route::get('/harvest-sale-invoices', [HarvestSaleInvoiceController::class, 'index'])->middleware('throttle:60,1');
+
+        // ── Facturas/liquidaciones bodega (lectura) ─────────────────────────
+        Route::get('/grape-purchase-invoices', [VitGrapePurchaseInvoiceController::class, 'index'])->middleware('throttle:60,1');
+
+        // ── Estadísticas financieras ────────────────────────────────────────
+        Route::get('/financial-stats', FinancialStatsController::class)->middleware('throttle:30,1');
+
+        // ── Trazabilidad uva ────────────────────────────────────────────────
+        Route::get('/grape-traceability', [GrapeTraceabilityController::class, 'index'])->middleware('throttle:60,1');
+
+        // ── Acceso bodegas ──────────────────────────────────────────────────
+        Route::get('/winery-access', [WineryAccessController::class, 'index'])->middleware('throttle:60,1');
+
+        // ── Tickets soporte ─────────────────────────────────────────────────
+        Route::get('/support-tickets', [SupportTicketController::class, 'index'])->middleware('throttle:60,1');
+        Route::post('/support-tickets', [SupportTicketController::class, 'store'])->middleware('throttle:30,1');
+
+        // ── Anuncios bodega ─────────────────────────────────────────────────
+        Route::get('/announcements', [AnnouncementController::class, 'index'])->middleware('throttle:60,1');
+        Route::post('/announcements/{id}/read', [AnnouncementController::class, 'markRead'])->middleware('throttle:30,1');
+
+        // ── Mensajes bodega (notificaciones de la bodega) ───────────────────
+        Route::get('/winery-messages', [WineryMessageController::class, 'index'])->middleware('throttle:60,1');
+        Route::post('/winery-messages/{id}/read', [WineryMessageController::class, 'markRead'])->middleware('throttle:30,1');
+
+        // ── Notificaciones ──────────────────────────────────────────────────
+        Route::get('/notifications', [VitNotificationController::class, 'index'])->middleware('throttle:60,1');
+        Route::post('/notifications/{id}/read', [VitNotificationController::class, 'markRead'])->middleware('throttle:30,1');
+        Route::post('/notifications/read-all', [VitNotificationController::class, 'markAllRead'])->middleware('throttle:30,1');
     });
 
     // ── Producer (endpoints exclusivos) ──────────────────────────────────────

@@ -79,7 +79,7 @@ class Index extends Component
         // Viticulturist y producer ven todos los tipos de cultivo.
         $wineryOnly = $user->hasWineryAccess() && !$user->hasViticulturistAccess();
 
-        $query = PlotPlanting::with(['plot.viticulturist', 'plot.municipality', 'grapeVariety'])
+        $query = PlotPlanting::with(['plot.viticulturist', 'plot.municipality', 'grapeVariety', 'trainingSystem'])
             ->whereIn('plot_id', $visiblePlotIds);
 
         if ($wineryOnly) {

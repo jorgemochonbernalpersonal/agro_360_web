@@ -249,29 +249,9 @@
                 </div>
             </x-agro.form-section>
 
-            <!-- 5. Plantacion y Cultivo -->
-            <x-agro.form-section title="Plantación y Cultivo">
+            <!-- 5. Cultivo -->
+            <x-agro.form-section title="Cultivo">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <flux:field>
-                        <flux:label for="plantation_year">Año de Plantación</flux:label>
-                        <flux:input wire:model="plantation_year" type="number" min="1800" max="{{ date('Y') }}" id="plantation_year" placeholder="Ej: 1985" />
-                        <flux:error name="plantation_year" />
-                    </flux:field>
-                    <flux:field>
-                        <flux:label for="number_of_vines">Número de Cepas</flux:label>
-                        <flux:input wire:model="number_of_vines" type="number" min="0" id="number_of_vines" placeholder="Ej: 2500" />
-                        <flux:error name="number_of_vines" />
-                    </flux:field>
-                    <flux:field>
-                        <flux:label for="training_system_id">Sistema de Conducción</flux:label>
-                        <flux:select wire:model="training_system_id" id="training_system_id">
-                            <option value="">Sin especificar</option>
-                            @foreach ($trainingSystems as $ts)
-                                <option value="{{ $ts->id }}">{{ $ts->name }}</option>
-                            @endforeach
-                        </flux:select>
-                        <flux:error name="training_system_id" />
-                    </flux:field>
                     <flux:field>
                         <flux:label for="planting_pattern">Marco de Plantación</flux:label>
                         <flux:input wire:model="planting_pattern" type="text" id="planting_pattern" placeholder="Ej: 2.5x1.2 tresbolillo" />
@@ -281,6 +261,7 @@
                         <flux:checkbox wire:model="is_organic" id="is_organic" label="Producción Ecológica" description="La parcela está bajo un programa de agricultura ecológica certificada." />
                     </div>
                 </div>
+                <p class="text-xs text-zinc-500 mt-3">El año de plantación, sistema de conducción y número de cepas se gestionan en cada plantación.</p>
             </x-agro.form-section>
 
             <!-- 6. Avanzado -->

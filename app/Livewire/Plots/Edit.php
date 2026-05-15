@@ -13,7 +13,6 @@ use App\Models\Topography;
 use App\Models\PropertyType;
 use App\Models\Valley;
 use App\Models\Site;
-use App\Models\TrainingSystem;
 use App\Models\Province;
 use App\Models\Municipality;
 use App\Livewire\Concerns\WithRoleBasedFields;
@@ -44,7 +43,6 @@ class Edit extends Component
     public $orientation_id = '';
     public $degree_day_base = '';
     public $cadastral_area = '';
-    public $plantation_year = '';
     public $is_organic = false;
     // Lookup FKs
     public $soil_type_id = '';
@@ -53,13 +51,11 @@ class Edit extends Component
     public $property_type_id = '';
     public $valley_id = '';
     public $site_id = '';
-    public $training_system_id = '';
     public $owner_id = '';
     // Nuevos campos simples
     public $enclosure = '';
     public $planting_pattern = '';
     public $slope = '';
-    public $number_of_vines = '';
     // PAC
     public $pac_eligible_area = '';
     public $non_eligible_area = '';
@@ -96,7 +92,6 @@ class Edit extends Component
         $this->orientation_id = $plot->orientation_id ?? '';
         $this->degree_day_base = $plot->degree_day_base ?? '';
         $this->cadastral_area = $plot->cadastral_area ?? '';
-        $this->plantation_year = $plot->plantation_year ?? '';
         $this->is_organic = $plot->is_organic ?? false;
         $this->soil_type_id = $plot->soil_type_id ?? '';
         $this->irrigation_type_id = $plot->irrigation_type_id ?? '';
@@ -104,12 +99,10 @@ class Edit extends Component
         $this->property_type_id = $plot->property_type_id ?? '';
         $this->valley_id = $plot->valley_id ?? '';
         $this->site_id = $plot->site_id ?? '';
-        $this->training_system_id = $plot->training_system_id ?? '';
         $this->owner_id = $plot->owner_id ?? '';
         $this->enclosure = $plot->enclosure ?? '';
         $this->planting_pattern = $plot->planting_pattern ?? '';
         $this->slope = $plot->slope ?? '';
-        $this->number_of_vines = $plot->number_of_vines ?? '';
         $this->pac_eligible_area = $plot->pac_eligible_area ?? '';
         $this->non_eligible_area = $plot->non_eligible_area ?? '';
 
@@ -130,7 +123,6 @@ class Edit extends Component
             'orientation_id' => 'nullable|exists:orientations,id',
             'degree_day_base' => 'nullable|numeric|min:0|max:30',
             'cadastral_area' => 'nullable|numeric|min:0',
-            'plantation_year' => 'nullable|integer|min:1800|max:' . date('Y'),
             'is_organic' => 'boolean',
             'soil_type_id' => 'nullable|exists:soil_types,id',
             'irrigation_type_id' => 'nullable|exists:irrigation_types,id',
@@ -138,12 +130,10 @@ class Edit extends Component
             'property_type_id' => 'nullable|exists:property_types,id',
             'valley_id' => 'nullable|exists:valleys,id',
             'site_id' => 'nullable|exists:sites,id',
-            'training_system_id' => 'nullable|exists:training_systems,id',
             'owner_id' => 'nullable|exists:users,id',
             'enclosure' => 'nullable|string|max:100',
             'planting_pattern' => 'nullable|string|max:50',
             'slope' => 'nullable|numeric|min:0|max:100',
-            'number_of_vines' => 'nullable|integer|min:0',
             'pac_eligible_area' => 'nullable|numeric|min:0|lte:area',
             'non_eligible_area' => 'nullable|numeric|min:0|lte:area',
         ];
@@ -257,7 +247,6 @@ class Edit extends Component
                 'orientation_id' => $this->orientation_id ?: null,
                 'degree_day_base' => $this->degree_day_base ?: null,
                 'cadastral_area' => $this->cadastral_area ?: null,
-                'plantation_year' => $this->plantation_year ?: null,
                 'is_organic' => $this->is_organic,
                 'soil_type_id' => $this->soil_type_id ?: null,
                 'irrigation_type_id' => $this->irrigation_type_id ?: null,
@@ -265,12 +254,10 @@ class Edit extends Component
                 'property_type_id' => $this->property_type_id ?: null,
                 'valley_id' => $this->valley_id ?: null,
                 'site_id' => $this->site_id ?: null,
-                'training_system_id' => $this->training_system_id ?: null,
                 'owner_id' => $this->owner_id ?: null,
                 'enclosure' => $this->enclosure ?: null,
                 'planting_pattern' => $this->planting_pattern ?: null,
                 'slope' => $this->slope ?: null,
-                'number_of_vines' => $this->number_of_vines ?: null,
                 'pac_eligible_area' => $this->pac_eligible_area ?: null,
                 'non_eligible_area' => $this->non_eligible_area ?: null,
             ];
@@ -332,7 +319,6 @@ class Edit extends Component
             'propertyTypes'  => $this->catalogScope(PropertyType::where('active', true), 'property_types')->orderBy('name')->get(),
             'valleys'        => $this->catalogScope(Valley::where('active', true), 'valleys')->orderBy('name')->get(),
             'sites'          => $this->catalogScope(Site::where('is_archived', false), 'sites')->orderBy('name')->get(),
-            'trainingSystems'=> $this->catalogScope(TrainingSystem::where('active', true), 'training_systems')->orderBy('name')->get(),
             'autonomousCommunities' => AutonomousCommunity::select(['id', 'name'])->orderBy('name')->get(),
             'allProvinces'   => Province::orderBy('name')->get(['id', 'name', 'autonomous_community_id'])->toArray(),
             'initMunicipalities' => $this->province_id

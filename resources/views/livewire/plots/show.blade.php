@@ -116,17 +116,17 @@
                         </div>
                     @endif
 
-                    @if($plot->number_of_vines)
+                    @if($plot->total_vines)
                         <div>
-                            <label class="text-sm font-semibold text-zinc-500">Número de Cepas</label>
-                            <p class="text-zinc-900">{{ number_format($plot->number_of_vines, 0, ',', '.') }}</p>
+                            <label class="text-sm font-semibold text-zinc-500">Total Cepas</label>
+                            <p class="text-zinc-900">{{ number_format($plot->total_vines, 0, ',', '.') }}</p>
                         </div>
                     @endif
 
-                    @if($plot->plantation_year)
+                    @if($plot->oldest_planting_year)
                         <div>
-                            <label class="text-sm font-semibold text-zinc-500">Año de Plantación</label>
-                            <p class="text-zinc-900">{{ $plot->plantation_year }}</p>
+                            <label class="text-sm font-semibold text-zinc-500">Plantación más antigua</label>
+                            <p class="text-zinc-900">{{ $plot->oldest_planting_year }}</p>
                         </div>
                     @endif
 

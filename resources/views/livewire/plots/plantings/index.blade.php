@@ -291,13 +291,27 @@
                         </div>
                     </div>
 
-                    {{-- Riego --}}
-                    @if($planting->irrigated)
-                        <span class="inline-flex items-center gap-1 text-xs text-blue-600">
-                            <flux:icon icon="cloud" class="size-3.5" />
-                            Con riego
-                        </span>
-                    @endif
+                    {{-- Detalles extra --}}
+                    <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-zinc-500 mb-1">
+                        @if($planting->vine_count)
+                            <span class="inline-flex items-center gap-1">
+                                <flux:icon icon="sparkles" class="size-3.5 text-zinc-400" />
+                                {{ number_format($planting->vine_count, 0, ',', '.') }} cepas
+                            </span>
+                        @endif
+                        @if($planting->trainingSystem)
+                            <span class="inline-flex items-center gap-1">
+                                <flux:icon icon="adjustments-vertical" class="size-3.5 text-zinc-400" />
+                                {{ $planting->trainingSystem->name }}
+                            </span>
+                        @endif
+                        @if($planting->irrigated)
+                            <span class="inline-flex items-center gap-1 text-blue-600">
+                                <flux:icon icon="cloud" class="size-3.5" />
+                                Con riego
+                            </span>
+                        @endif
+                    </div>
 
                     <x-slot:footer>
                         <div class="flex items-center justify-between">

@@ -90,11 +90,11 @@ class Index extends Component
                 'orientation_id',
                 'topography_id',
                 'slope',
-                'number_of_vines',
-                'plantation_year',
                 'created_at',
                 'updated_at',
             ])
+            ->withMin(['plantings as oldest_planting_year' => fn ($q) => $q->where('status', 'active')], 'planting_year')
+            ->withSum(['plantings as total_vines' => fn ($q) => $q->where('status', 'active')], 'vine_count')
             ->with([
                 'viticulturist:id,name',
                 'autonomousCommunity:id,name',

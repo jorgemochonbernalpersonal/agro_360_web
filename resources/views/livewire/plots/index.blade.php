@@ -264,11 +264,11 @@
                                         </span>
                                     </div>
                                 @endif
-                                @if ($plot->number_of_vines || $plot->plantation_year)
+                                @if ($plot->total_vines || $plot->oldest_planting_year)
                                     <div class="flex items-center gap-2 text-zinc-600">
                                         <flux:icon icon="sparkles" class="size-4 text-zinc-400 shrink-0" />
                                         <span class="truncate">
-                                            {{ $plot->number_of_vines ? number_format($plot->number_of_vines, 0, ',', '.') . ' cepas' : '' }}{{ $plot->number_of_vines && $plot->plantation_year ? ' · ' : '' }}{{ $plot->plantation_year ? 'Plantación ' . $plot->plantation_year : '' }}
+                                            {{ $plot->total_vines ? number_format($plot->total_vines, 0, ',', '.') . ' cepas' : '' }}{{ $plot->total_vines && $plot->oldest_planting_year ? ' · ' : '' }}{{ $plot->oldest_planting_year ? 'Plantación ' . $plot->oldest_planting_year : '' }}
                                         </span>
                                     </div>
                                 @endif
