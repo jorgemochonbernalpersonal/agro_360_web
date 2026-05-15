@@ -243,11 +243,35 @@
                             </div>
 
                             {{-- Métricas secundarias --}}
-                            <div class="space-y-2 text-sm">
-                                <div class="flex items-center gap-2 text-zinc-600">
-                                    <flux:icon icon="building-office" class="size-4 text-zinc-400 shrink-0" />
-                                    <span class="truncate">{{ $wineryName }}</span>
-                                </div>
+                            <div class="space-y-1.5 text-sm">
+                                @if ($plot->code_parcel)
+                                    <div class="flex items-center gap-2 text-zinc-600">
+                                        <flux:icon icon="hashtag" class="size-4 text-zinc-400 shrink-0" />
+                                        <span class="truncate text-xs font-mono">{{ $plot->code_parcel }}</span>
+                                    </div>
+                                @endif
+                                @if ($plot->soilType)
+                                    <div class="flex items-center gap-2 text-zinc-600">
+                                        <flux:icon icon="beaker" class="size-4 text-zinc-400 shrink-0" />
+                                        <span class="truncate">{{ $plot->soilType->name }}</span>
+                                    </div>
+                                @endif
+                                @if ($plot->orientation || $plot->slope)
+                                    <div class="flex items-center gap-2 text-zinc-600">
+                                        <flux:icon icon="arrow-trending-up" class="size-4 text-zinc-400 shrink-0" />
+                                        <span class="truncate">
+                                            {{ $plot->orientation?->name ?? '' }}{{ $plot->orientation && $plot->slope ? ' · ' : '' }}{{ $plot->slope ? $plot->slope . '% pend.' : '' }}
+                                        </span>
+                                    </div>
+                                @endif
+                                @if ($plot->number_of_vines || $plot->plantation_year)
+                                    <div class="flex items-center gap-2 text-zinc-600">
+                                        <flux:icon icon="sparkles" class="size-4 text-zinc-400 shrink-0" />
+                                        <span class="truncate">
+                                            {{ $plot->number_of_vines ? number_format($plot->number_of_vines, 0, ',', '.') . ' cepas' : '' }}{{ $plot->number_of_vines && $plot->plantation_year ? ' · ' : '' }}{{ $plot->plantation_year ? 'Plantación ' . $plot->plantation_year : '' }}
+                                        </span>
+                                    </div>
+                                @endif
                                 <div class="flex items-center gap-2 text-zinc-600">
                                     <flux:icon icon="user" class="size-4 text-zinc-400 shrink-0" />
                                     <span class="truncate">
@@ -257,9 +281,6 @@
                                         @endif
                                     </span>
                                 </div>
-                                @if ($plot->description)
-                                    <p class="text-xs text-zinc-400 truncate">{{ $plot->description }}</p>
-                                @endif
                             </div>
 
                         </div>

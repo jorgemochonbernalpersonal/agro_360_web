@@ -85,6 +85,13 @@ class Index extends Component
                 'autonomous_community_id',
                 'province_id',
                 'municipality_id',
+                'code_parcel',
+                'soil_type_id',
+                'orientation_id',
+                'topography_id',
+                'slope',
+                'number_of_vines',
+                'plantation_year',
                 'created_at',
                 'updated_at',
             ])
@@ -94,6 +101,9 @@ class Index extends Component
                 'province:id,name',
                 'municipality:id,name,province_id',
                 'municipality.province:id,name',
+                'soilType:id,name',
+                'orientation:id,name',
+                'topography:id,name',
                 'sigpacCodes:id,code,code_autonomous_community,code_province,code_municipality,code_aggregate,code_zone,code_polygon,code_plot,code_enclosure',
                 'multiplePlotSigpacs' => function($q) {
                     $q->with([
