@@ -69,7 +69,7 @@ class Index extends Component
         if ($plotFilter) {
             $plotsQuery->where('id', $plotFilter);
         }
-        $plots = $plotsQuery->orderBy('name')->get(['id', 'name', 'area', 'municipality_id']);
+        $plots = $plotsQuery->orderBy('name')->with('municipality:id,name')->get(['id', 'name', 'area', 'municipality_id']);
 
         $plotIds = $plots->pluck('id');
 

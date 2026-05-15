@@ -66,7 +66,7 @@
                     <flux:select wire:model="plot_id">
                         <option value="">Todas / Sin especificar</option>
                         @foreach ($plots as $plot)
-                            <option value="{{ $plot->id }}">{{ $plot->name }} @if($plot->municipality)· {{ $plot->municipality }}@endif</option>
+                            <option value="{{ $plot->id }}">{{ $plot->name }} @if($plot->municipality?->name)· {{ $plot->municipality->name }}@endif</option>
                         @endforeach
                     </flux:select>
                     <flux:error name="plot_id" />

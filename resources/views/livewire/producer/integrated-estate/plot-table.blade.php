@@ -25,8 +25,8 @@
                             <div class="flex items-center gap-2">
                                 <flux:icon icon="map" class="size-4 text-cyan-600" />
                                 <span class="text-sm font-semibold text-zinc-800">{{ $plot->name }}</span>
-                                @if($plot->municipality)
-                                    <span class="text-xs text-zinc-400">· {{ $plot->municipality }}</span>
+                                @if($plot->municipality?->name)
+                                    <span class="text-xs text-zinc-400">· {{ $plot->municipality->name }}</span>
                                 @endif
                             </div>
                             <div class="flex items-center gap-3 text-xs text-zinc-500">

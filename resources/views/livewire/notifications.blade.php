@@ -195,7 +195,7 @@
         </div>
 
         {{-- Footer --}}
-        @if($notifications->count() > 0)
+        @if($notifications->count() > 0 && !auth()->user()->isWinery())
             <div class="px-4 py-2 border-t border-zinc-200 bg-zinc-50">
                 <a
                     href="{{ roleRoute('official-reports.index') }}"
