@@ -91,6 +91,11 @@ use App\Http\Controllers\Api\Viticulturist\ClientController as VitClientControll
 use App\Http\Controllers\Api\Viticulturist\HarvestSaleInvoiceController;
 use App\Http\Controllers\Api\Viticulturist\GrapePurchaseInvoiceController as VitGrapePurchaseInvoiceController;
 use App\Http\Controllers\Api\Viticulturist\AdvisoryMembershipController;
+use App\Http\Controllers\Api\Viticulturist\CueExportController;
+use App\Http\Controllers\Api\Viticulturist\RemoteSensingController as VitRemoteSensingController;
+use App\Http\Controllers\Api\Viticulturist\PlantingController as VitPlantingController;
+use App\Http\Controllers\Api\Viticulturist\PacDeclarationController;
+use App\Http\Controllers\Api\Viticulturist\PacPaymentController;
 use App\Http\Controllers\Api\Viticulturist\DenominationController;
 use App\Http\Controllers\Api\Viticulturist\WineryAccessController;
 use App\Http\Controllers\Api\Viticulturist\FinancialStatsController;
@@ -770,6 +775,19 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
         // ── Asesorías Técnicas ──────────────────────────────────────────────
         Route::get('/advisory-memberships',  [AdvisoryMembershipController::class, 'index'])->middleware('throttle:60,1');
         Route::post('/advisory-memberships', [AdvisoryMembershipController::class, 'store'])->middleware('throttle:30,1');
+
+        // ── Exportaciones CUE ───────────────────────────────────────────────
+        Route::get('/cue-exports', [CueExportController::class, 'index'])->middleware('throttle:60,1');
+
+        // ── Teledetección ───────────────────────────────────────────────────
+        Route::get('/remote-sensing', [VitRemoteSensingController::class, 'index'])->middleware('throttle:60,1');
+
+        // ── Plantaciones ────────────────────────────────────────────────────
+        Route::get('/plantings', [VitPlantingController::class, 'index'])->middleware('throttle:60,1');
+
+        // ── PAC ─────────────────────────────────────────────────────────────
+        Route::get('/pac-declarations', [PacDeclarationController::class, 'index'])->middleware('throttle:60,1');
+        Route::get('/pac-payments',     [PacPaymentController::class, 'index'])->middleware('throttle:60,1');
 
         // ── Tickets soporte ─────────────────────────────────────────────────
         Route::get('/support-tickets', [SupportTicketController::class, 'index'])->middleware('throttle:60,1');

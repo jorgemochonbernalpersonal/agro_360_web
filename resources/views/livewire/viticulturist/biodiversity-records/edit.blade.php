@@ -23,7 +23,7 @@
                     <flux:select wire:model="plot_id">
                         <flux:select.option value="">Seleccionar parcela...</flux:select.option>
                         @foreach($plots as $plot)
-                            <flux:select.option value="{{ $plot->id }}">{{ $plot->name }} @if($plot->municipality)&middot; {{ $plot->municipality }}@endif</flux:select.option>
+                            <flux:select.option value="{{ $plot->id }}">{{ $plot->name }} @if($plot->municipality?->name)&middot; {{ $plot->municipality->name }}@endif</flux:select.option>
                         @endforeach
                     </flux:select>
                     <flux:error name="plot_id" />

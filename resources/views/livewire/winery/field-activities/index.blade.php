@@ -58,9 +58,11 @@
 
         <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
+        @if(auth()->user()->hasWineryAccess())
         <flux:button variant="ghost" icon="chart-bar" href="{{ roleRoute('harvest-summary.index') }}" wire:navigate size="sm">
             Cuadro de mando
         </flux:button>
+        @endif
     </div>
 
     {{-- Chips de filtros activos --}}

@@ -71,7 +71,7 @@ class Edit extends AbstractEdit
 
         return [
             'recordTypes' => BiodiversityRecord::RECORD_TYPES,
-            'plots'       => Plot::where('viticulturist_id', $userId)->orderBy('name')->get(['id', 'name', 'municipality_id']),
+            'plots'       => Plot::where('viticulturist_id', $userId)->orderBy('name')->with('municipality:id,name')->get(['id', 'name', 'municipality_id']),
             'campaigns'   => Campaign::forViticulturist($userId)->orderByDesc('year')->get(['id', 'name', 'year']),
         ];
     }
