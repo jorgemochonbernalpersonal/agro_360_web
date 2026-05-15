@@ -77,7 +77,7 @@ class Edit extends AbstractEdit
             'campaigns'  => Campaign::where('viticulturist_id', $this->viticulturistId())
                                 ->orderByDesc('year')->get(['id', 'name', 'year']),
             'plots'      => Plot::where('viticulturist_id', $this->viticulturistId())
-                                ->orderBy('name')->get(['id', 'name', 'municipality']),
+                                ->orderBy('name')->get(['id', 'name', 'municipality_id']),
         ];
     }
 }
