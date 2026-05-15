@@ -96,6 +96,26 @@
         ? (int) $lastActivity->activity_date->diffInDays(now())
         : null;
 
+    // =======================
+    // CONSEJO ESTACIONAL
+    // =======================
+    $month = (int) date('n');
+    $seasonalTips = [
+        1  => ['icon' => '❄️', 'title' => 'Enero — Reposo invernal',       'tip' => 'Buen momento para planificar la poda de invierno y revisar el estado de espalderas y tutores.', 'action' => 'Registrar poda',         'route' => 'viticulturist.digital-notebook.pruning.create'],
+        2  => ['icon' => '✂️', 'title' => 'Febrero — Poda en seco',         'tip' => 'Época de poda principal. Registra los tipos de poda y carga de yemas por parcela.',              'action' => 'Registrar poda',         'route' => 'viticulturist.digital-notebook.pruning.create'],
+        3  => ['icon' => '🌱', 'title' => 'Marzo — Lloro y brotación',      'tip' => 'Vigila la brotación y prepara tratamientos preventivos contra mildiu y oídio.',                  'action' => 'Registrar observación', 'route' => 'viticulturist.digital-notebook.observation.create'],
+        4  => ['icon' => '🌿', 'title' => 'Abril — Crecimiento vegetativo', 'tip' => 'Controla el vigor y aplica tratamientos preventivos. Revisa las necesidades de riego.',          'action' => 'Registrar tratamiento', 'route' => 'viticulturist.digital-notebook.treatment.create'],
+        5  => ['icon' => '🌸', 'title' => 'Mayo — Pre-floración',           'tip' => 'Momento crítico para mildiu. Mantén la vigilancia y registra tratamientos preventivos.',         'action' => 'Registrar tratamiento', 'route' => 'viticulturist.digital-notebook.treatment.create'],
+        6  => ['icon' => '🌼', 'title' => 'Junio — Floración y cuajado',    'tip' => 'Registra observaciones de floración. Controla el cuajado y ajusta el riego si es necesario.',    'action' => 'Registrar observación', 'route' => 'viticulturist.digital-notebook.observation.create'],
+        7  => ['icon' => '☀️', 'title' => 'Julio — Envero',                 'tip' => 'Controla el estrés hídrico y registra el inicio del envero. Prepara estimaciones de rendimiento.','action' => 'Estimar rendimiento',   'route' => 'viticulturist.digital-notebook.estimated-yields.create'],
+        8  => ['icon' => '🍇', 'title' => 'Agosto — Maduración',            'tip' => 'Muestrea la madurez de la uva y planifica la vendimia. Registra análisis de azúcar y acidez.',   'action' => 'Registrar observación', 'route' => 'viticulturist.digital-notebook.observation.create'],
+        9  => ['icon' => '🍷', 'title' => 'Septiembre — Vendimia',          'tip' => 'Registra cada entrega de vendimia con peso, variedad y parcela para la trazabilidad completa.',   'action' => 'Registrar vendimia',    'route' => 'viticulturist.harvests.create-delivery'],
+        10 => ['icon' => '🍂', 'title' => 'Octubre — Post-vendimia',        'tip' => 'Aplica tratamientos post-vendimia y registra labores de mantenimiento del suelo.',                'action' => 'Registrar post-vendimia', 'route' => 'viticulturist.digital-notebook.post-harvest.create'],
+        11 => ['icon' => '🍁', 'title' => 'Noviembre — Caída de hoja',      'tip' => 'Buen momento para análisis de suelo y planificación de la fertilización invernal.',               'action' => 'Registrar fertilización', 'route' => 'viticulturist.digital-notebook.fertilization.create'],
+        12 => ['icon' => '🌧️', 'title' => 'Diciembre — Reposo',             'tip' => 'Revisa el cumplimiento PAC del año y prepara la documentación para la campaña siguiente.',       'action' => 'Ver PAC',               'route' => 'viticulturist.pac.dashboard'],
+    ];
+    $currentTip = $seasonalTips[$month];
+
     $dashboardIcon = '<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>';
 @endphp
 
@@ -288,6 +308,23 @@
                     </div>
                 </a>
             @endif
+        </div>
+
+        {{-- Consejo estacional --}}
+        <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-5" data-cy="seasonal-tip">
+            <div class="flex items-start gap-4">
+                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center text-xl flex-shrink-0">
+                    {{ $currentTip['icon'] }}
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h3 class="text-sm font-bold text-gray-900">{{ $currentTip['title'] }}</h3>
+                    <p class="text-xs text-gray-600 mt-1">{{ $currentTip['tip'] }}</p>
+                </div>
+                <a href="{{ route($currentTip['route']) }}" wire:navigate
+                   class="flex-shrink-0 px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-700 text-xs font-semibold rounded-lg border border-amber-200 transition-colors">
+                    {{ $currentTip['action'] }}
+                </a>
+            </div>
         </div>
 
         {{-- PAC Compliance Section - ARRIBA y abierto por defecto --}}
