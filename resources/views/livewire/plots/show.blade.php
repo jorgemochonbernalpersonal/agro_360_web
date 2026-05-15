@@ -629,274 +629,117 @@
     @endif
     @endif
 
-@push('scripts')
 @if($hasGeometry && count($plotGeometries) > 0)
-
+    @script
     <script>
-        function initMap() {
-            console.log('=== Iniciando mapa ===');
-            let plotGeometries = @json($plotGeometries);
-            console.log('plotGeometries:', plotGeometries);
+        (function() {
+            const plotGeometries = @js($plotGeometries);
+            const plotName = @js($plot->name);
 
-            if (plotGeometries.length === 0) {
-                console.warn('No hay geometrias para mostrar');
-                return;
-            }
+            if (!plotGeometries || plotGeometries.length === 0) return;
 
-            // Verificar que el contenedor existe
             const mapContainer = document.getElementById('plot-map');
-            if (!mapContainer) {
-                console.error('No se encontro el contenedor #plot-map');
-                return;
-            }
+            if (!mapContainer) return;
 
-            // Inicializar mapa
-            let map = L.map('plot-map', {
-                zoomControl: true
-            });
-
-            // Capas base
-            let streetMap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; OpenStreetMap contributors'
-            });
-
-            let satelliteMap = L.tileLayer(
-                'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-                    attribution: '&copy; Esri'
+            function loadLeaflet(cb) {
+                if (window.L) { cb(); return; }
+                if (!document.getElementById('leaflet-css')) {
+                    const link = document.createElement('link');
+                    link.id = 'leaflet-css';
+                    link.rel = 'stylesheet';
+                    link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+                    document.head.appendChild(link);
                 }
-            );
-
-            streetMap.addTo(map);
-
-            // Control de capas
-            let baseMaps = {
-                "Mapa": streetMap,
-                "Satelite": satelliteMap
-            };
-            L.control.layers(baseMaps).addTo(map);
-
-            let bounds = [];
-
-            // Funcion para parsear WKT
-            function parseWKT(wkt) {
-                if (!wkt || typeof wkt !== 'string') {
-                    return [];
-                }
-
-                const trimmedWkt = wkt.trim();
-                if (trimmedWkt.length === 0) {
-                    return [];
-                }
-
-                if (trimmedWkt.startsWith("POLYGON")) {
-                    return parsePolygon(trimmedWkt);
-                } else if (trimmedWkt.startsWith("MULTIPOLYGON")) {
-                    return parseMultiPolygon(trimmedWkt);
-                } else {
-                    return [];
-                }
-            }
-
-            function parsePolygon(wkt) {
-                try {
-                    const ringMatches = wkt.match(/\(([^)]+)\)/g);
-                    if (!ringMatches || ringMatches.length === 0) {
-                        return [];
-                    }
-
-                    const rings = [];
-                    ringMatches.forEach((ringMatch) => {
-                        const coordString = ringMatch.slice(1, -1);
-                        const coordinates = parseCoordinateString(coordString);
-                        if (coordinates.length >= 3) {
-                            rings.push(coordinates);
-                        }
-                    });
-
-                    if (rings.length === 0) {
-                        return [];
-                    }
-
-                    if (rings.length === 1) {
-                        return rings[0];
-                    }
-
-                    return {
-                        isComplex: true,
-                        outerRing: rings[0],
-                        holes: rings.slice(1)
-                    };
-                } catch (error) {
-                    console.error('parsePolygon error:', error);
-                    return [];
-                }
-            }
-
-            function parseMultiPolygon(wkt) {
-                try {
-                    const polygons = [];
-                    let inner = wkt.replace(/^MULTIPOLYGON\s*\(\s*/i, '').replace(/\s*\)$/i, '');
-                    let polyStrings = inner.split(/\)\s*,\s*\(/);
-
-                    polyStrings.forEach(polyStr => {
-                        let cleanStr = polyStr.replace(/^\(\s*/, '').replace(/\s*\)$/i, '');
-                        let rings = cleanStr.match(/\(([^)]+)\)/g);
-                        if (rings) {
-                            const parsedRings = [];
-                            rings.forEach(ringMatch => {
-                                const coordString = ringMatch.slice(1, -1);
-                                const coordinates = parseCoordinateString(coordString);
-                                if (coordinates.length >= 3) {
-                                    parsedRings.push(coordinates);
-                                }
-                            });
-                            if (parsedRings.length === 1) {
-                                polygons.push(parsedRings[0]);
-                            } else if (parsedRings.length > 1) {
-                                polygons.push({
-                                    isComplex: true,
-                                    outerRing: parsedRings[0],
-                                    holes: parsedRings.slice(1)
-                                });
-                            }
-                        }
-                    });
-                    return polygons;
-                } catch (error) {
-                    console.error('parseMultiPolygon error:', error);
-                    return [];
-                }
+                const s = document.createElement('script');
+                s.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+                s.onload = cb;
+                document.head.appendChild(s);
             }
 
             function parseCoordinateString(coordString) {
-                if (!coordString || typeof coordString !== 'string') {
-                    return [];
-                }
-
-                const coords = coordString.split(",");
-                const validCoords = [];
-
-                coords.forEach((coord) => {
-                    try {
-                        const trimmedCoord = coord.trim();
-                        if (trimmedCoord.length === 0) return;
-
-                        const parts = trimmedCoord.split(/\s+/);
-                        if (parts.length >= 2) {
-                            const lon = parseFloat(parts[0]);
-                            const lat = parseFloat(parts[1]);
-
-                            if (isNaN(lat) || isNaN(lon)) {
-                                return;
-                            }
-
-                            if (lat < -90 || lat > 90 || lon < -180 || lon > 180) {
-                                return;
-                            }
-
-                            validCoords.push([lat, lon]);
+                if (!coordString || typeof coordString !== 'string') return [];
+                return coordString.split(",").reduce((acc, coord) => {
+                    const parts = coord.trim().split(/\s+/);
+                    if (parts.length >= 2) {
+                        const lon = parseFloat(parts[0]), lat = parseFloat(parts[1]);
+                        if (!isNaN(lat) && !isNaN(lon) && lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180) {
+                            acc.push([lat, lon]);
                         }
-                    } catch (error) {
-                        console.error('Error parsing coordinate:', error);
                     }
-                });
-                return validCoords;
+                    return acc;
+                }, []);
             }
 
-            // Renderizar geometrias
-            let polygonsAdded = 0;
-            plotGeometries.forEach((plot, index) => {
-                console.log(`Procesando geometria ${index + 1}:`, plot.wkt.substring(0, 100));
-                let geometries = parseWKT(plot.wkt);
-                console.log('Geometrias parseadas:', geometries);
+            function parsePolygon(wkt) {
+                const ringMatches = wkt.match(/\(([^)]+)\)/g);
+                if (!ringMatches) return [];
+                const rings = ringMatches.map(r => parseCoordinateString(r.slice(1, -1))).filter(r => r.length >= 3);
+                if (rings.length === 0) return [];
+                return rings.length === 1 ? rings[0] : { isComplex: true, outerRing: rings[0], holes: rings.slice(1) };
+            }
 
-                if (!geometries || geometries.length === 0) {
-                    console.warn(`No se pudieron parsear las geometrias para el indice ${index}`);
-                    return;
-                }
+            function parseMultiPolygon(wkt) {
+                let inner = wkt.replace(/^MULTIPOLYGON\s*\(\s*/i, '').replace(/\s*\)$/i, '');
+                return inner.split(/\)\s*,\s*\(/).map(polyStr => {
+                    let rings = polyStr.replace(/^\(\s*/, '').replace(/\s*\)$/i, '').match(/\(([^)]+)\)/g);
+                    if (!rings) return null;
+                    const parsed = rings.map(r => parseCoordinateString(r.slice(1, -1))).filter(r => r.length >= 3);
+                    if (parsed.length === 1) return parsed[0];
+                    if (parsed.length > 1) return { isComplex: true, outerRing: parsed[0], holes: parsed.slice(1) };
+                    return null;
+                }).filter(Boolean);
+            }
 
-                let polygons = Array.isArray(geometries[0]) && Array.isArray(geometries[0][0]) ?
-                    geometries : [geometries];
+            function parseWKT(wkt) {
+                if (!wkt || typeof wkt !== 'string') return [];
+                const t = wkt.trim();
+                if (t.startsWith("POLYGON")) return parsePolygon(t);
+                if (t.startsWith("MULTIPOLYGON")) return parseMultiPolygon(t);
+                return [];
+            }
 
-                console.log('Poligonos a renderizar:', polygons.length);
+            loadLeaflet(function() {
+                const map = L.map('plot-map', { zoomControl: true });
+                const street = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' });
+                const satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: '&copy; Esri' });
+                street.addTo(map);
+                L.control.layers({ "Mapa": street, "Satelite": satellite }).addTo(map);
 
-                polygons.forEach((coords, polyIndex) => {
-                    let polygonCoords;
-                    if (coords.isComplex) {
-                        polygonCoords = [coords.outerRing, ...coords.holes];
-                        bounds.push(...coords.outerRing);
-                        console.log(`Poligono complejo ${polyIndex}:`, coords.outerRing.length, 'puntos');
-                    } else if (Array.isArray(coords[0])) {
-                        polygonCoords = [coords];
-                        bounds.push(...coords);
-                        console.log(`Poligono simple ${polyIndex}:`, coords.length, 'puntos');
-                    } else {
-                        polygonCoords = coords;
-                        bounds.push(...coords);
-                        console.log(`Poligono directo ${polyIndex}:`, coords.length, 'puntos');
-                    }
+                const bounds = [];
 
-                    console.log('Coordenadas del poligono:', polygonCoords[0]?.slice(0, 3));
+                plotGeometries.forEach(plot => {
+                    let geometries = parseWKT(plot.wkt);
+                    if (!geometries || geometries.length === 0) return;
 
-                    try {
-                        let plotPolygon = L.polygon(polygonCoords, {
-                            color: '#10b981',
-                            fillColor: '#86efac',
-                            fillOpacity: 0.5,
-                            weight: 2
-                        }).addTo(map);
+                    let polygons = Array.isArray(geometries[0]) && Array.isArray(geometries[0][0]) ? geometries : [geometries];
 
-                        polygonsAdded++;
-                        console.log(`Poligono ${polygonsAdded} agregado al mapa`);
+                    polygons.forEach(coords => {
+                        let polygonCoords;
+                        if (coords.isComplex) {
+                            polygonCoords = [coords.outerRing, ...coords.holes];
+                            bounds.push(...coords.outerRing);
+                        } else if (Array.isArray(coords[0])) {
+                            polygonCoords = [coords];
+                            bounds.push(...coords);
+                        } else {
+                            polygonCoords = coords;
+                            bounds.push(...coords);
+                        }
 
-                        let tooltipContent = `
-                            <b>Parcela:</b> {{ $plot->name }}<br>
-                            <b>Codigo SIGPAC:</b> ${plot.sigpac_code || '-'}
-                        `;
-
-                        plotPolygon.bindPopup(tooltipContent);
-                        plotPolygon.on('mouseover', function() {
-                            this.bindTooltip(tooltipContent, { sticky: true }).openTooltip();
-                        });
-                    } catch (error) {
-                        console.error('Error al agregar poligono:', error, polygonCoords);
-                    }
+                        const poly = L.polygon(polygonCoords, { color: '#10b981', fillColor: '#86efac', fillOpacity: 0.5, weight: 2 }).addTo(map);
+                        poly.bindPopup(`<b>Parcela:</b> ${plotName}<br><b>SIGPAC:</b> ${plot.sigpac_code || '-'}`);
+                    });
                 });
+
+                if (bounds.length > 0) {
+                    setTimeout(() => { map.fitBounds(bounds); map.invalidateSize(); }, 200);
+                } else {
+                    map.setView([40.4168, -3.7038], 13);
+                }
+                setTimeout(() => map.invalidateSize(), 100);
             });
-
-            console.log(`Total poligonos agregados: ${polygonsAdded}`);
-            console.log('Bounds:', bounds.length, 'puntos');
-
-            // Ajustar vista al contenido
-            if (bounds.length > 0) {
-                try {
-                    // Esperar un momento para que el mapa se renderice
-                    setTimeout(function() {
-                        map.fitBounds(bounds);
-                        map.invalidateSize();
-                        console.log('Vista ajustada a bounds');
-                    }, 200);
-                } catch (error) {
-                    console.error('Error al ajustar bounds:', error);
-                }
-            } else {
-                console.warn('No hay bounds para ajustar la vista');
-                map.setView([40.4168, -3.7038], 13);
-            }
-
-            // Asegurar que el mapa se renderice correctamente
-            setTimeout(function() {
-                map.invalidateSize();
-            }, 100);
-        }
-
-        // Inicializar cuando el DOM este listo
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initMap);
-        } else {
-            initMap();
-        }
+        })();
     </script>
+    @endscript
 @endif
-@endpush
 </div>
