@@ -34,14 +34,14 @@ class OnboardingProgress extends Model
      * Todos los pasos en orden lógico
      * 1. Campaña (auto-creada, solo revisar)
      * 2. Parcelas (dato maestro esencial)
-     * 3. Productos fitosanitarios (dato maestro para tratamientos)
-     * 4. Primera actividad (ya puedes trabajar)
+     * 3. Primera actividad (valor inmediato — entrada rápida)
+     * 4. Productos fitosanitarios (dato maestro, puede hacerse después)
      */
     public const ALL_STEPS = [
         self::STEP_REVIEW_CAMPAIGN,      // 1. Revisar campaña activa
         self::STEP_CREATE_PLOT,          // 2. Crear parcela (dato maestro)
-        self::STEP_ADD_PRODUCTS,         // 3. Añadir productos (dato maestro)
-        self::STEP_REGISTER_ACTIVITY,    // 4. Primera actividad (¡ya puedes trabajar!)
+        self::STEP_REGISTER_ACTIVITY,    // 3. Primera actividad (¡ya puedes trabajar!)
+        self::STEP_ADD_PRODUCTS,         // 4. Añadir productos (dato maestro)
     ];
 
     // Winery onboarding steps

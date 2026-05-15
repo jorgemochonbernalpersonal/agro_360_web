@@ -100,8 +100,8 @@ class OnboardingChecklist extends Component
         return match ($step) {
             OnboardingProgress::STEP_REVIEW_CAMPAIGN => 'Verifica tu campaña activa',
             OnboardingProgress::STEP_CREATE_PLOT => 'Datos maestros de tus parcelas',
+            OnboardingProgress::STEP_REGISTER_ACTIVITY => 'Registra un riego, tratamiento o labor',
             OnboardingProgress::STEP_ADD_PRODUCTS => 'Catálogo de productos para tratamientos',
-            OnboardingProgress::STEP_REGISTER_ACTIVITY => '¡Ya puedes empezar a trabajar!',
             default => '',
         };
     }
@@ -124,8 +124,8 @@ class OnboardingChecklist extends Component
         return match ($step) {
             OnboardingProgress::STEP_REVIEW_CAMPAIGN => route("{$prefix}.campaign.index"),
             OnboardingProgress::STEP_CREATE_PLOT => route('plots.create'),
+            OnboardingProgress::STEP_REGISTER_ACTIVITY => route("{$prefix}.quick-entry"),
             OnboardingProgress::STEP_ADD_PRODUCTS => route("{$prefix}.phytosanitary-products.index"),
-            OnboardingProgress::STEP_REGISTER_ACTIVITY => route("{$prefix}.digital-notebook"),
             default => route("{$prefix}.dashboard"),
         };
     }

@@ -95,10 +95,10 @@
                             </div>
                             <div>
                                 <p class="text-sm text-zinc-700 font-medium">
-                                    4 pasos para configurar tus datos maestros
+                                    4 pasos para empezar a trabajar
                                 </p>
                                 <p class="text-xs text-zinc-600 mt-1">
-                                    Campaña → Parcelas → Productos fitosanitarios → Primera actividad
+                                    Campaña → Parcelas → Primera actividad → Productos fitosanitarios
                                 </p>
                             </div>
                         </div>
