@@ -19,6 +19,7 @@ class Index extends Component
     public $status = '';
     public $year = '';
     public $cropType = '';
+    public $plotSearch = '';
 
     protected $queryString = [
         'currentTab' => ['as' => 'tab', 'except' => 'active'],
@@ -134,7 +135,15 @@ class Index extends Component
             'total_area' => (clone $baseQuery)->sum('area_planted'),
         ];
 
-        return view('livewire.plots.plantings.index', compact('plantings', 'years', 'stats', 'wineryOnly'))
+        $selectablePlots = Plot::forUser($user)
+            ->where('active', true)
+            ->when($this->plotSearch, fn($q) =>
+                $q->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($this->plotSearch) . '%'])
+            )
+            ->orderBy('name')
+            ->get(['id', 'name']);
+
+        return view('livewire.plots.plantings.index', compact('plantings', 'years', 'stats', 'wineryOnly', 'selectablePlots'))
             ->layout('layouts.app', [
                 'title'       => 'Plantaciones - Agro365',
                 'description' => 'Gestiona las plantaciones de tus parcelas. Variedades de uva, años de plantación, hectáreas y estado de cada viñedo.',

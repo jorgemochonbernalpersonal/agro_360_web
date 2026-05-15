@@ -108,15 +108,14 @@
 
             {{-- Nueva Plantación --}}
             @can('create', App\Models\PlotPlanting::class)
-                <flux:button href="{{ route('plots.index') }}" variant="primary" icon="plus">
+                <flux:button
+                    x-on:click="$dispatch('open-modal', 'pick-plot-for-planting')"
+                    variant="primary"
+                    icon="plus"
+                >
                     Nueva
                 </flux:button>
             @endcan
-
-            {{-- Ver Parcelas --}}
-            <flux:button href="{{ route('plots.index') }}" variant="outline" icon="map">
-                Parcelas
-            </flux:button>
 
         </div>
 
@@ -418,6 +417,49 @@
             @endif
         </x-agro.empty-state>
     @endif
+
+    {{-- Modal: Elegir parcela para nueva plantación --}}
+    <x-agro.modal name="pick-plot-for-planting" maxWidth="sm">
+        <div class="px-6 py-4 border-b border-zinc-200">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
+                    <flux:icon icon="map" class="size-4 text-agro-600" />
+                </div>
+                <div>
+                    <h3 class="text-base font-semibold text-zinc-900">Nueva plantación</h3>
+                    <p class="text-xs text-zinc-500">Elige la parcela donde añadir la plantación</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="px-6 py-4 space-y-3">
+            <input
+                wire:model.live.debounce.200ms="plotSearch"
+                type="text"
+                placeholder="Buscar parcela..."
+                class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent"
+            />
+
+            <div class="max-h-64 overflow-y-auto space-y-1">
+                @forelse($selectablePlots as $p)
+                    <a
+                        href="{{ route('plots.plantings.create', $p->id) }}"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-agro-50 transition-colors group"
+                    >
+                        <div class="w-7 h-7 bg-zinc-100 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-agro-100">
+                            <flux:icon icon="map" class="size-3.5 text-zinc-400 group-hover:text-agro-600" />
+                        </div>
+                        <span class="text-sm text-zinc-700 group-hover:text-agro-700 font-medium truncate">{{ $p->name }}</span>
+                        <flux:icon icon="chevron-right" class="size-3.5 text-zinc-300 group-hover:text-agro-500 ml-auto shrink-0" />
+                    </a>
+                @empty
+                    <p class="text-sm text-zinc-400 text-center py-4">
+                        {{ $plotSearch ? 'No se encontraron parcelas' : 'No hay parcelas activas' }}
+                    </p>
+                @endforelse
+            </div>
+        </div>
+    </x-agro.modal>
 
     {{-- Modal Filtros --}}
     <x-agro.modal name="planting-filters" maxWidth="sm">
