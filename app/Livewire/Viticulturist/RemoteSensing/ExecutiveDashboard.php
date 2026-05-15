@@ -45,9 +45,8 @@ class ExecutiveDashboard extends Component
 
     private function loadSigpacs(): void
     {
-        // Cargar plots con geometría para el usuario
+        // Cargar todas las parcelas del usuario (para saber si tiene alguna)
         $this->plots = Plot::forUser(auth()->user())
-            ->whereHas('plotGeometries')
             ->select('id', 'name', 'area', 'viticulturist_id')
             ->orderBy('name')
             ->get();

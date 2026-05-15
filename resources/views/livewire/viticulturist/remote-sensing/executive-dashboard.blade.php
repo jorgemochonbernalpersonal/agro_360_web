@@ -557,18 +557,34 @@
         @else
             {{-- Sin parcela seleccionada --}}
             <x-agro.card>
-                <x-agro.empty-state
-                    icon="signal"
-                    title="Selecciona una parcela"
-                    description="Elige una parcela para ver sus datos de teledetección">
-                    @if(count($plots) === 0)
+                @if(count($plots) === 0)
+                    <x-agro.empty-state
+                        icon="map"
+                        title="Sin parcelas"
+                        description="Crea tu primera parcela para ver datos de teledetección">
                         <x-slot:action>
-                            <p class="text-sm text-yellow-700 bg-yellow-50 border border-yellow-200 rounded-lg px-4 py-3">
-                                Aún no tienes parcelas creadas. Crea tu primera parcela para comenzar.
-                            </p>
+                            <flux:button href="{{ roleRoute('plots.create') }}" variant="primary" icon="plus">
+                                Crear parcela
+                            </flux:button>
                         </x-slot:action>
-                    @endif
-                </x-agro.empty-state>
+                    </x-agro.empty-state>
+                @elseif(count($sigpacs) === 0)
+                    <x-agro.empty-state
+                        icon="rectangle-group"
+                        title="Vincula tus parcelas con SIGPAC"
+                        description="Para obtener datos satelitales necesitas asociar códigos SIGPAC a tus parcelas y generar sus geometrías">
+                        <x-slot:action>
+                            <flux:button href="{{ route('sigpac.codes') }}" variant="primary" icon="map-pin">
+                                Gestionar SIGPAC
+                            </flux:button>
+                        </x-slot:action>
+                    </x-agro.empty-state>
+                @else
+                    <x-agro.empty-state
+                        icon="signal"
+                        title="Selecciona una parcela"
+                        description="Elige una parcela del selector para ver sus datos de teledetección" />
+                @endif
             </x-agro.card>
         @endif
     </div>
