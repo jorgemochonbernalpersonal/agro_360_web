@@ -168,23 +168,27 @@
                         <option value="{{ $item->id }}">{{ $item->name }} ({{ $item->type }})</option>
                     @endforeach
                 </flux:select>
+                <flux:error name="machinery_id" />
             </flux:field>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                 <flux:field>
                     <flux:label>Condiciones Meteorológicas</flux:label>
                     <flux:input wire:model="weather_conditions" type="text" data-cy="weather-conditions-input" />
+                    <flux:error name="weather_conditions" />
                 </flux:field>
                 <flux:field>
                     <flux:label>Temperatura</flux:label>
                     <flux:input wire:model="temperature" type="number" step="0.1" data-cy="temperature-input" />
                     <flux:description>°C</flux:description>
+                    <flux:error name="temperature" />
                 </flux:field>
             </div>
             <div class="mt-6">
                 <flux:field>
                     <flux:label>Notas</flux:label>
                     <flux:textarea wire:model="notes" data-cy="notes-textarea" rows="3" />
+                    <flux:error name="notes" />
                 </flux:field>
             </div>
         </x-agro.form-section>

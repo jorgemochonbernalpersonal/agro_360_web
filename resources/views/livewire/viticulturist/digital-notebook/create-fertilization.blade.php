@@ -52,7 +52,7 @@
         <x-agro.form-section title="Información del Fertilizante">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <flux:field>
-                    <flux:label>Tipo de Fertilizante</flux:label>
+                    <flux:label required>Tipo de Fertilizante</flux:label>
                     <flux:input wire:model="fertilizer_type" type="text" data-cy="fertilizer-type-input" placeholder="Ej: Orgánico, Mineral, etc." />
                     <flux:error name="fertilizer_type" />
                 </flux:field>
@@ -64,7 +64,7 @@
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
                 <flux:field>
-                    <flux:label>Cantidad</flux:label>
+                    <flux:label required>Cantidad</flux:label>
                     <flux:input wire:model="quantity" id="quantity" type="number" step="0.001" data-cy="quantity-input" placeholder="0.000" />
                     <flux:description>kg</flux:description>
                     <flux:error name="quantity" />
@@ -75,7 +75,7 @@
                     <flux:error name="npk_ratio" />
                 </flux:field>
                 <flux:field>
-                    <flux:label>Área Aplicada</flux:label>
+                    <flux:label required>Área Aplicada</flux:label>
                     <flux:input wire:model="area_applied" id="area_applied" type="number" step="0.001" data-cy="area-applied-input" placeholder="0.000" />
                     <flux:description>ha</flux:description>
                     <flux:error name="area_applied" />

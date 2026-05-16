@@ -3,6 +3,7 @@
 namespace App\Livewire\Concerns;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Cache;
 
 trait WithUserFilters
 {
@@ -55,60 +56,60 @@ trait WithUserFilters
      */
     protected function getAllVisibleViticulturists(User $user)
     {
-        // Siempre incluir al usuario mismo al principio
-        $viticulturists = collect([$user]);
-        
-        // Agregar viticultores creados por este viticultor
-        $created = \App\Models\WineryViticulturist::where('parent_viticulturist_id', $user->id)
-            ->where('source', \App\Models\WineryViticulturist::SOURCE_VITICULTURIST)
-            ->with('viticulturist')
-            ->get()
-            ->pluck('viticulturist')
-            ->filter();
-        
-        $viticulturists = $viticulturists->merge($created);
-        
-        // Si tiene bodegas asociadas, agregar viticultores de esas bodegas
-        // Obtener IDs de wineries directamente desde WineryViticulturist
-        $wineryIds = \App\Models\WineryViticulturist::where('viticulturist_id', $user->id)
-            ->whereNotNull('winery_id')
-            ->pluck('winery_id');
-        
-        if ($wineryIds->isNotEmpty()) {
-            $fromWineries = \App\Models\WineryViticulturist::whereIn('winery_id', $wineryIds)
-                ->whereIn('source', [
-                    \App\Models\WineryViticulturist::SOURCE_OWN,
-                    \App\Models\WineryViticulturist::SOURCE_VITICULTURIST
-                ])
-                ->where('viticulturist_id', '!=', $user->id)
+        return Cache::remember("viticulturists_visible_{$user->id}", 300, function () use ($user) {
+            // Siempre incluir al usuario mismo al principio
+            $viticulturists = collect([$user]);
+
+            // Agregar viticultores creados por este viticultor
+            $created = \App\Models\WineryViticulturist::where('parent_viticulturist_id', $user->id)
+                ->where('source', \App\Models\WineryViticulturist::SOURCE_VITICULTURIST)
                 ->with('viticulturist')
                 ->get()
                 ->pluck('viticulturist')
                 ->filter();
-            
-            $viticulturists = $viticulturists->merge($fromWineries);
-        }
-        
-        // Si tiene supervisor, agregar viticultores del pool del supervisor
-        // Obtener ID del supervisor directamente desde WineryViticulturist
-        $supervisorId = \App\Models\WineryViticulturist::where('viticulturist_id', $user->id)
-            ->where('source', \App\Models\WineryViticulturist::SOURCE_SUPERVISOR)
-            ->whereNotNull('supervisor_id')
-            ->value('supervisor_id');
-        
-        if ($supervisorId) {
-            $fromSupervisor = \App\Models\WineryViticulturist::where('source', \App\Models\WineryViticulturist::SOURCE_SUPERVISOR)
-                ->where('supervisor_id', $supervisorId)
-                ->where('viticulturist_id', '!=', $user->id)
-                ->with('viticulturist')
-                ->get()
-                ->pluck('viticulturist')
-                ->filter();
-            
-            $viticulturists = $viticulturists->merge($fromSupervisor);
-        }
-        
-        return $viticulturists->unique('id')->values();
+
+            $viticulturists = $viticulturists->merge($created);
+
+            // Si tiene bodegas asociadas, agregar viticultores de esas bodegas
+            $wineryIds = \App\Models\WineryViticulturist::where('viticulturist_id', $user->id)
+                ->whereNotNull('winery_id')
+                ->pluck('winery_id');
+
+            if ($wineryIds->isNotEmpty()) {
+                $fromWineries = \App\Models\WineryViticulturist::whereIn('winery_id', $wineryIds)
+                    ->whereIn('source', [
+                        \App\Models\WineryViticulturist::SOURCE_OWN,
+                        \App\Models\WineryViticulturist::SOURCE_VITICULTURIST
+                    ])
+                    ->where('viticulturist_id', '!=', $user->id)
+                    ->with('viticulturist')
+                    ->get()
+                    ->pluck('viticulturist')
+                    ->filter();
+
+                $viticulturists = $viticulturists->merge($fromWineries);
+            }
+
+            // Si tiene supervisor, agregar viticultores del pool del supervisor
+            $supervisorId = \App\Models\WineryViticulturist::where('viticulturist_id', $user->id)
+                ->where('source', \App\Models\WineryViticulturist::SOURCE_SUPERVISOR)
+                ->whereNotNull('supervisor_id')
+                ->value('supervisor_id');
+
+            if ($supervisorId) {
+                $fromSupervisor = \App\Models\WineryViticulturist::where('source', \App\Models\WineryViticulturist::SOURCE_SUPERVISOR)
+                    ->where('supervisor_id', $supervisorId)
+                    ->where('viticulturist_id', '!=', $user->id)
+                    ->with('viticulturist')
+                    ->get()
+                    ->pluck('viticulturist')
+                    ->filter();
+
+                $viticulturists = $viticulturists->merge($fromSupervisor);
+            }
+
+            return $viticulturists->unique('id')->values();
+        });
     }
 
     /**

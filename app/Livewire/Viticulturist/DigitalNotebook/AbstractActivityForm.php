@@ -15,6 +15,7 @@ use App\Livewire\Concerns\WithUserFilters;
 use App\Livewire\Concerns\WithRoleAwareRedirect;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 /**
@@ -226,6 +227,38 @@ abstract class AbstractActivityForm extends Component
         ], $extra);
     }
 
+    // ─── Computed properties (memoized per request) ───────────────────────────
+
+    #[Computed]
+    public function plots()
+    {
+        return Plot::forUser(Auth::user())->where('active', true)->orderBy('name')->get();
+    }
+
+    #[Computed]
+    public function crews()
+    {
+        return Crew::where('viticulturist_id', Auth::id())->orderBy('name')->get();
+    }
+
+    #[Computed]
+    public function machinery()
+    {
+        return Machinery::forViticulturist(Auth::id())->active()->orderBy('name')->get();
+    }
+
+    #[Computed]
+    public function individualWorkers()
+    {
+        return CrewMember::whereNull('crew_id')
+            ->where('assigned_by', Auth::id())
+            ->join('users', 'users.id', '=', 'crew_members.viticulturist_id')
+            ->orderBy('users.name')
+            ->select('crew_members.*')
+            ->with('viticulturist')
+            ->get();
+    }
+
     // ─── Render helpers ───────────────────────────────────────────────────────
 
     /**
@@ -234,19 +267,13 @@ abstract class AbstractActivityForm extends Component
      */
     protected function renderData(array $extra = []): array
     {
-        $user = Auth::user();
         return array_merge([
-            'plots'             => Plot::forUser($user)->where('active', true)->orderBy('name')->get(),
-            'crews'             => Crew::where('viticulturist_id', $user->id)->orderBy('name')->get(),
-            'machinery'         => Machinery::forViticulturist($user->id)->active()->orderBy('name')->get(),
+            'plots'             => $this->plots,
+            'crews'             => $this->crews,
+            'machinery'         => $this->machinery,
             'campaign'          => Campaign::find($this->campaign_id),
             'allViticulturists' => $this->viticulturists,
-            'individualWorkers' => CrewMember::whereNull('crew_id')
-                ->where('assigned_by', $user->id)
-                ->with('viticulturist')
-                ->get()
-                ->sortBy(fn ($w) => $w->viticulturist?->name)
-                ->values(),
+            'individualWorkers' => $this->individualWorkers,
         ], $extra);
     }
 }
