@@ -47,31 +47,28 @@
     @else
         {{-- Sin recepciones hoy: stat-bar neutral --}}
         <div class="grid grid-cols-2 gap-4">
-            <div class="bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm">
-                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">Total campaña {{ $vintageYear }}</p>
-                <p class="text-2xl font-bold text-agro-700 leading-none">{{ number_format($totalKgCampaign, 0) }} <span class="text-sm font-medium text-zinc-400">kg</span></p>
-            </div>
-            <div class="bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm">
-                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">Recepciones</p>
-                <p class="text-2xl font-bold text-zinc-700 leading-none">{{ $totalReceptions }}</p>
-                <p class="text-xs text-zinc-400 mt-0.5">
-                    {{ $openBatchCount }} abiertos
-                    @if($closedBatchCount > 0)
-                        · <span class="text-green-600">{{ $closedBatchCount }} cerrados</span>
-                    @endif
-                </p>
-            </div>
-            <div class="bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm">
-                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">Viticultores</p>
-                <p class="text-2xl font-bold text-zinc-700 leading-none">{{ $viticulturistCount }}</p>
-                @if($pendingViticulturistCount > 0)
-                    <p class="text-xs text-amber-600 mt-0.5">{{ $pendingViticulturistCount }} pendiente{{ $pendingViticulturistCount > 1 ? 's' : '' }}</p>
-                @endif
-            </div>
-            <div class="bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm">
-                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">Lotes de vino</p>
-                <p class="text-2xl font-bold text-zinc-700 leading-none">{{ $wineLotCount }}</p>
-            </div>
+            <x-agro.stat-card
+                :label="'Total campaña ' . $vintageYear"
+                :value="number_format($totalKgCampaign, 0) . ' kg'"
+                color="agro"
+            />
+            <x-agro.stat-card
+                label="Recepciones"
+                :value="$totalReceptions"
+                :description="$openBatchCount . ' abiertos' . ($closedBatchCount > 0 ? ' · ' . $closedBatchCount . ' cerrados' : '')"
+                color="zinc"
+            />
+            <x-agro.stat-card
+                label="Viticultores"
+                :value="$viticulturistCount"
+                :description="$pendingViticulturistCount > 0 ? $pendingViticulturistCount . ' pendiente' . ($pendingViticulturistCount > 1 ? 's' : '') : null"
+                color="zinc"
+            />
+            <x-agro.stat-card
+                label="Lotes de vino"
+                :value="$wineLotCount"
+                color="zinc"
+            />
         </div>
     @endif
 

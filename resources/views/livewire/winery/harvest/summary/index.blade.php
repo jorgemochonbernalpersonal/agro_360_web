@@ -10,18 +10,17 @@
 
     {{-- Stat-bar --}}
     <div class="grid grid-cols-2 gap-4">
-        <div class="bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm">
-            <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">Total recibido</p>
-            <p class="text-2xl font-bold text-agro-700 leading-none">
-                {{ number_format($stats['total_received_kg'], 0) }}
-                <span class="text-sm font-medium text-zinc-400">kg</span>
-            </p>
-        </div>
-        <div class="bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm">
-            <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">Viticultores</p>
-            <p class="text-2xl font-bold text-zinc-700 leading-none">{{ $stats['viticulturists'] }}</p>
-            <p class="text-xs text-zinc-400 mt-0.5">{{ $stats['total_plantings'] }} plantaciones</p>
-        </div>
+        <x-agro.stat-card
+            label="Total recibido"
+            :value="number_format($stats['total_received_kg'], 0) . ' kg'"
+            color="agro"
+        />
+        <x-agro.stat-card
+            label="Viticultores"
+            :value="$stats['viticulturists']"
+            :description="$stats['total_plantings'] . ' plantaciones'"
+            color="zinc"
+        />
         <div class="rounded-2xl p-4 shadow-sm border {{ $stats['exceeded_count'] > 0 ? 'bg-red-50 border-red-200' : 'bg-white border-zinc-200' }}">
             <p class="text-[10px] font-semibold uppercase tracking-widest mb-1 {{ $stats['exceeded_count'] > 0 ? 'text-red-400' : 'text-zinc-400' }}">⚠ Superados</p>
             <p class="text-2xl font-bold leading-none {{ $stats['exceeded_count'] > 0 ? 'text-red-600' : 'text-zinc-300' }}">

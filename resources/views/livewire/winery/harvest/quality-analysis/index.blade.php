@@ -114,27 +114,31 @@
 
             {{-- Resumen global --}}
             <div class="grid grid-cols-2 gap-4">
-                <div class="bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm">
-                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">Total recibido</p>
-                    <p class="text-2xl font-bold text-agro-700">{{ number_format($globalStats['total_kg'], 0) }} <span class="text-sm font-medium text-zinc-400">kg</span></p>
-                </div>
+                <x-agro.stat-card
+                    label="Total recibido"
+                    :value="number_format($globalStats['total_kg'], 0) . ' kg'"
+                    color="agro"
+                />
                 @if($globalStats['avg_alcohol'] !== null)
-                <div class="bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm">
-                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">Media alcohol pot.</p>
-                    <p class="text-2xl font-bold text-blue-700">{{ $globalStats['avg_alcohol'] }} <span class="text-sm font-medium text-zinc-400">%</span></p>
-                </div>
+                <x-agro.stat-card
+                    label="Media alcohol pot."
+                    :value="$globalStats['avg_alcohol'] . ' %'"
+                    color="blue"
+                />
                 @endif
                 @if($globalStats['avg_baume'] !== null)
-                <div class="bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm">
-                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">Media Baumé</p>
-                    <p class="text-2xl font-bold text-violet-700">{{ $globalStats['avg_baume'] }} <span class="text-sm font-medium text-zinc-400">°Bé</span></p>
-                </div>
+                <x-agro.stat-card
+                    label="Media Baumé"
+                    :value="$globalStats['avg_baume'] . ' °Bé'"
+                    color="purple"
+                />
                 @endif
                 @if($globalStats['avg_acidity'] !== null)
-                <div class="bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm">
-                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">Media acidez</p>
-                    <p class="text-2xl font-bold text-amber-700">{{ $globalStats['avg_acidity'] }} <span class="text-sm font-medium text-zinc-400">g/L</span></p>
-                </div>
+                <x-agro.stat-card
+                    label="Media acidez"
+                    :value="$globalStats['avg_acidity'] . ' g/L'"
+                    color="amber"
+                />
                 @endif
             </div>
 
