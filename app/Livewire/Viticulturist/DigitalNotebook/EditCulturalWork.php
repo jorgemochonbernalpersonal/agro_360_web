@@ -44,6 +44,7 @@ class EditCulturalWork extends Component
     public $campaign_id = '';
     public $pruning_type = '';
     public $productive_buds_per_hectare = '';
+    public $residue_management = '';
     public $defoliation_face = '';
     public $topping_height_cm = '';
 
@@ -93,6 +94,7 @@ class EditCulturalWork extends Component
         $this->description = $this->culturalWork->description;
         $this->pruning_type = $this->culturalWork->pruning_type ?? '';
         $this->productive_buds_per_hectare = $this->culturalWork->productive_buds_per_hectare ?? '';
+        $this->residue_management = $this->culturalWork->residue_management ?? '';
         $this->defoliation_face = $this->culturalWork->defoliation_face ?? '';
         $this->topping_height_cm = $this->culturalWork->topping_height_cm ?? '';
         
@@ -148,14 +150,16 @@ class EditCulturalWork extends Component
             'workers_count' => 'nullable|integer|min:1',
             'description' => 'required|string|min:10',
             'phenological_stage' => 'required|string|max:50',
-            'crew_id' => $this->crewOwnershipRule(),
-            'crew_member_id' => 'nullable|exists:users,id',
+            'workType' => 'required|in:crew,individual',
+            'crew_id' => 'required_if:workType,crew|nullable|exists:crews,id',
+            'crew_member_id' => 'required_if:workType,individual|nullable|exists:users,id',
             'machinery_id' => $this->machineryOwnershipRule(),
             'weather_conditions' => 'nullable|string|max:255',
             'temperature' => 'nullable|numeric',
             'notes' => 'nullable|string',
             'pruning_type' => 'nullable|string|max:50',
             'productive_buds_per_hectare' => 'nullable|integer|min:0',
+            'residue_management' => 'nullable|string|in:triturado_incorporado,triturado_superficie,retirado,quemado,otro',
             'defoliation_face' => 'nullable|in:norte,sur,ambas',
             'topping_height_cm' => 'nullable|integer|min:1|max:300',
         ];
@@ -166,21 +170,6 @@ class EditCulturalWork extends Component
         $this->validate();
 
         $user = Auth::user();
-
-        if (!$this->workType) {
-            $this->addError('workType', 'Debes seleccionar si el trabajo lo realizó un equipo completo o un viticultor individual.');
-            return;
-        }
-
-        if ($this->workType === 'crew' && !$this->crew_id) {
-            $this->addError('crew_id', 'Debes seleccionar un equipo.');
-            return;
-        }
-
-        if ($this->workType === 'individual' && !$this->crew_member_id) {
-            $this->addError('crew_member_id', 'Debes seleccionar un viticultor.');
-            return;
-        }
 
         $plot = $this->authorizeCreateActivityForPlot($this->plot_id);
 
@@ -225,6 +214,7 @@ class EditCulturalWork extends Component
                     'description' => $this->description,
                     'pruning_type' => $this->work_type === 'poda' ? ($this->pruning_type ?: null) : null,
                     'productive_buds_per_hectare' => $this->work_type === 'poda' ? ($this->productive_buds_per_hectare ?: null) : null,
+                    'residue_management' => $this->residue_management ?: null,
                     'defoliation_face' => $this->work_type === 'deshojado' ? ($this->defoliation_face ?: null) : null,
                     'topping_height_cm' => $this->work_type === 'despuntado' ? ($this->topping_height_cm ?: null) : null,
                 ]);

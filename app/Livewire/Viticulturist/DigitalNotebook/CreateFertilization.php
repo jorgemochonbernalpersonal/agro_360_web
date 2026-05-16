@@ -156,24 +156,6 @@ class CreateFertilization extends Component
 
         $user = Auth::user();
 
-        // Validar que se haya seleccionado un tipo de trabajo
-        if (!$this->workType) {
-            $this->addError('workType', 'Debes seleccionar si el trabajo lo realizó un equipo completo o un viticultor individual.');
-            return;
-        }
-
-        // Validar según el tipo seleccionado
-        if ($this->workType === 'crew' && !$this->crew_id) {
-            $this->addError('crew_id', 'Debes seleccionar un equipo.');
-            return;
-        }
-
-        if ($this->workType === 'individual' && !$this->crew_member_id) {
-            $this->addError('crew_member_id', 'Debes seleccionar un viticultor.');
-            return;
-        }
-
-        // Validar que la parcela pertenece al viticultor usando el trait
         $plot = $this->authorizeCreateActivityForPlot($this->plot_id);
 
         try {

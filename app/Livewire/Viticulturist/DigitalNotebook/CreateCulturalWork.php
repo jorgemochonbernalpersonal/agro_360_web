@@ -42,6 +42,7 @@ class CreateCulturalWork extends Component
     public $campaign_id = '';
     public $pruning_type = '';
     public $productive_buds_per_hectare = '';
+    public $residue_management = '';
     public $defoliation_face = '';
     public $topping_height_cm = '';
 
@@ -117,6 +118,7 @@ class CreateCulturalWork extends Component
             'notes' => 'nullable|string',
             'pruning_type' => 'nullable|string|max:50',
             'productive_buds_per_hectare' => 'nullable|integer|min:0',
+            'residue_management' => 'nullable|string|in:triturado_incorporado,triturado_superficie,retirado,quemado,otro',
             'defoliation_face' => 'nullable|in:norte,sur,ambas',
             'topping_height_cm' => 'nullable|integer|min:1|max:300',
         ];
@@ -128,24 +130,6 @@ class CreateCulturalWork extends Component
 
         $user = Auth::user();
 
-        // Validar que se haya seleccionado un tipo de trabajo
-        if (!$this->workType) {
-            $this->addError('workType', 'Debes seleccionar si el trabajo lo realizó un equipo completo o un viticultor individual.');
-            return;
-        }
-
-        // Validar según el tipo seleccionado
-        if ($this->workType === 'crew' && !$this->crew_id) {
-            $this->addError('crew_id', 'Debes seleccionar un equipo.');
-            return;
-        }
-
-        if ($this->workType === 'individual' && !$this->crew_member_id) {
-            $this->addError('crew_member_id', 'Debes seleccionar un viticultor.');
-            return;
-        }
-
-        // Validar que la parcela pertenece al viticultor usando el trait
         $plot = $this->authorizeCreateActivityForPlot($this->plot_id);
 
         try {
@@ -195,6 +179,7 @@ class CreateCulturalWork extends Component
                     'description' => $this->description,
                     'pruning_type' => $this->work_type === 'poda' ? ($this->pruning_type ?: null) : null,
                     'productive_buds_per_hectare' => $this->work_type === 'poda' ? ($this->productive_buds_per_hectare ?: null) : null,
+                    'residue_management' => $this->residue_management ?: null,
                     'defoliation_face' => $this->work_type === 'deshojado' ? ($this->defoliation_face ?: null) : null,
                     'topping_height_cm' => $this->work_type === 'despuntado' ? ($this->topping_height_cm ?: null) : null,
                 ]);

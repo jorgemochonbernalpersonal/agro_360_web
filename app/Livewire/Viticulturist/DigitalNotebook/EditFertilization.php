@@ -162,8 +162,9 @@ class EditFertilization extends Component
             'application_method' => 'nullable|string|max:50',
             'area_applied' => 'required|numeric|min:0.01',
             'phenological_stage' => 'required|string|max:50',
-            'crew_id' => $this->crewOwnershipRule(),
-            'crew_member_id' => 'nullable|exists:users,id',
+            'workType' => 'required|in:crew,individual',
+            'crew_id' => 'required_if:workType,crew|nullable|exists:crews,id',
+            'crew_member_id' => 'required_if:workType,individual|nullable|exists:users,id',
             'machinery_id' => $this->machineryOwnershipRule(),
             'weather_conditions' => 'nullable|string|max:255',
             'temperature' => 'nullable|numeric',
@@ -197,21 +198,6 @@ class EditFertilization extends Component
         }
 
         $user = Auth::user();
-
-        if (!$this->workType) {
-            $this->addError('workType', 'Debes seleccionar si el trabajo lo realizó un equipo completo o un viticultor individual.');
-            return;
-        }
-
-        if ($this->workType === 'crew' && !$this->crew_id) {
-            $this->addError('crew_id', 'Debes seleccionar un equipo.');
-            return;
-        }
-
-        if ($this->workType === 'individual' && !$this->crew_member_id) {
-            $this->addError('crew_member_id', 'Debes seleccionar un viticultor.');
-            return;
-        }
 
         $plot = $this->authorizeCreateActivityForPlot($this->plot_id);
 
