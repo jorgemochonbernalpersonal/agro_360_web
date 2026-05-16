@@ -1,21 +1,19 @@
 <x-agro.form-card
     title="Crear Rendimiento Estimado"
-    description="Registra una estimaci�n de rendimiento para una plantaci�n y campa�a"
-    icon="chart-bar"
-    icon-color="from-agro-500 to-agro-700"
+    description="Registra una estimación de rendimiento para una plantación y campaña"
     :back-url="roleRoute('viticulturist.digital-notebook.estimated-yields.index')"
 >
     <form wire:submit="save" class="space-y-8" data-cy="create-estimated-yield-form">
-        
-        {{-- Filtros para seleccionar plantaci�n --}}
-        <x-agro.form-section title="Seleccionar Plantaci�n" color="green">
+
+        {{-- Filtros para seleccionar plantación --}}
+        <x-agro.form-section title="Seleccionar Plantación" color="green">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <flux:field>
-                    <flux:label required>Campa�a</flux:label>
+                    <flux:label required>Campaña</flux:label>
                     <flux:select wire:model.live="campaign_id" id="campaign_id" data-cy="campaign-select" required>
-                        <option value="">Selecciona una campa�a</option>
+                        <option value="">Selecciona una campaña</option>
                         @foreach($campaigns as $campaign)
-                            <option value="{{ $campaign->id }}">Campa�a {{ $campaign->year }}</option>
+                            <option value="{{ $campaign->id }}">Campaña {{ $campaign->year }}</option>
                         @endforeach
                     </flux:select>
                     <flux:error name="campaign_id" />
@@ -37,9 +35,9 @@
 
             <div class="mt-6">
                 <flux:field>
-                    <flux:label required>Plantaci�n</flux:label>
+                    <flux:label required>Plantación</flux:label>
                     <flux:select wire:model.live="plot_planting_id" id="plot_planting_id" data-cy="planting-select" required>
-                        <option value="">Selecciona una plantaci�n</option>
+                        <option value="">Selecciona una plantación</option>
                         @foreach($plantings as $planting)
                             <option value="{{ $planting->id }}">
                                 {{ $planting->plot->name ?? 'Sin parcela' }} -
@@ -230,8 +228,6 @@
             </flux:field>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="roleRoute('viticulturist.digital-notebook.estimated-yields.index')" submit-label="Guardar Estimaci�n" />
+        <x-agro.form-actions :back-url="roleRoute('viticulturist.digital-notebook.estimated-yields.index')" submit-label="Guardar Estimación" />
     </form>
 </x-agro.form-card>
-
-
