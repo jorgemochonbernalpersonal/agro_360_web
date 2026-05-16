@@ -6,7 +6,7 @@
             
             <div class="relative bg-white rounded-2xl shadow-2xl max-w-6xl w-full h-[90vh] p-6">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-2xl font-bold text-zinc-900">👁️ Vista Previa - {{ $reportToPreview->report_type_name }}</h3>
+                    <h3 class="text-2xl font-bold text-zinc-900 flex items-center gap-2"><flux:icon icon="eye" class="size-7" /> Vista Previa - {{ $reportToPreview->report_type_name }}</h3>
                     <button 
                         wire:click="closePreviewModal"
                         class="text-zinc-500 hover:text-zinc-700"
@@ -25,7 +25,7 @@
                         href="{{ roleRoute('viticulturist.official-reports.download', $reportToPreview) }}"
                         class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-semibold"
                     >
-                        ⬇️ Descargar PDF
+                        <flux:icon icon="arrow-down-tray" class="size-4" /> Descargar PDF
                     </a>
                 </div>
 

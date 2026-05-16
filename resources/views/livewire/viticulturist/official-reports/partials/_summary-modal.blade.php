@@ -5,7 +5,7 @@
             <div class="fixed inset-0 bg-zinc-500 bg-opacity-75 transition-opacity" wire:click="closeSummaryModal"></div>
             
             <div class="relative bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6">
-                <h3 class="text-2xl font-bold text-zinc-900 mb-4">📊 Resumen del Informe</h3>
+                <h3 class="text-2xl font-bold text-zinc-900 mb-4 flex items-center gap-2"><flux:icon icon="chart-bar" class="size-7" /> Resumen del Informe</h3>
                 <p class="text-zinc-600 mb-6">
                     Revisa los datos antes de firmar electrónicamente. Este proceso puede tardar varios segundos.
                 </p>
@@ -215,7 +215,7 @@
                             class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                         >
                             <flux:icon wire:loading wire:target="generateBatchReports" icon="arrow-path" class="animate-spin size-4" />
-                            <span wire:loading.remove wire:target="generateBatchReports">📦 Generar {{ $totalBatches }} Informes</span>
+                            <span wire:loading.remove wire:target="generateBatchReports">Generar {{ $totalBatches }} Informes</span>
                             <span wire:loading wire:target="generateBatchReports">Generando...</span>
                         </button>
                         

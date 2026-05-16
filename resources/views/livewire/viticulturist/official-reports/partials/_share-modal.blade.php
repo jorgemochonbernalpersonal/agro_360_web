@@ -5,7 +5,7 @@
             <div class="fixed inset-0 bg-zinc-500 bg-opacity-75 transition-opacity" wire:click="closeShareModal"></div>
             
             <div class="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6">
-                <h3 class="text-2xl font-bold text-zinc-900 mb-4">📧 Compartir Informe</h3>
+                <h3 class="text-2xl font-bold text-zinc-900 mb-4 flex items-center gap-2"><flux:icon icon="envelope" class="size-7" /> Compartir Informe</h3>
                 <p class="text-zinc-600 mb-6">
                     Envía este informe por email. El destinatario recibirá el PDF adjunto y un enlace para verificar su autenticidad.
                 </p>

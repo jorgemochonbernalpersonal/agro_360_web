@@ -47,7 +47,7 @@
                     <div class="grid grid-cols-2 gap-4 mb-6">
                         <div class="flex items-start gap-3">
                             <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
-                                <span class="text-xl">📅</span>
+                                <flux:icon icon="calendar-days" class="size-6 text-green-600" />
                             </div>
                             <div>
                                 <h3 class="font-semibold text-zinc-900 text-sm">Campañas</h3>
@@ -57,7 +57,7 @@
 
                         <div class="flex items-start gap-3">
                             <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
-                                <span class="text-xl">🗺️</span>
+                                <flux:icon icon="map" class="size-6 text-blue-600" />
                             </div>
                             <div>
                                 <h3 class="font-semibold text-zinc-900 text-sm">Parcelas</h3>
@@ -77,7 +77,7 @@
 
                         <div class="flex items-start gap-3">
                             <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center">
-                                <span class="text-xl">📓</span>
+                                <flux:icon icon="book-open" class="size-6 text-amber-600" />
                             </div>
                             <div>
                                 <h3 class="font-semibold text-zinc-900 text-sm">Cuaderno digital</h3>
