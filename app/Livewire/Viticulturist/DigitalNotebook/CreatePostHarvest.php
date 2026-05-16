@@ -26,6 +26,7 @@ class CreatePostHarvest extends AbstractActivityForm
     public function mount(): void
     {
         $this->mountCreate();
+        $this->phenological_stage = 'Caída de hoja';
     }
 
     // ─── Validation ───────────────────────────────────────────────────────────
