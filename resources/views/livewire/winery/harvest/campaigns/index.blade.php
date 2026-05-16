@@ -77,24 +77,23 @@
                         wire:key="campaign-{{ $campaign->id }}"
                     >
                         <x-slot:header>
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0
-                                    {{ $isActive ? 'bg-agro-100' : 'bg-zinc-100' }}">
-                                    <flux:icon icon="clipboard-document-list"
-                                        class="size-5 {{ $isActive ? 'text-agro-600' : 'text-zinc-400' }}" />
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <h3 class="font-bold text-zinc-900 truncate">{{ $campaign->name }}</h3>
-                                    <p class="text-xs text-zinc-400">Vendimia {{ $campaign->year }}</p>
-                                </div>
+                            <x-agro.card-item-header
+                                icon="clipboard-document-list"
+                                :title="$campaign->name"
+                                :subtitle="'Vendimia ' . $campaign->year"
+                                :iconBg="$isActive ? 'bg-agro-100' : 'bg-zinc-100'"
+                                :iconColor="$isActive ? 'text-agro-600' : 'text-zinc-400'"
+                                size="md"
+                                radius="xl"
+                            >
                                 @if($isActive)
-                                    <flux:badge color="green" size="sm" class="shrink-0">Activa</flux:badge>
+                                    <flux:badge color="green" size="sm">Activa</flux:badge>
                                 @elseif($isLocked)
-                                    <flux:badge color="indigo" size="sm" class="shrink-0">Bloqueada</flux:badge>
+                                    <flux:badge color="indigo" size="sm">Bloqueada</flux:badge>
                                 @else
-                                    <flux:badge color="zinc" size="sm" class="shrink-0">Cerrada</flux:badge>
+                                    <flux:badge color="zinc" size="sm">Cerrada</flux:badge>
                                 @endif
-                            </div>
+                            </x-agro.card-item-header>
                         </x-slot:header>
 
                         <div class="flex-1 space-y-4">

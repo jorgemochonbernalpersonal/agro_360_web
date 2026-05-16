@@ -29,15 +29,15 @@
                     wire:key="additive-{{ $additive->id }}"
                 >
                     <x-slot:header>
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-teal-100 flex items-center justify-center shrink-0">
-                                <flux:icon icon="beaker" class="size-5 text-teal-600" />
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <h3 class="font-bold text-zinc-900 truncate">{{ $additive->display_name }}</h3>
-                                <p class="text-xs text-zinc-500">{{ $additive->additive_date->format('d/m/Y') }}</p>
-                            </div>
-                        </div>
+                        <x-agro.card-item-header
+                            icon="beaker"
+                            :title="$additive->display_name"
+                            :subtitle="$additive->additive_date->format('d/m/Y')"
+                            iconBg="bg-teal-100"
+                            iconColor="text-teal-600"
+                            size="md"
+                            radius="xl"
+                        />
                     </x-slot:header>
 
                     <div class="flex-1 space-y-4">

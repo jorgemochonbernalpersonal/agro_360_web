@@ -112,20 +112,17 @@
                     style="animation-delay: {{ min($i * 50, 400) }}ms"
                 >
                     <x-slot:header>
-                        <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 {{ $isCompany ? 'bg-blue-50' : 'bg-agro-50' }} rounded-full flex items-center justify-center shrink-0">
-                                <flux:icon icon="{{ $isCompany ? 'building-office' : 'user' }}" class="size-4 {{ $isCompany ? 'text-blue-500' : 'text-agro-600' }}" />
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <p class="font-semibold text-zinc-900 text-sm truncate leading-tight">{{ $client->full_name }}</p>
-                                @if($isCompany && $client->company_name)
-                                    <p class="text-xs text-zinc-400 leading-tight mt-0.5 truncate">{{ $client->company_name }}</p>
-                                @endif
-                            </div>
-                            <flux:badge :color="$isCompany ? 'blue' : null" size="sm" class="shrink-0">
+                        <x-agro.card-item-header
+                            :icon="$isCompany ? 'building-office' : 'user'"
+                            :title="$client->full_name"
+                            :subtitle="($isCompany && $client->company_name) ? $client->company_name : null"
+                            :iconBg="$isCompany ? 'bg-blue-50' : 'bg-agro-50'"
+                            :iconColor="$isCompany ? 'text-blue-500' : 'text-agro-600'"
+                        >
+                            <flux:badge :color="$isCompany ? 'blue' : null" size="sm">
                                 {{ $isCompany ? 'Empresa' : 'Particular' }}
                             </flux:badge>
-                        </div>
+                        </x-agro.card-item-header>
                     </x-slot:header>
 
                     {{-- Contacto --}}

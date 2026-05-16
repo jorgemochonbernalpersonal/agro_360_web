@@ -165,28 +165,21 @@
                         style="animation-delay: {{ $delay }}ms">
 
                         <x-slot:header>
-                            <div class="flex items-start justify-between gap-3 w-full">
-                                <div class="flex items-center gap-3 min-w-0">
-                                    <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0
-                                        {{ $isConfirmed ? 'bg-agro-50' : 'bg-amber-50' }}">
-                                        <flux:icon icon="clipboard-document-list"
-                                            class="size-5 {{ $isConfirmed ? 'text-agro-600' : 'text-amber-500' }}" />
-                                    </div>
-                                    <div class="min-w-0">
-                                        <p class="font-semibold text-zinc-900 text-sm truncate">
-                                            {{ $forecast->viticulturist?->name ?? '—' }}
-                                        </p>
-                                        <p class="text-xs text-zinc-400 truncate">
-                                            Añada {{ $forecast->vintage_year }}
-                                        </p>
-                                    </div>
-                                </div>
+                            <x-agro.card-item-header
+                                icon="clipboard-document-list"
+                                :title="$forecast->viticulturist?->name ?? '—'"
+                                :subtitle="'Añada ' . $forecast->vintage_year"
+                                :iconBg="$isConfirmed ? 'bg-agro-50' : 'bg-amber-50'"
+                                :iconColor="$isConfirmed ? 'text-agro-600' : 'text-amber-500'"
+                                size="md"
+                                radius="xl"
+                            >
                                 @if($isConfirmed)
                                     <x-agro.status-badge color="green" label="Confirmada" />
                                 @else
                                     <x-agro.status-badge color="amber" label="Borrador" />
                                 @endif
-                            </div>
+                            </x-agro.card-item-header>
                         </x-slot:header>
 
                         <div class="space-y-4">

@@ -33,16 +33,17 @@
                     wire:key="document-{{ $document->id }}"
                 >
                     <x-slot:header>
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center shrink-0">
-                                <flux:icon icon="folder-open" class="size-5 text-blue-600" />
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <h3 class="font-bold text-zinc-900 truncate">{{ $document->title }}</h3>
-                                <p class="text-xs text-zinc-500">{{ $document->issuing_authority ?? '—' }}</p>
-                            </div>
-                            <x-agro.status-badge :label="$document->type_label" color="blue" class="shrink-0" />
-                        </div>
+                        <x-agro.card-item-header
+                            icon="folder-open"
+                            :title="$document->title"
+                            :subtitle="$document->issuing_authority ?? '—'"
+                            iconBg="bg-blue-100"
+                            iconColor="text-blue-600"
+                            size="md"
+                            radius="xl"
+                        >
+                            <x-agro.status-badge :label="$document->type_label" color="blue" />
+                        </x-agro.card-item-header>
                     </x-slot:header>
 
                     <div class="flex-1 space-y-4">

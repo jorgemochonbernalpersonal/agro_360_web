@@ -104,18 +104,17 @@
                         wire:key="grape-card-{{ $grape->id }}"
                     >
                         <x-slot:header>
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl {{ $tc['bg'] }} flex items-center justify-center shrink-0">
-                                    <flux:icon icon="{{ $tc['ico'] }}" class="size-5 {{ $tc['icon'] }}" />
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <h3 class="font-bold text-zinc-900 truncate">{{ $grape->supplier_name }}</h3>
-                                    <p class="text-xs text-zinc-500 truncate">
-                                        {{ $grape->getTypeLabel() }}{{ $grape->vintage_year ? ' · ' . $grape->vintage_year : '' }}{{ $grape->color ? ' · ' . $grape->getColorLabel() : '' }}
-                                    </p>
-                                </div>
-                                <x-agro.status-badge :label="$isExpired ? 'Caducado' : (\App\Models\ExternalGrape::STATUSES[$grape->status] ?? $grape->status)" :color="$isExpired ? 'red' : $statusColor" class="shrink-0" />
-                            </div>
+                            <x-agro.card-item-header
+                                :icon="$tc['ico']"
+                                :title="$grape->supplier_name"
+                                :subtitle="$grape->getTypeLabel() . ($grape->vintage_year ? ' · ' . $grape->vintage_year : '') . ($grape->color ? ' · ' . $grape->getColorLabel() : '')"
+                                :iconBg="$tc['bg']"
+                                :iconColor="$tc['icon']"
+                                size="md"
+                                radius="xl"
+                            >
+                                <x-agro.status-badge :label="$isExpired ? 'Caducado' : (\App\Models\ExternalGrape::STATUSES[$grape->status] ?? $grape->status)" :color="$isExpired ? 'red' : $statusColor" />
+                            </x-agro.card-item-header>
                         </x-slot:header>
 
                         <div class="flex-1 space-y-4">

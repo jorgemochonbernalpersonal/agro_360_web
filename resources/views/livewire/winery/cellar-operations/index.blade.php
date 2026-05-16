@@ -47,16 +47,17 @@
                     wire:key="operation-{{ $operation->id }}"
                 >
                     <x-slot:header>
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center shrink-0">
-                                <flux:icon icon="beaker" class="size-5 text-emerald-600" />
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <h3 class="font-bold text-zinc-900 truncate">{{ $operation->type_label }}</h3>
-                                <p class="text-xs text-zinc-500">{{ $operation->operation_date->format('d/m/Y') }}</p>
-                            </div>
-                            <x-agro.status-badge :label="$operation->status_label" :color="$statusColor" class="shrink-0" />
-                        </div>
+                        <x-agro.card-item-header
+                            icon="beaker"
+                            :title="$operation->type_label"
+                            :subtitle="$operation->operation_date->format('d/m/Y')"
+                            iconBg="bg-emerald-100"
+                            iconColor="text-emerald-600"
+                            size="md"
+                            radius="xl"
+                        >
+                            <x-agro.status-badge :label="$operation->status_label" :color="$statusColor" />
+                        </x-agro.card-item-header>
                     </x-slot:header>
 
                     <div class="flex-1 space-y-4">

@@ -81,18 +81,17 @@
                         wire:key="wine-card-{{ $wine->id }}"
                     >
                         <x-slot:header>
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl {{ $tc['bg'] }} flex items-center justify-center shrink-0">
-                                    <flux:icon icon="beaker" class="size-5 {{ $tc['icon'] }}" />
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <h3 class="font-bold text-zinc-900 truncate">{{ $wine->name }}</h3>
-                                    <p class="text-xs text-zinc-500 truncate">
-                                        {{ $wine->type_label }}{{ $wine->vintage ? ' · ' . $wine->vintage : '' }}{{ $wine->aging_type_label ? ' · ' . $wine->aging_type_label : '' }}
-                                    </p>
-                                </div>
-                                <x-agro.status-badge :label="$wine->status_label" :color="$statusColor" class="shrink-0" />
-                            </div>
+                            <x-agro.card-item-header
+                                icon="beaker"
+                                :title="$wine->name"
+                                :subtitle="$wine->type_label . ($wine->vintage ? ' · ' . $wine->vintage : '') . ($wine->aging_type_label ? ' · ' . $wine->aging_type_label : '')"
+                                :iconBg="$tc['bg']"
+                                :iconColor="$tc['icon']"
+                                size="md"
+                                radius="xl"
+                            >
+                                <x-agro.status-badge :label="$wine->status_label" :color="$statusColor" />
+                            </x-agro.card-item-header>
                         </x-slot:header>
 
                         <div class="flex-1 space-y-4">

@@ -105,16 +105,17 @@
                         wire:key="maint-{{ $m->id }}"
                     >
                         <x-slot:header>
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 {{ $sc['bg'] }}">
-                                    <flux:icon icon="wrench-screwdriver" class="size-5 {{ $sc['icon'] }}" />
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <h3 class="font-bold text-zinc-900 truncate">{{ $m->container?->name ?? '—' }}</h3>
-                                    <p class="text-xs text-zinc-500">{{ $types[$m->maintenance_type] ?? $m->maintenance_type }}</p>
-                                </div>
+                            <x-agro.card-item-header
+                                icon="wrench-screwdriver"
+                                :title="$m->container?->name ?? '—'"
+                                :subtitle="$types[$m->maintenance_type] ?? $m->maintenance_type"
+                                :iconBg="$sc['bg']"
+                                :iconColor="$sc['icon']"
+                                size="md"
+                                radius="xl"
+                            >
                                 <flux:badge color="{{ $sc['badge'] }}" size="sm">{{ $statuses[$m->status] ?? $m->status }}</flux:badge>
-                            </div>
+                            </x-agro.card-item-header>
                         </x-slot:header>
 
                         <div class="flex-1 space-y-2 text-sm">

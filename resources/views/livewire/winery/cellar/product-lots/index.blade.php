@@ -81,18 +81,17 @@
                         wire:key="lot-card-{{ $lot->id }}"
                     >
                         <x-slot:header>
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl {{ $headerIconBg }} flex items-center justify-center shrink-0">
-                                    <flux:icon icon="beaker" class="size-5 {{ $headerIconColor }}" />
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <h3 class="font-bold text-zinc-900 truncate">{{ $lot->name }}</h3>
-                                    <p class="text-xs text-zinc-500 truncate">
-                                        {{ ucfirst($lot->wine_type) }}{{ $lot->vintage ? ' · ' . $lot->vintage : '' }}{{ $lot->aging_type ? ' · ' . ucfirst(str_replace('_', ' ', $lot->aging_type)) : '' }}{{ $lot->alcohol ? ' · ' . $lot->alcohol . '°' : '' }}
-                                    </p>
-                                </div>
-                                <x-agro.status-badge :active="$isActive" class="shrink-0" />
-                            </div>
+                            <x-agro.card-item-header
+                                icon="beaker"
+                                :title="$lot->name"
+                                :subtitle="ucfirst($lot->wine_type) . ($lot->vintage ? ' · ' . $lot->vintage : '') . ($lot->aging_type ? ' · ' . ucfirst(str_replace('_', ' ', $lot->aging_type)) : '') . ($lot->alcohol ? ' · ' . $lot->alcohol . '°' : '')"
+                                :iconBg="$headerIconBg"
+                                :iconColor="$headerIconColor"
+                                size="md"
+                                radius="xl"
+                            >
+                                <x-agro.status-badge :active="$isActive" />
+                            </x-agro.card-item-header>
                         </x-slot:header>
 
                         <div class="flex-1 space-y-4">

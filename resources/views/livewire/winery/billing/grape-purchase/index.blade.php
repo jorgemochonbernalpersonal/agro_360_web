@@ -70,30 +70,23 @@
                     wire:key="gp-invoice-{{ $invoice->id }}"
                 >
                     <x-slot:header>
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-agro-50 flex items-center justify-center shrink-0">
-                                <flux:icon icon="document-text" class="size-5 text-agro-600" />
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <h3 class="font-mono font-bold text-zinc-900 truncate">
-                                    {{ $invoice->invoice_number ?? 'Sin código de factura' }}
-                                </h3>
-                                @if ($invoice->delivery_note_code)
-                                    <p class="text-xs text-zinc-400 font-mono truncate">{{ $invoice->delivery_note_code }}</p>
-                                @else
-                                    <p class="text-xs text-zinc-400">
-                                        {{ \Carbon\Carbon::parse($invoice->invoice_date)->format('d/m/Y') }}
-                                    </p>
-                                @endif
-                            </div>
+                        <x-agro.card-item-header
+                            icon="document-text"
+                            :title="$invoice->invoice_number ?? 'Sin código de factura'"
+                            :subtitle="$invoice->delivery_note_code ?? \Carbon\Carbon::parse($invoice->invoice_date)->format('d/m/Y')"
+                            iconBg="bg-agro-50"
+                            iconColor="text-agro-600"
+                            size="md"
+                            radius="xl"
+                        >
                             @if ($invoice->status === 'cancelled')
-                                <flux:badge color="red" size="sm" class="shrink-0">Cancelada</flux:badge>
+                                <flux:badge color="red" size="sm">Cancelada</flux:badge>
                             @elseif ($invoice->payment_status === 'paid')
-                                <flux:badge color="green" size="sm" class="shrink-0">Pagada</flux:badge>
+                                <flux:badge color="green" size="sm">Pagada</flux:badge>
                             @else
-                                <flux:badge color="orange" size="sm" class="shrink-0">Pendiente</flux:badge>
+                                <flux:badge color="orange" size="sm">Pendiente</flux:badge>
                             @endif
-                        </div>
+                        </x-agro.card-item-header>
                     </x-slot:header>
 
                     <div class="flex-1 space-y-3 text-sm">

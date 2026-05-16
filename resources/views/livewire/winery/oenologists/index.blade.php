@@ -59,20 +59,19 @@
                     style="animation-delay: {{ min($i * 50, 400) }}ms"
                 >
                     <x-slot:header>
-                        <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 bg-violet-50 rounded-full flex items-center justify-center shrink-0">
-                                <flux:icon icon="beaker" class="size-4 text-violet-500" />
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <p class="font-semibold text-zinc-900 text-sm truncate leading-tight">{{ $oenologist->full_name }}</p>
-                                @if($oenologist->license_number)
-                                    <p class="text-xs text-zinc-400 leading-tight mt-0.5">Colegiado: {{ $oenologist->license_number }}</p>
-                                @endif
-                            </div>
+                        <x-agro.card-item-header
+                            icon="beaker"
+                            :title="$oenologist->full_name"
+                            :subtitle="$oenologist->license_number ? 'Colegiado: ' . $oenologist->license_number : null"
+                            iconBg="bg-violet-50"
+                            iconColor="text-violet-500"
+                            size="sm"
+                            radius="full"
+                        >
                             @if(!$oenologist->active)
-                                <flux:badge color="zinc" size="sm" class="shrink-0">Inactivo</flux:badge>
+                                <flux:badge color="zinc" size="sm">Inactivo</flux:badge>
                             @endif
-                        </div>
+                        </x-agro.card-item-header>
                     </x-slot:header>
 
                     {{-- Contacto --}}

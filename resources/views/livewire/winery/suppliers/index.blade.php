@@ -33,16 +33,17 @@
                     wire:key="supplier-{{ $supplier->id }}"
                 >
                     <x-slot:header>
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
-                                <flux:icon icon="truck" class="size-5 text-amber-600" />
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <h3 class="font-bold text-zinc-900 truncate">{{ $supplier->name }}</h3>
-                                <p class="text-xs text-zinc-500">{{ $supplier->vat_number ?? '—' }}</p>
-                            </div>
-                            <x-agro.status-badge :label="$supplier->category_label" color="amber" class="shrink-0" />
-                        </div>
+                        <x-agro.card-item-header
+                            icon="truck"
+                            :title="$supplier->name"
+                            :subtitle="$supplier->vat_number ?? '—'"
+                            iconBg="bg-amber-100"
+                            iconColor="text-amber-600"
+                            size="md"
+                            radius="xl"
+                        >
+                            <x-agro.status-badge :label="$supplier->category_label" color="amber" />
+                        </x-agro.card-item-header>
                     </x-slot:header>
 
                     <div class="flex-1 space-y-4">

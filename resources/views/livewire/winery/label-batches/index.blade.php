@@ -48,16 +48,15 @@
                     wire:key="batch-{{ $batch->id }}"
                 >
                     <x-slot:header>
-                        <div class="flex items-start gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-violet-50 flex items-center justify-center shrink-0">
-                                <flux:icon icon="tag" class="size-5 text-violet-600" />
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <h3 class="font-bold text-zinc-900 truncate">{{ $batch->name }}</h3>
-                                <p class="text-xs text-zinc-400">
-                                    {{ number_format($batch->start_number) }} – {{ number_format($batch->end_number) }}
-                                </p>
-                            </div>
+                        <x-agro.card-item-header
+                            icon="tag"
+                            :title="$batch->name"
+                            :subtitle="number_format($batch->start_number) . ' – ' . number_format($batch->end_number)"
+                            iconBg="bg-violet-50"
+                            iconColor="text-violet-600"
+                            size="md"
+                            radius="xl"
+                        >
                             @if($batch->isEmpty())
                                 <flux:badge color="red" size="sm">Agotado</flux:badge>
                             @elseif($pct >= 80)
@@ -65,7 +64,7 @@
                             @else
                                 <flux:badge color="green" size="sm">Disponible</flux:badge>
                             @endif
-                        </div>
+                        </x-agro.card-item-header>
                     </x-slot:header>
 
                     <div class="flex-1 space-y-4">

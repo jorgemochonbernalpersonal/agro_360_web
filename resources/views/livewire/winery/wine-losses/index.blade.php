@@ -92,20 +92,19 @@
                         wire:key="loss-{{ $loss->id }}"
                     >
                         <x-slot:header>
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 {{ $tc['bg'] }}">
-                                    <flux:icon icon="exclamation-triangle" class="size-5 {{ $tc['icon'] }}" />
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <h3 class="font-bold text-zinc-900 truncate">{{ $loss->wine?->name ?? '—' }}</h3>
-                                    <p class="text-xs text-zinc-400">
-                                        {{ $loss->loss_date instanceof \Carbon\Carbon ? $loss->loss_date->format('d/m/Y') : $loss->loss_date }}
-                                    </p>
-                                </div>
-                                <flux:badge color="{{ $tc['badge'] }}" size="sm" class="shrink-0">
+                            <x-agro.card-item-header
+                                icon="exclamation-triangle"
+                                :title="$loss->wine?->name ?? '—'"
+                                :subtitle="$loss->loss_date instanceof \Carbon\Carbon ? $loss->loss_date->format('d/m/Y') : $loss->loss_date"
+                                :iconBg="$tc['bg']"
+                                :iconColor="$tc['icon']"
+                                size="md"
+                                radius="xl"
+                            >
+                                <flux:badge color="{{ $tc['badge'] }}" size="sm">
                                     {{ $lossTypes[$loss->loss_type] ?? $loss->loss_type }}
                                 </flux:badge>
-                            </div>
+                            </x-agro.card-item-header>
                         </x-slot:header>
 
                         <div class="flex-1 space-y-4">

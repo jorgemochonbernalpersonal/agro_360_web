@@ -30,17 +30,15 @@
             @foreach($rooms as $room)
                 <x-agro.card class="flex flex-col hover:-translate-y-1 animate-fade-in-up">
                     <x-slot:header>
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-teal-100 flex items-center justify-center shrink-0">
-                                <flux:icon icon="building-office" class="size-5 text-teal-600" />
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <h3 class="font-bold text-zinc-900 truncate">{{ $room->name }}</h3>
-                                @if($room->description)
-                                    <p class="text-xs text-zinc-500 truncate">{{ $room->description }}</p>
-                                @endif
-                            </div>
-                        </div>
+                        <x-agro.card-item-header
+                            icon="building-office"
+                            :title="$room->name"
+                            :subtitle="$room->description ?? null"
+                            iconBg="bg-teal-100"
+                            iconColor="text-teal-600"
+                            size="md"
+                            radius="xl"
+                        />
                     </x-slot:header>
 
                     <div class="flex-1 space-y-2 text-sm">

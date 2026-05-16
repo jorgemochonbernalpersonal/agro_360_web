@@ -129,16 +129,17 @@
                         wire:key="act-{{ $act->id }}"
                     >
                         <x-slot:header>
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 {{ $tc['bg'] }}">
-                                    <flux:icon icon="clipboard-document-list" class="size-5 {{ $tc['icon'] }}" />
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <h3 class="font-bold text-zinc-900 truncate">{{ $act->viticulturist?->name ?? '—' }}</h3>
-                                    <p class="text-xs text-zinc-400">{{ $act->activity_date?->format('d/m/Y') ?? '—' }}</p>
-                                </div>
-                                <flux:badge color="{{ $tc['badge'] }}" size="sm" class="shrink-0">{{ $tl }}</flux:badge>
-                            </div>
+                            <x-agro.card-item-header
+                                icon="clipboard-document-list"
+                                :title="$act->viticulturist?->name ?? '—'"
+                                :subtitle="$act->activity_date?->format('d/m/Y') ?? '—'"
+                                :iconBg="$tc['bg']"
+                                :iconColor="$tc['icon']"
+                                size="md"
+                                radius="xl"
+                            >
+                                <flux:badge color="{{ $tc['badge'] }}" size="sm">{{ $tl }}</flux:badge>
+                            </x-agro.card-item-header>
                         </x-slot:header>
 
                         <div class="flex-1 space-y-3">

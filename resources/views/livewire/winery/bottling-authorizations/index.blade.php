@@ -90,20 +90,19 @@
                         wire:key="auth-{{ $auth->id }}"
                     >
                         <x-slot:header>
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 {{ $statusConfig['bg'] }}">
-                                    <flux:icon icon="identification" class="size-5 {{ $statusConfig['icon'] }}" />
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <h3 class="font-bold text-zinc-900 font-mono truncate">{{ $auth->authorization_number }}</h3>
-                                    @if($auth->issuing_authority)
-                                        <p class="text-xs text-zinc-400 truncate">{{ $auth->issuing_authority }}</p>
-                                    @endif
-                                </div>
-                                <flux:badge color="{{ $statusConfig['badge'] }}" size="sm" class="shrink-0">
+                            <x-agro.card-item-header
+                                icon="identification"
+                                :title="$auth->authorization_number"
+                                :subtitle="$auth->issuing_authority ?? null"
+                                :iconBg="$statusConfig['bg']"
+                                :iconColor="$statusConfig['icon']"
+                                size="md"
+                                radius="xl"
+                            >
+                                <flux:badge color="{{ $statusConfig['badge'] }}" size="sm">
                                     {{ $auth->status_label }}
                                 </flux:badge>
-                            </div>
+                            </x-agro.card-item-header>
                         </x-slot:header>
 
                         <div class="flex-1 space-y-3">

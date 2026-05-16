@@ -42,18 +42,19 @@
                         wire:key="labeling-{{ $labeling->id }}"
                     >
                         <x-slot:header>
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center shrink-0">
-                                    <flux:icon icon="tag" class="size-5 text-violet-600" />
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <h3 class="font-bold text-zinc-900 truncate">{{ $labeling->wine->name }}</h3>
-                                    <p class="text-xs text-zinc-500">{{ $labeling->labeling_date->format('d/m/Y') }}</p>
-                                </div>
+                            <x-agro.card-item-header
+                                icon="tag"
+                                :title="$labeling->wine->name"
+                                :subtitle="$labeling->labeling_date->format('d/m/Y')"
+                                iconBg="bg-violet-100"
+                                iconColor="text-violet-600"
+                                size="md"
+                                radius="xl"
+                            >
                                 @if($labeling->wine->vintage)
-                                    <flux:badge color="violet" size="sm" class="shrink-0">{{ $labeling->wine->vintage }}</flux:badge>
+                                    <flux:badge color="violet" size="sm">{{ $labeling->wine->vintage }}</flux:badge>
                                 @endif
-                            </div>
+                            </x-agro.card-item-header>
                         </x-slot:header>
 
                         <div class="flex-1 space-y-4">

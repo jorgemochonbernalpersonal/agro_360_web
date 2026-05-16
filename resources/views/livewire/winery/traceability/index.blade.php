@@ -29,32 +29,33 @@
         @if($wines->count() > 0)
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 @foreach($wines as $wine)
-                    @php $delay = min($loop->index * 50, 300); @endphp
+                    @php
+                        $delay = min($loop->index * 50, 300);
+                        $badgeColor = match($wine->status) {
+                            'in_progress' => 'blue',
+                            'aged'        => 'amber',
+                            'bottled'     => 'green',
+                            'sold'        => 'zinc',
+                            default       => 'zinc',
+                        };
+                    @endphp
                     <x-agro.card
                         class="animate-fade-in-up flex flex-col hover:-translate-y-1"
                         style="animation-delay: {{ $delay }}ms;"
                         wire:key="wine-{{ $wine->id }}"
                     >
                         <x-slot:header>
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center shrink-0">
-                                    <flux:icon icon="magnifying-glass-circle" class="size-5 text-purple-600" />
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <h3 class="font-bold text-zinc-900 truncate">{{ $wine->name }}</h3>
-                                    <p class="text-xs text-zinc-500">{{ $wine->internal_code ?? '—' }}</p>
-                                </div>
-                                @php
-                                    $badgeColor = match($wine->status) {
-                                        'in_progress' => 'blue',
-                                        'aged'        => 'amber',
-                                        'bottled'     => 'green',
-                                        'sold'        => 'zinc',
-                                        default       => 'zinc',
-                                    };
-                                @endphp
-                                <flux:badge color="{{ $badgeColor }}" size="sm" class="shrink-0">{{ $wine->status_label }}</flux:badge>
-                            </div>
+                            <x-agro.card-item-header
+                                icon="magnifying-glass-circle"
+                                :title="$wine->name"
+                                :subtitle="$wine->internal_code ?? '—'"
+                                iconBg="bg-purple-100"
+                                iconColor="text-purple-600"
+                                size="md"
+                                radius="xl"
+                            >
+                                <flux:badge color="{{ $badgeColor }}" size="sm">{{ $wine->status_label }}</flux:badge>
+                            </x-agro.card-item-header>
                         </x-slot:header>
 
                         <div class="flex-1 space-y-4">

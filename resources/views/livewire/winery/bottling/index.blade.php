@@ -77,21 +77,17 @@
                         wire:key="bottling-{{ $bottling->id }}"
                     >
                         <x-slot:header>
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-agro-100">
-                                    <flux:icon icon="archive-box-arrow-down" class="size-5 text-agro-600" />
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <h3 class="font-bold text-zinc-900 truncate">
-                                        {{ $bottling->wine->name }}
-                                        @if($bottling->wine->vintage)
-                                            <span class="text-zinc-400 font-normal text-sm">{{ $bottling->wine->vintage }}</span>
-                                        @endif
-                                    </h3>
-                                    <p class="text-xs text-zinc-400">{{ $bottling->bottling_date->format('d/m/Y') }}</p>
-                                </div>
-                                <flux:badge color="zinc" size="sm" class="shrink-0">{{ $bottling->format_label }}</flux:badge>
-                            </div>
+                            <x-agro.card-item-header
+                                icon="archive-box-arrow-down"
+                                :title="$bottling->wine->name . ($bottling->wine->vintage ? ' ' . $bottling->wine->vintage : '')"
+                                :subtitle="$bottling->bottling_date->format('d/m/Y')"
+                                iconBg="bg-agro-100"
+                                iconColor="text-agro-600"
+                                size="md"
+                                radius="xl"
+                            >
+                                <flux:badge color="zinc" size="sm">{{ $bottling->format_label }}</flux:badge>
+                            </x-agro.card-item-header>
                         </x-slot:header>
 
                         <div class="flex-1 space-y-4">

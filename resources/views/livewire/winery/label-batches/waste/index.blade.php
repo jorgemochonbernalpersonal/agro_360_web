@@ -67,16 +67,17 @@
                         wire:key="waste-{{ $waste->id }}"
                     >
                         <x-slot:header>
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center shrink-0">
-                                    <flux:icon icon="exclamation-triangle" class="size-5 text-red-600" />
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <h3 class="font-bold text-zinc-900 truncate">{{ $waste->waste_date->format('d/m/Y') }}</h3>
-                                    <p class="text-xs text-zinc-500">Merma registrada</p>
-                                </div>
-                                <flux:badge color="red" size="sm" class="shrink-0">{{ number_format($waste->quantity) }} uds</flux:badge>
-                            </div>
+                            <x-agro.card-item-header
+                                icon="exclamation-triangle"
+                                :title="$waste->waste_date->format('d/m/Y')"
+                                subtitle="Merma registrada"
+                                iconBg="bg-red-100"
+                                iconColor="text-red-600"
+                                size="md"
+                                radius="xl"
+                            >
+                                <flux:badge color="red" size="sm">{{ number_format($waste->quantity) }} uds</flux:badge>
+                            </x-agro.card-item-header>
                         </x-slot:header>
 
                         <div class="flex-1 space-y-4">
