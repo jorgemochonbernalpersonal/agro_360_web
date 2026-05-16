@@ -1,0 +1,3525 @@
+{
+  "browserName": "electron",
+  "browserPath": "",
+  "browserVersion": "138.0.7204.251",
+  "config": {
+    "baseUrl": "http://127.0.0.1:8001",
+    "supportFile": "C:\\Users\\jorge\\Desktop\\agro365\\cypress\\support\\e2e.js",
+    "specPattern": "cypress/e2e/**/*.cy.{js,jsx,ts,tsx}",
+    "viewportWidth": 1280,
+    "viewportHeight": 720,
+    "video": false,
+    "screenshotOnRunFailure": false,
+    "defaultCommandTimeout": 10000,
+    "requestTimeout": 10000,
+    "responseTimeout": 10000,
+    "projectRoot": "C:\\Users\\jorge\\Desktop\\agro365",
+    "projectName": "agro365",
+    "configFile": "cypress.config.test.cjs",
+    "isTextTerminal": true,
+    "animationDistanceThreshold": 5,
+    "arch": "x64",
+    "blockHosts": null,
+    "chromeWebSecurity": true,
+    "clientCertificates": [],
+    "defaultBrowser": null,
+    "allowCypressEnv": true,
+    "downloadsFolder": "C:\\Users\\jorge\\Desktop\\agro365\\cypress\\downloads",
+    "env": {},
+    "expose": {},
+    "execTimeout": 60000,
+    "experimentalCspAllowList": false,
+    "experimentalInteractiveRunEvents": false,
+    "experimentalRunAllSpecs": false,
+    "experimentalMemoryManagement": false,
+    "experimentalModifyObstructiveThirdPartyCode": false,
+    "injectDocumentDomain": false,
+    "experimentalOriginDependencies": false,
+    "experimentalPromptCommand": false,
+    "experimentalSourceRewriting": false,
+    "experimentalSingleTabRunMode": false,
+    "experimentalWebKitSupport": false,
+    "experimentalFastVisibility": false,
+    "fileServerFolder": "C:\\Users\\jorge\\Desktop\\agro365",
+    "fixturesFolder": "C:\\Users\\jorge\\Desktop\\agro365\\cypress\\fixtures",
+    "excludeSpecPattern": "*.hot-update.js",
+    "includeShadowDom": false,
+    "justInTimeCompile": true,
+    "keystrokeDelay": 0,
+    "modifyObstructiveCode": true,
+    "numTestsKeptInMemory": 0,
+    "platform": "win32",
+    "pageLoadTimeout": 60000,
+    "port": 54569,
+    "projectId": null,
+    "redirectionLimit": 20,
+    "reporter": "spec",
+    "reporterOptions": null,
+    "resolvedNodePath": "C:\\Program Files\\nodejs\\node.exe",
+    "resolvedNodeVersion": "24.12.0",
+    "retries": {
+      "runMode": 0,
+      "openMode": 0
+    },
+    "screenshotsFolder": "C:\\Users\\jorge\\Desktop\\agro365\\cypress\\screenshots",
+    "slowTestThreshold": 10000,
+    "scrollBehavior": "top",
+    "taskTimeout": 60000,
+    "testIsolation": true,
+    "trashAssetsBeforeRuns": true,
+    "userAgent": null,
+    "videoCompression": false,
+    "videosFolder": "C:\\Users\\jorge\\Desktop\\agro365\\cypress\\videos",
+    "waitForAnimations": true,
+    "watchForFileChanges": false,
+    "browsers": [
+      {
+        "channel": "stable",
+        "displayName": "Chrome",
+        "family": "chromium",
+        "majorVersion": "148",
+        "name": "chrome",
+        "path": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+        "version": "148.0.7778.168"
+      },
+      {
+        "channel": "stable",
+        "displayName": "Edge",
+        "family": "chromium",
+        "majorVersion": "148",
+        "name": "edge",
+        "path": "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+        "version": "148.0.3967.54"
+      },
+      {
+        "channel": "stable",
+        "displayName": "Electron",
+        "family": "chromium",
+        "majorVersion": 138,
+        "name": "electron",
+        "path": "",
+        "version": "138.0.7204.251"
+      }
+    ],
+    "cypressBinaryRoot": "C:\\Users\\jorge\\AppData\\Local\\Cypress\\Cache\\15.12.0\\Cypress\\resources\\app",
+    "hosts": null,
+    "isInteractive": true,
+    "version": "15.12.0",
+    "testingType": "e2e",
+    "browser": null,
+    "cypressInternalEnv": "production"
+  },
+  "cypressVersion": "15.12.0",
+  "endedTestsAt": "2026-05-15T17:32:16.237Z",
+  "osName": "win32",
+  "osVersion": "Microsoft Windows 11 Pro - 10.0.26200",
+  "runs": [
+    {
+      "error": null,
+      "reporter": "spec",
+      "reporterStats": {
+        "suites": 2,
+        "tests": 1,
+        "passes": 0,
+        "pending": 0,
+        "failures": 1,
+        "start": "2026-05-15T17:30:11.522Z",
+        "end": "2026-05-15T17:30:24.224Z",
+        "duration": 12702
+      },
+      "screenshots": [],
+      "spec": {
+        "absolute": "C:/Users/jorge/Desktop/agro365/cypress/e2e/viticulturist/phytosanitary-treatments.cy.js",
+        "fileExtension": ".js",
+        "fileName": "phytosanitary-treatments",
+        "name": "phytosanitary-treatments.cy.js",
+        "relative": "cypress\\e2e\\viticulturist\\phytosanitary-treatments.cy.js"
+      },
+      "stats": {
+        "duration": 12703,
+        "endedAt": "2026-05-15T17:30:24.217Z",
+        "failures": 1,
+        "passes": 0,
+        "pending": 0,
+        "skipped": 31,
+        "startedAt": "2026-05-15T17:30:11.514Z",
+        "suites": 7,
+        "tests": 32
+      },
+      "tests": [
+        {
+          "attempts": [
+            {
+              "state": "failed"
+            }
+          ],
+          "displayError": "AssertionError: expected 'http://127.0.0.1:8001/login' to satisfy [Function]\n\nBecause this error occurred during a `before each` hook we are skipping the remaining tests in the current suite: `Tratamientos Fitosanitarios`\n    at Context.eval (webpack://agro365/./cypress/support/commands.js:72:19)\n    at getRet (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:122807:20)\n    at tryCatcher (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:1777:23)\n    at Promise.attempt.Promise.try (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:4285:29)\n    at Context.thenFn (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:122818:66)\n    at Context.then (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:123069:21)",
+          "duration": 12648,
+          "state": "failed",
+          "title": [
+            "Tratamientos Fitosanitarios",
+            "Index",
+            "muestra la página de tratamientos fitosanitarios"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Tratamientos Fitosanitarios",
+            "Index",
+            "tiene botón para registrar nuevo tratamiento"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Tratamientos Fitosanitarios",
+            "Index",
+            "puede filtrar o buscar si hay controles disponibles"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Tratamientos Fitosanitarios",
+            "Create — carga y estructura",
+            "carga el formulario de creación"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Tratamientos Fitosanitarios",
+            "Create — carga y estructura",
+            "tiene sección de Información Básica con parcela y fecha"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Tratamientos Fitosanitarios",
+            "Create — carga y estructura",
+            "tiene sección de Producto Fitosanitario"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Tratamientos Fitosanitarios",
+            "Create — carga y estructura",
+            "tiene sección de Cumplimiento PAC con campos obligatorios"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Tratamientos Fitosanitarios",
+            "Create — carga y estructura",
+            "tiene sección de Gestión Integrada de Plagas (IPM)"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Tratamientos Fitosanitarios",
+            "Create — carga y estructura",
+            "tiene sección de Zona Tampón y Masas de Agua"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Tratamientos Fitosanitarios",
+            "Create — carga y estructura",
+            "tiene sección de Condiciones Meteorológicas"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Tratamientos Fitosanitarios",
+            "Create — carga y estructura",
+            "tiene selector de aplicador ROPO y campo manual"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Tratamientos Fitosanitarios",
+            "Create — validaciones PAC",
+            "permanece en el formulario al enviar vacío"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Tratamientos Fitosanitarios",
+            "Create — validaciones PAC",
+            "muestra error si justificación es demasiado corta"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Tratamientos Fitosanitarios",
+            "Create — validaciones PAC",
+            "dose_total se calcula automáticamente al rellenar dosis y área"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Tratamientos Fitosanitarios",
+            "Create — comportamientos reactivos",
+            "auto-rellena ROPO al seleccionar un aplicador registrado"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Tratamientos Fitosanitarios",
+            "Create — comportamientos reactivos",
+            "muestra info del producto al seleccionarlo"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Tratamientos Fitosanitarios",
+            "Create — comportamientos reactivos",
+            "muestra alerta de viento al superar 10.8 km/h"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Tratamientos Fitosanitarios",
+            "Create — comportamientos reactivos",
+            "no muestra alerta de viento con valor bajo"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Tratamientos Fitosanitarios",
+            "Create — comportamientos reactivos",
+            "muestra campo de distancia al activar zona tampón"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Tratamientos Fitosanitarios",
+            "Create — comportamientos reactivos",
+            "oculta campo de distancia al desmarcar zona tampón"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Tratamientos Fitosanitarios",
+            "Create — comportamientos reactivos",
+            "muestra campo de fecha al activar asesoramiento técnico"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Tratamientos Fitosanitarios",
+            "Create — comportamientos reactivos",
+            "oculta campo de fecha al desmarcar asesoramiento"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Tratamientos Fitosanitarios",
+            "Create — comportamientos reactivos",
+            "muestra selector de parcela → plantaciones activas al seleccionar parcela"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Tratamientos Fitosanitarios",
+            "Create — comportamientos reactivos",
+            "el selector equipo/individual muestra dropdown de equipo al seleccionar crew"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Tratamientos Fitosanitarios",
+            "Create — comportamientos reactivos",
+            "el selector equipo/individual muestra dropdown de viticultor al seleccionar individual"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Tratamientos Fitosanitarios",
+            "Create — guardado",
+            "guarda tratamiento con campos mínimos PAC y redirige al index"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Tratamientos Fitosanitarios",
+            "Create — guardado",
+            "guarda tratamiento con zona tampón y flags IPM"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Tratamientos Fitosanitarios",
+            "Edit",
+            "accede a la edición del primer tratamiento si existe"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Tratamientos Fitosanitarios",
+            "Edit",
+            "el formulario de edición tiene los campos PAC precargados"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Tratamientos Fitosanitarios",
+            "Edit",
+            "puede actualizar la justificación del tratamiento"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Tratamientos Fitosanitarios",
+            "Edit",
+            "puede activar zona tampón en edición y guardar"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Tratamientos Fitosanitarios",
+            "Edit",
+            "dosis total se recalcula en edición"
+          ]
+        }
+      ],
+      "video": null
+    },
+    {
+      "error": null,
+      "reporter": "spec",
+      "reporterStats": {
+        "suites": 2,
+        "tests": 1,
+        "passes": 0,
+        "pending": 0,
+        "failures": 1,
+        "start": "2026-05-15T17:30:25.587Z",
+        "end": "2026-05-15T17:30:37.807Z",
+        "duration": 12220
+      },
+      "screenshots": [],
+      "spec": {
+        "absolute": "C:/Users/jorge/Desktop/agro365/cypress/e2e/viticulturist/fertilizations.cy.js",
+        "fileExtension": ".js",
+        "fileName": "fertilizations",
+        "name": "fertilizations.cy.js",
+        "relative": "cypress\\e2e\\viticulturist\\fertilizations.cy.js"
+      },
+      "stats": {
+        "duration": 12221,
+        "endedAt": "2026-05-15T17:30:37.800Z",
+        "failures": 1,
+        "passes": 0,
+        "pending": 0,
+        "skipped": 29,
+        "startedAt": "2026-05-15T17:30:25.579Z",
+        "suites": 10,
+        "tests": 30
+      },
+      "tests": [
+        {
+          "attempts": [
+            {
+              "state": "failed"
+            }
+          ],
+          "displayError": "AssertionError: expected 'http://127.0.0.1:8001/login' to satisfy [Function]\n\nBecause this error occurred during a `before each` hook we are skipping the remaining tests in the current suite: `Fertilizaciones`\n    at Context.eval (webpack://agro365/./cypress/support/commands.js:72:19)\n    at getRet (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:122807:20)\n    at tryCatcher (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:1777:23)\n    at Promise.attempt.Promise.try (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:4285:29)\n    at Context.thenFn (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:122818:66)\n    at Context.then (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:123069:21)",
+          "duration": 12165,
+          "state": "failed",
+          "title": [
+            "Fertilizaciones",
+            "Index",
+            "muestra la página de fertilizaciones"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Fertilizaciones",
+            "Index",
+            "tiene botón para registrar nueva fertilización"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Fertilizaciones",
+            "Index",
+            "puede filtrar si hay control de búsqueda"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Fertilizaciones",
+            "Create — carga y estructura",
+            "muestra el formulario de creación"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Fertilizaciones",
+            "Create — carga y estructura",
+            "tiene selector de parcela"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Fertilizaciones",
+            "Create — carga y estructura",
+            "tiene campo de fecha preestablecida con hoy"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Fertilizaciones",
+            "Create — carga y estructura",
+            "tiene campo de tipo de fertilizante"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Fertilizaciones",
+            "Create — carga y estructura",
+            "tiene campo de cantidad"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Fertilizaciones",
+            "Create — carga y estructura",
+            "tiene campo de superficie aplicada"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Fertilizaciones",
+            "Create — carga y estructura",
+            "tiene sección PAC con campos de UF nitrógeno, fósforo y potasio"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Fertilizaciones",
+            "Create — carga y estructura",
+            "tiene campos de fertilizantes orgánicos (estiércol y fecha)"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Fertilizaciones",
+            "Create — carga y estructura",
+            "tiene radios de tipo de trabajo"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Fertilizaciones",
+            "Create — validaciones",
+            "permanece en el formulario al enviar vacío"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Fertilizaciones",
+            "Create — validaciones",
+            "muestra error si falta tipo de fertilizante"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Fertilizaciones",
+            "Create — validaciones",
+            "muestra error si todos los campos NPK están vacíos"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Fertilizaciones",
+            "Create — sección PAC",
+            "muestra etiqueta de sección PAC"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Fertilizaciones",
+            "Create — sección PAC",
+            "puede introducir valores NPK fraccionarios"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Fertilizaciones",
+            "Create — sección PAC",
+            "puede introducir ratio NPK"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Fertilizaciones",
+            "Create — sección PAC",
+            "tiene selector de método de aplicación con opciones PAC"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Fertilizaciones",
+            "Create — fertilizante orgánico",
+            "tiene sección de estiércoles orgánicos visible"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Fertilizaciones",
+            "Create — fertilizante orgánico",
+            "puede introducir tipo de estiércol"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Fertilizaciones",
+            "Create — fertilizante orgánico",
+            "puede introducir fecha de enterrado"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Fertilizaciones",
+            "Create — fertilizante orgánico",
+            "tiene selector de método de reducción de emisiones"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Fertilizaciones",
+            "Create — cascada parcela",
+            "al seleccionar parcela puede aparecer selector de plantación"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Fertilizaciones",
+            "Create — tipo de trabajo",
+            "al seleccionar equipo muestra selector de crew"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Fertilizaciones",
+            "Create — tipo de trabajo",
+            "al seleccionar individual muestra selector de viticultor"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Fertilizaciones",
+            "Create — guardado mineral",
+            "guarda una fertilización mineral con campos PAC si hay parcela disponible"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Fertilizaciones",
+            "Edit",
+            "accede al formulario de edición si existe una fertilización"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Fertilizaciones",
+            "Edit",
+            "el formulario de edición tiene campos precargados"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Fertilizaciones",
+            "Edit",
+            "puede actualizar los valores de nitrógeno UF"
+          ]
+        }
+      ],
+      "video": null
+    },
+    {
+      "error": null,
+      "reporter": "spec",
+      "reporterStats": {
+        "suites": 2,
+        "tests": 1,
+        "passes": 0,
+        "pending": 0,
+        "failures": 1,
+        "start": "2026-05-15T17:30:39.236Z",
+        "end": "2026-05-15T17:30:51.431Z",
+        "duration": 12195
+      },
+      "screenshots": [],
+      "spec": {
+        "absolute": "C:/Users/jorge/Desktop/agro365/cypress/e2e/viticulturist/irrigations.cy.js",
+        "fileExtension": ".js",
+        "fileName": "irrigations",
+        "name": "irrigations.cy.js",
+        "relative": "cypress\\e2e\\viticulturist\\irrigations.cy.js"
+      },
+      "stats": {
+        "duration": 12197,
+        "endedAt": "2026-05-15T17:30:51.425Z",
+        "failures": 1,
+        "passes": 0,
+        "pending": 0,
+        "skipped": 28,
+        "startedAt": "2026-05-15T17:30:39.228Z",
+        "suites": 10,
+        "tests": 29
+      },
+      "tests": [
+        {
+          "attempts": [
+            {
+              "state": "failed"
+            }
+          ],
+          "displayError": "AssertionError: expected 'http://127.0.0.1:8001/login' to satisfy [Function]\n\nBecause this error occurred during a `before each` hook we are skipping the remaining tests in the current suite: `Riegos`\n    at Context.eval (webpack://agro365/./cypress/support/commands.js:72:19)\n    at getRet (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:122807:20)\n    at tryCatcher (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:1777:23)\n    at Promise.attempt.Promise.try (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:4285:29)\n    at Context.thenFn (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:122818:66)\n    at Context.then (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:123069:21)",
+          "duration": 12148,
+          "state": "failed",
+          "title": [
+            "Riegos",
+            "Index",
+            "muestra la página de riegos"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Riegos",
+            "Index",
+            "tiene botón para registrar nuevo riego"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Riegos",
+            "Index",
+            "puede filtrar si hay control de búsqueda"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Riegos",
+            "Create — carga y estructura",
+            "muestra el formulario de creación"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Riegos",
+            "Create — carga y estructura",
+            "tiene selector de parcela"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Riegos",
+            "Create — carga y estructura",
+            "tiene campo de fecha preestablecida con hoy"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Riegos",
+            "Create — carga y estructura",
+            "tiene campo de volumen de agua"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Riegos",
+            "Create — carga y estructura",
+            "tiene selector de método de riego"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Riegos",
+            "Create — carga y estructura",
+            "tiene sección de cumplimiento PAC con origen del agua"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Riegos",
+            "Create — carga y estructura",
+            "tiene campo de número de concesión"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Riegos",
+            "Create — carga y estructura",
+            "tiene campo de caudal de riego"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Riegos",
+            "Create — carga y estructura",
+            "tiene selector de unidad de volumen (L / m³)"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Riegos",
+            "Create — carga y estructura",
+            "tiene checkbox de fertirrigación"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Riegos",
+            "Create — carga y estructura",
+            "tiene radios de tipo de trabajo"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Riegos",
+            "Create — validaciones",
+            "permanece en el formulario al enviar vacío"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Riegos",
+            "Create — validaciones",
+            "muestra error si falta origen del agua"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Riegos",
+            "Create — fertirrigación",
+            "al marcar fertirrigación aparecen campos de producto y dosis"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Riegos",
+            "Create — fertirrigación",
+            "al desmarcar fertirrigación se ocultan los campos de producto y dosis"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Riegos",
+            "Create — fertirrigación",
+            "puede seleccionar unidad m³"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Riegos",
+            "Create — sección PAC",
+            "muestra el info box de PAC"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Riegos",
+            "Create — sección PAC",
+            "las opciones de origen del agua incluyen opciones correctas"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Riegos",
+            "Create — sección PAC",
+            "puede seleccionar origen del agua"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Riegos",
+            "Create — cascada parcela",
+            "muestra selector de plantación al seleccionar parcela"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Riegos",
+            "Create — tipo de trabajo",
+            "al seleccionar equipo muestra selector de crew"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Riegos",
+            "Create — tipo de trabajo",
+            "al seleccionar individual muestra selector de viticultor"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Riegos",
+            "Create — guardado",
+            "guarda un riego con todos los campos PAC si hay parcela disponible"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Riegos",
+            "Edit",
+            "accede al formulario de edición si existe un riego"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Riegos",
+            "Edit",
+            "el formulario de edición tiene campos precargados"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Riegos",
+            "Edit",
+            "puede actualizar la concesión de agua"
+          ]
+        }
+      ],
+      "video": null
+    },
+    {
+      "error": null,
+      "reporter": "spec",
+      "reporterStats": {
+        "suites": 2,
+        "tests": 1,
+        "passes": 0,
+        "pending": 0,
+        "failures": 1,
+        "start": "2026-05-15T17:30:53.099Z",
+        "end": "2026-05-15T17:31:06.186Z",
+        "duration": 13087
+      },
+      "screenshots": [],
+      "spec": {
+        "absolute": "C:/Users/jorge/Desktop/agro365/cypress/e2e/viticulturist/cultural-works.cy.js",
+        "fileExtension": ".js",
+        "fileName": "cultural-works",
+        "name": "cultural-works.cy.js",
+        "relative": "cypress\\e2e\\viticulturist\\cultural-works.cy.js"
+      },
+      "stats": {
+        "duration": 13093,
+        "endedAt": "2026-05-15T17:31:06.182Z",
+        "failures": 1,
+        "passes": 0,
+        "pending": 0,
+        "skipped": 20,
+        "startedAt": "2026-05-15T17:30:53.089Z",
+        "suites": 8,
+        "tests": 21
+      },
+      "tests": [
+        {
+          "attempts": [
+            {
+              "state": "failed"
+            }
+          ],
+          "displayError": "AssertionError: expected 'http://127.0.0.1:8001/login' to satisfy [Function]\n\nBecause this error occurred during a `before each` hook we are skipping the remaining tests in the current suite: `Labores Culturales`\n    at Context.eval (webpack://agro365/./cypress/support/commands.js:72:19)\n    at getRet (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:122807:20)\n    at tryCatcher (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:1777:23)\n    at Promise.attempt.Promise.try (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:4285:29)\n    at Context.thenFn (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:122818:66)\n    at Context.then (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:123069:21)",
+          "duration": 13048,
+          "state": "failed",
+          "title": [
+            "Labores Culturales",
+            "Index",
+            "muestra la página de labores culturales"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Labores Culturales",
+            "Index",
+            "tiene botón para registrar nueva labor"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Labores Culturales",
+            "Index",
+            "puede buscar si hay control disponible"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Labores Culturales",
+            "Create — carga y estructura",
+            "muestra el formulario de creación"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Labores Culturales",
+            "Create — carga y estructura",
+            "tiene selector de parcela"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Labores Culturales",
+            "Create — carga y estructura",
+            "tiene fecha preestablecida con hoy"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Labores Culturales",
+            "Create — carga y estructura",
+            "tiene selector de tipo de labor"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Labores Culturales",
+            "Create — carga y estructura",
+            "tiene campo de descripción"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Labores Culturales",
+            "Create — carga y estructura",
+            "tiene radios de tipo de trabajo"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Labores Culturales",
+            "Create — validaciones",
+            "permanece en el formulario al enviar vacío"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Labores Culturales",
+            "Create — validaciones",
+            "muestra error con descripción menor a 10 caracteres"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Labores Culturales",
+            "Create — campos de poda",
+            "muestra campos específicos al seleccionar poda"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Labores Culturales",
+            "Create — campos de poda",
+            "oculta campos de poda al cambiar a otro tipo"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Labores Culturales",
+            "Create — tipo de trabajo",
+            "al seleccionar equipo muestra selector de crew"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Labores Culturales",
+            "Create — tipo de trabajo",
+            "al seleccionar individual muestra selector de viticultor"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Labores Culturales",
+            "Create — guardado",
+            "guarda una labor cultural si hay parcela disponible"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Labores Culturales",
+            "Create — guardado",
+            "guarda una poda con tipo y yemas por hectárea si hay parcela"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Labores Culturales",
+            "Edit",
+            "accede al formulario de edición si existe una labor"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Labores Culturales",
+            "Edit",
+            "el formulario de edición tiene botón \"Actualizar Labor\""
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Labores Culturales",
+            "Edit",
+            "el formulario tiene campos precargados"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Labores Culturales",
+            "Edit",
+            "puede actualizar la descripción de una labor"
+          ]
+        }
+      ],
+      "video": null
+    },
+    {
+      "error": null,
+      "reporter": "spec",
+      "reporterStats": {
+        "suites": 2,
+        "tests": 1,
+        "passes": 0,
+        "pending": 0,
+        "failures": 1,
+        "start": "2026-05-15T17:31:07.561Z",
+        "end": "2026-05-15T17:31:20.880Z",
+        "duration": 13319
+      },
+      "screenshots": [],
+      "spec": {
+        "absolute": "C:/Users/jorge/Desktop/agro365/cypress/e2e/viticulturist/observations.cy.js",
+        "fileExtension": ".js",
+        "fileName": "observations",
+        "name": "observations.cy.js",
+        "relative": "cypress\\e2e\\viticulturist\\observations.cy.js"
+      },
+      "stats": {
+        "duration": 13318,
+        "endedAt": "2026-05-15T17:31:20.872Z",
+        "failures": 1,
+        "passes": 0,
+        "pending": 0,
+        "skipped": 31,
+        "startedAt": "2026-05-15T17:31:07.554Z",
+        "suites": 11,
+        "tests": 32
+      },
+      "tests": [
+        {
+          "attempts": [
+            {
+              "state": "failed"
+            }
+          ],
+          "displayError": "AssertionError: expected 'http://127.0.0.1:8001/login' to satisfy [Function]\n\nBecause this error occurred during a `before each` hook we are skipping the remaining tests in the current suite: `Observaciones`\n    at Context.eval (webpack://agro365/./cypress/support/commands.js:72:19)\n    at getRet (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:122807:20)\n    at tryCatcher (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:1777:23)\n    at Promise.attempt.Promise.try (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:4285:29)\n    at Context.thenFn (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:122818:66)\n    at Context.then (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:123069:21)",
+          "duration": 13261,
+          "state": "failed",
+          "title": [
+            "Observaciones",
+            "Index",
+            "muestra la página de observaciones"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Observaciones",
+            "Index",
+            "tiene botón para registrar nueva observación"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Observaciones",
+            "Index",
+            "puede filtrar si hay control de búsqueda"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Observaciones",
+            "Create — carga y estructura",
+            "muestra el formulario de creación"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Observaciones",
+            "Create — carga y estructura",
+            "tiene selector de parcela"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Observaciones",
+            "Create — carga y estructura",
+            "tiene campo de fecha preestablecida con hoy"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Observaciones",
+            "Create — carga y estructura",
+            "tiene selector de estadio fenológico"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Observaciones",
+            "Create — carga y estructura",
+            "tiene selector de tipo de observación"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Observaciones",
+            "Create — carga y estructura",
+            "tiene campo de descripción"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Observaciones",
+            "Create — carga y estructura",
+            "tiene campo de porcentaje de superficie afectada"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Observaciones",
+            "Create — carga y estructura",
+            "tiene checkbox de umbral de daño económico"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Observaciones",
+            "Create — carga y estructura",
+            "tiene campo de fecha de revisión"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Observaciones",
+            "Create — carga y estructura",
+            "tiene radios de tipo de trabajo"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Observaciones",
+            "Create — tipos de observación",
+            "las opciones de tipo de observación incluyen plaga, enfermedad y general"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Observaciones",
+            "Create — tipos de observación",
+            "puede seleccionar tipo de observación"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Observaciones",
+            "Create — severidad",
+            "tiene selector de severidad con opciones válidas"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Observaciones",
+            "Create — severidad",
+            "puede seleccionar severidad grave"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Observaciones",
+            "Create — IPM PAC",
+            "muestra la sección IPM"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Observaciones",
+            "Create — IPM PAC",
+            "puede introducir porcentaje de superficie afectada"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Observaciones",
+            "Create — IPM PAC",
+            "puede marcar que el umbral de daño económico está superado"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Observaciones",
+            "Create — IPM PAC",
+            "puede introducir fecha de revisión futura"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Observaciones",
+            "Create — IPM PAC",
+            "rechaza porcentaje mayor de 100"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Observaciones",
+            "Create — validaciones",
+            "permanece en el formulario al enviar vacío"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Observaciones",
+            "Create — validaciones",
+            "muestra error si falta tipo de observación"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Observaciones",
+            "Create — validaciones",
+            "muestra error si falta descripción"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Observaciones",
+            "Create — cascada parcela",
+            "al seleccionar parcela puede aparecer selector de plantación"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Observaciones",
+            "Create — tipo de trabajo",
+            "al seleccionar equipo muestra selector de crew"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Observaciones",
+            "Create — tipo de trabajo",
+            "al seleccionar individual muestra selector de viticultor"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Observaciones",
+            "Create — guardado",
+            "guarda una observación de plaga si hay parcela disponible"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Observaciones",
+            "Edit",
+            "accede al formulario de edición si existe una observación"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Observaciones",
+            "Edit",
+            "el formulario de edición tiene campos precargados"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Observaciones",
+            "Edit",
+            "puede actualizar la descripción de una observación"
+          ]
+        }
+      ],
+      "video": null
+    },
+    {
+      "error": null,
+      "reporter": "spec",
+      "reporterStats": {
+        "suites": 2,
+        "tests": 1,
+        "passes": 0,
+        "pending": 0,
+        "failures": 1,
+        "start": "2026-05-15T17:31:22.282Z",
+        "end": "2026-05-15T17:31:34.115Z",
+        "duration": 11833
+      },
+      "screenshots": [],
+      "spec": {
+        "absolute": "C:/Users/jorge/Desktop/agro365/cypress/e2e/viticulturist/pruning.cy.js",
+        "fileExtension": ".js",
+        "fileName": "pruning",
+        "name": "pruning.cy.js",
+        "relative": "cypress\\e2e\\viticulturist\\pruning.cy.js"
+      },
+      "stats": {
+        "duration": 11836,
+        "endedAt": "2026-05-15T17:31:34.112Z",
+        "failures": 1,
+        "passes": 0,
+        "pending": 0,
+        "skipped": 18,
+        "startedAt": "2026-05-15T17:31:22.276Z",
+        "suites": 6,
+        "tests": 19
+      },
+      "tests": [
+        {
+          "attempts": [
+            {
+              "state": "failed"
+            }
+          ],
+          "displayError": "AssertionError: expected 'http://127.0.0.1:8001/login' to satisfy [Function]\n\nBecause this error occurred during a `before each` hook we are skipping the remaining tests in the current suite: `Cuaderno Digital — Poda`\n    at Context.eval (webpack://agro365/./cypress/support/commands.js:72:19)\n    at getRet (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:122807:20)\n    at tryCatcher (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:1777:23)\n    at Promise.attempt.Promise.try (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:4285:29)\n    at Context.thenFn (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:122818:66)\n    at Context.then (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:123069:21)",
+          "duration": 11800,
+          "state": "failed",
+          "title": [
+            "Cuaderno Digital — Poda",
+            "Index",
+            "muestra la página de poda"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Poda",
+            "Index",
+            "tiene botón de nueva poda"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Poda",
+            "Create — estructura",
+            "tiene selector de parcela"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Poda",
+            "Create — estructura",
+            "tiene selector de fecha de actividad"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Poda",
+            "Create — estructura",
+            "tiene selector de estadio fenológico"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Poda",
+            "Create — estructura",
+            "tiene selector de tipo de poda"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Poda",
+            "Create — estructura",
+            "tiene campo de yemas productivas"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Poda",
+            "Create — estructura",
+            "tiene campo de horas trabajadas"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Poda",
+            "Create — estructura",
+            "tiene campo de número de trabajadores"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Poda",
+            "Create — estructura",
+            "tiene textarea de descripción"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Poda",
+            "Create — estructura",
+            "tiene selector de gestión de ramón (BCAM 6 PAC)"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Poda",
+            "Create — estructura",
+            "tiene opciones válidas de gestión de ramón"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Poda",
+            "Create — estructura",
+            "tiene radio buttons de tipo de trabajo"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Poda",
+            "Create — validaciones",
+            "falla si no se selecciona tipo de poda"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Poda",
+            "Create — validaciones",
+            "falla si descripción está vacía"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Poda",
+            "Create — BCAM 6 PAC",
+            "guarda poda con gestión de ramón especificada"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Poda",
+            "Create — BCAM 6 PAC",
+            "guarda poda sin gestión de ramón (campo opcional)"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Poda",
+            "Edit — estructura",
+            "tiene selector de gestión de ramón en edición"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Poda",
+            "Edit — estructura",
+            "precarga el valor de gestión de ramón existente"
+          ]
+        }
+      ],
+      "video": null
+    },
+    {
+      "error": null,
+      "reporter": "spec",
+      "reporterStats": {
+        "suites": 2,
+        "tests": 1,
+        "passes": 0,
+        "pending": 0,
+        "failures": 1,
+        "start": "2026-05-15T17:31:35.401Z",
+        "end": "2026-05-15T17:31:47.893Z",
+        "duration": 12492
+      },
+      "screenshots": [],
+      "spec": {
+        "absolute": "C:/Users/jorge/Desktop/agro365/cypress/e2e/viticulturist/post-harvest.cy.js",
+        "fileExtension": ".js",
+        "fileName": "post-harvest",
+        "name": "post-harvest.cy.js",
+        "relative": "cypress\\e2e\\viticulturist\\post-harvest.cy.js"
+      },
+      "stats": {
+        "duration": 12495,
+        "endedAt": "2026-05-15T17:31:47.888Z",
+        "failures": 1,
+        "passes": 0,
+        "pending": 0,
+        "skipped": 19,
+        "startedAt": "2026-05-15T17:31:35.393Z",
+        "suites": 6,
+        "tests": 20
+      },
+      "tests": [
+        {
+          "attempts": [
+            {
+              "state": "failed"
+            }
+          ],
+          "displayError": "AssertionError: expected 'http://127.0.0.1:8001/login' to satisfy [Function]\n\nBecause this error occurred during a `before each` hook we are skipping the remaining tests in the current suite: `Cuaderno Digital — Tratamie...`\n    at Context.eval (webpack://agro365/./cypress/support/commands.js:72:19)\n    at getRet (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:122807:20)\n    at tryCatcher (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:1777:23)\n    at Promise.attempt.Promise.try (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:4285:29)\n    at Context.thenFn (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:122818:66)\n    at Context.then (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:123069:21)",
+          "duration": 12445,
+          "state": "failed",
+          "title": [
+            "Cuaderno Digital — Tratamientos Post-Vendimia",
+            "Index",
+            "muestra la página de tratamientos post-vendimia"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Tratamientos Post-Vendimia",
+            "Index",
+            "tiene botón de nuevo tratamiento"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Tratamientos Post-Vendimia",
+            "Create — estructura",
+            "tiene selector de parcela"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Tratamientos Post-Vendimia",
+            "Create — estructura",
+            "tiene campo de fecha de tratamiento"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Tratamientos Post-Vendimia",
+            "Create — estructura",
+            "tiene selector de estadio fenológico"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Tratamientos Post-Vendimia",
+            "Create — estructura",
+            "tiene selector de tipo de aplicación"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Tratamientos Post-Vendimia",
+            "Create — estructura",
+            "tipo de aplicación tiene las opciones correctas"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Tratamientos Post-Vendimia",
+            "Create — estructura",
+            "tiene campo de superficie tratada"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Tratamientos Post-Vendimia",
+            "Create — estructura",
+            "tiene campo de volumen de caldo"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Tratamientos Post-Vendimia",
+            "Create — estructura",
+            "tiene campo de dosis por hectárea"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Tratamientos Post-Vendimia",
+            "Create — estructura",
+            "tiene selector de unidad de dosis"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Tratamientos Post-Vendimia",
+            "Create — estructura",
+            "tiene campo de plazo de reentrada (PAC)"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Tratamientos Post-Vendimia",
+            "Create — estructura",
+            "tiene radio buttons de tipo de trabajo"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Tratamientos Post-Vendimia",
+            "Create — validaciones",
+            "falla si no se selecciona tipo de aplicación"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Tratamientos Post-Vendimia",
+            "Create — validaciones",
+            "falla si superficie tratada está vacía"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Tratamientos Post-Vendimia",
+            "Create — plazo de reentrada PAC",
+            "guarda tratamiento con plazo de reentrada"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Tratamientos Post-Vendimia",
+            "Create — plazo de reentrada PAC",
+            "guarda tratamiento sin plazo de reentrada (opcional)"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Tratamientos Post-Vendimia",
+            "Create — plazo de reentrada PAC",
+            "guarda con plazo de reentrada 0 (sin restricción)"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Tratamientos Post-Vendimia",
+            "Edit — estructura",
+            "tiene campo de plazo de reentrada en edición"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Tratamientos Post-Vendimia",
+            "Edit — estructura",
+            "precarga el valor del plazo de reentrada"
+          ]
+        }
+      ],
+      "video": null
+    },
+    {
+      "error": null,
+      "reporter": "spec",
+      "reporterStats": {
+        "suites": 2,
+        "tests": 1,
+        "passes": 0,
+        "pending": 0,
+        "failures": 1,
+        "start": "2026-05-15T17:31:49.149Z",
+        "end": "2026-05-15T17:32:01.128Z",
+        "duration": 11979
+      },
+      "screenshots": [],
+      "spec": {
+        "absolute": "C:/Users/jorge/Desktop/agro365/cypress/e2e/viticulturist/estimated-yields.cy.js",
+        "fileExtension": ".js",
+        "fileName": "estimated-yields",
+        "name": "estimated-yields.cy.js",
+        "relative": "cypress\\e2e\\viticulturist\\estimated-yields.cy.js"
+      },
+      "stats": {
+        "duration": 11980,
+        "endedAt": "2026-05-15T17:32:01.124Z",
+        "failures": 1,
+        "passes": 0,
+        "pending": 0,
+        "skipped": 11,
+        "startedAt": "2026-05-15T17:31:49.144Z",
+        "suites": 4,
+        "tests": 12
+      },
+      "tests": [
+        {
+          "attempts": [
+            {
+              "state": "failed"
+            }
+          ],
+          "displayError": "AssertionError: expected 'http://127.0.0.1:8001/login' to satisfy [Function]\n\nBecause this error occurred during a `before each` hook we are skipping the remaining tests in the current suite: `Cuaderno Digital — Rendimie...`\n    at Context.eval (webpack://agro365/./cypress/support/commands.js:72:19)\n    at getRet (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:122807:20)\n    at tryCatcher (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:1777:23)\n    at Promise.attempt.Promise.try (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:4285:29)\n    at Context.thenFn (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:122818:66)\n    at Context.then (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:123069:21)",
+          "duration": 11930,
+          "state": "failed",
+          "title": [
+            "Cuaderno Digital — Rendimientos Estimados",
+            "Index",
+            "muestra la página de rendimientos estimados"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Rendimientos Estimados",
+            "Index",
+            "tiene botón de nueva estimación"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Rendimientos Estimados",
+            "Create — estructura",
+            "tiene selector de campaña"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Rendimientos Estimados",
+            "Create — estructura",
+            "tiene selector de plantación"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Rendimientos Estimados",
+            "Create — estructura",
+            "tiene selector de ronda de estimación"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Rendimientos Estimados",
+            "Create — estructura",
+            "selector de ronda tiene las cuatro opciones PAC"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Rendimientos Estimados",
+            "Create — estructura",
+            "tiene selector de método de estimación"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Rendimientos Estimados",
+            "Create — estructura",
+            "método de estimación tiene las opciones correctas"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Rendimientos Estimados",
+            "Create — estructura",
+            "tiene campo de rendimiento por hectárea"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Rendimientos Estimados",
+            "Create — estructura",
+            "tiene campo de alcohol potencial"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Rendimientos Estimados",
+            "Create — estructura",
+            "tiene formulario de creación"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Rendimientos Estimados",
+            "Edit — estructura",
+            "formulario de edición tiene los campos principales"
+          ]
+        }
+      ],
+      "video": null
+    },
+    {
+      "error": null,
+      "reporter": "spec",
+      "reporterStats": {
+        "suites": 2,
+        "tests": 1,
+        "passes": 0,
+        "pending": 0,
+        "failures": 1,
+        "start": "2026-05-15T17:32:02.548Z",
+        "end": "2026-05-15T17:32:16.264Z",
+        "duration": 13716
+      },
+      "screenshots": [],
+      "spec": {
+        "absolute": "C:/Users/jorge/Desktop/agro365/cypress/e2e/viticulturist/harvest.cy.js",
+        "fileExtension": ".js",
+        "fileName": "harvest",
+        "name": "harvest.cy.js",
+        "relative": "cypress\\e2e\\viticulturist\\harvest.cy.js"
+      },
+      "stats": {
+        "duration": 13695,
+        "endedAt": "2026-05-15T17:32:16.237Z",
+        "failures": 1,
+        "passes": 0,
+        "pending": 0,
+        "skipped": 9,
+        "startedAt": "2026-05-15T17:32:02.542Z",
+        "suites": 4,
+        "tests": 10
+      },
+      "tests": [
+        {
+          "attempts": [
+            {
+              "state": "failed"
+            }
+          ],
+          "displayError": "AssertionError: expected 'http://127.0.0.1:8001/login' to satisfy [Function]\n\nBecause this error occurred during a `before each` hook we are skipping the remaining tests in the current suite: `Cuaderno Digital — Vendimias`\n    at Context.eval (webpack://agro365/./cypress/support/commands.js:72:19)\n    at getRet (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:122807:20)\n    at tryCatcher (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:1777:23)\n    at Promise.attempt.Promise.try (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:4285:29)\n    at Context.thenFn (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:122818:66)\n    at Context.then (http://127.0.0.1:8001/__cypress/runner/cypress_runner.js:123069:21)",
+          "duration": 13593,
+          "state": "failed",
+          "title": [
+            "Cuaderno Digital — Vendimias",
+            "Index",
+            "muestra la página de vendimias"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Vendimias",
+            "Index",
+            "tiene botón de nueva vendimia"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Vendimias",
+            "Create — estructura",
+            "tiene selector de parcela"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Vendimias",
+            "Create — estructura",
+            "tiene campo de fecha de inicio de vendimia"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Vendimias",
+            "Create — estructura",
+            "tiene campo de peso total"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Vendimias",
+            "Create — estructura",
+            "tiene campo de alcohol potencial"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Vendimias",
+            "Create — estructura",
+            "tiene campo de nº de documento de transporte"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Vendimias",
+            "Create — estructura",
+            "tiene campo de REGA destino"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Vendimias",
+            "Create — estructura",
+            "tiene campo de matrícula vehículo"
+          ]
+        },
+        {
+          "attempts": [
+            {
+              "state": "skipped"
+            }
+          ],
+          "displayError": null,
+          "duration": 0,
+          "state": "skipped",
+          "title": [
+            "Cuaderno Digital — Vendimias",
+            "Edit — estructura",
+            "formulario de edición tiene los campos principales"
+          ]
+        }
+      ],
+      "video": null
+    }
+  ],
+  "startedTestsAt": "2026-05-15T17:30:11.514Z",
+  "totalDuration": 113538,
+  "totalFailed": 9,
+  "totalPassed": 0,
+  "totalPending": 0,
+  "totalSkipped": 196,
+  "totalSuites": 66,
+  "totalTests": 205
+}

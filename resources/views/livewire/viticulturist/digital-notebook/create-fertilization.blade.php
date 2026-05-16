@@ -4,238 +4,242 @@
     :back-url="roleRoute('viticulturist.digital-notebook.fertilization.index')"
 >
     <form wire:submit="save" class="space-y-8" data-cy="fertilization-form">
+
         <x-agro.form-section title="Información Básica">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <flux:label for="plot_id" required>Parcela</flux:label>
-                        <flux:select wire:model.live="plot_id" id="plot_id" data-cy="plot-select" :error="$errors->first('plot_id')" required>
-                            <option value="">Selecciona una parcela</option>
-                            @foreach($plots as $plot)
-                                <option value="{{ $plot->id }}">{{ $plot->name }}</option>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <flux:field>
+                    <flux:label required>Parcela</flux:label>
+                    <flux:select wire:model.live="plot_id" data-cy="plot-select">
+                        <option value="">Selecciona una parcela</option>
+                        @foreach($plots as $plot)
+                            <option value="{{ $plot->id }}">{{ $plot->name }}</option>
+                        @endforeach
+                    </flux:select>
+                    <flux:error name="plot_id" />
+                </flux:field>
+
+                @if($plot_id)
+                    <flux:field>
+                        <flux:label :required="count($availablePlantings) > 0">
+                            Plantación
+                            @if(!count($availablePlantings))
+                                <span class="text-zinc-400 text-xs font-normal">(Sin plantaciones activas)</span>
+                            @endif
+                        </flux:label>
+                        <flux:select wire:model="plot_planting_id" data-cy="plot-planting-select">
+                            <option value="">-- Selecciona una plantación --</option>
+                            @foreach($availablePlantings as $planting)
+                                <option value="{{ $planting->id }}">
+                                    {{ $planting->name }}
+                                    @if($planting->grapeVariety) — {{ $planting->grapeVariety->name }} @endif
+                                </option>
                             @endforeach
                         </flux:select>
-                    </div>
-                    @if($plot_id)
-                        <div>
-                            <flux:label for="plot_planting_id" :required="count($availablePlantings) > 0">
-                                Plantación
-                                @if(count($availablePlantings) > 0)
-                                    <span class="text-red-500">*</span>
-                                @else
-                                    <span class="text-zinc-500 text-sm">(Opcional)</span>
-                                @endif
-                            </flux:label>
-                            <flux:select wire:model="plot_planting_id" id="plot_planting_id" data-cy="plot-planting-select" :error="$errors->first('plot_planting_id')" :required="count($availablePlantings) > 0">
-                                <option value="">-- Selecciona una plantación --</option>
-                                @foreach($availablePlantings as $planting)
-                                    <option value="{{ $planting->id }}">
-                                        {{ $planting->name }}
-                                        @if($planting->grapeVariety)
-                                            - {{ $planting->grapeVariety->name }}
-                                        @endif
-                                    </option>
-                                @endforeach
-                            </flux:select>
-                        </div>
-                    @endif
-                    <div>
-                        <flux:label for="activity_date" required>Fecha</flux:label>
-                        <flux:input wire:model="activity_date" type="date" id="activity_date" data-cy="activity-date-input" :error="$errors->first('activity_date')" required />
-                    </div>
-                </div>
+                        <flux:error name="plot_planting_id" />
+                    </flux:field>
+                @endif
+
+                <flux:field>
+                    <flux:label required>Fecha</flux:label>
+                    <flux:input wire:model="activity_date" type="date" data-cy="activity-date-input" />
+                    <flux:error name="activity_date" />
+                </flux:field>
+
+            </div>
         </x-agro.form-section>
 
         <x-agro.form-section title="Información del Fertilizante">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <flux:label for="fertilizer_type">Tipo de Fertilizante</flux:label>
-                        <flux:input wire:model="fertilizer_type" type="text" id="fertilizer_type" data-cy="fertilizer-type-input" placeholder="Ej: Orgánico, Mineral, etc." :error="$errors->first('fertilizer_type')" />
-                    </div>
-                    <div>
-                        <flux:label for="fertilizer_name">Nombre del Fertilizante</flux:label>
-                        <flux:input wire:model="fertilizer_name" type="text" id="fertilizer_name" data-cy="fertilizer-name-input" placeholder="Nombre comercial" :error="$errors->first('fertilizer_name')" />
-                    </div>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-                    <div>
-                        <flux:label for="quantity">Cantidad (kg)</flux:label>
-                        <flux:input wire:model="quantity" type="number" step="0.001" id="quantity" data-cy="quantity-input" placeholder="0.000" :error="$errors->first('quantity')" />
-                    </div>
-                    <div>
-                        <flux:label for="npk_ratio">Relación NPK</flux:label>
-                        <flux:input wire:model="npk_ratio" type="text" id="npk_ratio" data-cy="npk-ratio-input" placeholder="Ej: 10-10-10" :error="$errors->first('npk_ratio')" />
-                    </div>
-                    <div>
-                        <flux:label for="area_applied">Área Aplicada (ha)</flux:label>
-                        <flux:input wire:model="area_applied" type="number" step="0.001" id="area_applied" data-cy="area-applied-input" placeholder="0.000" :error="$errors->first('area_applied')" />
-                    </div>
-                </div>
-                <div class="mt-6">
-                    <flux:label for="application_method">Método de Aplicación</flux:label>
-                    <flux:select wire:model="application_method" id="application_method" data-cy="application-method-select" :error="$errors->first('application_method')">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <flux:field>
+                    <flux:label>Tipo de Fertilizante</flux:label>
+                    <flux:input wire:model="fertilizer_type" type="text" data-cy="fertilizer-type-input" placeholder="Ej: Orgánico, Mineral, etc." />
+                    <flux:error name="fertilizer_type" />
+                </flux:field>
+                <flux:field>
+                    <flux:label>Nombre del Fertilizante</flux:label>
+                    <flux:input wire:model="fertilizer_name" type="text" data-cy="fertilizer-name-input" placeholder="Nombre comercial" />
+                    <flux:error name="fertilizer_name" />
+                </flux:field>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+                <flux:field>
+                    <flux:label>Cantidad</flux:label>
+                    <flux:input wire:model="quantity" id="quantity" type="number" step="0.001" data-cy="quantity-input" placeholder="0.000" />
+                    <flux:description>kg</flux:description>
+                    <flux:error name="quantity" />
+                </flux:field>
+                <flux:field>
+                    <flux:label>Relación NPK</flux:label>
+                    <flux:input wire:model="npk_ratio" id="npk_ratio" type="text" data-cy="npk-ratio-input" placeholder="Ej: 10-10-10" />
+                    <flux:error name="npk_ratio" />
+                </flux:field>
+                <flux:field>
+                    <flux:label>Área Aplicada</flux:label>
+                    <flux:input wire:model="area_applied" id="area_applied" type="number" step="0.001" data-cy="area-applied-input" placeholder="0.000" />
+                    <flux:description>ha</flux:description>
+                    <flux:error name="area_applied" />
+                </flux:field>
+            </div>
+            <div class="mt-6">
+                <flux:field>
+                    <flux:label>Método de Aplicación</flux:label>
+                    <flux:select wire:model="application_method" data-cy="application-method-select">
                         <option value="">Selecciona un método</option>
                         <option value="aplicación al suelo">Aplicación al Suelo</option>
                         <option value="fertirrigación">Fertirrigación</option>
                         <option value="aplicación foliar">Aplicación Foliar</option>
                         <option value="otro">Otro</option>
                     </flux:select>
-                </div>
+                    <flux:error name="application_method" />
+                </flux:field>
+            </div>
         </x-agro.form-section>
 
         <x-agro.form-section title="Nutrición Sostenible (PAC)">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div>
-                    <flux:label for="nitrogen_uf">Unidades N (kg/ha)</flux:label>
-                    <flux:input wire:model="nitrogen_uf" type="number" step="0.001" id="nitrogen_uf" placeholder="0.000" :error="$errors->first('nitrogen_uf')" />
-                    <p class="mt-1 text-xs text-zinc-500">Unidades Fertilizantes de Nitrógeno</p>
-                </div>
-                <div>
-                    <flux:label for="phosphorus_uf">Unidades P2O5 (kg/ha)</flux:label>
-                    <flux:input wire:model="phosphorus_uf" type="number" step="0.001" id="phosphorus_uf" placeholder="0.000" :error="$errors->first('phosphorus_uf')" />
-                    <p class="mt-1 text-xs text-zinc-500">Unidades Fertilizantes de Fósforo</p>
-                </div>
-                <div>
-                    <flux:label for="potassium_uf">Unidades K2O (kg/ha)</flux:label>
-                    <flux:input wire:model="potassium_uf" type="number" step="0.001" id="potassium_uf" placeholder="0.000" :error="$errors->first('potassium_uf')" />
-                    <p class="mt-1 text-xs text-zinc-500">Unidades Fertilizantes de Potasio</p>
-                </div>
+                <flux:field>
+                    <flux:label>Unidades N</flux:label>
+                    <flux:input wire:model="nitrogen_uf" id="nitrogen_uf" type="number" step="0.001" placeholder="0.000" />
+                    <flux:description>kg/ha — Nitrógeno</flux:description>
+                    <flux:error name="nitrogen_uf" />
+                </flux:field>
+                <flux:field>
+                    <flux:label>Unidades P₂O₅</flux:label>
+                    <flux:input wire:model="phosphorus_uf" id="phosphorus_uf" type="number" step="0.001" placeholder="0.000" />
+                    <flux:description>kg/ha — Fósforo</flux:description>
+                    <flux:error name="phosphorus_uf" />
+                </flux:field>
+                <flux:field>
+                    <flux:label>Unidades K₂O</flux:label>
+                    <flux:input wire:model="potassium_uf" id="potassium_uf" type="number" step="0.001" placeholder="0.000" />
+                    <flux:description>kg/ha — Potasio</flux:description>
+                    <flux:error name="potassium_uf" />
+                </flux:field>
             </div>
 
             <div class="mt-6 border-t pt-6">
                 <h4 class="text-sm font-medium text-zinc-900 mb-4 flex items-center gap-2">
-                    <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <flux:icon icon="globe-alt" class="size-4 text-amber-600" />
                     Fertilizantes Orgánicos / Estiércoles
                 </h4>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div>
-                        <flux:label for="manure_type">Tipo de Estiércol</flux:label>
-                        <flux:input wire:model="manure_type" type="text" id="manure_type" placeholder="Ej: Bovino, Porcino..." :error="$errors->first('manure_type')" />
-                    </div>
-                    <div>
-                        <flux:label for="burial_date">Fecha de Enterrado</flux:label>
-                        <flux:input wire:model="burial_date" type="date" id="burial_date" :error="$errors->first('burial_date')" />
-                    </div>
-                    <div>
-                        <flux:label for="emission_reduction_method">Método Reducción Emisiones</flux:label>
-                        <flux:select wire:model="emission_reduction_method" id="emission_reduction_method" :error="$errors->first('emission_reduction_method')">
+                    <flux:field>
+                        <flux:label>Tipo de Estiércol</flux:label>
+                        <flux:input wire:model="manure_type" id="manure_type" type="text" placeholder="Ej: Bovino, Porcino..." />
+                        <flux:error name="manure_type" />
+                    </flux:field>
+                    <flux:field>
+                        <flux:label>Fecha de Enterrado</flux:label>
+                        <flux:input wire:model="burial_date" id="burial_date" type="date" />
+                        <flux:error name="burial_date" />
+                    </flux:field>
+                    <flux:field>
+                        <flux:label>Método Reducción Emisiones</flux:label>
+                        <flux:select wire:model="emission_reduction_method" id="emission_reduction_method">
                             <option value="">Selecciona un método</option>
                             <option value="inyección">Inyección directa</option>
                             <option value="platos">Platos deflectores</option>
                             <option value="tubos">Tubos colgantes</option>
-                            <option value="enterrado_inmediato">Enterrado inmediato (< 4h)</option>
+                            <option value="enterrado_inmediato">Enterrado inmediato (&lt; 4h)</option>
                             <option value="otro">Otro</option>
                         </flux:select>
-                    </div>
+                        <flux:error name="emission_reduction_method" />
+                    </flux:field>
                 </div>
             </div>
         </x-agro.form-section>
 
         <x-agro.form-section title="Información Adicional">
-                <!-- ¿Quién realizó el trabajo? -->
-                <div class="mb-6">
-                    <flux:label class="mb-3 block font-semibold text-zinc-700">¿Quién realizó el trabajo?</flux:label>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <!-- Opción: Equipo completo -->
-                        <div class="border-2 rounded-lg p-4 transition-all {{ $workType === 'crew' ? 'border-agro-500 bg-agro-50' : 'border-zinc-200 hover:border-zinc-300' }}">
-                            <label class="flex items-center gap-3 cursor-pointer">
-                                <input
-                                    type="radio"
-                                    wire:model.live="workType"
-                                    value="crew"
-                                    data-cy="work-type-crew-radio"
-                                    class="w-5 h-5 text-agro-500 focus:ring-agro-500"
-                                />
-                                <div class="flex-1">
-                                    <span class="font-semibold text-zinc-900">Equipo completo</span>
-                                    <p class="text-sm text-zinc-500 mt-1">Todo el equipo trabajó en esta actividad</p>
-                                </div>
-                            </label>
-                            @if($workType === 'crew')
-                                <div class="mt-4">
-                                    <flux:label for="crew_id" class="text-sm">Selecciona el equipo</flux:label>
-                                    <flux:select
-                                        wire:model="crew_id"
-                                        id="crew_id"
-                                        data-cy="crew-select"
-                                        class="mt-1"
-                                        :error="$errors->first('crew_id')"
-                                    >
+            <div class="mb-6">
+                <flux:label class="mb-3 block font-semibold text-zinc-700">¿Quién realizó el trabajo?</flux:label>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="border-2 rounded-lg p-4 transition-all {{ $workType === 'crew' ? 'border-agro-500 bg-agro-50' : 'border-zinc-200 hover:border-zinc-300' }}">
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="radio" wire:model.live="workType" value="crew" data-cy="work-type-crew-radio" class="w-5 h-5 text-agro-500 focus:ring-agro-500" />
+                            <div class="flex-1">
+                                <span class="font-semibold text-zinc-900">Equipo completo</span>
+                                <p class="text-sm text-zinc-500 mt-1">Todo el equipo trabajó en esta actividad</p>
+                            </div>
+                        </label>
+                        @if($workType === 'crew')
+                            <div class="mt-4">
+                                <flux:field>
+                                    <flux:label>Selecciona el equipo</flux:label>
+                                    <flux:select wire:model="crew_id" id="crew_id" data-cy="crew-select">
                                         <option value="">Selecciona un equipo</option>
                                         @foreach($crews as $crew)
                                             <option value="{{ $crew->id }}">{{ $crew->name }}</option>
                                         @endforeach
                                     </flux:select>
-                                </div>
-                            @endif
-                        </div>
-
-                        <!-- Opción: Viticultor individual -->
-                        <div class="border-2 rounded-lg p-4 transition-all {{ $workType === 'individual' ? 'border-agro-500 bg-agro-50' : 'border-zinc-200 hover:border-zinc-300' }}">
-                            <label class="flex items-center gap-3 cursor-pointer">
-                                <input
-                                    type="radio"
-                                    wire:model.live="workType"
-                                    value="individual"
-                                    data-cy="work-type-individual-radio"
-                                    class="w-5 h-5 text-agro-500 focus:ring-agro-500"
-                                />
-                                <div class="flex-1">
-                                    <span class="font-semibold text-zinc-900">Viticultor individual</span>
-                                    <p class="text-sm text-zinc-500 mt-1">Un viticultor específico realizó el trabajo</p>
-                                </div>
-                            </label>
-                            @if($workType === 'individual')
-                                <div class="mt-4">
-                                    <flux:label for="crew_member_id" class="text-sm">Selecciona el viticultor</flux:label>
-                                    <flux:select
-                                        wire:model="crew_member_id"
-                                        id="crew_member_id"
-                                        data-cy="crew-member-select"
-                                        class="mt-1"
-                                        :error="$errors->first('crew_member_id')"
-                                    >
+                                    <flux:error name="crew_id" />
+                                </flux:field>
+                            </div>
+                        @endif
+                    </div>
+                    <div class="border-2 rounded-lg p-4 transition-all {{ $workType === 'individual' ? 'border-agro-500 bg-agro-50' : 'border-zinc-200 hover:border-zinc-300' }}">
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="radio" wire:model.live="workType" value="individual" data-cy="work-type-individual-radio" class="w-5 h-5 text-agro-500 focus:ring-agro-500" />
+                            <div class="flex-1">
+                                <span class="font-semibold text-zinc-900">Viticultor individual</span>
+                                <p class="text-sm text-zinc-500 mt-1">Un viticultor específico realizó el trabajo</p>
+                            </div>
+                        </label>
+                        @if($workType === 'individual')
+                            <div class="mt-4">
+                                <flux:field>
+                                    <flux:label>Selecciona el viticultor</flux:label>
+                                    <flux:select wire:model="crew_member_id" id="crew_member_id" data-cy="crew-member-select">
                                         <option value="">Selecciona un viticultor</option>
-                                        @if(isset($allViticulturists))
-                                            @foreach($allViticulturists as $viticulturist)
-                                                <option value="{{ $viticulturist->id }}">
-                                                    {{ $viticulturist->name }}@if($viticulturist->id === auth()->id()) (Yo)@endif
-                                                </option>
-                                            @endforeach
-                                        @endif
+                                        @foreach($allViticulturists as $viticulturist)
+                                            <option value="{{ $viticulturist->id }}">
+                                                {{ $viticulturist->name }}@if($viticulturist->id === auth()->id()) (Yo)@endif
+                                            </option>
+                                        @endforeach
                                     </flux:select>
-                                </div>
-                            @endif
-                        </div>
+                                    <flux:error name="crew_member_id" />
+                                </flux:field>
+                            </div>
+                        @endif
                     </div>
-                    @error('workType')
-                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
                 </div>
+                @error('workType')
+                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
 
-                <!-- Maquinaria -->
-                <div>
-                    <flux:label for="machinery_id">Maquinaria</flux:label>
-                    <flux:select wire:model="machinery_id" id="machinery_id" data-cy="machinery-select" :error="$errors->first('machinery_id')">
-                        <option value="">Sin maquinaria asignada</option>
-                        @foreach($machinery as $item)
-                            <option value="{{ $item->id }}">{{ $item->name }} ({{ $item->type }})</option>
-                        @endforeach
-                    </flux:select>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                    <div>
-                        <flux:label for="weather_conditions">Condiciones Meteorológicas</flux:label>
-                        <flux:input wire:model="weather_conditions" type="text" id="weather_conditions" data-cy="weather-conditions-input" placeholder="Ej: Soleado, nublado" :error="$errors->first('weather_conditions')" />
-                    </div>
-                    <div>
-                        <flux:label for="temperature">Temperatura (°C)</flux:label>
-                        <flux:input wire:model="temperature" type="number" step="0.1" id="temperature" data-cy="temperature-input" placeholder="20.0" :error="$errors->first('temperature')" />
-                    </div>
-                </div>
-                <div class="mt-6">
-                    <flux:label for="notes">Notas</flux:label>
-                    <flux:textarea wire:model="notes" id="notes" data-cy="notes-textarea" rows="4" placeholder="Observaciones, comentarios, etc." :error="$errors->first('notes')" />
-                </div>
+            <flux:field>
+                <flux:label>Maquinaria</flux:label>
+                <flux:select wire:model="machinery_id" data-cy="machinery-select">
+                    <option value="">Sin maquinaria asignada</option>
+                    @foreach($machinery as $item)
+                        <option value="{{ $item->id }}">{{ $item->name }} ({{ $item->type }})</option>
+                    @endforeach
+                </flux:select>
+                <flux:error name="machinery_id" />
+            </flux:field>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <flux:field>
+                    <flux:label>Condiciones Meteorológicas</flux:label>
+                    <flux:input wire:model="weather_conditions" type="text" data-cy="weather-conditions-input" placeholder="Ej: Soleado, nublado" />
+                    <flux:error name="weather_conditions" />
+                </flux:field>
+                <flux:field>
+                    <flux:label>Temperatura</flux:label>
+                    <flux:input wire:model="temperature" type="number" step="0.1" data-cy="temperature-input" placeholder="20.0" />
+                    <flux:description>°C</flux:description>
+                    <flux:error name="temperature" />
+                </flux:field>
+            </div>
+
+            <div class="mt-6">
+                <flux:field>
+                    <flux:label>Notas</flux:label>
+                    <flux:textarea wire:model="notes" data-cy="notes-textarea" rows="4" placeholder="Observaciones, comentarios, etc." />
+                    <flux:error name="notes" />
+                </flux:field>
+            </div>
         </x-agro.form-section>
 
         <x-agro.form-actions

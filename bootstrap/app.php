@@ -28,6 +28,7 @@ return Application::configure(basePath: dirname(__DIR__))
         
         $middleware->validateCsrfTokens(except: [
             '/logout',
+            '/__cypress/*',
         ]);
 
         // Timeout automático de impersonación (60 min)

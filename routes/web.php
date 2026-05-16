@@ -31,6 +31,33 @@ Route::get('/blog/{slug}', [App\Http\Controllers\BlogController::class, 'show'])
     ->where('slug', implode('|', App\Http\Controllers\BlogController::getAllSlugs()))
     ->name('blog.show');
 
+// ── Cypress test helpers (solo en entorno testing) ────────────────────────
+if (app()->environment('testing')) {
+    // Login programático para Cypress — evita la complejidad del form Livewire
+    Route::post('/__cypress/login', function (\Illuminate\Http\Request $request) {
+        $email = $request->input('email');
+        $user = \App\Models\User::where('email', $email)->firstOrFail();
+        \Illuminate\Support\Facades\Auth::login($user, true);
+        session()->regenerate();
+        return response()->json(['id' => $user->id, 'email' => $user->email, 'role' => $user->role]);
+    });
+
+    // Logout programático
+    Route::post('/__cypress/logout', function () {
+        \Illuminate\Support\Facades\Auth::logout();
+        session()->invalidate();
+        session()->regenerateToken();
+        return response()->json(['ok' => true]);
+    });
+
+    // Info de sesión actual (para validación)
+    Route::get('/__cypress/me', function () {
+        $user = \Illuminate\Support\Facades\Auth::user();
+        if (!$user) return response()->json(null, 401);
+        return response()->json(['id' => $user->id, 'email' => $user->email, 'role' => $user->role]);
+    });
+}
+
 // Dusk debug (solo testing)
 Route::get('/dusk-env', function () {
     return response()->json([
