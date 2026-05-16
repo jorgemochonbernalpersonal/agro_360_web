@@ -312,41 +312,26 @@
         </div>
 
         <div class="px-6 py-5 space-y-4">
-            <div>
-                <label class="block text-sm font-medium text-zinc-700 mb-1.5">Comunidad Autónoma</label>
-                <select wire:model.live="filterAutonomousCommunity"
-                        class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
-                    <option value="">Todas las Comunidades</option>
-                    @foreach($this->autonomousCommunities as $id => $name)
-                        <option value="{{ $id }}">{{ $name }}</option>
-                    @endforeach
-                </select>
-            </div>
+            <x-agro.filter-select label="Comunidad Autónoma" wire:model.live="filterAutonomousCommunity" placeholder="Todas las Comunidades">
+                @foreach($this->autonomousCommunities as $id => $name)
+                    <flux:select.option value="{{ $id }}">{{ $name }}</flux:select.option>
+                @endforeach
+            </x-agro.filter-select>
 
             @if($filterAutonomousCommunity)
-                <div>
-                    <label class="block text-sm font-medium text-zinc-700 mb-1.5">Provincia</label>
-                    <select wire:model.live="filterProvince"
-                            class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
-                        <option value="">Todas las Provincias</option>
-                        @foreach($this->provinces as $id => $name)
-                            <option value="{{ $id }}">{{ $name }}</option>
-                        @endforeach
-                    </select>
-                </div>
+                <x-agro.filter-select label="Provincia" wire:model.live="filterProvince" placeholder="Todas las Provincias">
+                    @foreach($this->provinces as $id => $name)
+                        <flux:select.option value="{{ $id }}">{{ $name }}</flux:select.option>
+                    @endforeach
+                </x-agro.filter-select>
             @endif
 
             @if($filterProvince)
-                <div>
-                    <label class="block text-sm font-medium text-zinc-700 mb-1.5">Municipio</label>
-                    <select wire:model.live="filterMunicipality"
-                            class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
-                        <option value="">Todos los Municipios</option>
-                        @foreach($this->municipalities as $id => $name)
-                            <option value="{{ $id }}">{{ $name }}</option>
-                        @endforeach
-                    </select>
-                </div>
+                <x-agro.filter-select label="Municipio" wire:model.live="filterMunicipality" placeholder="Todos los Municipios">
+                    @foreach($this->municipalities as $id => $name)
+                        <flux:select.option value="{{ $id }}">{{ $name }}</flux:select.option>
+                    @endforeach
+                </x-agro.filter-select>
             @endif
         </div>
 

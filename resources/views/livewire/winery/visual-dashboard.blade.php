@@ -1065,28 +1065,26 @@
             <div class="space-y-3">
                 {{-- Viticultor --}}
                 <div>
-                    <label class="block text-xs font-semibold text-zinc-600 mb-1">Viticultor *</label>
-                    <select wire:model.live="gr_viticulturistId"
-                            class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-agro-500">
-                        <option value="">Seleccionar viticultor...</option>
+                    <flux:label>Viticultor *</flux:label>
+                    <flux:select wire:model.live="gr_viticulturistId">
+                        <flux:select.option value="">Seleccionar viticultor...</flux:select.option>
                         @foreach($modalViticulturists as $v)
-                            <option value="{{ $v->id }}">{{ $v->name }}</option>
+                            <flux:select.option value="{{ $v->id }}">{{ $v->name }}</flux:select.option>
                         @endforeach
-                    </select>
+                    </flux:select>
                     @error('gr_viticulturistId') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 {{-- Parcela --}}
                 @if($gr_viticulturistId && count($gr_availablePlots))
                 <div>
-                    <label class="block text-xs font-semibold text-zinc-600 mb-1">Parcela *</label>
-                    <select wire:model.live="gr_plotId"
-                            class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-agro-500">
-                        <option value="">Seleccionar parcela...</option>
+                    <flux:label>Parcela *</flux:label>
+                    <flux:select wire:model.live="gr_plotId">
+                        <flux:select.option value="">Seleccionar parcela...</flux:select.option>
                         @foreach($gr_availablePlots as $p)
-                            <option value="{{ $p['id'] }}">{{ $p['name'] }}</option>
+                            <flux:select.option value="{{ $p['id'] }}">{{ $p['name'] }}</flux:select.option>
                         @endforeach
-                    </select>
+                    </flux:select>
                     @error('gr_plotId') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
                 @endif
@@ -1094,14 +1092,13 @@
                 {{-- Plantación --}}
                 @if($gr_plotId && count($gr_availablePlantings))
                 <div>
-                    <label class="block text-xs font-semibold text-zinc-600 mb-1">Variedad / Plantación *</label>
-                    <select wire:model="gr_plantingId"
-                            class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-agro-500">
-                        <option value="">Seleccionar plantación...</option>
+                    <flux:label>Variedad / Plantación *</flux:label>
+                    <flux:select wire:model="gr_plantingId">
+                        <flux:select.option value="">Seleccionar plantación...</flux:select.option>
                         @foreach($gr_availablePlantings as $p)
-                            <option value="{{ $p['id'] }}">{{ $p['label'] }}</option>
+                            <flux:select.option value="{{ $p['id'] }}">{{ $p['label'] }}</flux:select.option>
                         @endforeach
-                    </select>
+                    </flux:select>
                     @error('gr_plantingId') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
                 @endif
@@ -1132,14 +1129,13 @@
                     </div>
                     {{-- Depósito --}}
                     <div>
-                        <label class="block text-xs font-semibold text-zinc-600 mb-1">Depósito destino *</label>
-                        <select wire:model="gr_containerId"
-                                class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-agro-500">
-                            <option value="">Depósito...</option>
+                        <flux:label>Depósito destino *</flux:label>
+                        <flux:select wire:model="gr_containerId">
+                            <flux:select.option value="">Depósito...</flux:select.option>
                             @foreach($modalContainersKg as $c)
-                                <option value="{{ $c->id }}">{{ $c->name }} ({{ number_format($c->capacity - $c->used_capacity, 0) }} kg lib.)</option>
+                                <flux:select.option value="{{ $c->id }}">{{ $c->name }} ({{ number_format($c->capacity - $c->used_capacity, 0) }} kg lib.)</flux:select.option>
                             @endforeach
-                        </select>
+                        </flux:select>
                         @error('gr_containerId') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
                 </div>
@@ -1170,25 +1166,23 @@
 
             <div class="space-y-3">
                 <div>
-                    <label class="block text-xs font-semibold text-zinc-600 mb-1">Vino *</label>
-                    <select wire:model="fc_wineId"
-                            class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500">
-                        <option value="">Seleccionar vino...</option>
+                    <flux:label>Vino *</flux:label>
+                    <flux:select wire:model="fc_wineId">
+                        <flux:select.option value="">Seleccionar vino...</flux:select.option>
                         @foreach($modalWines as $w)
-                            <option value="{{ $w->id }}">{{ $w->name }}</option>
+                            <flux:select.option value="{{ $w->id }}">{{ $w->name }}</flux:select.option>
                         @endforeach
-                    </select>
+                    </flux:select>
                     @error('fc_wineId') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-zinc-600 mb-1">Contenedor *</label>
-                    <select wire:model="fc_containerId"
-                            class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500">
-                        <option value="">Seleccionar contenedor...</option>
+                    <flux:label>Contenedor *</flux:label>
+                    <flux:select wire:model="fc_containerId">
+                        <flux:select.option value="">Seleccionar contenedor...</flux:select.option>
                         @foreach($modalContainersAll as $c)
-                            <option value="{{ $c->id }}">{{ $c->name }}</option>
+                            <flux:select.option value="{{ $c->id }}">{{ $c->name }}</flux:select.option>
                         @endforeach
-                    </select>
+                    </flux:select>
                     @error('fc_containerId') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
                 <div>
@@ -1238,36 +1232,33 @@
 
             <div class="space-y-3">
                 <div>
-                    <label class="block text-xs font-semibold text-zinc-600 mb-1">Vino *</label>
-                    <select wire:model="tr_wineId"
-                            class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="">Seleccionar vino...</option>
+                    <flux:label>Vino *</flux:label>
+                    <flux:select wire:model="tr_wineId">
+                        <flux:select.option value="">Seleccionar vino...</flux:select.option>
                         @foreach($modalWines as $w)
-                            <option value="{{ $w->id }}">{{ $w->name }}</option>
+                            <flux:select.option value="{{ $w->id }}">{{ $w->name }}</flux:select.option>
                         @endforeach
-                    </select>
+                    </flux:select>
                     @error('tr_wineId') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-semibold text-zinc-600 mb-1">Desde contenedor</label>
-                        <select wire:model="tr_fromContainerId"
-                                class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="">— Ninguno —</option>
+                        <flux:label>Desde contenedor</flux:label>
+                        <flux:select wire:model="tr_fromContainerId">
+                            <flux:select.option value="">— Ninguno —</flux:select.option>
                             @foreach($modalContainersAll as $c)
-                                <option value="{{ $c->id }}">{{ $c->name }}</option>
+                                <flux:select.option value="{{ $c->id }}">{{ $c->name }}</flux:select.option>
                             @endforeach
-                        </select>
+                        </flux:select>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-zinc-600 mb-1">Hacia contenedor *</label>
-                        <select wire:model="tr_toContainerId"
-                                class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="">Seleccionar...</option>
+                        <flux:label>Hacia contenedor *</flux:label>
+                        <flux:select wire:model="tr_toContainerId">
+                            <flux:select.option value="">Seleccionar...</flux:select.option>
                             @foreach($modalContainersAll as $c)
-                                <option value="{{ $c->id }}">{{ $c->name }}</option>
+                                <flux:select.option value="{{ $c->id }}">{{ $c->name }}</flux:select.option>
                             @endforeach
-                        </select>
+                        </flux:select>
                         @error('tr_toContainerId') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
                 </div>
@@ -1279,26 +1270,24 @@
                         @error('tr_quantity') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-zinc-600 mb-1">Unidad *</label>
-                        <select wire:model="tr_unitId"
-                                class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="">Unidad...</option>
+                        <flux:label>Unidad *</flux:label>
+                        <flux:select wire:model="tr_unitId">
+                            <flux:select.option value="">Unidad...</flux:select.option>
                             @foreach($modalUnits as $u)
-                                <option value="{{ $u->id }}">{{ $u->symbol }}</option>
+                                <flux:select.option value="{{ $u->id }}">{{ $u->symbol }}</flux:select.option>
                             @endforeach
-                        </select>
+                        </flux:select>
                         @error('tr_unitId') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-semibold text-zinc-600 mb-1">Tipo *</label>
-                        <select wire:model="tr_transferType"
-                                class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <flux:label>Tipo *</flux:label>
+                        <flux:select wire:model="tr_transferType">
                             @foreach($transferTypes as $key => $label)
-                                <option value="{{ $key }}">{{ $label }}</option>
+                                <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
                             @endforeach
-                        </select>
+                        </flux:select>
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-zinc-600 mb-1">Fecha *</label>
@@ -1337,14 +1326,13 @@
                     @error('wine_name') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-zinc-600 mb-1">Tipo *</label>
-                    <select wire:model="wine_type"
-                            class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-agro-500">
-                        <option value="">Seleccionar tipo...</option>
+                    <flux:label>Tipo *</flux:label>
+                    <flux:select wire:model="wine_type">
+                        <flux:select.option value="">Seleccionar tipo...</flux:select.option>
                         @foreach($wineTypes as $key => $label)
-                            <option value="{{ $key }}">{{ $label }}</option>
+                            <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
                         @endforeach
-                    </select>
+                    </flux:select>
                     @error('wine_type') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
             </div>
@@ -1377,14 +1365,13 @@
                     @error('cont_name') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-zinc-600 mb-1">Tipo *</label>
-                    <select wire:model="cont_typeId"
-                            class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500">
-                        <option value="">Seleccionar tipo...</option>
+                    <flux:label>Tipo *</flux:label>
+                    <flux:select wire:model="cont_typeId">
+                        <flux:select.option value="">Seleccionar tipo...</flux:select.option>
                         @foreach($containerTypes as $t)
-                            <option value="{{ $t->id }}">{{ $t->name }}</option>
+                            <flux:select.option value="{{ $t->id }}">{{ $t->name }}</flux:select.option>
                         @endforeach
-                    </select>
+                    </flux:select>
                     @error('cont_typeId') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
                 <div class="grid grid-cols-2 gap-3">
@@ -1395,12 +1382,11 @@
                         @error('cont_capacity') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-zinc-600 mb-1">Unidad *</label>
-                        <select wire:model="cont_unit"
-                                class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500">
-                            <option value="litros">Litros</option>
-                            <option value="kg">Kg</option>
-                        </select>
+                        <flux:label>Unidad *</flux:label>
+                        <flux:select wire:model="cont_unit">
+                            <flux:select.option value="litros">Litros</flux:select.option>
+                            <flux:select.option value="kg">Kg</flux:select.option>
+                        </flux:select>
                     </div>
                 </div>
             </div>

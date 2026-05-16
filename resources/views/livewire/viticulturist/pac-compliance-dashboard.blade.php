@@ -8,16 +8,13 @@
     {{-- Selector de período --}}
     <div class="flex items-center gap-3">
         <span class="text-sm font-medium text-zinc-600">Período de análisis:</span>
-        <select
-            wire:model.live="timeRange"
-            class="px-3 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm text-zinc-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
-        >
-            <option value="30">Últimos 30 días</option>
-            <option value="90">Últimos 90 días</option>
-            <option value="180">Últimos 6 meses</option>
-            <option value="365">Último año</option>
-            <option value="all">Todas las actividades</option>
-        </select>
+        <flux:select wire:model.live="timeRange" class="w-48">
+            <flux:select.option value="30">Últimos 30 días</flux:select.option>
+            <flux:select.option value="90">Últimos 90 días</flux:select.option>
+            <flux:select.option value="180">Últimos 6 meses</flux:select.option>
+            <flux:select.option value="365">Último año</flux:select.option>
+            <flux:select.option value="all">Todas las actividades</flux:select.option>
+        </flux:select>
     </div>
 
     {{-- Cumplimiento Global --}}

@@ -11,30 +11,26 @@
 
             {{-- Vino --}}
             <div>
-                <label class="block text-sm font-medium text-zinc-700 mb-1">Vino <span class="text-red-500">*</span></label>
-                <select wire:model="wine_id"
-                        class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300">
-                    <option value="">Selecciona un vino...</option>
+                <flux:label>Vino <span class="text-red-500">*</span></flux:label>
+                <flux:select wire:model="wine_id">
+                    <flux:select.option value="">Selecciona un vino...</flux:select.option>
                     @foreach($wines as $wine)
-                        <option value="{{ $wine->id }}">
-                            {{ $wine->name }} — Añada {{ $wine->vintage }}
-                        </option>
+                        <flux:select.option value="{{ $wine->id }}">{{ $wine->name }} — Añada {{ $wine->vintage }}</flux:select.option>
                     @endforeach
-                </select>
+                </flux:select>
                 @error('wine_id') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
             </div>
 
             {{-- Categoría + Descripción --}}
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-zinc-700 mb-1">Categoría <span class="text-red-500">*</span></label>
-                    <select wire:model="category"
-                            class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300">
-                        <option value="">Selecciona categoría...</option>
+                    <flux:label>Categoría <span class="text-red-500">*</span></flux:label>
+                    <flux:select wire:model="category">
+                        <flux:select.option value="">Selecciona categoría...</flux:select.option>
                         @foreach($categories as $key => $label)
-                            <option value="{{ $key }}">{{ $label }}</option>
+                            <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
                         @endforeach
-                    </select>
+                    </flux:select>
                     @error('category') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
 

@@ -19,30 +19,20 @@
             <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar por albarán, nº factura o cliente..." />
 
             {{-- Filtro de estado de factura --}}
-            <div class="min-w-[160px]">
-                <select
-                    wire:model.live="statusFilter"
-                    class="w-full px-3 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm text-zinc-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent"
-                >
-                    <option value="">Estado: todos</option>
-                    <option value="draft">Borrador</option>
-                    <option value="sent">Emitida</option>
-                    <option value="cancelled">Cancelada</option>
-                </select>
-            </div>
+            <flux:select wire:model.live="statusFilter" class="min-w-[160px]">
+                <flux:select.option value="">Estado: todos</flux:select.option>
+                <flux:select.option value="draft">Borrador</flux:select.option>
+                <flux:select.option value="sent">Emitida</flux:select.option>
+                <flux:select.option value="cancelled">Cancelada</flux:select.option>
+            </flux:select>
 
             {{-- Filtro de estado de entrega --}}
-            <div class="min-w-[160px]">
-                <select
-                    wire:model.live="deliveryFilter"
-                    class="w-full px-3 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm text-zinc-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent"
-                >
-                    <option value="">Entrega: todas</option>
-                    <option value="pending">Pendiente</option>
-                    <option value="delivered">Entregada</option>
-                    <option value="cancelled">Cancelada</option>
-                </select>
-            </div>
+            <flux:select wire:model.live="deliveryFilter" class="min-w-[160px]">
+                <flux:select.option value="">Entrega: todas</flux:select.option>
+                <flux:select.option value="pending">Pendiente</flux:select.option>
+                <flux:select.option value="delivered">Entregada</flux:select.option>
+                <flux:select.option value="cancelled">Cancelada</flux:select.option>
+            </flux:select>
 
             {{-- Limpiar filtros --}}
             @if($search || $statusFilter || $deliveryFilter)

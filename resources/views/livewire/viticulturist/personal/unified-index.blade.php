@@ -204,13 +204,12 @@
                                                 class="absolute left-0 bottom-10 w-64 bg-white rounded-xl shadow-xl z-10 border border-zinc-200 p-4"
                                             >
                                                 <p class="text-sm font-semibold text-zinc-700 mb-3">{{ $member && $member->crew ? 'Cambiar equipo' : 'Asignar a equipo' }}</p>
-                                                <select wire:model="assignToCrewId"
-                                                        class="w-full px-3 py-2 text-sm border border-zinc-200 rounded-lg mb-3 focus:outline-none focus:ring-2 focus:ring-agro-400">
-                                                    <option value="">Selecciona un equipo</option>
+                                                <flux:select wire:model="assignToCrewId" class="mb-3">
+                                                    <flux:select.option value="">Selecciona un equipo</flux:select.option>
                                                     @foreach($crews as $crew)
-                                                        <option value="{{ $crew->id }}">{{ $crew->name }}</option>
+                                                        <flux:select.option value="{{ $crew->id }}">{{ $crew->name }}</flux:select.option>
                                                     @endforeach
-                                                </select>
+                                                </flux:select>
                                                 <flux:button
                                                     wire:click="assignToCrew({{ $v->id }})"
                                                     x-on:click="open = false"
@@ -411,41 +410,26 @@
 
         <div class="px-6 py-5 space-y-5">
             @if(isset($wineries) && $wineries->count() > 1)
-                <div>
-                    <label class="block text-sm font-medium text-zinc-700 mb-1.5">Bodega</label>
-                    <select wire:model.live="wineryFilter"
-                            class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
-                        <option value="">Todas las bodegas</option>
-                        @foreach($wineries as $winery)
-                            <option value="{{ $winery->id }}">{{ $winery->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
+                <x-agro.filter-select label="Bodega" wire:model.live="wineryFilter" placeholder="Todas las bodegas">
+                    @foreach($wineries as $winery)
+                        <flux:select.option value="{{ $winery->id }}">{{ $winery->name }}</flux:select.option>
+                    @endforeach
+                </x-agro.filter-select>
             @endif
 
             @if($viewMode === 'personal')
                 @if(isset($crews) && $crews->count() > 0)
-                    <div>
-                        <label class="block text-sm font-medium text-zinc-700 mb-1.5">Equipo</label>
-                        <select wire:model.live="crewFilter"
-                                class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
-                            <option value="">Todos los equipos</option>
-                            @foreach($crews as $crew)
-                                <option value="{{ $crew->id }}">{{ $crew->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+                    <x-agro.filter-select label="Equipo" wire:model.live="crewFilter" placeholder="Todos los equipos">
+                        @foreach($crews as $crew)
+                            <flux:select.option value="{{ $crew->id }}">{{ $crew->name }}</flux:select.option>
+                        @endforeach
+                    </x-agro.filter-select>
                 @endif
-                <div>
-                    <label class="block text-sm font-medium text-zinc-700 mb-1.5">Estado</label>
-                    <select wire:model.live="statusFilter"
-                            class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
-                        <option value="">Todos los estados</option>
-                        <option value="in_crew">En equipo</option>
-                        <option value="individual">Sin equipo</option>
-                        <option value="unassigned">Sin asignar</option>
-                    </select>
-                </div>
+                <x-agro.filter-select label="Estado" wire:model.live="statusFilter" placeholder="Todos los estados">
+                    <flux:select.option value="in_crew">En equipo</flux:select.option>
+                    <flux:select.option value="individual">Sin equipo</flux:select.option>
+                    <flux:select.option value="unassigned">Sin asignar</flux:select.option>
+                </x-agro.filter-select>
             @endif
         </div>
 

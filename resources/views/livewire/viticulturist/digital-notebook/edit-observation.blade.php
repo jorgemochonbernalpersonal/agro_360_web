@@ -52,7 +52,7 @@
         <x-agro.form-section title="Detalles de la Observación">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <flux:field>
-                    <flux:label>Tipo de Observación</flux:label>
+                    <flux:label required>Tipo de Observación</flux:label>
                     <flux:select wire:model="observation_type" data-cy="observation-type-select">
                         <option value="">Selecciona un tipo</option>
                         <option value="plaga">Plaga</option>

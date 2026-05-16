@@ -229,14 +229,11 @@
         </div>
 
         <div class="px-6 py-5">
-            <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Año</label>
-            <select wire:model.live="yearFilter"
-                    class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
-                <option value="">Todos los años</option>
+            <x-agro.filter-select label="Año" wire:model.live="yearFilter" placeholder="Todos los años">
                 @foreach($years as $year)
-                    <option value="{{ $year }}">{{ $year }}</option>
+                    <flux:select.option value="{{ $year }}">{{ $year }}</flux:select.option>
                 @endforeach
-            </select>
+            </x-agro.filter-select>
         </div>
 
         <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between rounded-b-2xl">

@@ -15,14 +15,14 @@
     {{-- Filtros --}}
     <x-agro.filter-bar>
         {{-- Fecha (archivo de log) --}}
-        <select wire:model.live="filterDate" class="text-sm border border-zinc-200 rounded-lg px-3 py-2 text-zinc-700 focus:outline-none focus:ring-2 focus:ring-agro-500 bg-white">
+        <flux:select wire:model.live="filterDate">
             @foreach($logDates as $date)
-                <option value="{{ $date }}">{{ $date }}</option>
+                <flux:select.option value="{{ $date }}">{{ $date }}</flux:select.option>
             @endforeach
             @if(empty($logDates))
-                <option value="">Sin archivos</option>
+                <flux:select.option value="">Sin archivos</flux:select.option>
             @endif
-        </select>
+        </flux:select>
 
         <x-agro.filter-select wire:model.live="filterLevel">
             <option value="">Todos los niveles</option>

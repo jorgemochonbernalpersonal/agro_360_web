@@ -356,37 +356,34 @@
                 <div class="px-6 py-5 space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-medium text-zinc-700 mb-1.5">Cliente <span class="text-red-500">*</span></label>
-                            <select wire:model.live="quickClientId"
-                                class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400">
-                                <option value="">Selecciona cliente</option>
+                            <flux:label>Cliente <span class="text-red-500">*</span></flux:label>
+                            <flux:select wire:model.live="quickClientId">
+                                <flux:select.option value="">Selecciona cliente</flux:select.option>
                                 @foreach(\App\Models\Client::where('user_id', Auth::id())->where('active', true)->orderBy('first_name')->get() as $c)
-                                    <option value="{{ $c->id }}">{{ $c->full_name }}</option>
+                                    <flux:select.option value="{{ $c->id }}">{{ $c->full_name }}</flux:select.option>
                                 @endforeach
-                            </select>
+                            </flux:select>
                             @error('quickClientId') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-zinc-700 mb-1.5">Dirección <span class="text-red-500">*</span></label>
-                            <select wire:model="quickClientAddressId"
-                                class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400">
-                                <option value="">Selecciona dirección</option>
+                            <flux:label>Dirección <span class="text-red-500">*</span></flux:label>
+                            <flux:select wire:model="quickClientAddressId">
+                                <flux:select.option value="">Selecciona dirección</flux:select.option>
                                 @foreach($quickAvailableAddresses as $addr)
-                                    <option value="{{ $addr->id }}">{{ $addr->full_address ?? $addr->address ?? '' }}</option>
+                                    <flux:select.option value="{{ $addr->id }}">{{ $addr->full_address ?? $addr->address ?? '' }}</flux:select.option>
                                 @endforeach
-                            </select>
+                            </flux:select>
                             @error('quickClientAddressId') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                         </div>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-zinc-700 mb-1.5">Producto <span class="text-red-500">*</span></label>
-                        <select wire:model.live="quickLotId"
-                            class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400">
-                            <option value="">Selecciona lote con stock</option>
+                        <flux:label>Producto <span class="text-red-500">*</span></flux:label>
+                        <flux:select wire:model.live="quickLotId">
+                            <flux:select.option value="">Selecciona lote con stock</flux:select.option>
                             @foreach(\App\Models\ProductLot::where('user_id', Auth::id())->where('archived', false)->where('available_quantity', '>', 0)->orderByDesc('vintage')->orderBy('name')->get() as $wl)
-                                <option value="{{ $wl->id }}">{{ $wl->name }}@if($wl->vintage) ({{ $wl->vintage }})@endif – {{ number_format($wl->available_quantity, 0) }} {{ $wl->unit }}</option>
+                                <flux:select.option value="{{ $wl->id }}">{{ $wl->name }}@if($wl->vintage) ({{ $wl->vintage }})@endif – {{ number_format($wl->available_quantity, 0) }} {{ $wl->unit }}</flux:select.option>
                             @endforeach
-                        </select>
+                        </flux:select>
                         @error('quickLotId') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div>
@@ -416,25 +413,23 @@
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-medium text-zinc-700 mb-1.5">Impuesto</label>
-                            <select wire:model="quickTaxId"
-                                class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400">
-                                <option value="">Sin impuesto</option>
+                            <flux:label>Impuesto</flux:label>
+                            <flux:select wire:model="quickTaxId">
+                                <flux:select.option value="">Sin impuesto</flux:select.option>
                                 @foreach(\App\Models\Tax::where('active', true)->orderBy('rate')->get() as $t)
-                                    <option value="{{ $t->id }}">{{ $t->name }} ({{ number_format($t->rate, 2) }}%)</option>
+                                    <flux:select.option value="{{ $t->id }}">{{ $t->name }} ({{ number_format($t->rate, 2) }}%)</flux:select.option>
                                 @endforeach
-                            </select>
+                            </flux:select>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-zinc-700 mb-1.5">Forma de pago</label>
-                            <select wire:model="quickPaymentType"
-                                class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400">
-                                <option value="">Sin especificar</option>
-                                <option value="cash">Efectivo</option>
-                                <option value="transfer">Transferencia</option>
-                                <option value="check">Cheque</option>
-                                <option value="other">Otro</option>
-                            </select>
+                            <flux:label>Forma de pago</flux:label>
+                            <flux:select wire:model="quickPaymentType">
+                                <flux:select.option value="">Sin especificar</flux:select.option>
+                                <flux:select.option value="cash">Efectivo</flux:select.option>
+                                <flux:select.option value="transfer">Transferencia</flux:select.option>
+                                <flux:select.option value="check">Cheque</flux:select.option>
+                                <flux:select.option value="other">Otro</flux:select.option>
+                            </flux:select>
                         </div>
                     </div>
                 </div>
@@ -501,36 +496,21 @@
             <flux:button x-on:click="$dispatch('close-modal', 'products-invoice-filters')" variant="ghost" size="sm" icon="x-mark" />
         </div>
         <div class="px-6 py-5 space-y-5">
-            <div>
-                <label class="block text-sm font-medium text-zinc-700 mb-1.5">Estado de factura</label>
-                <select wire:model.live="filterStatus"
-                    class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
-                    <option value="">Todos</option>
-                    <option value="draft">Borrador</option>
-                    <option value="sent">Emitida</option>
-                    <option value="cancelled">Cancelada</option>
-                </select>
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-zinc-700 mb-1.5">Estado de cobro</label>
-                <select wire:model.live="filterPaymentStatus"
-                    class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
-                    <option value="">Todos</option>
-                    <option value="unpaid">Pendiente</option>
-                    <option value="partial">Parcial</option>
-                    <option value="paid">Cobrada</option>
-                </select>
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-zinc-700 mb-1.5">Estado de entrega</label>
-                <select wire:model.live="filterDeliveryStatus"
-                    class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
-                    <option value="">Todos</option>
-                    <option value="pending">Pendiente</option>
-                    <option value="delivered">Entregada</option>
-                    <option value="cancelled">Cancelada</option>
-                </select>
-            </div>
+            <x-agro.filter-select label="Estado de factura" wire:model.live="filterStatus" placeholder="Todos">
+                <flux:select.option value="draft">Borrador</flux:select.option>
+                <flux:select.option value="sent">Emitida</flux:select.option>
+                <flux:select.option value="cancelled">Cancelada</flux:select.option>
+            </x-agro.filter-select>
+            <x-agro.filter-select label="Estado de cobro" wire:model.live="filterPaymentStatus" placeholder="Todos">
+                <flux:select.option value="unpaid">Pendiente</flux:select.option>
+                <flux:select.option value="partial">Parcial</flux:select.option>
+                <flux:select.option value="paid">Cobrada</flux:select.option>
+            </x-agro.filter-select>
+            <x-agro.filter-select label="Estado de entrega" wire:model.live="filterDeliveryStatus" placeholder="Todos">
+                <flux:select.option value="pending">Pendiente</flux:select.option>
+                <flux:select.option value="delivered">Entregada</flux:select.option>
+                <flux:select.option value="cancelled">Cancelada</flux:select.option>
+            </x-agro.filter-select>
             <div class="flex items-center justify-between py-2 px-3 bg-pink-50 rounded-xl border border-pink-100">
                 <div class="flex items-center gap-2">
                     <flux:icon icon="gift" class="size-4 text-pink-500" />

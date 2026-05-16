@@ -1,222 +1,204 @@
 <div>
 @if($totalPlantings === 0)
-    {{-- Sin plantaciones: CTA simple --}}
-    <div class="text-center py-4">
-        <p class="text-sm text-gray-500 mb-3">Aún no has registrado plantaciones en tus parcelas</p>
-        <a href="{{ route('plots.plantings.index') }}" wire:navigate
-           class="inline-flex items-center gap-2 px-4 py-2 bg-green-50 hover:bg-green-100 text-green-700 text-sm font-semibold rounded-lg border border-green-200 transition-colors">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-            </svg>
+    <x-agro.empty-state
+        icon="leaf"
+        title="Sin plantaciones registradas"
+        description="Añade plantaciones a tus parcelas para el cumplimiento PAC y la trazabilidad."
+    >
+        <flux:button href="{{ route('plots.plantings.index') }}" wire:navigate icon="plus">
             Añadir plantaciones
-        </a>
-        <p class="text-xs text-gray-400 mt-2">Necesarias para el cumplimiento PAC y la trazabilidad</p>
-    </div>
+        </flux:button>
+    </x-agro.empty-state>
 @else
     <div class="space-y-6">
-        {{-- Métricas Principales --}}
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-            {{-- Total Plantaciones --}}
-            <div class="bg-white rounded-lg shadow p-6">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-zinc-600">Total Plantaciones</p>
-                        <p class="text-3xl font-bold text-zinc-900 mt-2">{{ $totalPlantings }}</p>
-                        <p class="text-xs text-zinc-500 mt-1">{{ $varieties }} variedades</p>
-                    </div>
-                    <div class="p-3 bg-green-100 rounded-full">
-                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
-                        </svg>
-                    </div>
-                </div>
-            </div>
 
-            {{-- Superficie Plantada --}}
-            <div class="bg-white rounded-lg shadow p-6">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-zinc-600">Superficie Plantada</p>
-                        <p class="text-3xl font-bold text-zinc-900 mt-2">{{ $totalSurface }}</p>
-                        <p class="text-xs text-zinc-500 mt-1">hectáreas</p>
-                    </div>
-                    <div class="p-3 bg-blue-100 rounded-full">
-                        <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"/>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Cumplimiento PAC --}}
-            <div class="bg-white rounded-lg shadow p-6">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-zinc-600">Cumplimiento PAC</p>
-                        <p class="text-3xl font-bold text-zinc-900 mt-2">{{ $authorizationPercentage }}%</p>
-                        <p class="text-xs text-zinc-500 mt-1">{{ $withAuthorization }}/{{ $needsAuthorization }} autorizadas</p>
-                    </div>
-                    <div class="p-3 {{ $authorizationPercentage >= 90 ? 'bg-green-100' : 'bg-red-100' }} rounded-full">
-                        <svg class="w-8 h-8 {{ $authorizationPercentage >= 90 ? 'text-green-600' : 'text-red-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Sin Autorización --}}
+        {{-- Métricas principales --}}
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <x-agro.stat-card
+                label="Total Plantaciones"
+                :value="$totalPlantings"
+                :description="$varieties . ' variedades'"
+                icon="leaf"
+                color="green"
+            />
+            <x-agro.stat-card
+                label="Superficie Plantada"
+                :value="$totalSurface . ' ha'"
+                description="hectáreas declaradas"
+                icon="map"
+                color="blue"
+            />
+            <x-agro.stat-card
+                label="Cumplimiento PAC"
+                :value="$authorizationPercentage . '%'"
+                :description="$withAuthorization . '/' . $needsAuthorization . ' autorizadas'"
+                icon="shield-check"
+                :color="$authorizationPercentage >= 90 ? 'green' : 'red'"
+            />
             @if($missingAuthorization > 0)
-                <div class="bg-white rounded-lg shadow p-6">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm font-medium text-zinc-600">Sin Autorización</p>
-                            <p class="text-3xl font-bold text-red-600 mt-2">{{ $missingAuthorization }}</p>
-                            <p class="text-xs text-zinc-500 mt-1">requieren atención</p>
-                        </div>
-                        <div class="p-3 bg-red-100 rounded-full">
-                            <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
+                <x-agro.stat-card
+                    label="Sin Autorización"
+                    :value="$missingAuthorization"
+                    description="requieren atención"
+                    icon="exclamation-triangle"
+                    color="red"
+                />
             @endif
         </div>
 
         {{-- Distribución por Estado --}}
-        <div class="bg-white rounded-lg shadow p-6">
-            <h3 class="text-lg font-semibold text-zinc-900 mb-4">Distribución por Estado</h3>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                @foreach(['active' => 'Activa', 'removed' => 'Arrancada', 'experimental' => 'Experimental', 'replanting' => 'Replantación'] as $key => $label)
-                    @php
-                        $stats = $statusStats->get($key, ['count' => 0, 'surface' => 0]);
-                    @endphp
-                    <div class="border rounded-lg p-4">
-                        <p class="text-sm font-medium text-zinc-600">{{ $label }}</p>
-                        <p class="text-2xl font-bold text-zinc-900 mt-1">{{ $stats['count'] }}</p>
-                        <p class="text-xs text-zinc-500 mt-1">{{ round($stats['surface'], 2) }} ha</p>
+        <x-agro.card>
+            <x-slot:header>
+                <div class="flex items-center gap-2">
+                    <flux:icon icon="squares-2x2" class="size-4 text-agro-600" />
+                    <span class="font-semibold text-zinc-900">Distribución por Estado</span>
+                </div>
+            </x-slot:header>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                @foreach(['active' => ['label' => 'Activa', 'icon' => 'check-circle', 'color' => 'green'],
+                          'removed' => ['label' => 'Arrancada', 'icon' => 'x-circle', 'color' => 'zinc'],
+                          'experimental' => ['label' => 'Experimental', 'icon' => 'beaker', 'color' => 'blue'],
+                          'replanting' => ['label' => 'Replantación', 'icon' => 'arrow-path', 'color' => 'amber']] as $key => $cfg)
+                    @php $stats = $statusStats->get($key, ['count' => 0, 'surface' => 0]); @endphp
+                    <x-agro.stat-card
+                        :label="$cfg['label']"
+                        :value="$stats['count']"
+                        :description="round($stats['surface'], 2) . ' ha'"
+                        :icon="$cfg['icon']"
+                        :color="$cfg['color']"
+                    />
+                @endforeach
+            </div>
+        </x-agro.card>
+
+        {{-- Distribución por Edad --}}
+        <x-agro.card>
+            <x-slot:header>
+                <div class="flex items-center gap-2">
+                    <flux:icon icon="clock" class="size-4 text-agro-600" />
+                    <span class="font-semibold text-zinc-900">Distribución por Edad</span>
+                </div>
+            </x-slot:header>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                @foreach([
+                    ['label' => 'Jóvenes (< 3 años)', 'key' => 'joven',      'color' => 'text-green-600', 'sub' => '20-40% productividad'],
+                    ['label' => 'Desarrollo (3-8)',    'key' => 'desarrollo',  'color' => 'text-blue-600',  'sub' => '60-80% productividad'],
+                    ['label' => 'Productivas (8-25)',  'key' => 'productiva',  'color' => 'text-green-700', 'sub' => '100% productividad',  'highlight' => true],
+                    ['label' => 'Maduras (25-40)',     'key' => 'madura',      'color' => 'text-amber-600', 'sub' => '80-90% productividad'],
+                    ['label' => 'Viejas (> 40)',       'key' => 'vieja',       'color' => 'text-red-600',   'sub' => 'Replantación'],
+                ] as $row)
+                    <div class="border rounded-xl p-4 {{ isset($row['highlight']) ? 'bg-green-50 border-green-200' : 'border-zinc-200' }}">
+                        <p class="text-xs font-medium text-zinc-500">{{ $row['label'] }}</p>
+                        <p class="text-2xl font-bold {{ $row['color'] }} mt-1">{{ $ageStats[$row['key']] }}</p>
+                        <p class="text-xs text-zinc-400 mt-1">{{ $row['sub'] }}</p>
                     </div>
                 @endforeach
             </div>
-        </div>
 
-        {{-- Distribución por Edad y Ciclo de Vida --}}
-        <div class="bg-white rounded-lg shadow p-6">
-            <h3 class="text-lg font-semibold text-zinc-900 mb-4">Distribución por Edad</h3>
-            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-                <div class="border rounded-lg p-4">
-                    <p class="text-sm font-medium text-zinc-600">Jóvenes (< 3 años)</p>
-                    <p class="text-2xl font-bold text-green-600 mt-1">{{ $ageStats['joven'] }}</p>
-                    <p class="text-xs text-zinc-500 mt-1">20-40% productividad</p>
-                </div>
-                <div class="border rounded-lg p-4">
-                    <p class="text-sm font-medium text-zinc-600">Desarrollo (3-8)</p>
-                    <p class="text-2xl font-bold text-blue-600 mt-1">{{ $ageStats['desarrollo'] }}</p>
-                    <p class="text-xs text-zinc-500 mt-1">60-80% productividad</p>
-                </div>
-                <div class="border rounded-lg p-4 bg-green-50">
-                    <p class="text-sm font-medium text-zinc-600">Productivas (8-25)</p>
-                    <p class="text-2xl font-bold text-green-700 mt-1">{{ $ageStats['productiva'] }}</p>
-                    <p class="text-xs text-green-600 mt-1">100% productividad</p>
-                </div>
-                <div class="border rounded-lg p-4">
-                    <p class="text-sm font-medium text-zinc-600">Maduras (25-40)</p>
-                    <p class="text-2xl font-bold text-amber-600 mt-1">{{ $ageStats['madura'] }}</p>
-                    <p class="text-xs text-zinc-500 mt-1">80-90% productividad</p>
-                </div>
-                <div class="border rounded-lg p-4 {{ $ageStats['vieja'] > 0 ? 'bg-yellow-50' : '' }}">
-                    <p class="text-sm font-medium text-zinc-600">Viejas (> 40)</p>
-                    <p class="text-2xl font-bold text-red-600 mt-1">{{ $ageStats['vieja'] }}</p>
-                    <p class="text-xs text-red-600 mt-1">Replantación</p>
-                </div>
-            </div>
             @if($needsReplanting > 0)
-                <div class="mt-4 bg-yellow-50 border-l-4 border-yellow-500 p-3 rounded-r">
-                    <p class="text-sm text-yellow-800">
-                        <strong>{{ $needsReplanting }}</strong> plantación(es) necesitan replantación (> 35 años o en declive)
-                    </p>
+                <div class="mt-4">
+                    <x-agro.alert-banner
+                        tone="warning"
+                        icon="exclamation-circle"
+                        :message="$needsReplanting . ' plantación(es) necesitan replantación (> 35 años o en declive).'"
+                    />
                 </div>
             @endif
-        </div>
+        </x-agro.card>
 
         {{-- Certificaciones --}}
-        <div class="bg-white rounded-lg shadow p-6">
-            <h3 class="text-lg font-semibold text-zinc-900 mb-4">Certificaciones</h3>
+        <x-agro.card>
+            <x-slot:header>
+                <div class="flex items-center gap-2">
+                    <flux:icon icon="academic-cap" class="size-4 text-agro-600" />
+                    <span class="font-semibold text-zinc-900">Certificaciones</span>
+                </div>
+            </x-slot:header>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="border rounded-lg p-4">
-                    <p class="text-sm font-medium text-zinc-600">Plantaciones Certificadas</p>
-                    <p class="text-3xl font-bold text-purple-600 mt-1">{{ $certifiedPlantings }}</p>
-                    <p class="text-xs text-zinc-500 mt-1">de {{ $totalPlantings }} totales</p>
-                </div>
-                <div class="border rounded-lg p-4">
-                    <p class="text-sm font-medium text-zinc-600">Total Certificaciones</p>
-                    <p class="text-3xl font-bold text-blue-600 mt-1">{{ $totalCertifications }}</p>
-                    <p class="text-xs text-zinc-500 mt-1">activas</p>
-                </div>
-                <div class="border rounded-lg p-4 {{ $expiringCertifications > 0 ? 'bg-yellow-50' : '' }}">
-                    <p class="text-sm font-medium text-zinc-600">Próximas a Vencer</p>
-                    <p class="text-3xl font-bold text-yellow-600 mt-1">{{ $expiringCertifications }}</p>
-                    <p class="text-xs text-zinc-500 mt-1">en 30 días</p>
-                </div>
+                <x-agro.stat-card
+                    label="Plantaciones Certificadas"
+                    :value="$certifiedPlantings"
+                    :description="'de ' . $totalPlantings . ' totales'"
+                    icon="academic-cap"
+                    color="purple"
+                />
+                <x-agro.stat-card
+                    label="Total Certificaciones"
+                    :value="$totalCertifications"
+                    description="activas"
+                    icon="document-check"
+                    color="blue"
+                />
+                <x-agro.stat-card
+                    label="Próximas a Vencer"
+                    :value="$expiringCertifications"
+                    description="en 30 días"
+                    icon="clock"
+                    :color="$expiringCertifications > 0 ? 'amber' : 'green'"
+                />
             </div>
-        </div>
+        </x-agro.card>
 
         {{-- Tratamientos Fitosanitarios Recientes --}}
         @if($activeTreatments > 0)
-            <div class="bg-white rounded-lg shadow p-6">
-                <h3 class="text-lg font-semibold text-zinc-900 mb-4">Tratamientos Fitosanitarios (últimos 30 días)</h3>
+            <x-agro.card>
+                <x-slot:header>
+                    <div class="flex items-center gap-2">
+                        <flux:icon icon="shield-exclamation" class="size-4 text-agro-600" />
+                        <span class="font-semibold text-zinc-900">Tratamientos Fitosanitarios (últimos 30 días)</span>
+                    </div>
+                </x-slot:header>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="border rounded-lg p-4 bg-green-50">
-                        <p class="text-sm font-medium text-zinc-600">Tratamientos Aplicados</p>
-                        <p class="text-3xl font-bold text-green-600 mt-1">{{ $activeTreatments }}</p>
-                        <p class="text-xs text-zinc-500 mt-1">en el último mes</p>
-                    </div>
-                    <div class="border rounded-lg p-4">
-                        <p class="text-sm font-medium text-zinc-600">Plagas/Enfermedades Tratadas</p>
-                        <p class="text-3xl font-bold text-blue-600 mt-1">{{ $uniquePests }}</p>
-                        <p class="text-xs text-zinc-500 mt-1">diferentes</p>
-                    </div>
+                    <x-agro.stat-card
+                        label="Tratamientos Aplicados"
+                        :value="$activeTreatments"
+                        description="en el último mes"
+                        icon="beaker"
+                        color="green"
+                    />
+                    <x-agro.stat-card
+                        label="Plagas/Enfermedades Tratadas"
+                        :value="$uniquePests"
+                        description="diferentes"
+                        icon="bug-ant"
+                        color="blue"
+                    />
                 </div>
-            </div>
+            </x-agro.card>
         @endif
 
         {{-- Alertas de Cumplimiento --}}
         @if($totalAlerts > 0)
-            <div class="bg-white rounded-lg shadow p-6">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-semibold text-zinc-900">Alertas de Cumplimiento</h3>
-                    <span class="px-3 py-1 bg-red-100 text-red-800 text-sm font-medium rounded-full">
-                        {{ $totalAlerts }} {{ $totalAlerts === 1 ? 'alerta' : 'alertas' }}
-                    </span>
-                </div>
+            <x-agro.card>
+                <x-slot:header>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <flux:icon icon="exclamation-triangle" class="size-4 text-red-600" />
+                            <span class="font-semibold text-zinc-900">Alertas de Cumplimiento</span>
+                        </div>
+                        <flux:badge color="red" size="sm">
+                            {{ $totalAlerts }} {{ $totalAlerts === 1 ? 'alerta' : 'alertas' }}
+                        </flux:badge>
+                    </div>
+                </x-slot:header>
                 <div class="space-y-3">
                     @foreach($alerts as $alert)
-                        <div class="flex items-start gap-3 p-3 rounded-lg {{ $alert['type'] === 'error' ? 'bg-red-50 border-l-4 border-red-500' : 'bg-yellow-50 border-l-4 border-yellow-500' }}">
-                            <svg class="w-5 h-5 {{ $alert['type'] === 'error' ? 'text-red-600' : 'text-yellow-600' }} flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                            </svg>
-                            <div class="flex-1">
-                                <p class="text-sm font-semibold {{ $alert['type'] === 'error' ? 'text-red-900' : 'text-yellow-900' }}">
-                                    {{ $alert['planting'] }} - {{ $alert['plot'] }}
-                                </p>
-                                <p class="text-sm {{ $alert['type'] === 'error' ? 'text-red-700' : 'text-yellow-700' }} mt-1">
-                                    {{ $alert['message'] }}
-                                </p>
-                            </div>
-                        </div>
+                        <x-agro.alert-banner
+                            :tone="$alert['type'] === 'error' ? 'danger' : 'warning'"
+                            icon="exclamation-triangle"
+                            :title="$alert['planting'] . ' - ' . $alert['plot']"
+                            :message="$alert['message']"
+                        />
                     @endforeach
                 </div>
-            </div>
+            </x-agro.card>
         @else
-            <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded-lg">
-                <div class="flex items-center gap-3">
-                    <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                    </svg>
-                    <p class="text-sm font-medium text-green-900">Todas las plantaciones cumplen con los requisitos PAC</p>
-                </div>
-            </div>
+            <x-agro.alert-banner
+                tone="success"
+                message="Todas las plantaciones cumplen con los requisitos PAC."
+            />
         @endif
+
     </div>
 @endif
 </div>

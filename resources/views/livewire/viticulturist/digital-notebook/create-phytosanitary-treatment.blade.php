@@ -255,7 +255,7 @@
                     </div>
 
                     <flux:field>
-                        <flux:label :required="!$field_applicator_id">
+                        <flux:label required>
                             Número ROPO del Aplicador
                             @if($field_applicator_id)
                                 <span class="text-xs text-zinc-400 font-normal">(auto-rellenado)</span>

@@ -236,13 +236,10 @@
         </div>
 
         <div class="px-6 py-5">
-            <label class="block text-sm font-medium text-zinc-700 mb-1.5">Tipo de cliente</label>
-            <select wire:model.live="filterType"
-                    class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
-                <option value="">Todos los tipos</option>
-                <option value="individual">Particular</option>
-                <option value="company">Empresa</option>
-            </select>
+            <x-agro.filter-select label="Tipo de cliente" wire:model.live="filterType" placeholder="Todos los tipos">
+                <flux:select.option value="individual">Particular</flux:select.option>
+                <flux:select.option value="company">Empresa</flux:select.option>
+            </x-agro.filter-select>
         </div>
 
         <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between rounded-b-2xl">

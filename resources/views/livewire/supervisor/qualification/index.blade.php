@@ -22,13 +22,13 @@
         <h3 class="text-sm font-semibold text-zinc-700 mb-4">Nuevo registro de calificación</h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-                <label class="block text-xs font-medium text-zinc-600 mb-1">Bodega</label>
-                <select wire:model="winery_id" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300">
-                    <option value="">Selecciona bodega...</option>
+                <flux:label>Bodega</flux:label>
+                <flux:select wire:model="winery_id">
+                    <flux:select.option value="">Selecciona bodega...</flux:select.option>
                     @foreach($wineries as $w)
-                        <option value="{{ $w->id }}">{{ $w->name }}</option>
+                        <flux:select.option value="{{ $w->id }}">{{ $w->name }}</flux:select.option>
                     @endforeach
-                </select>
+                </flux:select>
                 @error('winery_id') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
             </div>
             <div>
@@ -41,13 +41,13 @@
                 <input type="number" wire:model="vintage" min="1990" max="2100" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" />
             </div>
             <div>
-                <label class="block text-xs font-medium text-zinc-600 mb-1">Color</label>
-                <select wire:model="color" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300">
-                    <option value="">— Sin especificar —</option>
+                <flux:label>Color</flux:label>
+                <flux:select wire:model="color">
+                    <flux:select.option value="">— Sin especificar —</flux:select.option>
                     @foreach($colorLabels as $key => $label)
-                        <option value="{{ $key }}">{{ $label }}</option>
+                        <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
                     @endforeach
-                </select>
+                </flux:select>
             </div>
             <div>
                 <label class="block text-xs font-medium text-zinc-600 mb-1">Grado alcohólico (%)</label>
@@ -72,19 +72,19 @@
     {{-- Filters --}}
     <div class="flex items-center gap-3 flex-wrap">
         @if($availableVintages->isNotEmpty())
-            <select wire:model.live="vintageFilter" class="text-sm border border-zinc-200 rounded-lg px-3 py-1.5 focus:outline-none">
-                <option value="">Todas las añadas</option>
+            <flux:select wire:model.live="vintageFilter">
+                <flux:select.option value="">Todas las añadas</flux:select.option>
                 @foreach($availableVintages as $v)
-                    <option value="{{ $v }}">{{ $v }}</option>
+                    <flux:select.option value="{{ $v }}">{{ $v }}</flux:select.option>
                 @endforeach
-            </select>
+            </flux:select>
         @endif
-        <select wire:model.live="colorFilter" class="text-sm border border-zinc-200 rounded-lg px-3 py-1.5 focus:outline-none">
-            <option value="">Todos los colores</option>
+        <flux:select wire:model.live="colorFilter">
+            <flux:select.option value="">Todos los colores</flux:select.option>
             @foreach($colorLabels as $key => $label)
-                <option value="{{ $key }}">{{ $label }}</option>
+                <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
             @endforeach
-        </select>
+        </flux:select>
     </div>
 
     {{-- Tabs + Card grid --}}
@@ -209,13 +209,13 @@
                         @error('editVintage') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-zinc-600 mb-1">Color</label>
-                        <select wire:model="editColor" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300">
-                            <option value="">— Sin especificar —</option>
+                        <flux:label>Color</flux:label>
+                        <flux:select wire:model="editColor">
+                            <flux:select.option value="">— Sin especificar —</flux:select.option>
                             @foreach($colorLabels as $key => $label)
-                                <option value="{{ $key }}">{{ $label }}</option>
+                                <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
                             @endforeach
-                        </select>
+                        </flux:select>
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-zinc-600 mb-1">Fecha de cata</label>

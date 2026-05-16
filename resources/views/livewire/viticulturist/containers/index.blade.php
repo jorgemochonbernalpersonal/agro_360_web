@@ -201,14 +201,11 @@
         </div>
 
         <div class="px-6 py-5">
-            <label class="block text-sm font-medium text-zinc-700 mb-1.5">Estado de ocupación</label>
-            <select wire:model.live="filterStatus"
-                    class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
-                <option value="">Todos</option>
-                <option value="empty">Vacíos</option>
-                <option value="available">Disponibles</option>
-                <option value="full">Llenos</option>
-            </select>
+            <x-agro.filter-select label="Estado de ocupación" wire:model.live="filterStatus" placeholder="Todos">
+                <flux:select.option value="empty">Vacíos</flux:select.option>
+                <flux:select.option value="available">Disponibles</flux:select.option>
+                <flux:select.option value="full">Llenos</flux:select.option>
+            </x-agro.filter-select>
         </div>
 
         <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between rounded-b-2xl">

@@ -142,13 +142,12 @@
                                         class="absolute left-0 bottom-10 w-64 bg-white rounded-xl shadow-xl z-10 border border-zinc-200 p-4"
                                     >
                                         <p class="text-sm font-semibold text-zinc-700 mb-3">Asignar a cuadrilla</p>
-                                        <select wire:model="assignToCrewId"
-                                                class="w-full px-3 py-2 text-sm border border-zinc-200 rounded-lg mb-3 focus:outline-none focus:ring-2 focus:ring-agro-400">
-                                            <option value="">Selecciona una cuadrilla</option>
+                                        <flux:select wire:model="assignToCrewId" class="mb-3">
+                                            <flux:select.option value="">Selecciona una cuadrilla</flux:select.option>
                                             @foreach($crews as $crew)
-                                                <option value="{{ $crew->id }}">{{ $crew->name }}</option>
+                                                <flux:select.option value="{{ $crew->id }}">{{ $crew->name }}</flux:select.option>
                                             @endforeach
-                                        </select>
+                                        </flux:select>
                                         <flux:button
                                             wire:click="assignToCrew({{ $worker->id }})"
                                             x-on:click="open = false"

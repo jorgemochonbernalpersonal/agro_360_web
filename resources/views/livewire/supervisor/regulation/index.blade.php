@@ -34,22 +34,20 @@
 
         {{-- Filters --}}
         <div class="flex flex-wrap items-center gap-3">
-            <select wire:model.live="filterVit"
-                class="text-sm border border-zinc-200 rounded-lg px-3 py-1.5 focus:outline-none">
-                <option value="">Todos los viticultores</option>
+            <flux:select wire:model.live="filterVit">
+                <flux:select.option value="">Todos los viticultores</flux:select.option>
                 @foreach($viticulturists as $v)
-                    <option value="{{ $v->id }}">{{ $v->name }}</option>
+                    <flux:select.option value="{{ $v->id }}">{{ $v->name }}</flux:select.option>
                 @endforeach
-            </select>
+            </flux:select>
 
-            <select wire:model.live="filterRightType"
-                class="text-sm border border-zinc-200 rounded-lg px-3 py-1.5 focus:outline-none">
-                <option value="">Todos los tipos de derecho</option>
-                <option value="nueva">Nueva plantación</option>
-                <option value="replantacion">Replantación</option>
-                <option value="conversion">Conversión</option>
-                <option value="transferencia">Transferencia</option>
-            </select>
+            <flux:select wire:model.live="filterRightType">
+                <flux:select.option value="">Todos los tipos de derecho</flux:select.option>
+                <flux:select.option value="nueva">Nueva plantación</flux:select.option>
+                <flux:select.option value="replantacion">Replantación</flux:select.option>
+                <flux:select.option value="conversion">Conversión</flux:select.option>
+                <flux:select.option value="transferencia">Transferencia</flux:select.option>
+            </flux:select>
 
             <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar autorización o parcela..." />
         </div>
@@ -152,21 +150,19 @@
 
         {{-- Filters --}}
         <div class="flex flex-wrap items-center gap-3">
-            <select wire:model.live="filterVit"
-                class="text-sm border border-zinc-200 rounded-lg px-3 py-1.5 focus:outline-none">
-                <option value="">Todos los viticultores</option>
+            <flux:select wire:model.live="filterVit">
+                <flux:select.option value="">Todos los viticultores</flux:select.option>
                 @foreach($viticulturists as $v)
-                    <option value="{{ $v->id }}">{{ $v->name }}</option>
+                    <flux:select.option value="{{ $v->id }}">{{ $v->name }}</flux:select.option>
                 @endforeach
-            </select>
+            </flux:select>
 
-            <select wire:model.live="filterStatus"
-                class="text-sm border border-zinc-200 rounded-lg px-3 py-1.5 focus:outline-none">
-                <option value="">Todos los estados</option>
-                <option value="active">Vigentes</option>
-                <option value="expiring">Por vencer</option>
-                <option value="expired">Caducadas</option>
-            </select>
+            <flux:select wire:model.live="filterStatus">
+                <flux:select.option value="">Todos los estados</flux:select.option>
+                <flux:select.option value="active">Vigentes</flux:select.option>
+                <flux:select.option value="expiring">Por vencer</flux:select.option>
+                <flux:select.option value="expired">Caducadas</flux:select.option>
+            </flux:select>
 
             <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar nº certificado u organismo..." />
         </div>
@@ -262,13 +258,12 @@
 
         {{-- Filter --}}
         <div class="flex items-center gap-3">
-            <select wire:model.live="filterStatus"
-                class="text-sm border border-zinc-200 rounded-lg px-3 py-1.5 focus:outline-none">
-                <option value="">Todos los estados</option>
-                <option value="draft">Borradores</option>
-                <option value="active">Vigentes</option>
-                <option value="archived">Archivados</option>
-            </select>
+            <flux:select wire:model.live="filterStatus">
+                <flux:select.option value="">Todos los estados</flux:select.option>
+                <flux:select.option value="draft">Borradores</flux:select.option>
+                <flux:select.option value="active">Vigentes</flux:select.option>
+                <flux:select.option value="archived">Archivados</flux:select.option>
+            </flux:select>
         </div>
 
         {{-- Document list (read-only) --}}

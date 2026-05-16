@@ -200,40 +200,25 @@
         </div>
 
         <div class="px-6 py-5 space-y-4">
-            <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Disponibilidad</label>
-                <select wire:model.live="filterAvailability"
-                        class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
-                    <option value="">Todos</option>
-                    <option value="available">Disponibles</option>
-                    <option value="assigned">Asignados</option>
-                </select>
-            </div>
-            <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Campaña</label>
-                <select wire:model.live="selectedCampaign"
-                        class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
-                    <option value="">Todas las campañas</option>
-                    @foreach($campaigns as $campaign)
-                        <option value="{{ $campaign->id }}">Campaña {{ $campaign->year }}</option>
-                    @endforeach
-                </select>
-            </div>
+            <x-agro.filter-select label="Disponibilidad" wire:model.live="filterAvailability" placeholder="Todos">
+                <flux:select.option value="available">Disponibles</flux:select.option>
+                <flux:select.option value="assigned">Asignados</flux:select.option>
+            </x-agro.filter-select>
+            <x-agro.filter-select label="Campaña" wire:model.live="selectedCampaign" placeholder="Todas las campañas">
+                @foreach($campaigns as $campaign)
+                    <flux:select.option value="{{ $campaign->id }}">Campaña {{ $campaign->year }}</flux:select.option>
+                @endforeach
+            </x-agro.filter-select>
             @if($selectedCampaign && $harvests->count() > 0)
-                <div>
-                    <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Cosecha</label>
-                    <select wire:model.live="selectedHarvest"
-                            class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
-                        <option value="">Todas las cosechas</option>
-                        @foreach($harvests as $harvest)
-                            <option value="{{ $harvest->id }}">
-                                {{ $harvest->activity->plot->name ?? 'Sin parcela' }} -
-                                {{ $harvest->plotPlanting->grapeVariety->name ?? 'Sin variedad' }}
-                                ({{ $harvest->harvest_start_date->format('d/m/Y') }})
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
+                <x-agro.filter-select label="Cosecha" wire:model.live="selectedHarvest" placeholder="Todas las cosechas">
+                    @foreach($harvests as $harvest)
+                        <flux:select.option value="{{ $harvest->id }}">
+                            {{ $harvest->activity->plot->name ?? 'Sin parcela' }} -
+                            {{ $harvest->plotPlanting->grapeVariety->name ?? 'Sin variedad' }}
+                            ({{ $harvest->harvest_start_date->format('d/m/Y') }})
+                        </flux:select.option>
+                    @endforeach
+                </x-agro.filter-select>
             @endif
         </div>
 

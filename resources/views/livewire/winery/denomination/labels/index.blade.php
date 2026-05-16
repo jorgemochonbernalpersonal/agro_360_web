@@ -10,21 +10,19 @@
 
     {{-- Filtros --}}
     <div class="flex flex-wrap gap-3">
-        <select wire:model.live="vintageFilter"
-                class="text-sm border border-zinc-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-300">
-            <option value="">Todas las añadas</option>
+        <flux:select wire:model.live="vintageFilter">
+            <flux:select.option value="">Todas las añadas</flux:select.option>
             @foreach($availableVintages as $v)
-                <option value="{{ $v }}">{{ $v }}</option>
+                <flux:select.option value="{{ $v }}">{{ $v }}</flux:select.option>
             @endforeach
-        </select>
+        </flux:select>
 
-        <select wire:model.live="statusFilter"
-                class="text-sm border border-zinc-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-300">
-            <option value="">Todos los estados</option>
+        <flux:select wire:model.live="statusFilter">
+            <flux:select.option value="">Todos los estados</flux:select.option>
             @foreach($statusLabels as $key => $label)
-                <option value="{{ $key }}">{{ $label }}</option>
+                <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
             @endforeach
-        </select>
+        </flux:select>
     </div>
 
     {{-- KPI pills --}}

@@ -24,11 +24,7 @@
                         <span class="text-xs text-zinc-500">
                             {{ count(array_filter($steps, fn($s) => $s['completed'])) }}/{{ count($steps) }}
                         </span>
-                        <svg class="w-5 h-5 text-zinc-400 transition-transform"
-                             :class="{ 'rotate-180': expanded }"
-                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                        </svg>
+                        <flux:icon icon="chevron-down" class="size-5 text-zinc-400 transition-transform" :class="{ 'rotate-180': expanded }" />
                     </div>
                 </div>
             </div>
@@ -41,9 +37,7 @@
                             <div class="flex-shrink-0 mt-0.5">
                                 @if($step['completed'])
                                     <div class="w-5 h-5 rounded-full bg-agro-600 flex items-center justify-center">
-                                        <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                                        </svg>
+                                        <flux:icon icon="check" class="size-3 text-white" />
                                     </div>
                                 @else
                                     <div class="w-5 h-5 rounded-full border-2 border-zinc-300"></div>
@@ -73,9 +67,7 @@
                     </button>
                     @if($progressPercentage === 100)
                         <div class="flex items-center gap-1 text-agro-700">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
+                            <flux:icon icon="check-circle" class="size-4" />
                             <span class="text-xs font-semibold">¡Campo y bodega listos!</span>
                         </div>
                     @endif
@@ -86,9 +78,7 @@
         <div class="mb-4">
             <button wire:click="resetOnboarding"
                     class="text-xs text-zinc-500 hover:text-agro-600 transition-colors flex items-center gap-1">
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                </svg>
+                <flux:icon icon="arrow-path" class="size-3" />
                 Volver a ver el tour de bienvenida
             </button>
         </div>

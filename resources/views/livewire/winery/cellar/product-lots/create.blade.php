@@ -128,7 +128,7 @@
                                 <button type="button" wire:click="removeGrape({{ $i }})"
                                     class="mt-1 p-1.5 text-zinc-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors"
                                     title="Eliminar">
-                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                    <flux:icon icon="x-mark" class="size-4" />
                                 </button>
                             </div>
                             @endforeach

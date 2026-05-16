@@ -397,27 +397,22 @@
 
         <div class="px-6 py-5 space-y-4">
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Añada</label>
-                <select wire:model.live="vintageFilter"
-                        class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
+                <x-agro.filter-select label="Añada" wire:model.live="vintageFilter">
                     @foreach($campaignYears as $year)
-                        <option value="{{ $year }}">{{ $year }}</option>
+                        <flux:select.option value="{{ $year }}">{{ $year }}</flux:select.option>
                     @endforeach
-                </select>
+                </x-agro.filter-select>
             </div>
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Estado</label>
-                <select wire:model.live="statusFilter"
-                        class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
-                    <option value="">Todos los estados</option>
-                    <option value="ok">Coincide</option>
-                    <option value="discrepancy">Con diferencia (&gt;5%)</option>
-                    <option value="not_delivered">Sin entregar</option>
-                    <option value="delivery_only">Sin cuaderno</option>
-                    <option value="pending">Pendiente</option>
-                    <option value="has_dispute">Con disputa activa</option>
-                    <option value="has_resolved">Con disputa resuelta</option>
-                </select>
+                <x-agro.filter-select label="Estado" wire:model.live="statusFilter" placeholder="Todos los estados">
+                    <flux:select.option value="ok">Coincide</flux:select.option>
+                    <flux:select.option value="discrepancy">Con diferencia (&gt;5%)</flux:select.option>
+                    <flux:select.option value="not_delivered">Sin entregar</flux:select.option>
+                    <flux:select.option value="delivery_only">Sin cuaderno</flux:select.option>
+                    <flux:select.option value="pending">Pendiente</flux:select.option>
+                    <flux:select.option value="has_dispute">Con disputa activa</flux:select.option>
+                    <flux:select.option value="has_resolved">Con disputa resuelta</flux:select.option>
+                </x-agro.filter-select>
             </div>
         </div>
 

@@ -8,16 +8,13 @@
         />
 
         @if($campaigns->count() > 0)
-            <select
-                wire:model.live="selectedCampaign"
-                class="self-start sm:self-center shrink-0 px-3 py-2 bg-white border border-zinc-200 rounded-xl text-sm text-zinc-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
-            >
+            <flux:select wire:model.live="selectedCampaign" class="self-start sm:self-center shrink-0">
                 @foreach($campaigns as $campaign)
-                    <option value="{{ $campaign->id }}">
+                    <flux:select.option value="{{ $campaign->id }}">
                         {{ $campaign->name }} ({{ $campaign->year }}){{ $campaign->active ? ' ★' : '' }}
-                    </option>
+                    </flux:select.option>
                 @endforeach
-            </select>
+            </flux:select>
         @endif
     </div>
 

@@ -41,22 +41,20 @@
         <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar por nombre o email..." />
 
         {{-- Filtro estado --}}
-        <select wire:model.live="statusFilter"
-            class="text-sm border border-zinc-200 rounded-xl px-3 py-2.5 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition">
-            <option value="">Todos los estados</option>
-            <option value="active">Activos</option>
-            <option value="pending">Pendientes</option>
-        </select>
+        <flux:select wire:model.live="statusFilter">
+            <flux:select.option value="">Todos los estados</flux:select.option>
+            <flux:select.option value="active">Activos</flux:select.option>
+            <flux:select.option value="pending">Pendientes</flux:select.option>
+        </flux:select>
 
         {{-- Filtro origen --}}
-        <select wire:model.live="sourceFilter"
-            class="text-sm border border-zinc-200 rounded-xl px-3 py-2.5 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition">
-            <option value="">Todos los orígenes</option>
-            <option value="own">Propios</option>
-            <option value="supervisor">Asignados por D.O.</option>
-            <option value="viticulturist">Viticultor</option>
-            <option value="self">Autoregistro</option>
-        </select>
+        <flux:select wire:model.live="sourceFilter">
+            <flux:select.option value="">Todos los orígenes</flux:select.option>
+            <flux:select.option value="own">Propios</flux:select.option>
+            <flux:select.option value="supervisor">Asignados por D.O.</flux:select.option>
+            <flux:select.option value="viticulturist">Viticultor</flux:select.option>
+            <flux:select.option value="self">Autoregistro</flux:select.option>
+        </flux:select>
 
         {{-- Separador --}}
         <div class="w-px h-8 bg-zinc-200 shrink-0"></div>

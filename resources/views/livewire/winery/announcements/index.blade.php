@@ -77,11 +77,11 @@
             <div class="space-y-4">
                 <div>
                     <flux:label>Tipo de aviso</flux:label>
-                    <select wire:model.live="type" class="w-full mt-1 text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-agro-500">
+                    <flux:select wire:model.live="type">
                         @foreach($typeLabels as $value => $label)
-                            <option value="{{ $value }}">{{ $label }}</option>
+                            <flux:select.option value="{{ $value }}">{{ $label }}</flux:select.option>
                         @endforeach
-                    </select>
+                    </flux:select>
                 </div>
 
                 <div>
@@ -98,10 +98,10 @@
 
                 <div>
                     <flux:label>Destinatarios</flux:label>
-                    <select wire:model.live="target" class="w-full mt-1 text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-agro-500">
-                        <option value="all">Todos los viticultores activos</option>
-                        <option value="specific">Seleccionar viticultores</option>
-                    </select>
+                    <flux:select wire:model.live="target">
+                        <flux:select.option value="all">Todos los viticultores activos</flux:select.option>
+                        <flux:select.option value="specific">Seleccionar viticultores</flux:select.option>
+                    </flux:select>
                 </div>
 
                 @if($target === 'specific')

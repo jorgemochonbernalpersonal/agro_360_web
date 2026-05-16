@@ -51,55 +51,34 @@
 
     {{-- KPIs 4 columnas --}}
     <div class="grid grid-cols-2 gap-4">
-
-        {{-- Campo: parcelas --}}
-        <x-agro.card class="flex items-center gap-4">
-            <div class="w-11 h-11 rounded-xl bg-agro-50 flex items-center justify-center shrink-0">
-                <flux:icon icon="map" class="size-5 text-agro-600" />
-            </div>
-            <div>
-                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">Campo · Parcelas</p>
-                <p class="text-2xl font-bold text-zinc-900 leading-none">{{ $totalPlots }}</p>
-                <p class="text-xs text-zinc-400 mt-0.5">{{ number_format($totalArea, 1) }} ha</p>
-            </div>
-        </x-agro.card>
-
-        {{-- Campo: actividades --}}
-        <x-agro.card class="flex items-center gap-4">
-            <div class="w-11 h-11 rounded-xl bg-purple-50 flex items-center justify-center shrink-0">
-                <flux:icon icon="clipboard-document-list" class="size-5 text-purple-600" />
-            </div>
-            <div>
-                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">Campo · Actividades</p>
-                <p class="text-2xl font-bold text-zinc-900 leading-none">{{ $activitiesThisMonth }}</p>
-                <p class="text-xs text-zinc-400 mt-0.5">este mes</p>
-            </div>
-        </x-agro.card>
-
-        {{-- Bodega: kg campaña --}}
-        <x-agro.card class="flex items-center gap-4">
-            <div class="w-11 h-11 rounded-xl bg-amber-50 flex items-center justify-center shrink-0">
-                <flux:icon icon="scale" class="size-5 text-amber-600" />
-            </div>
-            <div>
-                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">Bodega · Kg campaña</p>
-                <p class="text-2xl font-bold text-zinc-900 leading-none">{{ number_format($totalKgCampaign / 1000, 1) }}</p>
-                <p class="text-xs text-zinc-400 mt-0.5">toneladas {{ $vintageYear }}</p>
-            </div>
-        </x-agro.card>
-
-        {{-- Bodega: lotes de vino --}}
-        <x-agro.card class="flex items-center gap-4">
-            <div class="w-11 h-11 rounded-xl bg-violet-50 flex items-center justify-center shrink-0">
-                <flux:icon icon="beaker" class="size-5 text-violet-600" />
-            </div>
-            <div>
-                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">Bodega · Lotes</p>
-                <p class="text-2xl font-bold text-zinc-900 leading-none">{{ $wineLotCount }}</p>
-                <p class="text-xs text-zinc-400 mt-0.5">de vino en bodega</p>
-            </div>
-        </x-agro.card>
-
+        <x-agro.stat-card
+            label="Campo · Parcelas"
+            :value="$totalPlots"
+            :description="number_format($totalArea, 1) . ' ha'"
+            icon="map"
+            color="agro"
+        />
+        <x-agro.stat-card
+            label="Campo · Actividades"
+            :value="$activitiesThisMonth"
+            description="este mes"
+            icon="clipboard-document-list"
+            color="purple"
+        />
+        <x-agro.stat-card
+            label="Bodega · Kg campaña"
+            :value="number_format($totalKgCampaign / 1000, 1)"
+            :description="'toneladas ' . $vintageYear"
+            icon="scale"
+            color="amber"
+        />
+        <x-agro.stat-card
+            label="Bodega · Lotes"
+            :value="$wineLotCount"
+            description="de vino en bodega"
+            icon="beaker"
+            color="purple"
+        />
     </div>
 
     {{-- KPIs segunda fila: vinos, fermentaciones, contenedores --}}
@@ -233,15 +212,18 @@
                 <div class="space-y-1">
                     @foreach($recentActivities as $activity)
                         <div class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-zinc-50 transition-colors">
-                            <div class="w-9 h-9 rounded-lg bg-purple-50 flex items-center justify-center shrink-0 text-base">
-                                @switch($activity->activity_type)
-                                    @case('phytosanitary') 💊 @break
-                                    @case('harvest') 🍇 @break
-                                    @case('pruning') ✂️ @break
-                                    @case('fertilization') 🌿 @break
-                                    @case('irrigation') 💧 @break
-                                    @default 📝
-                                @endswitch
+                            <div class="w-9 h-9 rounded-lg bg-purple-50 flex items-center justify-center shrink-0">
+                                <flux:icon
+                                    :icon="match($activity->activity_type) {
+                                        'phytosanitary' => 'shield-exclamation',
+                                        'harvest'       => 'scissors',
+                                        'pruning'       => 'scissors',
+                                        'fertilization' => 'beaker',
+                                        'irrigation'    => 'cloud',
+                                        default         => 'document-text',
+                                    }"
+                                    class="size-4 text-purple-600"
+                                />
                             </div>
                             <div class="flex-1 min-w-0">
                                 <p class="text-sm font-medium text-zinc-900">{{ ucfirst(str_replace('_', ' ', $activity->activity_type)) }}</p>
@@ -452,7 +434,7 @@
 
     {{-- Accesos rápidos --}}
     <div>
-        <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide mb-3">Accesos rápidos</p>
+        <x-agro.field-label>Accesos rápidos</x-agro.field-label>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
 
             <a href="{{ route('producer.digital-notebook') }}" wire:navigate

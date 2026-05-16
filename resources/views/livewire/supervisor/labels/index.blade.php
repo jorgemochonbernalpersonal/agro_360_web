@@ -22,13 +22,13 @@
         <h3 class="text-sm font-semibold text-zinc-700 mb-4">Nueva solicitud de contraetiquetas</h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-                <label class="block text-xs font-medium text-zinc-600 mb-1">Bodega</label>
-                <select wire:model="winery_id" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300">
-                    <option value="">Selecciona bodega...</option>
+                <flux:label>Bodega</flux:label>
+                <flux:select wire:model="winery_id">
+                    <flux:select.option value="">Selecciona bodega...</flux:select.option>
                     @foreach($wineries as $w)
-                        <option value="{{ $w->id }}">{{ $w->name }}</option>
+                        <flux:select.option value="{{ $w->id }}">{{ $w->name }}</flux:select.option>
                     @endforeach
-                </select>
+                </flux:select>
                 @error('winery_id') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
             </div>
             <div>
@@ -60,12 +60,12 @@
     {{-- Filters --}}
     <div class="flex items-center gap-3">
         @if($availableVintages->isNotEmpty())
-            <select wire:model.live="vintageFilter" class="text-sm border border-zinc-200 rounded-lg px-3 py-1.5 focus:outline-none">
-                <option value="">Todas las añadas</option>
+            <flux:select wire:model.live="vintageFilter">
+                <flux:select.option value="">Todas las añadas</flux:select.option>
                 @foreach($availableVintages as $v)
-                    <option value="{{ $v }}">{{ $v }}</option>
+                    <flux:select.option value="{{ $v }}">{{ $v }}</flux:select.option>
                 @endforeach
-            </select>
+            </flux:select>
         @endif
     </div>
 

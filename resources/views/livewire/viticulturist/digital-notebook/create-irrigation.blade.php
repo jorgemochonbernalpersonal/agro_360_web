@@ -71,7 +71,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                 <flux:field>
-                    <flux:label>Volumen de Agua</flux:label>
+                    <flux:label required>Volumen de Agua</flux:label>
                     <div class="flex gap-2">
                         <flux:input wire:model="water_volume" type="number" step="0.001" data-cy="water-volume-input" placeholder="0.000" class="flex-1" />
                         <flux:select wire:model="water_volume_unit" data-cy="water-volume-unit-select" class="w-20">
@@ -134,7 +134,7 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <flux:field>
-                        <flux:label>Origen del Agua</flux:label>
+                        <flux:label required>Origen del Agua</flux:label>
                         <flux:select wire:model="water_source" data-cy="water-source-select">
                             <option value="">Selecciona el origen</option>
                             <option value="Pozo legalizado">Pozo legalizado</option>
@@ -148,7 +148,7 @@
                     </flux:field>
 
                     <flux:field>
-                        <flux:label>Nº Concesión / Autorización</flux:label>
+                        <flux:label required>Nº Concesión / Autorización</flux:label>
                         <flux:input wire:model="water_concession" type="text" id="water_concession" placeholder="Ej: 2023/CONF/1234" />
                         <flux:description>Número de expediente de la Confederación Hidrográfica</flux:description>
                         <flux:error name="water_concession" />
@@ -157,7 +157,7 @@
 
                 <div class="md:w-1/2">
                     <flux:field>
-                        <flux:label>Caudal de Riego</flux:label>
+                        <flux:label required>Caudal de Riego</flux:label>
                         <flux:input wire:model="flow_rate" type="number" step="0.01" id="flow_rate" placeholder="Ej: 2000.00" min="0" />
                         <flux:description>L/h</flux:description>
                         <flux:error name="flow_rate" />

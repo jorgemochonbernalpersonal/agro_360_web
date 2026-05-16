@@ -10,13 +10,12 @@
 
     {{-- Filtro estado --}}
     <div class="flex flex-wrap gap-3">
-        <select wire:model.live="statusFilter"
-                class="text-sm border border-zinc-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-300">
-            <option value="">Todos los estados</option>
+        <flux:select wire:model.live="statusFilter">
+            <flux:select.option value="">Todos los estados</flux:select.option>
             @foreach($statusLabels as $key => $label)
-                <option value="{{ $key }}">{{ $label }}</option>
+                <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
             @endforeach
-        </select>
+        </flux:select>
     </div>
 
     {{-- KPI pills --}}

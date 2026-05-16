@@ -59,7 +59,7 @@
                         <option value="doble_guyot">Doble Guyot</option>
                         <option value="vaso">Vaso</option>
                         <option value="cordon">Cordón</option>
-                        <option value="other">Otro</option>
+                        <option value="otro">Otro</option>
                     </flux:select>
                     <flux:error name="pruning_type" />
                 </flux:field>

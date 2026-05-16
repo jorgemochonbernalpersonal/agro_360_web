@@ -36,9 +36,7 @@
     <x-agro.form-card>
         <x-slot:header>
             <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
-                <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/>
-                </svg>
+                <flux:icon icon="receipt-percent" class="size-5 text-amber-600" />
             </div>
             <span>Impuestos disponibles</span>
         </x-slot:header>
@@ -59,9 +57,7 @@
                     {{-- Badge defecto --}}
                     @if($isDefault)
                         <span class="absolute top-3 right-3 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-agro-500 text-white">
-                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                            </svg>
+                            <flux:icon icon="check-circle" variant="solid" class="size-3" />
                             Defecto
                         </span>
                     @endif

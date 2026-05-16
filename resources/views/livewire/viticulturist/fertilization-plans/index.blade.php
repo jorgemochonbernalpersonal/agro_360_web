@@ -279,10 +279,7 @@
         class="hidden fixed inset-0 z-20 items-center justify-center bg-white/40 backdrop-blur-sm"
     >
         <div class="flex items-center gap-3 bg-white rounded-2xl shadow-xl px-6 py-4 border border-zinc-100">
-            <svg class="animate-spin size-5 text-agro-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-            </svg>
+            <flux:icon icon="arrow-path" class="animate-spin size-5 text-agro-500" />
             <span class="text-sm font-medium text-zinc-600">Cargando...</span>
         </div>
     </div>
@@ -302,27 +299,17 @@
         </div>
 
         <div class="px-6 py-5 space-y-4">
-            <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Campaña</label>
-                <select wire:model.live="filterCampaign"
-                        class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
-                    <option value="">Todas las campañas</option>
-                    @foreach($campaigns as $campaign)
-                        <option value="{{ $campaign->id }}">Campaña {{ $campaign->year }}</option>
-                    @endforeach
-                </select>
-            </div>
+            <x-agro.filter-select label="Campaña" wire:model.live="filterCampaign" placeholder="Todas las campañas">
+                @foreach($campaigns as $campaign)
+                    <flux:select.option value="{{ $campaign->id }}">Campaña {{ $campaign->year }}</flux:select.option>
+                @endforeach
+            </x-agro.filter-select>
 
-            <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Estado</label>
-                <select wire:model.live="filterStatus"
-                        class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
-                    <option value="">Todos los estados</option>
-                    @foreach($statuses as $value => $label)
-                        <option value="{{ $value }}">{{ $label }}</option>
-                    @endforeach
-                </select>
-            </div>
+            <x-agro.filter-select label="Estado" wire:model.live="filterStatus" placeholder="Todos los estados">
+                @foreach($statuses as $value => $label)
+                    <flux:select.option value="{{ $value }}">{{ $label }}</flux:select.option>
+                @endforeach
+            </x-agro.filter-select>
         </div>
 
         <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between rounded-b-2xl">

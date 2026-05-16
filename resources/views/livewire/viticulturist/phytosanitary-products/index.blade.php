@@ -165,14 +165,11 @@
 
         <div class="px-6 py-5 space-y-4">
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Tipo de producto</label>
-                <select wire:model.live="typeFilter" data-cy="product-type-filter"
-                        class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
-                    <option value="">Todos los tipos</option>
+                <x-agro.filter-select label="Tipo de producto" wire:model.live="typeFilter" placeholder="Todos los tipos" data-cy="product-type-filter">
                     @foreach($types as $type)
-                        <option value="{{ $type }}">{{ ucfirst($type) }}</option>
+                        <flux:select.option value="{{ $type }}">{{ ucfirst($type) }}</flux:select.option>
                     @endforeach
-                </select>
+                </x-agro.filter-select>
             </div>
         </div>
 

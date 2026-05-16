@@ -224,36 +224,22 @@
                 </div>
             </div>
             <div class="px-6 py-5 space-y-5">
-                <div>
-                    <label class="block text-sm font-medium text-zinc-700 mb-1.5">Producto</label>
-                    <select wire:model.live="inv_product"
-                            class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
-                        <option value="">Todos los productos</option>
-                        @foreach($inv_products as $product)
-                            <option value="{{ $product->id }}">{{ $product->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-zinc-700 mb-1.5">Almacén</label>
-                    <select wire:model.live="inv_warehouse"
-                            class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
-                        <option value="">Todos los almacenes</option>
-                        @foreach($inv_warehouses as $wh)
-                            <option value="{{ $wh->id }}">{{ $wh->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-zinc-700 mb-1.5">Estado</label>
-                    <select wire:model.live="inv_status"
-                            class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
-                        <option value="all">Todos</option>
-                        <option value="low_stock">Stock bajo</option>
-                        <option value="expiring">Próximos a caducar</option>
-                        <option value="expired">Caducados</option>
-                    </select>
-                </div>
+                <x-agro.filter-select label="Producto" wire:model.live="inv_product" placeholder="Todos los productos">
+                    @foreach($inv_products as $product)
+                        <flux:select.option value="{{ $product->id }}">{{ $product->name }}</flux:select.option>
+                    @endforeach
+                </x-agro.filter-select>
+                <x-agro.filter-select label="Almacén" wire:model.live="inv_warehouse" placeholder="Todos los almacenes">
+                    @foreach($inv_warehouses as $wh)
+                        <flux:select.option value="{{ $wh->id }}">{{ $wh->name }}</flux:select.option>
+                    @endforeach
+                </x-agro.filter-select>
+                <x-agro.filter-select label="Estado" wire:model.live="inv_status">
+                    <flux:select.option value="all">Todos</flux:select.option>
+                    <flux:select.option value="low_stock">Stock bajo</flux:select.option>
+                    <flux:select.option value="expiring">Próximos a caducar</flux:select.option>
+                    <flux:select.option value="expired">Caducados</flux:select.option>
+                </x-agro.filter-select>
             </div>
             <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between rounded-b-2xl">
                 <button wire:click="clearInventoryFilters" x-on:click="$dispatch('close-modal', 'almacen-inv-filters')"
@@ -526,10 +512,7 @@
                                             <flux:icon icon="{{ $warehouse->active ? 'no-symbol' : 'check-circle' }}" class="size-4" />
                                         </span>
                                         <span wire:loading wire:target="toggleActive({{ $warehouse->id }})">
-                                            <svg class="animate-spin size-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                            </svg>
+                                            <flux:icon icon="arrow-path" class="animate-spin size-4" />
                                         </span>
                                     </button>
                                     @if($warehouse->stocks_count === 0)
@@ -590,16 +573,11 @@
             </div>
         </div>
         <div class="px-6 py-5 space-y-5">
-            <div>
-                <label class="block text-sm font-medium text-zinc-700 mb-1.5">Tipo de insumo</label>
-                <select wire:model.live="sup_type"
-                        class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
-                    <option value="">Todos los tipos</option>
-                    @foreach($supplyTypes as $key => $label)
-                        <option value="{{ $key }}">{{ $label }}</option>
-                    @endforeach
-                </select>
-            </div>
+            <x-agro.filter-select label="Tipo de insumo" wire:model.live="sup_type" placeholder="Todos los tipos">
+                @foreach($supplyTypes as $key => $label)
+                    <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
+                @endforeach
+            </x-agro.filter-select>
             <flux:checkbox wire:model.live="sup_low" label="Solo stock bajo" description="Muestra solo insumos por debajo del mínimo" />
         </div>
         <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between rounded-b-2xl">

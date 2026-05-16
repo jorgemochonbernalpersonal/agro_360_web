@@ -8,20 +8,18 @@
     {{-- Filtros --}}
     <div class="flex flex-wrap items-center gap-3">
 
-        <select wire:model.live="vintageFilter"
-                class="px-3 py-2 text-sm bg-white border border-zinc-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-400">
-            <option value="">Todas las añadas</option>
+        <flux:select wire:model.live="vintageFilter">
+            <flux:select.option value="">Todas las añadas</flux:select.option>
             @foreach($vintageYears as $year)
-                <option value="{{ $year }}">{{ $year }}</option>
+                <flux:select.option value="{{ $year }}">{{ $year }}</flux:select.option>
             @endforeach
-        </select>
+        </flux:select>
 
-        <select wire:model.live="noteFilter"
-                class="px-3 py-2 text-sm bg-white border border-zinc-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-400">
-            <option value="">Todas las reclamaciones</option>
-            <option value="with_note">Con nota enviada</option>
-            <option value="without_note">Sin nota aún</option>
-        </select>
+        <flux:select wire:model.live="noteFilter">
+            <flux:select.option value="">Todas las reclamaciones</flux:select.option>
+            <flux:select.option value="with_note">Con nota enviada</flux:select.option>
+            <flux:select.option value="without_note">Sin nota aún</flux:select.option>
+        </flux:select>
 
         @if($disputes->count() > 0)
             <span class="ml-auto text-sm text-zinc-500">

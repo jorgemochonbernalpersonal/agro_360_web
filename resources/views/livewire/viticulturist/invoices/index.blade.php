@@ -463,28 +463,18 @@
         </div>
 
         <div class="px-6 py-5 space-y-5">
-            <div>
-                <label class="block text-sm font-medium text-zinc-700 mb-1.5">Estado de entrega</label>
-                <select wire:model.live="filterStatus"
-                        class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
-                    <option value="">Todos</option>
-                    <option value="draft">Borrador</option>
-                    <option value="sent">Enviada</option>
-                    <option value="paid">Pagada</option>
-                    <option value="cancelled">Cancelada</option>
-                </select>
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-zinc-700 mb-1.5">Estado de pago</label>
-                <select wire:model.live="filterPaymentStatus"
-                        class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
-                    <option value="">Todos</option>
-                    <option value="unpaid">Pendiente</option>
-                    <option value="partial">Parcial</option>
-                    <option value="paid">Pagado</option>
-                    <option value="overdue">Vencido</option>
-                </select>
-            </div>
+            <x-agro.filter-select label="Estado de entrega" wire:model.live="filterStatus" placeholder="Todos">
+                <flux:select.option value="draft">Borrador</flux:select.option>
+                <flux:select.option value="sent">Enviada</flux:select.option>
+                <flux:select.option value="paid">Pagada</flux:select.option>
+                <flux:select.option value="cancelled">Cancelada</flux:select.option>
+            </x-agro.filter-select>
+            <x-agro.filter-select label="Estado de pago" wire:model.live="filterPaymentStatus" placeholder="Todos">
+                <flux:select.option value="unpaid">Pendiente</flux:select.option>
+                <flux:select.option value="partial">Parcial</flux:select.option>
+                <flux:select.option value="paid">Pagado</flux:select.option>
+                <flux:select.option value="overdue">Vencido</flux:select.option>
+            </x-agro.filter-select>
         </div>
 
         <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between rounded-b-2xl">

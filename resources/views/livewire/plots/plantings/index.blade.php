@@ -374,10 +374,7 @@
                                         <flux:icon icon="{{ $planting->active ? 'no-symbol' : 'check-circle' }}" class="size-4" />
                                     </span>
                                     <span wire:loading wire:target="toggleActive({{ $planting->id }})">
-                                        <svg class="animate-spin size-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                        </svg>
+                                        <flux:icon icon="arrow-path" class="animate-spin size-4" />
                                     </span>
                                 </button>
                             @endcan
@@ -487,42 +484,27 @@
 
             {{-- Tipo de cultivo (solo viticultor/producer) --}}
             @if(!$wineryOnly)
-            <div>
-                <label class="block text-sm font-medium text-zinc-700 mb-1.5">Tipo de cultivo</label>
-                <select wire:model.live="cropType"
-                        class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
-                    <option value="">Todos los cultivos</option>
-                    @foreach(\App\Models\GrapeVariety::CROP_TYPES as $key => $label)
-                        <option value="{{ $key }}">{{ $label }}</option>
-                    @endforeach
-                </select>
-            </div>
+            <x-agro.filter-select label="Tipo de cultivo" wire:model.live="cropType" placeholder="Todos los cultivos">
+                @foreach(\App\Models\GrapeVariety::CROP_TYPES as $key => $label)
+                    <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
+                @endforeach
+            </x-agro.filter-select>
             @endif
 
             {{-- Estado operativo --}}
-            <div>
-                <label class="block text-sm font-medium text-zinc-700 mb-1.5">Estado operativo</label>
-                <select wire:model.live="status"
-                        class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
-                    <option value="">Todos los estados</option>
-                    <option value="active">Activa</option>
-                    <option value="removed">Arrancada</option>
-                    <option value="experimental">Experimental</option>
-                    <option value="replanting">Replantación</option>
-                </select>
-            </div>
+            <x-agro.filter-select label="Estado operativo" wire:model.live="status" placeholder="Todos los estados">
+                <flux:select.option value="active">Activa</flux:select.option>
+                <flux:select.option value="removed">Arrancada</flux:select.option>
+                <flux:select.option value="experimental">Experimental</flux:select.option>
+                <flux:select.option value="replanting">Replantación</flux:select.option>
+            </x-agro.filter-select>
 
             {{-- Año de plantación --}}
-            <div>
-                <label class="block text-sm font-medium text-zinc-700 mb-1.5">Año de plantación</label>
-                <select wire:model.live="year"
-                        class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
-                    <option value="">Todos los años</option>
-                    @foreach($years as $yearOption)
-                        <option value="{{ $yearOption }}">{{ $yearOption }}</option>
-                    @endforeach
-                </select>
-            </div>
+            <x-agro.filter-select label="Año de plantación" wire:model.live="year" placeholder="Todos los años">
+                @foreach($years as $yearOption)
+                    <flux:select.option value="{{ $yearOption }}">{{ $yearOption }}</flux:select.option>
+                @endforeach
+            </x-agro.filter-select>
 
         </div>
 
