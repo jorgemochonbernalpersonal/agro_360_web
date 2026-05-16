@@ -144,25 +144,24 @@
                     <x-slot:footer>
                         <div class="flex items-center justify-end gap-0.5">
                             @if($currentTab === 'active')
-                                <a href="{{ roleRoute('viticulturist.energy-usages.edit', $entry) }}"
-                                   title="Editar"
-                                   class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
-                                    <flux:icon icon="pencil-square" class="size-4" />
-                                </a>
-                                <button
+                                <x-agro.action-button
+                                    variant="edit"
+                                    href="{{ roleRoute('viticulturist.energy-usages.edit', $entry) }}"
+                                    title="Editar"
+                                />
+                                <x-agro.action-button
+                                    variant="archive"
                                     wire:click="archive({{ $entry->id }})"
                                     wire:confirm="¿Archivar este registro?"
                                     title="Archivar"
-                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-amber-600 hover:bg-amber-50 transition-colors">
-                                    <flux:icon icon="archive-box" class="size-4" />
-                                </button>
+                                />
                             @else
-                                <button
+                                <x-agro.action-button
+                                    variant="restore"
+                                    icon="arrow-uturn-left"
                                     wire:click="unarchive({{ $entry->id }})"
                                     title="Restaurar"
-                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-agro-600 hover:bg-agro-50 transition-colors">
-                                    <flux:icon icon="arrow-uturn-left" class="size-4" />
-                                </button>
+                                />
                             @endif
                         </div>
                     </x-slot:footer>

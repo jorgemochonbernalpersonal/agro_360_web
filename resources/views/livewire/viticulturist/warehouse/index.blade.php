@@ -101,8 +101,6 @@
             >
                 @foreach($stocks as $i => $stock)
                     @php
-                        $btnBase = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
-
                         [$statusLabel, $statusActive, $statusType] = match(true) {
                             $stock->isExpired()                                                       => ['Caducado',      false, 'danger'],
                             $stock->isExpiringSoon()                                                  => ['Próx. caducar', true,  'warning'],
@@ -152,24 +150,30 @@
 
                         <x-slot:footer>
                             <div class="flex items-center justify-between gap-1">
-                                <button
+                                <x-agro.action-button
+                                    variant="danger"
+                                    icon="archive-box-arrow-down"
                                     wire:click="deactivateStock({{ $stock->id }})"
                                     wire:confirm="¿Archivar este lote? Dejará de aparecer en el inventario activo."
-                                    class="{{ $btnBase }} hover:text-red-600 hover:bg-red-50"
                                     title="Archivar lote"
-                                >
-                                    <flux:icon icon="archive-box-arrow-down" class="size-4" />
-                                </button>
+                                />
                                 <div class="flex items-center gap-1">
-                                    <a href="{{ roleRoute('viticulturist.warehouse.stock.edit', $stock->id) }}" class="{{ $btnBase }}" title="Editar">
-                                        <flux:icon icon="pencil-square" class="size-4" />
-                                    </a>
-                                    <a href="{{ roleRoute('viticulturist.warehouse.stock.consume', $stock->id) }}" class="{{ $btnBase }}" title="Consumir">
-                                        <flux:icon icon="minus-circle" class="size-4" />
-                                    </a>
-                                    <a href="{{ roleRoute('viticulturist.warehouse.stock.movements', $stock->id) }}" class="{{ $btnBase }}" title="Movimientos">
-                                        <flux:icon icon="document-text" class="size-4" />
-                                    </a>
+                                    <x-agro.action-button
+                                        variant="edit"
+                                        href="{{ roleRoute('viticulturist.warehouse.stock.edit', $stock->id) }}"
+                                        title="Editar"
+                                    />
+                                    <x-agro.action-button
+                                        variant="default"
+                                        icon="minus-circle"
+                                        href="{{ roleRoute('viticulturist.warehouse.stock.consume', $stock->id) }}"
+                                        title="Consumir"
+                                    />
+                                    <x-agro.action-button
+                                        variant="history"
+                                        href="{{ roleRoute('viticulturist.warehouse.stock.movements', $stock->id) }}"
+                                        title="Movimientos"
+                                    />
                                 </div>
                             </div>
                         </x-slot:footer>
@@ -306,7 +310,6 @@
             >
                 @foreach($supplies as $i => $supply)
                     @php
-                        $btnBase = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
                         [$statusLabel, $statusActive, $statusType] = match(true) {
                             $supply->isExpired()      => ['Caducado',      false, 'danger'],
                             $supply->isExpiringSoon() => ['Próx. caducar', true,  'warning'],
@@ -366,20 +369,24 @@
 
                         <x-slot:footer>
                             <div class="flex items-center justify-end gap-1">
-                                <button wire:click="openPurchase({{ $supply->id }})" class="{{ $btnBase }}" title="Registrar compra">
-                                    <flux:icon icon="shopping-cart" class="size-4" />
-                                </button>
-                                <a href="{{ roleRoute('viticulturist.warehouse.supplies.edit', $supply) }}" class="{{ $btnBase }}" title="Editar">
-                                    <flux:icon icon="pencil-square" class="size-4" />
-                                </a>
-                                <button
+                                <x-agro.action-button
+                                    variant="default"
+                                    icon="shopping-cart"
+                                    wire:click="openPurchase({{ $supply->id }})"
+                                    title="Registrar compra"
+                                />
+                                <x-agro.action-button
+                                    variant="edit"
+                                    href="{{ roleRoute('viticulturist.warehouse.supplies.edit', $supply) }}"
+                                    title="Editar"
+                                />
+                                <x-agro.action-button
+                                    variant="archive"
+                                    icon="archive-box-arrow-down"
                                     wire:click="deactivateSupply({{ $supply->id }})"
                                     wire:confirm="¿Archivar este insumo?"
-                                    class="{{ $btnBase }}"
                                     title="Archivar"
-                                >
-                                    <flux:icon icon="archive-box-arrow-down" class="size-4" />
-                                </button>
+                                />
                             </div>
                         </x-slot:footer>
                     </x-agro.card>
@@ -433,11 +440,6 @@
                 wire:target="switchWhTab, wh_search"
             >
                 @foreach($warehouses as $i => $warehouse)
-                    @php
-                        $btnBase    = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
-                        $btnDanger  = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors';
-                        $btnSuccess = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-agro-600 hover:bg-agro-50 transition-colors';
-                    @endphp
 
                     <x-agro.card
                         wire:key="warehouse-{{ $warehouse->id }}"
@@ -469,16 +471,18 @@
                         <x-slot:footer>
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-1">
-                                    <a href="{{ roleRoute('viticulturist.warehouse.warehouses.edit', $warehouse->id) }}" class="{{ $btnBase }}" title="Editar">
-                                        <flux:icon icon="pencil-square" class="size-4" />
-                                    </a>
+                                    <x-agro.action-button
+                                        variant="edit"
+                                        href="{{ roleRoute('viticulturist.warehouse.warehouses.edit', $warehouse->id) }}"
+                                        title="Editar"
+                                    />
                                 </div>
                                 <div class="flex items-center gap-1">
                                     <button
                                         wire:click="toggleActive({{ $warehouse->id }})"
                                         wire:loading.attr="disabled"
                                         wire:target="toggleActive({{ $warehouse->id }})"
-                                        class="{{ $warehouse->active ? $btnDanger : $btnSuccess }}"
+                                        class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 transition-colors {{ $warehouse->active ? 'hover:text-red-500 hover:bg-red-50' : 'hover:text-agro-600 hover:bg-agro-50' }}"
                                         title="{{ $warehouse->active ? 'Desactivar' : 'Activar' }}"
                                     >
                                         <span wire:loading.remove wire:target="toggleActive({{ $warehouse->id }})">
@@ -489,15 +493,13 @@
                                         </span>
                                     </button>
                                     @if($warehouse->stocks_count === 0)
-                                        <button
+                                        <x-agro.action-button
+                                            variant="delete"
                                             wire:click="deleteWarehouse({{ $warehouse->id }})"
                                             wire:confirm="¿Seguro que deseas eliminar este almacén?"
                                             wire:loading.attr="disabled"
-                                            class="{{ $btnDanger }}"
                                             title="Eliminar"
-                                        >
-                                            <flux:icon icon="trash" class="size-4" />
-                                        </button>
+                                        />
                                     @endif
                                 </div>
                             </div>

@@ -107,17 +107,8 @@
                         </div>
 
                         <x-slot:footer>
-                            @php $btnBase = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors'; @endphp
                             <div class="flex items-center justify-end gap-0.5">
-                                <button
-                                    wire:click="delete({{ $waste->id }})"
-                                    wire:confirm="¿Eliminar esta merma? Se restaurarán las {{ $waste->quantity }} etiquetas al disponible."
-                                    wire:loading.attr="disabled"
-                                    class="{{ $btnBase }} hover:!text-red-500 hover:!bg-red-50"
-                                    title="Eliminar"
-                                >
-                                    <flux:icon icon="trash" class="size-4" />
-                                </button>
+                                <x-agro.action-button variant="delete" wire:click="delete({{ $waste->id }})" wire:confirm="¿Eliminar esta merma? Se restaurarán las {{ $waste->quantity }} etiquetas al disponible." wire:loading.attr="disabled" title="Eliminar" />
                             </div>
                         </x-slot:footer>
                     </x-agro.card>

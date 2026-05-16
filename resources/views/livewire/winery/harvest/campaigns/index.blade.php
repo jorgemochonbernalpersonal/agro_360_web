@@ -152,46 +152,24 @@
                         <x-slot:footer>
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-0.5">
-                                    <a href="{{ roleRoute('grape-reception.index', ['campaignFilter' => $campaign->id]) }}"
-                                       wire:navigate
-                                       title="Ver recepciones"
-                                       class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-agro-600 hover:bg-agro-50 transition-colors">
-                                        <flux:icon icon="archive-box-arrow-down" class="size-4" />
-                                    </a>
+                                    <x-agro.action-button icon="archive-box-arrow-down" variant="primary" href="{{ roleRoute('grape-reception.index', ['campaignFilter' => $campaign->id]) }}" wire:navigate title="Ver recepciones" />
                                 </div>
 
                                 <div class="w-px h-5 bg-zinc-200 mx-1"></div>
 
                                 <div class="flex items-center gap-0.5">
                                     @if(!$isLocked)
-                                        <a href="{{ roleRoute('campaigns.edit', $campaign) }}"
-                                           wire:navigate
-                                           title="Editar campaña"
-                                           class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
-                                            <flux:icon icon="pencil-square" class="size-4" />
-                                        </a>
+                                        <x-agro.action-button variant="edit" href="{{ roleRoute('campaigns.edit', $campaign) }}" wire:navigate title="Editar campaña" />
                                     @endif
 
-                                    <button
-                                        wire:click="toggleActive({{ $campaign->id }})"
-                                        wire:loading.attr="disabled"
-                                        title="{{ $isActive ? 'Cerrar campaña' : 'Activar campaña' }}"
-                                        class="inline-flex items-center justify-center w-8 h-8 rounded-lg transition-colors
-                                            {{ $isActive
-                                                ? 'text-zinc-400 hover:text-amber-600 hover:bg-amber-50'
-                                                : 'text-zinc-400 hover:text-agro-600 hover:bg-agro-50' }}">
-                                        <flux:icon icon="{{ $isActive ? 'lock-closed' : 'lock-open' }}" class="size-4" />
-                                    </button>
+                                    @if($isActive)
+                                        <x-agro.action-button icon="lock-closed" variant="warning" wire:click="toggleActive({{ $campaign->id }})" wire:loading.attr="disabled" title="Cerrar campaña" />
+                                    @else
+                                        <x-agro.action-button icon="lock-open" variant="primary" wire:click="toggleActive({{ $campaign->id }})" wire:loading.attr="disabled" title="Activar campaña" />
+                                    @endif
 
                                     @if($campaign->activities_count === 0)
-                                        <button
-                                            wire:click="delete({{ $campaign->id }})"
-                                            wire:loading.attr="disabled"
-                                            wire:confirm="¿Eliminar esta campaña permanentemente?"
-                                            title="Eliminar campaña"
-                                            class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors">
-                                            <flux:icon icon="trash" class="size-4" />
-                                        </button>
+                                        <x-agro.action-button variant="delete" wire:click="delete({{ $campaign->id }})" wire:loading.attr="disabled" wire:confirm="¿Eliminar esta campaña permanentemente?" title="Eliminar campaña" />
                                     @endif
                                 </div>
                             </div>

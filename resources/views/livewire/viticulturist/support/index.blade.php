@@ -83,11 +83,12 @@
                         </div>
 
                         <x-slot:footer>
-                            @php $btnBase = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors'; @endphp
                             <div class="flex items-center justify-end gap-0.5">
-                                <button wire:click.stop="selectTicket({{ $ticket->id }})" class="{{ $btnBase }}" title="Ver detalles">
-                                    <flux:icon icon="eye" class="size-4" />
-                                </button>
+                                <x-agro.action-button
+                                    variant="view"
+                                    wire:click.stop="selectTicket({{ $ticket->id }})"
+                                    title="Ver detalles"
+                                />
                             </div>
                         </x-slot:footer>
                     </x-agro.card>

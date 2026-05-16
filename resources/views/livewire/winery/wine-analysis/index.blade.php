@@ -165,20 +165,8 @@
 
                         <x-slot:footer>
                             <div class="flex items-center justify-end gap-0.5">
-                                <a href="{{ roleRoute('wine-analysis.edit', $analysis) }}"
-                                   wire:navigate
-                                   title="Editar análisis"
-                                   class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
-                                    <flux:icon icon="pencil-square" class="size-4" />
-                                </a>
-                                <button
-                                    wire:click="delete({{ $analysis->id }})"
-                                    wire:confirm="¿Eliminar este análisis de laboratorio?"
-                                    wire:loading.attr="disabled"
-                                    title="Eliminar análisis"
-                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors">
-                                    <flux:icon icon="trash" class="size-4" />
-                                </button>
+                                <x-agro.action-button variant="edit" href="{{ roleRoute('wine-analysis.edit', $analysis) }}" wire:navigate title="Editar análisis" />
+                                <x-agro.action-button variant="delete" wire:click="delete({{ $analysis->id }})" wire:confirm="¿Eliminar este análisis de laboratorio?" wire:loading.attr="disabled" title="Eliminar análisis" />
                             </div>
                         </x-slot:footer>
                     </x-agro.card>

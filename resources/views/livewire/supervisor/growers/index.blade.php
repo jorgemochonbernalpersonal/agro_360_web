@@ -116,40 +116,16 @@
                         </div>
 
                         <x-slot:footer>
-                            @php
-                                $btnBase = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
-                                $btnDanger = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors';
-                            @endphp
                             <div class="flex items-center justify-between gap-0.5">
                                 {{-- Remove from pool --}}
-                                <button
-                                    wire:click="removeGrower({{ $grower->id }})"
-                                    wire:confirm="¿Eliminar a {{ $grower->name }} del pool de la DO? Se retirarán también sus asignaciones a bodegas."
-                                    class="{{ $btnDanger }}"
-                                    title="Eliminar del pool"
-                                >
-                                    <flux:icon icon="trash" class="size-4" />
-                                </button>
+                                <x-agro.action-button variant="delete" wire:click="removeGrower({{ $grower->id }})" wire:confirm="¿Eliminar a {{ $grower->name }} del pool de la DO? Se retirarán también sus asignaciones a bodegas." title="Eliminar del pool" />
 
                                 <div class="flex items-center gap-0.5">
                                     @if($isGhost)
                                         @if($hasPendingInvite)
-                                            <button
-                                                wire:click="revokeInvitation({{ $grower->id }})"
-                                                wire:confirm="¿Revocar la invitación de {{ $grower->name }}?"
-                                                class="{{ $btnDanger }}"
-                                                title="Revocar invitación"
-                                            >
-                                                <flux:icon icon="x-mark" class="size-4" />
-                                            </button>
+                                            <x-agro.action-button icon="x-mark" variant="danger" wire:click="revokeInvitation({{ $grower->id }})" wire:confirm="¿Revocar la invitación de {{ $grower->name }}?" title="Revocar invitación" />
                                         @else
-                                            <button
-                                                wire:click="openInviteModal({{ $grower->id }})"
-                                                class="{{ $btnBase }}"
-                                                title="Invitar"
-                                            >
-                                                <flux:icon icon="envelope" class="size-4" />
-                                            </button>
+                                            <x-agro.action-button icon="envelope" variant="default" wire:click="openInviteModal({{ $grower->id }})" title="Invitar" />
                                         @endif
                                     @endif
                                 </div>

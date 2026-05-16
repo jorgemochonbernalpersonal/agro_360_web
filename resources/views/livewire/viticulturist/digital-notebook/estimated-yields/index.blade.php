@@ -64,9 +64,6 @@
                 'confirmed'=> ['label' => 'Confirmada', 'color' => 'green'],
                 'archived' => ['label' => 'Archivada',  'color' => 'blue'],
             ];
-            $btnBase   = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
-            $btnDanger = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-orange-500 hover:bg-orange-50 transition-colors';
-            $btnGreen  = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-green-600 hover:bg-green-50 transition-colors';
         @endphp
 
         <div
@@ -141,16 +138,16 @@
 
                     <x-slot:footer>
                         <div class="flex items-center justify-end gap-1">
-                            <a href="{{ roleRoute('viticulturist.digital-notebook.estimated-yields.edit', $yield->id) }}" class="{{ $btnBase }}" title="Editar">
-                                <flux:icon icon="pencil-square" class="size-4" />
-                            </a>
-                            <button
+                            <x-agro.action-button
+                                variant="edit"
+                                href="{{ roleRoute('viticulturist.digital-notebook.estimated-yields.edit', $yield->id) }}"
+                                title="Editar"
+                            />
+                            <x-agro.action-button
+                                variant="{{ $yield->active ? 'deactivate' : 'activate' }}"
                                 wire:click="toggleActive({{ $yield->id }})"
-                                class="{{ $yield->active ? $btnDanger : $btnGreen }}"
                                 title="{{ $yield->active ? 'Desactivar' : 'Activar' }}"
-                            >
-                                <flux:icon icon="{{ $yield->active ? 'x-circle' : 'check-circle' }}" class="size-4" />
-                            </button>
+                            />
                         </div>
                     </x-slot:footer>
                 </x-agro.card>

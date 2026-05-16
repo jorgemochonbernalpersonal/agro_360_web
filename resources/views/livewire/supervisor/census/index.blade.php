@@ -96,22 +96,9 @@
                                 </div>
 
                                 <x-slot:footer>
-                                    @php
-                                        $btnBase = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
-                                        $btnDanger = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors';
-                                    @endphp
                                     <div class="flex items-center justify-end gap-0.5">
-                                        <a href="{{ route('supervisor.oversight.wineries.show', $winery) }}" wire:navigate class="{{ $btnBase }}" title="Ver">
-                                            <flux:icon icon="eye" class="size-4" />
-                                        </a>
-                                        <button
-                                            wire:click="unassignWinery({{ $winery->id }})"
-                                            wire:confirm="¿Desadscribir {{ $winery->name }} de la denominación? Los viticultores asignados por la DO a esta bodega también se desvincularán."
-                                            class="{{ $btnDanger }}"
-                                            title="Desadscribir"
-                                        >
-                                            <flux:icon icon="x-mark" class="size-4" />
-                                        </button>
+                                        <x-agro.action-button variant="view" href="{{ route('supervisor.oversight.wineries.show', $winery) }}" wire:navigate title="Ver" />
+                                        <x-agro.action-button icon="x-mark" variant="danger" wire:click="unassignWinery({{ $winery->id }})" wire:confirm="¿Desadscribir {{ $winery->name }} de la denominación? Los viticultores asignados por la DO a esta bodega también se desvincularán." title="Desadscribir" />
                                     </div>
                                 </x-slot:footer>
                             </x-agro.card>

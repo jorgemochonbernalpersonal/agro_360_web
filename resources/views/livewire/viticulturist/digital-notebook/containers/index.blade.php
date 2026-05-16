@@ -143,23 +143,24 @@
                         </div>
 
                         <x-slot:footer>
-                            @php
-                                $btnBase   = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
-                                $btnDanger = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors';
-                                $btnSuccess= 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-agro-600 hover:bg-agro-50 transition-colors';
-                            @endphp
                             <div class="flex items-center justify-end gap-0.5">
-                                <a href="{{ roleRoute('viticulturist.containers.edit', $container->id) }}" class="{{ $btnBase }}" title="Editar">
-                                    <flux:icon icon="pencil-square" class="size-4" />
-                                </a>
+                                <x-agro.action-button
+                                    variant="edit"
+                                    href="{{ roleRoute('viticulturist.containers.edit', $container->id) }}"
+                                    title="Editar"
+                                />
                                 @if($container->archived)
-                                    <button wire:click="toggleActive({{ $container->id }})" class="{{ $btnSuccess }}" title="Activar">
-                                        <flux:icon icon="check-circle" class="size-4" />
-                                    </button>
+                                    <x-agro.action-button
+                                        variant="activate"
+                                        wire:click="toggleActive({{ $container->id }})"
+                                        title="Activar"
+                                    />
                                 @else
-                                    <button wire:click="toggleActive({{ $container->id }})" class="{{ $btnDanger }}" title="Desactivar">
-                                        <flux:icon icon="no-symbol" class="size-4" />
-                                    </button>
+                                    <x-agro.action-button
+                                        variant="deactivate"
+                                        wire:click="toggleActive({{ $container->id }})"
+                                        title="Desactivar"
+                                    />
                                 @endif
                             </div>
                         </x-slot:footer>

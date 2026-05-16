@@ -83,15 +83,10 @@
                         </div>
 
                         <x-slot:footer>
-                            @php $btnBase = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors'; @endphp
                             <div class="flex items-center justify-end gap-0.5">
-                                <a href="{{ roleRoute('wines.show', $wine) }}" wire:navigate class="{{ $btnBase }}" title="Ver vino">
-                                    <flux:icon icon="eye" class="size-4" />
-                                </a>
+                                <x-agro.action-button variant="view" href="{{ roleRoute('wines.show', $wine) }}" wire:navigate title="Ver vino" />
                                 @if($wine->trace_token)
-                                    <a href="{{ roleRoute('wines.traceability-pdf', $wine) }}" target="_blank" class="{{ $btnBase }}" title="Descargar PDF">
-                                        <flux:icon icon="arrow-down-tray" class="size-4" />
-                                    </a>
+                                    <x-agro.action-button icon="arrow-down-tray" variant="default" href="{{ roleRoute('wines.traceability-pdf', $wine) }}" target="_blank" title="Descargar PDF" />
                                 @endif
                             </div>
                         </x-slot:footer>

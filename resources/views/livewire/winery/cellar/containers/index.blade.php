@@ -181,49 +181,18 @@
 
                     <x-slot:footer>
                         <div class="flex items-center justify-end gap-1">
-                            <a href="{{ roleRoute('containers.show', $container) }}" title="Ver detalle">
-                                <button class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-agro-600 hover:bg-agro-50 transition-colors">
-                                    <flux:icon icon="eye" class="size-4" />
-                                </button>
-                            </a>
+                            <x-agro.action-button icon="eye" variant="primary" href="{{ roleRoute('containers.show', $container) }}" title="Ver detalle" />
                             @if(!$container->archived && $container->wine_volume_liters > 0)
-                                <button
-                                    wire:click="emptyWine({{ $container->id }})"
-                                    wire:confirm="¿Vaciar el vino elaborado de «{{ $container->name }}»?"
-                                    wire:loading.attr="disabled"
-                                    title="Vaciar vino"
-                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-orange-500 hover:bg-orange-50 transition-colors">
-                                    <flux:icon icon="arrow-path" class="size-4" />
-                                </button>
+                                <x-agro.action-button icon="arrow-path" variant="warning" wire:click="emptyWine({{ $container->id }})" wire:confirm="¿Vaciar el vino elaborado de «{{ $container->name }}»?" wire:loading.attr="disabled" title="Vaciar vino" />
                             @endif
-                            <a href="{{ roleRoute('containers.edit', $container) }}" title="Editar">
-                                <button class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
-                                    <flux:icon icon="pencil" class="size-4" />
-                                </button>
-                            </a>
+                            <x-agro.action-button icon="pencil" variant="default" href="{{ roleRoute('containers.edit', $container) }}" title="Editar" />
                             @if($container->archived)
-                                <button wire:click="unarchive({{ $container->id }})"
-                                    title="Activar"
-                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-agro-600 hover:bg-agro-50 transition-colors">
-                                    <flux:icon icon="check-circle" class="size-4" />
-                                </button>
+                                <x-agro.action-button variant="activate" wire:click="unarchive({{ $container->id }})" title="Activar" />
                             @else
-                                <button wire:click="archive({{ $container->id }})"
-                                    wire:loading.attr="disabled"
-                                    wire:confirm="¿Desactivar este contenedor?"
-                                    title="Desactivar"
-                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors">
-                                    <flux:icon icon="no-symbol" class="size-4" />
-                                </button>
+                                <x-agro.action-button variant="deactivate" wire:click="archive({{ $container->id }})" wire:loading.attr="disabled" wire:confirm="¿Desactivar este contenedor?" title="Desactivar" />
                             @endif
                             @if($container->harvests_count === 0)
-                                <button wire:click="delete({{ $container->id }})"
-                                    wire:loading.attr="disabled"
-                                    wire:confirm="¿Eliminar este contenedor permanentemente?"
-                                    title="Eliminar"
-                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-600 hover:bg-red-50 transition-colors">
-                                    <flux:icon icon="trash" class="size-4" />
-                                </button>
+                                <x-agro.action-button variant="delete" wire:click="delete({{ $container->id }})" wire:loading.attr="disabled" wire:confirm="¿Eliminar este contenedor permanentemente?" title="Eliminar" />
                             @endif
                         </div>
                     </x-slot:footer>

@@ -125,8 +125,6 @@
             >
                 @foreach($viticulturists as $i => $v)
                     @php
-                        $btnBase   = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
-                        $btnDanger = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors';
                         $member    = $membersByViticulturist->get($v->id) ?? null;
                         $vWineries = $wineriesByViticulturist->get($v->id) ?? collect();
                         $recentActivities = \App\Models\AgriculturalActivity::where('viticulturist_id', $v->id)
@@ -194,7 +192,7 @@
                                     {{-- Asignar a equipo --}}
                                     @if(isset($crews) && $crews->count() > 0)
                                         <div x-data="{ open: false }" class="relative">
-                                            <button @click="open = !open" class="{{ $btnBase }}" title="Asignar a equipo">
+                                            <button @click="open = !open" class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors" title="Asignar a equipo">
                                                 <flux:icon icon="user-group" class="size-4" />
                                             </button>
                                             <div
@@ -224,21 +222,23 @@
                                     @endif
 
                                     {{-- Quitar de equipo / marcar individual --}}
-                                    <button
+                                    <x-agro.action-button
+                                        icon="user"
+                                        variant="default"
                                         wire:click="makeIndividual({{ $v->id }})"
-                                        class="{{ $btnBase }}"
                                         title="{{ $member && $member->crew ? 'Quitar del equipo' : 'Marcar sin equipo' }}"
-                                    >
-                                        <flux:icon icon="user" class="size-4" />
-                                    </button>
+                                    />
                                 </div>
 
                                 <div class="flex items-center gap-1">
                                     {{-- Invitación --}}
                                     @if(!$v->can_login && $v->invitation_sent_at === null)
-                                        <button wire:click="sendInvitation({{ $v->id }})" class="{{ $btnBase }}" title="Enviar invitación">
-                                            <flux:icon icon="envelope" class="size-4" />
-                                        </button>
+                                        <x-agro.action-button
+                                            icon="envelope"
+                                            variant="primary"
+                                            wire:click="sendInvitation({{ $v->id }})"
+                                            title="Enviar invitación"
+                                        />
                                     @elseif($v->invitation_sent_at !== null)
                                         <span class="inline-flex items-center justify-center w-8 h-8 text-agro-500" title="Invitación enviada el {{ $v->invitation_sent_at->format('d/m/Y') }}">
                                             <flux:icon icon="check-circle" class="size-4" />
@@ -246,14 +246,12 @@
                                     @endif
 
                                     {{-- Eliminar --}}
-                                    <button
+                                    <x-agro.action-button
+                                        variant="delete"
                                         wire:click="deleteViticulturist({{ $v->id }})"
                                         wire:confirm="¿Seguro que deseas eliminar este viticultor? Esta acción no se puede deshacer."
-                                        class="{{ $btnDanger }}"
                                         title="Eliminar viticultor"
-                                    >
-                                        <flux:icon icon="trash" class="size-4" />
-                                    </button>
+                                    />
                                 </div>
                             </div>
                         </x-slot:footer>
@@ -294,10 +292,6 @@
                 wire:target="search, wineryFilter, clearFilters, switchView"
             >
                 @foreach($crewsPaginated as $i => $crew)
-                    @php
-                        $btnBase   = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
-                        $btnDanger = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors';
-                    @endphp
 
                     <x-agro.card
                         wire:key="crew-{{ $crew->id }}"
@@ -339,26 +333,28 @@
                         <x-slot:footer>
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-1">
-                                    <a href="{{ roleRoute('viticulturist.personal.show', $crew) }}#miembros" class="{{ $btnBase }}" title="Ver equipo">
-                                        <flux:icon icon="eye" class="size-4" />
-                                    </a>
+                                    <x-agro.action-button
+                                        variant="view"
+                                        href="{{ roleRoute('viticulturist.personal.show', $crew) }}#miembros"
+                                        title="Ver equipo"
+                                    />
                                     @can('update', $crew)
-                                        <a href="{{ roleRoute('viticulturist.personal.edit', $crew) }}" class="{{ $btnBase }}" title="Editar">
-                                            <flux:icon icon="pencil-square" class="size-4" />
-                                        </a>
+                                        <x-agro.action-button
+                                            variant="edit"
+                                            href="{{ roleRoute('viticulturist.personal.edit', $crew) }}"
+                                            title="Editar"
+                                        />
                                     @endcan
                                 </div>
                                 <div class="flex items-center gap-1">
                                     <span class="text-xs text-zinc-400">{{ $crew->created_at->format('d/m/Y') }}</span>
                                     @can('delete', $crew)
-                                        <button
+                                        <x-agro.action-button
+                                            variant="delete"
                                             wire:click="deleteCrew({{ $crew->id }})"
                                             wire:confirm="¿Seguro que deseas eliminar este equipo?"
-                                            class="{{ $btnDanger }}"
                                             title="Eliminar"
-                                        >
-                                            <flux:icon icon="trash" class="size-4" />
-                                        </button>
+                                        />
                                     @endcan
                                 </div>
                             </div>

@@ -94,8 +94,6 @@
                         $avail = $grape->getAvailableWeightKg();
                         $isExpired = $grape->expiration_date && $grape->expiration_date->isPast() && $grape->status === 'available';
 
-                        $btnBase   = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
-                        $btnDanger = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-amber-600 hover:bg-amber-50 transition-colors';
                     @endphp
 
                     <x-agro.card
@@ -166,21 +164,13 @@
                         <x-slot:footer>
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-0.5">
-                                    <a href="{{ roleRoute('external-grape.edit', $grape) }}" wire:navigate
-                                        class="{{ $btnBase }}" title="Editar">
-                                        <flux:icon icon="pencil-square" class="size-4" />
-                                    </a>
+                                    <x-agro.action-button variant="edit" href="{{ roleRoute('external-grape.edit', $grape) }}" wire:navigate title="Editar" />
                                 </div>
 
                                 @if($grape->status === 'available')
                                     <div class="w-px h-5 bg-zinc-200 mx-1"></div>
                                     <div class="flex items-center gap-0.5">
-                                        <button wire:click="archive({{ $grape->id }})"
-                                            wire:loading.attr="disabled"
-                                            wire:confirm="¿Archivar esta partida?"
-                                            class="{{ $btnDanger }}" title="Archivar">
-                                            <flux:icon icon="archive-box-x-mark" class="size-4" />
-                                        </button>
+                                        <x-agro.action-button icon="archive-box-x-mark" variant="warning" wire:click="archive({{ $grape->id }})" wire:loading.attr="disabled" wire:confirm="¿Archivar esta partida?" title="Archivar" />
                                     </div>
                                 @endif
                             </div>

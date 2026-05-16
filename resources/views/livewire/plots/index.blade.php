@@ -299,36 +299,21 @@
 
                         {{-- Footer: acciones --}}
                         <x-slot:footer>
-                            @php
-                                $btnBase    = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
-                                $btnDanger  = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors';
-                                $btnSuccess = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-agro-600 hover:bg-agro-50 transition-colors';
-                            @endphp
                             <div class="flex items-center justify-between">
                                 {{-- Izquierda: navegar --}}
                                 <div class="flex items-center gap-0.5">
-                                    <a href="{{ route('plots.show', $plot) }}" class="{{ $btnBase }}" title="Ver parcela">
-                                        <flux:icon icon="eye" class="size-4" />
-                                    </a>
+                                    <x-agro.action-button variant="view" href="{{ route('plots.show', $plot) }}" title="Ver parcela" />
                                     @if ($hasMap)
-                                        <a href="{{ route('map', ['id' => $plot->id, 'return' => 'plots']) }}" class="{{ $btnBase }}" title="Ver mapa">
-                                            <flux:icon icon="map" class="size-4" />
-                                        </a>
+                                        <x-agro.action-button variant="map" href="{{ route('map', ['id' => $plot->id, 'return' => 'plots']) }}" title="Ver mapa" />
                                     @elseif($plot->sigpacCodes->isNotEmpty())
                                         @can('update', $plot)
-                                            <button wire:click="generateMap(null, {{ $plot->id }})" class="{{ $btnBase }}" title="Generar mapa desde SIGPAC">
-                                                <flux:icon icon="cpu-chip" class="size-4" />
-                                            </button>
+                                            <x-agro.action-button icon="cpu-chip" variant="default" wire:click="generateMap(null, {{ $plot->id }})" title="Generar mapa desde SIGPAC" />
                                         @endcan
                                     @endif
                                     @can('update', $plot)
-                                        <a href="{{ route('plots.plantings.create', $plot) }}" class="{{ $btnBase }}" title="Nueva plantación">
-                                            <flux:icon icon="scissors" class="size-4" />
-                                        </a>
+                                        <x-agro.action-button icon="scissors" variant="default" href="{{ route('plots.plantings.create', $plot) }}" title="Nueva plantación" />
                                     @endcan
-                                    <button wire:click="selectAuditPlot({{ $plot->id }})" class="{{ $btnBase }}" title="Historial de cambios">
-                                        <flux:icon icon="list-bullet" class="size-4" />
-                                    </button>
+                                    <x-agro.action-button icon="list-bullet" variant="default" wire:click="selectAuditPlot({{ $plot->id }})" title="Historial de cambios" />
                                 </div>
 
                                 {{-- Separador --}}
@@ -337,17 +322,11 @@
                                 {{-- Derecha: gestionar --}}
                                 <div class="flex items-center gap-0.5">
                                     @can('update', $plot)
-                                        <a href="{{ route('plots.edit', $plot) }}" class="{{ $btnBase }}" title="Editar">
-                                            <flux:icon icon="pencil-square" class="size-4" />
-                                        </a>
+                                        <x-agro.action-button variant="edit" href="{{ route('plots.edit', $plot) }}" title="Editar" />
                                         @if ($plot->active)
-                                            <button wire:click="toggleActive({{ $plot->id }})" class="{{ $btnDanger }}" title="Desactivar">
-                                                <flux:icon icon="no-symbol" class="size-4" />
-                                            </button>
+                                            <x-agro.action-button variant="deactivate" wire:click="toggleActive({{ $plot->id }})" title="Desactivar" />
                                         @else
-                                            <button wire:click="toggleActive({{ $plot->id }})" class="{{ $btnSuccess }}" title="Activar">
-                                                <flux:icon icon="check-circle" class="size-4" />
-                                            </button>
+                                            <x-agro.action-button variant="activate" wire:click="toggleActive({{ $plot->id }})" title="Activar" />
                                         @endif
                                     @endcan
                                 </div>

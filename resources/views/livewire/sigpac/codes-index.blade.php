@@ -152,7 +152,6 @@
         >
             @foreach($codes as $i => $code)
                 @php
-                    $btnBase    = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
                     $firstPlot  = $code->plots->first();
                     $hasGeometry = false;
                     $multipartId = null;
@@ -239,12 +238,8 @@
                     <x-slot:footer>
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-1">
-                                <a href="{{ route('plots.index', ['sigpac_code' => $code->id]) }}" class="{{ $btnBase }}" title="Ver parcelas">
-                                    <flux:icon icon="eye" class="size-4" />
-                                </a>
-                                <a href="{{ route('sigpac.codes.edit', $code->id) }}" class="{{ $btnBase }}" title="Editar">
-                                    <flux:icon icon="pencil-square" class="size-4" />
-                                </a>
+                                <x-agro.action-button variant="view" href="{{ route('plots.index', ['sigpac_code' => $code->id]) }}" title="Ver parcelas" />
+                                <x-agro.action-button variant="edit" href="{{ route('sigpac.codes.edit', $code->id) }}" title="Editar" />
                             </div>
 
                             @if($firstPlot)

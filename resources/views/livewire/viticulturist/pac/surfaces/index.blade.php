@@ -90,11 +90,14 @@
                         </div>
 
                         <x-slot:footer>
-                            @php $btnBase = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors'; @endphp
                             <div class="flex items-center justify-end gap-0.5">
-                                <a href="{{ route('plots.edit', $plot) }}" wire:navigate class="{{ $btnBase }}" title="Editar">
-                                    <flux:icon icon="pencil" class="size-4" />
-                                </a>
+                                <x-agro.action-button
+                                    icon="pencil"
+                                    variant="edit"
+                                    href="{{ route('plots.edit', $plot) }}"
+                                    wire:navigate
+                                    title="Editar"
+                                />
                             </div>
                         </x-slot:footer>
                     </x-agro.card>

@@ -68,11 +68,6 @@
         @if($activities->count() > 0)
             <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                 @foreach($activities as $i => $activity)
-                    @php
-                        $btnBase    = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
-                        $btnDanger  = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors';
-                        $btnDisabled = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-300 cursor-not-allowed';
-                    @endphp
 
                     <x-agro.card
                         wire:key="activity-{{ $activity->id }}"
@@ -254,29 +249,31 @@
                         <x-slot:footer>
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-1">
-                                    <a href="{{ roleRoute('viticulturist.plots.index') }}" class="{{ $btnBase }}" title="Ver parcelas">
-                                        <flux:icon icon="map" class="size-4" />
-                                    </a>
+                                    <x-agro.action-button
+                                        variant="map"
+                                        href="{{ roleRoute('viticulturist.plots.index') }}"
+                                        title="Ver parcelas"
+                                    />
                                 </div>
                                 <div class="flex items-center gap-1">
                                     @if(!$activity->is_locked)
                                         @can('update', $activity)
-                                            <a href="{{ route($editRouteName, $activity->id) }}" class="{{ $btnBase }}" title="Editar">
-                                                <flux:icon icon="pencil-square" class="size-4" />
-                                            </a>
+                                            <x-agro.action-button
+                                                variant="edit"
+                                                href="{{ route($editRouteName, $activity->id) }}"
+                                                title="Editar"
+                                            />
                                         @endcan
                                         @can('delete', $activity)
-                                            <button
+                                            <x-agro.action-button
+                                                variant="delete"
                                                 wire:click="delete({{ $activity->id }})"
                                                 wire:confirm="¿Estás seguro de eliminar esta actividad? Esta acción no se puede deshacer."
-                                                class="{{ $btnDanger }}"
                                                 title="Eliminar"
-                                            >
-                                                <flux:icon icon="trash" class="size-4" />
-                                            </button>
+                                            />
                                         @endcan
                                     @else
-                                        <span class="{{ $btnDisabled }}" title="Actividad bloqueada — cumplimiento PAC">
+                                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-300 cursor-not-allowed" title="Actividad bloqueada — cumplimiento PAC">
                                             <flux:icon icon="lock-closed" class="size-4" />
                                         </span>
                                     @endif

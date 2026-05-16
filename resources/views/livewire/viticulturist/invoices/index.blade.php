@@ -93,8 +93,6 @@
         >
             @foreach($invoices as $i => $invoice)
                 @php
-                    $btnBase = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
-
                     [$deliveryLabel, $deliveryColor, $deliveryIcon] = match($invoice->delivery_status) {
                         'pending'    => ['Pendiente',   'yellow', 'clock'],
                         'in_transit' => ['En tránsito', 'blue',   'truck'],
@@ -210,88 +208,98 @@
                         <div class="flex items-center justify-end gap-1 flex-wrap">
 
                                 {{-- Ver --}}
-                                <a href="{{ roleRoute('viticulturist.invoices.show', $invoice->id) }}"
-                                   class="{{ $btnBase }}" title="Ver factura">
-                                    <flux:icon icon="eye" class="size-4" />
-                                </a>
+                                <x-agro.action-button
+                                    variant="view"
+                                    href="{{ roleRoute('viticulturist.invoices.show', $invoice->id) }}"
+                                    title="Ver factura"
+                                />
 
                                 {{-- Editar (no canceladas ni entregadas) --}}
                                 @if($invoice->isEditable())
-                                    <a href="{{ roleRoute('viticulturist.invoices.edit', $invoice->id) }}"
-                                       class="{{ $btnBase }}" title="Editar">
-                                        <flux:icon icon="pencil-square" class="size-4" />
-                                    </a>
+                                    <x-agro.action-button
+                                        variant="edit"
+                                        href="{{ roleRoute('viticulturist.invoices.edit', $invoice->id) }}"
+                                        title="Editar"
+                                    />
                                 @endif
 
                                 {{-- PDF Albarán --}}
                                 @if($invoice->delivery_note_code)
-                                    <a href="{{ roleRoute('viticulturist.invoices.delivery-note-pdf', $invoice->id) }}"
-                                       class="{{ $btnBase }}" title="Descargar albarán PDF" target="_blank">
-                                        <flux:icon icon="document-arrow-down" class="size-4" />
-                                    </a>
+                                    <x-agro.action-button
+                                        icon="document-arrow-down"
+                                        variant="default"
+                                        href="{{ roleRoute('viticulturist.invoices.delivery-note-pdf', $invoice->id) }}"
+                                        title="Descargar albarán PDF"
+                                    />
                                 @endif
 
                                 {{-- PDF Factura --}}
                                 @if($invoice->invoice_number)
-                                    <a href="{{ roleRoute('viticulturist.invoices.pdf', $invoice->id) }}"
-                                       class="{{ $btnBase }}" title="Descargar factura PDF" target="_blank">
-                                        <flux:icon icon="document-text" class="size-4" />
-                                    </a>
+                                    <x-agro.action-button
+                                        icon="document-text"
+                                        variant="default"
+                                        href="{{ roleRoute('viticulturist.invoices.pdf', $invoice->id) }}"
+                                        title="Descargar factura PDF"
+                                    />
                                 @endif
 
                                 {{-- Emitir (solo draft) --}}
                                 @if($invoice->status === 'draft')
-                                    <button wire:click="openEmitirModal({{ $invoice->id }})"
-                                            class="{{ $btnBase }} text-agro-500 hover:text-agro-700 hover:bg-agro-50"
-                                            title="Emitir factura">
-                                        <flux:icon icon="paper-airplane" class="size-4" />
-                                    </button>
+                                    <x-agro.action-button
+                                        icon="paper-airplane"
+                                        variant="primary"
+                                        wire:click="openEmitirModal({{ $invoice->id }})"
+                                        title="Emitir factura"
+                                    />
                                 @endif
 
                                 {{-- Marcar pagada --}}
                                 @if($invoice->status !== 'cancelled' && $invoice->payment_status !== 'paid')
-                                    <button wire:click="markPaid({{ $invoice->id }})"
-                                            wire:confirm="¿Marcar esta factura como pagada?"
-                                            class="{{ $btnBase }} text-green-500 hover:text-green-700 hover:bg-green-50"
-                                            title="Marcar como pagada">
-                                        <flux:icon icon="banknotes" class="size-4" />
-                                    </button>
+                                    <x-agro.action-button
+                                        icon="banknotes"
+                                        variant="success"
+                                        wire:click="markPaid({{ $invoice->id }})"
+                                        wire:confirm="¿Marcar esta factura como pagada?"
+                                        title="Marcar como pagada"
+                                    />
                                 @endif
 
                                 {{-- Enviar por email (emitidas con email) --}}
                                 @if($invoice->status === 'sent' && ($invoice->billing_email ?: $invoice->client?->email))
-                                    <button wire:click="sendEmail({{ $invoice->id }})"
-                                            wire:loading.attr="disabled"
-                                            wire:target="sendEmail({{ $invoice->id }})"
-                                            class="{{ $btnBase }} text-blue-500 hover:text-blue-700 hover:bg-blue-50"
-                                            title="Enviar por email">
-                                        <flux:icon icon="envelope" class="size-4" />
-                                    </button>
+                                    <x-agro.action-button
+                                        icon="envelope"
+                                        variant="primary"
+                                        wire:click="sendEmail({{ $invoice->id }})"
+                                        wire:loading.attr="disabled"
+                                        title="Enviar por email"
+                                    />
                                 @endif
 
                                 {{-- Rectificativa (facturas emitidas sin rectificativa previa) --}}
                                 @if($invoice->status === 'sent' && !$invoice->corrective && $invoice->correctives_count === 0)
-                                    <button wire:click="openCorrectiveModal({{ $invoice->id }})"
-                                            class="{{ $btnBase }} text-orange-400 hover:text-orange-600 hover:bg-orange-50"
-                                            title="Crear factura rectificativa">
-                                        <flux:icon icon="arrow-uturn-left" class="size-4" />
-                                    </button>
+                                    <x-agro.action-button
+                                        variant="restore"
+                                        icon="arrow-uturn-left"
+                                        wire:click="openCorrectiveModal({{ $invoice->id }})"
+                                        title="Crear factura rectificativa"
+                                    />
                                 @endif
 
                                 {{-- Cancelar (solo draft) --}}
                                 @if($invoice->status === 'draft')
-                                    <button wire:click="cancel({{ $invoice->id }})"
-                                            wire:confirm="¿Cancelar esta factura? El stock quedará liberado."
-                                            class="{{ $btnBase }} text-red-400 hover:text-red-600 hover:bg-red-50"
-                                            title="Cancelar factura">
-                                        <flux:icon icon="x-circle" class="size-4" />
-                                    </button>
-                                    <button wire:click="delete({{ $invoice->id }})"
-                                            wire:confirm="¿Eliminar permanentemente esta factura? Esta acción no se puede deshacer."
-                                            class="{{ $btnBase }} text-red-600 hover:text-red-800 hover:bg-red-50"
-                                            title="Eliminar factura">
-                                        <flux:icon icon="trash" class="size-4" />
-                                    </button>
+                                    <x-agro.action-button
+                                        icon="x-circle"
+                                        variant="warning"
+                                        wire:click="cancel({{ $invoice->id }})"
+                                        wire:confirm="¿Cancelar esta factura? El stock quedará liberado."
+                                        title="Cancelar factura"
+                                    />
+                                    <x-agro.action-button
+                                        variant="delete"
+                                        wire:click="delete({{ $invoice->id }})"
+                                        wire:confirm="¿Eliminar permanentemente esta factura? Esta acción no se puede deshacer."
+                                        title="Eliminar factura"
+                                    />
                                 @endif
 
                             </div>

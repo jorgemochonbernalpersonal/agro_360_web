@@ -184,11 +184,6 @@
             wire:loading.class="opacity-60 pointer-events-none"
             wire:target="switchTab, search, status, year, clearFilters"
         >
-            @php
-                $btnBase    = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
-                $btnDanger  = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors';
-                $btnSuccess = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-agro-600 hover:bg-agro-50 transition-colors';
-            @endphp
             @foreach($plantings as $i => $planting)
 
                 <x-agro.card
@@ -335,48 +330,23 @@
                         <div class="flex items-center justify-between">
                             {{-- Left: navegar --}}
                             <div class="flex items-center gap-1">
-                                <a href="{{ route('plots.show', $planting->plot) }}"
-                                   class="{{ $btnBase }}"
-                                   title="Ver parcela">
-                                    <flux:icon icon="map" class="size-4" />
-                                </a>
+                                <x-agro.action-button variant="map" href="{{ route('plots.show', $planting->plot) }}" title="Ver parcela" />
                                 @can('update', $planting->plot)
-                                    <a href="{{ route('plots.plantings.edit', $planting) }}"
-                                       class="{{ $btnBase }}"
-                                       title="Editar plantación">
-                                        <flux:icon icon="pencil-square" class="size-4" />
-                                    </a>
+                                    <x-agro.action-button variant="edit" href="{{ route('plots.plantings.edit', $planting) }}" title="Editar plantación" />
                                 @endcan
                                 @if(auth()->user()->hasViticulturistAccess())
-                                <a href="{{ roleRoute('phenology.index', ['filter_planting_id' => $planting->id]) }}"
-                                   class="{{ $btnBase }}"
-                                   title="Ver fenología">
-                                    <flux:icon icon="sun" class="size-4" />
-                                </a>
-                                <a href="{{ roleRoute('phenology.create', ['planting_id' => $planting->id]) }}"
-                                   class="{{ $btnBase }}"
-                                   title="Registrar estadio fenológico">
-                                    <flux:icon icon="plus-circle" class="size-4" />
-                                </a>
+                                <x-agro.action-button icon="sun" variant="default" href="{{ roleRoute('phenology.index', ['filter_planting_id' => $planting->id]) }}" title="Ver fenología" />
+                                <x-agro.action-button icon="plus-circle" variant="default" href="{{ roleRoute('phenology.create', ['planting_id' => $planting->id]) }}" title="Registrar estadio fenológico" />
                                 @endif
                             </div>
 
                             {{-- Right: toggle activo --}}
                             @can('update', $planting->plot)
-                                <button
-                                    wire:click="toggleActive({{ $planting->id }})"
-                                    wire:loading.attr="disabled"
-                                    wire:target="toggleActive({{ $planting->id }})"
-                                    class="{{ $planting->active ? $btnDanger : $btnSuccess }}"
-                                    title="{{ $planting->active ? 'Desactivar plantación' : 'Activar plantación' }}"
-                                >
-                                    <span wire:loading.remove wire:target="toggleActive({{ $planting->id }})">
-                                        <flux:icon icon="{{ $planting->active ? 'no-symbol' : 'check-circle' }}" class="size-4" />
-                                    </span>
-                                    <span wire:loading wire:target="toggleActive({{ $planting->id }})">
-                                        <flux:icon icon="arrow-path" class="animate-spin size-4" />
-                                    </span>
-                                </button>
+                                @if($planting->active)
+                                    <x-agro.action-button variant="deactivate" wire:click="toggleActive({{ $planting->id }})" wire:loading.attr="disabled" wire:target="toggleActive({{ $planting->id }})" title="Desactivar plantación" />
+                                @else
+                                    <x-agro.action-button variant="activate" wire:click="toggleActive({{ $planting->id }})" wire:loading.attr="disabled" wire:target="toggleActive({{ $planting->id }})" title="Activar plantación" />
+                                @endif
                             @endcan
                         </div>
                     </x-slot:footer>

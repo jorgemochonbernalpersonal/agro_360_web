@@ -109,7 +109,6 @@
         >
             @foreach($rows as $i => $row)
                 @php
-                    $btnBase = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
                     $statusConfig = [
                         'ok'            => ['color' => 'green',  'label' => 'Coincide'],
                         'discrepancy'   => ['color' => 'yellow', 'label' => 'Diferencia'],
@@ -336,15 +335,19 @@
                             </span>
                             <div class="flex items-center gap-1">
                                 @if($row['planting_id'])
-                                    <a href="{{ roleRoute('viticulturist.harvests.show', ['planting' => $row['planting_id'], 'vintage' => $vintageYear]) }}"
-                                       wire:navigate
-                                       class="{{ $btnBase }}" title="Ver detalle">
-                                        <flux:icon icon="eye" class="size-4" />
-                                    </a>
+                                    <x-agro.action-button
+                                        variant="view"
+                                        href="{{ roleRoute('viticulturist.harvests.show', ['planting' => $row['planting_id'], 'vintage' => $vintageYear]) }}"
+                                        wire:navigate
+                                        title="Ver detalle"
+                                    />
                                 @endif
-                                <a href="{{ roleRoute('viticulturist.digital-notebook.harvest.create') }}" class="{{ $btnBase }}" title="Nuevo registro en el cuaderno">
-                                    <flux:icon icon="document-plus" class="size-4" />
-                                </a>
+                                <x-agro.action-button
+                                    icon="document-plus"
+                                    variant="default"
+                                    href="{{ roleRoute('viticulturist.digital-notebook.harvest.create') }}"
+                                    title="Nuevo registro en el cuaderno"
+                                />
                             </div>
                         </div>
                     </x-slot:footer>

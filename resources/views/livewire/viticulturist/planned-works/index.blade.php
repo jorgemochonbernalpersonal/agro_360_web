@@ -235,53 +235,46 @@
                             <div class="flex items-center justify-end gap-0.5">
                                 @if (in_array($entry->status, ['pendiente', 'en_progreso']))
                                     @if ($entry->status === 'pendiente')
-                                        <button
+                                        <x-agro.action-button
+                                            variant="primary"
+                                            icon="play"
                                             wire:click="startWork({{ $entry->id }})"
                                             title="Iniciar"
-                                            class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
-                                        >
-                                            <flux:icon icon="play" class="size-4" />
-                                        </button>
+                                        />
                                     @endif
-                                    <button
+                                    <x-agro.action-button
+                                        variant="activate"
                                         wire:click="completeWork({{ $entry->id }})"
                                         wire:confirm="¿Marcar como completado?"
                                         title="Completar"
-                                        class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-green-600 hover:bg-green-50 transition-colors"
-                                    >
-                                        <flux:icon icon="check-circle" class="size-4" />
-                                    </button>
-                                    <a href="{{ roleRoute('viticulturist.planned-works.edit', $entry) }}"
-                                       title="Editar"
-                                       class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
-                                        <flux:icon icon="pencil-square" class="size-4" />
-                                    </a>
-                                    <button
+                                    />
+                                    <x-agro.action-button
+                                        variant="edit"
+                                        href="{{ roleRoute('viticulturist.planned-works.edit', $entry) }}"
+                                        title="Editar"
+                                    />
+                                    <x-agro.action-button
+                                        variant="warning"
+                                        icon="x-circle"
                                         wire:click="cancelWork({{ $entry->id }})"
                                         wire:confirm="¿Cancelar este trabajo?"
                                         title="Cancelar"
-                                        class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-amber-600 hover:bg-amber-50 transition-colors"
-                                    >
-                                        <flux:icon icon="x-circle" class="size-4" />
-                                    </button>
+                                    />
                                 @elseif ($entry->status === 'completada' || $entry->status === 'cancelada')
-                                    <button
+                                    <x-agro.action-button
+                                        variant="restore"
+                                        icon="arrow-path"
                                         wire:click="reopen({{ $entry->id }})"
                                         wire:confirm="¿Reabrir este trabajo?"
                                         title="Reabrir"
-                                        class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
-                                    >
-                                        <flux:icon icon="arrow-path" class="size-4" />
-                                    </button>
+                                    />
                                 @endif
-                                <button
+                                <x-agro.action-button
+                                    variant="delete"
                                     wire:click="delete({{ $entry->id }})"
                                     wire:confirm="¿Eliminar este trabajo? Esta acción no se puede deshacer."
                                     title="Eliminar"
-                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors"
-                                >
-                                    <flux:icon icon="trash" class="size-4" />
-                                </button>
+                                />
                             </div>
                         </x-slot:footer>
                     </x-agro.card>

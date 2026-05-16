@@ -114,8 +114,6 @@
                         $year        = $reception->batch?->vintage_year;
                         $delay       = min($loop->index * 50, 300);
                         $isCancelled = $reception->status === 'cancelled';
-                        $btnBase     = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
-                        $btnDanger   = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors';
                     @endphp
                     <x-agro.card
                         class="animate-fade-in-up flex flex-col hover:-translate-y-1 {{ $isCancelled ? 'opacity-60' : '' }}"
@@ -234,14 +232,7 @@
                                 {{-- Grupo izquierdo: anular --}}
                                 <div class="flex items-center gap-0.5">
                                     @if(!$isCancelled)
-                                        <button
-                                            wire:click="cancelReception({{ $reception->id }})"
-                                            wire:confirm="¿Anular esta recepción? Esta acción no se puede deshacer."
-                                            class="{{ $btnDanger }}"
-                                            title="Anular recepción"
-                                        >
-                                            <flux:icon icon="x-circle" class="size-4" />
-                                        </button>
+                                        <x-agro.action-button icon="x-circle" variant="danger" wire:click="cancelReception({{ $reception->id }})" wire:confirm="¿Anular esta recepción? Esta acción no se puede deshacer." title="Anular recepción" />
                                     @endif
                                 </div>
 
@@ -250,13 +241,9 @@
 
                                 {{-- Grupo derecho: ver + editar --}}
                                 <div class="flex items-center gap-0.5">
-                                    <a href="{{ roleRoute('grape-reception.show', $reception) }}" wire:navigate class="{{ $btnBase }}" title="Ver detalle">
-                                        <flux:icon icon="eye" class="size-4" />
-                                    </a>
+                                    <x-agro.action-button variant="view" href="{{ roleRoute('grape-reception.show', $reception) }}" wire:navigate title="Ver detalle" />
                                     @if(!$isCancelled)
-                                        <a href="{{ roleRoute('grape-reception.edit', $reception) }}" wire:navigate class="{{ $btnBase }}" title="Editar recepción">
-                                            <flux:icon icon="pencil-square" class="size-4" />
-                                        </a>
+                                        <x-agro.action-button variant="edit" href="{{ roleRoute('grape-reception.edit', $reception) }}" wire:navigate title="Editar recepción" />
                                     @endif
                                 </div>
                             </div>

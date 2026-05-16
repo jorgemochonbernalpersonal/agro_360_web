@@ -136,20 +136,9 @@
 
                         <x-slot:footer>
                             <div class="flex items-center justify-end gap-0.5">
-                                <a href="{{ roleRoute('bottling.edit', $bottling) }}"
-                                   title="Editar embotellado"
-                                   class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
-                                    <flux:icon icon="pencil-square" class="size-4" />
-                                </a>
+                                <x-agro.action-button variant="edit" href="{{ roleRoute('bottling.edit', $bottling) }}" title="Editar embotellado" />
                                 @if(! $bottling->product_lot_id)
-                                    <button
-                                        wire:click="delete({{ $bottling->id }})"
-                                        wire:confirm="¿Eliminar este registro de embotellado?"
-                                        wire:loading.attr="disabled"
-                                        title="Eliminar embotellado"
-                                        class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors">
-                                        <flux:icon icon="trash" class="size-4" />
-                                    </button>
+                                    <x-agro.action-button variant="delete" wire:click="delete({{ $bottling->id }})" wire:confirm="¿Eliminar este registro de embotellado?" wire:loading.attr="disabled" title="Eliminar embotellado" />
                                 @endif
                             </div>
                         </x-slot:footer>

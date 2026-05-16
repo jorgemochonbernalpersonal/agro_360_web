@@ -112,25 +112,10 @@
 
                     <x-slot:footer>
                         <div class="flex items-center justify-end gap-1">
-                            <a href="{{ roleRoute('label-batches.edit', $batch) }}" wire:navigate title="Editar">
-                                <button class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
-                                    <flux:icon icon="pencil-square" class="size-4" />
-                                </button>
-                            </a>
-                            <a href="{{ roleRoute('label-batches.waste.index', $batch) }}" wire:navigate title="Mermas">
-                                <button class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors">
-                                    <flux:icon icon="exclamation-triangle" class="size-4" />
-                                </button>
-                            </a>
+                            <x-agro.action-button variant="edit" href="{{ roleRoute('label-batches.edit', $batch) }}" wire:navigate title="Editar" />
+                            <x-agro.action-button icon="exclamation-triangle" variant="danger" href="{{ roleRoute('label-batches.waste.index', $batch) }}" wire:navigate title="Mermas" />
                             @if($batch->canDelete())
-                                <button
-                                    wire:click="delete({{ $batch->id }})"
-                                    wire:confirm="¿Eliminar este lote de etiquetas?"
-                                    wire:loading.attr="disabled"
-                                    title="Eliminar"
-                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-600 hover:bg-red-50 transition-colors">
-                                    <flux:icon icon="trash" class="size-4" />
-                                </button>
+                                <x-agro.action-button variant="delete" wire:click="delete({{ $batch->id }})" wire:confirm="¿Eliminar este lote de etiquetas?" wire:loading.attr="disabled" title="Eliminar" />
                             @endif
                         </div>
                     </x-slot:footer>

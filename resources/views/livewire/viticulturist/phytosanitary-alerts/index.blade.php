@@ -205,35 +205,33 @@
                         {{-- Footer acciones --}}
                         <x-slot:footer>
                             <div class="flex items-center justify-end gap-0.5">
-                                <a href="{{ roleRoute('viticulturist.phytosanitary-alerts.edit', $entry) }}"
-                                   title="Editar"
-                                   class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
-                                    <flux:icon icon="pencil-square" class="size-4" />
-                                </a>
+                                <x-agro.action-button
+                                    variant="edit"
+                                    href="{{ roleRoute('viticulturist.phytosanitary-alerts.edit', $entry) }}"
+                                    title="Editar"
+                                />
                                 @if ($currentTab === 'active')
-                                    <button
+                                    <x-agro.action-button
+                                        variant="archive"
                                         wire:click="archive({{ $entry->id }})"
                                         wire:confirm="¿Archivar esta alerta?"
                                         title="Archivar"
-                                        class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-amber-600 hover:bg-amber-50 transition-colors">
-                                        <flux:icon icon="archive-box" class="size-4" />
-                                    </button>
+                                    />
                                 @else
-                                    <button
+                                    <x-agro.action-button
+                                        variant="restore"
+                                        icon="arrow-path"
                                         wire:click="unarchive({{ $entry->id }})"
                                         wire:confirm="¿Restaurar esta alerta?"
                                         title="Restaurar"
-                                        class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-agro-600 hover:bg-agro-50 transition-colors">
-                                        <flux:icon icon="arrow-path" class="size-4" />
-                                    </button>
+                                    />
                                 @endif
-                                <button
+                                <x-agro.action-button
+                                    variant="delete"
                                     wire:click="delete({{ $entry->id }})"
                                     wire:confirm="¿Eliminar esta alerta? Esta acción no se puede deshacer."
                                     title="Eliminar"
-                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors">
-                                    <flux:icon icon="trash" class="size-4" />
-                                </button>
+                                />
                             </div>
                         </x-slot:footer>
                     </x-agro.card>

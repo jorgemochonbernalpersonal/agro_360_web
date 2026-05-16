@@ -96,11 +96,6 @@
             wire:target="switchTab, search, typeFilter, clearFilters"
         >
             @foreach($machinery as $i => $item)
-                @php
-                    $btnBase    = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
-                    $btnDanger  = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors';
-                    $btnSuccess = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-agro-600 hover:bg-agro-50 transition-colors';
-                @endphp
 
                 <x-agro.card
                     wire:key="machinery-{{ $item->id }}"
@@ -155,25 +150,27 @@
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-1">
                                 @can('view', $item)
-                                    <a href="{{ roleRoute('viticulturist.machinery.show', $item) }}" class="{{ $btnBase }}" title="Ver maquinaria">
-                                        <flux:icon icon="eye" class="size-4" />
-                                    </a>
+                                    <x-agro.action-button
+                                        variant="view"
+                                        href="{{ roleRoute('viticulturist.machinery.show', $item) }}"
+                                        title="Ver maquinaria"
+                                    />
                                 @endcan
                                 @can('update', $item)
-                                    <a href="{{ roleRoute('viticulturist.machinery.edit', $item) }}" class="{{ $btnBase }}" title="Editar">
-                                        <flux:icon icon="pencil-square" class="size-4" />
-                                    </a>
+                                    <x-agro.action-button
+                                        variant="edit"
+                                        href="{{ roleRoute('viticulturist.machinery.edit', $item) }}"
+                                        title="Editar"
+                                    />
                                 @endcan
                                 @can('delete', $item)
                                     @if($item->activities_count === 0)
-                                        <button
+                                        <x-agro.action-button
+                                            variant="delete"
                                             wire:click="delete({{ $item->id }})"
                                             wire:confirm="¿Eliminar esta maquinaria? Esta acción no se puede deshacer."
-                                            class="{{ $btnDanger }}"
                                             title="Eliminar maquinaria"
-                                        >
-                                            <flux:icon icon="trash" class="size-4" />
-                                        </button>
+                                        />
                                     @endif
                                 @endcan
                             </div>
@@ -183,7 +180,7 @@
                                     wire:click="toggleActive({{ $item->id }})"
                                     wire:loading.attr="disabled"
                                     wire:target="toggleActive({{ $item->id }})"
-                                    class="{{ $item->active ? $btnDanger : $btnSuccess }}"
+                                    class="{{ $item->active ? 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors' : 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-agro-600 hover:bg-agro-50 transition-colors' }}"
                                     title="{{ $item->active ? 'Desactivar' : 'Activar' }}"
                                 >
                                     <span wire:loading.remove wire:target="toggleActive({{ $item->id }})">

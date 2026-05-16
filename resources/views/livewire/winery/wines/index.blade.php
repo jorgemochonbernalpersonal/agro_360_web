@@ -71,8 +71,6 @@
                             default       => 'red',
                         };
 
-                        $btnBase   = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
-                        $btnDanger = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors';
                     @endphp
 
                     <x-agro.card
@@ -137,25 +135,14 @@
                         <x-slot:footer>
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-0.5">
-                                    <a href="{{ roleRoute('wines.show', $wine) }}" wire:navigate
-                                        class="{{ $btnBase }}" title="Ver detalle">
-                                        <flux:icon icon="eye" class="size-4" />
-                                    </a>
-                                    <a href="{{ roleRoute('wines.edit', $wine) }}" wire:navigate
-                                        class="{{ $btnBase }}" title="Editar">
-                                        <flux:icon icon="pencil-square" class="size-4" />
-                                    </a>
+                                    <x-agro.action-button variant="view" href="{{ roleRoute('wines.show', $wine) }}" wire:navigate title="Ver detalle" />
+                                    <x-agro.action-button variant="edit" href="{{ roleRoute('wines.edit', $wine) }}" wire:navigate title="Editar" />
                                 </div>
 
                                 <div class="w-px h-5 bg-zinc-200 mx-1"></div>
 
                                 <div class="flex items-center gap-0.5">
-                                    <button wire:click="delete({{ $wine->id }})"
-                                        wire:loading.attr="disabled"
-                                        wire:confirm="¿Eliminar este vino y todas sus operaciones?"
-                                        class="{{ $btnDanger }}" title="Eliminar">
-                                        <flux:icon icon="trash" class="size-4" />
-                                    </button>
+                                    <x-agro.action-button variant="delete" wire:click="delete({{ $wine->id }})" wire:loading.attr="disabled" wire:confirm="¿Eliminar este vino y todas sus operaciones?" title="Eliminar" />
                                 </div>
                             </div>
                         </x-slot:footer>

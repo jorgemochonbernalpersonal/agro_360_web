@@ -169,29 +169,30 @@
                         <x-slot:footer>
                             <div class="flex items-center justify-end gap-0.5">
                                 @if($currentTab === 'active')
-                                    <a href="{{ roleRoute('viticulturist.container-returns.edit', $entry) }}"
-                                       class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors"
-                                       title="Editar">
-                                        <flux:icon icon="pencil-square" class="size-4" />
-                                    </a>
-                                    <button wire:click="archive({{ $entry->id }})"
-                                            wire:confirm="¿Archivar este registro?"
-                                            class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-amber-600 hover:bg-amber-50 transition-colors"
-                                            title="Archivar">
-                                        <flux:icon icon="archive-box" class="size-4" />
-                                    </button>
+                                    <x-agro.action-button
+                                        variant="edit"
+                                        href="{{ roleRoute('viticulturist.container-returns.edit', $entry) }}"
+                                        title="Editar"
+                                    />
+                                    <x-agro.action-button
+                                        variant="archive"
+                                        wire:click="archive({{ $entry->id }})"
+                                        wire:confirm="¿Archivar este registro?"
+                                        title="Archivar"
+                                    />
                                 @else
-                                    <button wire:click="unarchive({{ $entry->id }})"
-                                            class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-agro-600 hover:bg-agro-50 transition-colors"
-                                            title="Restaurar">
-                                        <flux:icon icon="arrow-uturn-left" class="size-4" />
-                                    </button>
-                                    <button wire:click="delete({{ $entry->id }})"
-                                            wire:confirm="¿Eliminar este registro permanentemente?"
-                                            class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-600 hover:bg-red-50 transition-colors"
-                                            title="Eliminar">
-                                        <flux:icon icon="trash" class="size-4" />
-                                    </button>
+                                    <x-agro.action-button
+                                        variant="restore"
+                                        icon="arrow-uturn-left"
+                                        wire:click="unarchive({{ $entry->id }})"
+                                        title="Restaurar"
+                                    />
+                                    <x-agro.action-button
+                                        variant="delete"
+                                        wire:click="delete({{ $entry->id }})"
+                                        wire:confirm="¿Eliminar este registro permanentemente?"
+                                        title="Eliminar"
+                                    />
                                 @endif
                             </div>
                         </x-slot:footer>

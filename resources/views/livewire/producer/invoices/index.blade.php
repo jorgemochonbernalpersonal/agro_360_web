@@ -156,41 +156,19 @@
 
                                 {{-- Acciones --}}
                                 <td class="px-4 py-3 whitespace-nowrap text-right">
-                                    @php $btnBase = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors'; @endphp
                                     <div class="flex items-center justify-end gap-1">
 
                                         {{-- Editar --}}
-                                        <a
-                                            href="{{ route('producer.invoices.mixed.edit', $invoice->id) }}"
-                                            wire:navigate
-                                            class="{{ $btnBase }}"
-                                            title="Editar albarán"
-                                        >
-                                            <flux:icon icon="pencil-square" class="size-4" />
-                                        </a>
+                                        <x-agro.action-button variant="edit" href="{{ route('producer.invoices.mixed.edit', $invoice->id) }}" wire:navigate title="Editar albarán" />
 
                                         {{-- PDF Albarán --}}
                                         @if($invoice->delivery_note_code)
-                                            <a
-                                                href="{{ route('producer.invoices.mixed.delivery-note-pdf', $invoice->id) }}"
-                                                class="{{ $btnBase }}"
-                                                title="Descargar albarán PDF"
-                                                target="_blank"
-                                            >
-                                                <flux:icon icon="document-arrow-down" class="size-4" />
-                                            </a>
+                                            <x-agro.action-button icon="document-arrow-down" variant="default" href="{{ route('producer.invoices.mixed.delivery-note-pdf', $invoice->id) }}" target="_blank" title="Descargar albarán PDF" />
                                         @endif
 
                                         {{-- PDF Factura --}}
                                         @if($invoice->invoice_number)
-                                            <a
-                                                href="{{ route('producer.invoices.mixed.pdf', $invoice->id) }}"
-                                                class="{{ $btnBase }} text-blue-400 hover:text-blue-600 hover:bg-blue-50"
-                                                title="Descargar factura PDF"
-                                                target="_blank"
-                                            >
-                                                <flux:icon icon="document-text" class="size-4" />
-                                            </a>
+                                            <x-agro.action-button icon="document-text" variant="success" href="{{ route('producer.invoices.mixed.pdf', $invoice->id) }}" target="_blank" title="Descargar factura PDF" />
                                         @endif
 
                                     </div>

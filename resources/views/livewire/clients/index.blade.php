@@ -153,9 +153,6 @@
         >
             @foreach($clients as $i => $client)
                 @php
-                    $btnBase    = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
-                    $btnDanger  = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors';
-                    $btnSuccess = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-agro-600 hover:bg-agro-50 transition-colors';
                     $isCompany  = $client->client_type === 'company';
                     $defaultAddress = $client->addresses?->where('is_default', true)->first()
                         ?? $client->addresses?->first();
@@ -226,19 +223,14 @@
                     <x-slot:footer>
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-1">
-                                <a href="{{ roleRoute('clients.edit', $client->id) }}" wire:navigate class="{{ $btnBase }}" title="Editar">
-                                    <flux:icon icon="pencil-square" class="size-4" />
-                                </a>
+                                <x-agro.action-button variant="edit" href="{{ roleRoute('clients.edit', $client->id) }}" wire:navigate title="Editar" />
                             </div>
                             <div class="flex items-center gap-1">
-                                <button
-                                    wire:click="toggleActive({{ $client->id }})"
-                                    wire:loading.attr="disabled"
-                                    class="{{ $client->active ? $btnDanger : $btnSuccess }}"
-                                    title="{{ $client->active ? 'Desactivar' : 'Activar' }}"
-                                >
-                                    <flux:icon icon="{{ $client->active ? 'no-symbol' : 'check-circle' }}" class="size-4" />
-                                </button>
+                                @if($client->active)
+                                    <x-agro.action-button variant="deactivate" wire:click="toggleActive({{ $client->id }})" wire:loading.attr="disabled" title="Desactivar" />
+                                @else
+                                    <x-agro.action-button variant="activate" wire:click="toggleActive({{ $client->id }})" wire:loading.attr="disabled" title="Activar" />
+                                @endif
                             </div>
                         </div>
                     </x-slot:footer>

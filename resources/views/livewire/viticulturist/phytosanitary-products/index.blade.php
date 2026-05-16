@@ -51,11 +51,6 @@
 
     {{-- Card grid --}}
     @if($products->count() > 0)
-        @php
-            $btnBase   = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
-            $btnDanger = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-orange-500 hover:bg-orange-50 transition-colors';
-            $btnGreen  = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-green-600 hover:bg-green-50 transition-colors';
-        @endphp
 
         <div
             class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6"
@@ -110,18 +105,19 @@
 
                     <x-slot:footer>
                         <div class="flex items-center justify-end gap-1">
-                            <a href="{{ roleRoute('viticulturist.phytosanitary-products.edit', $product) }}" class="{{ $btnBase }}" title="Editar" data-cy="edit-product-button">
-                                <flux:icon icon="pencil-square" class="size-4" />
-                            </a>
-                            <button
+                            <x-agro.action-button
+                                variant="edit"
+                                href="{{ roleRoute('viticulturist.phytosanitary-products.edit', $product) }}"
+                                title="Editar"
+                                data-cy="edit-product-button"
+                            />
+                            <x-agro.action-button
+                                variant="{{ $product->active ? 'deactivate' : 'activate' }}"
                                 wire:click="toggleActive({{ $product->id }})"
                                 wire:loading.attr="disabled"
                                 wire:target="toggleActive({{ $product->id }})"
-                                class="{{ $product->active ? $btnDanger : $btnGreen }}"
                                 title="{{ $product->active ? 'Desactivar producto' : 'Activar producto' }}"
-                            >
-                                <flux:icon icon="{{ $product->active ? 'x-circle' : 'check-circle' }}" class="size-4" />
-                            </button>
+                            />
                         </div>
                     </x-slot:footer>
                 </x-agro.card>

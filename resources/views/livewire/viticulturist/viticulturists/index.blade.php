@@ -130,13 +130,12 @@
 
                     <x-slot:footer>
                         <div class="flex items-center justify-end">
-                            <button
+                            <x-agro.action-button
+                                variant="delete"
                                 wire:click="delete({{ $v->id }})"
                                 wire:confirm="¿Estás seguro de eliminar este viticultor? Esta acción no se puede deshacer."
                                 title="Eliminar"
-                                class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors">
-                                <flux:icon icon="trash" class="size-4" />
-                            </button>
+                            />
                         </div>
                     </x-slot:footer>
                 </x-agro.card>

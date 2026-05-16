@@ -153,38 +153,25 @@
                         </div>
 
                         <x-slot:footer>
-                            @php $btnBase = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors'; @endphp
                             <div class="flex items-center justify-end gap-0.5 flex-wrap">
                                 {{-- Workflow de estados --}}
                                 @if($maint->status === 'scheduled')
-                                    <button wire:click="transition({{ $maint->id }}, 'in_progress')" class="{{ $btnBase }}" title="Iniciar">
-                                        <flux:icon icon="play" class="size-4" />
-                                    </button>
+                                    <x-agro.action-button icon="play" variant="default" wire:click="transition({{ $maint->id }}, 'in_progress')" title="Iniciar" />
                                 @endif
                                 @if(in_array($maint->status, ['scheduled', 'in_progress']))
-                                    <button wire:click="transition({{ $maint->id }}, 'in_review')" class="{{ $btnBase }}" title="Enviar a revisión">
-                                        <flux:icon icon="eye" class="size-4" />
-                                    </button>
+                                    <x-agro.action-button icon="eye" variant="default" wire:click="transition({{ $maint->id }}, 'in_review')" title="Enviar a revisión" />
                                 @endif
                                 @if($maint->status === 'in_review')
-                                    <button wire:click="transition({{ $maint->id }}, 'approved')" class="{{ $btnBase }} !text-agro-600" title="Aprobar">
-                                        <flux:icon icon="hand-thumb-up" class="size-4" />
-                                    </button>
+                                    <x-agro.action-button icon="hand-thumb-up" variant="primary" wire:click="transition({{ $maint->id }}, 'approved')" title="Aprobar" />
                                 @endif
                                 @if(in_array($maint->status, ['in_review', 'approved']))
-                                    <button wire:click="transition({{ $maint->id }}, 'completed')" wire:confirm="¿Marcar como completado?" class="{{ $btnBase }}" title="Completar">
-                                        <flux:icon icon="check-circle" class="size-4" />
-                                    </button>
+                                    <x-agro.action-button variant="activate" wire:click="transition({{ $maint->id }}, 'completed')" wire:confirm="¿Marcar como completado?" title="Completar" />
                                 @endif
                                 @if(!in_array($maint->status, ['completed', 'cancelled']))
-                                    <button wire:click="transition({{ $maint->id }}, 'cancelled')" wire:confirm="¿Cancelar este mantenimiento?" class="{{ $btnBase }} hover:!text-red-500 hover:!bg-red-50" title="Cancelar">
-                                        <flux:icon icon="x-circle" class="size-4" />
-                                    </button>
+                                    <x-agro.action-button icon="x-circle" variant="danger" wire:click="transition({{ $maint->id }}, 'cancelled')" wire:confirm="¿Cancelar este mantenimiento?" title="Cancelar" />
                                 @endif
                                 {{-- Editar siempre --}}
-                                <a href="{{ roleRoute('containers.maintenance.edit', [$container, $maint]) }}" class="{{ $btnBase }}" title="Editar">
-                                    <flux:icon icon="pencil" class="size-4" />
-                                </a>
+                                <x-agro.action-button icon="pencil" variant="default" href="{{ roleRoute('containers.maintenance.edit', [$container, $maint]) }}" title="Editar" />
                             </div>
                         </x-slot:footer>
                     </x-agro.card>

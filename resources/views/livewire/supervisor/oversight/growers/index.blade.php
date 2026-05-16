@@ -100,11 +100,7 @@
 
                     <x-slot:footer>
                         <div class="flex items-center justify-end">
-                            <a href="{{ route('supervisor.oversight.growers.show', $grower) }}" wire:navigate title="Ver detalle">
-                                <button class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-emerald-600 hover:bg-emerald-50 transition-colors">
-                                    <flux:icon icon="eye" class="size-4" />
-                                </button>
-                            </a>
+                            <x-agro.action-button icon="eye" variant="success" href="{{ route('supervisor.oversight.growers.show', $grower) }}" wire:navigate title="Ver detalle" />
                         </div>
                     </x-slot:footer>
                 </x-agro.card>

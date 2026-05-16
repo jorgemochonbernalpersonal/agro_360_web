@@ -35,10 +35,6 @@
 
     {{-- Card grid --}}
     @if($reports->count() > 0)
-        @php
-            $btnBase = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
-            $btnRed  = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors';
-        @endphp
 
         <div
             class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6"
@@ -116,26 +112,34 @@
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-1">
                                 {{-- Preview --}}
-                                <button wire:click="openPreviewModal({{ $report->id }})" class="{{ $btnBase }}" title="Vista previa">
-                                    <flux:icon icon="eye" class="size-4" />
-                                </button>
+                                <x-agro.action-button
+                                    variant="view"
+                                    wire:click="openPreviewModal({{ $report->id }})"
+                                    title="Vista previa"
+                                />
 
                                 {{-- Verify --}}
-                                <a href="{{ route('reports.verify', ['code' => $report->verification_code]) }}" target="_blank" class="{{ $btnBase }}" title="Verificar autenticidad">
-                                    <flux:icon icon="shield-check" class="size-4" />
-                                </a>
+                                <x-agro.action-button
+                                    icon="shield-check"
+                                    variant="default"
+                                    href="{{ route('reports.verify', ['code' => $report->verification_code]) }}"
+                                    title="Verificar autenticidad"
+                                />
 
                                 {{-- Share --}}
-                                <button wire:click="openShareModal({{ $report->id }})" class="{{ $btnBase }}" title="Compartir por email">
-                                    <flux:icon icon="envelope" class="size-4" />
-                                </button>
+                                <x-agro.action-button
+                                    icon="envelope"
+                                    variant="primary"
+                                    wire:click="openShareModal({{ $report->id }})"
+                                    title="Compartir por email"
+                                />
                             </div>
 
                             <div class="flex items-center gap-1">
                                 {{-- Download dropdown --}}
                                 @if($report->processing_status === 'completed')
                                     <div x-data="{ open: false }" @click.away="open = false" class="relative">
-                                        <button @click="open = !open" class="{{ $btnBase }}" title="Descargar">
+                                        <button @click="open = !open" class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors" title="Descargar">
                                             <flux:icon icon="arrow-down-tray" class="size-4" />
                                         </button>
                                         <div
@@ -163,9 +167,11 @@
 
                                 {{-- Invalidate --}}
                                 @if($report->isValid())
-                                    <button wire:click="openInvalidateModal({{ $report->id }})" class="{{ $btnRed }}" title="Invalidar informe">
-                                        <flux:icon icon="no-symbol" class="size-4" />
-                                    </button>
+                                    <x-agro.action-button
+                                        variant="deactivate"
+                                        wire:click="openInvalidateModal({{ $report->id }})"
+                                        title="Invalidar informe"
+                                    />
                                 @endif
                             </div>
                         </div>

@@ -94,9 +94,6 @@
         >
             @foreach($clients as $i => $client)
                 @php
-                    $btnBase    = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
-                    $btnDanger  = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors';
-                    $btnSuccess = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-agro-600 hover:bg-agro-50 transition-colors';
                     $isCompany  = $client->client_type === 'company';
                     $defaultAddress = $client->addresses?->where('is_default', true)->first()
                         ?? $client->addresses?->first();
@@ -164,30 +161,30 @@
                     <x-slot:footer>
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-1">
-                                <a href="{{ roleRoute('viticulturist.clients.show', $client->id) }}" class="{{ $btnBase }}" title="Ver cliente">
-                                    <flux:icon icon="eye" class="size-4" />
-                                </a>
-                                <a href="{{ roleRoute('viticulturist.clients.edit', $client->id) }}" class="{{ $btnBase }}" title="Editar">
-                                    <flux:icon icon="pencil-square" class="size-4" />
-                                </a>
+                                <x-agro.action-button
+                                    variant="view"
+                                    href="{{ roleRoute('viticulturist.clients.show', $client->id) }}"
+                                    title="Ver cliente"
+                                />
+                                <x-agro.action-button
+                                    variant="edit"
+                                    href="{{ roleRoute('viticulturist.clients.edit', $client->id) }}"
+                                    title="Editar"
+                                />
                                 @if($client->invoices->isEmpty())
-                                    <button
+                                    <x-agro.action-button
+                                        variant="delete"
                                         wire:click="delete({{ $client->id }})"
                                         wire:confirm="¿Eliminar este cliente? Esta acción no se puede deshacer."
-                                        class="{{ $btnDanger }}"
                                         title="Eliminar cliente"
-                                    >
-                                        <flux:icon icon="trash" class="size-4" />
-                                    </button>
+                                    />
                                 @endif
                             </div>
-                            <button
+                            <x-agro.action-button
+                                variant="{{ $client->active ? 'deactivate' : 'activate' }}"
                                 wire:click="toggleActive({{ $client->id }})"
-                                class="{{ $client->active ? $btnDanger : $btnSuccess }}"
                                 title="{{ $client->active ? 'Desactivar' : 'Activar' }}"
-                            >
-                                <flux:icon icon="{{ $client->active ? 'no-symbol' : 'check-circle' }}" class="size-4" />
-                            </button>
+                            />
                         </div>
                     </x-slot:footer>
                 </x-agro.card>

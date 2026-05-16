@@ -94,33 +94,31 @@
                                 <td class="py-3 px-4 text-right">
                                     <div class="flex items-center justify-end gap-1">
                                         @if($export->status === 'draft')
-                                            <a href="{{ roleRoute('viticulturist.cue-exports.edit', $export) }}"
-                                               class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors"
-                                               title="Editar">
-                                                <flux:icon icon="pencil-square" class="size-4" />
-                                            </a>
-                                            <button
+                                            <x-agro.action-button
+                                                variant="edit"
+                                                href="{{ roleRoute('viticulturist.cue-exports.edit', $export) }}"
+                                                title="Editar"
+                                            />
+                                            <x-agro.action-button
+                                                variant="activate"
                                                 wire:click="markAsGenerated({{ $export->id }})"
                                                 wire:confirm="¿Marcar esta exportación como generada?"
-                                                class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
-                                                title="Marcar como generado">
-                                                <flux:icon icon="check-circle" class="size-4" />
-                                            </button>
-                                            <button
+                                                title="Marcar como generado"
+                                            />
+                                            <x-agro.action-button
+                                                variant="delete"
                                                 wire:click="delete({{ $export->id }})"
                                                 wire:confirm="¿Eliminar esta exportación? Esta acción no se puede deshacer."
-                                                class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-600 hover:bg-red-50 transition-colors"
-                                                title="Eliminar">
-                                                <flux:icon icon="trash" class="size-4" />
-                                            </button>
+                                                title="Eliminar"
+                                            />
                                         @elseif($export->status === 'generated')
-                                            <button
+                                            <x-agro.action-button
+                                                variant="primary"
+                                                icon="paper-airplane"
                                                 wire:click="markAsSent({{ $export->id }})"
                                                 wire:confirm="¿Marcar esta exportación como enviada al MAPA?"
-                                                class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-agro-600 hover:bg-agro-50 transition-colors"
-                                                title="Marcar como enviado">
-                                                <flux:icon icon="paper-airplane" class="size-4" />
-                                            </button>
+                                                title="Marcar como enviado"
+                                            />
                                         @endif
                                     </div>
                                 </td>

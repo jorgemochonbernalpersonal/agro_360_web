@@ -190,28 +190,12 @@
                         </div>
 
                         <x-slot:footer>
-                            @php
-                                $btnBase    = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
-                                $btnDanger  = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors';
-                                $btnSuccess = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-agro-600 hover:bg-agro-50 transition-colors';
-                            @endphp
                             <div class="flex items-center justify-between">
                                 {{-- Grupo izquierdo: editar + duplicar + ventas --}}
                                 <div class="flex items-center gap-0.5">
-                                    <a href="{{ roleRoute('product-lots.edit', $lot) }}" wire:navigate
-                                        class="{{ $btnBase }}" title="Editar">
-                                        <flux:icon icon="pencil-square" class="size-4" />
-                                    </a>
-                                    <a href="{{ roleRoute('product-lots.sales', $lot) }}" wire:navigate
-                                        class="{{ $btnBase }}" title="Ver ventas">
-                                        <flux:icon icon="shopping-cart" class="size-4" />
-                                    </a>
-                                    <button wire:click="duplicate({{ $lot->id }})"
-                                        wire:loading.attr="disabled"
-                                        wire:confirm="¿Duplicar «{{ $lot->name }}»? Se creará una copia con stock en cero."
-                                        class="{{ $btnBase }}" title="Duplicar">
-                                        <flux:icon icon="document-duplicate" class="size-4" />
-                                    </button>
+                                    <x-agro.action-button variant="edit" href="{{ roleRoute('product-lots.edit', $lot) }}" wire:navigate title="Editar" />
+                                    <x-agro.action-button icon="shopping-cart" variant="default" href="{{ roleRoute('product-lots.sales', $lot) }}" wire:navigate title="Ver ventas" />
+                                    <x-agro.action-button icon="document-duplicate" variant="default" wire:click="duplicate({{ $lot->id }})" wire:loading.attr="disabled" wire:confirm="¿Duplicar «{{ $lot->name }}»? Se creará una copia con stock en cero." title="Duplicar" />
                                 </div>
 
                                 <div class="w-px h-5 bg-zinc-200 mx-1"></div>
@@ -219,17 +203,9 @@
                                 {{-- Grupo derecho: activar / desactivar --}}
                                 <div class="flex items-center gap-0.5">
                                     @if ($isActive)
-                                        <button wire:click="toggleActive({{ $lot->id }})"
-                                        wire:loading.attr="disabled"
-                                            class="{{ $btnDanger }}" title="Desactivar">
-                                            <flux:icon icon="no-symbol" class="size-4" />
-                                        </button>
+                                        <x-agro.action-button variant="deactivate" wire:click="toggleActive({{ $lot->id }})" wire:loading.attr="disabled" title="Desactivar" />
                                     @else
-                                        <button wire:click="toggleActive({{ $lot->id }})"
-                                        wire:loading.attr="disabled"
-                                            class="{{ $btnSuccess }}" title="Activar">
-                                            <flux:icon icon="check-circle" class="size-4" />
-                                        </button>
+                                        <x-agro.action-button variant="activate" wire:click="toggleActive({{ $lot->id }})" wire:loading.attr="disabled" title="Activar" />
                                     @endif
                                 </div>
                             </div>

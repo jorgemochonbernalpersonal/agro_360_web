@@ -77,10 +77,6 @@
 
     {{-- Card grid --}}
     @php
-        $btnBase   = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
-        $btnDanger = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors';
-        $btnGreen  = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-green-600 hover:bg-green-50 transition-colors';
-        $btnAmber  = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-amber-600 hover:bg-amber-50 transition-colors';
         $statusIconBg = [
             'draft'    => 'bg-zinc-100',
             'active'   => 'bg-green-100',
@@ -199,45 +195,39 @@
 
                     <x-slot:footer>
                         <div class="flex items-center justify-end gap-0.5">
-                            <a href="{{ roleRoute('viticulturist.fertilization-plans.edit', $plan) }}"
-                               title="Editar"
-                               class="{{ $btnBase }}">
-                                <flux:icon icon="pencil-square" class="size-4" />
-                            </a>
+                            <x-agro.action-button
+                                variant="edit"
+                                href="{{ roleRoute('viticulturist.fertilization-plans.edit', $plan) }}"
+                                title="Editar"
+                            />
 
                             @if($plan->status === 'draft')
-                                <button
+                                <x-agro.action-button
+                                    variant="activate"
                                     wire:click="activate({{ $plan->id }})"
                                     wire:loading.attr="disabled"
-                                    wire:target="activate({{ $plan->id }})"
                                     title="Activar plan"
-                                    class="{{ $btnGreen }}">
-                                    <flux:icon icon="check-circle" class="size-4" />
-                                </button>
+                                />
                             @endif
 
                             @if($plan->status === 'active')
-                                <button
+                                <x-agro.action-button
+                                    variant="archive"
                                     wire:click="archive({{ $plan->id }})"
                                     wire:loading.attr="disabled"
-                                    wire:target="archive({{ $plan->id }})"
                                     wire:confirm="¿Archivar este plan? Quedará inactivo."
                                     title="Archivar plan"
-                                    class="{{ $btnAmber }}">
-                                    <flux:icon icon="archive-box" class="size-4" />
-                                </button>
+                                />
                             @endif
 
                             @if($plan->status === 'draft')
-                                <button
+                                <x-agro.action-button
+                                    variant="delete"
                                     wire:click="delete({{ $plan->id }})"
                                     wire:loading.attr="disabled"
-                                    wire:target="delete({{ $plan->id }})"
                                     wire:confirm="¿Eliminar este plan de fertilización? Esta acción no se puede deshacer."
                                     title="Eliminar plan"
-                                    class="{{ $btnDanger }}">
-                                    <flux:icon icon="trash" class="size-4" />
-                                </button>
+                                />
                             @endif
                         </div>
                     </x-slot:footer>

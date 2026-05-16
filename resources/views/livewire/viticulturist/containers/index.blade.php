@@ -64,10 +64,6 @@
         >
             @foreach($containers as $i => $container)
                 @php
-                    $btnBase    = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
-                    $btnDanger  = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors';
-                    $btnSuccess = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-agro-600 hover:bg-agro-50 transition-colors';
-
                     $occupancy = $container->getOccupancyPercentage();
                     [$statusLabel, $statusDot] = match(true) {
                         $container->isEmpty() => ['Vacío',      'bg-blue-400'],
@@ -117,31 +113,38 @@
                     <x-slot:footer>
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-1">
-                                <a href="{{ roleRoute('viticulturist.containers.show', $container->id) }}" class="{{ $btnBase }}" title="Ver contenedor">
-                                    <flux:icon icon="eye" class="size-4" />
-                                </a>
-                                <a href="{{ roleRoute('viticulturist.containers.edit', $container->id) }}" class="{{ $btnBase }}" title="Editar">
-                                    <flux:icon icon="pencil-square" class="size-4" />
-                                </a>
+                                <x-agro.action-button
+                                    variant="view"
+                                    href="{{ roleRoute('viticulturist.containers.show', $container->id) }}"
+                                    title="Ver contenedor"
+                                />
+                                <x-agro.action-button
+                                    variant="edit"
+                                    href="{{ roleRoute('viticulturist.containers.edit', $container->id) }}"
+                                    title="Editar"
+                                />
                             </div>
                             <div class="flex items-center gap-1">
                                 @if(!$container->archived)
-                                    <button wire:click="archive({{ $container->id }})" class="{{ $btnDanger }}" title="Archivar">
-                                        <flux:icon icon="archive-box" class="size-4" />
-                                    </button>
+                                    <x-agro.action-button
+                                        variant="archive"
+                                        wire:click="archive({{ $container->id }})"
+                                        title="Archivar"
+                                    />
                                 @else
-                                    <button wire:click="unarchive({{ $container->id }})" class="{{ $btnSuccess }}" title="Restaurar">
-                                        <flux:icon icon="arrow-uturn-left" class="size-4" />
-                                    </button>
+                                    <x-agro.action-button
+                                        variant="restore"
+                                        icon="arrow-uturn-left"
+                                        wire:click="unarchive({{ $container->id }})"
+                                        title="Restaurar"
+                                    />
                                     @if($container->isEmpty())
-                                        <button
+                                        <x-agro.action-button
+                                            variant="delete"
                                             wire:click="delete({{ $container->id }})"
                                             wire:confirm="¿Seguro que deseas eliminar este contenedor?"
-                                            class="{{ $btnDanger }}"
                                             title="Eliminar"
-                                        >
-                                            <flux:icon icon="trash" class="size-4" />
-                                        </button>
+                                        />
                                     @endif
                                 @endif
                             </div>

@@ -129,19 +129,8 @@
 
                         <x-slot:footer>
                             <div class="flex items-center justify-end gap-0.5">
-                                <a href="{{ roleRoute('subproducts.edit', $sp) }}"
-                                   title="Editar subproducto"
-                                   class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
-                                    <flux:icon icon="pencil-square" class="size-4" />
-                                </a>
-                                <button
-                                    wire:click="delete({{ $sp->id }})"
-                                    wire:confirm="¿Eliminar este registro de subproducto?"
-                                    wire:loading.attr="disabled"
-                                    title="Eliminar subproducto"
-                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors">
-                                    <flux:icon icon="trash" class="size-4" />
-                                </button>
+                                <x-agro.action-button variant="edit" href="{{ roleRoute('subproducts.edit', $sp) }}" title="Editar subproducto" />
+                                <x-agro.action-button variant="delete" wire:click="delete({{ $sp->id }})" wire:confirm="¿Eliminar este registro de subproducto?" wire:loading.attr="disabled" title="Eliminar subproducto" />
                             </div>
                         </x-slot:footer>
                     </x-agro.card>

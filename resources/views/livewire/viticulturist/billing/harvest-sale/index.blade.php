@@ -101,34 +101,28 @@
 
                             {{-- Grupo izquierdo: navegar --}}
                             <div class="flex items-center gap-0.5">
-                                @php
-                                    $btnBase    = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
-                                    $btnSuccess = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-green-600 hover:bg-green-50 transition-colors';
-                                    $btnDanger  = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-600 hover:bg-red-50 transition-colors';
-                                @endphp
+                                <x-agro.action-button
+                                    icon="document-text"
+                                    variant="default"
+                                    href="{{ roleRoute('viticulturist.invoices.harvest-sale.pdf', $invoice->id) }}"
+                                    title="Descargar Factura"
+                                />
 
-                                <a href="{{ roleRoute('viticulturist.invoices.harvest-sale.pdf', $invoice->id) }}"
-                                    target="_blank" title="Descargar Factura"
-                                    class="{{ $btnBase }}">
-                                    <flux:icon icon="document-text" class="size-4" />
-                                </a>
-
-                                <a href="{{ roleRoute('viticulturist.invoices.harvest-sale.delivery-note-pdf', $invoice->id) }}"
-                                    target="_blank" title="Descargar Albarán"
-                                    class="{{ $btnBase }}">
-                                    <flux:icon icon="document-arrow-down" class="size-4" />
-                                </a>
+                                <x-agro.action-button
+                                    icon="document-arrow-down"
+                                    variant="default"
+                                    href="{{ roleRoute('viticulturist.invoices.harvest-sale.delivery-note-pdf', $invoice->id) }}"
+                                    title="Descargar Albarán"
+                                />
 
                                 @if ($invoice->status !== 'cancelled' && $invoice->billing_email)
-                                    <button
+                                    <x-agro.action-button
+                                        icon="envelope"
+                                        variant="primary"
                                         wire:click="sendEmail({{ $invoice->id }})"
                                         wire:loading.attr="disabled"
-                                        wire:target="sendEmail({{ $invoice->id }})"
                                         title="Enviar al comprador"
-                                        class="{{ $btnBase }}"
-                                    >
-                                        <flux:icon icon="envelope" class="size-4" />
-                                    </button>
+                                    />
                                 @endif
                             </div>
 
@@ -138,40 +132,38 @@
                             {{-- Grupo derecho: gestionar --}}
                             <div class="flex items-center gap-0.5">
                                 @if ($invoice->status !== 'cancelled' && $invoice->payment_status !== 'paid')
-                                    <a href="{{ roleRoute('viticulturist.invoices.harvest-sale.edit', $invoice->id) }}"
-                                        wire:navigate title="Editar"
-                                        class="{{ $btnBase }}">
-                                        <flux:icon icon="pencil" class="size-4" />
-                                    </a>
+                                    <x-agro.action-button
+                                        icon="pencil"
+                                        variant="edit"
+                                        href="{{ roleRoute('viticulturist.invoices.harvest-sale.edit', $invoice->id) }}"
+                                        wire:navigate
+                                        title="Editar"
+                                    />
 
                                     @if ($invoice->delivery_status !== 'delivered')
-                                        <button
+                                        <x-agro.action-button
+                                            icon="truck"
+                                            variant="success"
                                             wire:click="markDelivered({{ $invoice->id }})"
                                             wire:confirm="¿Marcar esta factura como entregada? El stock pasará a vendido."
                                             title="Marcar como entregada"
-                                            class="{{ $btnSuccess }}"
-                                        >
-                                            <flux:icon icon="truck" class="size-4" />
-                                        </button>
+                                        />
                                     @endif
 
-                                    <button
+                                    <x-agro.action-button
+                                        variant="activate"
                                         wire:click="markPaid({{ $invoice->id }})"
                                         wire:confirm="¿Marcar esta factura como pagada?"
                                         title="Marcar como pagada"
-                                        class="{{ $btnSuccess }}"
-                                    >
-                                        <flux:icon icon="check-circle" class="size-4" />
-                                    </button>
+                                    />
 
-                                    <button
+                                    <x-agro.action-button
+                                        icon="x-mark"
+                                        variant="danger"
                                         wire:click="cancel({{ $invoice->id }})"
                                         wire:confirm="¿Cancelar esta factura? Los kg quedarán disponibles de nuevo."
                                         title="Cancelar"
-                                        class="{{ $btnDanger }}"
-                                    >
-                                        <flux:icon icon="x-mark" class="size-4" />
-                                    </button>
+                                    />
                                 @endif
                             </div>
 

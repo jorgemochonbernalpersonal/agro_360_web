@@ -83,10 +83,6 @@
             wire:target="wineryFilter"
         >
             @foreach($workers as $i => $worker)
-                @php
-                    $btnBase   = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
-                    $btnDanger = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors';
-                @endphp
 
                 <x-agro.card
                     wire:key="worker-{{ $worker->id }}"
@@ -132,7 +128,7 @@
                             {{-- Asignar a cuadrilla --}}
                             @if($crews->count() > 0)
                                 <div x-data="{ open: false }" class="relative">
-                                    <button @click="open = !open" class="{{ $btnBase }}" title="Asignar a cuadrilla">
+                                    <button @click="open = !open" class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors" title="Asignar a cuadrilla">
                                         <flux:icon icon="user-group" class="size-4" />
                                     </button>
                                     <div

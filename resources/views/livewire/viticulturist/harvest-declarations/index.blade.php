@@ -171,31 +171,32 @@
 
                         <x-slot:footer>
                             <div class="flex items-center justify-end gap-0.5">
-                                <a href="{{ roleRoute('viticulturist.harvest-declarations.edit', $entry) }}"
-                                   class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors"
-                                   title="Editar">
-                                    <flux:icon icon="pencil-square" class="size-4" />
-                                </a>
+                                <x-agro.action-button
+                                    variant="edit"
+                                    href="{{ roleRoute('viticulturist.harvest-declarations.edit', $entry) }}"
+                                    title="Editar"
+                                />
                                 @if($entry->status === 'draft')
-                                    <button wire:click="markSubmitted({{ $entry->id }})"
-                                            wire:confirm="¿Marcar como presentada ante {{ $entry->authority }}?"
-                                            class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
-                                            title="Marcar como presentada">
-                                        <flux:icon icon="paper-airplane" class="size-4" />
-                                    </button>
-                                    <button wire:click="delete({{ $entry->id }})"
-                                            wire:confirm="¿Eliminar este borrador permanentemente?"
-                                            class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-600 hover:bg-red-50 transition-colors"
-                                            title="Eliminar borrador">
-                                        <flux:icon icon="trash" class="size-4" />
-                                    </button>
+                                    <x-agro.action-button
+                                        icon="paper-airplane"
+                                        variant="primary"
+                                        wire:click="markSubmitted({{ $entry->id }})"
+                                        wire:confirm="¿Marcar como presentada ante {{ $entry->authority }}?"
+                                        title="Marcar como presentada"
+                                    />
+                                    <x-agro.action-button
+                                        variant="delete"
+                                        wire:click="delete({{ $entry->id }})"
+                                        wire:confirm="¿Eliminar este borrador permanentemente?"
+                                        title="Eliminar borrador"
+                                    />
                                 @elseif($entry->status === 'submitted')
-                                    <button wire:click="markAccepted({{ $entry->id }})"
-                                            wire:confirm="¿Confirmar aceptación de la declaración?"
-                                            class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-green-600 hover:bg-green-50 transition-colors"
-                                            title="Marcar como aceptada">
-                                        <flux:icon icon="check-circle" class="size-4" />
-                                    </button>
+                                    <x-agro.action-button
+                                        variant="activate"
+                                        wire:click="markAccepted({{ $entry->id }})"
+                                        wire:confirm="¿Confirmar aceptación de la declaración?"
+                                        title="Marcar como aceptada"
+                                    />
                                 @endif
                             </div>
                         </x-slot:footer>

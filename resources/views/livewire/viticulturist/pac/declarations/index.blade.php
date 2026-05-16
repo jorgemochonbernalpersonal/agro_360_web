@@ -70,29 +70,34 @@
                         </div>
 
                         <x-slot:footer>
-                            @php $btnBase = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors'; @endphp
                             <div class="flex items-center justify-end gap-0.5">
-                                <a href="{{ roleRoute('viticulturist.pac.declarations.show', $declaration) }}"
-                                   wire:navigate class="{{ $btnBase }}" title="Ver">
-                                    <flux:icon icon="eye" class="size-4" />
-                                </a>
+                                <x-agro.action-button
+                                    variant="view"
+                                    href="{{ roleRoute('viticulturist.pac.declarations.show', $declaration) }}"
+                                    wire:navigate
+                                    title="Ver"
+                                />
                                 @if($declaration->isDraft())
-                                    <a href="{{ roleRoute('viticulturist.pac.declarations.edit', $declaration) }}"
-                                       wire:navigate class="{{ $btnBase }}" title="Editar">
-                                        <flux:icon icon="pencil" class="size-4" />
-                                    </a>
-                                    <button wire:click="submit({{ $declaration->id }})"
+                                    <x-agro.action-button
+                                        icon="pencil"
+                                        variant="edit"
+                                        href="{{ roleRoute('viticulturist.pac.declarations.edit', $declaration) }}"
+                                        wire:navigate
+                                        title="Editar"
+                                    />
+                                    <x-agro.action-button
+                                        icon="paper-airplane"
+                                        variant="primary"
+                                        wire:click="submit({{ $declaration->id }})"
                                         wire:confirm="¿Presentar esta declaración? Una vez presentada no podrás editarla."
-                                        class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
-                                        title="Presentar">
-                                        <flux:icon icon="paper-airplane" class="size-4" />
-                                    </button>
-                                    <button wire:click="delete({{ $declaration->id }})"
+                                        title="Presentar"
+                                    />
+                                    <x-agro.action-button
+                                        variant="delete"
+                                        wire:click="delete({{ $declaration->id }})"
                                         wire:confirm="¿Eliminar esta declaración? Esta acción no se puede deshacer."
-                                        class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-600 hover:bg-red-50 transition-colors"
-                                        title="Eliminar">
-                                        <flux:icon icon="trash" class="size-4" />
-                                    </button>
+                                        title="Eliminar"
+                                    />
                                 @endif
                             </div>
                         </x-slot:footer>

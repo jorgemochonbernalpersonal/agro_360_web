@@ -117,26 +117,25 @@
 
                     <x-slot:footer>
                         <div class="flex items-center justify-end gap-0.5">
-                            <a href="{{ roleRoute('viticulturist.personal.show', $crew) }}#miembros"
-                               title="Ver cuadrilla"
-                               class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
-                                <flux:icon icon="eye" class="size-4" />
-                            </a>
+                            <x-agro.action-button
+                                variant="view"
+                                href="{{ roleRoute('viticulturist.personal.show', $crew) }}#miembros"
+                                title="Ver cuadrilla"
+                            />
                             @can('update', $crew)
-                                <a href="{{ roleRoute('viticulturist.personal.edit', $crew) }}"
-                                   title="Editar"
-                                   class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
-                                    <flux:icon icon="pencil-square" class="size-4" />
-                                </a>
+                                <x-agro.action-button
+                                    variant="edit"
+                                    href="{{ roleRoute('viticulturist.personal.edit', $crew) }}"
+                                    title="Editar"
+                                />
                             @endcan
                             @can('delete', $crew)
-                                <button
+                                <x-agro.action-button
+                                    variant="delete"
                                     wire:click="delete({{ $crew->id }})"
                                     wire:confirm="¿Estás seguro de eliminar esta cuadrilla?"
                                     title="Eliminar"
-                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors">
-                                    <flux:icon icon="trash" class="size-4" />
-                                </button>
+                                />
                             @endcan
                         </div>
                     </x-slot:footer>

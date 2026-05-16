@@ -122,11 +122,7 @@
 
                     <x-slot:footer>
                         <div class="flex items-center justify-between">
-                            <a href="{{ route('supervisor.oversight.wineries.show', $winery) }}" wire:navigate title="Ver detalle">
-                                <button class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-blue-600 hover:bg-blue-50 transition-colors">
-                                    <flux:icon icon="eye" class="size-4" />
-                                </button>
-                            </a>
+                            <x-agro.action-button icon="eye" variant="success" href="{{ route('supervisor.oversight.wineries.show', $winery) }}" wire:navigate title="Ver detalle" />
                             <flux:button
                                 wire:click="unlinkWinery({{ $winery->id }})"
                                 wire:confirm="¿Desvincular {{ addslashes($winery->name) }} de la denominación? Se eliminarán también las asignaciones de viticultores DO a esta bodega."

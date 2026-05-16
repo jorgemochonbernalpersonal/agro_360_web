@@ -115,9 +115,6 @@
                             }
                         }
 
-                        $btnBase    = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
-                        $btnPrimary = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-agro-600 hover:bg-agro-50 transition-colors';
-                        $btnDanger  = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-600 hover:bg-red-50 transition-colors';
                     @endphp
 
                     <x-agro.card
@@ -196,10 +193,7 @@
 
                                 {{-- Grupo izquierdo: navegar --}}
                                 <div class="flex items-center gap-0.5">
-                                    <a href="{{ roleRoute('viticulturists.show', $v->id) }}"
-                                        class="{{ $btnBase }}" title="Ver viticultor">
-                                        <flux:icon icon="eye" class="size-4" />
-                                    </a>
+                                    <x-agro.action-button variant="view" href="{{ roleRoute('viticulturists.show', $v->id) }}" title="Ver viticultor" />
                                 </div>
 
                                 {{-- Separador vertical --}}
@@ -208,34 +202,13 @@
                                 {{-- Grupo derecho: gestionar --}}
                                 <div class="flex items-center gap-0.5">
                                     @if ($relation->source === 'own')
-                                        <a href="{{ roleRoute('viticulturists.edit', $v->id) }}"
-                                            class="{{ $btnBase }}" title="Editar">
-                                            <flux:icon icon="pencil-square" class="size-4" />
-                                        </a>
+                                        <x-agro.action-button variant="edit" href="{{ roleRoute('viticulturists.edit', $v->id) }}" title="Editar" />
                                         @if (!$v->can_login)
-                                            <a href="{{ roleRoute('viticulturists.show', $v->id) }}"
-                                                class="{{ $btnPrimary }}"
-                                                title="{{ $v->invitation_token ? 'Ver invitación' : 'Invitar al portal' }}">
-                                                <flux:icon icon="paper-airplane" class="size-4" />
-                                            </a>
+                                            <x-agro.action-button icon="paper-airplane" variant="primary" href="{{ roleRoute('viticulturists.show', $v->id) }}" title="{{ $v->invitation_token ? 'Ver invitación' : 'Invitar al portal' }}" />
                                         @endif
-                                        <button
-                                            wire:click="unlinkViticulturist({{ $v->id }})"
-                                            wire:confirm="¿Desvincular a {{ $v->name }} de tu bodega? Se revocará el acceso al cuaderno."
-                                            class="{{ $btnDanger }}"
-                                            title="Desvincular"
-                                        >
-                                            <flux:icon icon="link-slash" class="size-4" />
-                                        </button>
+                                        <x-agro.action-button icon="link-slash" variant="danger" wire:click="unlinkViticulturist({{ $v->id }})" wire:confirm="¿Desvincular a {{ $v->name }} de tu bodega? Se revocará el acceso al cuaderno." title="Desvincular" />
                                     @elseif ($relation->source === 'supervisor')
-                                        <button
-                                            wire:click="unassignFromDO({{ $v->id }})"
-                                            wire:confirm="¿Desasignar a {{ $v->name }} de tu bodega?"
-                                            class="{{ $btnDanger }}"
-                                            title="Desasignar de D.O."
-                                        >
-                                            <flux:icon icon="x-mark" class="size-4" />
-                                        </button>
+                                        <x-agro.action-button icon="x-mark" variant="danger" wire:click="unassignFromDO({{ $v->id }})" wire:confirm="¿Desasignar a {{ $v->name }} de tu bodega?" title="Desasignar de D.O." />
                                     @endif
                                 </div>
 

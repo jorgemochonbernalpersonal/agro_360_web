@@ -84,8 +84,6 @@
         >
             @foreach($invoices as $i => $invoice)
                 @php
-                    $btnBase = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
-
                     [$deliveryLabel, $deliveryColor] = match($invoice->delivery_status) {
                         'pending'    => ['Pendiente',   'yellow'],
                         'in_transit' => ['En tránsito', 'blue'],
@@ -168,59 +166,29 @@
                             <div class="flex items-center gap-0.5 flex-wrap justify-end">
 
                                 @if(!$isLocked)
-                                    <a href="{{ roleRoute('invoices.products.edit', $invoice->id) }}" wire:navigate
-                                       class="{{ $btnBase }}" title="Editar">
-                                        <flux:icon icon="pencil-square" class="size-4" />
-                                    </a>
+                                    <x-agro.action-button variant="edit" href="{{ roleRoute('invoices.products.edit', $invoice->id) }}" wire:navigate title="Editar" />
                                 @endif
 
                                 @if($invoice->status !== 'cancelled')
-                                    <button wire:click="duplicate({{ $invoice->id }})"
-                                            wire:confirm="¿Duplicar esta factura? Se creará una nueva en borrador con los mismos productos y cantidades."
-                                            class="{{ $btnBase }} text-indigo-400 hover:text-indigo-600 hover:bg-indigo-50"
-                                            title="Duplicar factura">
-                                        <flux:icon icon="document-duplicate" class="size-4" />
-                                    </button>
+                                    <x-agro.action-button icon="document-duplicate" variant="default" wire:click="duplicate({{ $invoice->id }})" wire:confirm="¿Duplicar esta factura? Se creará una nueva en borrador con los mismos productos y cantidades." title="Duplicar factura" />
                                 @endif
 
-                                <a href="{{ roleRoute('invoices.products.pdf', $invoice->id) }}"
-                                   target="_blank" class="{{ $btnBase }}" title="Descargar Factura">
-                                    <flux:icon icon="document-text" class="size-4" />
-                                </a>
+                                <x-agro.action-button icon="document-text" variant="default" href="{{ roleRoute('invoices.products.pdf', $invoice->id) }}" target="_blank" title="Descargar Factura" />
 
-                                <a href="{{ roleRoute('invoices.products.delivery-note-pdf', $invoice->id) }}"
-                                   target="_blank" class="{{ $btnBase }}" title="Descargar Albarán">
-                                    <flux:icon icon="document-arrow-down" class="size-4" />
-                                </a>
+                                <x-agro.action-button icon="document-arrow-down" variant="default" href="{{ roleRoute('invoices.products.delivery-note-pdf', $invoice->id) }}" target="_blank" title="Descargar Albarán" />
 
-                                <a href="{{ roleRoute('invoices.products.valorado-pdf', $invoice->id) }}"
-                                   target="_blank" class="{{ $btnBase }}" title="Descargar Albarán Valorado">
-                                    <flux:icon icon="currency-euro" class="size-4" />
-                                </a>
+                                <x-agro.action-button icon="currency-euro" variant="default" href="{{ roleRoute('invoices.products.valorado-pdf', $invoice->id) }}" target="_blank" title="Descargar Albarán Valorado" />
 
                                 @if($invoice->status === 'draft')
-                                    <button wire:click="openEmitirModal({{ $invoice->id }})"
-                                            class="{{ $btnBase }} text-agro-500 hover:text-agro-700 hover:bg-agro-50"
-                                            title="Emitir factura">
-                                        <flux:icon icon="paper-airplane" class="size-4" />
-                                    </button>
+                                    <x-agro.action-button icon="paper-airplane" variant="primary" wire:click="openEmitirModal({{ $invoice->id }})" title="Emitir factura" />
                                 @endif
 
 @if($invoice->status === 'sent' && ($invoice->billing_email ?: $invoice->client?->email))
-                                    <button wire:click="sendEmail({{ $invoice->id }})"
-                                            wire:loading.attr="disabled" wire:target="sendEmail({{ $invoice->id }})"
-                                            class="{{ $btnBase }} text-blue-500 hover:text-blue-700 hover:bg-blue-50"
-                                            title="Enviar por email">
-                                        <flux:icon icon="envelope" class="size-4" />
-                                    </button>
+                                    <x-agro.action-button icon="envelope" variant="default" wire:click="sendEmail({{ $invoice->id }})" wire:loading.attr="disabled" wire:target="sendEmail({{ $invoice->id }})" title="Enviar por email" />
                                 @endif
 
                                 @if($invoice->status === 'sent' && !$invoice->corrective && $invoice->correctives_count === 0)
-                                    <button wire:click="openCorrectiveModal({{ $invoice->id }})"
-                                            class="{{ $btnBase }} text-orange-400 hover:text-orange-600 hover:bg-orange-50"
-                                            title="Crear rectificativa">
-                                        <flux:icon icon="arrow-uturn-left" class="size-4" />
-                                    </button>
+                                    <x-agro.action-button icon="arrow-uturn-left" variant="warning" wire:click="openCorrectiveModal({{ $invoice->id }})" title="Crear rectificativa" />
                                 @endif
 
                                 @if($invoice->correctives_count > 0)

@@ -113,54 +113,20 @@
                     <x-slot:footer>
                         <div class="flex items-center justify-end gap-1 flex-wrap">
                             @if ($invoice->status !== 'cancelled' && $invoice->payment_status !== 'paid')
-                                <a href="{{ roleRoute('invoices.grape-purchase.edit', $invoice->id) }}" wire:navigate title="Editar">
-                                    <button class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
-                                        <flux:icon icon="pencil" class="size-4" />
-                                    </button>
-                                </a>
+                                <x-agro.action-button variant="edit" href="{{ roleRoute('invoices.grape-purchase.edit', $invoice->id) }}" wire:navigate title="Editar" />
                             @endif
 
-                            <a href="{{ roleRoute('invoices.grape-purchase.pdf', $invoice->id) }}" target="_blank" title="Descargar Liquidación">
-                                <button class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
-                                    <flux:icon icon="document-text" class="size-4" />
-                                </button>
-                            </a>
+                            <x-agro.action-button icon="document-text" variant="default" href="{{ roleRoute('invoices.grape-purchase.pdf', $invoice->id) }}" target="_blank" title="Descargar Liquidación" />
 
-                            <a href="{{ roleRoute('invoices.grape-purchase.delivery-note-pdf', $invoice->id) }}" target="_blank" title="Descargar Albarán">
-                                <button class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
-                                    <flux:icon icon="document-arrow-down" class="size-4" />
-                                </button>
-                            </a>
+                            <x-agro.action-button icon="document-arrow-down" variant="default" href="{{ roleRoute('invoices.grape-purchase.delivery-note-pdf', $invoice->id) }}" target="_blank" title="Descargar Albarán" />
 
                             @if ($invoice->status !== 'cancelled' && $invoice->viticulturist?->email)
-                                <button
-                                    wire:click="sendEmail({{ $invoice->id }})"
-                                    wire:loading.attr="disabled"
-                                    wire:target="sendEmail({{ $invoice->id }})"
-                                    title="Enviar al viticultor"
-                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors"
-                                >
-                                    <flux:icon icon="envelope" class="size-4" />
-                                </button>
+                                <x-agro.action-button icon="envelope" variant="default" wire:click="sendEmail({{ $invoice->id }})" wire:loading.attr="disabled" wire:target="sendEmail({{ $invoice->id }})" title="Enviar al viticultor" />
                             @endif
 
                             @if ($invoice->status !== 'cancelled' && $invoice->payment_status !== 'paid')
-                                <button
-                                    wire:click="markPaid({{ $invoice->id }})"
-                                    wire:confirm="¿Marcar esta liquidación como pagada?"
-                                    title="Marcar como pagada"
-                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-green-600 hover:bg-green-50 transition-colors"
-                                >
-                                    <flux:icon icon="check-circle" class="size-4" />
-                                </button>
-                                <button
-                                    wire:click="cancel({{ $invoice->id }})"
-                                    wire:confirm="¿Cancelar esta liquidación? Las recepciones quedarán disponibles para una nueva liquidación."
-                                    title="Cancelar"
-                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-600 hover:bg-red-50 transition-colors"
-                                >
-                                    <flux:icon icon="x-mark" class="size-4" />
-                                </button>
+                                <x-agro.action-button variant="activate" wire:click="markPaid({{ $invoice->id }})" wire:confirm="¿Marcar esta liquidación como pagada?" title="Marcar como pagada" />
+                                <x-agro.action-button icon="x-mark" variant="danger" wire:click="cancel({{ $invoice->id }})" wire:confirm="¿Cancelar esta liquidación? Las recepciones quedarán disponibles para una nueva liquidación." title="Cancelar" />
                             @endif
                         </div>
                     </x-slot:footer>

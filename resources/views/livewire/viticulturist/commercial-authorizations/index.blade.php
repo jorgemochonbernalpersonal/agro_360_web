@@ -116,19 +116,18 @@
                         </div>
 
                         <x-slot:footer>
-                            @php $btnBase = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors'; @endphp
                             <div class="flex items-center justify-end gap-0.5">
-                                <a href="{{ roleRoute('viticulturist.commercial-authorizations.edit', $entry) }}"
-                                   class="{{ $btnBase }}" title="Editar">
-                                    <flux:icon icon="pencil-square" class="size-4" />
-                                </a>
-                                <button
+                                <x-agro.action-button
+                                    variant="edit"
+                                    href="{{ roleRoute('viticulturist.commercial-authorizations.edit', $entry) }}"
+                                    title="Editar"
+                                />
+                                <x-agro.action-button
+                                    variant="archive"
                                     wire:click="deactivate({{ $entry->id }})"
                                     wire:confirm="¿Archivar esta autorización?"
-                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-amber-600 hover:bg-amber-50 transition-colors"
-                                    title="Archivar">
-                                    <flux:icon icon="archive-box" class="size-4" />
-                                </button>
+                                    title="Archivar"
+                                />
                             </div>
                         </x-slot:footer>
                     </x-agro.card>

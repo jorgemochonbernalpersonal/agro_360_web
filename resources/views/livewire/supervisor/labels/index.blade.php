@@ -121,25 +121,13 @@
                             </div>
 
                             <x-slot:footer>
-                                @php
-                                    $btnBase = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
-                                    $btnSuccess = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-blue-600 hover:bg-blue-50 transition-colors';
-                                    $btnAgro = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-agro-600 hover:bg-agro-50 transition-colors';
-                                    $btnDanger = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors';
-                                @endphp
                                 <div class="flex items-center justify-end gap-0.5">
                                     @if($label->status === 'pending')
-                                        <button wire:click="approve({{ $label->id }})" class="{{ $btnSuccess }}" title="Aprobar">
-                                            <flux:icon icon="check-circle" class="size-4" />
-                                        </button>
+                                        <x-agro.action-button icon="check-circle" variant="success" wire:click="approve({{ $label->id }})" title="Aprobar" />
                                     @endif
                                     @if(in_array($label->status, ['pending', 'approved']))
-                                        <button wire:click="issue({{ $label->id }})" class="{{ $btnAgro }}" title="Emitir">
-                                            <flux:icon icon="printer" class="size-4" />
-                                        </button>
-                                        <button wire:click="cancel({{ $label->id }})" class="{{ $btnDanger }}" title="Cancelar">
-                                            <flux:icon icon="x-mark" class="size-4" />
-                                        </button>
+                                        <x-agro.action-button icon="printer" variant="primary" wire:click="issue({{ $label->id }})" title="Emitir" />
+                                        <x-agro.action-button icon="x-mark" variant="danger" wire:click="cancel({{ $label->id }})" title="Cancelar" />
                                     @endif
                                 </div>
                             </x-slot:footer>

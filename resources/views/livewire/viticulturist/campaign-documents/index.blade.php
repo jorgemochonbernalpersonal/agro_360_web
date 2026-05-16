@@ -105,25 +105,24 @@
                     <x-slot:footer>
                         <div class="flex items-center justify-end gap-0.5">
                             @if($entry->file_path)
-                                <a href="{{ roleRoute('viticulturist.campaign-documents.download', $entry) }}"
-                                   title="Descargar"
-                                   class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
-                                    <flux:icon icon="arrow-down-tray" class="size-4" />
-                                </a>
+                                <x-agro.action-button
+                                    icon="arrow-down-tray"
+                                    variant="default"
+                                    href="{{ roleRoute('viticulturist.campaign-documents.download', $entry) }}"
+                                    title="Descargar"
+                                />
                             @endif
-                            <button
+                            <x-agro.action-button
+                                variant="edit"
                                 wire:click="openEdit({{ $entry->id }})"
                                 title="Editar"
-                                class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
-                                <flux:icon icon="pencil-square" class="size-4" />
-                            </button>
-                            <button
+                            />
+                            <x-agro.action-button
+                                variant="delete"
                                 wire:click="delete({{ $entry->id }})"
                                 wire:confirm="¿Eliminar este documento? Esta acción no se puede deshacer."
                                 title="Eliminar"
-                                class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors">
-                                <flux:icon icon="trash" class="size-4" />
-                            </button>
+                            />
                         </div>
                     </x-slot:footer>
                 </x-agro.card>

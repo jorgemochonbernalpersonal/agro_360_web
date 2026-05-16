@@ -136,20 +136,8 @@
 
                         <x-slot:footer>
                             <div class="flex items-center justify-end gap-0.5">
-                                <a href="{{ roleRoute('sanitary-registrations.edit', $registration) }}"
-                                   wire:navigate
-                                   title="Editar registro"
-                                   class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
-                                    <flux:icon icon="pencil-square" class="size-4" />
-                                </a>
-                                <button
-                                    wire:click="delete({{ $registration->id }})"
-                                    wire:confirm="¿Eliminar este registro sanitario?"
-                                    wire:loading.attr="disabled"
-                                    title="Eliminar registro"
-                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors">
-                                    <flux:icon icon="trash" class="size-4" />
-                                </button>
+                                <x-agro.action-button variant="edit" href="{{ roleRoute('sanitary-registrations.edit', $registration) }}" wire:navigate title="Editar registro" />
+                                <x-agro.action-button variant="delete" wire:click="delete({{ $registration->id }})" wire:confirm="¿Eliminar este registro sanitario?" wire:loading.attr="disabled" title="Eliminar registro" />
                             </div>
                         </x-slot:footer>
                     </x-agro.card>

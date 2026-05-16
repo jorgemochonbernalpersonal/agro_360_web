@@ -47,11 +47,6 @@
             wire:target="search, clearFilters, switchTab"
         >
             @foreach($oenologists as $i => $oenologist)
-                @php
-                    $btnBase   = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
-                    $btnDanger = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors';
-                    $btnGreen  = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-agro-600 hover:bg-agro-50 transition-colors';
-                @endphp
 
                 <x-agro.card
                     wire:key="oenologist-{{ $oenologist->id }}"
@@ -100,28 +95,15 @@
                     <x-slot:footer>
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-1">
-                                <a href="{{ roleRoute('oenologists.edit', $oenologist->id) }}" wire:navigate class="{{ $btnBase }}" title="Editar">
-                                    <flux:icon icon="pencil-square" class="size-4" />
-                                </a>
+                                <x-agro.action-button variant="edit" href="{{ roleRoute('oenologists.edit', $oenologist->id) }}" wire:navigate title="Editar" />
                             </div>
                             <div class="flex items-center gap-1">
-                                <button
-                                    wire:click="toggleActive({{ $oenologist->id }})"
-                                    wire:loading.attr="disabled"
-                                    class="{{ $oenologist->active ? $btnDanger : $btnGreen }}"
-                                    title="{{ $oenologist->active ? 'Desactivar' : 'Activar' }}"
-                                >
-                                    <flux:icon icon="{{ $oenologist->active ? 'no-symbol' : 'check-circle' }}" class="size-4" />
-                                </button>
-                                <button
-                                    wire:click="delete({{ $oenologist->id }})"
-                                    wire:loading.attr="disabled"
-                                    wire:confirm="¿Seguro que quieres eliminar este enólogo?"
-                                    class="{{ $btnDanger }}"
-                                    title="Eliminar"
-                                >
-                                    <flux:icon icon="trash" class="size-4" />
-                                </button>
+                                @if($oenologist->active)
+                                    <x-agro.action-button variant="deactivate" wire:click="toggleActive({{ $oenologist->id }})" wire:loading.attr="disabled" title="Desactivar" />
+                                @else
+                                    <x-agro.action-button variant="activate" wire:click="toggleActive({{ $oenologist->id }})" wire:loading.attr="disabled" title="Activar" />
+                                @endif
+                                <x-agro.action-button variant="delete" wire:click="delete({{ $oenologist->id }})" wire:loading.attr="disabled" wire:confirm="¿Seguro que quieres eliminar este enólogo?" title="Eliminar" />
                             </div>
                         </div>
                     </x-slot:footer>

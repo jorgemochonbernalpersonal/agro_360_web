@@ -169,12 +169,7 @@
                                             Descalificar
                                         </button>
                                     @endif
-                                    @php
-                                        $btnBase = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
-                                    @endphp
-                                    <button wire:click="openEdit({{ $q->id }})" class="{{ $btnBase }}" title="Editar">
-                                        <flux:icon icon="pencil" class="size-4" />
-                                    </button>
+                                    <x-agro.action-button icon="pencil" variant="default" wire:click="openEdit({{ $q->id }})" title="Editar" />
                                 </div>
                             </x-slot:footer>
                         </x-agro.card>

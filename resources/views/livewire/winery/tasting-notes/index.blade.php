@@ -83,19 +83,8 @@
                             </td>
                             <td class="px-4 py-3">
                                 <div class="flex items-center justify-end gap-1">
-                                    <a href="{{ roleRoute('tasting-notes.edit', $note) }}" title="Editar">
-                                        <button class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
-                                            <flux:icon icon="pencil" class="size-4" />
-                                        </button>
-                                    </a>
-                                    <button
-                                        wire:click="delete({{ $note->id }})"
-                                        wire:confirm="¿Eliminar esta nota de cata?"
-                                        wire:loading.attr="disabled"
-                                        title="Eliminar"
-                                        class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-600 hover:bg-red-50 transition-colors">
-                                        <flux:icon icon="trash" class="size-4" />
-                                    </button>
+                                    <x-agro.action-button icon="pencil" variant="default" href="{{ roleRoute('tasting-notes.edit', $note) }}" title="Editar" />
+                                    <x-agro.action-button variant="delete" wire:click="delete({{ $note->id }})" wire:confirm="¿Eliminar esta nota de cata?" wire:loading.attr="disabled" title="Eliminar" />
                                 </div>
                             </td>
                         </tr>

@@ -88,12 +88,6 @@
             wire:target="search, yearFilter, clearFilters, switchTab"
         >
             @foreach($campaigns as $i => $campaign)
-                @php
-                    $btnBase    = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
-                    $btnDanger  = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors';
-                    $btnSuccess = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-agro-600 hover:bg-agro-50 transition-colors';
-                    $btnDisabled = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-300 cursor-not-allowed';
-                @endphp
 
                 <x-agro.card
                     wire:key="campaign-{{ $campaign->id }}"
@@ -136,38 +130,38 @@
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-1">
                                 @can('view', $campaign)
-                                    <a href="{{ roleRoute('viticulturist.campaign.show', $campaign) }}" class="{{ $btnBase }}" title="Ver campaña">
-                                        <flux:icon icon="eye" class="size-4" />
-                                    </a>
+                                    <x-agro.action-button
+                                        variant="view"
+                                        href="{{ roleRoute('viticulturist.campaign.show', $campaign) }}"
+                                        title="Ver campaña"
+                                    />
                                 @endcan
                                 @can('update', $campaign)
-                                    <a href="{{ roleRoute('viticulturist.campaign.edit', $campaign) }}" class="{{ $btnBase }}" title="Editar">
-                                        <flux:icon icon="pencil-square" class="size-4" />
-                                    </a>
+                                    <x-agro.action-button
+                                        variant="edit"
+                                        href="{{ roleRoute('viticulturist.campaign.edit', $campaign) }}"
+                                        title="Editar"
+                                    />
                                 @endcan
                             </div>
                             <div class="flex items-center gap-1">
                                 @can('update', $campaign)
-                                    <button
+                                    <x-agro.action-button
+                                        variant="{{ $campaign->active ? 'deactivate' : 'activate' }}"
                                         wire:click="toggleActive({{ $campaign->id }})"
-                                        class="{{ $campaign->active ? $btnDanger : $btnSuccess }}"
                                         title="{{ $campaign->active ? 'Desactivar' : 'Activar' }}"
-                                    >
-                                        <flux:icon icon="{{ $campaign->active ? 'no-symbol' : 'check-circle' }}" class="size-4" />
-                                    </button>
+                                    />
                                 @endcan
                                 @can('delete', $campaign)
                                     @if($campaign->activities_count === 0)
-                                        <button
+                                        <x-agro.action-button
+                                            variant="delete"
                                             wire:click="delete({{ $campaign->id }})"
                                             wire:confirm="¿Estás seguro de eliminar esta campaña?"
-                                            class="{{ $btnDanger }}"
                                             title="Eliminar"
-                                        >
-                                            <flux:icon icon="trash" class="size-4" />
-                                        </button>
+                                        />
                                     @else
-                                        <span class="{{ $btnDisabled }}" title="No se puede eliminar: tiene actividades">
+                                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-300 cursor-not-allowed" title="No se puede eliminar: tiene actividades">
                                             <flux:icon icon="trash" class="size-4" />
                                         </span>
                                     @endif
