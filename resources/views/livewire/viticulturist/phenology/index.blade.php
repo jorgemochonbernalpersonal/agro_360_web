@@ -87,16 +87,17 @@
                     wire:key="pheno-{{ $obs->id }}"
                 >
                     <x-slot:header>
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 {{ $config['bg'] }}">
-                                <flux:icon icon="sun" class="size-5 {{ $config['icon'] }}" />
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <h3 class="font-bold text-zinc-900 truncate">{{ $obs->plotPlanting->plot->name ?? '—' }}</h3>
-                                <p class="text-xs text-zinc-400">{{ $obs->obs_date->format('d/m/Y') }}</p>
-                            </div>
-                            <flux:badge color="{{ $config['badge'] }}" size="sm" class="shrink-0">{{ $obs->event_label }}</flux:badge>
-                        </div>
+                        <x-agro.card-item-header
+                            icon="sun"
+                            :title="$obs->plotPlanting->plot->name ?? '—'"
+                            :subtitle="$obs->obs_date->format('d/m/Y')"
+                            :iconBg="$config['bg']"
+                            :iconColor="$config['icon']"
+                            size="md"
+                            radius="xl"
+                        >
+                            <flux:badge color="{{ $config['badge'] }}" size="sm">{{ $obs->event_label }}</flux:badge>
+                        </x-agro.card-item-header>
                     </x-slot:header>
 
                     <div class="flex-1 space-y-3">

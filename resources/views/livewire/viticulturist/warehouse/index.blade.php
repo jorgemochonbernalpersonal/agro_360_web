@@ -117,22 +117,17 @@
                         style="animation-delay: {{ min($i * 50, 400) }}ms"
                     >
                         <x-slot:header>
-                            <div class="flex items-center gap-3">
-                                <div class="w-9 h-9 bg-zinc-100 rounded-full flex items-center justify-center shrink-0">
-                                    <flux:icon icon="archive-box" class="size-4 text-zinc-500" />
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <p class="font-semibold text-zinc-900 text-sm truncate leading-tight">{{ $stock->product->name }}</p>
-                                    @if($stock->product->active_ingredient)
-                                        <p class="text-xs text-zinc-400 leading-tight mt-0.5 truncate">{{ $stock->product->active_ingredient }}</p>
-                                    @endif
-                                </div>
+                            <x-agro.card-item-header
+                                icon="archive-box"
+                                :title="$stock->product->name"
+                                :subtitle="$stock->product->active_ingredient ?? null"
+                            >
                                 @if($statusType === 'default')
                                     <x-agro.status-badge :status="true" label="OK" />
                                 @else
                                     <x-agro.status-badge :status="$statusActive" :label="$statusLabel" type="{{ $statusType }}" />
                                 @endif
-                            </div>
+                            </x-agro.card-item-header>
                         </x-slot:header>
 
                         <div class="flex items-center gap-2 mb-3">
@@ -144,14 +139,8 @@
                         </div>
 
                         <div class="grid grid-cols-2 gap-2 mb-3">
-                            <div class="bg-agro-50 rounded-xl p-2.5">
-                                <p class="text-[10px] text-agro-600 font-medium uppercase tracking-wide mb-0.5">Cantidad</p>
-                                <p class="text-sm font-bold text-agro-700">{{ number_format($stock->getAvailableQuantity(), 3) }} {{ $stock->unit }}</p>
-                            </div>
-                            <div class="bg-zinc-50 rounded-xl p-2.5">
-                                <p class="text-[10px] text-zinc-500 font-medium uppercase tracking-wide mb-0.5">Caducidad</p>
-                                <p class="text-sm font-bold text-zinc-700">{{ $stock->expiry_date ? $stock->expiry_date->format('d/m/Y') : '—' }}</p>
-                            </div>
+                            <x-agro.metric-cell label="Cantidad" :value="number_format($stock->getAvailableQuantity(), 3) . ' ' . $stock->unit" color="agro" />
+                            <x-agro.metric-cell label="Caducidad" :value="$stock->expiry_date ? $stock->expiry_date->format('d/m/Y') : '—'" color="zinc" />
                         </div>
 
                         @if($stock->unit_price)
@@ -332,22 +321,17 @@
                         style="animation-delay: {{ min($i * 50, 400) }}ms"
                     >
                         <x-slot:header>
-                            <div class="flex items-center gap-3">
-                                <div class="w-9 h-9 bg-zinc-100 rounded-full flex items-center justify-center shrink-0">
-                                    <flux:icon icon="archive-box" class="size-4 text-zinc-500" />
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <p class="font-semibold text-zinc-900 text-sm truncate leading-tight">{{ $supply->name }}</p>
-                                    @if($supply->commercial_name)
-                                        <p class="text-xs text-zinc-400 leading-tight mt-0.5 truncate">{{ $supply->commercial_name }}</p>
-                                    @endif
-                                </div>
+                            <x-agro.card-item-header
+                                icon="archive-box"
+                                :title="$supply->name"
+                                :subtitle="$supply->commercial_name ?? null"
+                            >
                                 @if($statusType === 'default')
                                     <x-agro.status-badge :status="true" label="OK" />
                                 @else
                                     <x-agro.status-badge :status="$statusActive" :label="$statusLabel" type="{{ $statusType }}" />
                                 @endif
-                            </div>
+                            </x-agro.card-item-header>
                         </x-slot:header>
 
                         <div class="flex items-center gap-2 mb-2">
@@ -461,18 +445,13 @@
                         style="animation-delay: {{ min($i * 50, 400) }}ms"
                     >
                         <x-slot:header>
-                            <div class="flex items-center gap-3">
-                                <div class="w-9 h-9 bg-zinc-100 rounded-full flex items-center justify-center shrink-0">
-                                    <flux:icon icon="building-office" class="size-4 text-zinc-500" />
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <p class="font-semibold text-zinc-900 text-sm truncate leading-tight">{{ $warehouse->name }}</p>
-                                    @if($warehouse->location)
-                                        <p class="text-xs text-zinc-400 leading-tight mt-0.5 truncate">{{ $warehouse->location }}</p>
-                                    @endif
-                                </div>
+                            <x-agro.card-item-header
+                                icon="building-office"
+                                :title="$warehouse->name"
+                                :subtitle="$warehouse->location ?? null"
+                            >
                                 <x-agro.status-badge :status="$warehouse->active" />
-                            </div>
+                            </x-agro.card-item-header>
                         </x-slot:header>
 
                         @if($warehouse->description)
@@ -483,14 +462,8 @@
                         @endif
 
                         <div class="grid grid-cols-2 gap-2">
-                            <div class="bg-agro-50 rounded-xl p-2.5">
-                                <p class="text-[10px] text-agro-600 font-medium uppercase tracking-wide mb-0.5">Fitosanitarios</p>
-                                <p class="text-sm font-bold text-agro-700">{{ $warehouse->stocks_count }}</p>
-                            </div>
-                            <div class="bg-zinc-50 rounded-xl p-2.5">
-                                <p class="text-[10px] text-zinc-500 font-medium uppercase tracking-wide mb-0.5">Insumos</p>
-                                <p class="text-sm font-bold text-zinc-700">{{ $warehouse->supplies_count }}</p>
-                            </div>
+                            <x-agro.metric-cell label="Fitosanitarios" :value="$warehouse->stocks_count" color="agro" />
+                            <x-agro.metric-cell label="Insumos" :value="$warehouse->supplies_count" color="zinc" />
                         </div>
 
                         <x-slot:footer>

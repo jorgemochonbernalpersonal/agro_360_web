@@ -116,18 +116,19 @@
                         wire:key="cr-{{ $entry->id }}"
                     >
                         <x-slot:header>
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 {{ $systemColor['bg'] }} rounded-xl flex items-center justify-center shrink-0">
-                                    <flux:icon icon="archive-box-x-mark" class="size-5 {{ $systemColor['icon'] }}" />
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <h3 class="font-bold text-zinc-900 truncate">{{ $entry->product_name }}</h3>
-                                    <p class="text-xs text-zinc-500">{{ $entry->date->format('d/m/Y') }}</p>
-                                </div>
-                                <x-agro.status-badge :color="$entry->collection_system === 'sigfito' ? 'green' : ($entry->collection_system === 'field' ? 'blue' : 'zinc')" class="shrink-0">
+                            <x-agro.card-item-header
+                                icon="archive-box-x-mark"
+                                :title="$entry->product_name"
+                                :subtitle="$entry->date->format('d/m/Y')"
+                                :iconBg="$systemColor['bg']"
+                                :iconColor="$systemColor['icon']"
+                                size="md"
+                                radius="xl"
+                            >
+                                <x-agro.status-badge :color="$entry->collection_system === 'sigfito' ? 'green' : ($entry->collection_system === 'field' ? 'blue' : 'zinc')">
                                     {{ $entry->collection_system_label }}
                                 </x-agro.status-badge>
-                            </div>
+                            </x-agro.card-item-header>
                         </x-slot:header>
 
                         <div class="flex-1 space-y-4">

@@ -78,22 +78,19 @@
                     style="animation-delay: {{ min($i * 50, 400) }}ms"
                 >
                     <x-slot:header>
-                        <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 {{ $isPest ? 'bg-red-50' : 'bg-blue-50' }} rounded-full flex items-center justify-center shrink-0">
-                                <flux:icon icon="{{ $isPest ? 'bug-ant' : 'shield-exclamation' }}" class="size-4 {{ $isPest ? 'text-red-500' : 'text-blue-500' }}" />
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <p class="font-semibold text-zinc-900 text-sm truncate leading-tight">{{ $pest->name }}</p>
-                                @if($pest->scientific_name)
-                                    <p class="text-xs text-zinc-400 italic leading-tight mt-0.5 truncate">{{ $pest->scientific_name }}</p>
-                                @endif
-                            </div>
+                        <x-agro.card-item-header
+                            :icon="$isPest ? 'bug-ant' : 'shield-exclamation'"
+                            :title="$pest->name"
+                            :subtitle="$pest->scientific_name ?? null"
+                            :iconBg="$isPest ? 'bg-red-50' : 'bg-blue-50'"
+                            :iconColor="$isPest ? 'text-red-500' : 'text-blue-500'"
+                        >
                             @if($isRisk)
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700 shrink-0">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700">
                                     Riesgo
                                 </span>
                             @endif
-                        </div>
+                        </x-agro.card-item-header>
                     </x-slot:header>
 
                     {{-- Tipo --}}

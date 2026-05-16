@@ -100,15 +100,15 @@
                     wire:key="energy-{{ $entry->id }}"
                 >
                     <x-slot:header>
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-emerald-100">
-                                <flux:icon icon="bolt" class="size-5 text-emerald-600" />
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <h3 class="font-bold text-zinc-900 truncate">{{ $entry->energy_type_label }}</h3>
-                                <p class="text-xs text-zinc-400">{{ $entry->date->format('d/m/Y') }}</p>
-                            </div>
-                        </div>
+                        <x-agro.card-item-header
+                            icon="bolt"
+                            :title="$entry->energy_type_label"
+                            :subtitle="$entry->date->format('d/m/Y')"
+                            iconBg="bg-emerald-100"
+                            iconColor="text-emerald-600"
+                            size="md"
+                            radius="xl"
+                        />
                     </x-slot:header>
 
                     <div class="flex-1 space-y-3">

@@ -138,16 +138,17 @@
                             wire:key="concession-{{ $entry->id }}"
                         >
                             <x-slot:header>
-                                <div class="flex items-start gap-3">
-                                    <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 {{ $colors['bg'] }}">
-                                        <flux:icon icon="beaker" class="size-5 {{ $colors['text'] }}" />
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <h3 class="font-bold text-zinc-900 truncate">{{ $entry->water_body }}</h3>
-                                        <p class="text-xs text-zinc-400 truncate">{{ $entry->authority }}</p>
-                                    </div>
-                                    <flux:badge color="blue" size="sm" class="shrink-0">{{ $entry->concession_type_label }}</flux:badge>
-                                </div>
+                                <x-agro.card-item-header
+                                    icon="beaker"
+                                    :title="$entry->water_body"
+                                    :subtitle="$entry->authority"
+                                    :iconBg="$colors['bg']"
+                                    :iconColor="$colors['text']"
+                                    size="md"
+                                    radius="xl"
+                                >
+                                    <flux:badge color="blue" size="sm">{{ $entry->concession_type_label }}</flux:badge>
+                                </x-agro.card-item-header>
                             </x-slot:header>
 
                             <div class="flex-1 space-y-3">

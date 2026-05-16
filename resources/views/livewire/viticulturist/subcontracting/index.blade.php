@@ -101,20 +101,21 @@
                     wire:key="sub-{{ $record->id }}"
                 >
                     <x-slot:header>
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-orange-100">
-                                <flux:icon icon="user-plus" class="size-5 text-orange-600" />
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <h3 class="font-bold text-zinc-900 truncate">{{ $record->company_name }}</h3>
-                                <p class="text-xs text-zinc-400">{{ $record->service_date->format('d/m/Y') }}{{ $record->service_end_date ? ' — ' . $record->service_end_date->format('d/m/Y') : '' }}</p>
-                            </div>
-                            <button wire:click="toggleInvoiced({{ $record->id }})" class="shrink-0">
+                        <x-agro.card-item-header
+                            icon="user-plus"
+                            :title="$record->company_name"
+                            :subtitle="$record->service_date->format('d/m/Y') . ($record->service_end_date ? ' — ' . $record->service_end_date->format('d/m/Y') : '')"
+                            iconBg="bg-orange-100"
+                            iconColor="text-orange-600"
+                            size="md"
+                            radius="xl"
+                        >
+                            <button wire:click="toggleInvoiced({{ $record->id }})">
                                 <flux:badge color="{{ $record->invoiced ? 'green' : 'amber' }}" size="sm">
                                     {{ $record->invoiced ? 'Facturado' : 'Pendiente' }}
                                 </flux:badge>
                             </button>
-                        </div>
+                        </x-agro.card-item-header>
                     </x-slot:header>
 
                     <div class="flex-1 space-y-3">

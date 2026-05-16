@@ -85,15 +85,15 @@
                     wire:key="env-{{ $entry->id }}"
                 >
                     <x-slot:header>
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-agro-100">
-                                <flux:icon icon="map" class="size-5 text-agro-600" />
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <h3 class="font-bold text-zinc-900 truncate">{{ $entry->plot->name ?? '—' }}</h3>
-                                <p class="text-xs text-zinc-400">{{ $entry->plotPlanting?->grapeVariety?->name ?? 'Global parcela' }}</p>
-                            </div>
-                        </div>
+                        <x-agro.card-item-header
+                            icon="map"
+                            :title="$entry->plot->name ?? '—'"
+                            :subtitle="$entry->plotPlanting?->grapeVariety?->name ?? 'Global parcela'"
+                            iconBg="bg-agro-100"
+                            iconColor="text-agro-600"
+                            size="md"
+                            radius="xl"
+                        />
                     </x-slot:header>
 
                     <div class="flex-1 space-y-3">

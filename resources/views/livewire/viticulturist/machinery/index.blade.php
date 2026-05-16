@@ -108,18 +108,13 @@
                     style="animation-delay: {{ min($i * 50, 400) }}ms"
                 >
                     <x-slot:header>
-                        <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 bg-zinc-100 rounded-full flex items-center justify-center shrink-0">
-                                <flux:icon icon="cog-6-tooth" class="size-4 text-zinc-500" />
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <p class="font-semibold text-zinc-900 text-sm truncate leading-tight">{{ $item->name }}</p>
-                                @if($item->year)
-                                    <p class="text-xs text-zinc-400 leading-tight mt-0.5">Año {{ $item->year }}</p>
-                                @endif
-                            </div>
+                        <x-agro.card-item-header
+                            icon="cog-6-tooth"
+                            :title="$item->name"
+                            :subtitle="$item->year ? 'Año ' . $item->year : null"
+                        >
                             <x-agro.status-badge :status="$item->active" />
-                        </div>
+                        </x-agro.card-item-header>
                     </x-slot:header>
 
                     {{-- Tipo --}}
@@ -136,16 +131,16 @@
 
                     {{-- Métricas --}}
                     <div class="grid grid-cols-2 gap-2 mb-3">
-                        <div class="bg-zinc-50 rounded-xl p-2.5">
-                            <p class="text-[10px] text-zinc-500 font-medium uppercase tracking-wide mb-0.5">Marca/Modelo</p>
-                            <p class="text-sm font-bold text-zinc-700 truncate">
-                                {{ ($item->brand || $item->model) ? trim(($item->brand ?? '') . ' ' . ($item->model ?? '')) : '—' }}
-                            </p>
-                        </div>
-                        <div class="bg-agro-50 rounded-xl p-2.5">
-                            <p class="text-[10px] text-agro-600 font-medium uppercase tracking-wide mb-0.5">Actividades</p>
-                            <p class="text-sm font-bold text-agro-700">{{ $item->activities_count }}</p>
-                        </div>
+                        <x-agro.metric-cell
+                            label="Marca/Modelo"
+                            :value="($item->brand || $item->model) ? trim(($item->brand ?? '') . ' ' . ($item->model ?? '')) : '—'"
+                            color="zinc"
+                        />
+                        <x-agro.metric-cell
+                            label="Actividades"
+                            :value="$item->activities_count"
+                            color="agro"
+                        />
                     </div>
 
                     {{-- ROMA --}}

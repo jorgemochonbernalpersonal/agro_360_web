@@ -87,18 +87,17 @@
                     wire:key="residue-{{ $entry->id }}"
                 >
                     <x-slot:header>
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-agro-100">
-                                <flux:icon icon="trash" class="size-5 text-agro-600" />
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <h3 class="font-bold text-zinc-900 truncate">
-                                    {{ $entry->plot->name ?? ($entry->plotPlanting?->plot->name ?? 'Global campaña') }}
-                                </h3>
-                                <p class="text-xs text-zinc-400">{{ $entry->date->format('d/m/Y') }}</p>
-                            </div>
-                            <flux:badge color="blue" size="sm" class="shrink-0">{{ $entry->practice_label }}</flux:badge>
-                        </div>
+                        <x-agro.card-item-header
+                            icon="trash"
+                            :title="$entry->plot->name ?? ($entry->plotPlanting?->plot->name ?? 'Global campaña')"
+                            :subtitle="$entry->date->format('d/m/Y')"
+                            iconBg="bg-agro-100"
+                            iconColor="text-agro-600"
+                            size="md"
+                            radius="xl"
+                        >
+                            <flux:badge color="blue" size="sm">{{ $entry->practice_label }}</flux:badge>
+                        </x-agro.card-item-header>
                     </x-slot:header>
 
                     <div class="flex-1 space-y-3">

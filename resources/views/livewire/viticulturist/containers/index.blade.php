@@ -82,21 +82,16 @@
                     style="animation-delay: {{ min($i * 50, 400) }}ms"
                 >
                     <x-slot:header>
-                        <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 bg-zinc-100 rounded-full flex items-center justify-center shrink-0">
-                                <flux:icon icon="beaker" class="size-4 text-zinc-500" />
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <p class="font-semibold text-zinc-900 text-sm truncate leading-tight">{{ $container->name }}</p>
-                                @if($container->serial_number)
-                                    <p class="text-xs text-zinc-400 leading-tight mt-0.5">SN: {{ $container->serial_number }}</p>
-                                @endif
-                            </div>
-                            <span class="inline-flex items-center gap-1 text-xs font-medium text-zinc-600 shrink-0">
+                        <x-agro.card-item-header
+                            icon="beaker"
+                            :title="$container->name"
+                            :subtitle="$container->serial_number ? 'SN: ' . $container->serial_number : null"
+                        >
+                            <span class="inline-flex items-center gap-1 text-xs font-medium text-zinc-600">
                                 <span class="w-2 h-2 rounded-full {{ $statusDot }}"></span>
                                 {{ $statusLabel }}
                             </span>
-                        </div>
+                        </x-agro.card-item-header>
                     </x-slot:header>
 
                     {{-- Ocupación --}}
@@ -115,14 +110,8 @@
 
                     {{-- Capacidad --}}
                     <div class="grid grid-cols-2 gap-2">
-                        <div class="bg-agro-50 rounded-xl p-2.5">
-                            <p class="text-[10px] text-agro-600 font-medium uppercase tracking-wide mb-0.5">Capacidad</p>
-                            <p class="text-sm font-bold text-agro-700">{{ number_format($container->capacity, 0) }} L</p>
-                        </div>
-                        <div class="bg-zinc-50 rounded-xl p-2.5">
-                            <p class="text-[10px] text-zinc-500 font-medium uppercase tracking-wide mb-0.5">Disponible</p>
-                            <p class="text-sm font-bold text-zinc-700">{{ number_format($container->getAvailableCapacity(), 0) }} L</p>
-                        </div>
+                        <x-agro.metric-cell label="Capacidad" :value="number_format($container->capacity, 0) . ' L'" color="agro" />
+                        <x-agro.metric-cell label="Disponible" :value="number_format($container->getAvailableCapacity(), 0) . ' L'" color="zinc" />
                     </div>
 
                     <x-slot:footer>

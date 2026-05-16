@@ -77,18 +77,15 @@
                     wire:key="equipment-{{ $item->id }}"
                 >
                     <x-slot:header>
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-zinc-100">
-                                <flux:icon icon="wrench-screwdriver" class="size-5 text-zinc-500" />
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <h3 class="font-bold text-zinc-900 truncate">{{ $item->name }}</h3>
-                                @if($item->registration_number)
-                                    <p class="text-xs text-zinc-400 font-mono">{{ $item->registration_number }}</p>
-                                @endif
-                            </div>
-                            <flux:badge color="blue" size="sm" class="shrink-0">{{ $item->type_label }}</flux:badge>
-                        </div>
+                        <x-agro.card-item-header
+                            icon="wrench-screwdriver"
+                            :title="$item->name"
+                            :subtitle="$item->registration_number ?? null"
+                            size="md"
+                            radius="xl"
+                        >
+                            <flux:badge color="blue" size="sm">{{ $item->type_label }}</flux:badge>
+                        </x-agro.card-item-header>
                     </x-slot:header>
 
                     <div class="flex-1 space-y-3">

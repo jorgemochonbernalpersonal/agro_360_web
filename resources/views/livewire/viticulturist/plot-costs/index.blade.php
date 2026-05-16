@@ -87,16 +87,17 @@
                     wire:key="cost-{{ $cost->id }}"
                 >
                     <x-slot:header>
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-red-100">
-                                <flux:icon icon="banknotes" class="size-5 text-red-600" />
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <h3 class="font-bold text-zinc-900 truncate">{{ $cost->description }}</h3>
-                                <p class="text-xs text-zinc-400">{{ $cost->cost_date->format('d/m/Y') }}</p>
-                            </div>
-                            <flux:badge color="blue" size="sm" class="shrink-0">{{ $cost->category_label }}</flux:badge>
-                        </div>
+                        <x-agro.card-item-header
+                            icon="banknotes"
+                            :title="$cost->description"
+                            :subtitle="$cost->cost_date->format('d/m/Y')"
+                            iconBg="bg-red-100"
+                            iconColor="text-red-600"
+                            size="md"
+                            radius="xl"
+                        >
+                            <flux:badge color="blue" size="sm">{{ $cost->category_label }}</flux:badge>
+                        </x-agro.card-item-header>
                     </x-slot:header>
 
                     <div class="flex-1 space-y-3">

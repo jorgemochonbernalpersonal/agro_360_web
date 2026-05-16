@@ -86,16 +86,17 @@
                     wire:key="analysis-{{ $entry->id }}"
                 >
                     <x-slot:header>
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 {{ $bg }}">
-                                <flux:icon icon="beaker" class="size-5 {{ $iconColor }}" />
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <h3 class="font-bold text-zinc-900 truncate">{{ $entry->laboratory_name }}</h3>
-                                <p class="text-xs text-zinc-400">{{ $entry->analysis_date->format('d/m/Y') }}</p>
-                            </div>
-                            <flux:badge color="{{ $badge }}" size="sm" class="shrink-0">{{ $label }}</flux:badge>
-                        </div>
+                        <x-agro.card-item-header
+                            icon="beaker"
+                            :title="$entry->laboratory_name"
+                            :subtitle="$entry->analysis_date->format('d/m/Y')"
+                            :iconBg="$bg"
+                            :iconColor="$iconColor"
+                            size="md"
+                            radius="xl"
+                        >
+                            <flux:badge color="{{ $badge }}" size="sm">{{ $label }}</flux:badge>
+                        </x-agro.card-item-header>
                     </x-slot:header>
 
                     <div class="flex-1 space-y-3">

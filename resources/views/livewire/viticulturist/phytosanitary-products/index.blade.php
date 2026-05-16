@@ -69,20 +69,17 @@
                     style="animation-delay: {{ min($i * 50, 400) }}ms"
                 >
                     <x-slot:header>
-                        <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 bg-red-50 rounded-full flex items-center justify-center shrink-0">
-                                <flux:icon icon="shield-exclamation" class="size-4 text-red-600" />
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <p class="font-semibold text-zinc-900 text-sm truncate leading-tight">{{ $product->name }}</p>
-                                @if($product->manufacturer)
-                                    <p class="text-xs text-zinc-400 leading-tight mt-0.5 truncate">{{ $product->manufacturer }}</p>
-                                @endif
-                            </div>
+                        <x-agro.card-item-header
+                            icon="shield-exclamation"
+                            :title="$product->name"
+                            :subtitle="$product->manufacturer ?? null"
+                            iconBg="bg-red-50"
+                            iconColor="text-red-600"
+                        >
                             @if($product->type)
-                                <flux:badge size="sm" class="shrink-0">{{ ucfirst($product->type) }}</flux:badge>
+                                <flux:badge size="sm">{{ ucfirst($product->type) }}</flux:badge>
                             @endif
-                        </div>
+                        </x-agro.card-item-header>
                     </x-slot:header>
 
                     {{-- Detalles --}}

@@ -85,24 +85,17 @@
                     style="animation-delay: {{ min($i * 50, 400) }}ms"
                 >
                     <x-slot:header>
-                        <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 bg-agro-50 rounded-full flex items-center justify-center shrink-0">
-                                <flux:icon icon="chart-bar" class="size-4 text-agro-600" />
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <p class="font-semibold text-zinc-900 text-sm truncate leading-tight">
-                                    {{ $yield->plotPlanting->plot->name ?? 'Sin parcela' }}
-                                </p>
-                                @if($yield->plotPlanting->grapeVariety)
-                                    <p class="text-xs text-zinc-400 leading-tight mt-0.5 truncate">
-                                        {{ $yield->plotPlanting->grapeVariety->name }}
-                                    </p>
-                                @endif
-                            </div>
-                            <flux:badge :color="$statusInfo['color']" size="sm" class="shrink-0">
+                        <x-agro.card-item-header
+                            icon="chart-bar"
+                            :title="$yield->plotPlanting->plot->name ?? 'Sin parcela'"
+                            :subtitle="$yield->plotPlanting->grapeVariety?->name ?? null"
+                            iconBg="bg-agro-50"
+                            iconColor="text-agro-600"
+                        >
+                            <flux:badge :color="$statusInfo['color']" size="sm">
                                 {{ $statusInfo['label'] }}
                             </flux:badge>
-                        </div>
+                        </x-agro.card-item-header>
                     </x-slot:header>
 
                     {{-- Campaña + fecha --}}

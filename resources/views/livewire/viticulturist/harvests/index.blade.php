@@ -127,24 +127,19 @@
                 >
                     {{-- Header --}}
                     <x-slot:header>
-                        <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 bg-purple-50 rounded-full flex items-center justify-center shrink-0">
-                                <flux:icon icon="archive-box-arrow-down" class="size-4 text-purple-600" />
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <p class="font-semibold text-zinc-900 text-sm truncate leading-tight" title="{{ $row['variety'] }}">
-                                    {{ $row['variety'] }}
-                                </p>
-                                <p class="text-xs text-zinc-400 leading-tight mt-0.5 truncate">
-                                    {{ $row['plot'] }}@if($row['area']) · {{ number_format($row['area'], 2) }} ha @endif
-                                </p>
-                            </div>
+                        <x-agro.card-item-header
+                            icon="archive-box-arrow-down"
+                            :title="$row['variety']"
+                            :subtitle="$row['plot'] . ($row['area'] ? ' · ' . number_format($row['area'], 2) . ' ha' : '')"
+                            iconBg="bg-purple-50"
+                            iconColor="text-purple-600"
+                        >
                             @if($sc['color'])
-                                <flux:badge color="{{ $sc['color'] }}" size="sm" class="shrink-0">{{ $sc['label'] }}</flux:badge>
+                                <flux:badge color="{{ $sc['color'] }}" size="sm">{{ $sc['label'] }}</flux:badge>
                             @else
-                                <flux:badge size="sm" class="shrink-0">{{ $sc['label'] }}</flux:badge>
+                                <flux:badge size="sm">{{ $sc['label'] }}</flux:badge>
                             @endif
-                        </div>
+                        </x-agro.card-item-header>
                     </x-slot:header>
 
                     {{-- Fecha y añada --}}

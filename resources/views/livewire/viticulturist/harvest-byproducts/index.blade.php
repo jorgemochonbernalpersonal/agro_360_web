@@ -123,18 +123,19 @@
                         wire:key="hbp-{{ $entry->id }}"
                     >
                         <x-slot:header>
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 {{ $typeColor['bg'] }} rounded-xl flex items-center justify-center shrink-0">
-                                    <flux:icon icon="beaker" class="size-5 {{ $typeColor['icon'] }}" />
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <h3 class="font-bold text-zinc-900 truncate">{{ $entry->destination_name }}</h3>
-                                    <p class="text-xs text-zinc-500">{{ $entry->date->format('d/m/Y') }}</p>
-                                </div>
-                                <span class="shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold {{ $typeBadgeClass }}">
+                            <x-agro.card-item-header
+                                icon="beaker"
+                                :title="$entry->destination_name"
+                                :subtitle="$entry->date->format('d/m/Y')"
+                                :iconBg="$typeColor['bg']"
+                                :iconColor="$typeColor['icon']"
+                                size="md"
+                                radius="xl"
+                            >
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold {{ $typeBadgeClass }}">
                                     {{ $entry->byproduct_type_label }}
                                 </span>
-                            </div>
+                            </x-agro.card-item-header>
                         </x-slot:header>
 
                         <div class="flex-1 space-y-3">

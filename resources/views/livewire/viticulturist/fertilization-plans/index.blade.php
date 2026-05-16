@@ -111,20 +111,19 @@
                     style="animation-delay: {{ min($i * 50, 400) }}ms"
                 >
                     <x-slot:header>
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 {{ $iconBg }} rounded-xl flex items-center justify-center shrink-0">
-                                <flux:icon icon="funnel" class="size-5 {{ $iconColor }}" />
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <p class="font-bold text-zinc-900 leading-tight">{{ $plan->plan_year }}</p>
-                                @if($plan->prepared_by)
-                                    <p class="text-xs text-zinc-400 leading-tight mt-0.5 truncate">{{ $plan->prepared_by }}</p>
-                                @endif
-                            </div>
-                            <flux:badge color="{{ $plan->status_color }}" size="sm" class="shrink-0">
+                        <x-agro.card-item-header
+                            icon="funnel"
+                            :title="(string) $plan->plan_year"
+                            :subtitle="$plan->prepared_by ?? null"
+                            :iconBg="$iconBg"
+                            :iconColor="$iconColor"
+                            size="md"
+                            radius="xl"
+                        >
+                            <flux:badge color="{{ $plan->status_color }}" size="sm">
                                 {{ $plan->status_label }}
                             </flux:badge>
-                        </div>
+                        </x-agro.card-item-header>
                     </x-slot:header>
 
                     <div class="flex-1 space-y-3">

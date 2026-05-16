@@ -108,18 +108,19 @@
                         wire:key="hd-{{ $entry->id }}"
                     >
                         <x-slot:header>
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 {{ $statusColor['bg'] }} rounded-xl flex items-center justify-center shrink-0">
-                                    <flux:icon icon="document-arrow-up" class="size-5 {{ $statusColor['icon'] }}" />
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <h3 class="font-bold text-zinc-900 truncate">{{ $entry->declaration_year }}</h3>
-                                    <p class="text-xs text-zinc-500 truncate">{{ $entry->authority }}</p>
-                                </div>
-                                <x-agro.status-badge :color="$entry->status_color" class="shrink-0">
+                            <x-agro.card-item-header
+                                icon="document-arrow-up"
+                                :title="(string) $entry->declaration_year"
+                                :subtitle="$entry->authority"
+                                :iconBg="$statusColor['bg']"
+                                :iconColor="$statusColor['icon']"
+                                size="md"
+                                radius="xl"
+                            >
+                                <x-agro.status-badge :color="$entry->status_color">
                                     {{ $entry->status_label }}
                                 </x-agro.status-badge>
-                            </div>
+                            </x-agro.card-item-header>
                         </x-slot:header>
 
                         <div class="flex-1 space-y-4">

@@ -77,20 +77,17 @@
                     wire:key="applicator-{{ $applicator->id }}"
                 >
                     <x-slot:header>
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-zinc-100">
-                                <flux:icon icon="user" class="size-5 text-zinc-500" />
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <h3 class="font-bold text-zinc-900 truncate">{{ $applicator->name }}</h3>
-                                @if($applicator->email)
-                                    <p class="text-xs text-zinc-400 truncate">{{ $applicator->email }}</p>
-                                @endif
-                            </div>
+                        <x-agro.card-item-header
+                            icon="user"
+                            :title="$applicator->name"
+                            :subtitle="$applicator->email ?? null"
+                            size="md"
+                            radius="xl"
+                        >
                             @if($applicator->is_advisor)
-                                <flux:badge color="green" size="sm" class="shrink-0">Asesor</flux:badge>
+                                <flux:badge color="green" size="sm">Asesor</flux:badge>
                             @endif
-                        </div>
+                        </x-agro.card-item-header>
                     </x-slot:header>
 
                     <div class="flex-1 space-y-3">

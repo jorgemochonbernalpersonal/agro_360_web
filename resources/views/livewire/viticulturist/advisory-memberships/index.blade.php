@@ -81,18 +81,17 @@
                     wire:key="advisor-{{ $entry->id }}"
                 >
                     <x-slot:header>
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-agro-100">
-                                <flux:icon icon="user" class="size-5 text-agro-600" />
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <h3 class="font-bold text-zinc-900 truncate">{{ $entry->advisor_name }}</h3>
-                                @if($entry->company_name)
-                                    <p class="text-xs text-zinc-400 truncate">{{ $entry->company_name }}</p>
-                                @endif
-                            </div>
-                            <flux:badge color="blue" size="sm" class="shrink-0">{{ $entry->specialty_label }}</flux:badge>
-                        </div>
+                        <x-agro.card-item-header
+                            icon="user"
+                            :title="$entry->advisor_name"
+                            :subtitle="$entry->company_name ?? null"
+                            iconBg="bg-agro-100"
+                            iconColor="text-agro-600"
+                            size="md"
+                            radius="xl"
+                        >
+                            <flux:badge color="blue" size="sm">{{ $entry->specialty_label }}</flux:badge>
+                        </x-agro.card-item-header>
                     </x-slot:header>
 
                     <div class="flex-1 space-y-3">
