@@ -41,6 +41,7 @@ class Login extends Component
         
         // Rate limiting: por IP. En producción más estricto, en entornos de desarrollo/test más laxo
         $key = 'login.' . request()->ip();
+        $emailKey = 'login.email.' . sha1(strtolower(trim($this->email)));
         $failedKey = 'login.failed.' . request()->ip();
         $maxAttempts = app()->environment('production') ? 5 : 100;
         $decaySeconds = app()->environment('production') ? 60 : 10;
@@ -76,7 +77,17 @@ class Login extends Component
             ]);
         }
 
+        // Rate limit por email (bloquea ataques distribuidos desde múltiples IPs)
+        if (RateLimiter::tooManyAttempts($emailKey, 10)) {
+            $seconds = RateLimiter::availableIn($emailKey);
+            SecurityLogger::logRateLimitReached($emailKey, 10);
+            throw ValidationException::withMessages([
+                'email' => "Demasiados intentos para este email. Por favor, intenta de nuevo en {$seconds} segundos.",
+            ]);
+        }
+
         RateLimiter::hit($key, $decaySeconds);
+        RateLimiter::hit($emailKey, 3600);
 
         $this->validate();
 
@@ -145,8 +156,9 @@ class Login extends Component
             return $this->redirect(route('auth.change-password-required'), navigate: true);
         }
 
-        // Limpiar contador de intentos fallidos en login exitoso
+        // Limpiar contadores de intentos fallidos en login exitoso
         RateLimiter::clear('login.failed.' . request()->ip());
+        RateLimiter::clear('login.email.' . sha1(strtolower(trim($this->email))));
 
         return $this->redirect(route($this->getDashboardRoute()), navigate: true);
     }

@@ -32,7 +32,7 @@ return [
     |
     */
 
-    'lifetime' => (int) env('SESSION_LIFETIME', 180), // 3 horas - recomendado para usuarios en campo
+    'lifetime' => (int) env('SESSION_LIFETIME', 480), // 8 horas - jornada laboral completa
 
     'expire_on_close' => env('SESSION_EXPIRE_ON_CLOSE', false),
 

@@ -17,6 +17,20 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->redirectGuestsTo(fn () => route('login'));
+        $middleware->redirectUsersTo(function () {
+            $user = auth()->user();
+            if (!$user) return route('login');
+            return match($user->role) {
+                'admin'         => route('admin.dashboard'),
+                'supervisor'    => route('supervisor.dashboard'),
+                'winery'        => route('winery.dashboard'),
+                'viticulturist' => route('viticulturist.dashboard'),
+                'producer'      => route('producer.dashboard'),
+                default         => route('login'),
+            };
+        });
+
         // Forzar HTTPS en producción (debe ir primero)
         $middleware->append(\App\Http\Middleware\ForceHttps::class);
         

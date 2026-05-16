@@ -68,6 +68,14 @@ Route::middleware('auth')->group(function () {
         ->name('auth.change-password-required');
     
     Route::post('/logout', function () {
+        $user = Auth::user();
+        if ($user) {
+            \App\Services\SecurityLogger::logSecurityEvent('user_logout', [
+                'user_id' => $user->id,
+                'email'   => $user->email,
+                'role'    => $user->role,
+            ]);
+        }
         Auth::logout();
         request()->session()->invalidate();
         request()->session()->regenerateToken();
