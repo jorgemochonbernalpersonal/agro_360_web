@@ -12,18 +12,19 @@ class Notifications extends Component
     public $notifications = [];
     public $dashboardAlerts = [];
     public $unreadCount = 0;
-    public $showDropdown = false;
+    /** @deprecated Alpine manages open state locally — no server sync needed */
 
     public function mount()
     {
         $this->loadNotifications();
-        $this->loadDashboardAlerts();
     }
 
     protected $listeners = ['notificationReceived' => 'loadNotifications'];
 
     public function loadNotifications()
     {
+        $this->loadDashboardAlerts();
+
         $this->notifications = auth()->user()
             ->notifications()
             ->latest()
@@ -31,8 +32,6 @@ class Notifications extends Component
             ->get();
 
         $this->unreadCount = auth()->user()->unreadNotifications()->count();
-
-        // Add dashboard alerts count
         $this->unreadCount += count($this->dashboardAlerts);
     }
 
@@ -66,11 +65,6 @@ class Notifications extends Component
             $notification->delete();
             $this->loadNotifications();
         }
-    }
-
-    public function toggleDropdown()
-    {
-        $this->showDropdown = !$this->showDropdown;
     }
 
     /**

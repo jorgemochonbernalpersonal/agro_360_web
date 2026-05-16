@@ -1,4 +1,4 @@
-<div wire:poll.30s="loadNotifications" x-data="{ open: @entangle('showDropdown') }" @click.away="open = false" class="relative">
+<div wire:poll.30s="loadNotifications" x-data="{ open: false }" @click.away="open = false" class="relative">
     {{-- Notification Bell Button --}}
     <button
         @click="open = !open"
@@ -56,9 +56,13 @@
                     <span class="text-xs font-semibold text-amber-700">Alertas del sistema</span>
                 </div>
                 @foreach($dashboardAlerts as $alert)
-                    <div class="px-4 py-3 border-b border-zinc-100 bg-{{ $alert['type'] === 'danger' ? 'red' : ($alert['type'] === 'warning' ? 'amber' : 'blue') }}-50/50">
+                    @php
+                        $alertBg     = match($alert['type']) { 'danger' => 'bg-red-50/50', 'warning' => 'bg-amber-50/50', default => 'bg-blue-50/50' };
+                        $alertIconBg = match($alert['type']) { 'danger' => 'bg-red-100',   'warning' => 'bg-amber-100',   default => 'bg-blue-100' };
+                    @endphp
+                    <div class="px-4 py-3 border-b border-zinc-100 {{ $alertBg }}">
                         <div class="flex items-start gap-3">
-                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-{{ $alert['type'] === 'danger' ? 'red' : ($alert['type'] === 'warning' ? 'amber' : 'blue') }}-100 flex items-center justify-center text-xl">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full {{ $alertIconBg }} flex items-center justify-center text-xl">
                                 {{ $alert['icon'] }}
                             </div>
                             <div class="flex-1 min-w-0">
@@ -67,7 +71,7 @@
                                 @if(isset($alert['action_url']))
                                     <a href="{{ $alert['action_url'] }}" wire:navigate @click="open = false"
                                        class="inline-block mt-2 text-xs font-medium text-agro-600 hover:text-agro-700">
-                                        {{ $alert['action_text'] ?? 'Ver m��s' }} ��
+                                        {{ $alert['action_text'] ?? 'Ver más' }} →
                                     </a>
                                 @endif
                             </div>
@@ -195,7 +199,7 @@
         </div>
 
         {{-- Footer --}}
-        @if($notifications->count() > 0 && !auth()->user()->isWinery())
+        @if(count($notifications) > 0 && !auth()->user()->isWinery())
             <div class="px-4 py-2 border-t border-zinc-200 bg-zinc-50">
                 <a
                     href="{{ roleRoute('official-reports.index') }}"
