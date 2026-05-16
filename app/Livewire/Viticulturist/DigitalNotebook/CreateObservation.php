@@ -2,203 +2,71 @@
 
 namespace App\Livewire\Viticulturist\DigitalNotebook;
 
-use App\Models\Plot;
-use App\Models\PlotPlanting;
 use App\Models\AgriculturalActivity;
 use App\Models\Observation;
-use App\Models\Campaign;
-use App\Models\Crew;
-use App\Models\Machinery;
-use App\Models\CrewMember;
-use App\Livewire\Concerns\WithViticulturistValidation;
-use App\Livewire\Concerns\WithToastNotifications;
-use App\Livewire\Concerns\WithUserFilters;
-use App\Livewire\Concerns\WithRoleAwareRedirect;
-use Livewire\Component;
-use Livewire\Attributes\Layout;
+use App\Models\Pest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-class CreateObservation extends Component
+class CreateObservation extends AbstractActivityForm
 {
-    use WithViticulturistValidation, WithToastNotifications, WithUserFilters, WithRoleAwareRedirect;
-    public $plot_id = '';
-    public $plot_planting_id = '';
-    public $availablePlantings = [];
-    public $activity_date = '';
-    public $observation_type = '';
-    public $description = '';
-    public $severity = '';
-    public $action_taken = '';
-    public $phenological_stage = ''; // Estadio fenológico
-    public $workType = ''; // 'crew' o 'individual'
-    public $crew_id = '';
-    public $crew_member_id = '';
-    public $machinery_id = '';
-    public $weather_conditions = '';
-    public $temperature = '';
-    public $notes = '';
-    public $campaign_id = '';
-    public $affected_area_percentage = '';
-    public $threshold_exceeded = false;
-    public $follow_up_date = '';
-    public $pest_id = '';
-    public $selectedPest = null;
+    // ─── Type-specific properties ─────────────────────────────────────────────
 
-    public function mount()
+    public $observation_type        = '';
+    public $description             = '';
+    public $severity                = '';
+    public $action_taken            = '';
+    public $affected_area_percentage = '';
+    public $threshold_exceeded      = false;
+    public $follow_up_date          = '';
+    public $pest_id                 = '';
+    public $selectedPest            = null;
+
+    // ─── Mount ────────────────────────────────────────────────────────────────
+
+    public function mount(): void
     {
-        // Validar autorización
-        $this->authorizeCreateActivity();
-        
-        $this->activity_date = now()->format('Y-m-d');
-        
-        // Capturar pest_id de la URL si existe
+        $this->mountCreate();
+
+        // Pre-select pest from URL query param (e.g. from pest-management detail page)
         $this->pest_id = request()->query('pest_id', '');
         if ($this->pest_id) {
-            $this->selectedPest = \App\Models\Pest::find($this->pest_id);
+            $this->selectedPest = Pest::find($this->pest_id);
             if ($this->selectedPest) {
-                // Pre-seleccionar tipo según el tipo de plaga
-                $this->observation_type = ($this->selectedPest->type === 'disease' || $this->selectedPest->type === 'enfermedad') 
-                    ? 'enfermedad' 
+                $this->observation_type = in_array($this->selectedPest->type, ['disease', 'enfermedad'])
+                    ? 'enfermedad'
                     : 'plaga';
             }
         }
-
-        // Obtener o crear campaña activa del año actual
-        $user = Auth::user();
-        $campaign = Campaign::getOrCreateActiveForYear($user->id);
-        
-        if (!$campaign) {
-            // Si no se pudo obtener/crear campaña, redirigir
-            $this->toastError('No se pudo obtener la campaña activa. Por favor, crea una campaña primero.');
-            return $this->viticulturistRoleRedirect('campaign.create');
-        }
-        
-        $this->campaign_id = $campaign->id;
     }
 
-    public function updatedPlotId($value)
-    {
-        $this->plot_planting_id = '';
-        if ($value) {
-            $this->availablePlantings = PlotPlanting::where('plot_id', $value)
-                ->where('status', 'active')
-                ->with('grapeVariety')
-                ->orderBy('name')
-                ->get();
-        } else {
-            $this->availablePlantings = [];
-        }
-    }
+    // ─── Validation ───────────────────────────────────────────────────────────
 
     protected function rules(): array
     {
-        return [
-            'plot_id' => $this->plotOwnershipRule(),
-            'plot_planting_id' => [
-                'nullable',
-                'exists:plot_plantings,id',
-                function ($attribute, $value, $fail) {
-                    if ($this->plot_id) {
-                        $plot = Plot::find($this->plot_id);
-                        if ($plot && $plot->plantings()->where('status', 'active')->exists()) {
-                            if (!$value) {
-                                $fail('Debes seleccionar una plantación para esta parcela.');
-                            } elseif (!PlotPlanting::where('id', $value)
-                                ->where('plot_id', $this->plot_id)
-                                ->exists()) {
-                                $fail('La plantación seleccionada no pertenece a esta parcela.');
-                            }
-                        }
-                    }
-                },
-            ],
-            'campaign_id' => $this->campaignOwnershipRule(),
-            'activity_date' => 'required|date',
-            'observation_type' => 'required|string|max:50',
-            'description' => 'required|string',
-            'severity' => 'nullable|string|in:leve,moderada,grave',
-            'affected_area_percentage' => 'nullable|numeric|min:0|max:100',
-            'threshold_exceeded' => 'boolean',
-            'follow_up_date' => 'nullable|date|after_or_equal:activity_date',
-            'action_taken' => 'nullable|string',
-            'phenological_stage' => 'required|string|max:50',
-            'workType' => 'required|in:crew,individual',
-            'crew_id' => 'required_if:workType,crew|nullable|exists:crews,id',
-            'crew_member_id' => 'required_if:workType,individual|nullable|exists:users,id',
-            'machinery_id' => $this->machineryOwnershipRule(),
-            'weather_conditions' => 'nullable|string|max:255',
-            'temperature' => 'nullable|numeric',
-            'notes' => 'nullable|string',
-            'pest_id' => 'nullable|exists:pests,id',
-        ];
+        return array_merge($this->commonRules(), [
+            'observation_type'        => 'required|string|max:50',
+            'description'             => 'required|string',
+            'severity'                => 'nullable|string|in:leve,moderada,grave',
+            'affected_area_percentage'=> 'nullable|numeric|min:0|max:100',
+            'threshold_exceeded'      => 'boolean',
+            'follow_up_date'          => 'nullable|date|after_or_equal:activity_date',
+            'action_taken'            => 'nullable|string',
+            'pest_id'                 => 'nullable|exists:pests,id',
+        ]);
     }
 
-    public function save()
+    // ─── Save ─────────────────────────────────────────────────────────────────
+
+    public function save(): mixed
     {
         $this->validate();
-
-        $user = Auth::user();
-
-        // Validar que se haya seleccionado un tipo de trabajo
-        if (!$this->workType) {
-            $this->addError('workType', 'Debes seleccionar si el trabajo lo realizó un equipo completo o un viticultor individual.');
-            return;
-        }
-
-        // Validar según el tipo seleccionado
-        if ($this->workType === 'crew' && !$this->crew_id) {
-            $this->addError('crew_id', 'Debes seleccionar un equipo.');
-            return;
-        }
-
-        if ($this->workType === 'individual' && !$this->crew_member_id) {
-            $this->addError('crew_member_id', 'Debes seleccionar un viticultor.');
-            return;
-        }
-
-        // Validar que la parcela pertenece al viticultor usando el trait
-        $plot = $this->authorizeCreateActivityForPlot($this->plot_id);
+        $this->authorizeCreateActivityForPlot($this->plot_id);
 
         try {
-            DB::transaction(function () use ($user) {
-                $crewMemberId = null;
-                
-                // Si es trabajo individual, buscar o crear CrewMember
-                if ($this->workType === 'individual' && $this->crew_member_id) {
-                    $viticulturistId = $this->crew_member_id;
-                    
-                    $crewMember = CrewMember::firstOrCreate(
-                        [
-                            'viticulturist_id' => $viticulturistId,
-                            'assigned_by' => $user->id,
-                        ],
-                        [
-                            'crew_id' => null,
-                        ]
-                    );
-                    
-                    $crewMemberId = $crewMember->id;
-                }
-                
-                // Crear la actividad base
-                $activity = AgriculturalActivity::create([
-                    'plot_id' => $this->plot_id,
-                    'plot_planting_id' => $this->plot_planting_id ?: null,
-                    'viticulturist_id' => $user->id,
-                    'campaign_id' => $this->campaign_id,
-                    'activity_type' => 'observation',
-                    'phenological_stage' => $this->phenological_stage,
-                    'activity_date' => $this->activity_date,
-                    'crew_id' => $this->workType === 'crew' ? $this->crew_id : null,
-                    'crew_member_id' => $crewMemberId,
-                    'machinery_id' => $this->machinery_id ?: null,
-                    'weather_conditions' => $this->weather_conditions,
-                    'temperature' => $this->temperature ?: null,
-                    'notes' => $this->notes,
-                ]);
+            DB::transaction(function () {
+                $activity = AgriculturalActivity::create($this->activityData('observation'));
 
-                // Crear la observación
                 Observation::create([
                     'activity_id'              => $activity->id,
                     'pest_id'                  => $this->pest_id ?: null,
@@ -216,57 +84,16 @@ class CreateObservation extends Component
             $this->toastSuccess('Observación registrada correctamente.');
             return $this->viticulturistRoleRedirect('digital-notebook.observation.index');
         } catch (\Exception $e) {
-            \Log::error('Error al registrar observación', [
-                'error' => $e->getMessage(),
-                'user_id' => $user->id,
-                'plot_id' => $this->plot_id,
-                'trace' => $e->getTraceAsString(),
-            ]);
-
+            \Log::error('Error al registrar observación', ['error' => $e->getMessage(), 'user_id' => Auth::id()]);
             $this->toastError('Error al registrar la observación. Por favor, intenta de nuevo.');
-            return;
         }
     }
 
-    #[Layout('layouts.app')]
+    // ─── Render ───────────────────────────────────────────────────────────────
+
     public function render()
     {
-        $user = Auth::user();
-        
-        $plots = Plot::forUser($user)
-            ->where('active', true)
-            ->orderBy('name')
-            ->get();
-
-        $crews = Crew::where('viticulturist_id', $user->id)
-            ->orderBy('name')
-            ->get();
-
-        $machinery = Machinery::forViticulturist($user->id)
-            ->active()
-            ->orderBy('name')
-            ->get();
-
-        $individualWorkers = CrewMember::whereNull('crew_id')
-            ->where('assigned_by', $user->id)
-            ->with('viticulturist')
-            ->get()
-            ->sortBy(fn ($worker) => $worker->viticulturist->name)
-            ->values();
-        
-        // SIEMPRE incluir al usuario mismo al principio
-        $allViticulturists = $this->viticulturists;
-
-        $campaign = Campaign::find($this->campaign_id);
-
-        return view('livewire.viticulturist.digital-notebook.create-observation', [
-            'plots' => $plots,
-            'crews' => $crews,
-            'machinery' => $machinery,
-            'campaign' => $campaign,
-            'individualWorkers' => $individualWorkers,
-            'allViticulturists' => $allViticulturists,
-        ]);
+        return view('livewire.viticulturist.digital-notebook.create-observation', $this->renderData())
+            ->layout('layouts.app');
     }
 }
-

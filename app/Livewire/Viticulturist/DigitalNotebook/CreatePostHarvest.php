@@ -2,164 +2,71 @@
 
 namespace App\Livewire\Viticulturist\DigitalNotebook;
 
-use App\Models\Plot;
-use App\Models\PlotPlanting;
 use App\Models\AgriculturalActivity;
-use App\Models\PostHarvestTreatment;
 use App\Models\PhytosanitaryProduct;
-use App\Models\Campaign;
-use App\Models\Crew;
-use App\Models\Machinery;
-use App\Models\CrewMember;
+use App\Models\PostHarvestTreatment;
 use App\Models\WineryViticulturist;
-use App\Livewire\Concerns\WithViticulturistValidation;
-use App\Livewire\Concerns\WithToastNotifications;
-use App\Livewire\Concerns\WithUserFilters;
-use App\Livewire\Concerns\WithRoleAwareRedirect;
-use Livewire\Attributes\Layout;
-use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-#[Layout('layouts.app', ['title' => 'Registrar Tratamiento Post-Vendimia - Agro365'])]
-class CreatePostHarvest extends Component
+class CreatePostHarvest extends AbstractActivityForm
 {
-    use WithViticulturistValidation, WithToastNotifications, WithUserFilters, WithRoleAwareRedirect;
+    // ─── Type-specific properties ─────────────────────────────────────────────
 
-    public $plot_id = '';
-    public $plot_planting_id = '';
-    public $availablePlantings = [];
-    public $activity_date = '';
-    public $phenological_stage = 'Caída de hoja';
-    public $product_id = '';
-    public $application_type = '';
-    public $treated_area_ha = '';
-    public $dose_per_hectare = '';
-    public $dose_unit = 'kg/ha';
-    public $water_volume_liters = '';
+    public $product_id             = '';
+    public $application_type       = '';
+    public $treated_area_ha        = '';
+    public $dose_per_hectare       = '';
+    public $dose_unit              = 'kg/ha';
+    public $water_volume_liters    = '';
     public $reentry_interval_hours = '';
-    public $workType = '';
-    public $crew_id = '';
-    public $crew_member_id = '';
-    public $machinery_id = '';
-    public $weather_conditions = '';
-    public $temperature = '';
-    public $notes = '';
-    public $campaign_id = '';
 
-    public function mount()
+    // ─── Mount ────────────────────────────────────────────────────────────────
+
+    public function mount(): void
     {
-        $this->authorizeCreateActivity();
-        $this->activity_date = now()->format('Y-m-d');
-
-        $campaign = Campaign::getOrCreateActiveForYear(Auth::id());
-        if (!$campaign) {
-            $this->toastError('No se pudo obtener la campaña activa. Por favor, crea una campaña primero.');
-            return $this->viticulturistRoleRedirect('campaign.create');
-        }
-        $this->campaign_id = $campaign->id;
+        $this->mountCreate();
     }
 
-    public function updatedPlotId($value)
-    {
-        $this->plot_planting_id   = '';
-        $this->availablePlantings = $value
-            ? PlotPlanting::where('plot_id', $value)->where('status', 'active')->with('grapeVariety')->orderBy('name')->get()
-            : [];
-    }
+    // ─── Validation ───────────────────────────────────────────────────────────
 
     protected function rules(): array
     {
-        return [
-            'plot_id' => $this->plotOwnershipRule(),
-            'plot_planting_id' => [
-                'nullable',
-                'exists:plot_plantings,id',
-                function ($attribute, $value, $fail) {
-                    if ($this->plot_id) {
-                        $plot = Plot::find($this->plot_id);
-                        if ($plot && $plot->plantings()->where('status', 'active')->exists()) {
-                            if (!$value) {
-                                $fail('Debes seleccionar una plantación para esta parcela.');
-                            } elseif (!PlotPlanting::where('id', $value)->where('plot_id', $this->plot_id)->exists()) {
-                                $fail('La plantación seleccionada no pertenece a esta parcela.');
-                            }
-                        }
-                    }
-                },
-            ],
-            'campaign_id'        => 'required|exists:campaigns,id',
-            'activity_date'      => 'required|date',
-            'phenological_stage' => 'required|string|max:50',
-            'product_id'         => 'nullable|exists:phytosanitary_products,id',
-            'application_type'   => 'required|string|in:' . implode(',', array_keys(PostHarvestTreatment::APPLICATION_TYPES)),
-            'treated_area_ha'    => 'required|numeric|min:0.001',
-            'dose_per_hectare'   => 'nullable|numeric|min:0',
-            'dose_unit'          => 'nullable|string|max:20',
-            'water_volume_liters'     => 'nullable|numeric|min:0',
-            'reentry_interval_hours'  => 'nullable|integer|min:0|max:168',
-            'workType'                => 'required|in:crew,individual',
-            'crew_id'            => 'required_if:workType,crew|nullable|exists:crews,id',
-            'crew_member_id'     => 'required_if:workType,individual|nullable|exists:users,id',
-            'machinery_id'       => 'nullable|exists:machinery,id',
-            'weather_conditions' => 'nullable|string|max:255',
-            'temperature'        => 'nullable|numeric',
-            'notes'              => 'nullable|string',
-        ];
+        return array_merge($this->commonRules(), [
+            'product_id'             => 'nullable|exists:phytosanitary_products,id',
+            'application_type'       => 'required|string|in:' . implode(',', array_keys(PostHarvestTreatment::APPLICATION_TYPES)),
+            'treated_area_ha'        => 'required|numeric|min:0.001',
+            'dose_per_hectare'       => 'nullable|numeric|min:0',
+            'dose_unit'              => 'nullable|string|max:20',
+            'water_volume_liters'    => 'nullable|numeric|min:0',
+            'reentry_interval_hours' => 'nullable|integer|min:0|max:168',
+        ]);
     }
 
-    public function save()
+    // ─── Save ─────────────────────────────────────────────────────────────────
+
+    public function save(): mixed
     {
         $this->validate();
-        $user = Auth::user();
-
-        if ($this->workType === 'crew' && !$this->crew_id) {
-            $this->addError('crew_id', 'Debes seleccionar un equipo.');
-            return;
-        }
-        if ($this->workType === 'individual' && !$this->crew_member_id) {
-            $this->addError('crew_member_id', 'Debes seleccionar un viticultor.');
-            return;
-        }
-
         $this->authorizeCreateActivityForPlot($this->plot_id);
 
         try {
-            DB::transaction(function () use ($user) {
-                $crewMemberId = null;
-                if ($this->workType === 'individual' && $this->crew_member_id) {
-                    $crewMember = CrewMember::firstOrCreate(
-                        ['viticulturist_id' => $this->crew_member_id, 'assigned_by' => $user->id],
-                        ['crew_id' => null]
-                    );
-                    $crewMemberId = $crewMember->id;
-                }
+            DB::transaction(function () {
+                $user = Auth::user();
 
-                // Obtener relación con bodega si es viticultor invitado
                 $wineryViticulturistId = null;
                 if ($user->isViticulturist()) {
-                    $wineryRelation = WineryViticulturist::where('viticulturist_id', $user->id)
+                    $wineryViticulturistId = WineryViticulturist::where('viticulturist_id', $user->id)
                         ->whereNotNull('winery_id')
-                        ->first();
-                    $wineryViticulturistId = $wineryRelation?->id;
+                        ->value('id');
                 }
 
-                $activity = AgriculturalActivity::create([
-                    'plot_id'            => $this->plot_id,
-                    'plot_planting_id'   => $this->plot_planting_id ?: null,
-                    'viticulturist_id'   => $user->id,
-                    'winery_viticulturist_id' => $wineryViticulturistId,  // ← Vincular a bodega
-                    'campaign_id'        => $this->campaign_id,
-                    'activity_type'      => 'post_harvest',
-                    'phenological_stage' => $this->phenological_stage,
-                    'activity_date'      => $this->activity_date,
-                    'crew_id'            => $this->workType === 'crew' ? $this->crew_id : null,
-                    'crew_member_id'     => $crewMemberId,
-                    'machinery_id'       => $this->machinery_id ?: null,
-                    'weather_conditions' => $this->weather_conditions,
-                    'temperature'        => $this->temperature ?: null,
-                    'notes'              => $this->notes,
-                ]);
+                $activity = AgriculturalActivity::create(
+                    $this->activityData('post_harvest', array_filter(
+                        ['winery_viticulturist_id' => $wineryViticulturistId],
+                        fn ($v) => $v !== null
+                    ))
+                );
 
                 PostHarvestTreatment::create([
                     'activity_id'            => $activity->id,
@@ -182,17 +89,13 @@ class CreatePostHarvest extends Component
         }
     }
 
+    // ─── Render ───────────────────────────────────────────────────────────────
+
     public function render()
     {
-        $user = Auth::user();
-        return view('livewire.viticulturist.digital-notebook.create-post-harvest', [
-            'plots'            => Plot::forUser($user)->where('active', true)->orderBy('name')->get(),
-            'crews'            => Crew::where('viticulturist_id', $user->id)->orderBy('name')->get(),
-            'machinery'        => Machinery::forViticulturist($user->id)->active()->orderBy('name')->get(),
-            'campaign'         => Campaign::find($this->campaign_id),
-            'products'         => PhytosanitaryProduct::forUser($user->id)->where('active', true)->orderBy('name')->get(),
+        return view('livewire.viticulturist.digital-notebook.create-post-harvest', $this->renderData([
+            'products'         => PhytosanitaryProduct::forUser(Auth::id())->where('active', true)->orderBy('name')->get(),
             'applicationTypes' => PostHarvestTreatment::APPLICATION_TYPES,
-            'allViticulturists'=> $this->viticulturists,
-        ]);
+        ]))->layout('layouts.app', ['title' => 'Registrar Tratamiento Post-Vendimia - Agro365']);
     }
 }

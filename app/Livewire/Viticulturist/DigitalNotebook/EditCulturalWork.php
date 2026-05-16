@@ -2,278 +2,109 @@
 
 namespace App\Livewire\Viticulturist\DigitalNotebook;
 
-use App\Models\Plot;
-use App\Models\PlotPlanting;
 use App\Models\AgriculturalActivity;
 use App\Models\CulturalWork;
-use App\Models\Campaign;
-use App\Models\Crew;
-use App\Models\Machinery;
-use App\Models\CrewMember;
-use App\Livewire\Concerns\WithViticulturistValidation;
-use App\Livewire\Concerns\WithToastNotifications;
-use App\Livewire\Concerns\WithUserFilters;
-use App\Livewire\Concerns\WithRoleAwareRedirect;
-use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-class EditCulturalWork extends Component
+class EditCulturalWork extends AbstractActivityForm
 {
-    use WithViticulturistValidation, WithToastNotifications, WithUserFilters, WithRoleAwareRedirect;
-    
-    public AgriculturalActivity $activity;
-    public CulturalWork $culturalWork;
-    
-    public $plot_id = '';
-    public $plot_planting_id = '';
-    public $availablePlantings = [];
-    public $activity_date = '';
-    public $work_type = '';
-    public $hours_worked = '';
-    public $workers_count = '';
-    public $description = '';
-    public $phenological_stage = '';
-    public $workType = '';
-    public $crew_id = '';
-    public $crew_member_id = '';
-    public $machinery_id = '';
-    public $weather_conditions = '';
-    public $temperature = '';
-    public $notes = '';
-    public $campaign_id = '';
-    public $pruning_type = '';
-    public $productive_buds_per_hectare = '';
-    public $residue_management = '';
-    public $defoliation_face = '';
-    public $topping_height_cm = '';
+    // ─── Model instances ──────────────────────────────────────────────────────
 
-    public function mount(AgriculturalActivity $activity)
+    public AgriculturalActivity $activity;
+    public CulturalWork         $culturalWork;
+
+    // ─── Type-specific properties ─────────────────────────────────────────────
+
+    public $work_type                   = '';
+    public $hours_worked                = '';
+    public $workers_count               = '';
+    public $description                 = '';
+    public $pruning_type                = '';
+    public $productive_buds_per_hectare = '';
+    public $residue_management          = '';
+    public $defoliation_face            = '';
+    public $topping_height_cm           = '';
+
+    // ─── Mount ────────────────────────────────────────────────────────────────
+
+    public function mount(AgriculturalActivity $activity): void
     {
         $this->activity = $activity->load(['culturalWork', 'plot', 'plotPlanting', 'crew', 'crewMember']);
-        
-        if ($this->activity->activity_type !== 'cultural') {
-            $this->toastError('Esta actividad no es una labor cultural.');
-            return $this->viticulturistRoleRedirect('digital-notebook.cultural.index');
+
+        if (!$this->mountEditGuards($activity, 'cultural', 'digital-notebook.cultural.index')) {
+            return;
         }
-        
-        if (!Auth::user()->can('update', $this->activity)) {
-            abort(403, 'No tienes permiso para editar esta actividad.');
-        }
-        
-        if ($this->activity->isLocked()) {
-            $this->toastError(' No se puede editar una actividad bloqueada. Las actividades se bloquean automáticamente después de ' . config('activities.lock_days', 7) . ' días para cumplimiento PAC.');
-            return $this->viticulturistRoleRedirect('digital-notebook.cultural.index');
-        }
-        
+
         $this->culturalWork = $this->activity->culturalWork;
-        
-        $this->plot_id = $this->activity->plot_id;
-        $this->plot_planting_id = $this->activity->plot_planting_id;
-        $this->activity_date = \Carbon\Carbon::parse($this->activity->activity_date)->format('Y-m-d');
-        $this->phenological_stage = $this->activity->phenological_stage;
-        $this->campaign_id = $this->activity->campaign_id;
-        $this->weather_conditions = $this->activity->weather_conditions;
-        $this->temperature = $this->activity->temperature;
-        $this->notes = $this->activity->notes;
-        
-        if ($this->activity->crew_id) {
-            $this->workType = 'crew';
-            $this->crew_id = $this->activity->crew_id;
-        } elseif ($this->activity->crew_member_id) {
-            $this->workType = 'individual';
-            $crewMember = $this->activity->crewMember;
-            $this->crew_member_id = $crewMember ? $crewMember->viticulturist_id : '';
-        }
-        
-        $this->machinery_id = $this->activity->machinery_id;
-        
-        $this->work_type = $this->culturalWork->work_type;
-        $this->hours_worked = $this->culturalWork->hours_worked;
-        $this->workers_count = $this->culturalWork->workers_count;
-        $this->description = $this->culturalWork->description;
-        $this->pruning_type = $this->culturalWork->pruning_type ?? '';
+        $this->loadActivityFields($this->activity);
+        $this->loadAvailablePlantings();
+
+        $this->work_type                   = $this->culturalWork->work_type;
+        $this->hours_worked                = $this->culturalWork->hours_worked ?? '';
+        $this->workers_count               = $this->culturalWork->workers_count ?? '';
+        $this->description                 = $this->culturalWork->description;
+        $this->pruning_type                = $this->culturalWork->pruning_type ?? '';
         $this->productive_buds_per_hectare = $this->culturalWork->productive_buds_per_hectare ?? '';
-        $this->residue_management = $this->culturalWork->residue_management ?? '';
-        $this->defoliation_face = $this->culturalWork->defoliation_face ?? '';
-        $this->topping_height_cm = $this->culturalWork->topping_height_cm ?? '';
-        
-        if ($this->plot_id) {
-            $this->availablePlantings = PlotPlanting::where('plot_id', $this->plot_id)
-                ->where('status', 'active')
-                ->with('grapeVariety')
-                ->orderBy('name')
-                ->get();
-        }
+        $this->residue_management          = $this->culturalWork->residue_management ?? '';
+        $this->defoliation_face            = $this->culturalWork->defoliation_face ?? '';
+        $this->topping_height_cm           = $this->culturalWork->topping_height_cm ?? '';
     }
 
-    public function updatedPlotId($value)
-    {
-        $this->plot_planting_id = '';
-        if ($value) {
-            $this->availablePlantings = PlotPlanting::where('plot_id', $value)
-                ->where('status', 'active')
-                ->with('grapeVariety')
-                ->orderBy('name')
-                ->get();
-        } else {
-            $this->availablePlantings = [];
-        }
-    }
+    // ─── Validation ───────────────────────────────────────────────────────────
 
     protected function rules(): array
     {
-        return [
-            'plot_id' => $this->plotOwnershipRule(),
-            'plot_planting_id' => [
-                'nullable',
-                'exists:plot_plantings,id',
-                function ($attribute, $value, $fail) {
-                    if ($this->plot_id) {
-                        $plot = Plot::find($this->plot_id);
-                        if ($plot && $plot->plantings()->where('status', 'active')->exists()) {
-                            if (!$value) {
-                                $fail('Debes seleccionar una plantación para esta parcela.');
-                            } elseif (!PlotPlanting::where('id', $value)
-                                ->where('plot_id', $this->plot_id)
-                                ->exists()) {
-                                $fail('La plantación seleccionada no pertenece a esta parcela.');
-                            }
-                        }
-                    }
-                },
-            ],
-            'campaign_id' => $this->campaignOwnershipRule(),
-            'activity_date' => 'required|date',
-            'work_type' => 'required|string|max:100',
-            'hours_worked' => 'nullable|numeric|min:0',
-            'workers_count' => 'nullable|integer|min:1',
-            'description' => 'required|string|min:10',
-            'phenological_stage' => 'required|string|max:50',
-            'workType' => 'required|in:crew,individual',
-            'crew_id' => 'required_if:workType,crew|nullable|exists:crews,id',
-            'crew_member_id' => 'required_if:workType,individual|nullable|exists:users,id',
-            'machinery_id' => $this->machineryOwnershipRule(),
-            'weather_conditions' => 'nullable|string|max:255',
-            'temperature' => 'nullable|numeric',
-            'notes' => 'nullable|string',
-            'pruning_type' => 'nullable|string|max:50',
+        return array_merge($this->commonRules(), [
+            'work_type'                   => 'required|string|max:100',
+            'hours_worked'                => 'nullable|numeric|min:0',
+            'workers_count'               => 'nullable|integer|min:1',
+            'description'                 => 'required|string|min:10',
+            'pruning_type'                => 'nullable|string|max:50',
             'productive_buds_per_hectare' => 'nullable|integer|min:0',
-            'residue_management' => 'nullable|string|in:triturado_incorporado,triturado_superficie,retirado,quemado,otro',
-            'defoliation_face' => 'nullable|in:norte,sur,ambas',
-            'topping_height_cm' => 'nullable|integer|min:1|max:300',
-        ];
+            'residue_management'          => 'nullable|string|in:triturado_incorporado,triturado_superficie,retirado,quemado,otro',
+            'defoliation_face'            => 'nullable|in:norte,sur,ambas',
+            'topping_height_cm'           => 'nullable|integer|min:1|max:300',
+        ]);
     }
 
-    public function update()
+    // ─── Update ───────────────────────────────────────────────────────────────
+
+    public function update(): mixed
     {
         $this->validate();
-
-        $user = Auth::user();
-
-        $plot = $this->authorizeCreateActivityForPlot($this->plot_id);
+        $this->authorizeCreateActivityForPlot($this->plot_id);
 
         try {
-            DB::transaction(function () use ($user) {
-                $crewMemberId = null;
-                
-                if ($this->workType === 'individual' && $this->crew_member_id) {
-                    $viticulturistId = $this->crew_member_id;
-                    
-                    $crewMember = CrewMember::firstOrCreate(
-                        [
-                            'viticulturist_id' => $viticulturistId,
-                            'assigned_by' => $user->id,
-                        ],
-                        [
-                            'crew_id' => null,
-                        ]
-                    );
-                    
-                    $crewMemberId = $crewMember->id;
-                }
-                
-                $this->activity->update([
-                    'plot_id' => $this->plot_id,
-                    'plot_planting_id' => $this->plot_planting_id ?: null,
-                    'campaign_id' => $this->campaign_id,
-                    'phenological_stage' => $this->phenological_stage,
-                    'activity_date' => $this->activity_date,
-                    'crew_id' => $this->workType === 'crew' ? $this->crew_id : null,
-                    'crew_member_id' => $crewMemberId,
-                    'machinery_id' => $this->machinery_id ?: null,
-                    'weather_conditions' => $this->weather_conditions,
-                    'temperature' => $this->temperature ?: null,
-                    'notes' => $this->notes,
-                ]);
+            DB::transaction(function () {
+                $this->activity->update($this->activityData('cultural'));
 
                 $this->culturalWork->update([
-                    'work_type' => $this->work_type,
-                    'hours_worked' => $this->hours_worked ?: null,
-                    'workers_count' => $this->workers_count ?: null,
-                    'description' => $this->description,
-                    'pruning_type' => $this->work_type === 'poda' ? ($this->pruning_type ?: null) : null,
+                    'work_type'                   => $this->work_type,
+                    'hours_worked'                => $this->hours_worked ?: null,
+                    'workers_count'               => $this->workers_count ?: null,
+                    'description'                 => $this->description,
+                    'pruning_type'                => $this->work_type === 'poda' ? ($this->pruning_type ?: null) : null,
                     'productive_buds_per_hectare' => $this->work_type === 'poda' ? ($this->productive_buds_per_hectare ?: null) : null,
-                    'residue_management' => $this->residue_management ?: null,
-                    'defoliation_face' => $this->work_type === 'deshojado' ? ($this->defoliation_face ?: null) : null,
-                    'topping_height_cm' => $this->work_type === 'despuntado' ? ($this->topping_height_cm ?: null) : null,
+                    'residue_management'          => $this->residue_management ?: null,
+                    'defoliation_face'            => $this->work_type === 'deshojado' ? ($this->defoliation_face ?: null) : null,
+                    'topping_height_cm'           => $this->work_type === 'despuntado' ? ($this->topping_height_cm ?: null) : null,
                 ]);
             });
 
             $this->toastSuccess('Labor cultural actualizada correctamente.');
             return $this->viticulturistRoleRedirect('digital-notebook.cultural.index');
         } catch (\Exception $e) {
-            \Log::error('Error al actualizar labor cultural', [
-                'error' => $e->getMessage(),
-                'user_id' => $user->id,
-                'activity_id' => $this->activity->id,
-                'trace' => $e->getTraceAsString(),
-            ]);
-
+            \Log::error('Error al actualizar labor cultural', ['error' => $e->getMessage(), 'user_id' => Auth::id(), 'activity_id' => $this->activity->id]);
             $this->toastError('Error al actualizar la labor cultural. Por favor, intenta de nuevo.');
-            return;
         }
     }
 
+    // ─── Render ───────────────────────────────────────────────────────────────
+
     public function render()
     {
-        $user = Auth::user();
-        
-        $plots = Plot::forUser($user)
-            ->where('active', true)
-            ->orderBy('name')
-            ->get();
-
-        $crews = Crew::where('viticulturist_id', $user->id)
-            ->orderBy('name')
-            ->get();
-
-        $machinery = Machinery::forViticulturist($user->id)
-            ->active()
-            ->orderBy('name')
-            ->get();
-
-        $individualWorkers = CrewMember::whereNull('crew_id')
-            ->where('assigned_by', $user->id)
-            ->with('viticulturist')
-            ->get()
-            ->sortBy(fn ($worker) => $worker->viticulturist->name)
-            ->values();
-        
-        // SIEMPRE incluir al usuario mismo al principio
-        $allViticulturists = $this->viticulturists;
-
-        $campaign = Campaign::find($this->campaign_id);
-
-        return view('livewire.viticulturist.digital-notebook.edit-cultural-work', [
-            'plots' => $plots,
-            'crews' => $crews,
-            'machinery' => $machinery,
-            'campaign' => $campaign,
-            'individualWorkers' => $individualWorkers,
-            'allViticulturists' => $allViticulturists,
-        ])->layout('layouts.app', [
-            'title' => 'Editar Labor Cultural - Agro365',
-        ]);
+        return view('livewire.viticulturist.digital-notebook.edit-cultural-work', $this->renderData())
+            ->layout('layouts.app', ['title' => 'Editar Labor Cultural - Agro365']);
     }
 }

@@ -2,272 +2,118 @@
 
 namespace App\Livewire\Viticulturist\DigitalNotebook;
 
-use App\Models\Plot;
-use App\Models\PlotPlanting;
 use App\Models\AgriculturalActivity;
 use App\Models\Fertilization;
-use App\Models\Campaign;
-use App\Models\Crew;
-use App\Models\Machinery;
-use App\Models\CrewMember;
-use App\Livewire\Concerns\WithViticulturistValidation;
-use App\Livewire\Concerns\WithToastNotifications;
-use App\Livewire\Concerns\WithUserFilters;
-use App\Livewire\Concerns\WithRoleAwareRedirect;
-use Livewire\Attributes\Layout;
-use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-#[Layout('layouts.app')]
-class CreateFertilization extends Component
+class CreateFertilization extends AbstractActivityForm
 {
-    use WithViticulturistValidation, WithToastNotifications, WithUserFilters, WithRoleAwareRedirect;
-    public $plot_id = '';
-    public $plot_planting_id = '';
-    public $availablePlantings = [];
-    public $activity_date = '';
-    public $fertilizer_type = '';
-    public $fertilizer_name = '';
-    public $quantity = '';
-    public $npk_ratio = '';
-    public $application_method = '';
-    public $area_applied = '';
-    public $phenological_stage = ''; // Estadio fenológico
-    public $workType = ''; // 'crew' o 'individual'
-    public $crew_id = '';
-    public $crew_member_id = '';
-    public $machinery_id = '';
-    public $weather_conditions = '';
-    public $temperature = '';
-    public $notes = '';
-    public $campaign_id = '';
-    
-    // PAC Nutrición
-    public $nitrogen_uf = '';
-    public $phosphorus_uf = '';
-    public $potassium_uf = '';
-    public $manure_type = '';
-    public $burial_date = '';
-    public $emission_reduction_method = '';
+    // ─── Type-specific properties ─────────────────────────────────────────────
 
-    public function mount()
+    public $fertilizer_type            = '';
+    public $fertilizer_name            = '';
+    public $quantity                   = '';
+    public $npk_ratio                  = '';
+    public $application_method         = '';
+    public $area_applied               = '';
+    public $nitrogen_uf                = '';
+    public $phosphorus_uf              = '';
+    public $potassium_uf               = '';
+    public $manure_type                = '';
+    public $burial_date                = '';
+    public $emission_reduction_method  = '';
+    public $is_organic                 = false;
+
+    // ─── Mount ────────────────────────────────────────────────────────────────
+
+    public function mount(): void
     {
-        // Validar autorización
-        $this->authorizeCreateActivity();
-        
-        $this->activity_date = now()->format('Y-m-d');
-        
-        // Obtener o crear campaña activa del año actual
-        $user = Auth::user();
-        $campaign = Campaign::getOrCreateActiveForYear($user->id);
-        
-        if (!$campaign) {
-            // Si no se pudo obtener/crear campaña, redirigir
-            $this->toastError('No se pudo obtener la campaña activa. Por favor, crea una campaña primero.');
-            return $this->viticulturistRoleRedirect('campaign.create');
-        }
-        
-        $this->campaign_id = $campaign->id;
+        $this->mountCreate();
     }
 
-    public function updatedPlotId($value)
+    // ─── Reactive ─────────────────────────────────────────────────────────────
+
+    public function updatedFertilizerType(): void
     {
-        $this->plot_planting_id = '';
-        if ($value) {
-            $this->availablePlantings = PlotPlanting::where('plot_id', $value)
-                ->where('status', 'active')
-                ->with('grapeVariety')
-                ->orderBy('name')
-                ->get();
-        } else {
-            $this->availablePlantings = [];
-        }
+        $lower = strtolower($this->fertilizer_type);
+        $this->is_organic = str_contains($lower, 'orgán')
+            || str_contains($lower, 'organ')
+            || str_contains($lower, 'estiér')
+            || str_contains($lower, 'estier');
     }
+
+    // ─── Validation ───────────────────────────────────────────────────────────
 
     protected function rules(): array
     {
-        return [
-            'plot_id' => $this->plotOwnershipRule(),
-            'plot_planting_id' => [
-                'nullable',
-                'exists:plot_plantings,id',
-                function ($attribute, $value, $fail) {
-                    if ($this->plot_id) {
-                        $plot = Plot::find($this->plot_id);
-                        if ($plot && $plot->plantings()->where('status', 'active')->exists()) {
-                            if (!$value) {
-                                $fail('Debes seleccionar una plantación para esta parcela.');
-                            } elseif (!PlotPlanting::where('id', $value)
-                                ->where('plot_id', $this->plot_id)
-                                ->exists()) {
-                                $fail('La plantación seleccionada no pertenece a esta parcela.');
-                            }
-                        }
-                    }
-                },
-            ],
-            'campaign_id' => $this->campaignOwnershipRule(),
-            'activity_date' => 'required|date',
-            'fertilizer_type' => 'required|string|max:100',
-            'fertilizer_name' => 'nullable|string|max:255',
-            'quantity' => 'required|numeric|min:0.01',
-            'npk_ratio' => 'nullable|string|max:50',
-            'application_method' => 'nullable|string|max:50',
-            'area_applied' => 'required|numeric|min:0.01',
-            'phenological_stage' => 'required|string|max:50',
-            'workType' => 'required|in:crew,individual',
-            'crew_id' => 'required_if:workType,crew|nullable|exists:crews,id',
-            'crew_member_id' => 'required_if:workType,individual|nullable|exists:users,id',
-            'machinery_id' => $this->machineryOwnershipRule(),
-            'weather_conditions' => 'nullable|string|max:255',
-            'temperature' => 'nullable|numeric',
-            'notes' => 'nullable|string',
-            // PAC Nutrición (BCAM 6 - RD 1078/2014)
-            'nitrogen_uf' => 'required_without_all:phosphorus_uf,potassium_uf|nullable|numeric|min:0|max:1000',
+        return array_merge($this->commonRules(), [
+            'fertilizer_type'          => 'required|string|max:100',
+            'fertilizer_name'          => 'nullable|string|max:255',
+            'quantity'                 => 'required|numeric|min:0.01',
+            'npk_ratio'                => 'nullable|string|max:50',
+            'application_method'       => 'nullable|string|max:50',
+            'area_applied'             => 'required|numeric|min:0.01',
+            // PAC Nutrición (BCAM 6) — al menos un valor NPK
+            'nitrogen_uf'   => 'required_without_all:phosphorus_uf,potassium_uf|nullable|numeric|min:0|max:1000',
             'phosphorus_uf' => 'required_without_all:nitrogen_uf,potassium_uf|nullable|numeric|min:0|max:1000',
-            'potassium_uf' => 'required_without_all:nitrogen_uf,phosphorus_uf|nullable|numeric|min:0|max:1000',
-            // Campos obligatorios si es fertilizante orgánico
-            'manure_type' => 'nullable|string|max:100',
-            'burial_date' => 'nullable|date|before_or_equal:today',
+            'potassium_uf'  => 'required_without_all:nitrogen_uf,phosphorus_uf|nullable|numeric|min:0|max:1000',
+            // Campos orgánicos — obligatorios solo si is_organic
+            'manure_type'  => $this->is_organic ? 'required|string|max:100'               : 'nullable|string|max:100',
+            'burial_date'  => $this->is_organic ? 'required|date|before_or_equal:today'   : 'nullable|date|before_or_equal:today',
             'emission_reduction_method' => 'nullable|string|max:100',
+        ]);
+    }
+
+    protected function messages(): array
+    {
+        return [
+            'manure_type.required' => 'El tipo de estiércol es obligatorio para fertilizantes orgánicos (BCAM 6).',
+            'burial_date.required' => 'La fecha de enterrado es obligatoria para fertilizantes orgánicos (BCAM 6).',
         ];
     }
 
-    public function save()
+    // ─── Save ─────────────────────────────────────────────────────────────────
+
+    public function save(): mixed
     {
         $this->validate();
-        
-        // Validación condicional para fertilizantes orgánicos (BCAM 6)
-        if ($this->fertilizer_type && 
-            (str_contains(strtolower($this->fertilizer_type), 'orgánico') || 
-             str_contains(strtolower($this->fertilizer_type), 'organico') ||
-             str_contains(strtolower($this->fertilizer_type), 'estiércol') ||
-             str_contains(strtolower($this->fertilizer_type), 'estiercol'))) {
-            
-            $this->validate([
-                'manure_type' => 'required|string|max:100',
-                'burial_date' => 'required|date|before_or_equal:today',
-            ], [
-                'manure_type.required' => 'El tipo de estiércol es obligatorio para fertilizantes orgánicos (BCAM 6).',
-                'burial_date.required' => 'La fecha de enterrado es obligatoria para fertilizantes orgánicos (BCAM 6).',
-            ]);
-        }
-
-        $user = Auth::user();
-
-        $plot = $this->authorizeCreateActivityForPlot($this->plot_id);
+        $this->authorizeCreateActivityForPlot($this->plot_id);
 
         try {
-            DB::transaction(function () use ($user) {
-                $crewMemberId = null;
-                
-                // Si es trabajo individual, buscar o crear CrewMember
-                if ($this->workType === 'individual' && $this->crew_member_id) {
-                    $viticulturistId = $this->crew_member_id;
-                    
-                    $crewMember = CrewMember::firstOrCreate(
-                        [
-                            'viticulturist_id' => $viticulturistId,
-                            'assigned_by' => $user->id,
-                        ],
-                        [
-                            'crew_id' => null,
-                        ]
-                    );
-                    
-                    $crewMemberId = $crewMember->id;
-                }
-                
-                // Crear la actividad base
-                $activity = AgriculturalActivity::create([
-                    'plot_id' => $this->plot_id,
-                    'plot_planting_id' => $this->plot_planting_id ?: null,
-                    'viticulturist_id' => $user->id,
-                    'campaign_id' => $this->campaign_id,
-                    'activity_type' => 'fertilization',
-                    'phenological_stage' => $this->phenological_stage,
-                    'activity_date' => $this->activity_date,
-                    'crew_id' => $this->workType === 'crew' ? $this->crew_id : null,
-                    'crew_member_id' => $crewMemberId,
-                    'machinery_id' => $this->machinery_id ?: null,
-                    'weather_conditions' => $this->weather_conditions,
-                    'temperature' => $this->temperature ?: null,
-                    'notes' => $this->notes,
-                ]);
+            DB::transaction(function () {
+                $activity = AgriculturalActivity::create($this->activityData('fertilization'));
 
-                // Crear la fertilización
                 Fertilization::create([
-                    'activity_id' => $activity->id,
-                    'fertilizer_type' => $this->fertilizer_type,
-                    'fertilizer_name' => $this->fertilizer_name,
-                    'quantity' => $this->quantity ?: null,
-                    'npk_ratio' => $this->npk_ratio,
-                    'application_method' => $this->application_method,
-                    'area_applied' => $this->area_applied ?: null,
-                    // PAC
-                    'nitrogen_uf' => $this->nitrogen_uf ?: null,
-                    'phosphorus_uf' => $this->phosphorus_uf ?: null,
-                    'potassium_uf' => $this->potassium_uf ?: null,
-                    'manure_type' => $this->manure_type,
-                    'burial_date' => $this->burial_date ?: null,
-                    'emission_reduction_method' => $this->emission_reduction_method,
+                    'activity_id'               => $activity->id,
+                    'fertilizer_type'           => $this->fertilizer_type,
+                    'fertilizer_name'           => $this->fertilizer_name,
+                    'quantity'                  => $this->quantity ?: null,
+                    'npk_ratio'                 => $this->npk_ratio,
+                    'application_method'        => $this->application_method,
+                    'area_applied'              => $this->area_applied ?: null,
+                    'nitrogen_uf'               => $this->nitrogen_uf ?: null,
+                    'phosphorus_uf'             => $this->phosphorus_uf ?: null,
+                    'potassium_uf'              => $this->potassium_uf ?: null,
+                    'manure_type'               => $this->manure_type ?: null,
+                    'burial_date'               => $this->burial_date ?: null,
+                    'emission_reduction_method' => $this->emission_reduction_method ?: null,
                 ]);
             });
 
             $this->toastSuccess('Fertilización registrada correctamente.');
             return $this->viticulturistRoleRedirect('digital-notebook.fertilization.index');
         } catch (\Exception $e) {
-            \Log::error('Error al registrar fertilización', [
-                'error' => $e->getMessage(),
-                'user_id' => $user->id,
-                'plot_id' => $this->plot_id,
-                'trace' => $e->getTraceAsString(),
-            ]);
-
+            \Log::error('Error al registrar fertilización', ['error' => $e->getMessage(), 'user_id' => Auth::id()]);
             $this->toastError('Error al registrar la fertilización. Por favor, intenta de nuevo.');
-            return;
         }
     }
 
+    // ─── Render ───────────────────────────────────────────────────────────────
+
     public function render()
     {
-        $user = Auth::user();
-        
-        $plots = Plot::forUser($user)
-            ->where('active', true)
-            ->orderBy('name')
-            ->get();
-
-        $crews = Crew::where('viticulturist_id', $user->id)
-            ->orderBy('name')
-            ->get();
-
-        $machinery = Machinery::forViticulturist($user->id)
-            ->active()
-            ->orderBy('name')
-            ->get();
-
-        $individualWorkers = CrewMember::whereNull('crew_id')
-            ->where('assigned_by', $user->id)
-            ->with('viticulturist')
-            ->get()
-            ->sortBy(fn ($worker) => $worker->viticulturist->name)
-            ->values();
-        
-        // SIEMPRE incluir al usuario mismo al principio
-        $allViticulturists = $this->viticulturists;
-
-        $campaign = Campaign::find($this->campaign_id);
-
-        return view('livewire.viticulturist.digital-notebook.create-fertilization', [
-            'plots' => $plots,
-            'crews' => $crews,
-            'machinery' => $machinery,
-            'campaign' => $campaign,
-            'individualWorkers' => $individualWorkers,
-            'allViticulturists' => $allViticulturists,
-        ]);
+        return view('livewire.viticulturist.digital-notebook.create-fertilization', $this->renderData())
+            ->layout('layouts.app');
     }
 }
-

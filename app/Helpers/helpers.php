@@ -306,7 +306,7 @@ if (!function_exists('roleRoute')) {
             }
         }
 
-        // Last resort: try the suffix as-is (shared routes like plots.*, sigpac.*)
-        return route($suffix, $parameters);
+        // Last resort: try the clean suffix (shared routes like plots.*, sigpac.*)
+        return route($cleanSuffix, $parameters);
     }
 }
