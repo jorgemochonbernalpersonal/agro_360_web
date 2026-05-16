@@ -111,20 +111,19 @@
                         wire:key="activity-{{ $activity->id }}"
                     >
                         <x-slot:header>
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl {{ $style['iconBg'] }} flex items-center justify-center shrink-0">
-                                    <flux:icon :icon="$style['icon']" class="size-5 {{ $style['iconText'] }}" />
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <h3 class="font-bold text-zinc-900 truncate">
-                                        {{ $activityTypes[$activity->activity_type] ?? $activity->activity_type }}
-                                    </h3>
-                                    <p class="text-xs text-zinc-400">{{ $activity->activity_date->format('d/m/Y') }}</p>
-                                </div>
+                            <x-agro.card-item-header
+                                :icon="$style['icon']"
+                                :title="$activityTypes[$activity->activity_type] ?? $activity->activity_type"
+                                :subtitle="$activity->activity_date->format('d/m/Y')"
+                                :iconBg="$style['iconBg']"
+                                :iconColor="$style['iconText']"
+                                size="md"
+                                radius="xl"
+                            >
                                 <span class="inline-flex px-2 py-0.5 rounded-full text-xs border {{ $style['bg'] }} {{ $style['text'] }} {{ $style['border'] }} shrink-0">
                                     {{ $activityTypes[$activity->activity_type] ?? $activity->activity_type }}
                                 </span>
-                            </div>
+                            </x-agro.card-item-header>
                         </x-slot:header>
 
                         <div class="flex-1 space-y-3">

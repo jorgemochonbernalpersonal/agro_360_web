@@ -31,20 +31,21 @@
                             wire:key="prov-{{ $loop->index }}"
                         >
                             <x-slot:header>
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center shrink-0">
-                                        <flux:icon icon="map-pin" class="size-5 text-blue-600" />
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <h3 class="font-bold text-zinc-900 truncate">{{ $row->province_name ?? '—' }}</h3>
-                                        <p class="text-xs text-zinc-400">Provincia</p>
-                                    </div>
+                                <x-agro.card-item-header
+                                    icon="map-pin"
+                                    :title="$row->province_name ?? '—'"
+                                    subtitle="Provincia"
+                                    iconBg="bg-blue-100"
+                                    iconColor="text-blue-600"
+                                    size="md"
+                                    radius="xl"
+                                >
                                     @if($totalArea > 0)
-                                        <flux:badge color="blue" size="sm" class="shrink-0">
+                                        <flux:badge color="blue" size="sm">
                                             {{ number_format(($row->total_area / $totalArea) * 100, 1) }}%
                                         </flux:badge>
                                     @endif
-                                </div>
+                                </x-agro.card-item-header>
                             </x-slot:header>
 
                             <div class="flex-1 space-y-3">
@@ -89,20 +90,21 @@
                             wire:key="var-{{ $loop->index }}"
                         >
                             <x-slot:header>
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center shrink-0">
-                                        <flux:icon icon="sparkles" class="size-5 text-violet-600" />
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <h3 class="font-bold text-zinc-900 truncate">{{ $row->variety_name }}</h3>
-                                        <p class="text-xs text-zinc-400 capitalize">{{ $row->variety_color ?? '—' }}</p>
-                                    </div>
+                                <x-agro.card-item-header
+                                    icon="sparkles"
+                                    :title="$row->variety_name"
+                                    :subtitle="ucfirst($row->variety_color ?? '—')"
+                                    iconBg="bg-violet-100"
+                                    iconColor="text-violet-600"
+                                    size="md"
+                                    radius="xl"
+                                >
                                     @if($totalPlanted > 0)
-                                        <flux:badge color="violet" size="sm" class="shrink-0">
+                                        <flux:badge color="violet" size="sm">
                                             {{ number_format(($row->planted_area / $totalPlanted) * 100, 1) }}%
                                         </flux:badge>
                                     @endif
-                                </div>
+                                </x-agro.card-item-header>
                             </x-slot:header>
 
                             <div class="flex-1 space-y-3">
@@ -143,15 +145,15 @@
                             wire:key="mun-{{ $loop->index }}"
                         >
                             <x-slot:header>
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
-                                        <flux:icon icon="building-office" class="size-5 text-amber-600" />
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <h3 class="font-bold text-zinc-900 truncate">{{ $row->municipality_name ?? '—' }}</h3>
-                                        <p class="text-xs text-zinc-400">Municipio</p>
-                                    </div>
-                                </div>
+                                <x-agro.card-item-header
+                                    icon="building-office"
+                                    :title="$row->municipality_name ?? '—'"
+                                    subtitle="Municipio"
+                                    iconBg="bg-amber-100"
+                                    iconColor="text-amber-600"
+                                    size="md"
+                                    radius="xl"
+                                />
                             </x-slot:header>
 
                             <div class="flex-1 space-y-3">

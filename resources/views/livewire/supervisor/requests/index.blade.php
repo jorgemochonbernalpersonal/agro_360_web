@@ -66,16 +66,17 @@
                         wire:key="req-{{ $req->id }}"
                     >
                         <x-slot:header>
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center shrink-0">
-                                    <flux:icon icon="document-text" class="size-5 text-indigo-600" />
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <h3 class="font-bold text-zinc-900 truncate text-sm">{{ $req->title ?: ($typeLabels[$req->type] ?? $req->type) }}</h3>
-                                    <p class="text-xs text-zinc-500">{{ $req->winery->name }}</p>
-                                </div>
+                            <x-agro.card-item-header
+                                icon="document-text"
+                                :title="$req->title ?: ($typeLabels[$req->type] ?? $req->type)"
+                                :subtitle="$req->winery->name"
+                                iconBg="bg-indigo-100"
+                                iconColor="text-indigo-600"
+                                size="md"
+                                radius="xl"
+                            >
                                 <x-agro.status-badge :status="$req->status" :label="$statusLabels[$req->status] ?? $req->status" :color="$color" />
-                            </div>
+                            </x-agro.card-item-header>
                         </x-slot:header>
 
                         <div class="flex-1 space-y-4">

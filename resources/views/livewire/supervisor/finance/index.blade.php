@@ -40,18 +40,19 @@
                             wire:key="sub-{{ $sub->id }}"
                         >
                             <x-slot:header>
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl {{ $sColor['iconBg'] }} flex items-center justify-center shrink-0">
-                                        <flux:icon icon="credit-card" class="size-5 {{ $sColor['iconText'] }}" />
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <h3 class="font-bold text-zinc-900 truncate">{{ $sub->user?->name ?? '—' }}</h3>
-                                        <p class="text-xs text-zinc-400 truncate">{{ $sub->user?->email ?? '—' }}</p>
-                                    </div>
-                                    <flux:badge :color="$sColor['badge']" size="sm" class="shrink-0">
+                                <x-agro.card-item-header
+                                    icon="credit-card"
+                                    :title="$sub->user?->name ?? '—'"
+                                    :subtitle="$sub->user?->email ?? '—'"
+                                    :iconBg="$sColor['iconBg']"
+                                    :iconColor="$sColor['iconText']"
+                                    size="md"
+                                    radius="xl"
+                                >
+                                    <flux:badge :color="$sColor['badge']" size="sm">
                                         {{ $subStatusLabels[$sub->status] ?? $sub->status }}
                                     </flux:badge>
-                                </div>
+                                </x-agro.card-item-header>
                             </x-slot:header>
 
                             <div class="flex-1 space-y-3">
@@ -105,15 +106,15 @@
                             wire:key="winery-val-{{ $loop->index }}"
                         >
                             <x-slot:header>
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center shrink-0">
-                                        <flux:icon icon="building-office-2" class="size-5 text-blue-600" />
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <h3 class="font-bold text-zinc-900 truncate">{{ $row->winery_name }}</h3>
-                                        <p class="text-xs text-zinc-400">Campaña {{ $currentYear }}</p>
-                                    </div>
-                                </div>
+                                <x-agro.card-item-header
+                                    icon="building-office-2"
+                                    :title="$row->winery_name"
+                                    :subtitle="'Campaña ' . $currentYear"
+                                    iconBg="bg-blue-100"
+                                    iconColor="text-blue-600"
+                                    size="md"
+                                    radius="xl"
+                                />
                             </x-slot:header>
 
                             <div class="flex-1 space-y-3">

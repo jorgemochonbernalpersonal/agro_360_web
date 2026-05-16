@@ -87,16 +87,17 @@
                             wire:key="label-{{ $label->id }}"
                         >
                             <x-slot:header>
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center shrink-0">
-                                        <flux:icon icon="tag" class="size-5 text-indigo-600" />
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <h3 class="font-bold text-zinc-900 truncate">{{ $label->winery?->name ?? '---' }}</h3>
-                                        <p class="text-xs text-zinc-500">Añada {{ $label->vintage }}</p>
-                                    </div>
-                                    <x-agro.status-badge :status="$label->status" :labels="\App\Models\DoLabel::STATUS_LABELS" class="shrink-0" />
-                                </div>
+                                <x-agro.card-item-header
+                                    icon="tag"
+                                    :title="$label->winery?->name ?? '---'"
+                                    :subtitle="'Añada ' . $label->vintage"
+                                    iconBg="bg-indigo-100"
+                                    iconColor="text-indigo-600"
+                                    size="md"
+                                    radius="xl"
+                                >
+                                    <x-agro.status-badge :status="$label->status" :labels="\App\Models\DoLabel::STATUS_LABELS" />
+                                </x-agro.card-item-header>
                             </x-slot:header>
 
                             <div class="flex-1 space-y-4">

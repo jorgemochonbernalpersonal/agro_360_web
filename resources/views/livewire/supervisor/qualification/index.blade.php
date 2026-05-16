@@ -120,16 +120,17 @@
                             wire:key="qual-{{ $q->id }}"
                         >
                             <x-slot:header>
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl {{ $colorIcon['bg'] }} flex items-center justify-center shrink-0">
-                                        <flux:icon icon="beaker" class="size-5 {{ $colorIcon['text'] }}" />
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <h3 class="font-bold text-zinc-900 truncate text-sm">{{ $q->wine_name }}</h3>
-                                        <p class="text-xs text-zinc-500">{{ $q->winery?->name ?? '—' }}</p>
-                                    </div>
+                                <x-agro.card-item-header
+                                    icon="beaker"
+                                    :title="$q->wine_name"
+                                    :subtitle="$q->winery?->name ?? '—'"
+                                    :iconBg="$colorIcon['bg']"
+                                    :iconColor="$colorIcon['text']"
+                                    size="md"
+                                    radius="xl"
+                                >
                                     <x-agro.status-badge :status="$q->result" :labels="$resultLabels" />
-                                </div>
+                                </x-agro.card-item-header>
                             </x-slot:header>
 
                             <div class="flex-1 space-y-4">

@@ -81,22 +81,23 @@
                     wire:key="cert-{{ $cert->id }}"
                 >
                     <x-slot:header>
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl {{ $cStyle['iconBg'] }} flex items-center justify-center shrink-0">
-                                <flux:icon icon="check-badge" class="size-5 {{ $cStyle['iconText'] }}" />
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <h3 class="font-bold text-zinc-900 truncate">{{ $cert->certification_type_label }}</h3>
-                                <p class="text-xs text-zinc-400 truncate">{{ $cert->viticulturist?->name ?? '—' }}</p>
-                            </div>
+                        <x-agro.card-item-header
+                            icon="check-badge"
+                            :title="$cert->certification_type_label"
+                            :subtitle="$cert->viticulturist?->name ?? '—'"
+                            :iconBg="$cStyle['iconBg']"
+                            :iconColor="$cStyle['iconText']"
+                            size="md"
+                            radius="xl"
+                        >
                             @if($cert->is_expired)
-                                <flux:badge color="red" size="sm" class="shrink-0">Caducada</flux:badge>
+                                <flux:badge color="red" size="sm">Caducada</flux:badge>
                             @elseif($cert->is_expiring_soon)
-                                <flux:badge color="yellow" size="sm" class="shrink-0">Pronto vence</flux:badge>
+                                <flux:badge color="yellow" size="sm">Pronto vence</flux:badge>
                             @else
-                                <flux:badge color="green" size="sm" class="shrink-0">Vigente</flux:badge>
+                                <flux:badge color="green" size="sm">Vigente</flux:badge>
                             @endif
-                        </div>
+                        </x-agro.card-item-header>
                     </x-slot:header>
 
                     <div class="flex-1 space-y-3">

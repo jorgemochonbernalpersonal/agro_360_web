@@ -93,18 +93,19 @@
                             wire:key="planting-{{ $planting->id }}"
                         >
                             <x-slot:header>
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl {{ $bgClass }} flex items-center justify-center shrink-0">
-                                        <flux:icon icon="{{ $iconName }}" class="size-5 {{ $iconColorClass }}" />
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <h3 class="font-bold text-zinc-900 truncate text-sm">{{ $planting->plot?->name ?? '—' }}</h3>
-                                        <p class="text-xs text-zinc-500">{{ $planting->plot?->viticulturist?->name ?? '—' }}</p>
-                                    </div>
+                                <x-agro.card-item-header
+                                    :icon="$iconName"
+                                    :title="$planting->plot?->name ?? '—'"
+                                    :subtitle="$planting->plot?->viticulturist?->name ?? '—'"
+                                    :iconBg="$bgClass"
+                                    :iconColor="$iconColorClass"
+                                    size="md"
+                                    radius="xl"
+                                >
                                     @if($planting->right_type)
-                                        <flux:badge color="{{ $rc }}" size="sm" class="shrink-0">{{ $rightLabels[$planting->right_type] ?? $planting->right_type }}</flux:badge>
+                                        <flux:badge color="{{ $rc }}" size="sm">{{ $rightLabels[$planting->right_type] ?? $planting->right_type }}</flux:badge>
                                     @endif
-                                </div>
+                                </x-agro.card-item-header>
                             </x-slot:header>
 
                             <div class="flex-1 space-y-4">
@@ -190,20 +191,21 @@
                             wire:key="cert-{{ $cert->id }}"
                         >
                             <x-slot:header>
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl {{ $iconBg }} flex items-center justify-center shrink-0">
-                                        <flux:icon icon="check-badge" class="size-5 {{ $iconText }}" />
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <h3 class="font-bold text-zinc-900 truncate text-sm">{{ $cert->viticulturist?->name ?? '—' }}</h3>
-                                        <p class="text-xs text-zinc-500">{{ $cert->certifying_body ?? '—' }}</p>
-                                    </div>
+                                <x-agro.card-item-header
+                                    icon="check-badge"
+                                    :title="$cert->viticulturist?->name ?? '—'"
+                                    :subtitle="$cert->certifying_body ?? '—'"
+                                    :iconBg="$iconBg"
+                                    :iconColor="$iconText"
+                                    size="md"
+                                    radius="xl"
+                                >
                                     @if($cert->active)
-                                        <flux:badge color="{{ $statusColor }}" size="sm" class="shrink-0">{{ $statusLabel }}</flux:badge>
+                                        <flux:badge color="{{ $statusColor }}" size="sm">{{ $statusLabel }}</flux:badge>
                                     @else
-                                        <flux:badge color="zinc" size="sm" class="shrink-0">Inactiva</flux:badge>
+                                        <flux:badge color="zinc" size="sm">Inactiva</flux:badge>
                                     @endif
-                                </div>
+                                </x-agro.card-item-header>
                             </x-slot:header>
 
                             <div class="flex-1 space-y-4">

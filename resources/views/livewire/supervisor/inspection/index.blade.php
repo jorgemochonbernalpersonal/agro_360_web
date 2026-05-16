@@ -98,16 +98,17 @@
                             wire:key="inspection-{{ $inspection->id }}"
                         >
                             <x-slot:header>
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl {{ $isWinery ? 'bg-blue-100' : 'bg-emerald-100' }} flex items-center justify-center shrink-0">
-                                        <flux:icon icon="{{ $isWinery ? 'building-office' : 'user' }}" class="size-5 {{ $isWinery ? 'text-blue-600' : 'text-emerald-600' }}" />
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <h3 class="font-bold text-zinc-900 truncate text-sm">{{ $inspection->subject?->name ?? '—' }}</h3>
-                                        <p class="text-xs text-zinc-500">{{ $isWinery ? 'Bodega' : 'Viticultor' }}</p>
-                                    </div>
-                                    <flux:badge color="{{ $statusColor }}" size="sm" class="shrink-0">{{ $statusLabel }}</flux:badge>
-                                </div>
+                                <x-agro.card-item-header
+                                    :icon="$isWinery ? 'building-office' : 'user'"
+                                    :title="$inspection->subject?->name ?? '—'"
+                                    :subtitle="$isWinery ? 'Bodega' : 'Viticultor'"
+                                    :iconBg="$isWinery ? 'bg-blue-100' : 'bg-emerald-100'"
+                                    :iconColor="$isWinery ? 'text-blue-600' : 'text-emerald-600'"
+                                    size="md"
+                                    radius="xl"
+                                >
+                                    <flux:badge color="{{ $statusColor }}" size="sm">{{ $statusLabel }}</flux:badge>
+                                </x-agro.card-item-header>
                             </x-slot:header>
 
                             <div class="flex-1 space-y-4">

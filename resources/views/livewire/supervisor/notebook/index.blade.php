@@ -57,16 +57,17 @@
                     wire:key="request-{{ $req->id }}"
                 >
                     <x-slot:header>
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl {{ $s['iconBg'] }} flex items-center justify-center shrink-0">
-                                <flux:icon icon="book-open" class="size-5 {{ $s['iconText'] }}" />
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <h3 class="font-bold text-zinc-900 truncate">{{ $req->viticulturist?->name ?? '—' }}</h3>
-                                <p class="text-xs text-zinc-400 truncate">{{ $req->viticulturist?->email }}</p>
-                            </div>
-                            <flux:badge :color="$s['color']" size="sm" class="shrink-0">{{ $s['label'] }}</flux:badge>
-                        </div>
+                        <x-agro.card-item-header
+                            icon="book-open"
+                            :title="$req->viticulturist?->name ?? '—'"
+                            :subtitle="$req->viticulturist?->email"
+                            :iconBg="$s['iconBg']"
+                            :iconColor="$s['iconText']"
+                            size="md"
+                            radius="xl"
+                        >
+                            <flux:badge :color="$s['color']" size="sm">{{ $s['label'] }}</flux:badge>
+                        </x-agro.card-item-header>
                     </x-slot:header>
 
                     <div class="flex-1 space-y-3">

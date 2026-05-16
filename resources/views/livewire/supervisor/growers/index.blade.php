@@ -76,26 +76,23 @@
                         wire:key="grower-{{ $grower->id }}"
                     >
                         <x-slot:header>
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl bg-agro-100 flex items-center justify-center shrink-0">
-                                    <flux:icon icon="user" class="size-5 text-agro-600" />
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <h3 class="font-bold text-zinc-900 truncate">{{ $grower->name }}</h3>
-                                    @if(!str_starts_with($grower->email, 'viticultores.'))
-                                        <p class="text-xs text-zinc-500 truncate">{{ $grower->email }}</p>
-                                    @else
-                                        <p class="text-xs text-zinc-300 italic">Sin email registrado</p>
-                                    @endif
-                                </div>
+                            <x-agro.card-item-header
+                                icon="user"
+                                :title="$grower->name"
+                                :subtitle="!str_starts_with($grower->email, 'viticultores.') ? $grower->email : 'Sin email registrado'"
+                                iconBg="bg-agro-100"
+                                iconColor="text-agro-600"
+                                size="md"
+                                radius="xl"
+                            >
                                 @if(!$isGhost)
-                                    <flux:badge color="green" size="sm" class="shrink-0">Activo</flux:badge>
+                                    <flux:badge color="green" size="sm">Activo</flux:badge>
                                 @elseif($hasPendingInvite)
-                                    <flux:badge color="amber" size="sm" class="shrink-0">Invitación enviada</flux:badge>
+                                    <flux:badge color="amber" size="sm">Invitación enviada</flux:badge>
                                 @else
-                                    <flux:badge color="zinc" size="sm" class="shrink-0">Ghost</flux:badge>
+                                    <flux:badge color="zinc" size="sm">Ghost</flux:badge>
                                 @endif
-                            </div>
+                            </x-agro.card-item-header>
                         </x-slot:header>
 
                         <div class="flex-1 space-y-4">

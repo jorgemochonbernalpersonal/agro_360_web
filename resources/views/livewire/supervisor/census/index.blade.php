@@ -134,15 +134,15 @@
                                 wire:key="vit-{{ $viticulturist->id }}"
                             >
                                 <x-slot:header>
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 rounded-xl bg-agro-100 flex items-center justify-center shrink-0">
-                                            <flux:icon icon="user" class="size-5 text-agro-600" />
-                                        </div>
-                                        <div class="flex-1 min-w-0">
-                                            <h3 class="font-bold text-zinc-900 truncate">{{ $viticulturist->name }}</h3>
-                                            <p class="text-xs text-zinc-500 truncate">{{ $viticulturist->email }}</p>
-                                        </div>
-                                    </div>
+                                    <x-agro.card-item-header
+                                        icon="user"
+                                        :title="$viticulturist->name"
+                                        :subtitle="$viticulturist->email"
+                                        iconBg="bg-agro-100"
+                                        iconColor="text-agro-600"
+                                        size="md"
+                                        radius="xl"
+                                    />
                                 </x-slot:header>
 
                                 <div class="flex-1 space-y-4">

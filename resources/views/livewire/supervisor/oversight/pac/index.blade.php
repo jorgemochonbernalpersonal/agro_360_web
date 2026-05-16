@@ -61,19 +61,20 @@
                         wire:key="pac-vit-{{ $vit->id }}"
                     >
                         <x-slot:header>
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center shrink-0">
-                                    <flux:icon icon="user" class="size-5 text-emerald-600" />
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <h3 class="font-bold text-zinc-900 truncate">{{ $vit->name }}</h3>
-                                    <p class="text-xs text-zinc-400">{{ $vtot }} parcelas</p>
-                                </div>
+                            <x-agro.card-item-header
+                                icon="user"
+                                :title="$vit->name"
+                                :subtitle="$vtot . ' parcelas'"
+                                iconBg="bg-emerald-100"
+                                iconColor="text-emerald-600"
+                                size="md"
+                                radius="xl"
+                            >
                                 <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium shrink-0
                                     {{ $vpct >= 90 ? 'bg-emerald-50 text-emerald-700' : ($vpct >= 60 ? 'bg-amber-50 text-amber-700' : 'bg-red-50 text-red-700') }}">
                                     {{ $vpct }}%
                                 </span>
-                            </div>
+                            </x-agro.card-item-header>
                         </x-slot:header>
 
                         <div class="flex-1 space-y-3">
@@ -153,24 +154,23 @@
                     wire:key="pac-plot-{{ $plot->id }}"
                 >
                     <x-slot:header>
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-teal-100 flex items-center justify-center shrink-0">
-                                <flux:icon icon="map" class="size-5 text-teal-600" />
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <h3 class="font-bold text-zinc-900 truncate">{{ $plot->name }}</h3>
-                                @if($plot->code_parcel)
-                                    <p class="text-xs text-zinc-400">{{ $plot->code_parcel }}</p>
-                                @endif
-                            </div>
+                        <x-agro.card-item-header
+                            icon="map"
+                            :title="$plot->name"
+                            :subtitle="$plot->code_parcel ?: null"
+                            iconBg="bg-teal-100"
+                            iconColor="text-teal-600"
+                            size="md"
+                            radius="xl"
+                        >
                             @if($plot->is_locked)
-                                <flux:badge color="blue" size="sm" class="shrink-0">Bloqueada</flux:badge>
+                                <flux:badge color="blue" size="sm">Bloqueada</flux:badge>
                             @elseif(!$plot->pac_eligible_area)
-                                <flux:badge color="yellow" size="sm" class="shrink-0">Pendiente</flux:badge>
+                                <flux:badge color="yellow" size="sm">Pendiente</flux:badge>
                             @else
-                                <flux:badge color="green" size="sm" class="shrink-0">OK</flux:badge>
+                                <flux:badge color="green" size="sm">OK</flux:badge>
                             @endif
-                        </div>
+                        </x-agro.card-item-header>
                     </x-slot:header>
 
                     <div class="flex-1 space-y-3">

@@ -26,18 +26,19 @@
                                 wire:key="summary-{{ $row->year }}"
                             >
                                 <x-slot:header>
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
-                                            <flux:icon icon="calendar-days" class="size-5 text-amber-600" />
-                                        </div>
-                                        <div class="flex-1 min-w-0">
-                                            <h3 class="font-bold text-zinc-900">{{ $row->year }}</h3>
-                                            <p class="text-xs text-zinc-500">Campaña de vendimia</p>
-                                        </div>
+                                    <x-agro.card-item-header
+                                        icon="calendar-days"
+                                        :title="(string) $row->year"
+                                        subtitle="Campaña de vendimia"
+                                        iconBg="bg-amber-100"
+                                        iconColor="text-amber-600"
+                                        size="md"
+                                        radius="xl"
+                                    >
                                         @if($row->year === $currentYear)
-                                            <flux:badge color="green" size="sm" class="shrink-0">Actual</flux:badge>
+                                            <flux:badge color="green" size="sm">Actual</flux:badge>
                                         @endif
-                                    </div>
+                                    </x-agro.card-item-header>
                                 </x-slot:header>
 
                                 <div class="flex-1 space-y-4">
@@ -92,23 +93,24 @@
                                 wire:key="vit-{{ $vit->id }}"
                             >
                                 <x-slot:header>
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 rounded-xl bg-agro-100 flex items-center justify-center shrink-0">
-                                            <flux:icon icon="user" class="size-5 text-agro-600" />
-                                        </div>
-                                        <div class="flex-1 min-w-0">
-                                            <h3 class="font-bold text-zinc-900 truncate">{{ $vit->name }}</h3>
-                                            <p class="text-xs text-zinc-500 truncate">{{ $vit->email }}</p>
-                                        </div>
+                                    <x-agro.card-item-header
+                                        icon="user"
+                                        :title="$vit->name"
+                                        :subtitle="$vit->email"
+                                        iconBg="bg-agro-100"
+                                        iconColor="text-agro-600"
+                                        size="md"
+                                        radius="xl"
+                                    >
                                         @if($cs?->has_active)
-                                            <span class="inline-flex items-center gap-1 text-xs font-medium text-agro-700 bg-agro-50 px-2 py-0.5 rounded-full shrink-0">
+                                            <span class="inline-flex items-center gap-1 text-xs font-medium text-agro-700 bg-agro-50 px-2 py-0.5 rounded-full">
                                                 <span class="w-1.5 h-1.5 rounded-full bg-agro-500 flex-shrink-0"></span>
                                                 Activa
                                             </span>
                                         @else
-                                            <flux:badge color="zinc" size="sm" class="shrink-0">Sin activa</flux:badge>
+                                            <flux:badge color="zinc" size="sm">Sin activa</flux:badge>
                                         @endif
-                                    </div>
+                                    </x-agro.card-item-header>
                                 </x-slot:header>
 
                                 <div class="flex-1 space-y-4">
