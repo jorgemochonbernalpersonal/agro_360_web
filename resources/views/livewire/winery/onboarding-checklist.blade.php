@@ -24,7 +24,7 @@
                         <span class="text-xs text-zinc-500">
                             {{ count(array_filter($steps, fn($s) => $s['completed'])) }}/{{ count($steps) }}
                         </span>
-                        <flux:icon icon="chevron-down" class="size-5 text-zinc-400 transition-transform" :class="{ 'rotate-180': expanded }" />
+                        <flux:icon icon="chevron-down" class="size-5 text-zinc-400 transition-transform" ::class="{ 'rotate-180': expanded }" />
                     </div>
                 </div>
             </div>
