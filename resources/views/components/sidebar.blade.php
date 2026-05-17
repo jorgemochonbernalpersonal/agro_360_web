@@ -229,10 +229,17 @@
 
     // ── Generar índice de búsqueda con todos los ítems navegables ─────
     $searchIndex = [];
+    $searchIndexHrefs = [];
     // Main items
     foreach ($mainItems as $item) {
         if (isset($item['route'])) {
-            $searchIndex[] = ['href' => route($item['route']), 'label' => $item['label'], 'chapter' => 'Principal'];
+            try {
+                $href = route($item['route']);
+                if (!in_array($href, $searchIndexHrefs)) {
+                    $searchIndex[] = ['href' => $href, 'label' => $item['label'], 'chapter' => 'Principal'];
+                    $searchIndexHrefs[] = $href;
+                }
+            } catch (\Exception $e) { /* ruta no registrada, skip */ }
         }
     }
     // Chapter items
@@ -243,7 +250,11 @@
                 if (isset($item['divider']) || isset($item['section_header'])) continue;
                 if (!isset($item['route'])) continue;
                 try {
-                    $searchIndex[] = ['href' => route($item['route']), 'label' => $item['label'], 'chapter' => $ch['label']];
+                    $href = route($item['route']);
+                    if (!in_array($href, $searchIndexHrefs)) {
+                        $searchIndex[] = ['href' => $href, 'label' => $item['label'], 'chapter' => $ch['label']];
+                        $searchIndexHrefs[] = $href;
+                    }
                 } catch (\Exception $e) { /* ruta no registrada, skip */ }
             }
         }
@@ -251,7 +262,13 @@
     // Rail bottom
     foreach (($menu['rail_bottom'] ?? []) as $item) {
         if (isset($item['route'])) {
-            $searchIndex[] = ['href' => route($item['route']), 'label' => $item['label'], 'chapter' => 'Sistema'];
+            try {
+                $href = route($item['route']);
+                if (!in_array($href, $searchIndexHrefs)) {
+                    $searchIndex[] = ['href' => $href, 'label' => $item['label'], 'chapter' => 'Sistema'];
+                    $searchIndexHrefs[] = $href;
+                }
+            } catch (\Exception $e) { /* ruta no registrada, skip */ }
         }
     }
 @endphp
@@ -950,7 +967,7 @@
 
             {{-- Results --}}
             <div class="max-h-80 overflow-y-auto py-2">
-                <template x-for="(item, idx) in cmdkFiltered" :key="item.href">
+                <template x-for="(item, idx) in cmdkFiltered" :key="idx">
                     <a :href="item.href"
                        @click.prevent="cmdkGo(item.href)"
                        @mouseenter="cmdkSelected = idx"
