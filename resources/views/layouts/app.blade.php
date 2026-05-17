@@ -75,7 +75,7 @@
             <div class="fixed top-0 left-0 right-0 z-[9999] bg-amber-500 text-white text-xs font-semibold text-center py-1.5 px-4 flex items-center justify-center gap-3">
                 <flux:icon icon="eye" class="size-3.5 shrink-0" />
                 <span>Impersonando a <strong>{{ auth()->user()->name }}</strong> ({{ auth()->user()->role }}) — {{ $remaining }} min restantes</span>
-                <form method="POST" action="{{ route('admin.impersonate.stop') }}">
+                <form method="POST" action="{{ route('admin.users.stop-impersonate') }}">
                     @csrf
                     <button type="submit" class="underline hover:no-underline ml-2">Salir</button>
                 </form>
