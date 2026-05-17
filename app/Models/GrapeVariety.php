@@ -16,7 +16,7 @@ class GrapeVariety extends Model
     const CROP_TYPE_ICONS = [
         'wine'  => 'scissors',
         'olive' => 'sun',
-        'other' => 'leaf',
+        'other' => 'sparkles',
     ];
 
     protected $fillable = [
@@ -67,6 +67,6 @@ class GrapeVariety extends Model
 
     public function getCropTypeIconAttribute(): string
     {
-        return self::CROP_TYPE_ICONS[$this->crop_type] ?? 'leaf';
+        return self::CROP_TYPE_ICONS[$this->crop_type] ?? 'sparkles';
     }
 }

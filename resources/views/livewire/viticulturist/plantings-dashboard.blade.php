@@ -1,7 +1,7 @@
 <div>
 @if($totalPlantings === 0)
     <x-agro.empty-state
-        icon="leaf"
+        icon="sparkles"
         title="Sin plantaciones registradas"
         description="Añade plantaciones a tus parcelas para el cumplimiento PAC y la trazabilidad."
     >
@@ -18,7 +18,7 @@
                 label="Total Plantaciones"
                 :value="$totalPlantings"
                 :description="$varieties . ' variedades'"
-                icon="leaf"
+                icon="sparkles"
                 color="green"
             />
             <x-agro.stat-card

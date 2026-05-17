@@ -196,7 +196,7 @@
                             {{-- Icono variedad (depende del tipo de cultivo) --}}
                             @php
                                 $cropIcon = $planting->grapeVariety
-                                    ? \App\Models\GrapeVariety::CROP_TYPE_ICONS[$planting->grapeVariety->crop_type] ?? 'leaf'
+                                    ? \App\Models\GrapeVariety::CROP_TYPE_ICONS[$planting->grapeVariety->crop_type] ?? 'sparkles'
                                     : 'scissors';
                                 $cropBg = match($planting->grapeVariety->crop_type ?? 'wine') {
                                     'olive' => 'bg-amber-100',
