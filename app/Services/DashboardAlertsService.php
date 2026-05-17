@@ -12,6 +12,7 @@ use App\Models\WineryViticulturist;
 use App\Models\WineStockSnapshot;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class DashboardAlertsService
@@ -21,27 +22,24 @@ class DashboardAlertsService
      */
     public function getAlerts(User $user): Collection
     {
-        $alerts = collect();
+        $cached = Cache::remember("dashboard_alerts_{$user->id}", 300, function () use ($user) {
+            $alerts = collect();
 
-        if ($user->hasWineryAccess()) {
-            $this->checkWineryAlerts($user, $alerts);
-        }
+            if ($user->hasWineryAccess()) {
+                $this->checkWineryAlerts($user, $alerts);
+            }
 
-        if ($user->hasViticulturistAccess()) {
-            // Check containers
-            $this->checkContainerAlerts($user, $alerts);
+            if ($user->hasViticulturistAccess()) {
+                $this->checkContainerAlerts($user, $alerts);
+                $this->checkActivityAlerts($user, $alerts);
+                $this->checkRemoteSensingAlerts($user, $alerts);
+                $this->checkNotebookAccessAlerts($user, $alerts);
+            }
 
-            // Check activities
-            $this->checkActivityAlerts($user, $alerts);
+            return $alerts->values()->all();
+        });
 
-            // Check remote sensing
-            $this->checkRemoteSensingAlerts($user, $alerts);
-
-            // Check pending notebook access requests
-            $this->checkNotebookAccessAlerts($user, $alerts);
-        }
-
-        return $alerts;
+        return collect($cached);
     }
 
     /**

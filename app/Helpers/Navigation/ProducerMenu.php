@@ -30,17 +30,20 @@ class ProducerMenu
             ['icon' => 'chart-bar-square', 'label' => 'Comparativa de Campañas','route' => 'producer.campaign-comparison',   'active' => request()->routeIs('producer.campaign-comparison')],
         ];
 
+        // ── Plan de acceso del producer ───────────────────────────────────────
+        $producerLocked = !$user->hasActiveAccess();
+
         // ── Viñedo: Cuaderno de Campo ─────────────────────────────────────────
-        $menu['notebook_inputs'] = ViticulturistMenu::notebookInputs('producer', 'Vendimia Campo');
+        $menu['notebook_inputs'] = ViticulturistMenu::notebookInputs('producer', 'Vendimia Campo', $producerLocked);
 
         // ── Viñedo: Seguimiento (plagas + alertas) ───────────────────────────
-        $menu['monitoring'] = ViticulturistMenu::monitoring('producer');
+        $menu['monitoring'] = ViticulturistMenu::monitoring('producer', $producerLocked);
 
         // ── Viñedo: Medioambiente ─────────────────────────────────────────────
-        $menu['environmental'] = ViticulturistMenu::environmental('producer');
+        $menu['environmental'] = ViticulturistMenu::environmental('producer', $producerLocked);
 
         // ── Viñedo: Declaraciones y Certificaciones ───────────────────────────
-        $menu['declarations'] = ViticulturistMenu::officialDeclarations('producer');
+        $menu['declarations'] = ViticulturistMenu::officialDeclarations('producer', $producerLocked);
 
         // ── Bodega: Vendimia ──────────────────────────────────────────────────
         $harvestItems = [
@@ -105,13 +108,13 @@ class ProducerMenu
         ];
 
         // ── Recursos ──────────────────────────────────────────────────────────
-        $menu['resources'] = ViticulturistMenu::resources('producer', includeContainers: false);
+        $menu['resources'] = ViticulturistMenu::resources('producer', includeContainers: false, locked: $producerLocked);
 
         // ── Normativa viñedo ──────────────────────────────────────────────────
-        $menu['compliance'] = ViticulturistMenu::compliance('producer');
+        $menu['compliance'] = ViticulturistMenu::compliance('producer', $producerLocked);
 
         // ── PAC ───────────────────────────────────────────────────────────────
-        $menu['pac'] = ViticulturistMenu::pac('producer');
+        $menu['pac'] = ViticulturistMenu::pac('producer', $producerLocked);
 
         // ── Negocio viñedo (usado por tab viñedo del producer) ────────────────
         $menu['billing'] = [

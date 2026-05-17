@@ -10,7 +10,7 @@ class RequireCompleteAccess
 {
     /**
      * Bloquea el acceso a funcionalidades del plan Completo para viticultores
-     * que solo tienen el plan Básico gratuito (vinculados a bodega sin suscripción).
+     * que solo tienen el plan Básico gratuito (disponible para todos los viticultores sin suscripción activa).
      */
     public function handle(Request $request, Closure $next): Response
     {

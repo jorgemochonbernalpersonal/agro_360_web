@@ -44,9 +44,7 @@ Route::middleware(['role:viticulturist,producer', 'check.beta'])
     ->group(function () {
 
         // ── PLAN BÁSICO (gratis para viticultores vinculados a bodega) ────────────
-        Route::get('/dashboard', function () {
-            return view('viticulturist.dashboard');
-        })->name('dashboard');
+        Route::get('/dashboard', \App\Livewire\Viticulturist\Dashboard::class)->name('dashboard');
 
         Route::get('/quick-entry', \App\Livewire\Viticulturist\QuickEntry::class)->name('quick-entry');
         Route::get('/calendar', Calendar::class)->name('calendar');
@@ -60,7 +58,7 @@ Route::middleware(['role:viticulturist,producer', 'check.beta'])
 
         Route::get('/winery-access', \App\Livewire\Viticulturist\WineryAccess\Index::class)->name('winery-access.index');
         Route::get('/announcements', \App\Livewire\Viticulturist\Announcements\Index::class)->name('announcements');
-        Route::get('/denomination', \App\Livewire\Viticulturist\Denomination\Index::class)->name('denomination.index');
+        Route::get('/denomination', \App\Livewire\Viticulturist\Denomination\Index::class)->name('denomination.index')->middleware('require.supervisor');
 
         Route::prefix('support')->name('support.')->group(function () {
             Route::get('/', \App\Livewire\Viticulturist\Support\Index::class)->name('index');
@@ -113,6 +111,18 @@ Route::middleware(['role:viticulturist,producer', 'check.beta'])
             Route::get('/{observation}/edit', \App\Livewire\Viticulturist\Phenology\Edit::class)->name('edit');
         });
 
+        // Mis Entregas a Bodega — Consulta (plan básico, requiere bodega vinculada)
+        Route::prefix('harvests')->name('harvests.')->middleware('require.winery')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\Harvests\Index::class)->name('index');
+            Route::get('/planting/{planting}', \App\Livewire\Viticulturist\Harvests\Show::class)->name('show');
+        });
+
+        // Gestión de Plagas y Enfermedades — solo lectura, plan básico
+        Route::prefix('pest-management')->name('pest-management.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\PestManagement\Index::class)->name('index');
+            Route::get('/{pest}', \App\Livewire\Viticulturist\PestManagement\Show::class)->name('show');
+        });
+
         // ── PLAN COMPLETO (requiere suscripción) ─────────────────────────────────
         Route::middleware('require.complete')->group(function () {
 
@@ -136,20 +146,14 @@ Route::middleware(['role:viticulturist,producer', 'check.beta'])
                 Route::get('/{declaration}', \App\Livewire\Viticulturist\Pac\Declarations\Show::class)->name('show');
             });
         });
-        
-        // Gestión de Plagas y Enfermedades
-        Route::prefix('pest-management')->name('pest-management.')->group(function () {
-            Route::get('/', \App\Livewire\Viticulturist\PestManagement\Index::class)->name('index');
-            Route::get('/{pest}', \App\Livewire\Viticulturist\PestManagement\Show::class)->name('show');
-        });
 
-        // Mis Entregas a Bodega (cuadro de vendimia del viticulturist)
-        Route::get('/harvests', \App\Livewire\Viticulturist\Harvests\Index::class)->name('harvests.index');
-        Route::get('/harvests/export/pdf', \App\Http\Controllers\Viticulturist\HarvestsPdfController::class . '@export')->name('harvests.export-pdf');
-        Route::get('/harvests/planting/{planting}', \App\Livewire\Viticulturist\Harvests\Show::class)->name('harvests.show');
-        Route::get('/harvests/create-delivery', \App\Livewire\Viticulturist\Harvests\CreateDelivery::class)->name('harvests.delivery.create');
-        Route::get('/harvests/{delivery}/edit-delivery', \App\Livewire\Viticulturist\Harvests\EditDelivery::class)->name('harvests.delivery.edit');
-        Route::get('/harvests/{delivery}/albaran', \App\Http\Controllers\Viticulturist\HarvestDeliveryAlbaranController::class)->name('harvests.delivery.albaran');
+        // Mis Entregas a Bodega — Operaciones (plan completo + bodega vinculada)
+        Route::prefix('harvests')->name('harvests.')->middleware('require.winery')->group(function () {
+            Route::get('/export/pdf', \App\Http\Controllers\Viticulturist\HarvestsPdfController::class . '@export')->name('export-pdf');
+            Route::get('/create-delivery', \App\Livewire\Viticulturist\Harvests\CreateDelivery::class)->name('delivery.create');
+            Route::get('/{delivery}/edit-delivery', \App\Livewire\Viticulturist\Harvests\EditDelivery::class)->name('delivery.edit');
+            Route::get('/{delivery}/albaran', \App\Http\Controllers\Viticulturist\HarvestDeliveryAlbaranController::class)->name('delivery.albaran');
+        });
 
         // Aplicadores fitosanitarios (ROPO)
         Route::prefix('field-applicators')->name('field-applicators.')->group(function () {
@@ -165,8 +169,8 @@ Route::middleware(['role:viticulturist,producer', 'check.beta'])
             Route::get('/{fieldEquipment}/edit', \App\Livewire\Viticulturist\FieldEquipment\Edit::class)->name('edit');
         });
 
-        // Cosecha Comercializada
-        Route::prefix('marketed-harvests')->name('marketed-harvests.')->group(function () {
+        // Cosecha Comercializada (requiere bodega vinculada)
+        Route::prefix('marketed-harvests')->name('marketed-harvests.')->middleware('require.winery')->group(function () {
             Route::get('/', \App\Livewire\Viticulturist\MarketedHarvests\Index::class)->name('index');
             Route::get('/create', \App\Livewire\Viticulturist\MarketedHarvests\Create::class)->name('create');
             Route::get('/{marketedHarvest}/edit', \App\Livewire\Viticulturist\MarketedHarvests\Edit::class)->name('edit');
@@ -281,8 +285,8 @@ Route::middleware(['role:viticulturist,producer', 'check.beta'])
         // Actividades de Campo
         Route::get('/field-activities', \App\Livewire\Winery\FieldActivities\Index::class)->name('field-activities.index');
 
-        // Contenedores
-        Route::prefix('containers')->name('containers.')->group(function () {
+        // Contenedores (requiere bodega vinculada)
+        Route::prefix('containers')->name('containers.')->middleware('require.winery')->group(function () {
             Route::get('/', \App\Livewire\Viticulturist\Containers\Index::class)->name('index');
             Route::get('/create', \App\Livewire\Viticulturist\Containers\Create::class)->name('create');
             Route::get('/{id}', \App\Livewire\Viticulturist\Containers\Show::class)->name('show');
@@ -383,8 +387,8 @@ Route::middleware(['role:viticulturist,producer', 'check.beta'])
             // Rutas estáticas primero (antes de rutas dinámicas)
             Route::get('/harvest', \App\Livewire\Viticulturist\Invoices\Harvest\Index::class)->name('harvest.index');
 
-            // ── Liquidaciones de la bodega (solo lectura) ─────────────────────────
-            Route::get('/grape-purchase', \App\Livewire\Viticulturist\Invoices\GrapePurchase\Index::class)->name('grape-purchase.index');
+            // ── Liquidaciones de la bodega (solo lectura, requiere bodega vinculada)
+            Route::get('/grape-purchase', \App\Livewire\Viticulturist\Invoices\GrapePurchase\Index::class)->name('grape-purchase.index')->middleware('require.winery');
 
             // ── Facturación de Vendimia (Cosecha Comercializada) ──────────────────────
             Route::prefix('harvest-sale')->name('harvest-sale.')->group(function () {
@@ -532,8 +536,8 @@ Route::middleware(['role:viticulturist,producer', 'check.beta'])
         // ── Comparativa entre Campañas ────────────────────────────────
         Route::get('/campaign-comparison', \App\Livewire\Viticulturist\CampaignComparison\Index::class)->name('campaign-comparison');
 
-        // ── Trazabilidad de Uva ───────────────────────────────────────
-        Route::get('/grape-traceability', \App\Livewire\Viticulturist\GrapeTraceability\Index::class)->name('grape-traceability');
+        // ── Trazabilidad de Uva (requiere bodega vinculada) ────────────
+        Route::get('/grape-traceability', \App\Livewire\Viticulturist\GrapeTraceability\Index::class)->name('grape-traceability')->middleware('require.winery');
 
         }); // end require.complete
     });

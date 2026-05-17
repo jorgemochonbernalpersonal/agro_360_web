@@ -9,6 +9,7 @@ use App\Models\PhytosanitaryProduct;
 use App\Models\Plot;
 use App\Livewire\Concerns\WithToastNotifications;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
 
 class OnboardingChecklist extends Component
@@ -57,12 +58,14 @@ class OnboardingChecklist extends Component
 
     public function completeStep(string $step): void
     {
-        $progress = OnboardingProgress::getOrCreate(auth()->id(), $step);
+        $userId = auth()->id();
+        $progress = OnboardingProgress::getOrCreate($userId, $step);
         $progress->markAsCompleted();
-        
+
+        Cache::forget("nav_onboarding_pending_{$userId}");
+
         $this->loadProgress();
-        
-        // Si todos los pasos están completados, mostrar mensaje de éxito
+
         if ($this->progressPercentage === 100) {
             session()->flash('onboarding_complete', true);
         }
@@ -70,9 +73,11 @@ class OnboardingChecklist extends Component
 
     public function skipAll(): void
     {
-        OnboardingProgress::skipAll(auth()->id());
+        $userId = auth()->id();
+        OnboardingProgress::skipAll($userId);
+        Cache::forget("nav_onboarding_pending_{$userId}");
         $this->show = false;
-        
+
         $this->toastInfo('Onboarding saltado. Puedes reactivarlo desde el dashboard.');
     }
 
@@ -146,11 +151,17 @@ class OnboardingChecklist extends Component
                 AgriculturalActivity::forViticulturist($userId)->exists(),
         ];
 
+        $anyCompleted = false;
         foreach ($checks as $step => $hasData) {
             $progress = OnboardingProgress::getOrCreate($userId, $step);
             if (!$progress->isCompleted() && $hasData()) {
                 $progress->markAsCompleted();
+                $anyCompleted = true;
             }
+        }
+
+        if ($anyCompleted) {
+            Cache::forget("nav_onboarding_pending_{$userId}");
         }
     }
 

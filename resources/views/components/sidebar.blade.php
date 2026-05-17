@@ -52,8 +52,10 @@
     $chapterColors['cellar']       = ['accent' => '#f87171', 'bg' => 'rgba(248,113,113,0.12)', 'border' => 'rgba(248,113,113,0.5)'];  // rojo vino (infraestructura bodega)
     $chapterColors['wines']        = ['accent' => '#e879f9', 'bg' => 'rgba(232,121,249,0.12)', 'border' => 'rgba(232,121,249,0.5)'];  // fuchsia (vinificación)
     $chapterColors['output']       = ['accent' => '#c084fc', 'bg' => 'rgba(192,132,252,0.12)', 'border' => 'rgba(192,132,252,0.5)'];  // violeta (producto)
+    $chapterColors['onboarding']   = ['accent' => '#f59e0b', 'bg' => 'rgba(245,158,11,0.12)',  'border' => 'rgba(245,158,11,0.5)'];   // amber (primeros pasos)
 
     $viticulturistChapters = [
+        ['key' => 'onboarding',  'icon' => 'rocket-launch',            'label' => 'Primeros Pasos',    'sections' => ['onboarding']],
         ['key' => 'campaign',    'icon' => 'pencil-square',            'label' => 'Campaña',           'sections' => ['campaigns']],
         ['key' => 'winery_rel',  'icon' => 'building-office-2',        'label' => 'Bodega',            'sections' => ['winery_rel', 'denomination'], 'section_labels' => ['winery_rel' => 'Comunicación', 'denomination' => 'Denominación']],
         ['key' => 'notebook',    'icon' => 'document-text',            'label' => 'Cuaderno de Campo', 'sections' => ['notebook_inputs']],
@@ -189,6 +191,27 @@
             }
         }
     }
+
+    // Pre-computar qué capítulos tienen TODOS sus ítems de navegación bloqueados.
+    // Usado para mostrar CTA de upgrade en flyout en vez de lista de ítems.
+    $allLockedChapterKeys = [];
+    foreach ($chapters as $ch) {
+        $_items = [];
+        foreach ($ch['sections'] as $_sk) {
+            if (!isset($menu[$_sk])) continue;
+            foreach ($menu[$_sk] as $_i) { $_items[] = $_i; }
+        }
+        $_navItems = array_values(array_filter($_items, fn($i) =>
+            !isset($i['divider']) && !isset($i['section_header'])
+        ));
+        if (!empty($_navItems) && collect($_navItems)->every(fn($i) => ($i['locked'] ?? false) === true)) {
+            $allLockedChapterKeys[] = $ch['key'];
+        }
+    }
+    // Precio mensual para mostrar en el CTA (solo viticulturist/producer)
+    $_upgradePrice = method_exists($user, 'viticulturistMonthlyPrice')
+        ? number_format($user->viticulturistMonthlyPrice(), 0)
+        : null;
 
     // Para producer: detectar en qué tab (vineyard/bodega) está el capítulo activo
     $activeProducerTab = null;  // null = no hay detección por ruta, usar localStorage
@@ -399,13 +422,21 @@
         {{-- Otros roles: capítulos directos --}}
         <div class="flex-1 flex flex-col items-center gap-1 overflow-y-auto overflow-x-hidden w-full py-0.5 rail-chapters-scroll">
         @foreach($chapters as $ch)
-            @php $color = $chapterColors[$ch['key']] ?? $chapterColors['system']; $isActive = ($activeChapterKey === $ch['key']); @endphp
-            <button type="button" x-on:click="$store.nav.toggle('{{ $ch['key'] }}')" title="{{ $ch['label'] }}"
+            @php
+                $color    = $chapterColors[$ch['key']] ?? $chapterColors['system'];
+                $isActive = ($activeChapterKey === $ch['key']);
+                $chIsAllLocked = in_array($ch['key'], $allLockedChapterKeys);
+            @endphp
+            <button type="button" x-on:click="$store.nav.toggle('{{ $ch['key'] }}')"
+                title="{{ $ch['label'] }}{{ $chIsAllLocked ? ' — Plan Completo' : '' }}"
                 class="notebook-tab flex-shrink-0 relative group flex items-center justify-center w-11 h-11 rounded-xl transition-all duration-200"
                 :class="$store.nav.open === '{{ $ch['key'] }}' ? 'tab-open' : ''"
                 data-key="{{ $ch['key'] }}" data-active="{{ $isActive ? 'true' : 'false' }}"
                 style="--tab-accent: {{ $color['accent'] }}; --tab-bg: {{ $color['bg'] }}; --tab-border: {{ $color['border'] }};">
                 <flux:icon icon="{{ $ch['icon'] }}" class="w-5 h-5 tab-icon transition-colors duration-150" />
+                @if($chIsAllLocked)
+                    <span class="absolute top-0.5 right-0.5 w-2 h-2 rounded-full bg-amber-400 border border-[#1a2a1a]" title="Plan Completo"></span>
+                @endif
                 <span class="rail-tooltip" style="border-left: 2px solid {{ $color['accent'] }}">{{ $ch['label'] }}</span>
             </button>
         @endforeach
@@ -533,6 +564,7 @@
                 }
                 foreach ($menu[$sectionKey] as $item) { $chapterItems[] = $item; }
             }
+            $chapterAllLocked = in_array($ch['key'], $allLockedChapterKeys);
         @endphp
 
         <div
@@ -569,6 +601,30 @@
             <div class="flex flex-1 overflow-hidden">
                 <div class="w-px flex-shrink-0 ml-5 my-2" style="background: {{ $color['accent'] }}; opacity: 0.4;"></div>
 
+                @if($chapterAllLocked)
+                {{-- ── Upgrade CTA: capítulo 100% bloqueado ── --}}
+                <div class="flex-1 flex flex-col items-center justify-center px-5 py-8 text-center gap-4">
+                    <div class="w-14 h-14 rounded-2xl flex items-center justify-center" style="background: {{ $color['bg'] }}; box-shadow: 0 0 0 1px {{ $color['border'] }};">
+                        <svg class="w-7 h-7" fill="none" stroke="{{ $color['accent'] }}" stroke-width="1.8" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-sm font-bold text-zinc-800">{{ $ch['label'] }}</p>
+                        <p class="text-xs text-zinc-500 mt-1 leading-relaxed">Este módulo está disponible<br>en el Plan Completo.</p>
+                    </div>
+                    @if($_upgradePrice)
+                        <span class="px-3 py-1 text-xs font-bold rounded-full" style="background: {{ $color['bg'] }}; color: {{ $color['accent'] }}; box-shadow: 0 0 0 1px {{ $color['border'] }};">
+                            Desde {{ $_upgradePrice }}€/mes
+                        </span>
+                    @endif
+                    <a href="{{ route('subscription.manage') }}" wire:navigate x-on:click="$store.nav.close()"
+                       class="w-full px-4 py-2.5 text-white text-sm font-bold rounded-xl transition-colors text-center"
+                       style="background: {{ $color['accent'] }};">
+                        Activar Plan Completo
+                    </a>
+                </div>
+                @else
                 <nav class="flex-1 overflow-y-auto py-2 sidebar-scrollbar notebook-lines-light">
                     @foreach($chapterItems as $item)
                         @if(isset($item['divider']) && $item['divider'])
@@ -605,6 +661,8 @@
                                     <span class="px-1.5 py-0.5 text-[9px] font-bold bg-amber-100 text-amber-600 rounded-full whitespace-nowrap">Pronto</span>
                                 @elseif(isset($item['new']) && $item['new'])
                                     <span class="px-1.5 py-0.5 text-[9px] font-bold bg-emerald-100 text-emerald-600 rounded-full whitespace-nowrap">Nuevo</span>
+                                @elseif(isset($item['locked']) && $item['locked'])
+                                    <svg class="w-3 h-3 flex-shrink-0 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                                 @elseif($item['active'] ?? false)
                                     <div class="w-1.5 h-1.5 rounded-full flex-shrink-0" style="background: {{ $color['accent'] }};"></div>
                                 @endif
@@ -635,6 +693,7 @@
                         @endif
                     @endforeach
                 </nav>
+                @endif {{-- end @else (not allLocked) --}}
             </div>
 
             {{-- Footer --}}
@@ -741,6 +800,7 @@
                             }
                             foreach ($menu[$sk] as $itm) { $chItems[] = $itm; }
                         }
+                        $mobAllLocked = in_array($ch['key'], $allLockedChapterKeys);
                         $chTab = 'vineyard';
                         if ($user->role === 'producer') {
                             $bodegaKeys = array_column($producerWineryChapters, 'key');
@@ -765,6 +825,9 @@
                               :class="mobileChapter === '{{ $ch['key'] }}' ? 'text-white' : 'text-white/70'">
                             {{ $ch['label'] }}
                         </span>
+                        @if($mobAllLocked)
+                            <svg class="w-3 h-3 flex-shrink-0 text-amber-400/80 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                        @endif
                         <span class="transition-transform duration-200"
                               :class="mobileChapter === '{{ $ch['key'] }}' ? 'rotate-90' : ''">
                             <flux:icon icon="chevron-right" class="w-4 h-4 text-white/30" />
@@ -773,6 +836,23 @@
 
                     {{-- Chapter items --}}
                     <div x-show="mobileChapter === '{{ $ch['key'] }}'" x-cloak class="pb-1">
+                        @if($mobAllLocked)
+                        <div class="mx-4 my-3 p-4 rounded-xl flex flex-col items-center gap-3 text-center"
+                             style="background: {{ $color['bg'] }}20; border: 1px solid {{ $color['border'] }};">
+                            <svg class="w-6 h-6" fill="none" stroke="{{ $color['accent'] }}" stroke-width="1.8" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                            </svg>
+                            <p class="text-xs text-white/70">Disponible en el <strong class="text-white">Plan Completo</strong>.</p>
+                            @if($_upgradePrice)
+                                <p class="text-[10px] text-white/40">Desde {{ $_upgradePrice }}€/mes</p>
+                            @endif
+                            <a href="{{ route('subscription.manage') }}" wire:navigate @click="mobileOpen = false"
+                               class="px-4 py-2 text-xs font-bold rounded-lg text-white transition-colors"
+                               style="background: {{ $color['accent'] }};">
+                                Activar Plan Completo
+                            </a>
+                        </div>
+                        @else
                         <div class="ml-4 border-l pl-3" style="border-color: {{ $color['accent'] }}50;">
                             @foreach($chItems as $item)
                                 @if(isset($item['divider']) && $item['divider'])
@@ -804,11 +884,14 @@
                                             <span class="px-1.5 py-0.5 text-[9px] font-bold bg-amber-100 text-amber-600 rounded-full">Pronto</span>
                                         @elseif(isset($item['new']) && $item['new'])
                                             <span class="px-1.5 py-0.5 text-[9px] font-bold bg-emerald-100 text-emerald-600 rounded-full">Nuevo</span>
+                                        @elseif(isset($item['locked']) && $item['locked'])
+                                            <svg class="w-3 h-3 flex-shrink-0 text-amber-400/70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                                         @endif
                                     </a>
                                 @endif
                             @endforeach
                         </div>
+                        @endif {{-- end @else (not mobAllLocked) --}}
                     </div>
 
                     @if($user->role === 'producer')
