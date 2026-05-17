@@ -187,6 +187,10 @@
                         </div>
 
                         <x-slot:footer>
+                            @if($v->id === auth()->id())
+                                {{-- Propia cuenta: sin acciones de gestión --}}
+                                <p class="text-xs text-zinc-400 italic text-center py-1">Tu propia cuenta</p>
+                            @else
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-1">
                                     {{-- Asignar a equipo --}}
@@ -254,6 +258,7 @@
                                     />
                                 </div>
                             </div>
+                            @endif
                         </x-slot:footer>
                     </x-agro.card>
                 @endforeach
