@@ -83,9 +83,11 @@ class OnboardingChecklist extends Component
 
     public function resetOnboarding(): void
     {
-        OnboardingProgress::resetOnboarding(auth()->id());
+        $userId = auth()->id();
+        OnboardingProgress::resetOnboarding($userId);
+        Cache::forget("nav_onboarding_pending_{$userId}");
         $this->loadProgress();
-        
+
         $this->toastSuccess('Onboarding reiniciado. Recarga la página para ver el tour de nuevo.');
     }
 
