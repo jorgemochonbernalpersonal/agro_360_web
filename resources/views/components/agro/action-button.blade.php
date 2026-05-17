@@ -44,10 +44,10 @@ $base = 'inline-flex items-center justify-center w-8 h-8 rounded-lg transition-c
 
 @if($attributes->has('href'))
     <a {{ $attributes->merge(['class' => $base]) }}>
-        <flux:icon :icon="$resolvedIcon" class="size-4" />
+        <flux:icon :icon="$resolvedIcon" variant="outline" class="size-4" />
     </a>
 @else
     <button {{ $attributes->merge(['class' => $base]) }}>
-        <flux:icon :icon="$resolvedIcon" class="size-4" />
+        <flux:icon :icon="$resolvedIcon" variant="outline" class="size-4" />
     </button>
 @endif
