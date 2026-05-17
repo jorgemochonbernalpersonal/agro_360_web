@@ -1,20 +1,24 @@
 <div class="space-y-6 animate-fade-in">
 
     {{-- Header + selector de campaña --}}
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
         <x-agro.page-header
             title="Cuaderno de Campo"
-            :description="$currentCampaign ? 'Campaña ' . $currentCampaign->name . ' · ' . $currentCampaign->year : 'Selecciona una campaña para ver las actividades'"
+            :description="$currentCampaign ? $currentCampaign->name : 'Selecciona una campaña para ver las actividades'"
         />
 
-        @if($campaigns->count() > 0)
-            <flux:select wire:model.live="selectedCampaign" class="self-start sm:self-center shrink-0">
-                @foreach($campaigns as $campaign)
-                    <flux:select.option value="{{ $campaign->id }}">
-                        {{ $campaign->name }} ({{ $campaign->year }}){{ $campaign->active ? ' ★' : '' }}
-                    </flux:select.option>
-                @endforeach
-            </flux:select>
+        @if($campaigns->count() > 1)
+            <div class="flex items-center gap-2 self-start shrink-0">
+                <flux:icon icon="calendar-days" class="size-4 text-zinc-400 shrink-0" />
+                <select wire:model.live="selectedCampaign"
+                        class="text-sm text-zinc-700 bg-white border border-zinc-200 rounded-lg px-2 py-1.5 pr-7 focus:outline-none focus:ring-1 focus:ring-agro-400 focus:border-agro-400 appearance-none cursor-pointer">
+                    @foreach($campaigns as $campaign)
+                        <option value="{{ $campaign->id }}">
+                            {{ $campaign->name }}{{ $campaign->active ? '' : ' (inactiva)' }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
         @endif
     </div>
 
