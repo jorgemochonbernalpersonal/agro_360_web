@@ -10,28 +10,28 @@
         <x-agro.stat-card
             label="Total campañas"
             :value="$stats['total']"
-            description="'Historial completo'"
+            description="Historial completo"
             icon="calendar-days"
             color="agro"
         />
         <x-agro.stat-card
             label="Activas"
             :value="$stats['active']"
-            description="'Campañas en curso'"
+            description="Campañas en curso"
             icon="check-circle"
             color="agro"
         />
         <x-agro.stat-card
             label="Inactivas"
             :value="$stats['inactive']"
-            description="$stats['inactive'] > 0 ? 'Campañas cerradas' : 'Todas activas'"
+            :description="$stats['inactive'] > 0 ? 'Campañas cerradas' : 'Todas activas'"
             icon="archive-box"
             color="zinc"
         />
         <x-agro.stat-card
             label="Año actual"
             :value="(string) now()->year"
-            description="'Campaña en progreso'"
+            description="Campaña en progreso"
             icon="sun"
             color="orange"
         />
