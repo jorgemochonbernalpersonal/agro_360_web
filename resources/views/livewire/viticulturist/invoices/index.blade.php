@@ -11,28 +11,28 @@
         <x-agro.stat-card
             label="Total facturas"
             :value="$stats['total']"
-            description="'Historial completo'"
+            description="Historial completo"
             icon="document-text"
             color="agro"
         />
         <x-agro.stat-card
             label="Emitidas"
             :value="$stats['issued']"
-            description="'Facturas en firme'"
+            description="Facturas en firme"
             icon="check-circle"
             color="agro"
         />
         <x-agro.stat-card
             label="Borradores"
             :value="$stats['draft']"
-            description="'Pendientes de emitir'"
+            description="Pendientes de emitir"
             icon="pencil-square"
             color="orange"
         />
         <x-agro.stat-card
             label="Pendiente cobro"
             :value="number_format($stats['pending_amount'], 2) . ' €'"
-            description="'Importe sin cobrar'"
+            description="Importe sin cobrar"
             icon="banknotes"
             color="red"
         />

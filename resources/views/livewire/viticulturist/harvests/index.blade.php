@@ -11,28 +11,28 @@
             <x-agro.stat-card
                 label="Plantaciones"
                 :value="$stats['delivered'] + $stats['pending']"
-                description="'Con o sin entrega declarada'"
+                description="Con o sin entrega declarada"
                 icon="scissors"
                 color="agro"
             />
             <x-agro.stat-card
                 label="Con entregas"
                 :value="$stats['delivered']"
-                description="'Entrega registrada'"
+                description="Entrega registrada"
                 icon="check-circle"
                 color="agro"
             />
             <x-agro.stat-card
                 label="Sin entregar"
                 :value="$stats['pending']"
-                description="'Pendientes de entrega'"
+                description="Pendientes de entrega"
                 icon="clock"
                 color="orange"
             />
             <x-agro.stat-card
                 label="Kg vendimia"
                 :value="number_format($stats['total_harvest_kg']) . ' kg'"
-                description="'Total cosechado'"
+                description="Total cosechado"
                 icon="scale"
                 color="blue"
             />

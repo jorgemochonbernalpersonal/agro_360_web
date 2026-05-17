@@ -17,28 +17,28 @@
             <x-agro.stat-card
                 label="Total activas"
                 :value="$stats['total']"
-                description="'Autorizaciones vigentes'"
+                description="Autorizaciones vigentes"
                 icon="shield-check"
                 color="agro"
             />
             <x-agro.stat-card
                 label="Tipos distintos"
                 :value="$stats['types']"
-                description="'Categorías de autorización'"
+                description="Categorías de autorización"
                 icon="squares-2x2"
                 color="blue"
             />
             <x-agro.stat-card
                 label="Próximas a vencer"
                 :value="$stats['expiring']"
-                description="'En los próximos 60 días'"
+                description="En los próximos 60 días"
                 icon="exclamation-triangle"
                 color="orange"
             />
             <x-agro.stat-card
                 label="Vencidas"
                 :value="$stats['expired']"
-                description="$stats['expired'] > 0 ? 'Requieren renovación' : 'Todas vigentes'"
+                :description="$stats['expired'] > 0 ? 'Requieren renovación' : 'Todas vigentes'"
                 icon="x-circle"
                 color="red"
             />

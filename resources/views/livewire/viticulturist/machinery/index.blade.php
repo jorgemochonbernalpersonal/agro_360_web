@@ -10,28 +10,28 @@
         <x-agro.stat-card
             label="Total maquinaria"
             :value="$stats['total']"
-            description="'Equipos registrados'"
+            description="Equipos registrados"
             icon="wrench-screwdriver"
             color="agro"
         />
         <x-agro.stat-card
             label="Activa"
             :value="$stats['active']"
-            description="'En uso'"
+            description="En uso"
             icon="check-circle"
             color="agro"
         />
         <x-agro.stat-card
             label="Inactiva"
             :value="$stats['inactive']"
-            description="'Archivada o fuera de uso'"
+            description="Archivada o fuera de uso"
             icon="archive-box"
             color="zinc"
         />
         <x-agro.stat-card
             label="Tipos distintos"
             :value="$stats['types_count']"
-            description="'Categorías de maquinaria'"
+            description="Categorías de maquinaria"
             icon="squares-2x2"
             color="blue"
         />

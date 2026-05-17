@@ -11,28 +11,28 @@
             <x-agro.stat-card
                 label="Total clientes"
                 :value="$stats['total']"
-                description="'Cartera total'"
+                description="Cartera total"
                 icon="user-group"
                 color="agro"
             />
             <x-agro.stat-card
                 label="Activos"
                 :value="$stats['active']"
-                description="'Clientes activos'"
+                description="Clientes activos"
                 icon="check-circle"
                 color="agro"
             />
             <x-agro.stat-card
                 label="Inactivos"
                 :value="$stats['inactive']"
-                description="$stats['inactive'] > 0 ? 'Clientes archivados' : 'Todos activos'"
+                :description="$stats['inactive'] > 0 ? 'Clientes archivados' : 'Todos activos'"
                 icon="archive-box"
                 color="zinc"
             />
             <x-agro.stat-card
                 label="Alta este año"
                 :value="\App\Models\Client::where('user_id', auth()->id())->whereYear('created_at', date('Y'))->count()"
-                description="'Nuevos en 2026'"
+                description="Nuevos este año"
                 icon="user-plus"
                 color="blue"
             />

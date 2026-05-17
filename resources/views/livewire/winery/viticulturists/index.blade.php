@@ -7,28 +7,28 @@
         <x-agro.stat-card
             label="Activos"
             :value="$stats['active']"
-            description="'Con acceso al portal'"
+            description="Con acceso al portal"
             icon="check-circle"
             color="green"
         />
         <x-agro.stat-card
             label="Pendientes"
             :value="$stats['pending']"
-            description="'Sin activar o invitar'"
+            description="Sin activar o invitar"
             icon="clock"
             color="amber"
         />
         <x-agro.stat-card
             label="Propios"
             :value="$stats['own']"
-            description="'Creados por tu bodega'"
+            description="Creados por tu bodega"
             icon="user-plus"
             color="blue"
         />
         <x-agro.stat-card
             label="Con cuaderno"
             :value="$stats['with_notebook']"
-            description="'Acceso al cuaderno de campo'"
+            description="Acceso al cuaderno de campo"
             icon="book-open"
             color="orange"
         />
