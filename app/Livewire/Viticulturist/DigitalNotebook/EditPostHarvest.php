@@ -7,6 +7,7 @@ use App\Models\PhytosanitaryProduct;
 use App\Models\PostHarvestTreatment;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Computed;
 
 class EditPostHarvest extends AbstractActivityForm
 {
@@ -24,6 +25,16 @@ class EditPostHarvest extends AbstractActivityForm
     public $dose_unit              = 'kg/ha';
     public $water_volume_liters    = '';
     public $reentry_interval_hours = '';
+
+    // ─── Mount ────────────────────────────────────────────────────────────────
+
+    // ─── Computed ─────────────────────────────────────────────────────────────
+
+    #[Computed]
+    public function products()
+    {
+        return PhytosanitaryProduct::forUser(Auth::id())->where('active', true)->orderBy('name')->get();
+    }
 
     // ─── Mount ────────────────────────────────────────────────────────────────
 
@@ -99,7 +110,7 @@ class EditPostHarvest extends AbstractActivityForm
     public function render()
     {
         return view('livewire.viticulturist.digital-notebook.edit-post-harvest', $this->renderData([
-            'products'         => PhytosanitaryProduct::forUser(Auth::id())->where('active', true)->orderBy('name')->get(),
+            'products'         => $this->products,
             'applicationTypes' => PostHarvestTreatment::APPLICATION_TYPES,
         ]))->layout('layouts.app', ['title' => 'Editar Tratamiento Post-Vendimia - Agro365']);
     }

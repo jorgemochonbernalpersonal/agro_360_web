@@ -36,11 +36,18 @@ class CreateFertilization extends AbstractActivityForm
 
     public function updatedFertilizerType(): void
     {
-        $lower = strtolower($this->fertilizer_type);
-        $this->is_organic = str_contains($lower, 'orgán')
+        $this->is_organic = $this->detectIsOrganic($this->fertilizer_type);
+    }
+
+    private function detectIsOrganic(string $type): bool
+    {
+        $lower = strtolower($type);
+        $hasOrganicKeyword = str_contains($lower, 'orgán')
             || str_contains($lower, 'organ')
             || str_contains($lower, 'estiér')
             || str_contains($lower, 'estier');
+        $isInorganic = str_contains($lower, 'inorgán') || str_contains($lower, 'inorgan');
+        return $hasOrganicKeyword && !$isInorganic;
     }
 
     // ─── Validation ───────────────────────────────────────────────────────────
@@ -48,11 +55,12 @@ class CreateFertilization extends AbstractActivityForm
     protected function rules(): array
     {
         return array_merge($this->commonRules(), [
+            'phenological_stage'       => 'nullable|string|max:50',
             'fertilizer_type'          => 'required|string|max:100',
             'fertilizer_name'          => 'nullable|string|max:255',
             'quantity'                 => 'required|numeric|min:0.01',
             'npk_ratio'                => 'nullable|string|max:50',
-            'application_method'       => 'nullable|string|max:50',
+            'application_method'       => 'nullable|in:aplicación al suelo,fertirrigación,aplicación foliar,otro',
             'area_applied'             => 'required|numeric|min:0.01',
             // PAC Nutrición (BCAM 6) — al menos un valor NPK
             'nitrogen_uf'   => 'required_without_all:phosphorus_uf,potassium_uf|nullable|numeric|min:0|max:1000',
@@ -61,7 +69,7 @@ class CreateFertilization extends AbstractActivityForm
             // Campos orgánicos — obligatorios solo si is_organic
             'manure_type'  => $this->is_organic ? 'required|string|max:100'               : 'nullable|string|max:100',
             'burial_date'  => $this->is_organic ? 'required|date|before_or_equal:today'   : 'nullable|date|before_or_equal:today',
-            'emission_reduction_method' => 'nullable|string|max:100',
+            'emission_reduction_method' => 'nullable|in:inyección,platos,tubos,enterrado_inmediato,otro',
         ]);
     }
 

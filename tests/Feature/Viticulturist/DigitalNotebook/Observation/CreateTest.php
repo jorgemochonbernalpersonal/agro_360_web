@@ -316,7 +316,7 @@ class CreateTest extends ViticulturistTestCase
         Livewire::test(CreateObservation::class)
             ->set('plot_id', $plot->id)
             ->set('phenological_stage', 'Maduración')
-            ->set('observation_type', 'general')
+            ->set('observation_type', 'otro')
             ->set('description', 'Estado general de la parcela bueno. Maduración homogénea.')
             ->set('severity', '')
             ->set('workType', 'individual')

@@ -56,7 +56,7 @@ class EditCulturalWork extends AbstractActivityForm
     protected function rules(): array
     {
         return array_merge($this->commonRules(), [
-            'work_type'                   => 'required|string|max:100',
+            'work_type'                   => 'required|in:poda,deshojado,despuntado,laboreo,desbroce,otro',
             'hours_worked'                => 'nullable|numeric|min:0',
             'workers_count'               => 'nullable|integer|min:1',
             'description'                 => 'required|string|min:10',

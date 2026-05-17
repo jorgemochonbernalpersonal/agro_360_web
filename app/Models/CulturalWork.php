@@ -21,8 +21,10 @@ class CulturalWork extends Model
     ];
 
     protected $casts = [
-        'hours_worked' => 'decimal:2',
+        'hours_worked'                => 'decimal:2',
         'productive_buds_per_hectare' => 'integer',
+        'workers_count'               => 'integer',
+        'topping_height_cm'           => 'integer',
     ];
 
     /**

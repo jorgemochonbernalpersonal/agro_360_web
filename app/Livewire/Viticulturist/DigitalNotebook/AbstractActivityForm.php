@@ -259,6 +259,12 @@ abstract class AbstractActivityForm extends Component
             ->get();
     }
 
+    #[Computed]
+    public function campaign()
+    {
+        return Campaign::find($this->campaign_id);
+    }
+
     // ─── Render helpers ───────────────────────────────────────────────────────
 
     /**
@@ -271,7 +277,7 @@ abstract class AbstractActivityForm extends Component
             'plots'             => $this->plots,
             'crews'             => $this->crews,
             'machinery'         => $this->machinery,
-            'campaign'          => Campaign::find($this->campaign_id),
+            'campaign'          => $this->campaign,
             'allViticulturists' => $this->viticulturists,
             'individualWorkers' => $this->individualWorkers,
         ], $extra);

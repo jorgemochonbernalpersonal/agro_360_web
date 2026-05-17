@@ -100,7 +100,15 @@ class PhytosanitaryTreatment extends Model
                 if (!$this->product || !$this->product->withdrawal_period_days) {
                     return null;
                 }
-                return $this->activity->activity_date->addDays($this->product->withdrawal_period_days);
+                $activityDate = $this->relationLoaded('activity')
+                    ? $this->activity?->activity_date
+                    : $this->activity()->value('activity_date');
+
+                if (!$activityDate) {
+                    return null;
+                }
+
+                return \Carbon\Carbon::parse($activityDate)->addDays($this->product->withdrawal_period_days);
             }
         );
     }

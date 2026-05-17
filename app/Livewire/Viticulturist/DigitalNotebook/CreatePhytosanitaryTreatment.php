@@ -77,7 +77,8 @@ class CreatePhytosanitaryTreatment extends AbstractActivityForm
 
     // ─── Computed ─────────────────────────────────────────────────────────────
 
-    public function getApplicationsThisCampaignProperty(): int
+    #[\Livewire\Attributes\Computed]
+    public function applicationsThisCampaign(): int
     {
         if (!$this->product_id || !$this->campaign_id) {
             return 0;
@@ -88,7 +89,8 @@ class CreatePhytosanitaryTreatment extends AbstractActivityForm
         )->where('product_id', $this->product_id)->count();
     }
 
-    public function getSelectedProductProperty(): ?PhytosanitaryProduct
+    #[\Livewire\Attributes\Computed]
+    public function selectedProduct(): ?PhytosanitaryProduct
     {
         return $this->product_id ? PhytosanitaryProduct::find($this->product_id) : null;
     }
@@ -109,7 +111,7 @@ class CreatePhytosanitaryTreatment extends AbstractActivityForm
             // PAC
             'treatment_justification' => 'required|string|min:10|max:500',
             'field_applicator_id'     => 'nullable|exists:field_applicators,id',
-            'applicator_ropo_number'  => 'nullable|string|max:50|required_without:field_applicator_id',
+            'applicator_ropo_number'  => 'required|string|min:3|max:50',
             'reentry_period_days'     => 'required|integer|min:0|max:365',
             'spray_volume'            => 'required|numeric|min:0.01|max:10000',
             'water_volume_liters_ha'  => 'nullable|numeric|min:0|max:10000',
@@ -180,10 +182,9 @@ class CreatePhytosanitaryTreatment extends AbstractActivityForm
     {
         $user = Auth::user();
         return view('livewire.viticulturist.digital-notebook.create-phytosanitary-treatment', $this->renderData([
-            'products'   => PhytosanitaryProduct::forUser($user->id)->where('active', true)->orderBy('name')->get(),
-            'pests'      => Pest::active()->orderBy('name')->get(),
-            'applicators'=> FieldApplicator::forViticulturist($user->id)->active()->orderBy('name')->get(),
-            'campaign'   => \App\Models\Campaign::find($this->campaign_id),
+            'products'    => PhytosanitaryProduct::forUser($user->id)->where('active', true)->orderBy('name')->get(),
+            'pests'       => Pest::active()->orderBy('name')->get(),
+            'applicators' => FieldApplicator::forViticulturist($user->id)->active()->orderBy('name')->get(),
         ]))->layout('layouts.app');
     }
 }

@@ -38,6 +38,7 @@ class CreateIrrigation extends AbstractActivityForm
     protected function rules(): array
     {
         return array_merge($this->commonRules(), [
+            'phenological_stage'   => 'nullable|string|max:50',
             'water_volume'         => 'required|numeric|min:0.01|max:1000000',
             'water_volume_unit'    => 'required|in:L,m3',
             'irrigation_method'    => 'nullable|string|max:50',
@@ -50,7 +51,7 @@ class CreateIrrigation extends AbstractActivityForm
             'flow_rate'            => 'required|numeric|min:0|max:100000',
             // Fertirrigación
             'is_fertirrigation'       => 'boolean',
-            'fertilizer_product'      => 'nullable|string|max:150',
+            'fertilizer_product'      => 'nullable|string|max:150|required_if:is_fertirrigation,true',
             'fertilizer_dose_per_ha'  => 'nullable|numeric|min:0',
         ]);
     }

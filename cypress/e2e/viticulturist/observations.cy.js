@@ -100,12 +100,12 @@ describe('Observaciones', () => {
       cy.waitForLivewire()
     })
 
-    it('las opciones de tipo de observación incluyen plaga, enfermedad y general', () => {
+    it('las opciones de tipo de observación incluyen plaga, enfermedad y otro', () => {
       cy.get('[data-cy="observation-type-select"]').within(() => {
         cy.get('option').should('have.length.greaterThan', 1)
         cy.get('option[value="plaga"]').should('exist')
         cy.get('option[value="enfermedad"]').should('exist')
-        cy.get('option[value="general"]').should('exist')
+        cy.get('option[value="otro"]').should('exist')
       })
     })
 

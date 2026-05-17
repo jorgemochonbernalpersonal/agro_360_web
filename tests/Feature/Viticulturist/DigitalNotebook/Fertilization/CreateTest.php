@@ -129,7 +129,7 @@ class CreateTest extends ViticulturistTestCase
             ->assertHasErrors(['area_applied']);
     }
 
-    public function test_validates_phenological_stage_required(): void
+    public function test_phenological_stage_optional_for_fertilization(): void
     {
         $viticulturist = $this->makeViticulturist();
         $this->makeCampaign($viticulturist);
@@ -137,6 +137,7 @@ class CreateTest extends ViticulturistTestCase
 
         $this->actingAs($viticulturist);
 
+        // Para fertilización el estadio fenológico es informativo, no obligatorio
         Livewire::test(CreateFertilization::class)
             ->set('plot_id', $plot->id)
             ->set('phenological_stage', '')
@@ -147,7 +148,7 @@ class CreateTest extends ViticulturistTestCase
             ->set('workType', 'individual')
             ->set('crew_member_id', $viticulturist->id)
             ->call('save')
-            ->assertHasErrors(['phenological_stage']);
+            ->assertHasNoErrors(['phenological_stage']);
     }
 
     // ── PAC: NPK al menos uno requerido ───────────────────────────────────────
@@ -280,7 +281,7 @@ class CreateTest extends ViticulturistTestCase
             ->set('nitrogen_uf', 80)
             ->set('manure_type', 'Estiércol vacuno')
             ->set('burial_date', $burialDate)
-            ->set('emission_reduction_method', 'Enterrado en menos de 24h')
+            ->set('emission_reduction_method', 'enterrado_inmediato')
             ->set('workType', 'individual')
             ->set('crew_member_id', $viticulturist->id)
             ->call('save')

@@ -136,7 +136,7 @@ class CreateTest extends ViticulturistTestCase
             ->assertHasErrors(['applicator_ropo_number']);
     }
 
-    public function test_ropo_not_required_when_applicator_selected(): void
+    public function test_ropo_always_required_even_when_applicator_selected(): void
     {
         $viticulturist = $this->makeViticulturist();
         $campaign      = $this->makeCampaign($viticulturist);
@@ -152,6 +152,7 @@ class CreateTest extends ViticulturistTestCase
 
         $this->actingAs($viticulturist);
 
+        // ROPO es siempre obligatorio — borrar el campo auto-rellenado sigue siendo error
         Livewire::test(CreatePhytosanitaryTreatment::class)
             ->set('plot_id', $plot->id)
             ->set('campaign_id', $campaign->id)
@@ -164,11 +165,11 @@ class CreateTest extends ViticulturistTestCase
             ->set('reentry_period_days', 3)
             ->set('spray_volume', 400.0)
             ->set('field_applicator_id', $applicator->id)
-            ->set('applicator_ropo_number', '')
+            ->set('applicator_ropo_number', '') // usuario borra el ROPO auto-rellenado
             ->set('workType', 'individual')
             ->set('crew_member_id', $viticulturist->id)
             ->call('save')
-            ->assertHasNoErrors(['applicator_ropo_number']);
+            ->assertHasErrors(['applicator_ropo_number']);
     }
 
     // ── Auto-fill ROPO desde aplicador ────────────────────────────────────────

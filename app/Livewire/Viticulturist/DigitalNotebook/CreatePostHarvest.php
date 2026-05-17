@@ -8,6 +8,7 @@ use App\Models\PostHarvestTreatment;
 use App\Models\WineryViticulturist;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Computed;
 
 class CreatePostHarvest extends AbstractActivityForm
 {
@@ -20,6 +21,14 @@ class CreatePostHarvest extends AbstractActivityForm
     public $dose_unit              = 'kg/ha';
     public $water_volume_liters    = '';
     public $reentry_interval_hours = '';
+
+    // ─── Computed ─────────────────────────────────────────────────────────────
+
+    #[Computed]
+    public function products()
+    {
+        return PhytosanitaryProduct::forUser(Auth::id())->where('active', true)->orderBy('name')->get();
+    }
 
     // ─── Mount ────────────────────────────────────────────────────────────────
 
@@ -95,7 +104,7 @@ class CreatePostHarvest extends AbstractActivityForm
     public function render()
     {
         return view('livewire.viticulturist.digital-notebook.create-post-harvest', $this->renderData([
-            'products'         => PhytosanitaryProduct::forUser(Auth::id())->where('active', true)->orderBy('name')->get(),
+            'products'         => $this->products,
             'applicationTypes' => PostHarvestTreatment::APPLICATION_TYPES,
         ]))->layout('layouts.app', ['title' => 'Registrar Tratamiento Post-Vendimia - Agro365']);
     }

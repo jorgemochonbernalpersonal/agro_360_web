@@ -109,7 +109,7 @@ class CreateTest extends ViticulturistTestCase
             ->assertHasErrors(['water_volume']);
     }
 
-    public function test_validates_phenological_stage_required(): void
+    public function test_phenological_stage_optional_for_irrigation(): void
     {
         $viticulturist = $this->makeViticulturist();
         $this->makeCampaign($viticulturist);
@@ -117,6 +117,7 @@ class CreateTest extends ViticulturistTestCase
 
         $this->actingAs($viticulturist);
 
+        // Para riego el estadio fenológico es informativo, no obligatorio
         Livewire::test(CreateIrrigation::class)
             ->set('plot_id', $plot->id)
             ->set('phenological_stage', '')
@@ -127,7 +128,7 @@ class CreateTest extends ViticulturistTestCase
             ->set('water_concession', 'EXP-2024/001')
             ->set('flow_rate', 2000)
             ->call('save')
-            ->assertHasErrors(['phenological_stage']);
+            ->assertHasNoErrors(['phenological_stage']);
     }
 
     public function test_validates_worktype_required(): void

@@ -32,7 +32,7 @@ class CreatePruning extends AbstractActivityForm
     protected function rules(): array
     {
         return array_merge($this->commonRules(), [
-            'pruning_type'                => 'required|string|max:50',
+            'pruning_type'                => 'required|in:guyot,doble_guyot,vaso,cordon,otro',
             'productive_buds_per_hectare' => 'nullable|integer|min:0',
             'residue_management'          => 'nullable|string|in:triturado_incorporado,triturado_superficie,retirado,quemado,otro',
             'hours_worked'                => 'nullable|numeric|min:0',

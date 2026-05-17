@@ -40,12 +40,19 @@ class CreateObservation extends AbstractActivityForm
         }
     }
 
+    // ─── Reactive ─────────────────────────────────────────────────────────────
+
+    public function updatedPestId($value): void
+    {
+        $this->selectedPest = $value ? Pest::find($value) : null;
+    }
+
     // ─── Validation ───────────────────────────────────────────────────────────
 
     protected function rules(): array
     {
         return array_merge($this->commonRules(), [
-            'observation_type'        => 'required|string|max:50',
+            'observation_type'        => 'required|in:plaga,enfermedad,fenología,climatología,suelo,otro',
             'description'             => 'required|string',
             'severity'                => 'nullable|string|in:leve,moderada,grave',
             'affected_area_percentage'=> 'nullable|numeric|min:0|max:100',

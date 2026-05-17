@@ -46,30 +46,33 @@ class IndexTest extends ViticulturistTestCase
 
     public function test_search_by_name(): void
     {
-        $this->makePest(['name' => 'Araña Roja']);
-        $this->makePest(['name' => 'Filoxera']);
+        // Use unique names not present in seeder data (seeder has 'Araña Roja', 'Filoxera' which
+        // appear in risk-period alerts and would break assertDontSee regardless of search filter).
+        $this->makePest(['name' => 'ZZZ_Araña de Prueba']);
+        $this->makePest(['name' => 'ZZZ_Pulgón de Prueba']);
 
         $viticulturist = $this->makeViticulturist();
         $this->actingAs($viticulturist);
 
         Livewire::test(Index::class)
-            ->set('search', 'Araña')
-            ->assertSee('Araña Roja')
-            ->assertDontSee('Filoxera');
+            ->set('search', 'ZZZ_Araña')
+            ->assertSee('ZZZ_Araña de Prueba')
+            ->assertDontSee('ZZZ_Pulgón de Prueba');
     }
 
     public function test_search_by_scientific_name(): void
     {
-        $this->makePest(['name' => 'Araña Roja', 'scientific_name' => 'Tetranychus urticae']);
-        $this->makePest(['name' => 'Filoxera', 'scientific_name' => 'Daktulosphaira vitifoliae']);
+        // Use unique names/scientific names not present in seeder data.
+        $this->makePest(['name' => 'ZZZ_Ácaro de Prueba', 'scientific_name' => 'Zzzus testicus']);
+        $this->makePest(['name' => 'ZZZ_Trips de Prueba', 'scientific_name' => 'Zzzus differentus']);
 
         $viticulturist = $this->makeViticulturist();
         $this->actingAs($viticulturist);
 
         Livewire::test(Index::class)
-            ->set('search', 'Tetranychus')
-            ->assertSee('Araña Roja')
-            ->assertDontSee('Filoxera');
+            ->set('search', 'Zzzus testicus')
+            ->assertSee('ZZZ_Ácaro de Prueba')
+            ->assertDontSee('ZZZ_Trips de Prueba');
     }
 
     // ── Type Filter ───────────────────────────────────────────────────────────
