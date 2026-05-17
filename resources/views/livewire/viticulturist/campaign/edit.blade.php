@@ -35,6 +35,7 @@
                         <flux:label>Nombre de la Campaña</flux:label>
                         <flux:input
                             wire:model="name"
+                            value="{{ $name }}"
                             type="text"
                             id="name"
                             data-cy="campaign-name-input"
@@ -49,6 +50,7 @@
                         <flux:label>Año</flux:label>
                         <flux:input
                             wire:model="year"
+                            value="{{ $year }}"
                             type="number"
                             min="2000"
                             max="{{ now()->year + 5 }}"
@@ -70,7 +72,7 @@
                             data-cy="campaign-description-input"
                             rows="3"
                             placeholder="Descripción de la campaña..."
-                        />
+                        >{{ $description }}</flux:textarea>
                         <flux:error name="description" />
                     </flux:field>
                 </div>
@@ -84,6 +86,7 @@
                         <flux:label>Fecha de Inicio</flux:label>
                         <flux:input
                             wire:model="start_date"
+                            value="{{ $start_date }}"
                             type="date"
                             id="start_date"
                             data-cy="campaign-start-date-input"
@@ -96,6 +99,7 @@
                         <flux:label>Fecha de Fin</flux:label>
                         <flux:input
                             wire:model="end_date"
+                            value="{{ $end_date }}"
                             type="date"
                             id="end_date"
                             data-cy="campaign-end-date-input"
@@ -110,6 +114,7 @@
                 <div class="flex items-center">
                     <flux:checkbox
                         wire:model="active"
+                        :checked="$active"
                         id="active"
                         data-cy="campaign-active-checkbox"
                         label="Activar esta campaña"
