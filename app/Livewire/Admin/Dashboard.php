@@ -42,14 +42,27 @@ class Dashboard extends Component
         }, $filename, ['Content-Type' => 'text/csv; charset=UTF-8']);
     }
 
+    private function applyDemoExclusion($query, string $emailCol = 'email', string $nameCol = 'name'): void
+    {
+        $query->where($emailCol, 'not like', '%demo%')
+              ->where($emailCol, 'not like', '%test%')
+              ->where($emailCol, 'not like', '%@noemail.agro365.es')
+              ->where($emailCol, 'not like', '%bernalmochonjorge%')
+              ->where($emailCol, 'not like', '%bernhshsj%')
+              ->where($emailCol, 'not like', '%jorgemochonb%')
+              ->where($nameCol, 'not like', '%demo%')
+              ->where($nameCol, 'not like', '%test%')
+              ->where($nameCol, 'not like', '%maestro%');
+    }
+
     public function render()
     {
         $now = now();
         $year = $now->year;
         $month = $now->month;
 
-        // Optimized: batch user counts in a single query
-        $userStats = DB::table('users')
+        // Optimized: batch user counts in a single query (demo/test users excluded)
+        $userQuery = DB::table('users')
             ->selectRaw("COUNT(*) as total")
             ->selectRaw("SUM(CASE WHEN role = 'admin' THEN 1 ELSE 0 END) as admin")
             ->selectRaw("SUM(CASE WHEN role = 'supervisor' THEN 1 ELSE 0 END) as supervisor")
@@ -58,38 +71,47 @@ class Dashboard extends Component
             ->selectRaw("SUM(CASE WHEN role = 'producer' THEN 1 ELSE 0 END) as producer")
             ->selectRaw("SUM(CASE WHEN can_login = 1 THEN 1 ELSE 0 END) as active")
             ->selectRaw("SUM(CASE WHEN email_verified_at IS NOT NULL THEN 1 ELSE 0 END) as verified")
-            ->selectRaw("SUM(CASE WHEN MONTH(created_at) = ? AND YEAR(created_at) = ? THEN 1 ELSE 0 END) as new_this_month", [$month, $year])
-            ->first();
+            ->selectRaw("SUM(CASE WHEN MONTH(created_at) = ? AND YEAR(created_at) = ? THEN 1 ELSE 0 END) as new_this_month", [$month, $year]);
+        $this->applyDemoExclusion($userQuery);
+        $userStats = $userQuery->first();
 
-        // Optimized: batch plot counts
-        $plotStats = DB::table('plots')
+        // Optimized: batch plot counts (excluding plots of demo users)
+        $plotQuery = DB::table('plots')
+            ->join('users', 'users.id', '=', 'plots.viticulturist_id')
             ->selectRaw("COUNT(*) as total")
-            ->selectRaw("COALESCE(SUM(area), 0) as total_area")
-            ->selectRaw("SUM(CASE WHEN MONTH(created_at) = ? AND YEAR(created_at) = ? THEN 1 ELSE 0 END) as new_this_month", [$month, $year])
-            ->first();
+            ->selectRaw("COALESCE(SUM(plots.area), 0) as total_area")
+            ->selectRaw("SUM(CASE WHEN MONTH(plots.created_at) = ? AND YEAR(plots.created_at) = ? THEN 1 ELSE 0 END) as new_this_month", [$month, $year]);
+        $this->applyDemoExclusion($plotQuery, 'users.email', 'users.name');
+        $plotStats = $plotQuery->first();
 
-        // Optimized: batch client counts
-        $clientStats = DB::table('clients')
+        // Optimized: batch client counts (excluding clients of demo users)
+        $clientQuery = DB::table('clients')
+            ->join('users', 'users.id', '=', 'clients.user_id')
             ->selectRaw("COUNT(*) as total")
-            ->selectRaw("SUM(CASE WHEN active = 1 THEN 1 ELSE 0 END) as active")
-            ->selectRaw("SUM(CASE WHEN client_type = 'individual' THEN 1 ELSE 0 END) as individual")
-            ->selectRaw("SUM(CASE WHEN client_type = 'company' THEN 1 ELSE 0 END) as company")
-            ->first();
+            ->selectRaw("SUM(CASE WHEN clients.active = 1 THEN 1 ELSE 0 END) as active")
+            ->selectRaw("SUM(CASE WHEN clients.client_type = 'individual' THEN 1 ELSE 0 END) as individual")
+            ->selectRaw("SUM(CASE WHEN clients.client_type = 'company' THEN 1 ELSE 0 END) as company");
+        $this->applyDemoExclusion($clientQuery, 'users.email', 'users.name');
+        $clientStats = $clientQuery->first();
 
-        // Optimized: batch invoice counts
-        $invoiceStats = DB::table('invoices')
+        // Optimized: batch invoice counts (excluding invoices of demo users)
+        $invoiceQuery = DB::table('invoices')
+            ->join('users', 'users.id', '=', 'invoices.user_id')
             ->selectRaw("COUNT(*) as total")
-            ->selectRaw("SUM(CASE WHEN YEAR(invoice_date) = ? THEN 1 ELSE 0 END) as this_year", [$year])
-            ->selectRaw("COALESCE(SUM(CASE WHEN YEAR(invoice_date) = ? THEN total_amount ELSE 0 END), 0) as this_year_amount", [$year])
-            ->selectRaw("SUM(CASE WHEN payment_status = 'unpaid' AND status != 'cancelled' THEN 1 ELSE 0 END) as pending")
-            ->first();
+            ->selectRaw("SUM(CASE WHEN YEAR(invoices.invoice_date) = ? THEN 1 ELSE 0 END) as this_year", [$year])
+            ->selectRaw("COALESCE(SUM(CASE WHEN YEAR(invoices.invoice_date) = ? THEN invoices.total_amount ELSE 0 END), 0) as this_year_amount", [$year])
+            ->selectRaw("SUM(CASE WHEN invoices.payment_status = 'unpaid' AND invoices.status != 'cancelled' THEN 1 ELSE 0 END) as pending");
+        $this->applyDemoExclusion($invoiceQuery, 'users.email', 'users.name');
+        $invoiceStats = $invoiceQuery->first();
 
-        // Optimized: batch activity counts
-        $activityStats = DB::table('agricultural_activities')
+        // Optimized: batch activity counts (excluding activities of demo users)
+        $activityQuery = DB::table('agricultural_activities')
+            ->join('users', 'users.id', '=', 'agricultural_activities.viticulturist_id')
             ->selectRaw("COUNT(*) as total")
-            ->selectRaw("SUM(CASE WHEN YEAR(activity_date) = ? THEN 1 ELSE 0 END) as this_year", [$year])
-            ->selectRaw("SUM(CASE WHEN YEAR(activity_date) = ? AND MONTH(activity_date) = ? THEN 1 ELSE 0 END) as this_month", [$year, $month])
-            ->first();
+            ->selectRaw("SUM(CASE WHEN YEAR(agricultural_activities.activity_date) = ? THEN 1 ELSE 0 END) as this_year", [$year])
+            ->selectRaw("SUM(CASE WHEN YEAR(agricultural_activities.activity_date) = ? AND MONTH(agricultural_activities.activity_date) = ? THEN 1 ELSE 0 END) as this_month", [$year, $month]);
+        $this->applyDemoExclusion($activityQuery, 'users.email', 'users.name');
+        $activityStats = $activityQuery->first();
 
         // Optimized: batch support ticket counts
         $supportStats = DB::table('support_tickets')
