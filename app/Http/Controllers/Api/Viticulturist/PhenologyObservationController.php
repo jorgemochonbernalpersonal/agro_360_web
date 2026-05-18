@@ -77,7 +77,14 @@ class PhenologyObservationController extends Controller
                 ->value('id');
         }
 
-        $record = PhenologyObservation::create([...$validated, 'viticulturist_id' => $user->id, 'active' => true]);
+        $record = PhenologyObservation::updateOrCreate(
+            [
+                'plot_planting_id' => $validated['plot_planting_id'],
+                'campaign_id'      => $validated['campaign_id'],
+                'event'            => $validated['event'],
+            ],
+            [...$validated, 'viticulturist_id' => $user->id, 'active' => true]
+        );
         $record->load(['plotPlanting.plot', 'plotPlanting.grapeVariety', 'campaign']);
 
         return response()->json([
