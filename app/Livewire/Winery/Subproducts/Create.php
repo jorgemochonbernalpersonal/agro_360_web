@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\Subproducts;
 
+use App\Livewire\Concerns\WithOwnershipRules;
 use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\UnitOfMeasurement;
@@ -13,7 +14,7 @@ use Livewire\Component;
 
 class Create extends Component
 {
-    use WithToastNotifications, WithRoleAwareRedirect;
+    use WithOwnershipRules, WithToastNotifications, WithRoleAwareRedirect;
 
     public string $wine_id                  = '';
     public string $type                     = '';
@@ -47,7 +48,7 @@ class Create extends Component
     protected function rules(): array
     {
         return [
-            'wine_id'                => ['nullable', 'exists:wines,id'],
+            'wine_id'                => $this->ownedWineRule(false),
             'type'                   => ['required', 'string', 'in:' . implode(',', array_keys(WineSubproduct::TYPES))],
             'subproduct_date'        => ['required', 'date'],
             'quantity'               => ['required', 'numeric', 'min:0.001'],

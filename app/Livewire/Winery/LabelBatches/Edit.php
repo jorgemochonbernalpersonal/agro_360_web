@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\LabelBatches;
 
+use App\Livewire\Concerns\WithOwnershipRules;
 use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\LabelBatch;
@@ -14,7 +15,7 @@ use Livewire\Component;
 
 class Edit extends Component
 {
-    use WithToastNotifications, WithRoleAwareRedirect;
+    use WithOwnershipRules, WithToastNotifications, WithRoleAwareRedirect;
 
     public LabelBatch $batch;
 
@@ -60,7 +61,7 @@ class Edit extends Component
     {
         return [
             'name'    => ['required', 'string', 'max:255'],
-            'wine_id' => ['nullable', 'exists:wines,id'],
+            'wine_id' => $this->ownedWineRule(false),
             'source'  => ['required', 'in:own,do_assigned,other'],
             'notes'   => ['nullable', 'string'],
         ];

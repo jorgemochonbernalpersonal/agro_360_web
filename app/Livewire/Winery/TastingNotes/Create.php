@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\TastingNotes;
 
+use App\Livewire\Concerns\WithOwnershipRules;
 use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Oenologist;
@@ -13,7 +14,7 @@ use Livewire\Component;
 
 class Create extends Component
 {
-    use WithToastNotifications, WithRoleAwareRedirect;
+    use WithOwnershipRules, WithToastNotifications, WithRoleAwareRedirect;
 
     public string $wine_id             = '';
     public string $evaluation_date     = '';
@@ -71,10 +72,10 @@ class Create extends Component
     protected function rules(): array
     {
         return [
-            'wine_id'             => ['required', 'exists:wines,id'],
+            'wine_id'             => $this->ownedWineRule(),
             'evaluation_date'     => ['required', 'date'],
             'evaluator_name'      => ['nullable', 'string', 'max:255'],
-            'oenologist_id'       => ['nullable', 'exists:oenologists,id'],
+            'oenologist_id'       => $this->ownedOenologistRule(),
             'visual_color'        => ['nullable', 'string', 'max:100'],
             'visual_clarity'      => ['nullable', 'in:' . implode(',', array_keys(WineTastingNote::VISUAL_CLARITY))],
             'visual_intensity'    => ['nullable', 'in:' . implode(',', array_keys(WineTastingNote::VISUAL_INTENSITY))],

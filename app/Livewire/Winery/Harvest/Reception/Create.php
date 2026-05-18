@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\Harvest\Reception;
 
+use App\Livewire\Concerns\WithOwnershipRules;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Campaign;
 use App\Models\Container;
@@ -19,7 +20,7 @@ use Livewire\Component;
 
 class Create extends Component
 {
-    use WithToastNotifications, WithRoleAwareRedirect;
+    use WithOwnershipRules, WithToastNotifications, WithRoleAwareRedirect;
 
     // ── Context ─────────────────────────────────────────────────────────────
     public string $viticulturist_id = '';
@@ -273,9 +274,9 @@ class Create extends Component
     protected function rules(): array
     {
         return [
-            'viticulturist_id'           => ['required', 'exists:users,id'],
-            'plot_id'                    => ['required', 'exists:plots,id'],
-            'plot_planting_id'           => ['required', 'exists:plot_plantings,id'],
+            'viticulturist_id'           => $this->linkedViticulturistRule(),
+            'plot_id'                    => $this->linkedPlotRule(),
+            'plot_planting_id'           => $this->linkedPlotPlantingRule(true),
             'vintage_year'               => ['required', 'integer', 'min:2000', 'max:' . (now()->year + 1)],
             'harvest_start_date'         => ['required', 'date'],
             'harvest_ticket_number'      => ['nullable', 'string', 'max:50'],

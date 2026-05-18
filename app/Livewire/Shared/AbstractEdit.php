@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Shared;
 
+use App\Livewire\Concerns\WithOwnershipRules;
 use App\Livewire\Concerns\WithToastNotifications;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -10,7 +11,7 @@ use Livewire\Component;
 
 abstract class AbstractEdit extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithOwnershipRules;
 
     abstract protected function rules(): array;
 

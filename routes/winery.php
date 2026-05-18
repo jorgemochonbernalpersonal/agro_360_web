@@ -60,12 +60,8 @@ Route::middleware(['role:winery,producer'])
         // ── Actividades de campo (solo lectura) ───────────────────────
         Route::get('/field-activities', \App\Livewire\Winery\FieldActivities\Index::class)->name('field-activities.index');
 
-        // ── Entorno de parcelas ──────────────────────────────────────
-        Route::prefix('plot-environments')->name('plot-environments.')->group(function () {
-            Route::get('/', \App\Livewire\Viticulturist\PlotEnvironments\Index::class)->name('index');
-            Route::get('/create', \App\Livewire\Viticulturist\PlotEnvironments\Create::class)->name('create');
-            Route::get('/{plotEnvironment}/edit', \App\Livewire\Viticulturist\PlotEnvironments\Edit::class)->name('edit');
-        });
+        // ── Entorno de parcelas (solo lectura — la bodega no puede crear/editar) ─
+        Route::get('/plot-environments', \App\Livewire\Viticulturist\PlotEnvironments\Index::class)->name('plot-environments.index');
 
         // ── Previsiones de vendimia (aforo bodega) ───────────────────
         Route::middleware('winery.ability:yield_forecasts')->group(function () {

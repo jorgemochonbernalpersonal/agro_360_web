@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\CellarOperations;
 
+use App\Livewire\Concerns\WithOwnershipRules;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\CellarOperation;
 use App\Models\Container;
@@ -10,7 +11,7 @@ use Livewire\Component;
 
 class Edit extends Component
 {
-    use WithToastNotifications;
+    use WithOwnershipRules, WithToastNotifications;
 
     public CellarOperation $operation;
 
@@ -43,8 +44,8 @@ class Edit extends Component
         return [
             'operation_type'      => ['required', 'in:' . implode(',', array_keys(CellarOperation::OPERATION_TYPES))],
             'operation_date'      => ['required', 'date'],
-            'source_container_id' => ['nullable', 'exists:containers,id'],
-            'target_container_id' => ['nullable', 'exists:containers,id'],
+            'source_container_id' => $this->ownedContainerRule(false),
+            'target_container_id' => $this->ownedContainerRule(false),
             'volume_liters'       => ['nullable', 'numeric', 'min:0'],
             'responsible_person'  => ['nullable', 'string', 'max:150'],
             'status'              => ['required', 'in:' . implode(',', array_keys(CellarOperation::STATUSES))],

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\Bottling;
 
+use App\Livewire\Concerns\WithOwnershipRules;
 use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Container;
@@ -20,7 +21,7 @@ use Livewire\Component;
 
 class Edit extends Component
 {
-    use WithToastNotifications, WithRoleAwareRedirect;
+    use WithOwnershipRules, WithToastNotifications, WithRoleAwareRedirect;
 
     public WineBottling $bottling;
     public array $oldBottlingData            = [];
@@ -177,7 +178,7 @@ class Edit extends Component
             'quantity_liters'        => ['required', 'numeric', 'min:0.001'],
             'lot_number'             => ['nullable', 'string', 'max:100'],
             'oenologist_id'          => ['nullable', Rule::exists('oenologists', 'id')->where('user_id', Auth::id())],
-            'wine_process_detail_id' => ['nullable', 'exists:wine_process_details,id'],
+            'wine_process_detail_id' => $this->ownedWineProcessDetailRule(false),
             'product_lot_id'         => ['nullable', Rule::exists('wine_lots', 'id')->where('user_id', Auth::id())],
             'notes'                  => ['nullable', 'string'],
             'supplies'               => ['array'],

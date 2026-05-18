@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\Cellar\Containers;
 
+use App\Livewire\Concerns\WithOwnershipRules;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Container;
 use App\Models\ContainerHistory;
@@ -15,7 +16,7 @@ use Livewire\Component;
 
 class Show extends Component
 {
-    use WithToastNotifications;
+    use WithOwnershipRules, WithToastNotifications;
 
     public Container $container;
 
@@ -52,7 +53,7 @@ class Show extends Component
     {
         $this->validate([
             'adjustLiters' => ['required', 'numeric', 'min:0'],
-            'adjustWineId' => ['nullable', 'exists:wines,id'],
+            'adjustWineId' => $this->ownedWineRule(false),
         ]);
 
         $container = Container::where('user_id', Auth::id())->findOrFail($this->container->id);

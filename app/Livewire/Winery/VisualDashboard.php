@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery;
 
+use App\Livewire\Concerns\WithOwnershipRules;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Livewire\Concerns\WithUserPreferences;
 use App\Models\AgriculturalActivity;
@@ -29,7 +30,7 @@ use Livewire\Component;
 
 class VisualDashboard extends Component
 {
-    use WithToastNotifications, WithUserPreferences;
+    use WithOwnershipRules, WithToastNotifications, WithUserPreferences;
 
     public string $activeTab            = 'plots';
     public ?int   $selectedPlotId       = null;
@@ -229,9 +230,9 @@ class VisualDashboard extends Component
     public function saveGrapeReception(): void
     {
         $this->validate([
-            'gr_viticulturistId' => ['required', 'exists:users,id'],
-            'gr_plotId'          => ['required', 'exists:plots,id'],
-            'gr_plantingId'      => ['required', 'exists:plot_plantings,id'],
+            'gr_viticulturistId' => $this->linkedViticulturistRule(),
+            'gr_plotId'          => $this->linkedPlotRule(),
+            'gr_plantingId'      => $this->linkedPlotPlantingRule(true),
             'gr_harvestDate'     => ['required', 'date'],
             'gr_totalWeight'     => ['required', 'numeric', 'min:0.01'],
             'gr_vintageYear'     => ['required', 'integer', 'min:2000', 'max:' . (now()->year + 1)],
@@ -346,8 +347,8 @@ class VisualDashboard extends Component
     public function saveFermentationControl(): void
     {
         $this->validate([
-            'fc_wineId'      => ['required', 'exists:wines,id'],
-            'fc_containerId' => ['required', 'exists:containers,id'],
+            'fc_wineId'      => $this->ownedWineRule(),
+            'fc_containerId' => $this->ownedContainerRule(),
             'fc_controlDate' => ['required', 'date'],
             'fc_temperature' => ['nullable', 'numeric', 'min:-20', 'max:60'],
             'fc_brix'        => ['nullable', 'numeric', 'min:0', 'max:100'],
@@ -387,8 +388,8 @@ class VisualDashboard extends Component
     public function saveTransfer(): void
     {
         $this->validate([
-            'tr_wineId'        => ['required', 'exists:wines,id'],
-            'tr_toContainerId' => ['required', 'exists:containers,id'],
+            'tr_wineId'        => $this->ownedWineRule(),
+            'tr_toContainerId' => $this->ownedContainerRule(),
             'tr_quantity'      => ['required', 'numeric', 'min:0.001'],
             'tr_unitId'        => ['required', 'exists:units_of_measurement,id'],
             'tr_transferType'  => ['required', 'in:' . implode(',', array_keys(WineTransfer::TRANSFER_TYPES))],

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\WineTransfers;
 
+use App\Livewire\Concerns\WithOwnershipRules;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Container;
 use App\Models\Oenologist;
@@ -15,7 +16,7 @@ use Livewire\Component;
 
 class Edit extends Component
 {
-    use WithToastNotifications;
+    use WithOwnershipRules, WithToastNotifications;
 
     public WineTransfer $transfer;
     public array $oldData             = [];
@@ -66,7 +67,7 @@ class Edit extends Component
             'unit_of_measurement_id' => ['required', 'exists:units_of_measurement,id'],
             'transfer_type'          => ['required', 'in:' . implode(',', array_keys(WineTransfer::TRANSFER_TYPES))],
             'transfer_date'          => ['required', 'date'],
-            'oenologist_id'          => ['nullable', 'exists:oenologists,id'],
+            'oenologist_id'          => $this->ownedOenologistRule(),
             'notes'                  => ['nullable', 'string'],
         ];
     }

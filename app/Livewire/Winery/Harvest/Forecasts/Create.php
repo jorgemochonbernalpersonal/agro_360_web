@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\Harvest\Forecasts;
 
+use App\Livewire\Concerns\WithOwnershipRules;
 use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Campaign;
@@ -16,7 +17,7 @@ use Livewire\Component;
 
 class Create extends Component
 {
-    use WithToastNotifications, WithRoleAwareRedirect;
+    use WithOwnershipRules, WithToastNotifications, WithRoleAwareRedirect;
 
     public string $viticulturist_id  = '';
     public string $plot_id           = '';
@@ -178,9 +179,9 @@ class Create extends Component
     protected function rules(): array
     {
         return [
-            'viticulturist_id' => ['required', 'exists:users,id'],
-            'plot_planting_id' => ['required', 'exists:plot_plantings,id'],
-            'campaign_id'      => ['required', 'exists:campaigns,id'],
+            'viticulturist_id' => $this->linkedViticulturistRule(),
+            'plot_planting_id' => $this->linkedPlotPlantingRule(true),
+            'campaign_id'      => $this->linkedCampaignRule(),
             'vintage_year'     => ['required', 'integer', 'min:2000', 'max:2100'],
             'estimated_kg'     => ['required', 'numeric', 'min:1'],
             'estimation_date'  => ['required', 'date'],

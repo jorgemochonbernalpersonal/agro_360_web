@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\Cellar\Containers\Additives;
 
+use App\Livewire\Concerns\WithOwnershipRules;
 use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Container;
@@ -14,7 +15,7 @@ use Livewire\Component;
 
 class Create extends Component
 {
-    use WithToastNotifications, WithRoleAwareRedirect;
+    use WithOwnershipRules, WithToastNotifications, WithRoleAwareRedirect;
 
     public Container $container;
 
@@ -35,7 +36,7 @@ class Create extends Component
     protected function rules(): array
     {
         return [
-            'winery_supply_id'       => ['nullable', 'exists:winery_supplies,id'],
+            'winery_supply_id'       => $this->ownedWinerySupplyRule(false),
             'additive_name'          => ['nullable', 'string', 'max:200'],
             'quantity'               => ['required', 'numeric', 'min:0.001'],
             'unit_of_measurement_id' => ['nullable', 'exists:units_of_measurement,id'],

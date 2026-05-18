@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\Wines;
 
+use App\Livewire\Concerns\WithOwnershipRules;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Container;
 use App\Models\Harvest;
@@ -27,7 +28,7 @@ use Livewire\Component;
 
 class Show extends Component
 {
-    use WithToastNotifications;
+    use WithOwnershipRules, WithToastNotifications;
 
     public Wine $wine;
 
@@ -110,7 +111,7 @@ class Show extends Component
     public function saveFermentationControl(): void
     {
         $this->validate([
-            'fc_container_id' => ['required', 'exists:containers,id'],
+            'fc_container_id' => $this->ownedContainerRule(),
             'fc_control_date' => ['required', 'date'],
             'fc_temperature'  => ['nullable', 'numeric', 'min:-20', 'max:100'],
             'fc_brix'         => ['nullable', 'numeric', 'min:0', 'max:100'],
@@ -149,13 +150,13 @@ class Show extends Component
     public function saveTransfer(): void
     {
         $this->validate([
-            'tr_from_container_id' => ['nullable', 'exists:containers,id'],
-            'tr_to_container_id'   => ['required', 'exists:containers,id', 'different:tr_from_container_id'],
+            'tr_from_container_id' => $this->ownedContainerRule(false),
+            'tr_to_container_id'   => [...$this->ownedContainerRule(), 'different:tr_from_container_id'],
             'tr_quantity'          => ['required', 'numeric', 'min:0.001'],
             'tr_unit_id'           => ['required', 'exists:units_of_measurement,id'],
             'tr_type'              => ['required', 'in:' . implode(',', array_keys(WineTransfer::TRANSFER_TYPES))],
             'tr_date'              => ['required', 'date'],
-            'tr_oenologist_id'     => ['nullable', 'exists:oenologists,id'],
+            'tr_oenologist_id'     => $this->ownedOenologistRule(),
             'tr_notes'             => ['nullable', 'string'],
         ]);
 
@@ -202,7 +203,7 @@ class Show extends Component
     public function saveLoss(): void
     {
         $this->validate([
-            'lo_container_id' => ['nullable', 'exists:containers,id'],
+            'lo_container_id' => $this->ownedContainerRule(false),
             'lo_type'         => ['required', 'in:' . implode(',', array_keys(WineLoss::LOSS_TYPES))],
             'lo_quantity'     => ['required', 'numeric', 'min:0.001'],
             'lo_unit_id'      => ['required', 'exists:units_of_measurement,id'],
@@ -251,8 +252,8 @@ class Show extends Component
     public function saveAnalysis(): void
     {
         $this->validate([
-            'an_container_id'     => ['nullable', 'exists:containers,id'],
-            'an_oenologist_id'    => ['nullable', 'exists:oenologists,id'],
+            'an_container_id'     => $this->ownedContainerRule(false),
+            'an_oenologist_id'    => $this->ownedOenologistRule(),
             'an_date'             => ['required', 'date'],
             'an_type'             => ['required', 'in:own,external'],
             'an_laboratory'       => ['nullable', 'string', 'max:200'],
@@ -323,16 +324,9 @@ class Show extends Component
             'ad_quantity'          => ['required', 'numeric', 'min:0.001'],
             'ad_unit_id'           => ['required', 'exists:units_of_measurement,id'],
             'ad_date'              => ['required', 'date'],
-            'ad_supply_id'         => [
-                'nullable',
-                function ($attribute, $value, $fail) {
-                    if ($value && !\App\Models\WinerySupply::where('id', $value)->where('user_id', \Illuminate\Support\Facades\Auth::id())->exists()) {
-                        $fail('El insumo seleccionado no es válido.');
-                    }
-                },
-            ],
-            'ad_process_detail_id' => ['nullable', 'exists:wine_process_details,id'],
-            'ad_oenologist_id'     => ['nullable', 'exists:oenologists,id'],
+            'ad_supply_id'         => $this->ownedWinerySupplyRule(false),
+            'ad_process_detail_id' => $this->ownedWineProcessDetailRule(false),
+            'ad_oenologist_id'     => $this->ownedOenologistRule(),
             'ad_notes'             => ['nullable', 'string'],
         ]);
 
@@ -387,7 +381,7 @@ class Show extends Component
     public function linkHarvest(): void
     {
         $this->validate([
-            'co_harvest_id'  => ['required', 'exists:harvests,id'],
+            'co_harvest_id'  => $this->ownedHarvestRule(),
             'co_quantity_kg' => ['required', 'numeric', 'min:0.001'],
         ]);
 

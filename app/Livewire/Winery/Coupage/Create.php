@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\Coupage;
 
+use App\Livewire\Concerns\WithOwnershipRules;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Container;
 use App\Models\Oenologist;
@@ -17,7 +18,7 @@ use Livewire\Component;
 
 class Create extends Component
 {
-    use WithToastNotifications;
+    use WithOwnershipRules, WithToastNotifications;
 
     public string $target_wine_id       = '';
     public string $to_container_id      = '';
@@ -54,7 +55,7 @@ class Create extends Component
             'to_container_id'         => ['required', Rule::exists('containers', 'id')->where('user_id', Auth::id())],
             'unit_of_measurement_id'  => ['required', 'exists:units_of_measurement,id'],
             'coupage_date'            => ['required', 'date'],
-            'oenologist_id'           => ['nullable', 'exists:oenologists,id'],
+            'oenologist_id'           => $this->ownedOenologistRule(),
             'notes'                   => ['nullable', 'string', 'max:2000'],
             'sources'                 => ['required', 'array', 'min:1'],
             'sources.*.wine_id'       => ['required', Rule::exists('wines', 'id')->where('user_id', Auth::id())],

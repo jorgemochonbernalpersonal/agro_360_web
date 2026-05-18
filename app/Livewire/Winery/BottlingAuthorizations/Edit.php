@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\BottlingAuthorizations;
 
+use App\Livewire\Concerns\WithOwnershipRules;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\BottlingAuthorization;
 use App\Models\Wine;
@@ -10,7 +11,7 @@ use Livewire\Component;
 
 class Edit extends Component
 {
-    use WithToastNotifications;
+    use WithOwnershipRules, WithToastNotifications;
 
     public BottlingAuthorization $bottlingAuthorization;
 
@@ -48,7 +49,7 @@ class Edit extends Component
         return [
             'authorization_number'    => ['required', 'string', 'max:100'],
             'authorization_type'      => ['required', 'in:' . implode(',', array_keys(BottlingAuthorization::AUTHORIZATION_TYPES))],
-            'wine_id'                 => ['nullable', 'exists:wines,id'],
+            'wine_id'                 => $this->ownedWineRule(false),
             'authorized_volume_liters' => ['nullable', 'numeric', 'min:0'],
             'valid_from'              => ['nullable', 'date'],
             'valid_until'             => ['nullable', 'date'],
