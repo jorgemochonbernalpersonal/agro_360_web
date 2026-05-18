@@ -410,14 +410,7 @@ Route::middleware(['role:producer', 'check.beta'])
         // ── Documentos de Campaña ─────────────────────────────────────────
         Route::prefix('campaign-documents')->name('campaign-documents.')->group(function () {
             Route::get('/', \App\Livewire\Viticulturist\CampaignDocuments\Index::class)->name('index');
-            Route::get('/{document}/download', function (\App\Models\CampaignDocument $document) {
-                if ($document->viticulturist_id !== auth()->id()) abort(403);
-                if (!$document->file_path || !\Storage::disk('private')->exists($document->file_path)) abort(404);
-                return \Storage::disk('private')->download(
-                    $document->file_path,
-                    $document->original_filename ?? basename($document->file_path)
-                );
-            })->name('download');
+            Route::get('/{document}/download', [\App\Http\Controllers\Viticulturist\CampaignDocumentController::class, 'download'])->name('download');
         });
 
         // ── Firma y Cierre de Campaña ─────────────────────────────────────
@@ -559,23 +552,12 @@ Route::middleware(['role:producer', 'check.beta'])
             Route::get('/{certification}/edit', \App\Livewire\Viticulturist\Certifications\Edit::class)->name('edit');
         });
 
-        Route::get('/official-reports', \App\Livewire\Viticulturist\OfficialReports\Index::class)->name('official-reports.index');
-        Route::get('/official-reports/create', \App\Livewire\Viticulturist\OfficialReports\Create::class)->name('official-reports.create');
-        Route::get('/official-reports/{report}/download', function (\App\Models\OfficialReport $report) {
-            if ($report->user_id !== auth()->id()) abort(403);
-            return (new \App\Services\OfficialReportService())->downloadReport($report);
-        })->name('official-reports.download');
-        Route::get('/official-reports/{report}/preview', function (\App\Models\OfficialReport $report) {
-            if ($report->user_id !== auth()->id()) abort(403);
-            if (!$report->pdfExists()) abort(404);
-            $pdfPath = str_starts_with($report->pdf_path, storage_path())
-                ? $report->pdf_path
-                : \Storage::disk('local')->path($report->pdf_path);
-            return response()->file($pdfPath, [
-                'Content-Type' => 'application/pdf',
-                'Content-Disposition' => 'inline; filename="' . ($report->pdf_filename ?? 'informe.pdf') . '"',
-            ]);
-        })->name('official-reports.preview');
+        Route::prefix('official-reports')->name('official-reports.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\OfficialReports\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\OfficialReports\Create::class)->name('create');
+            Route::get('/{report}/download', [\App\Http\Controllers\Viticulturist\OfficialReportController::class, 'download'])->name('download');
+            Route::get('/{report}/preview', [\App\Http\Controllers\Viticulturist\OfficialReportController::class, 'preview'])->name('preview');
+        });
 
         // ── Parcelas y territorio ─────────────────────────────────────────
         Route::prefix('plots')->name('plots.')->group(function () {

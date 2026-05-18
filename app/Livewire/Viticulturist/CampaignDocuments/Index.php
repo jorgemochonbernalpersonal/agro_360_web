@@ -5,6 +5,7 @@ namespace App\Livewire\Viticulturist\CampaignDocuments;
 use App\Models\Campaign;
 use App\Models\CampaignDocument;
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Concerns\WithViticulturistValidation;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
@@ -14,7 +15,7 @@ use Livewire\WithFileUploads;
 #[Layout('layouts.app')]
 class Index extends Component
 {
-    use WithToastNotifications, WithFileUploads;
+    use WithToastNotifications, WithFileUploads, WithViticulturistValidation;
 
     // Filters
     public $filterCampaign = '';
@@ -106,7 +107,7 @@ class Index extends Component
     {
         $fileRule = $this->editingId ? 'nullable' : 'required';
         return [
-            'campaign_id'    => 'required|exists:campaigns,id',
+            'campaign_id'    => $this->campaignOwnershipRule(),
             'name'           => 'required|string|max:255',
             'document_type'  => 'required|in:' . implode(',', array_keys(CampaignDocument::DOCUMENT_TYPES)),
             'notes'          => 'nullable|string',

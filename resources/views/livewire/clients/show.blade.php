@@ -44,13 +44,13 @@
             @if($client->client_type === 'company' && $client->company_document)
                 <div>
                     <p class="text-sm text-zinc-500">CIF/NIF</p>
-                    <p class="font-semibold">{{ $client->company_document }}</p>
+                    <p class="font-semibold">{{ mask_nif($client->company_document) }}</p>
                 </div>
             @endif
             @if($client->client_type === 'individual' && $client->particular_document)
                 <div>
                     <p class="text-sm text-zinc-500">DNI/NIE</p>
-                    <p class="font-semibold">{{ $client->particular_document }}</p>
+                    <p class="font-semibold">{{ mask_nif($client->particular_document) }}</p>
                 </div>
             @endif
             @if($client->default_discount > 0)

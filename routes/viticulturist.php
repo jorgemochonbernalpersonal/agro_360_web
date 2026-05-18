@@ -200,18 +200,7 @@ Route::middleware(['role:viticulturist,producer', 'check.beta'])
         // Documentos de Campaña
         Route::prefix('campaign-documents')->name('campaign-documents.')->group(function () {
             Route::get('/', \App\Livewire\Viticulturist\CampaignDocuments\Index::class)->name('index');
-            Route::get('/{document}/download', function (\App\Models\CampaignDocument $document) {
-                if ($document->viticulturist_id !== auth()->id()) {
-                    abort(403, 'No tienes permiso para descargar este documento.');
-                }
-                if (!$document->file_path || !\Storage::disk('private')->exists($document->file_path)) {
-                    abort(404, 'El archivo no existe.');
-                }
-                return \Storage::disk('private')->download(
-                    $document->file_path,
-                    $document->original_filename ?? basename($document->file_path)
-                );
-            })->name('download');
+            Route::get('/{document}/download', [\App\Http\Controllers\Viticulturist\CampaignDocumentController::class, 'download'])->name('download');
         });
 
         // Firma y Cierre de Campaña
@@ -230,10 +219,7 @@ Route::middleware(['role:viticulturist,producer', 'check.beta'])
         Route::prefix('warehouse')->name('warehouse.')->group(function () {
             Route::get('/', \App\Livewire\Viticulturist\Warehouse\Index::class)->name('index');
             Route::get('/stock/analytics', \App\Livewire\Viticulturist\Inventory\Analytics::class)->name('stock.analytics');
-            Route::get('/stock/export', function () {
-                $export = new \App\Exports\InventoryExport(auth()->id());
-                return \Maatwebsite\Excel\Facades\Excel::download($export, 'inventario_' . now()->format('Y-m-d') . '.xlsx');
-            })->name('stock.export');
+            Route::get('/stock/export', \App\Http\Controllers\Viticulturist\InventoryExportController::class)->name('stock.export');
             Route::get('/stock/create', \App\Livewire\Viticulturist\Inventory\CreateStock::class)->name('stock.create');
             Route::get('/stock/{stock}/edit', \App\Livewire\Viticulturist\Inventory\EditStock::class)->name('stock.edit');
             Route::get('/stock/{stock}/consume', \App\Livewire\Viticulturist\Inventory\ConsumeStock::class)->name('stock.consume');
@@ -311,46 +297,7 @@ Route::middleware(['role:viticulturist,producer', 'check.beta'])
             })->name('workers');
             Route::get('/viticulturist/create', \App\Livewire\Viticulturist\Viticulturists\Create::class)->name('viticulturist.create');
             Route::get('/viticulturist/{viticulturist}/edit', \App\Livewire\Viticulturist\Viticulturists\Edit::class)->name('viticulturist.edit');
-            Route::get('/viticulturist/download-credentials', function (\Illuminate\Http\Request $request) {
-                $viticulturistId = $request->query('id');
-
-                // Intentar obtener desde sesión primero
-                $pdfPath = session('viticulturist_credentials_pdf');
-                $viticulturistName = session('viticulturist_created_name');
-
-                // Si no está en sesión pero tenemos ID, buscar el archivo más reciente
-                if (!$pdfPath && $viticulturistId) {
-                    $tempDir = storage_path('app/temp');
-                    $pattern = $tempDir . '/credentials_' . $viticulturistId . '_*.pdf';
-                    $files = glob($pattern);
-                    if (!empty($files)) {
-                        // Ordenar por fecha de modificación (más reciente primero)
-                        usort($files, function ($a, $b) {
-                            return filemtime($b) - filemtime($a);
-                        });
-                        $pdfPath = $files[0];
-
-                        // Obtener nombre del viticultor
-                        $viticulturist = \App\Models\User::find($viticulturistId);
-                        if ($viticulturist) {
-                            $viticulturistName = $viticulturist->name;
-                        }
-                    }
-                }
-
-                if (!$pdfPath || !file_exists($pdfPath)) {
-                    return redirect()
-                        ->route('viticulturist.personal.index')
-                        ->with('error', 'El PDF de credenciales no está disponible. El archivo puede haber expirado.');
-                }
-
-                $filename = 'credenciales_' . \Str::slug($viticulturistName ?? 'viticultor') . '_' . now()->format('Y-m-d') . '.pdf';
-
-                // Limpiar sesión antes de descargar
-                session()->forget(['viticulturist_credentials_pdf', 'viticulturist_created_id', 'viticulturist_created_name']);
-
-                return response()->download($pdfPath, $filename)->deleteFileAfterSend(true);
-            })->name('viticulturist.download-credentials');
+            Route::get('/viticulturist/download-credentials', [\App\Http\Controllers\Viticulturist\ViticulturistCredentialsController::class, 'download'])->name('viticulturist.download-credentials');
             Route::get('/{crew}', PersonalShow::class)->name('show');
             Route::get('/{crew}/edit', PersonalEdit::class)->name('edit');
         });
@@ -373,10 +320,10 @@ Route::middleware(['role:viticulturist,producer', 'check.beta'])
 
         // Clientes
         Route::prefix('clients')->name('clients.')->group(function () {
-            Route::get('/', \App\Livewire\Clients\Index::class)->name('index');
-            Route::get('/create', \App\Livewire\Clients\Create::class)->name('create');
-            Route::get('/{client}', \App\Livewire\Clients\Show::class)->name('show');
-            Route::get('/{client}/edit', \App\Livewire\Clients\Edit::class)->name('edit');
+            Route::get('/', \App\Livewire\Viticulturist\Clients\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\Clients\Create::class)->name('create');
+            Route::get('/{client}', \App\Livewire\Viticulturist\Clients\Show::class)->name('show');
+            Route::get('/{client}/edit', \App\Livewire\Viticulturist\Clients\Edit::class)->name('edit');
         });
 
         // Facturas/Pedidos
@@ -428,38 +375,12 @@ Route::middleware(['role:viticulturist,producer', 'check.beta'])
         });
 
         // Informes Oficiales
-        Route::get('/official-reports', \App\Livewire\Viticulturist\OfficialReports\Index::class)->name('official-reports.index');
-        Route::get('/official-reports/create', \App\Livewire\Viticulturist\OfficialReports\Create::class)->name('official-reports.create');
-        Route::get('/official-reports/{report}/download', function (\App\Models\OfficialReport $report) {
-            // Verificar permisos
-            if ($report->user_id !== auth()->id()) {
-                abort(403, 'No tienes permiso para descargar este informe.');
-            }
-
-            $service = new \App\Services\OfficialReportService();
-            return $service->downloadReport($report);
-        })->name('official-reports.download');
-        Route::get('/official-reports/{report}/preview', function (\App\Models\OfficialReport $report) {
-            // Verificar permisos
-            if ($report->user_id !== auth()->id()) {
-                abort(403, 'No tienes permiso para ver este informe.');
-            }
-
-            if (!$report->pdfExists()) {
-                abort(404, 'El archivo PDF no existe.');
-            }
-
-            // Obtener ruta completa del PDF
-            $pdfPath = str_starts_with($report->pdf_path, storage_path()) 
-                ? $report->pdf_path 
-                : \Storage::disk('local')->path($report->pdf_path);
-
-            // Devolver PDF para visualización (no descarga)
-            return response()->file($pdfPath, [
-                'Content-Type' => 'application/pdf',
-                'Content-Disposition' => 'inline; filename="' . ($report->pdf_filename ?? 'informe.pdf') . '"',
-            ]);
-        })->name('official-reports.preview');
+        Route::prefix('official-reports')->name('official-reports.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\OfficialReports\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\OfficialReports\Create::class)->name('create');
+            Route::get('/{report}/download', [\App\Http\Controllers\Viticulturist\OfficialReportController::class, 'download'])->name('download');
+            Route::get('/{report}/preview', [\App\Http\Controllers\Viticulturist\OfficialReportController::class, 'preview'])->name('preview');
+        });
 
         // ── Notificaciones ───────────────────────────────────────────
         Route::get('/notifications', \App\Livewire\Viticulturist\Notifications\Index::class)

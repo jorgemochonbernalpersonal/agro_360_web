@@ -34,7 +34,7 @@ class Create extends AbstractCreate
     protected function rules(): array
     {
         return [
-            'plot_id'                 => 'required|exists:plots,id',
+            'plot_id'                 => $this->plotOwnershipRule(),
             'campaign_id'             => 'nullable',
             'analysis_date'           => 'required|date',
             'laboratory'              => 'nullable|string|max:255',

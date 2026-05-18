@@ -70,7 +70,7 @@
             @if($viticulturist->dni)
                 <div>
                     <p class="text-sm text-zinc-500">DNI</p>
-                    <p class="font-semibold text-zinc-900">{{ $viticulturist->dni }}</p>
+                    <p class="font-semibold text-zinc-900">{{ mask_nif($viticulturist->dni) }}</p>
                 </div>
             @endif
             @if($viticulturist->profile?->phone)

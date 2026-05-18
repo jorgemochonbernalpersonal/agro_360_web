@@ -44,7 +44,7 @@ class Create extends AbstractCreate
     protected function rules(): array
     {
         return [
-            'campaign_id'              => 'required|exists:campaigns,id',
+            'campaign_id'              => $this->campaignOwnershipRule(),
             'date'                     => 'required|date',
             'product_name'             => 'required|string|max:255',
             'registration_number'      => 'nullable|string|max:50',

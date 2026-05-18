@@ -66,11 +66,11 @@ trait WithViticulturistValidation
     // que no le pertenecen, sin necesitar import adicional en cada componente.
     // -------------------------------------------------------------------------
 
-    public function plotOwnershipRule(): array
+    public function plotOwnershipRule(bool $required = true): array
     {
         $userId = Auth::id();
         return [
-            'required',
+            $required ? 'required' : 'nullable',
             function ($attribute, $value, $fail) use ($userId) {
                 if ($value && !\App\Models\Plot::where('id', $value)->where('viticulturist_id', $userId)->exists()) {
                     $fail('La parcela seleccionada no es válida.');

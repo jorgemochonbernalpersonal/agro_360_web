@@ -55,8 +55,8 @@ class Edit extends Component
     protected function rules(): array
     {
         return [
-            'plot_id'          => 'nullable|exists:plots,id',
-            'campaign_id'      => 'nullable|exists:campaigns,id',
+            'plot_id'          => $this->plotOwnershipRule(false),
+            'campaign_id'      => $this->campaignOwnershipRule(false),
             'service_type'     => 'required|in:' . implode(',', array_keys(Subcontracting::SERVICE_TYPES)),
             'company_name'     => 'required|string|max:255',
             'contact_person'   => 'nullable|string|max:255',

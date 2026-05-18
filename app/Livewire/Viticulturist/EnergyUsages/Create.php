@@ -67,7 +67,7 @@ class Create extends AbstractCreate
     protected function rules(): array
     {
         return [
-            'campaign_id'       => 'required|exists:campaigns,id',
+            'campaign_id'       => $this->campaignOwnershipRule(),
             'date'              => 'required|date',
             'energy_type'       => 'required|in:' . implode(',', array_keys(EnergyUsage::ENERGY_TYPES)),
             'unit'              => 'required|in:' . implode(',', array_keys(EnergyUsage::UNITS)),

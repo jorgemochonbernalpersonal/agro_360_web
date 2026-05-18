@@ -4,6 +4,7 @@ namespace App\Livewire\Viticulturist\Phenology;
 
 use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Concerns\WithViticulturistValidation;
 use App\Models\Campaign;
 use App\Models\PhenologyObservation;
 use App\Models\PlotPlanting;
@@ -12,7 +13,7 @@ use Livewire\Component;
 
 class Edit extends Component
 {
-    use WithRoleAwareRedirect, WithToastNotifications;
+    use WithRoleAwareRedirect, WithToastNotifications, WithViticulturistValidation;
 
     public PhenologyObservation $observation;
 
@@ -54,8 +55,8 @@ class Edit extends Component
     protected function rules(): array
     {
         return [
-            'plot_planting_id'        => 'required|exists:plot_plantings,id',
-            'campaign_id'             => 'required|exists:campaigns,id',
+            'plot_planting_id'        => $this->plotPlantingOwnershipRule(true),
+            'campaign_id'             => $this->campaignOwnershipRule(),
             'event'                   => 'required|in:' . implode(',', array_keys(PhenologyObservation::EVENTS)),
             'obs_date'                => 'required|date',
             'source'                  => 'required|in:manual,sensor,model,auto',

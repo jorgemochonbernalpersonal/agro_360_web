@@ -4,6 +4,7 @@ namespace App\Livewire\Viticulturist\OfficialReports;
 
 use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Concerns\WithViticulturistValidation;
 use App\Models\Campaign;
 use App\Models\OfficialReport;
 use App\Services\OfficialReportService;
@@ -12,7 +13,7 @@ use Livewire\Component;
 
 class Create extends Component
 {
-    use WithRoleAwareRedirect, WithToastNotifications;
+    use WithRoleAwareRedirect, WithToastNotifications, WithViticulturistValidation;
 
     // Formulario de generación
     public $reportType = 'phytosanitary_treatments';
@@ -39,13 +40,16 @@ class Create extends Component
     public $batchPeriods = [];
     public $totalBatches = 0;
 
-    protected $rules = [
-        'reportType' => 'required|in:phytosanitary_treatments,full_digital_notebook',
-        'startDate' => 'required_if:reportType,phytosanitary_treatments|date',
-        'endDate' => 'required_if:reportType,phytosanitary_treatments|date|after_or_equal:startDate',
-        'campaignId' => 'required_if:reportType,full_digital_notebook|exists:campaigns,id',
-        'password' => 'required|string',
-    ];
+    protected function rules(): array
+    {
+        return [
+            'reportType' => 'required|in:phytosanitary_treatments,full_digital_notebook',
+            'startDate'  => 'required_if:reportType,phytosanitary_treatments|date',
+            'endDate'    => 'required_if:reportType,phytosanitary_treatments|date|after_or_equal:startDate',
+            'campaignId' => ['required_if:reportType,full_digital_notebook', ...$this->campaignOwnershipRule(false)],
+            'password'   => 'required|string',
+        ];
+    }
 
     protected $messages = [
         'reportType.required' => 'Selecciona el tipo de informe.',
@@ -188,7 +192,7 @@ class Create extends Component
             ]);
         } else {
             $this->validate([
-                'campaignId' => 'required|exists:campaigns,id',
+                'campaignId' => $this->campaignOwnershipRule(),
             ]);
         }
 
@@ -658,7 +662,7 @@ class Create extends Component
             $rules['startDate'] = 'required|date';
             $rules['endDate'] = 'required|date|after_or_equal:startDate';
         } else {
-            $rules['campaignId'] = 'required|exists:campaigns,id';
+            $rules['campaignId'] = $this->campaignOwnershipRule();
         }
 
         $messages = [

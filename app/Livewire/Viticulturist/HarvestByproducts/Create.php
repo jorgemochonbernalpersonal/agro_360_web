@@ -27,7 +27,7 @@ class Create extends AbstractCreate
     protected function rules(): array
     {
         return [
-            'campaign_id'        => 'required|exists:campaigns,id',
+            'campaign_id'        => $this->campaignOwnershipRule(),
             'date'               => 'required|date',
             'byproduct_type'     => 'required|in:' . implode(',', array_keys(HarvestByproduct::BYPRODUCT_TYPES)),
             'quantity_kg'        => 'required|numeric|min:0.001',

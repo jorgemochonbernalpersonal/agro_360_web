@@ -66,7 +66,7 @@ class Edit extends AbstractEdit
     protected function rules(): array
     {
         return [
-            'campaign_id'               => 'required|exists:campaigns,id',
+            'campaign_id'               => $this->campaignOwnershipRule(),
             'plan_year'                 => 'required|integer|min:2000|max:2100',
             'nitrate_zone'              => 'boolean',
             'prepared_by'               => 'nullable|string|max:255',

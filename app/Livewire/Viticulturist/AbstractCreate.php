@@ -2,11 +2,14 @@
 
 namespace App\Livewire\Viticulturist;
 
+use App\Livewire\Concerns\WithViticulturistValidation;
 use App\Livewire\Shared\AbstractCreate as SharedAbstractCreate;
 use Illuminate\Support\Facades\Auth;
 
 abstract class AbstractCreate extends SharedAbstractCreate
 {
+    use WithViticulturistValidation;
+
     /**
      * Returns the authenticated viticulturist ID.
      */

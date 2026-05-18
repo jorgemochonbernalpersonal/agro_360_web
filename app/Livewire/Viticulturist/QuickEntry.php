@@ -3,6 +3,7 @@
 namespace App\Livewire\Viticulturist;
 
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Concerns\WithViticulturistValidation;
 use App\Models\AgriculturalActivity;
 use App\Models\Campaign;
 use App\Models\Plot;
@@ -12,7 +13,7 @@ use Livewire\Component;
 
 class QuickEntry extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithViticulturistValidation;
 
     public int    $step         = 1;
     public string $activityType = '';
@@ -40,7 +41,7 @@ class QuickEntry extends Component
     {
         $this->validate([
             'activityType' => 'required|string',
-            'plotId'       => 'required|exists:plots,id',
+            'plotId'       => $this->plotOwnershipRule(),
             'activityDate' => 'required|date',
         ]);
 

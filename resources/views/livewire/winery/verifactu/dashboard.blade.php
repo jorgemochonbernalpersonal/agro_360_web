@@ -351,7 +351,7 @@
                     </div>
                     @php $nif = auth()->user()->dni ?? null; @endphp
                     @if($nif)
-                        <flux:badge color="green">{{ $nif }}</flux:badge>
+                        <flux:badge color="green">{{ mask_nif($nif) }}</flux:badge>
                     @else
                         <div class="flex items-center gap-2">
                             <flux:badge color="red">No configurado</flux:badge>

@@ -39,8 +39,8 @@ class Create extends Component
     protected function rules(): array
     {
         return [
-            'plot_id'           => 'nullable|exists:plots,id',
-            'campaign_id'       => 'nullable|exists:campaigns,id',
+            'plot_id'           => $this->plotOwnershipRule(false),
+            'campaign_id'       => $this->campaignOwnershipRule(false),
             'category'          => 'required|in:' . implode(',', array_keys(PlotCost::CATEGORIES)),
             'description'       => 'required|string|max:255',
             'amount'            => 'required|numeric|min:0.01',

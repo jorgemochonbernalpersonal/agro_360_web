@@ -2,12 +2,15 @@
 
 namespace App\Livewire\Viticulturist;
 
+use App\Livewire\Concerns\WithViticulturistValidation;
 use App\Livewire\Shared\AbstractEdit as SharedAbstractEdit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
 abstract class AbstractEdit extends SharedAbstractEdit
 {
+    use WithViticulturistValidation;
+
     /**
      * Returns the authenticated viticulturist ID.
      */

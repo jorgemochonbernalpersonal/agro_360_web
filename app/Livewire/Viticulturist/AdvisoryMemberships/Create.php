@@ -19,7 +19,7 @@ class Create extends AbstractCreate
     protected function rules(): array
     {
         return [
-            'campaign_id'    => 'nullable|exists:campaigns,id',
+            'campaign_id'    => $this->campaignOwnershipRule(false),
             'advisor_name'   => 'required|string|max:255',
             'license_number' => 'required|string|max:50',
             'specialty'      => 'required|in:' . implode(',', array_keys(AdvisoryMembership::SPECIALTIES)),

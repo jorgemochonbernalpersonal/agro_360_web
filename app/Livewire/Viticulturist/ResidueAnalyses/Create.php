@@ -30,8 +30,8 @@ class Create extends AbstractCreate
     protected function rules(): array
     {
         return [
-            'campaign_id'              => 'required|exists:campaigns,id',
-            'plot_planting_id'         => 'nullable|exists:plot_plantings,id',
+            'campaign_id'              => $this->campaignOwnershipRule(),
+            'plot_planting_id'         => $this->plotPlantingOwnershipRule(),
             'analysis_date'            => 'required|date',
             'sample_date'              => 'nullable|date',
             'laboratory_name'          => 'required|string|max:255',

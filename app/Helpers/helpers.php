@@ -126,6 +126,22 @@ if (!function_exists('format_nif')) {
     }
 }
 
+if (!function_exists('mask_nif')) {
+    /**
+     * Enmascarar NIF/DNI para mostrar en pantalla (RGPD).
+     * Muestra los 4 últimos caracteres y enmascara el resto con '*'.
+     * Ej: 12345678A → *****678A
+     */
+    function mask_nif(?string $nif): string
+    {
+        if (empty($nif)) return '—';
+        $nif = strtoupper(trim($nif));
+        $len = strlen($nif);
+        if ($len <= 4) return $nif;
+        return str_repeat('*', $len - 4) . substr($nif, -4);
+    }
+}
+
 if (!function_exists('format_phone')) {
     /**
      * Formatear teléfono español

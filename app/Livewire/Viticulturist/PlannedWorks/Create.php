@@ -27,8 +27,8 @@ class Create extends AbstractCreate
     protected function rules(): array
     {
         return [
-            'campaign_id'      => 'nullable|exists:campaigns,id',
-            'plot_id'          => 'nullable|exists:plots,id',
+            'campaign_id'      => $this->campaignOwnershipRule(false),
+            'plot_id'          => $this->plotOwnershipRule(false),
             'category'         => 'required|in:' . implode(',', array_keys(PlannedWork::CATEGORIES)),
             'title'            => 'required|string|max:255',
             'description'      => 'nullable|string',

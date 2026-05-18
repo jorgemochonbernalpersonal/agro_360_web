@@ -32,9 +32,9 @@ class Create extends AbstractCreate
     protected function rules(): array
     {
         $rules = [
-            'campaign_id'        => 'required|exists:campaigns,id',
-            'plot_id'            => 'nullable|exists:plots,id',
-            'plot_planting_id'   => 'nullable|exists:plot_plantings,id',
+            'campaign_id'        => $this->campaignOwnershipRule(),
+            'plot_id'            => $this->plotOwnershipRule(false),
+            'plot_planting_id'   => $this->plotPlantingOwnershipRule(),
             'date'               => 'required|date',
             'practice_type'      => 'required|in:' . implode(',', array_keys(ResidueManagement::PRACTICE_TYPES)),
             'material_type'      => 'required|in:' . implode(',', array_keys(ResidueManagement::MATERIAL_TYPES)),

@@ -37,8 +37,8 @@ class Edit extends AbstractEdit
     protected function rules(): array
     {
         return [
-            'plot_id'     => 'required|exists:plots,id',
-            'campaign_id' => 'nullable|exists:campaigns,id',
+            'plot_id'     => $this->plotOwnershipRule(),
+            'campaign_id' => $this->campaignOwnershipRule(false),
             'record_type' => 'required|in:' . implode(',', array_keys(BiodiversityRecord::RECORD_TYPES)),
             'description' => 'nullable|string',
             'area_m2'     => 'nullable|numeric|min:0',

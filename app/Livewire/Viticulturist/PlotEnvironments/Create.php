@@ -34,9 +34,9 @@ class Create extends AbstractCreate
     protected function rules(): array
     {
         return [
-            'campaign_id'             => 'required|exists:campaigns,id',
-            'plot_id'                 => 'required|exists:plots,id',
-            'plot_planting_id'        => 'nullable|exists:plot_plantings,id',
+            'campaign_id'             => $this->campaignOwnershipRule(),
+            'plot_id'                 => $this->plotOwnershipRule(),
+            'plot_planting_id'        => $this->plotPlantingOwnershipRule(),
             'water_intake_nearby'     => 'boolean',
             'water_intake_distance_m' => 'nullable|numeric|min:0',
             'protected_zone_total'    => 'boolean',

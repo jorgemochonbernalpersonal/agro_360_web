@@ -162,7 +162,7 @@
             @if($user->dni)
             <div>
                 <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">DNI/NIF</p>
-                <p class="text-sm font-semibold text-zinc-900 mt-0.5">{{ $user->dni }}</p>
+                <p class="text-sm font-semibold text-zinc-900 mt-0.5">{{ mask_nif($user->dni) }}</p>
             </div>
             @endif
             @if($user->organization)

@@ -287,6 +287,10 @@
                                 <flux:input wire:model="fiscal_nif" placeholder="Ej: 12345678A" maxlength="20" />
                                 <flux:description>Número de Identificación Fiscal. Obligatorio para Verifactu.</flux:description>
                                 <flux:error name="fiscal_nif" />
+                                <p class="text-[11px] text-zinc-400 mt-1 flex items-center gap-1">
+                                    <flux:icon icon="lock-closed" class="size-3 shrink-0" />
+                                    Dato protegido conforme al RGPD. Uso exclusivo para generación de documentos fiscales.
+                                </p>
                             </flux:field>
 
                             <flux:field>

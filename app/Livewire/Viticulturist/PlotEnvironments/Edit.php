@@ -49,14 +49,13 @@ class Edit extends AbstractEdit
     {
         return [
             'campaign_id' => [
-                'required',
-                'exists:campaigns,id',
+                ...$this->campaignOwnershipRule(),
                 Rule::unique('plot_environments', 'campaign_id')
                     ->where('plot_id', $this->plot_id)
                     ->ignore($this->plotEnvironment->id),
             ],
-            'plot_id'                 => 'required|exists:plots,id',
-            'plot_planting_id'        => 'nullable|exists:plot_plantings,id',
+            'plot_id'                 => $this->plotOwnershipRule(),
+            'plot_planting_id'        => $this->plotPlantingOwnershipRule(),
             'water_intake_nearby'     => 'boolean',
             'water_intake_distance_m' => 'nullable|numeric|min:0',
             'protected_zone_total'    => 'boolean',

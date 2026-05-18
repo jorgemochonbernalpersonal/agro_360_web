@@ -160,8 +160,7 @@ abstract class AbstractActivityForm extends Component
         return [
             'plot_id' => $this->plotOwnershipRule(),
             'plot_planting_id' => [
-                'nullable',
-                'exists:plot_plantings,id',
+                ...$this->plotPlantingOwnershipRule(),
                 function ($attribute, $value, $fail) {
                     if ($this->plot_id) {
                         $plot = Plot::find($this->plot_id);

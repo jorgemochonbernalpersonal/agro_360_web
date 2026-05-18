@@ -43,7 +43,7 @@ class Edit extends AbstractEdit
     protected function rules(): array
     {
         return [
-            'campaign_id'       => 'nullable|exists:campaigns,id',
+            'campaign_id'       => $this->campaignOwnershipRule(false),
             'concession_type'   => 'required|in:' . implode(',', array_keys(WaterConcession::CONCESSION_TYPES)),
             'concession_number' => 'nullable|string|max:100',
             'water_body'        => 'required|string|max:255',
