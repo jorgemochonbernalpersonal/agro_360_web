@@ -4,8 +4,15 @@
         description="Panel de control principal con estadísticas generales del sistema"
     >
         <x-slot:actions>
+            <span class="text-xs text-zinc-400 self-center">
+                Actualizado {{ \Carbon\Carbon::createFromTimestamp($cachedAt)->diffForHumans() }}
+            </span>
+            <flux:button wire:click="refreshStats" variant="ghost" icon="arrow-path" wire:loading.attr="disabled">
+                <span wire:loading.remove wire:target="refreshStats">Actualizar</span>
+                <span wire:loading wire:target="refreshStats">Actualizando…</span>
+            </flux:button>
             <flux:button wire:click="exportCsv" variant="ghost" icon="arrow-down-tray">
-                Exportar Usuarios CSV
+                Exportar CSV
             </flux:button>
         </x-slot:actions>
     </x-agro.page-header>
@@ -127,6 +134,85 @@
         </x-agro.card>
     </div>
 
+    {{-- Métricas SaaS --}}
+    <div>
+        <h2 class="text-sm font-semibold text-zinc-500 uppercase tracking-wider mb-3">Métricas SaaS</h2>
+        <div class="grid grid-cols-2 gap-4">
+            {{-- MRR --}}
+            <x-agro.card>
+                <div class="flex items-start gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-agro-50 flex items-center justify-center flex-shrink-0">
+                        <flux:icon icon="currency-euro" class="size-5 text-agro-600" />
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <p class="text-xs text-zinc-500 font-medium uppercase tracking-wide">MRR</p>
+                        <p class="text-2xl font-bold text-zinc-900">{{ number_format($stats['saas']['mrr'], 2) }} €</p>
+                        <p class="text-xs text-zinc-400 mt-0.5">ARR {{ number_format($stats['saas']['arr'], 0) }} €</p>
+                    </div>
+                </div>
+            </x-agro.card>
+
+            {{-- Suscripciones activas --}}
+            <x-agro.card>
+                <div class="flex items-start gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
+                        <flux:icon icon="credit-card" class="size-5 text-blue-600" />
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <p class="text-xs text-zinc-500 font-medium uppercase tracking-wide">Activas</p>
+                        <p class="text-2xl font-bold text-zinc-900">{{ $stats['saas']['active'] }}</p>
+                        <p class="text-xs text-zinc-400 mt-0.5">
+                            {{ $stats['saas']['active_monthly'] }} mensual · {{ $stats['saas']['active_yearly'] }} anual
+                        </p>
+                    </div>
+                </div>
+            </x-agro.card>
+
+            {{-- Nuevas vs Canceladas este mes --}}
+            <x-agro.card>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-zinc-600">Nuevas este mes</span>
+                        <span class="text-sm font-semibold {{ $stats['saas']['new_this_month'] > 0 ? 'text-agro-600' : 'text-zinc-900' }}">
+                            +{{ $stats['saas']['new_this_month'] }}
+                        </span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-zinc-600">Canceladas este mes</span>
+                        <span class="text-sm font-semibold {{ $stats['saas']['cancelled_this_month'] > 0 ? 'text-red-600' : 'text-zinc-900' }}">
+                            −{{ $stats['saas']['cancelled_this_month'] }}
+                        </span>
+                    </div>
+                    <div class="border-t border-zinc-100 pt-2 flex justify-between items-center">
+                        <span class="text-sm font-medium text-zinc-700">Neto</span>
+                        @php $net = $stats['saas']['net_new']; @endphp
+                        <span class="text-sm font-bold {{ $net > 0 ? 'text-agro-600' : ($net < 0 ? 'text-red-600' : 'text-zinc-500') }}">
+                            {{ $net >= 0 ? '+' : '' }}{{ $net }}
+                        </span>
+                    </div>
+                </div>
+            </x-agro.card>
+
+            {{-- Churn rate --}}
+            <x-agro.card>
+                <div class="flex items-start gap-3">
+                    <div class="w-10 h-10 rounded-lg {{ $stats['saas']['churn_rate'] >= 5 ? 'bg-red-50' : ($stats['saas']['churn_rate'] >= 2 ? 'bg-orange-50' : 'bg-agro-50') }} flex items-center justify-center flex-shrink-0">
+                        <flux:icon icon="arrow-trending-down" class="size-5 {{ $stats['saas']['churn_rate'] >= 5 ? 'text-red-600' : ($stats['saas']['churn_rate'] >= 2 ? 'text-orange-500' : 'text-agro-600') }}" />
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <p class="text-xs text-zinc-500 font-medium uppercase tracking-wide">Churn mensual</p>
+                        <p class="text-2xl font-bold {{ $stats['saas']['churn_rate'] >= 5 ? 'text-red-600' : ($stats['saas']['churn_rate'] >= 2 ? 'text-orange-500' : 'text-zinc-900') }}">
+                            {{ $stats['saas']['churn_rate'] }}%
+                        </p>
+                        <p class="text-xs text-zinc-400 mt-0.5">
+                            {{ $stats['saas']['churn_rate'] < 2 ? 'Saludable' : ($stats['saas']['churn_rate'] < 5 ? 'Atención' : 'Crítico') }}
+                        </p>
+                    </div>
+                </div>
+            </x-agro.card>
+        </div>
+    </div>
+
     {{-- Accesos Rápidos --}}
     <div>
         <h2 class="text-sm font-semibold text-zinc-500 uppercase tracking-wider mb-3">Accesos Rápidos</h2>
@@ -141,6 +227,19 @@
                         <p class="text-xs text-zinc-500 truncate">Eventos y alertas</p>
                     </div>
                     <flux:icon icon="chevron-right" class="size-4 text-zinc-300 ml-auto group-hover:text-orange-400 transition-colors" />
+                </a>
+            </x-agro.card>
+
+            <x-agro.card class="hover-lift transition-all duration-200">
+                <a href="{{ route('admin.health.index') }}" class="flex items-center gap-4 group">
+                    <div class="w-10 h-10 rounded-lg bg-agro-50 flex items-center justify-center flex-shrink-0 group-hover:bg-agro-100 transition-colors">
+                        <flux:icon icon="heart" class="size-5 text-agro-600" />
+                    </div>
+                    <div class="min-w-0">
+                        <p class="font-semibold text-zinc-900 group-hover:text-agro-600 transition-colors text-sm">Salud del Sistema</p>
+                        <p class="text-xs text-zinc-500 truncate">Servicios y métricas</p>
+                    </div>
+                    <flux:icon icon="chevron-right" class="size-4 text-zinc-300 ml-auto group-hover:text-agro-400 transition-colors" />
                 </a>
             </x-agro.card>
 

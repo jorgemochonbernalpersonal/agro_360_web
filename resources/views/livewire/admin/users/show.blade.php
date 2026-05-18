@@ -378,12 +378,12 @@
                 </div>
             </x-slot:header>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-4">
                 <x-agro.stat-card
-                    label="Viticultores Asociados"
+                    label="Viticultores"
                     :value="$stats['winery']['viticulturists']['total']"
                     icon="users"
-                    color="purple"
+                    color="agro"
                 />
                 <x-agro.stat-card
                     label="Cuadrillas"
@@ -391,6 +391,51 @@
                     icon="user-group"
                     color="blue"
                 />
+                <x-agro.stat-card
+                    label="Clientes"
+                    :value="$stats['winery']['clients']['total']"
+                    :description="$stats['winery']['clients']['active'] . ' activos'"
+                    icon="identification"
+                    color="purple"
+                />
+                <x-agro.stat-card
+                    label="Facturas"
+                    :value="$stats['winery']['invoices']['total']"
+                    :description="$stats['winery']['invoices']['pending'] . ' pendientes'"
+                    icon="document-text"
+                    color="orange"
+                />
+                <x-agro.stat-card
+                    label="Vinos"
+                    :value="$stats['winery']['wines']['total']"
+                    :description="number_format($stats['winery']['wines']['total_liters'], 0) . ' L'"
+                    icon="beaker"
+                    color="violet"
+                />
+                <x-agro.stat-card
+                    label="Depósitos"
+                    :value="$stats['winery']['containers']['total']"
+                    :description="$stats['winery']['containers']['active'] . ' activos'"
+                    icon="archive-box"
+                    color="zinc"
+                />
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-zinc-100">
+                <div class="bg-zinc-50 rounded-lg px-4 py-3">
+                    <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">Facturación este año</p>
+                    <p class="text-lg font-bold text-zinc-900 mt-1">{{ number_format($stats['winery']['invoices']['this_year_amount'], 2) }} €</p>
+                    <p class="text-xs text-zinc-400">{{ $stats['winery']['invoices']['this_year'] }} facturas</p>
+                </div>
+                <div class="bg-zinc-50 rounded-lg px-4 py-3">
+                    <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">Vinos en elaboración</p>
+                    <p class="text-lg font-bold text-zinc-900 mt-1">{{ $stats['winery']['wines']['in_progress'] }}</p>
+                    <p class="text-xs text-zinc-400">{{ $stats['winery']['wines']['bottled'] }} embotellados</p>
+                </div>
+                <div class="bg-zinc-50 rounded-lg px-4 py-3">
+                    <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">Facturación total</p>
+                    <p class="text-lg font-bold text-zinc-900 mt-1">{{ number_format($stats['winery']['invoices']['total_amount'], 2) }} €</p>
+                </div>
             </div>
         </x-agro.card>
     @endif
@@ -411,12 +456,14 @@
                 <x-agro.stat-card
                     label="Bodegas Supervisadas"
                     :value="$stats['supervisor']['wineries']['total']"
+                    :description="$stats['supervisor']['wineries']['active'] . ' activas · ' . $stats['supervisor']['wineries']['inactive'] . ' inactivas'"
                     icon="building-office"
                     color="blue"
                 />
                 <x-agro.stat-card
                     label="Viticultores Supervisados"
                     :value="$stats['supervisor']['viticulturists']['total']"
+                    :description="$stats['supervisor']['viticulturists']['active'] . ' activos · ' . $stats['supervisor']['viticulturists']['inactive'] . ' inactivos'"
                     icon="users"
                     color="agro"
                 />
@@ -424,7 +471,7 @@
         </x-agro.card>
     @endif
 
-    {{-- Información de Admin --}}
+    {{-- Estadísticas de Administrador --}}
     @if(isset($stats['admin']))
         <x-agro.card>
             <x-slot:header>
@@ -432,10 +479,45 @@
                     <div class="p-1.5 rounded-lg bg-purple-50">
                         <flux:icon icon="shield-check" class="size-4 text-purple-600" />
                     </div>
-                    <span class="font-semibold text-zinc-900 text-sm">Información de Administrador</span>
+                    <span class="font-semibold text-zinc-900 text-sm">Estado del Sistema</span>
                 </div>
             </x-slot:header>
-            <p class="text-sm text-zinc-600">{{ $stats['admin']['note'] }}</p>
+
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
+                <x-agro.stat-card
+                    label="Usuarios Totales"
+                    :value="$stats['admin']['users']['total']"
+                    :description="$stats['admin']['users']['active'] . ' activos'"
+                    icon="users"
+                    color="purple"
+                />
+                <x-agro.stat-card
+                    label="Parcelas"
+                    :value="$stats['admin']['plots']['total']"
+                    :description="number_format($stats['admin']['plots']['total_area'], 1) . ' ha'"
+                    icon="map"
+                    color="agro"
+                />
+                <x-agro.stat-card
+                    label="Tickets abiertos"
+                    :value="$stats['admin']['support']['open']"
+                    :description="$stats['admin']['support']['new_this_week'] . ' nuevos esta semana'"
+                    icon="chat-bubble-left-ellipsis"
+                    color="orange"
+                />
+                <x-agro.stat-card
+                    label="Facturas pendientes"
+                    :value="$stats['admin']['invoices']['pending']"
+                    :description="number_format($stats['admin']['invoices']['this_year_amount'], 0) . ' € facturado este año'"
+                    icon="document-text"
+                    color="blue"
+                />
+            </div>
+
+            <div class="bg-zinc-50 rounded-lg px-4 py-3">
+                <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">Nuevos usuarios este mes</p>
+                <p class="text-2xl font-bold text-zinc-900 mt-1">{{ $stats['admin']['users']['new_this_month'] }}</p>
+            </div>
         </x-agro.card>
     @endif
 

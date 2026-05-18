@@ -99,11 +99,106 @@
         </x-slot:footer>
     </x-agro.card>
 
+    {{-- Seguridad --}}
+    <x-agro.card>
+        <x-slot:header>
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 bg-red-50 rounded-xl flex items-center justify-center">
+                    <flux:icon icon="shield-check" class="size-5 text-red-600" />
+                </div>
+                <div>
+                    <h3 class="font-semibold text-zinc-900">Política de contraseñas</h3>
+                    <p class="text-xs text-zinc-400">Se aplica al registrarse, al crear usuarios desde admin y al cambiar contraseña</p>
+                </div>
+            </div>
+        </x-slot:header>
+
+        <div class="space-y-5">
+            {{-- Longitud mínima --}}
+            <div class="space-y-1.5">
+                <label class="block text-sm font-medium text-zinc-700">Longitud mínima de contraseña</label>
+                <p class="text-xs text-zinc-400">Mínimo 6, máximo 32 caracteres</p>
+                <div class="flex items-center gap-3">
+                    <flux:input
+                        wire:model="password_min_length"
+                        type="number"
+                        min="6"
+                        max="32"
+                        class="max-w-[100px]"
+                    />
+                    <span class="text-sm text-zinc-500">caracteres</span>
+                </div>
+                @error('password_min_length')
+                    <p class="text-xs text-red-500">{{ $message }}</p>
+                @enderror
+            </div>
+
+            {{-- Contraseña fuerte --}}
+            <div class="flex items-center justify-between py-3 border-t border-zinc-100">
+                <div>
+                    <p class="text-sm font-medium text-zinc-900">Requerir contraseña fuerte</p>
+                    <p class="text-xs text-zinc-400 mt-0.5">Obliga a incluir mayúscula, número y símbolo</p>
+                </div>
+                <flux:switch wire:model="require_strong_password" />
+            </div>
+        </div>
+
+        <x-slot:footer>
+            <div class="flex justify-end">
+                <flux:button wire:click="saveSecurity" variant="primary" wire:loading.attr="disabled">
+                    Guardar política
+                </flux:button>
+            </div>
+        </x-slot:footer>
+    </x-agro.card>
+
+    {{-- Módulos --}}
+    <x-agro.card>
+        <x-slot:header>
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 bg-agro-50 rounded-xl flex items-center justify-center">
+                    <flux:icon icon="puzzle-piece" class="size-5 text-agro-600" />
+                </div>
+                <div>
+                    <h3 class="font-semibold text-zinc-900">Módulos</h3>
+                    <p class="text-xs text-zinc-400">Activa o desactiva funcionalidades para todos los usuarios</p>
+                </div>
+            </div>
+        </x-slot:header>
+
+        <div class="space-y-1">
+            <div class="flex items-center justify-between py-3 border-b border-zinc-100">
+                <div>
+                    <p class="text-sm font-medium text-zinc-900">SILICIE</p>
+                    <p class="text-xs text-zinc-400 mt-0.5">Integración con el Registro de Operadores de SILICIE (bodegas)</p>
+                </div>
+                <flux:switch wire:model="module_silicie" />
+            </div>
+
+            <div class="flex items-center justify-between py-3">
+                <div>
+                    <p class="text-sm font-medium text-zinc-900">PAC / Cuaderno Digital</p>
+                    <p class="text-xs text-zinc-400 mt-0.5">Módulos de Política Agrícola Común: cuaderno de campo, BCAM, IPM (viticultores)</p>
+                </div>
+                <flux:switch wire:model="module_pac" />
+            </div>
+        </div>
+
+        <x-slot:footer>
+            <div class="flex items-center justify-between">
+                <p class="text-xs text-zinc-400">Los cambios se aplican en el próximo login del usuario</p>
+                <flux:button wire:click="saveModules" variant="primary" wire:loading.attr="disabled">
+                    Guardar módulos
+                </flux:button>
+            </div>
+        </x-slot:footer>
+    </x-agro.card>
+
     {{-- Info --}}
     <div class="flex items-start gap-3 p-4 bg-zinc-50 border border-zinc-200 rounded-xl">
         <flux:icon icon="information-circle" class="size-5 text-zinc-400 shrink-0 mt-0.5" />
         <p class="text-xs text-zinc-500">
-            Los cambios de plataforma se aplican inmediatamente. La configuración se almacena en base de datos
+            Los cambios se aplican inmediatamente. La configuración se almacena en base de datos
             y se cachea durante 5 minutos. Para aplicar el modo mantenimiento al instante, limpia la caché
             desde consola con <code class="font-mono bg-zinc-100 px-1 rounded">php artisan cache:clear</code>.
         </p>

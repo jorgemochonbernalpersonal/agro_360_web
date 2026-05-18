@@ -83,8 +83,27 @@
                     <option value="expired">Beta expirado</option>
                     <option value="never">Sin beta</option>
                 </x-agro.filter-select>
+                <flux:button
+                    wire:click="toggleInternal"
+                    variant="ghost"
+                    size="sm"
+                    icon="bug-ant"
+                    tooltip="{{ $showInternal ? 'Ocultar usuarios internos' : 'Mostrar usuarios internos (demo/test)' }}"
+                    @class(['text-amber-500 bg-amber-50' => $showInternal])
+                >
+                    Internos
+                </flux:button>
             </x-agro.filter-bar>
         </div>
+
+        {{-- Banner: modo usuarios internos --}}
+        @if($showInternal)
+        <div class="mx-6 mb-3 flex items-center gap-2 rounded-lg bg-amber-50 border border-amber-200 px-4 py-2.5 text-sm text-amber-800">
+            <flux:icon icon="bug-ant" class="size-4 flex-shrink-0" />
+            <span>Mostrando también cuentas internas (demo / test / maestro). Las estadísticas siempre reflejan solo usuarios reales.</span>
+            <button wire:click="toggleInternal" class="ml-auto text-amber-600 hover:text-amber-800 font-medium text-xs">Ocultar</button>
+        </div>
+        @endif
 
         {{-- Fecha fin beta configurable --}}
         <div class="px-6 pb-3 flex items-center gap-2 text-xs text-zinc-500 border-t border-zinc-100 pt-3">
@@ -178,7 +197,12 @@
                                         <flux:icon icon="user" class="size-4 text-purple-600" />
                                     </div>
                                     <div>
-                                        <p class="text-sm font-semibold text-zinc-900">{{ $user->name }}</p>
+                                        <div class="flex items-center gap-1.5">
+                                            <p class="text-sm font-semibold text-zinc-900">{{ $user->name }}</p>
+                                            @if($user->isInternal())
+                                                <flux:badge color="yellow" size="sm">Interno</flux:badge>
+                                            @endif
+                                        </div>
                                         <p class="text-xs text-zinc-400">ID: {{ $user->id }}</p>
                                     </div>
                                 </div>

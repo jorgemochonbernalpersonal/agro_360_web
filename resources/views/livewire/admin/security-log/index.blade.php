@@ -2,27 +2,38 @@
     <x-agro.page-header
         title="Log de Seguridad"
         description="Historial de eventos de seguridad del sistema"
-    />
+    >
+        <x-slot:actions>
+            <flux:button wire:click="resetFilters" variant="ghost" icon="arrow-path">
+                Resetear filtros
+            </flux:button>
+        </x-slot:actions>
+    </x-agro.page-header>
 
     {{-- Stats --}}
     <div class="grid grid-cols-2 gap-4">
-        <x-agro.stat-card label="Entradas"  :value="$stats['total']"    icon="list-bullet"      color="blue"   />
-        <x-agro.stat-card label="Info"      :value="$stats['info']"     icon="information-circle" color="agro" />
+        <x-agro.stat-card label="Entradas"  :value="$stats['total']"    icon="list-bullet"          color="blue"   />
+        <x-agro.stat-card label="Info"      :value="$stats['info']"     icon="information-circle"   color="agro"   />
         <x-agro.stat-card label="Avisos"    :value="$stats['warnings']" icon="exclamation-triangle" color="orange" />
-        <x-agro.stat-card label="Alertas"   :value="$stats['alerts']"   icon="exclamation-circle" color="red"   />
+        <x-agro.stat-card label="Alertas"   :value="$stats['alerts']"   icon="exclamation-circle"   color="red"    />
     </div>
 
     {{-- Filtros --}}
     <x-agro.filter-bar>
-        {{-- Fecha (archivo de log) --}}
-        <flux:select wire:model.live="filterDate">
-            @foreach($logDates as $date)
-                <flux:select.option value="{{ $date }}">{{ $date }}</flux:select.option>
-            @endforeach
-            @if(empty($logDates))
-                <flux:select.option value="">Sin archivos</flux:select.option>
-            @endif
-        </flux:select>
+        {{-- Rango de fechas --}}
+        <div class="flex items-center gap-2">
+            <flux:input
+                wire:model.live="filterDateFrom"
+                type="date"
+                class="text-xs"
+            />
+            <span class="text-zinc-400 text-xs">—</span>
+            <flux:input
+                wire:model.live="filterDateTo"
+                type="date"
+                class="text-xs"
+            />
+        </div>
 
         <x-agro.filter-select wire:model.live="filterLevel">
             <option value="">Todos los niveles</option>
@@ -31,20 +42,22 @@
             <option value="warning">Warning</option>
             <option value="alert">Alert</option>
             <option value="error">Error</option>
+            <option value="critical">Critical</option>
         </x-agro.filter-select>
 
         <x-agro.filter-select wire:model.live="filterEvent">
             <option value="">Todos los eventos</option>
             <option value="failed_login">Login fallido</option>
-            <option value="rate_limit">Rate limit</option>
-            <option value="impersonation">Impersonación</option>
+            <option value="rate_limit_reached">Rate limit</option>
+            <option value="user_impersonation">Impersonación</option>
             <option value="access_denied">Acceso denegado</option>
             <option value="account_locked">Cuenta bloqueada</option>
             <option value="user_created">Usuario creado</option>
             <option value="user_deleted">Usuario eliminado</option>
             <option value="user_edited">Usuario editado</option>
             <option value="beta_toggled">Beta toggled</option>
-            <option value="broadcast_sent">Broadcast enviado</option>
+            <option value="settings_">Configuración</option>
+            <option value="organization_">Organización</option>
         </x-agro.filter-select>
 
         <x-agro.filter-input wire:model.live="search" placeholder="Buscar IP, email, evento..." />
@@ -82,37 +95,38 @@
                                     'critical'  => 'text-red-900 bg-red-200',
                                     'emergency' => 'text-white bg-red-600',
                                 ];
-                                $levelClass = $levelColors[$entry['level']] ?? 'text-zinc-600 bg-zinc-100';
+                                $levelClass = $levelColors[$entry->level] ?? 'text-zinc-600 bg-zinc-100';
+                                $context    = $entry->context ?? [];
                             @endphp
                             <tr class="hover:bg-zinc-50 transition-colors">
                                 <td class="px-4 py-2.5 text-zinc-500 whitespace-nowrap">
-                                    {{ $entry['timestamp'] }}
+                                    {{ $entry->created_at->format('Y-m-d H:i:s') }}
                                 </td>
                                 <td class="px-4 py-2.5">
                                     <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold {{ $levelClass }}">
-                                        {{ strtoupper($entry['level']) }}
+                                        {{ strtoupper($entry->level) }}
                                     </span>
                                 </td>
                                 <td class="px-4 py-2.5">
-                                    <p class="text-zinc-900 font-semibold">{{ $entry['event'] ?: '—' }}</p>
-                                    <p class="text-zinc-500 font-normal text-[11px] mt-0.5 truncate max-w-xs">{{ $entry['message'] }}</p>
+                                    <p class="text-zinc-900 font-semibold">{{ $entry->event ?: '—' }}</p>
+                                    <p class="text-zinc-500 font-normal text-[11px] mt-0.5 truncate max-w-xs">{{ $entry->message }}</p>
                                 </td>
                                 <td class="px-4 py-2.5 text-zinc-500 whitespace-nowrap">
-                                    {{ $entry['ip'] ?: '—' }}
+                                    {{ $entry->ip ?: '—' }}
                                 </td>
                                 <td class="px-4 py-2.5 text-zinc-500 max-w-xs">
                                     <div class="flex flex-wrap gap-1">
-                                        @if($entry['email'])
-                                            <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-700">{{ $entry['email'] }}</span>
+                                        @if($entry->email)
+                                            <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-700">{{ $entry->email }}</span>
                                         @endif
-                                        @if($entry['user_id'])
-                                            <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-700">uid:{{ $entry['user_id'] }}</span>
+                                        @if($entry->user_id)
+                                            <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-700">uid:{{ $entry->user_id }}</span>
                                         @endif
-                                        @if($entry['admin_id'])
-                                            <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-purple-100 text-purple-700">admin:{{ $entry['admin_id'] }}</span>
+                                        @if($entry->admin_id)
+                                            <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-purple-100 text-purple-700">admin:{{ $entry->admin_id }}</span>
                                         @endif
-                                        @foreach($entry['context'] as $k => $v)
-                                            @if(!in_array($k, ['event', 'ip', 'user_agent', 'timestamp', 'email', 'user_email', 'user_id', 'admin_id']) && $v !== null && $v !== '')
+                                        @foreach($context as $k => $v)
+                                            @if($v !== null && $v !== '')
                                                 <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600">{{ $k }}:{{ is_array($v) ? json_encode($v) : $v }}</span>
                                             @endif
                                         @endforeach

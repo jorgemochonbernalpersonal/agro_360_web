@@ -22,6 +22,7 @@ class Index extends Component
     public $filterActive = '';
     public $filterVerified = '';
     public $filterBeta = '';
+    public bool $showInternal = false;
 
     // Create modal
     public $showCreateModal = false;
@@ -49,6 +50,7 @@ class Index extends Component
         'filterActive'  => ['except' => ''],
         'filterVerified'=> ['except' => ''],
         'filterBeta'    => ['except' => ''],
+        'showInternal'  => ['except' => false, 'as' => 'internal'],
     ];
 
     public function switchTab($tab)
@@ -62,6 +64,14 @@ class Index extends Component
     public function updatingFilterActive()  { $this->resetPage(); $this->selectedUsers = []; }
     public function updatingFilterVerified(){ $this->resetPage(); $this->selectedUsers = []; }
     public function updatingFilterBeta()    { $this->resetPage(); $this->selectedUsers = []; }
+    public function updatingShowInternal()  { $this->resetPage(); $this->selectedUsers = []; }
+
+    public function toggleInternal(): void
+    {
+        $this->showInternal = !$this->showInternal;
+        $this->resetPage();
+        $this->selectedUsers = [];
+    }
 
     // ─── Create ───────────────────────────────────────────────────────────────
 
@@ -365,7 +375,8 @@ class Index extends Component
 
     public function render()
     {
-        $query = User::excludeDemo();
+        // Listado: incluye internos sólo cuando el toggle está activo
+        $query = $this->showInternal ? User::query() : User::excludeDemo();
 
         if ($this->currentTab !== 'all') {
             $query->where('role', $this->currentTab);
@@ -407,25 +418,37 @@ class Index extends Component
 
         $users = $query->orderBy('created_at', 'desc')->paginate(20);
 
+        // Stats: siempre sobre usuarios reales (excluye internos), query única optimizada
+        $raw = User::excludeDemo()
+            ->selectRaw("COUNT(*) as total")
+            ->selectRaw("SUM(CASE WHEN role = 'admin' THEN 1 ELSE 0 END) as role_admin")
+            ->selectRaw("SUM(CASE WHEN role = 'supervisor' THEN 1 ELSE 0 END) as role_supervisor")
+            ->selectRaw("SUM(CASE WHEN role = 'winery' THEN 1 ELSE 0 END) as role_winery")
+            ->selectRaw("SUM(CASE WHEN role = 'viticulturist' THEN 1 ELSE 0 END) as role_viticulturist")
+            ->selectRaw("SUM(CASE WHEN role = 'producer' THEN 1 ELSE 0 END) as role_producer")
+            ->selectRaw("SUM(CASE WHEN can_login = 1 THEN 1 ELSE 0 END) as active")
+            ->selectRaw("SUM(CASE WHEN can_login = 0 THEN 1 ELSE 0 END) as inactive")
+            ->selectRaw("SUM(CASE WHEN email_verified_at IS NOT NULL THEN 1 ELSE 0 END) as verified")
+            ->selectRaw("SUM(CASE WHEN email_verified_at IS NULL THEN 1 ELSE 0 END) as unverified")
+            ->selectRaw("SUM(CASE WHEN is_beta_user = 1 AND (beta_ends_at IS NULL OR beta_ends_at > NOW()) THEN 1 ELSE 0 END) as beta_active")
+            ->selectRaw("SUM(CASE WHEN is_beta_user = 1 AND beta_ends_at <= NOW() THEN 1 ELSE 0 END) as beta_expired")
+            ->first();
+
         $stats = [
-            'total'   => User::excludeDemo()->count(),
+            'total'   => (int) $raw->total,
             'by_role' => [
-                'admin'         => User::excludeDemo()->where('role', 'admin')->count(),
-                'supervisor'    => User::excludeDemo()->where('role', 'supervisor')->count(),
-                'winery'        => User::excludeDemo()->where('role', 'winery')->count(),
-                'viticulturist' => User::excludeDemo()->where('role', 'viticulturist')->count(),
-                'producer'      => User::excludeDemo()->where('role', 'producer')->count(),
+                'admin'         => (int) $raw->role_admin,
+                'supervisor'    => (int) $raw->role_supervisor,
+                'winery'        => (int) $raw->role_winery,
+                'viticulturist' => (int) $raw->role_viticulturist,
+                'producer'      => (int) $raw->role_producer,
             ],
-            'active'       => User::excludeDemo()->where('can_login', true)->count(),
-            'inactive'     => User::excludeDemo()->where('can_login', false)->count(),
-            'verified'     => User::excludeDemo()->whereNotNull('email_verified_at')->count(),
-            'unverified'   => User::excludeDemo()->whereNull('email_verified_at')->count(),
-            'beta_active'  => User::excludeDemo()->where('is_beta_user', true)
-                ->where(function ($q) {
-                    $q->whereNull('beta_ends_at')->orWhere('beta_ends_at', '>', now());
-                })->count(),
-            'beta_expired' => User::excludeDemo()->where('is_beta_user', true)
-                ->where('beta_ends_at', '<=', now())->count(),
+            'active'       => (int) $raw->active,
+            'inactive'     => (int) $raw->inactive,
+            'verified'     => (int) $raw->verified,
+            'unverified'   => (int) $raw->unverified,
+            'beta_active'  => (int) $raw->beta_active,
+            'beta_expired' => (int) $raw->beta_expired,
         ];
 
         return view('livewire.admin.users.index', [

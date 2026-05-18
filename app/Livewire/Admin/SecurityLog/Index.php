@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Admin\SecurityLog;
 
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
+use App\Models\SecurityEvent;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -11,141 +11,96 @@ class Index extends Component
 {
     use WithPagination;
 
-    public $filterDate  = '';
-    public $filterLevel = '';
-    public $filterEvent = '';
-    public $search      = '';
+    public string $filterDateFrom = '';
+    public string $filterDateTo   = '';
+    public string $filterLevel    = '';
+    public string $filterEvent    = '';
+    public string $search         = '';
 
-    protected $queryString = ['filterDate', 'filterLevel', 'filterEvent', 'search'];
+    protected $queryString = [
+        'filterDateFrom' => ['except' => '', 'as' => 'from'],
+        'filterDateTo'   => ['except' => '', 'as' => 'to'],
+        'filterLevel'    => ['except' => ''],
+        'filterEvent'    => ['except' => ''],
+        'search'         => ['except' => ''],
+    ];
 
-    public function mount()
+    public function mount(): void
     {
-        $this->filterDate = now()->format('Y-m-d');
+        $this->filterDateFrom = now()->subDays(6)->format('Y-m-d');
+        $this->filterDateTo   = now()->format('Y-m-d');
     }
 
-    public function updatingSearch()      { $this->resetPage(); }
-    public function updatingFilterDate()  { $this->resetPage(); }
-    public function updatingFilterLevel() { $this->resetPage(); }
-    public function updatingFilterEvent() { $this->resetPage(); }
+    public function updatingSearch()         { $this->resetPage(); }
+    public function updatingFilterDateFrom() { $this->resetPage(); }
+    public function updatingFilterDateTo()   { $this->resetPage(); }
+    public function updatingFilterLevel()    { $this->resetPage(); }
+    public function updatingFilterEvent()    { $this->resetPage(); }
 
-    // ─── Log files ────────────────────────────────────────────────────────────
-
-    private function getLogFiles(): array
+    public function resetFilters(): void
     {
-        $files = glob(storage_path('logs/security-*.log')) ?: [];
-
-        $dates = [];
-        foreach ($files as $file) {
-            if (preg_match('/security-(\d{4}-\d{2}-\d{2})\.log$/', $file, $m)) {
-                $dates[$m[1]] = $file;
-            }
-        }
-
-        krsort($dates);
-        return $dates;
+        $this->filterDateFrom = now()->subDays(6)->format('Y-m-d');
+        $this->filterDateTo   = now()->format('Y-m-d');
+        $this->filterLevel    = '';
+        $this->filterEvent    = '';
+        $this->search         = '';
+        $this->resetPage();
     }
 
-    private function parseLogFile(string $filePath): Collection
+    private function baseQuery()
     {
-        if (!file_exists($filePath)) {
-            return collect();
+        $query = SecurityEvent::query();
+
+        if ($this->filterDateFrom) {
+            $query->whereDate('created_at', '>=', $this->filterDateFrom);
+        }
+        if ($this->filterDateTo) {
+            $query->whereDate('created_at', '<=', $this->filterDateTo);
+        }
+        if ($this->filterLevel) {
+            $query->where('level', $this->filterLevel);
+        }
+        if ($this->filterEvent) {
+            $query->where('event', 'like', "%{$this->filterEvent}%");
+        }
+        if ($this->search) {
+            $s = $this->search;
+            $query->where(function ($q) use ($s) {
+                $q->where('email',   'like', "%{$s}%")
+                  ->orWhere('ip',    'like', "%{$s}%")
+                  ->orWhere('event', 'like', "%{$s}%")
+                  ->orWhere('message', 'like', "%{$s}%");
+            });
         }
 
-        $entries  = collect();
-        $lines    = file($filePath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [];
-
-        foreach ($lines as $line) {
-            // [2024-03-15 10:30:00] local.warning: Message {"key":"val"} []
-            if (preg_match('/^\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\] \w+\.(\w+): (.+?) (\{.*\})\s*(?:\[\])?\s*$/', $line, $m)) {
-                $context = json_decode($m[4], true) ?? [];
-                $entries->push([
-                    'timestamp' => $m[1],
-                    'level'     => strtolower($m[2]),
-                    'message'   => trim($m[3]),
-                    'event'     => $context['event'] ?? '',
-                    'ip'        => $context['ip'] ?? '',
-                    'email'     => $context['email'] ?? ($context['user_email'] ?? ''),
-                    'user_id'   => $context['user_id'] ?? null,
-                    'admin_id'  => $context['admin_id'] ?? null,
-                    'context'   => $context,
-                ]);
-            }
-        }
-
-        return $entries->reverse()->values(); // newest first
-    }
-
-    private function getEntries(): Collection
-    {
-        $logFiles = $this->getLogFiles();
-        $file     = $logFiles[$this->filterDate] ?? null;
-
-        if (!$file) {
-            return collect();
-        }
-
-        return $this->parseLogFile($file);
+        return $query;
     }
 
     // ─── Render ───────────────────────────────────────────────────────────────
 
     public function render()
     {
-        $logFiles = $this->getLogFiles();
+        $entries = $this->baseQuery()
+            ->orderByDesc('created_at')
+            ->paginate(50);
 
-        // Auto-select most recent file
-        if ($this->filterDate && !isset($logFiles[$this->filterDate])) {
-            $this->filterDate = array_key_first($logFiles) ?? now()->format('Y-m-d');
-        }
-
-        $entries = $this->getEntries();
-
-        // Apply filters
-        if ($this->filterLevel) {
-            $entries = $entries->filter(fn($e) => $e['level'] === $this->filterLevel);
-        }
-
-        if ($this->filterEvent) {
-            $entries = $entries->filter(fn($e) => str_contains($e['event'], $this->filterEvent));
-        }
-
-        if ($this->search) {
-            $s = strtolower($this->search);
-            $entries = $entries->filter(function ($e) use ($s) {
-                return str_contains(strtolower($e['ip'] ?? ''), $s)
-                    || str_contains(strtolower($e['email'] ?? ''), $s)
-                    || str_contains(strtolower($e['message'] ?? ''), $s)
-                    || str_contains(strtolower($e['event'] ?? ''), $s);
-            });
-        }
-
-        $entries = $entries->values();
-
-        $perPage     = 50;
-        $currentPage = $this->getPage();
-        $paginated   = new LengthAwarePaginator(
-            $entries->forPage($currentPage, $perPage),
-            $entries->count(),
-            $perPage,
-            $currentPage,
-            ['path' => request()->url(), 'query' => request()->query()]
-        );
-
-        $allEntries = $this->filterLevel || $this->filterEvent || $this->search
-            ? $entries
-            : $this->getEntries();
+        $statsRaw = $this->baseQuery()
+            ->selectRaw("COUNT(*) as total")
+            ->selectRaw("SUM(CASE WHEN level = 'info' THEN 1 ELSE 0 END) as info")
+            ->selectRaw("SUM(CASE WHEN level IN ('warning','notice') THEN 1 ELSE 0 END) as warnings")
+            ->selectRaw("SUM(CASE WHEN level IN ('alert','error','critical','emergency') THEN 1 ELSE 0 END) as alerts")
+            ->first();
 
         $stats = [
-            'total'    => $entries->count(),
-            'warnings' => $entries->whereIn('level', ['warning', 'notice'])->count(),
-            'alerts'   => $entries->whereIn('level', ['alert', 'critical', 'emergency', 'error'])->count(),
-            'info'     => $entries->where('level', 'info')->count(),
+            'total'    => (int) ($statsRaw->total    ?? 0),
+            'info'     => (int) ($statsRaw->info     ?? 0),
+            'warnings' => (int) ($statsRaw->warnings ?? 0),
+            'alerts'   => (int) ($statsRaw->alerts   ?? 0),
         ];
 
         return view('livewire.admin.security-log.index', [
-            'entries'  => $paginated,
-            'logDates' => array_keys($logFiles),
-            'stats'    => $stats,
+            'entries' => $entries,
+            'stats'   => $stats,
         ])->layout('layouts.app', [
             'title'       => 'Log de Seguridad - Admin - Agro365',
             'description' => 'Historial de eventos de seguridad del sistema',

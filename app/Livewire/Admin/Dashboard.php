@@ -8,6 +8,7 @@ use App\Models\Client;
 use App\Models\Invoice;
 use App\Models\AgriculturalActivity;
 use App\Models\SupportTicket;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -44,24 +45,30 @@ class Dashboard extends Component
 
     private function applyDemoExclusion($query, string $emailCol = 'email', string $nameCol = 'name'): void
     {
-        $query->where($emailCol, 'not like', '%demo%')
-              ->where($emailCol, 'not like', '%test%')
-              ->where($emailCol, 'not like', '%@noemail.agro365.es')
-              ->where($emailCol, 'not like', '%bernalmochonjorge%')
-              ->where($emailCol, 'not like', '%bernhshsj%')
-              ->where($emailCol, 'not like', '%jorgemochonb%')
-              ->where($nameCol, 'not like', '%demo%')
-              ->where($nameCol, 'not like', '%test%')
-              ->where($nameCol, 'not like', '%maestro%');
+        foreach (User::INTERNAL_EMAIL_PATTERNS as $pattern) {
+            $query->where($emailCol, 'not like', "%{$pattern}%");
+        }
+        foreach (User::INTERNAL_NAME_PATTERNS as $pattern) {
+            $query->where($nameCol, 'not like', "%{$pattern}%");
+        }
     }
 
-    public function render()
+    private function cacheKey(): string
     {
-        $now = now();
-        $year = $now->year;
+        return 'admin.dashboard.stats.' . now()->format('Y.m');
+    }
+
+    public function refreshStats(): void
+    {
+        Cache::forget($this->cacheKey());
+    }
+
+    private function buildStats(): array
+    {
+        $now   = now();
+        $year  = $now->year;
         $month = $now->month;
 
-        // Optimized: batch user counts in a single query (demo/test users excluded)
         $userQuery = DB::table('users')
             ->selectRaw("COUNT(*) as total")
             ->selectRaw("SUM(CASE WHEN role = 'admin' THEN 1 ELSE 0 END) as admin")
@@ -75,7 +82,6 @@ class Dashboard extends Component
         $this->applyDemoExclusion($userQuery);
         $userStats = $userQuery->first();
 
-        // Optimized: batch plot counts (excluding plots of demo users)
         $plotQuery = DB::table('plots')
             ->join('users', 'users.id', '=', 'plots.viticulturist_id')
             ->selectRaw("COUNT(*) as total")
@@ -84,7 +90,6 @@ class Dashboard extends Component
         $this->applyDemoExclusion($plotQuery, 'users.email', 'users.name');
         $plotStats = $plotQuery->first();
 
-        // Optimized: batch client counts (excluding clients of demo users)
         $clientQuery = DB::table('clients')
             ->join('users', 'users.id', '=', 'clients.user_id')
             ->selectRaw("COUNT(*) as total")
@@ -94,7 +99,6 @@ class Dashboard extends Component
         $this->applyDemoExclusion($clientQuery, 'users.email', 'users.name');
         $clientStats = $clientQuery->first();
 
-        // Optimized: batch invoice counts (excluding invoices of demo users)
         $invoiceQuery = DB::table('invoices')
             ->join('users', 'users.id', '=', 'invoices.user_id')
             ->selectRaw("COUNT(*) as total")
@@ -104,7 +108,6 @@ class Dashboard extends Component
         $this->applyDemoExclusion($invoiceQuery, 'users.email', 'users.name');
         $invoiceStats = $invoiceQuery->first();
 
-        // Optimized: batch activity counts (excluding activities of demo users)
         $activityQuery = DB::table('agricultural_activities')
             ->join('users', 'users.id', '=', 'agricultural_activities.viticulturist_id')
             ->selectRaw("COUNT(*) as total")
@@ -113,16 +116,56 @@ class Dashboard extends Component
         $this->applyDemoExclusion($activityQuery, 'users.email', 'users.name');
         $activityStats = $activityQuery->first();
 
-        // Optimized: batch support ticket counts
+        $weekAgo      = now()->subWeek()->toDateTimeString();
         $supportStats = DB::table('support_tickets')
             ->selectRaw("COUNT(*) as total")
             ->selectRaw("SUM(CASE WHEN status IN ('open', 'in_progress') THEN 1 ELSE 0 END) as open")
             ->selectRaw("SUM(CASE WHEN status = 'in_progress' THEN 1 ELSE 0 END) as in_progress")
             ->selectRaw("SUM(CASE WHEN status = 'resolved' THEN 1 ELSE 0 END) as resolved")
-            ->selectRaw("SUM(CASE WHEN created_at >= ? THEN 1 ELSE 0 END) as new_this_week", [$now->subWeek()])
+            ->selectRaw("SUM(CASE WHEN created_at >= ? THEN 1 ELSE 0 END) as new_this_week", [$weekAgo])
             ->first();
 
-        $stats = [
+        // ── SaaS metrics ──────────────────────────────────────────────────────
+        $subBase = DB::table('subscriptions')
+            ->join('users', 'users.id', '=', 'subscriptions.user_id');
+        $this->applyDemoExclusion($subBase, 'users.email', 'users.name');
+
+        // MRR: active subs normalized to monthly
+        $mrrMonthly = (clone $subBase)
+            ->where('subscriptions.status', 'active')
+            ->where('subscriptions.ends_at', '>', now())
+            ->where('subscriptions.plan_type', 'monthly')
+            ->sum('subscriptions.amount');
+
+        $mrrYearly = (clone $subBase)
+            ->where('subscriptions.status', 'active')
+            ->where('subscriptions.ends_at', '>', now())
+            ->where('subscriptions.plan_type', 'yearly')
+            ->sum('subscriptions.amount');
+
+        $mrr = round((float) $mrrMonthly + ((float) $mrrYearly / 12), 2);
+
+        $saasStats = (clone $subBase)
+            ->selectRaw("COUNT(*) as total")
+            ->selectRaw("SUM(CASE WHEN subscriptions.status = 'active' AND subscriptions.ends_at > NOW() THEN 1 ELSE 0 END) as active")
+            ->selectRaw("SUM(CASE WHEN subscriptions.plan_type = 'monthly' AND subscriptions.status = 'active' AND subscriptions.ends_at > NOW() THEN 1 ELSE 0 END) as active_monthly")
+            ->selectRaw("SUM(CASE WHEN subscriptions.plan_type = 'yearly'  AND subscriptions.status = 'active' AND subscriptions.ends_at > NOW() THEN 1 ELSE 0 END) as active_yearly")
+            ->selectRaw("SUM(CASE WHEN MONTH(subscriptions.starts_at) = ? AND YEAR(subscriptions.starts_at) = ? THEN 1 ELSE 0 END) as new_this_month", [$month, $year])
+            ->selectRaw("SUM(CASE WHEN subscriptions.status = 'cancelled' AND MONTH(subscriptions.cancelled_at) = ? AND YEAR(subscriptions.cancelled_at) = ? THEN 1 ELSE 0 END) as cancelled_this_month", [$month, $year])
+            ->selectRaw("SUM(CASE WHEN subscriptions.status IN ('cancelled','expired') THEN 1 ELSE 0 END) as churned_total")
+            ->first();
+
+        $newThisMonth       = (int) ($saasStats->new_this_month ?? 0);
+        $cancelledThisMonth = (int) ($saasStats->cancelled_this_month ?? 0);
+        $activeCount        = (int) ($saasStats->active ?? 0);
+
+        // Churn rate = cancelled this month / (active + cancelled this month) * 100
+        $churnDenominator = $activeCount + $cancelledThisMonth;
+        $churnRate = $churnDenominator > 0
+            ? round($cancelledThisMonth / $churnDenominator * 100, 1)
+            : 0.0;
+
+        return [
             'users' => [
                 'total'          => (int) $userStats->total,
                 'by_role'        => [
@@ -165,10 +208,32 @@ class Dashboard extends Component
                 'resolved'      => (int) $supportStats->resolved,
                 'new_this_week' => (int) $supportStats->new_this_week,
             ],
+            'saas' => [
+                'mrr'                => $mrr,
+                'arr'                => round($mrr * 12, 2),
+                'active'             => $activeCount,
+                'active_monthly'     => (int) ($saasStats->active_monthly ?? 0),
+                'active_yearly'      => (int) ($saasStats->active_yearly  ?? 0),
+                'new_this_month'     => $newThisMonth,
+                'cancelled_this_month' => $cancelledThisMonth,
+                'net_new'            => $newThisMonth - $cancelledThisMonth,
+                'churn_rate'         => $churnRate,
+            ],
         ];
+    }
+
+    public function render()
+    {
+        $cached = Cache::remember($this->cacheKey(), now()->addMinutes(5), function () {
+            return [
+                'stats'     => $this->buildStats(),
+                'cached_at' => now()->timestamp,
+            ];
+        });
 
         return view('livewire.admin.dashboard', [
-            'stats' => $stats,
+            'stats'     => $cached['stats'],
+            'cachedAt'  => $cached['cached_at'],
         ])->layout('layouts.app', [
             'title'       => 'Dashboard Administrador - Agro365',
             'description' => 'Panel de control con estadísticas generales del sistema',

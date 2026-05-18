@@ -41,6 +41,9 @@ Route::middleware(['role:admin'])
         // Log de seguridad
         Route::get('/security-log', \App\Livewire\Admin\SecurityLog\Index::class)->name('security-log.index');
 
+        // Salud del sistema
+        Route::get('/health', \App\Livewire\Admin\Health\Index::class)->name('health.index');
+
         // Notificaciones masivas
         Route::get('/notifications', \App\Livewire\Admin\Notifications\Index::class)->name('notifications.index');
 

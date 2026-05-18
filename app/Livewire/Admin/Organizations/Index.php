@@ -94,18 +94,37 @@ class Index extends Component
 
     public function save(): void
     {
+        $validRoles = [User::ROLE_WINERY, User::ROLE_SUPERVISOR, User::ROLE_PRODUCER];
+
         $this->validate([
-            'name'       => 'required|string|max:255',
-            'type'       => 'required|in:winery,denomination_of_origin',
-            'vat_number' => 'nullable|string|max:20',
-            'email'      => 'nullable|email|max:255',
-            'website'    => 'nullable|url|max:255',
+            'name'          => 'required|string|max:255',
+            'type'          => 'required|in:winery,denomination_of_origin',
+            'vat_number'    => 'nullable|string|max:20',
+            'email'         => 'nullable|email|max:255',
+            'website'       => 'nullable|url|max:255',
+            'owner_user_id' => [
+                'nullable',
+                'integer',
+                function ($attribute, $value, $fail) use ($validRoles) {
+                    if (!$value) return;
+                    $owner = User::find($value);
+                    if (!$owner) {
+                        $fail('El usuario propietario no existe.');
+                        return;
+                    }
+                    if (!in_array($owner->role, $validRoles)) {
+                        $fail('El propietario debe ser Bodega, Supervisor o Productor.');
+                    }
+                },
+            ],
         ], [
             'name.required' => 'El nombre es obligatorio.',
             'type.required' => 'El tipo es obligatorio.',
             'email.email'   => 'El email no tiene un formato válido.',
             'website.url'   => 'La URL no tiene un formato válido (debe incluir https://).',
         ]);
+
+        $newOwnerId = $this->owner_user_id ?: null;
 
         $data = [
             'name'          => $this->name,
@@ -119,16 +138,34 @@ class Index extends Component
             'email'         => $this->email         ?: null,
             'website'       => $this->website       ?: null,
             'active'        => $this->active,
-            'owner_user_id' => $this->owner_user_id ?: null,
+            'owner_user_id' => $newOwnerId,
             'parent_id'     => $this->parent_id     ?: null,
         ];
 
         if ($this->editingId) {
-            $org = Organization::findOrFail($this->editingId);
+            $org        = Organization::findOrFail($this->editingId);
+            $prevOwnerId = $org->owner_user_id;
             $org->update($data);
 
             if ($org->wasChanged('name')) {
                 $org->update(['slug' => Str::slug($this->name) . '-' . $org->id]);
+            }
+
+            // Handle owner change: unlink previous, link new
+            if ($prevOwnerId !== $newOwnerId) {
+                if ($prevOwnerId) {
+                    User::where('id', $prevOwnerId)
+                        ->where('organization_id', $org->id)
+                        ->update(['organization_id' => null]);
+                }
+                if ($newOwnerId) {
+                    $newOwner = User::find($newOwnerId);
+                    if ($newOwner && $newOwner->organization_id && $newOwner->organization_id !== $org->id) {
+                        $this->toastWarning("El propietario ya pertenece a otra organización. El vínculo de organización no se ha actualizado.");
+                    } else {
+                        User::where('id', $newOwnerId)->update(['organization_id' => $org->id]);
+                    }
+                }
             }
 
             SecurityLogger::logSecurityEvent('organization_updated', [
@@ -143,11 +180,13 @@ class Index extends Component
             $data['slug'] = $this->uniqueSlug($this->name);
             $org = Organization::create($data);
 
-            // Link owner user to this org if they are unlinked
-            if ($org->owner_user_id) {
-                User::where('id', $org->owner_user_id)
-                    ->whereNull('organization_id')
-                    ->update(['organization_id' => $org->id]);
+            if ($newOwnerId) {
+                $owner = User::find($newOwnerId);
+                if ($owner && $owner->organization_id) {
+                    $this->toastWarning("El propietario ya pertenece a otra organización. El vínculo de organización no se ha actualizado.");
+                } else {
+                    User::where('id', $newOwnerId)->update(['organization_id' => $org->id]);
+                }
             }
 
             SecurityLogger::logSecurityEvent('organization_created', [

@@ -243,20 +243,41 @@
                     </div>
 
                     {{-- Comentarios --}}
-                    @if($selectedTicket->comments->count() > 0)
+                    @php
+                        $publicComments   = $selectedTicket->comments->where('is_internal', false);
+                        $internalComments = $selectedTicket->comments->where('is_internal', true);
+                        $totalComments    = $selectedTicket->comments->count();
+                    @endphp
+                    @if($totalComments > 0)
                         <div>
                             <p class="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-3">
-                                Comentarios ({{ $selectedTicket->comments->count() }})
+                                Comentarios ({{ $totalComments }})
+                                @if($internalComments->count() > 0)
+                                    <span class="ml-1 font-normal text-amber-600">· {{ $internalComments->count() }} nota(s) interna(s)</span>
+                                @endif
                             </p>
                             <div class="space-y-2">
-                                @foreach($selectedTicket->comments as $comment)
-                                    <div class="bg-zinc-50 border border-zinc-100 rounded-lg px-4 py-3">
-                                        <div class="flex items-center justify-between mb-1">
-                                            <span class="text-sm font-semibold text-zinc-900">{{ $comment->user->name }}</span>
-                                            <span class="text-xs text-zinc-400">{{ $comment->created_at->diffForHumans() }}</span>
+                                @foreach($selectedTicket->comments->sortBy('created_at') as $comment)
+                                    @if($comment->is_internal)
+                                        <div class="bg-amber-50 border border-amber-200 rounded-lg px-4 py-3">
+                                            <div class="flex items-center justify-between mb-1">
+                                                <div class="flex items-center gap-2">
+                                                    <span class="text-sm font-semibold text-zinc-900">{{ $comment->user->name }}</span>
+                                                    <flux:badge color="yellow" size="sm">Nota interna</flux:badge>
+                                                </div>
+                                                <span class="text-xs text-zinc-400">{{ $comment->created_at->diffForHumans() }}</span>
+                                            </div>
+                                            <p class="text-sm text-amber-900">{{ $comment->comment }}</p>
                                         </div>
-                                        <p class="text-sm text-zinc-700">{{ $comment->comment }}</p>
-                                    </div>
+                                    @else
+                                        <div class="bg-zinc-50 border border-zinc-100 rounded-lg px-4 py-3">
+                                            <div class="flex items-center justify-between mb-1">
+                                                <span class="text-sm font-semibold text-zinc-900">{{ $comment->user->name }}</span>
+                                                <span class="text-xs text-zinc-400">{{ $comment->created_at->diffForHumans() }}</span>
+                                            </div>
+                                            <p class="text-sm text-zinc-700">{{ $comment->comment }}</p>
+                                        </div>
+                                    @endif
                                 @endforeach
                             </div>
                         </div>
@@ -268,15 +289,26 @@
                         <flux:textarea
                             wire:model="newComment"
                             rows="3"
-                            placeholder="Escribe tu comentario..."
+                            :placeholder="$isInternal ? 'Nota interna (solo visible para admins)...' : 'Escribe tu comentario...'"
+                            @class(['border-amber-300 bg-amber-50 focus:ring-amber-400' => $isInternal])
                         />
                         @error('newComment')
                             <flux:error>{{ $message }}</flux:error>
                         @enderror
-                        <div class="mt-2">
-                            <flux:button wire:click="addComment" variant="primary" size="sm" icon="chat-bubble-left">
-                                Añadir Comentario
+                        <div class="mt-2 flex items-center gap-3">
+                            <flux:button wire:click="addComment" variant="primary" size="sm"
+                                icon="{{ $isInternal ? 'lock-closed' : 'chat-bubble-left' }}"
+                            >
+                                {{ $isInternal ? 'Añadir Nota Interna' : 'Añadir Comentario' }}
                             </flux:button>
+                            <label class="flex items-center gap-2 cursor-pointer select-none">
+                                <input
+                                    type="checkbox"
+                                    wire:model.live="isInternal"
+                                    class="rounded border-zinc-300 text-amber-500 focus:ring-amber-400"
+                                />
+                                <span class="text-xs text-zinc-600">Nota interna <span class="text-zinc-400">(solo admins)</span></span>
+                            </label>
                         </div>
                     </div>
                 </div>

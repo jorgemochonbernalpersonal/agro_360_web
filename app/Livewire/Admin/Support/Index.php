@@ -18,9 +18,10 @@ class Index extends Component
     public $filterStatus    = 'all';
     public $filterType      = 'all';
     public $filterPriority  = 'all';
-    public $selectedTicket  = null;
-    public $newComment      = '';
-    public $assignTo        = '';
+    public $selectedTicket    = null;
+    public $newComment        = '';
+    public bool $isInternal   = false;
+    public $assignTo          = '';
 
     protected $queryString = ['search', 'filterStatus', 'filterType', 'filterPriority'];
 
@@ -33,14 +34,16 @@ class Index extends Component
     {
         $this->selectedTicket = SupportTicket::with(['user', 'comments.user', 'assignedTo'])
             ->findOrFail($ticketId);
-        $this->newComment = '';
-        $this->assignTo   = $this->selectedTicket->assigned_to ?? '';
+        $this->newComment  = '';
+        $this->isInternal  = false;
+        $this->assignTo    = $this->selectedTicket->assigned_to ?? '';
     }
 
     public function closeTicketDetail()
     {
         $this->selectedTicket = null;
         $this->newComment     = '';
+        $this->isInternal     = false;
         $this->assignTo       = '';
     }
 
@@ -127,12 +130,14 @@ class Index extends Component
         $this->selectedTicket->comments()->create([
             'user_id'     => auth()->id(),
             'comment'     => $this->newComment,
-            'is_internal' => false,
+            'is_internal' => $this->isInternal,
         ]);
 
+        $wasInternal          = $this->isInternal;
         $this->newComment     = '';
+        $this->isInternal     = false;
         $this->selectedTicket = $this->selectedTicket->fresh(['comments.user']);
-        $this->toastSuccess('Comentario añadido.');
+        $this->toastSuccess($wasInternal ? 'Nota interna añadida.' : 'Comentario añadido.');
     }
 
     public function exportCsv()
