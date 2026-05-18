@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Supervisor\Notebook;
 
+use App\Livewire\Concerns\WithOwnershipRules;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\NotebookAccessRequest;
 use App\Models\SupervisorViticulturist;
@@ -15,7 +16,7 @@ use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination, WithToastNotifications;
+    use WithPagination, WithOwnershipRules, WithToastNotifications;
 
     public string $filterStatus = 'all';
     public string $search       = '';
@@ -41,14 +42,9 @@ class Index extends Component
 
     public function requestAccess(): void
     {
-        $this->validate(['targetViticulturistId' => 'required|exists:users,id']);
+        $this->validate(['targetViticulturistId' => $this->supervisorLinkedViticulturistRule()]);
 
         $doId = Auth::id();
-
-        // Guard: viticulturist must be in supervisor's pool
-        SupervisorViticulturist::where('supervisor_id', $doId)
-            ->where('viticulturist_id', $this->targetViticulturistId)
-            ->firstOrFail();
 
         $existing = NotebookAccessRequest::where('supervisor_id', $doId)
             ->where('viticulturist_id', $this->targetViticulturistId)

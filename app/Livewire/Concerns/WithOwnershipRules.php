@@ -8,6 +8,8 @@ use App\Models\Harvest;
 use App\Models\Oenologist;
 use App\Models\Plot;
 use App\Models\PlotPlanting;
+use App\Models\SupervisorViticulturist;
+use App\Models\SupervisorWinery;
 use App\Models\Wine;
 use App\Models\WineProcessDetail;
 use App\Models\WinerySupply;
@@ -255,6 +257,63 @@ trait WithOwnershipRules
                     ->pluck('viticulturist_id');
                 if (! Campaign::where('id', $value)->whereIn('viticulturist_id', $viticulturistIds)->exists()) {
                     $fail('La campaña seleccionada no pertenece a un viticultor vinculado.');
+                }
+            },
+        ];
+    }
+
+    // ── SUPERVISOR ────────────────────────────────────────────────────────────
+
+    /**
+     * Validates that the selected winery is linked to the authenticated supervisor (DO).
+     */
+    public function supervisorLinkedWineryRule(bool $required = true): array
+    {
+        $supervisorId = Auth::id();
+        return [
+            $required ? 'required' : 'nullable',
+            function ($attribute, $value, $fail) use ($supervisorId) {
+                if ($value && ! SupervisorWinery::where('supervisor_id', $supervisorId)
+                    ->where('winery_id', $value)->exists()) {
+                    $fail('La bodega seleccionada no pertenece a esta denominación.');
+                }
+            },
+        ];
+    }
+
+    /**
+     * Validates that the selected viticulturist is in the supervisor's (DO) pool.
+     */
+    public function supervisorLinkedViticulturistRule(bool $required = true): array
+    {
+        $supervisorId = Auth::id();
+        return [
+            $required ? 'required' : 'nullable',
+            function ($attribute, $value, $fail) use ($supervisorId) {
+                if ($value && ! SupervisorViticulturist::where('supervisor_id', $supervisorId)
+                    ->where('viticulturist_id', $value)->exists()) {
+                    $fail('El viticultor seleccionado no pertenece a esta denominación.');
+                }
+            },
+        ];
+    }
+
+    /**
+     * Validates a polymorphic subject (winery or viticulturist) against the supervisor's pool.
+     * Pass the subject_type ('winery'|'viticulturist') at call time.
+     */
+    public function supervisorLinkedSubjectRule(string $subjectType, bool $required = true): array
+    {
+        $supervisorId = Auth::id();
+        return [
+            $required ? 'required' : 'nullable',
+            function ($attribute, $value, $fail) use ($supervisorId, $subjectType) {
+                if (! $value) return;
+                $exists = $subjectType === 'winery'
+                    ? SupervisorWinery::where('supervisor_id', $supervisorId)->where('winery_id', $value)->exists()
+                    : SupervisorViticulturist::where('supervisor_id', $supervisorId)->where('viticulturist_id', $value)->exists();
+                if (! $exists) {
+                    $fail('El sujeto seleccionado no pertenece a esta denominación.');
                 }
             },
         ];

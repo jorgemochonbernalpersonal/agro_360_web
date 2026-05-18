@@ -68,16 +68,22 @@ class Index extends Component
     public function linkWinery(): void
     {
         $this->validate([
-            'linkWineryId' => ['required', 'exists:users,id'],
+            'linkWineryId' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    if ($value && ! User::where('id', $value)
+                        ->whereIn('role', [User::ROLE_WINERY, User::ROLE_PRODUCER])
+                        ->exists()) {
+                        $fail('La bodega seleccionada no es válida.');
+                    }
+                },
+            ],
         ], [
             'linkWineryId.required' => 'Selecciona una bodega.',
         ]);
 
-        $doId = Auth::id();
-
-        $winery = User::where('id', $this->linkWineryId)
-            ->whereIn('role', [User::ROLE_WINERY, User::ROLE_PRODUCER])
-            ->firstOrFail();
+        $doId   = Auth::id();
+        $winery = User::findOrFail($this->linkWineryId);
 
         $alreadyLinked = SupervisorWinery::where('supervisor_id', $doId)
             ->where('winery_id', $winery->id)

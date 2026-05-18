@@ -6,6 +6,7 @@ use App\Models\DoInspection;
 use App\Models\SupervisorRequest;
 use App\Models\SupervisorWinery;
 use App\Models\SupervisorViticulturist;
+use App\Livewire\Concerns\WithOwnershipRules;
 use App\Livewire\Concerns\WithToastNotifications;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -16,7 +17,7 @@ use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination, WithToastNotifications;
+    use WithPagination, WithOwnershipRules, WithToastNotifications;
 
     public string $currentTab  = 'all';
     public string $search      = '';
@@ -75,26 +76,13 @@ class Index extends Component
 
         $this->validate([
             'subject_type'     => 'required|in:winery,viticulturist',
-            'subject_id'       => 'required|integer|exists:users,id',
+            'subject_id'       => $this->supervisorLinkedSubjectRule($this->subject_type),
             'inspection_date'  => 'required|date',
             'notes'            => 'nullable|string',
             'reference_number' => 'nullable|string|max:100',
         ]);
 
         $doId = Auth::id();
-
-        // Authorization: subject must be supervised by this DO
-        $wineryIds = SupervisorWinery::where('supervisor_id', $doId)->pluck('winery_id');
-        $vitIds    = SupervisorViticulturist::where('supervisor_id', $doId)->pluck('viticulturist_id');
-
-        $allowed = $this->subject_type === 'winery'
-            ? $wineryIds->contains((int) $this->subject_id)
-            : $vitIds->contains((int) $this->subject_id);
-
-        if (!$allowed) {
-            $this->toastError('El sujeto seleccionado no pertenece a esta denominación.');
-            return;
-        }
 
         DoInspection::create([
             'supervisor_id'    => $doId,

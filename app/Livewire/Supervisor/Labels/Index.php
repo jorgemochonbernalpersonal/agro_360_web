@@ -4,6 +4,7 @@ namespace App\Livewire\Supervisor\Labels;
 
 use App\Models\DoLabel;
 use App\Models\SupervisorWinery;
+use App\Livewire\Concerns\WithOwnershipRules;
 use App\Livewire\Concerns\WithToastNotifications;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -14,7 +15,7 @@ use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination, WithToastNotifications;
+    use WithPagination, WithOwnershipRules, WithToastNotifications;
 
     public string $currentTab    = 'all';
     public string $vintageFilter = '';
@@ -68,7 +69,7 @@ class Index extends Component
         }
 
         $this->validate([
-            'winery_id'          => 'required|integer|exists:users,id',
+            'winery_id'          => $this->supervisorLinkedWineryRule(),
             'vintage'            => 'required|integer|min:1990|max:2100',
             'batch_number'       => 'nullable|string|max:100',
             'quantity_requested' => 'required|integer|min:1',
@@ -76,15 +77,6 @@ class Index extends Component
         ]);
 
         $doId = Auth::id();
-
-        $isLinked = SupervisorWinery::where('supervisor_id', $doId)
-            ->where('winery_id', $this->winery_id)
-            ->exists();
-
-        if (!$isLinked) {
-            $this->toastError('La bodega seleccionada no pertenece a esta denominación.');
-            return;
-        }
 
         DoLabel::create([
             'supervisor_id'        => $doId,
