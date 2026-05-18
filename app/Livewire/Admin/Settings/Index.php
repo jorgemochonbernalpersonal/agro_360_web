@@ -54,7 +54,7 @@ class Index extends Component
     {
         $this->registration_open = AppSetting::getBool('registration_open', true);
         $this->maintenance_mode  = AppSetting::getBool('maintenance_mode', false);
-        $this->support_email     = AppSetting::get('support_email', 'soporte@agro365.es');
+        $this->support_email     = AppSetting::get('support_email', 'info@agro365.es');
         $this->beta_end_date     = AppSetting::get('beta_end_date', '2026-06-30');
 
         $this->password_min_length     = (int) AppSetting::get('password_min_length', 8);

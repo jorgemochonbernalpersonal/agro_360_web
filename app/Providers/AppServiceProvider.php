@@ -32,11 +32,13 @@ use App\Observers\PhytosanitaryTreatmentObserver;
 use App\Observers\PlotObserver;
 use App\Observers\PlotPlantingObserver;
 use App\Observers\WineLossObserver;
+use App\Models\Client;
 use App\Models\DoInspection;
 use App\Models\DoLabel;
 use App\Models\DoQualification;
 use App\Policies\AgriculturalActivityPolicy;
 use App\Policies\CampaignPolicy;
+use App\Policies\ClientPolicy;
 use App\Policies\CrewPolicy;
 use App\Policies\DoInspectionPolicy;
 use App\Policies\DoLabelPolicy;
@@ -68,6 +70,7 @@ class AppServiceProvider extends ServiceProvider
         AgriculturalActivity::class => AgriculturalActivityPolicy::class,
         Crew::class               => CrewPolicy::class,
         Machinery::class          => MachineryPolicy::class,
+        Client::class             => ClientPolicy::class,
         DoLabel::class            => DoLabelPolicy::class,
         DoInspection::class       => DoInspectionPolicy::class,
         DoQualification::class    => DoQualificationPolicy::class,

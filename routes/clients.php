@@ -15,8 +15,11 @@ Route::middleware(['auth', 'role:admin,supervisor,winery,viticulturist,producer'
     ->name('clients.')
     ->group(function () {
         Route::get('/', \App\Livewire\Clients\Index::class)->name('index');
-        Route::get('/create', \App\Livewire\Clients\Create::class)->name('create');
+        Route::get('/create', \App\Livewire\Clients\Create::class)->name('create')
+            ->middleware('can:create,App\Models\Client');
         Route::get('/insights', \App\Livewire\Clients\Insights::class)->name('insights');
-        Route::get('/{client}', \App\Livewire\Clients\Show::class)->name('show');
-        Route::get('/{client}/edit', \App\Livewire\Clients\Edit::class)->name('edit');
+        Route::get('/{client}', \App\Livewire\Clients\Show::class)->name('show')
+            ->middleware('can:view,client');
+        Route::get('/{client}/edit', \App\Livewire\Clients\Edit::class)->name('edit')
+            ->middleware('can:update,client');
     });

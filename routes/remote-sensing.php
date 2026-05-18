@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware(['auth', 'verified', 'check.beta'])->group(function () {
+Route::middleware(['auth', 'verified', 'check.beta', 'role:viticulturist,producer,winery'])->group(function () {
     Route::prefix('remote-sensing')->name('remote-sensing.')->group(function () {
         // Dashboard ejecutivo (vista resumen)
         Route::get('/', ExecutiveDashboard::class)->name('dashboard');

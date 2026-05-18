@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * Lógica:
  *  - Si el usuario no tiene acceso a bodega → 403.
- *  - Si el usuario no tiene NINGUNA ability configurada → acceso total (sin supervisor restrictivo).
+ *  - Si el usuario no tiene NINGUNA ability configurada → 403 (cuenta nueva no configurada).
  *  - Si tiene abilities configuradas → comprueba que tenga la requerida.
  *
  * Cache:
@@ -38,9 +38,11 @@ class CheckWineryAbility
             fn () => $user->abilities()->pluck('code')->all()
         );
 
-        // Sin restricciones → acceso total
+        // Sin abilities → acceso denegado.
+        // Las bodegas existentes tienen todas las abilities via migración de backfill.
+        // Una bodega sin abilities es una cuenta nueva aún no configurada por el supervisor.
         if (empty($granted)) {
-            return $next($request);
+            abort(403, 'Tu denominación de origen no ha habilitado ningún módulo todavía. Contacta con tu supervisor.');
         }
 
         if (! in_array($ability, $granted, true)) {

@@ -45,7 +45,7 @@
                 <flux:input
                     wire:model="support_email"
                     type="email"
-                    placeholder="soporte@agro365.es"
+                    placeholder="info@agro365.es"
                     class="max-w-sm"
                 />
                 @error('support_email')

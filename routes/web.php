@@ -125,12 +125,9 @@ Route::middleware('guest')->get('/activar-cuenta/{token}', \App\Livewire\Auth\Cl
 // require.password.change debe ejecutarse ANTES de verified para usuarios creados por otro
 Route::middleware(['auth', 'password.changed', 'require.password.change', 'verified'])->group(function () {
     // Laravel Log Viewer - Solo para administradores
-    Route::get('logs', function () {
-        if (auth()->user()->role !== 'admin') {
-            abort(403, 'No tienes permiso para acceder a los logs.');
-        }
-        return app('\Rap2hpoutre\LaravelLogViewer\LogViewerController')->index();
-    })->name('logs');
+    Route::middleware('role:admin')
+        ->get('logs', fn() => app('\Rap2hpoutre\LaravelLogViewer\LogViewerController')->index())
+        ->name('logs');
     
     require __DIR__ . '/plots.php';
     require __DIR__ . '/clients.php';
