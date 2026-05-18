@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Viticulturist;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\PhenologyObservationResource;
+use App\Models\Campaign;
 use App\Models\PhenologyObservation;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -69,6 +70,12 @@ class PhenologyObservationController extends Controller
             'bbch_code'               => 'nullable|integer|min:0|max:99',
             'notes'                   => 'nullable|string|max:2000',
         ]);
+
+        if (empty($validated['campaign_id'])) {
+            $validated['campaign_id'] = Campaign::where('viticulturist_id', $user->id)
+                ->where('active', true)
+                ->value('id');
+        }
 
         $record = PhenologyObservation::create([...$validated, 'viticulturist_id' => $user->id, 'active' => true]);
         $record->load(['plotPlanting.plot', 'plotPlanting.grapeVariety', 'campaign']);
