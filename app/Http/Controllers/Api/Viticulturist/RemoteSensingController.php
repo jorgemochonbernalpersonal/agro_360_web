@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\Viticulturist;
 
 use App\Http\Controllers\Controller;
-use App\Models\RemoteSensingRecord;
+use App\Models\PlotRemoteSensing;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -14,7 +14,7 @@ class RemoteSensingController extends Controller
         $user = $request->user();
         abort_unless($user->hasViticulturistAccess(), 403);
 
-        $items = RemoteSensingRecord::whereHas('plot', fn ($q) => $q->where('viticulturist_id', $user->id))
+        $items = PlotRemoteSensing::whereHas('plot', fn ($q) => $q->where('viticulturist_id', $user->id))
             ->with('plot:id,name')
             ->orderByDesc('image_date')
             ->paginate(20);
@@ -29,7 +29,7 @@ class RemoteSensingController extends Controller
         ]);
     }
 
-    private function format(RemoteSensingRecord $r): array
+    private function format(PlotRemoteSensing $r): array
     {
         return [
             'id'               => $r->id,
