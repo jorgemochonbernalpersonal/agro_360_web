@@ -81,7 +81,7 @@ class BottlingController extends Controller
             'bottling_date'           => 'required|date',
             'bottle_format'           => 'required|string|in:' . implode(',', array_keys(WineBottling::BOTTLE_FORMATS)),
             'quantity_bottles'        => 'required|integer|min:1',
-            'quantity_liters'         => 'nullable|numeric|min:0',
+            'quantity_liters'         => 'required|numeric|min:0',
             'lot_number'              => 'nullable|string|max:100',
             'notes'                   => 'nullable|string|max:2000',
             // Insumos usados en el embotellado
@@ -153,7 +153,7 @@ class BottlingController extends Controller
             'bottling_date'  => 'sometimes|date',
             'bottle_format'  => 'sometimes|string|in:' . implode(',', array_keys(WineBottling::BOTTLE_FORMATS)),
             'quantity_bottles' => 'sometimes|integer|min:1',
-            'quantity_liters'  => 'sometimes|nullable|numeric|min:0',
+            'quantity_liters'  => 'sometimes|numeric|min:0',
             'lot_number'       => 'sometimes|nullable|string|max:100',
             'notes'            => 'sometimes|nullable|string|max:2000',
         ]);

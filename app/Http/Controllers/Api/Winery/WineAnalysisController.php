@@ -52,7 +52,7 @@ class WineAnalysisController extends Controller
             'container_id'       => 'nullable|integer',
             'analysis_date'      => 'required|date',
             'analysis_type'      => 'nullable|string|in:standard,complete,organic,custom',
-            'laboratory'         => 'boolean',
+            'laboratory'         => 'nullable|string|max:200',
             'laboratory_name'    => 'nullable|string|max:255',
             'alcoholic_strength' => 'nullable|numeric|between:0,25',
             'alcohol'            => 'nullable|numeric|between:0,25',

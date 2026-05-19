@@ -77,6 +77,11 @@ class ContainerReturnController extends Controller
             'notes'                    => 'nullable|string|max:2000',
         ]);
 
+        if (empty($validated['campaign_id'])) {
+            $validated['campaign_id'] = \App\Models\Campaign::where('viticulturist_id', $user->id)
+                ->where('active', true)->value('id');
+        }
+
         $record = PhytosanitaryContainerReturn::create([
             ...$validated,
             'viticulturist_id' => $user->id,

@@ -67,7 +67,7 @@ class PhytosanitaryAlertController extends Controller
             'source'      => 'required|string|max:100',
             'alert_type'  => 'required|string|max:100',
             'severity'    => 'required|string|max:50',
-            'description' => 'nullable|string|max:2000',
+            'description' => 'required|string|max:2000',
             'alert_date'  => 'required|date',
             'expiry_date' => 'nullable|date|after_or_equal:alert_date',
         ]);
