@@ -102,13 +102,22 @@ class EstimatedYieldController extends Controller
             Campaign::forViticulturist($user->id)->findOrFail($validated['campaign_id']);
         }
 
-        $yield = EstimatedYield::create([
+        $data = [
             ...$validated,
             'estimated_by' => $user->id,
             'status'       => 'draft',
             'active'       => true,
             'vintage'      => $validated['vintage'] ?? now()->year,
-        ]);
+        ];
+
+        $yield = EstimatedYield::updateOrCreate(
+            [
+                'plot_planting_id' => $validated['plot_planting_id'],
+                'campaign_id'      => $validated['campaign_id'],
+                'estimation_round' => $validated['estimation_round'],
+            ],
+            $data
+        );
 
         $yield->load(['plotPlanting.plot', 'plotPlanting.grapeVariety', 'campaign']);
 

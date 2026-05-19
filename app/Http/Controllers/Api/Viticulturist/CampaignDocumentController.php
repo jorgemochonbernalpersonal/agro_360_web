@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Viticulturist;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\CampaignDocumentResource;
+use App\Models\Campaign;
 use App\Models\CampaignDocument;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -59,11 +60,17 @@ class CampaignDocumentController extends Controller
         abort_unless($user->hasViticulturistAccess(), 403);
 
         $validated = $request->validate([
-            'campaign_id'    => 'required|integer|exists:campaigns,id',
+            'campaign_id'    => 'nullable|integer|exists:campaigns,id',
             'name'           => 'required|string|max:255',
             'document_type'  => 'required|string|max:100',
             'notes'          => 'nullable|string|max:2000',
         ]);
+
+        if (empty($validated['campaign_id'])) {
+            $validated['campaign_id'] = Campaign::where('viticulturist_id', $user->id)
+                ->where('active', true)
+                ->value('id');
+        }
 
         $record = \App\Models\CampaignDocument::create([...$validated, 'viticulturist_id' => $user->id]);
 
