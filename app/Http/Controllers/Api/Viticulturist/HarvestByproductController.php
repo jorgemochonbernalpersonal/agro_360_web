@@ -65,6 +65,8 @@ class HarvestByproductController extends Controller
         $user = $request->user();
         abort_unless($user->hasViticulturistAccess(), 403);
 
+        $this->normalizeCampaignId($request);
+
         $validated = $request->validate([
             'campaign_id'        => 'nullable|integer|exists:campaigns,id',
             'date'               => 'required|date',

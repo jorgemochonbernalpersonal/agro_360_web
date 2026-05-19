@@ -56,6 +56,8 @@ class HarvestDeclarationController extends Controller
         $user = $request->user();
         abort_unless($user->hasViticulturistAccess(), 403);
 
+        $this->normalizeCampaignId($request);
+
         $validated = $request->validate([
             'campaign_id'       => 'nullable|integer|exists:campaigns,id',
             'declaration_year'  => 'required|integer|min:2000|max:2100',
