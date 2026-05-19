@@ -720,6 +720,7 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
         Route::post('/field-equipment', [FieldEquipmentController::class, 'store'])->middleware('throttle:30,1');
 
         // ── Cosechas comercializadas ─────────────────────────────────────────
+        Route::get('/harvests/picker', [MarketedHarvestController::class, 'picker'])->middleware('throttle:60,1');
         Route::get('/marketed-harvests', [MarketedHarvestController::class, 'index'])->middleware('throttle:60,1');
         Route::post('/marketed-harvests', [MarketedHarvestController::class, 'store'])->middleware('throttle:30,1');
 
