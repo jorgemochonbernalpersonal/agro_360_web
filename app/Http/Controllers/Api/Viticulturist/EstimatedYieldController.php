@@ -20,10 +20,11 @@ class EstimatedYieldController extends Controller
         abort_unless($user->hasViticulturistAccess(), 403);
 
         $request->validate([
-            'plot_id'     => 'nullable|integer|min:1',
-            'campaign_id' => 'nullable|integer|min:1',
-            'status'      => 'nullable|string|in:draft,confirmed',
-            'per_page'    => 'nullable|integer|min:1|max:100',
+            'plot_id'          => 'nullable|integer|min:1',
+            'plot_planting_id' => 'nullable|integer|min:1',
+            'campaign_id'      => 'nullable|integer|min:1',
+            'status'           => 'nullable|string|in:draft,confirmed',
+            'per_page'         => 'nullable|integer|min:1|max:100',
         ]);
 
         $query = EstimatedYield::whereHas('plotPlanting', fn ($q) =>
@@ -39,6 +40,10 @@ class EstimatedYieldController extends Controller
             $query->whereHas('plotPlanting', fn ($q) =>
                 $q->where('plot_id', (int) $request->plot_id)
             );
+        }
+
+        if ($request->filled('plot_planting_id')) {
+            $query->where('plot_planting_id', (int) $request->plot_planting_id);
         }
 
         if ($request->filled('campaign_id')) {
@@ -110,14 +115,15 @@ class EstimatedYieldController extends Controller
             'vintage'      => $validated['vintage'] ?? now()->year,
         ];
 
-        $yield = EstimatedYield::updateOrCreate(
-            [
-                'plot_planting_id' => $validated['plot_planting_id'],
-                'campaign_id'      => $validated['campaign_id'],
-                'estimation_round' => $validated['estimation_round'],
-            ],
-            $data
-        );
+        try {
+            $yield = EstimatedYield::create($data);
+        } catch (\Illuminate\Database\UniqueConstraintViolationException) {
+            $roundLabel = EstimatedYield::ROUNDS[$validated['estimation_round']] ?? "ronda {$validated['estimation_round']}";
+            return response()->json([
+                'message' => "Ya existe una estimación de {$roundLabel} para esta plantación en la campaña activa. Edita la existente o elige otra ronda.",
+                'error'   => 'duplicate_round',
+            ], 409);
+        }
 
         $yield->load(['plotPlanting.plot', 'plotPlanting.grapeVariety', 'campaign']);
 
