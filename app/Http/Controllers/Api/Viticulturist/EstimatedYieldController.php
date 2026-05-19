@@ -74,8 +74,6 @@ class EstimatedYieldController extends Controller
         $user = $request->user();
         abort_unless($user->hasViticulturistAccess(), 403);
 
-        $this->normalizeCampaignId($request);
-
         $validated = $request->validate([
             'plot_planting_id'            => 'required|integer|min:1',
             'estimation_date'             => 'required|date',

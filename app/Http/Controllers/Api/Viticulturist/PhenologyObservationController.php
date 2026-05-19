@@ -59,8 +59,6 @@ class PhenologyObservationController extends Controller
         $user = $request->user();
         abort_unless($user->hasViticulturistAccess(), 403);
 
-        $this->normalizeCampaignId($request);
-
         $validated = $request->validate([
             'plot_planting_id'        => 'required|integer|exists:plot_plantings,id',
             'campaign_id'             => 'nullable|integer|exists:campaigns,id',

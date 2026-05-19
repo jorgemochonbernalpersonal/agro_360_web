@@ -65,8 +65,6 @@ class MarketedHarvestController extends Controller
         $user = $request->user();
         abort_unless($user->hasViticulturistAccess(), 403);
 
-        $this->normalizeCampaignId($request);
-
         $validated = $request->validate([
             'harvest_id'         => 'nullable|integer|exists:harvests,id',
             'campaign_id'        => 'nullable|integer|exists:campaigns,id',
