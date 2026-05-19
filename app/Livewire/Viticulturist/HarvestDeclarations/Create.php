@@ -76,7 +76,7 @@ class Create extends AbstractCreate
             'campaign_id'      => $this->campaignOwnershipRule(),
             'declaration_year' => 'required|integer|min:2000|max:2100',
             'declaration_date' => 'required|date',
-            'authority'        => 'required|string|max:255',
+            'authority'        => 'nullable|string|max:255',
             'total_surface_ha' => 'nullable|numeric|min:0',
             'total_kg'         => 'nullable|numeric|min:0',
             'notes'            => 'nullable|string',

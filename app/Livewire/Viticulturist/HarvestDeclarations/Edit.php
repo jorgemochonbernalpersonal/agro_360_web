@@ -72,7 +72,7 @@ class Edit extends AbstractEdit
             'declaration_year' => 'required|integer|min:2000|max:2100',
             'declaration_date' => 'required|date',
             'submission_date'  => 'nullable|date',
-            'authority'        => 'required|string|max:255',
+            'authority'        => 'required_unless:status,draft|nullable|string|max:255',
             'reference_number' => 'nullable|string|max:100',
             'total_surface_ha' => 'nullable|numeric|min:0',
             'total_kg'         => 'nullable|numeric|min:0',
