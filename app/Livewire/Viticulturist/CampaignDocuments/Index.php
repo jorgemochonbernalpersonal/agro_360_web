@@ -98,7 +98,9 @@ class Index extends Component
     public function delete(int $id)
     {
         $doc = CampaignDocument::where('viticulturist_id', Auth::id())->findOrFail($id);
-        Storage::disk('private')->delete($doc->file_path);
+        if ($doc->file_path) {
+            Storage::disk('private')->delete($doc->file_path);
+        }
         $doc->delete();
         $this->toastSuccess('Documento eliminado.');
     }
