@@ -62,6 +62,11 @@ class PlotEnvironmentController extends Controller
 
         \App\Models\Plot::where('user_id', $user->id)->findOrFail($validated['plot_id']);
 
+        if (empty($validated['campaign_id'])) {
+            $validated['campaign_id'] = \App\Models\Campaign::where('viticulturist_id', $user->id)
+                ->where('active', true)->value('id');
+        }
+
         $record = \App\Models\PlotEnvironment::create([...$validated, 'viticulturist_id' => $user->id]);
         $record->load(['plot']);
 

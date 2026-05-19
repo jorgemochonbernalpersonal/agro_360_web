@@ -66,6 +66,11 @@ class FertilizationPlanController extends Controller
             'notes'            => 'nullable|string|max:2000',
         ]);
 
+        if (empty($validated['campaign_id'])) {
+            $validated['campaign_id'] = \App\Models\Campaign::where('viticulturist_id', $user->id)
+                ->where('active', true)->value('id');
+        }
+
         $record = \App\Models\FertilizationPlan::create([...$validated, 'viticulturist_id' => $user->id, 'status' => $validated['status'] ?? 'draft', 'active' => true]);
 
         return response()->json([

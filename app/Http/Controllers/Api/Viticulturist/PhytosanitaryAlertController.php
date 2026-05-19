@@ -64,9 +64,9 @@ class PhytosanitaryAlertController extends Controller
 
         $validated = $request->validate([
             'title'       => 'required|string|max:255',
-            'source'      => 'nullable|string|max:100',
-            'alert_type'  => 'nullable|string|max:100',
-            'severity'    => 'nullable|string|max:50',
+            'source'      => 'required|string|max:100',
+            'alert_type'  => 'required|string|max:100',
+            'severity'    => 'required|string|max:50',
             'description' => 'nullable|string|max:2000',
             'alert_date'  => 'required|date',
             'expiry_date' => 'nullable|date|after_or_equal:alert_date',
