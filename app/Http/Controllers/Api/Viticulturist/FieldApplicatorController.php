@@ -62,7 +62,7 @@ class FieldApplicatorController extends Controller
         $validated = $request->validate([
             'campaign_id'       => 'nullable|integer|exists:campaigns,id',
             'name'              => 'required|string|max:255',
-            'ropo_number'       => 'nullable|string|max:50',
+            'ropo_number'       => 'required|string|max:30',
             'ropo_category'     => 'nullable|string|max:50',
             'ropo_expiry_date'  => 'nullable|date',
             'is_advisor'        => 'nullable|boolean',

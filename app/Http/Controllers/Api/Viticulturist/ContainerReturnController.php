@@ -72,7 +72,7 @@ class ContainerReturnController extends Controller
             'containers_quantity'      => 'required|integer|min:1',
             'total_weight_kg'          => 'nullable|numeric|min:0',
             'collection_system'        => 'nullable|string|in:sigfito,field,other',
-            'collection_point'         => 'nullable|string|max:255',
+            'collection_point'         => 'required|string|max:255',
             'transport_document'       => 'nullable|string|max:100',
             'notes'                    => 'nullable|string|max:2000',
         ]);

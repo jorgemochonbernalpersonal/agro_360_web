@@ -59,7 +59,7 @@ class SoilAnalysisController extends Controller
         abort_unless($user->hasViticulturistAccess(), 403);
 
         $validated = $request->validate([
-            'plot_id'         => 'nullable|integer|exists:plots,id',
+            'plot_id'         => 'required|integer|exists:plots,id',
             'campaign_id'     => 'nullable|integer|exists:campaigns,id',
             'analysis_date'   => 'required|date',
             'laboratory'      => 'required|string|max:255',
@@ -69,9 +69,7 @@ class SoilAnalysisController extends Controller
             'notes'           => 'nullable|string|max:2000',
         ]);
 
-        if (isset($validated['plot_id'])) {
-            \App\Models\Plot::where('user_id', $user->id)->findOrFail($validated['plot_id']);
-        }
+        \App\Models\Plot::where('user_id', $user->id)->findOrFail($validated['plot_id']);
 
         $record = \App\Models\SoilAnalysis::create([...$validated, 'viticulturist_id' => $user->id]);
         $record->load(['plot']);

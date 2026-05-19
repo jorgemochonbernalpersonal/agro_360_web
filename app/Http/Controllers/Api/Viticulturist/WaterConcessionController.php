@@ -58,10 +58,10 @@ class WaterConcessionController extends Controller
             'campaign_id'        => 'nullable|integer|exists:campaigns,id',
             'concession_type'    => 'required|string|max:100',
             'concession_number'  => 'nullable|string|max:100',
-            'water_body'         => 'nullable|string|max:255',
-            'authority'          => 'nullable|string|max:255',
+            'water_body'         => 'required|string|max:255',
+            'authority'          => 'required|string|max:255',
             'expiry_date'        => 'nullable|date',
-            'max_volume_m3'      => 'nullable|numeric|min:0',
+            'max_volume_m3'      => 'required|numeric|min:0',
             'notes'              => 'nullable|string|max:2000',
         ]);
 
