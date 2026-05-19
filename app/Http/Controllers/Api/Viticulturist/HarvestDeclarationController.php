@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Viticulturist;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\HarvestDeclarationResource;
+use App\Models\Campaign;
 use App\Models\HarvestDeclaration;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -66,6 +67,12 @@ class HarvestDeclarationController extends Controller
             'status'            => 'nullable|string|max:50',
             'notes'             => 'nullable|string|max:2000',
         ]);
+
+        if (empty($validated['campaign_id'])) {
+            $validated['campaign_id'] = Campaign::where('viticulturist_id', $user->id)
+                ->where('active', true)
+                ->value('id');
+        }
 
         $record = \App\Models\HarvestDeclaration::create([...$validated, 'viticulturist_id' => $user->id, 'status' => $validated['status'] ?? 'draft', 'active' => true]);
 

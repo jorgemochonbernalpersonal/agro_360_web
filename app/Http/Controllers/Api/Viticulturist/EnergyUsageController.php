@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Viticulturist;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\EnergyUsageResource;
+use App\Models\Campaign;
 use App\Models\EnergyUsage;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -71,6 +72,12 @@ class EnergyUsageController extends Controller
             'usage_description' => 'nullable|string|max:500',
             'notes'             => 'nullable|string|max:2000',
         ]);
+
+        if (empty($validated['campaign_id'])) {
+            $validated['campaign_id'] = Campaign::where('viticulturist_id', $user->id)
+                ->where('active', true)
+                ->value('id');
+        }
 
         $record = \App\Models\EnergyUsage::create([...$validated, 'viticulturist_id' => $user->id, 'active' => true]);
 
