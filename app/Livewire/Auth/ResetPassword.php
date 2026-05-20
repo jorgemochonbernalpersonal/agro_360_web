@@ -128,7 +128,7 @@ class ResetPassword extends Component
                 return redirect()->route('password.reset.mobile-success');
             }
             $this->toastSuccess('Tu contraseña ha sido restablecida correctamente. Ya puedes iniciar sesión.');
-            return $this->redirect(route('login'), navigate: true);
+            return $this->redirect(route('login') . '?reset_email=' . urlencode($this->email), navigate: true);
         } else {
             throw ValidationException::withMessages([
                 'email' => 'El enlace de restablecimiento no es válido o ha expirado. Por favor, solicita uno nuevo.',

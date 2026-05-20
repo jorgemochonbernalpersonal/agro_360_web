@@ -44,8 +44,20 @@ class GoogleAuthController extends Controller
             $user = User::where('email', strtolower($googleUser->getEmail()))->first();
 
             if ($user) {
-                // Link Google to existing account
-                $user->update(['google_id' => $googleUser->getId()]);
+                // Si es un ghost (can_login=false), activarlo — Google ya verificó el email
+                if (! $user->can_login) {
+                    $user->update([
+                        'google_id'         => $googleUser->getId(),
+                        'can_login'         => true,
+                        'email_verified_at' => $user->email_verified_at ?? now(),
+                        'invitation_token'      => null,
+                        'invitation_expires_at' => null,
+                        'invitation_sent_at'    => null,
+                    ]);
+                } else {
+                    // Link Google to existing active account
+                    $user->update(['google_id' => $googleUser->getId()]);
+                }
             }
         }
 
@@ -61,7 +73,7 @@ class GoogleAuthController extends Controller
             ]);
         }
 
-        // Guard: account must be active
+        // Guard: account must be active (shouldn't happen after ghost activation above)
         if (! $user->can_login) {
             SecurityLogger::logSecurityEvent('google_login_blocked_can_login', [
                 'user_id' => $user->id,

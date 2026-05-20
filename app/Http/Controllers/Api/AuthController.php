@@ -94,16 +94,17 @@ class AuthController extends Controller
             return response()->json(['message' => 'Cuenta desactivada. Contacta con soporte.'], 403);
         }
 
-        if (! $user->hasVerifiedEmail()) {
+        // Permitir login sin verificación si fue creado por otro usuario (bodega, supervisor)
+        // Consistente con el flujo web (Login.php)
+        if (! $user->hasVerifiedEmail() && ! $user->wasCreatedByAnotherUser()) {
             return response()->json([
                 'message'          => 'Verifica tu email para continuar.',
                 'email_unverified' => true,
             ], 403);
         }
 
-        // Login exitoso → guardar contador antes de limpiar
+        // Login exitoso → loguear intentos fallidos previos y luego limpiar
         $failedAttempts = RateLimiter::attempts($throttleKey);
-        RateLimiter::clear($throttleKey);
 
         if ($failedAttempts > 0) {
             SecurityLogger::logSuccessfulLoginAfterFailures(
@@ -112,6 +113,8 @@ class AuthController extends Controller
                 $failedAttempts
             );
         }
+
+        RateLimiter::clear($throttleKey);
 
         // Beta expirada sin acceso básico gratuito → bloquear login
         if ($user->betaExpired() && !$user->hasBasicFreeAccess()) {
@@ -182,16 +185,24 @@ class AuthController extends Controller
             return response()->json(['message' => 'Este email ya está registrado.'], 422);
         }
 
+        // Solo auto-verificar si el email no cambió respecto al ghost
+        $emailMatches = strtolower($user->email) === strtolower($validated['email']);
+
         $user->update([
             'name'                  => $validated['name'],
             'email'                 => $validated['email'],
             'password'              => Hash::make($validated['password']),
             'can_login'             => true,
-            'email_verified_at'     => now(),
+            'email_verified_at'     => $emailMatches ? ($user->email_verified_at ?? now()) : null,
             'invitation_token'      => null,
             'invitation_expires_at' => null,
             'invitation_sent_at'    => null,
         ]);
+
+        // Si el email cambió, enviar verificación
+        if (!$emailMatches) {
+            $user->fresh()->notify(new \App\Notifications\MobileVerifyEmailNotification());
+        }
 
         $device = $validated['device_name'] ?? 'mobile';
         $token  = $user->fresh()->createToken($device, [$user->role], $this->tokenExpiresAt())->plainTextToken;

@@ -33,19 +33,49 @@ class WelcomeToAgro365 extends Notification implements ShouldQueue
      */
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage)
-            ->subject('¡Bienvenido a Agro365! 🌱')
-            ->greeting("¡Hola {$notifiable->name}!")
-            ->line('Bienvenido a Agro365, tu cuaderno de campo digital profesional.')
-            ->line('**¿Qué puedes hacer en Agro365?**')
-            ->line('✅ Gestionar tus parcelas y plantaciones')
-            ->line('✅ Registrar actividades agrícolas (fitosanitarios, riegos, cosechas...)')
-            ->line('✅ Generar informes oficiales con firma digital')
-            ->line('✅ Monitorear la salud de tus viñedos con teledetección')
-            ->line('✅ Controlar el stock de productos y maquinaria')
-            ->action('Ir al Dashboard', AppLink::url(url('/dashboard'), 'agro365://home'))
-            ->line('Si necesitas ayuda, no dudes en contactarnos en info@agro365.es')
-            ->line('¡Comienza hoy tu gestión agrícola digital!');
+        $isWinery   = $notifiable->hasWineryAccess();
+        $isProducer = $notifiable->role === 'producer';
+
+        $dashboardPath = match (true) {
+            $isWinery   => '/winery/dashboard',
+            $isProducer => '/producer/dashboard',
+            default     => '/viticulturist/dashboard',
+        };
+
+        $dashboardUrl = AppLink::url(url($dashboardPath), 'agro365://home');
+
+        $nextSteps = $isWinery
+            ? [
+                '1. Accede al dashboard y revisa el panel de control',
+                '2. Da de alta a tus viticultores para que registren sus parcelas',
+                '3. Configura tu primera campana de vendimia',
+            ]
+            : [
+                '1. Accede al dashboard y familiarízate con el panel',
+                '2. Registra tus parcelas y plantaciones',
+                '3. Empieza a anotar actividades en el cuaderno de campo',
+            ];
+
+        $message = (new MailMessage)
+            ->subject('Tu cuenta de Agro365 ya está activa')
+            ->greeting("Hola {$notifiable->name},")
+            ->line('Tu email ha sido verificado y tu cuenta está completamente activa.')
+            ->line('Tienes **3 meses de acceso completo gratuito** para explorar todas las funcionalidades.')
+            ->line('**Primeros pasos recomendados:**');
+
+        foreach ($nextSteps as $step) {
+            $message->line($step);
+        }
+
+        return $message
+            ->action('Ir al Dashboard', $dashboardUrl)
+            ->line('---')
+            ->line('**Tus datos de acceso:**')
+            ->line("Email: **{$notifiable->email}**")
+            ->line('Contraseña: la que elegiste al registrarte.')
+            ->line('Si no la recuerdas, usa "¿Olvidaste tu contraseña?" en la pantalla de inicio de sesión.')
+            ->line('Si necesitas ayuda, contáctanos en info@agro365.es')
+            ->salutation('Saludos, El equipo de Agro365');
     }
 
     /**

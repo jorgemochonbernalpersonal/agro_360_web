@@ -48,6 +48,8 @@ class ViticulturistInvitationNotification extends Notification implements Should
             ->line('Ya tienes tus parcelas y plantaciones configuradas. Solo necesitas activar tu cuenta para acceder al cuaderno de campo digital.')
             ->line('El enlace de activación es válido — úsalo para elegir tu contraseña:')
             ->action('Activar mi cuenta', AppLink::url($webUrl, $deepUrl))
+            ->line('---')
+            ->line('**Para volver a entrar después:** ve a agro365.es, haz clic en "Iniciar sesión" y usa tu email con la contraseña que elijas ahora. Si no la recuerdas, usa "¿Olvidaste tu contraseña?".')
             ->line('Si no esperabas esta invitación, puedes ignorar este correo.')
             ->salutation("Saludos,\nAgro365");
     }

@@ -38,8 +38,8 @@ Route::get('/email/verify/{id}/{hash}', function (Request $request, string $id, 
         return redirect()->route('verification.verified');
     }
 
-    // Web sin sesión (incógnito / otro dispositivo) → login (ya está verificado)
-    return redirect()->route('login');
+    // Web sin sesión (incógnito / otro dispositivo) → login con email pre-rellenado
+    return redirect()->route('login')->with('verified_email', $user->email);
 })->middleware(['signed'])->name('verification.verify');
 
 // ─── Google OAuth ─────────────────────────────────────────────────────────────

@@ -90,6 +90,31 @@
             @endif
         @endif
 
+        @if(auth()->check() && !auth()->user()->hasVerifiedEmail() && !auth()->user()->isAdmin())
+            <div
+                x-data="{ open: true }"
+                x-show="open"
+                x-cloak
+                class="px-4 py-2.5 bg-amber-50 border-b border-amber-200 text-amber-800 flex items-center gap-3 text-sm"
+            >
+                <flux:icon icon="envelope" class="size-4 flex-shrink-0" />
+                <div class="flex-1 min-w-0">
+                    <span class="font-semibold">Verifica tu email</span>
+                    — Hemos enviado un enlace a <strong>{{ auth()->user()->email }}</strong>.
+                    Haz clic en él para activar tu cuenta completamente.
+                </div>
+                <form method="POST" action="{{ route('verification.send') }}" class="flex-shrink-0">
+                    @csrf
+                    <button type="submit" class="text-amber-700 hover:text-amber-900 underline font-medium text-xs">
+                        Reenviar email
+                    </button>
+                </form>
+                <button @click="open = false" class="text-amber-600 hover:text-amber-900 flex-shrink-0 ml-1">
+                    <flux:icon icon="x-mark" class="size-4" />
+                </button>
+            </div>
+        @endif
+
         @if(session('impersonating'))
             @php
                 $startedAt = session('impersonation_started_at');

@@ -24,6 +24,7 @@ class Register extends Component
     public $role = 'viticulturist'; // Por defecto
     public $winery_id = ''; // Si lo crea un winery
     public $supervisor_id = ''; // Si lo crea un supervisor
+    public $honeypot = ''; // Honeypot anti-bots
 
     public function mount()
     {
@@ -128,20 +129,27 @@ class Register extends Component
             if ($existing) {
                 // Activar viticultor que fue creado previamente sin acceso (can_login = false)
                 if ($existing->role === User::ROLE_VITICULTURIST && $existing->can_login === false) {
-                    // El email ya fue verificado implícitamente: la bodega envió la invitación
-                    // a este correo y el viticultor lo recibió (de lo contrario no sabría que
-                    // tiene una cuenta pre-creada). Marcamos email_verified_at automáticamente.
+                    // Solo auto-verificar si el email del registro coincide con el del ghost.
+                    // Si coincide, la bodega envió la invitación a este correo y el viticultor
+                    // lo recibió → verificación implícita. Si no coincide, debe verificar.
+                    $ghostEmailMatches = strtolower($existing->email) === strtolower($this->email);
+
                     $existing->update([
                         'name'                  => $this->name,
                         'password'              => Hash::make($this->password),
                         'can_login'             => true,
                         'password_must_reset'   => false,
-                        'email_verified_at'     => $existing->email_verified_at ?? now(),
+                        'email_verified_at'     => $ghostEmailMatches ? ($existing->email_verified_at ?? now()) : null,
                         'dni'                   => $normalizedDni ?? $existing->dni,
                         'invitation_token'      => null,
                         'invitation_expires_at' => null,
                         'invitation_sent_at'    => null,
                     ]);
+
+                    // Si el email no coincide con el ghost, enviar verificación
+                    if (!$ghostEmailMatches) {
+                        $existing->fresh()->sendEmailVerificationNotification();
+                    }
 
                     Auth::login($existing->fresh());
                     session()->regenerate();
@@ -309,15 +317,15 @@ class Register extends Component
         // Para registro público: enviar email de verificación
         // El beta de 3 meses se activa automáticamente al confirmar el email (evento Verified)
         $user->sendEmailVerificationNotification();
-        
+
         // Viticultor independiente: NO crear WineryViticulturist con winery_id=null.
         // El registro se crea solo cuando una bodega real lo vincula.
-        
+
         Auth::login($user);
         session()->regenerate();
-        $this->toastSuccess('Registro exitoso. Por favor, verifica tu email antes de continuar.');
+        $this->toastSuccess('¡Bienvenido a Agro365! Revisa tu email para verificar tu cuenta.');
 
-        return $this->redirect(route('verification.notice'), navigate: true);
+        return $this->redirect(route($this->getDashboardRoute()), navigate: true);
     }
 
     protected function getDashboardRoute(): string
@@ -376,19 +384,30 @@ class Register extends Component
             return 'email_taken';
         }
 
+        // Solo auto-verificar si el email del registro coincide con el del ghost.
+        // Si es diferente, el usuario debe verificar su nuevo email.
+        $emailMatches = strtolower($ghost->email) === strtolower($email);
+
         $ghost->update([
             'name'                  => $this->name,
             'email'                 => $email,
             'password'              => Hash::make($this->password),
             'can_login'             => true,
             'password_must_reset'   => false,
-            'email_verified_at'     => now(),
+            'email_verified_at'     => $emailMatches ? ($ghost->email_verified_at ?? now()) : null,
             'invitation_token'      => null,
             'invitation_expires_at' => null,
             'invitation_sent_at'    => null,
         ]);
 
-        Auth::login($ghost->fresh());
+        $freshGhost = $ghost->fresh();
+
+        // Si el email cambió, enviar verificación
+        if (!$emailMatches) {
+            $freshGhost->sendEmailVerificationNotification();
+        }
+
+        Auth::login($freshGhost);
         session()->regenerate();
 
         $this->toastSuccess('¡Cuenta vinculada! Tu bodega ya tenía tus datos registrados. Bienvenido a Agro365.');

@@ -2,6 +2,7 @@
 
 namespace App\Listeners;
 
+use App\Notifications\WelcomeToAgro365;
 use Illuminate\Auth\Events\Verified;
 
 class GrantBetaAccessOnVerification
@@ -14,5 +15,8 @@ class GrantBetaAccessOnVerification
         if (!$user->isBetaUser()) {
             $user->grantBetaAccess();
         }
+
+        // Enviar email de bienvenida tras verificación
+        $user->notify(new WelcomeToAgro365());
     }
 }

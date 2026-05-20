@@ -47,13 +47,15 @@ class TemporaryPasswordNotification extends Notification
         }
         
         $mail = (new MailMessage)
-                    ->subject('Bienvenido a Agro365 - Credenciales de Acceso')
+                    ->subject('Bienvenido a Agro365 — Credenciales de Acceso')
                     ->greeting('¡Bienvenido a Agro365!')
                     ->line('Se ha creado una cuenta para ti en Agro365.')
                     ->line('Adjunto encontrarás un PDF con tus credenciales de acceso.')
                     ->line('Por motivos de seguridad, **deberás cambiar tu contraseña** al iniciar sesión por primera vez.')
                     ->action('Iniciar Sesión', $loginUrl)
-                    ->line('Si no solicitaste esta cuenta, por favor contacta con el administrador.');
+                    ->line('---')
+                    ->line('**Para volver a entrar después:** ve a agro365.es, haz clic en "Iniciar sesión" y usa tu email con la nueva contraseña que elijas. Si no la recuerdas, usa "¿Olvidaste tu contraseña?".')
+                    ->line('Si no solicitaste esta cuenta, por favor contacta con quien te dio de alta.');
         
         // Adjuntar PDF si existe
         if ($this->pdfPath && file_exists($this->pdfPath)) {

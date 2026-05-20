@@ -13,7 +13,7 @@ class Login extends Component
 {
     public $email = '';
     public $password = '';
-    public $remember = false;
+    public $remember = true;
     public $recaptchaToken = '';  // Token de reCAPTCHA
     public $showCaptcha = false;  // Control para mostrar CAPTCHA
     public $honeypot = '';  // Honeypot anti-bots
@@ -22,6 +22,15 @@ class Login extends Component
         'email' => 'required|email',
         'password' => 'required',
     ];
+
+    public function mount(): void
+    {
+        if (session('verified_email')) {
+            $this->email = session('verified_email');
+        } elseif (request()->query('reset_email')) {
+            $this->email = urldecode(request()->query('reset_email'));
+        }
+    }
 
     public function login()
     {
@@ -124,7 +133,7 @@ class Login extends Component
         }
 
         // Bloquear acceso si la cuenta no está activada para iniciar sesión
-        if (property_exists($user, 'can_login') && $user->can_login === false) {
+        if ($user->can_login === false) {
             Auth::logout();
             session()->invalidate();
             session()->regenerateToken();
@@ -169,29 +178,33 @@ class Login extends Component
     protected function validateRecaptcha(string $token): bool
     {
         $secretKey = config('services.recaptcha.secret_key');
-        
+
         if (empty($secretKey)) {
-            // Si no está configurado, permitir login (útil en desarrollo)
+            // Solo permitir sin CAPTCHA en desarrollo/test
+            if (app()->environment('production')) {
+                \Log::error('reCAPTCHA secret_key no configurado en producción');
+                return false;
+            }
             return true;
         }
-        
+
         try {
-            $response = \Illuminate\Support\Facades\Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+            $response = \Illuminate\Support\Facades\Http::timeout(5)->asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
                 'secret' => $secretKey,
                 'response' => $token,
                 'remoteip' => request()->ip(),
             ]);
-            
+
             $result = $response->json();
-            
+
             return isset($result['success']) && $result['success'] === true;
         } catch (\Exception $e) {
-            // En caso de error de conexión, permitir login (fail open)
             \Log::warning('reCAPTCHA validation failed', [
                 'error' => $e->getMessage(),
                 'ip' => request()->ip(),
             ]);
-            return true;
+            // Fail closed en producción, fail open en desarrollo
+            return !app()->environment('production');
         }
     }
 
