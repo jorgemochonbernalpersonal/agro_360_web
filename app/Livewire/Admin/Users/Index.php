@@ -347,41 +347,10 @@ class Index extends Component
         $this->toastSuccess($message);
     }
 
-    // ─── Export ───────────────────────────────────────────────────────────────
+    // ─── Filtered query (shared by render + export) ───────────────────────────
 
-    public function exportCsv()
+    private function buildFilteredQuery()
     {
-        $users    = User::excludeDemo()->orderBy('created_at', 'desc')->get();
-        $filename = 'usuarios_' . now()->format('Y-m-d_H-i-s') . '.csv';
-
-        return response()->streamDownload(function () use ($users) {
-            $handle = fopen('php://output', 'w');
-            fputs($handle, "\xEF\xBB\xBF"); // UTF-8 BOM for Excel
-            fputcsv($handle, ['ID', 'Nombre', 'Email', 'Rol', 'Estado', 'Email Verificado', 'Beta', 'Fin Beta', 'Registro']);
-
-            foreach ($users as $user) {
-                fputcsv($handle, [
-                    $user->id,
-                    $user->name,
-                    $user->email,
-                    $user->role,
-                    $user->can_login ? 'Activo' : 'Inactivo',
-                    $user->email_verified_at ? 'Sí' : 'No',
-                    $user->is_beta_user ? 'Sí' : 'No',
-                    $user->beta_ends_at ? $user->beta_ends_at->format('d/m/Y') : '',
-                    $user->created_at->format('d/m/Y H:i'),
-                ]);
-            }
-
-            fclose($handle);
-        }, $filename, ['Content-Type' => 'text/csv; charset=UTF-8']);
-    }
-
-    // ─── Render ───────────────────────────────────────────────────────────────
-
-    public function render()
-    {
-        // Listado: incluye internos sólo cuando el toggle está activo
         $query = $this->showInternal ? User::query() : User::excludeDemo();
 
         if ($this->currentTab !== 'all') {
@@ -430,7 +399,54 @@ class Index extends Component
             $query->whereDate('created_at', '<=', $this->filterDateTo);
         }
 
-        $users = $query->orderBy('created_at', 'desc')->paginate(20);
+        return $query;
+    }
+
+    // ─── Export ───────────────────────────────────────────────────────────────
+
+    public function exportCsv()
+    {
+        $activeFilters = array_filter([
+            $this->currentTab !== 'all' ? $this->currentTab : null,
+            $this->search,
+            $this->filterActive,
+            $this->filterVerified,
+            $this->filterBeta,
+            $this->filterDateFrom,
+            $this->filterDateTo,
+        ]);
+
+        $users    = $this->buildFilteredQuery()->orderBy('created_at', 'desc')->get();
+        $filename = 'usuarios_' . now()->format('Y-m-d_H-i-s') . '.csv';
+
+        return response()->streamDownload(function () use ($users) {
+            $handle = fopen('php://output', 'w');
+            fputs($handle, "\xEF\xBB\xBF"); // UTF-8 BOM for Excel
+            fputcsv($handle, ['ID', 'Nombre', 'Email', 'Rol', 'Estado', 'Email Verificado', 'Beta', 'Fin Beta', 'Registro']);
+
+            foreach ($users as $user) {
+                fputcsv($handle, [
+                    $user->id,
+                    $user->name,
+                    $user->email,
+                    $user->role,
+                    $user->can_login ? 'Activo' : 'Inactivo',
+                    $user->email_verified_at ? 'Sí' : 'No',
+                    $user->is_beta_user ? 'Sí' : 'No',
+                    $user->beta_ends_at ? $user->beta_ends_at->format('d/m/Y') : '',
+                    $user->created_at->format('d/m/Y H:i'),
+                ]);
+            }
+
+            fclose($handle);
+        }, $filename, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
+    // ─── Render ───────────────────────────────────────────────────────────────
+
+    public function render()
+    {
+        $users = $this->buildFilteredQuery()->orderBy('created_at', 'desc')->paginate(20);
 
         // Stats: siempre sobre usuarios reales (excluye internos), query única optimizada
         $raw = User::excludeDemo()

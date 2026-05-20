@@ -137,6 +137,26 @@
 
                     <x-agro.table-cell>
                         <span class="text-sm text-zinc-500">{{ $ticket->created_at->diffForHumans() }}</span>
+                        @if(in_array($ticket->status, ['open', 'in_progress']))
+                            @php
+                                $slaHours = match($ticket->priority) {
+                                    'critical' => 24,
+                                    'high'     => 72,
+                                    'medium'   => 168,
+                                    'low'      => 336,
+                                    default    => 168,
+                                };
+                                $ageHours    = $ticket->created_at->diffInHours(now());
+                                $slaBreached = $ageHours > $slaHours;
+                                $slaWarning  = !$slaBreached && ($ageHours / $slaHours) >= 0.75;
+                                $overDays    = (int) ceil(($ageHours - $slaHours) / 24);
+                            @endphp
+                            @if($slaBreached)
+                                <flux:badge color="red" size="sm">SLA +{{ $overDays }}d</flux:badge>
+                            @elseif($slaWarning)
+                                <flux:badge color="yellow" size="sm">SLA riesgo</flux:badge>
+                            @endif
+                        @endif
                     </x-agro.table-cell>
 
                     <x-agro.table-cell align="right">

@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\SecurityLog;
 
 use App\Models\SecurityEvent;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -16,6 +17,7 @@ class Index extends Component
     public string $filterLevel    = '';
     public string $filterEvent    = '';
     public string $search         = '';
+    public bool   $showInternal   = false;
 
     protected $queryString = [
         'filterDateFrom' => ['except' => '', 'as' => 'from'],
@@ -23,6 +25,7 @@ class Index extends Component
         'filterLevel'    => ['except' => ''],
         'filterEvent'    => ['except' => ''],
         'search'         => ['except' => ''],
+        'showInternal'   => ['except' => false, 'as' => 'internal'],
     ];
 
     public function mount(): void
@@ -36,6 +39,13 @@ class Index extends Component
     public function updatingFilterDateTo()   { $this->resetPage(); }
     public function updatingFilterLevel()    { $this->resetPage(); }
     public function updatingFilterEvent()    { $this->resetPage(); }
+    public function updatingShowInternal()   { $this->resetPage(); }
+
+    public function toggleInternal(): void
+    {
+        $this->showInternal = !$this->showInternal;
+        $this->resetPage();
+    }
 
     public function resetFilters(): void
     {
@@ -44,12 +54,22 @@ class Index extends Component
         $this->filterLevel    = '';
         $this->filterEvent    = '';
         $this->search         = '';
+        $this->showInternal   = false;
         $this->resetPage();
     }
 
     private function baseQuery()
     {
         $query = SecurityEvent::query();
+
+        if (!$this->showInternal) {
+            foreach (User::INTERNAL_EMAIL_PATTERNS as $pattern) {
+                $query->where(function ($q) use ($pattern) {
+                    $q->whereNull('email')
+                      ->orWhere('email', 'not like', "%{$pattern}%");
+                });
+            }
+        }
 
         if ($this->filterDateFrom) {
             $query->whereDate('created_at', '>=', $this->filterDateFrom);

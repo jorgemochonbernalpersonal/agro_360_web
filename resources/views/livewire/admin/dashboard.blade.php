@@ -213,6 +213,73 @@
         </div>
     </div>
 
+    {{-- Registros últimos 14 días --}}
+    @if(!empty($registrationsChart))
+    <div>
+        <h2 class="text-sm font-semibold text-zinc-500 uppercase tracking-wider mb-3">Nuevos registros — últimos 14 días</h2>
+        <x-agro.card>
+            @php
+                $maxReg = max(array_column($registrationsChart, 'count') ?: [0]);
+                $maxReg = max($maxReg, 1);
+                $totalReg = array_sum(array_column($registrationsChart, 'count'));
+            @endphp
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs text-zinc-400">{{ $totalReg }} registro(s) en el periodo</span>
+                <span class="text-xs text-zinc-400">Máx: {{ $maxReg }}/día</span>
+            </div>
+            <div class="flex items-end gap-1 h-12">
+                @foreach($registrationsChart as $day)
+                    @php
+                        $barH = $day['count'] > 0 ? max(3, (int) round(($day['count'] / $maxReg) * 48)) : 0;
+                    @endphp
+                    <div class="flex-1 flex flex-col items-center gap-0.5 group cursor-default">
+                        <div
+                            class="w-full bg-agro-500 rounded-sm opacity-75 group-hover:opacity-100 transition-opacity"
+                            style="height: {{ $barH }}px"
+                            title="{{ $day['label'] }}: {{ $day['count'] }}"
+                        ></div>
+                    </div>
+                @endforeach
+            </div>
+            <div class="flex mt-1">
+                @foreach($registrationsChart as $i => $day)
+                    <div class="flex-1 text-center">
+                        @if($i % 7 === 0)
+                            <span class="text-[9px] text-zinc-400">{{ $day['label'] }}</span>
+                        @endif
+                    </div>
+                @endforeach
+            </div>
+        </x-agro.card>
+    </div>
+    @endif
+
+    {{-- Funnel de activación --}}
+    @if(!empty($activationFunnel))
+    <div>
+        <h2 class="text-sm font-semibold text-zinc-500 uppercase tracking-wider mb-3">Funnel de activación</h2>
+        <x-agro.card>
+            <div class="space-y-3">
+                @foreach($activationFunnel as $i => $step)
+                    @php
+                        $colors = ['bg-purple-500', 'bg-blue-500', 'bg-agro-500', 'bg-orange-500', 'bg-teal-500'];
+                        $color  = $colors[$i] ?? 'bg-zinc-400';
+                    @endphp
+                    <div>
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-xs text-zinc-600">{{ $step['label'] }}</span>
+                            <span class="text-xs font-semibold text-zinc-900">{{ $step['count'] }} <span class="font-normal text-zinc-400">({{ $step['pct'] }}%)</span></span>
+                        </div>
+                        <div class="h-1.5 bg-zinc-100 rounded-full overflow-hidden">
+                            <div class="h-full {{ $color }} rounded-full transition-all duration-500" style="width: {{ $step['pct'] }}%"></div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </x-agro.card>
+    </div>
+    @endif
+
     {{-- Alertas de seguridad + parcelas huérfanas --}}
     @if($suspiciousUsers->count() > 0 || $orphanedPlots > 0)
     <div class="space-y-3">
@@ -372,6 +439,19 @@
                         <p class="text-xs text-zinc-500 truncate">Pagos y planes</p>
                     </div>
                     <flux:icon icon="chevron-right" class="size-4 text-zinc-300 ml-auto group-hover:text-green-400 transition-colors" />
+                </a>
+            </x-agro.card>
+
+            <x-agro.card class="hover-lift transition-all duration-200">
+                <a href="{{ route('admin.failed-jobs.index') }}" class="flex items-center gap-4 group">
+                    <div class="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center flex-shrink-0 group-hover:bg-red-100 transition-colors">
+                        <flux:icon icon="x-circle" class="size-5 text-red-600" />
+                    </div>
+                    <div class="min-w-0">
+                        <p class="font-semibold text-zinc-900 group-hover:text-red-600 transition-colors text-sm">Jobs Fallidos</p>
+                        <p class="text-xs text-zinc-500 truncate">Cola de trabajos</p>
+                    </div>
+                    <flux:icon icon="chevron-right" class="size-4 text-zinc-300 ml-auto group-hover:text-red-400 transition-colors" />
                 </a>
             </x-agro.card>
         </div>

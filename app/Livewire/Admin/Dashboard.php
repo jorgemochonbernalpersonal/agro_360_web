@@ -223,6 +223,74 @@ class Dashboard extends Component
         ];
     }
 
+    private function buildRegistrationsChart(): array
+    {
+        try {
+            $query = DB::table('users')
+                ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
+                ->where('created_at', '>=', now()->subDays(13)->startOfDay());
+
+            foreach (User::INTERNAL_EMAIL_PATTERNS as $p) {
+                $query->where('email', 'not like', "%{$p}%");
+            }
+            foreach (User::INTERNAL_NAME_PATTERNS as $p) {
+                $query->where('name', 'not like', "%{$p}%");
+            }
+
+            $raw = $query->groupBy('date')->get()->keyBy('date');
+
+            $chart = [];
+            for ($i = 13; $i >= 0; $i--) {
+                $date    = now()->subDays($i)->format('Y-m-d');
+                $chart[] = [
+                    'label' => now()->subDays($i)->format('d/m'),
+                    'count' => (int) ($raw[$date]->count ?? 0),
+                ];
+            }
+
+            return $chart;
+        } catch (\Throwable) {
+            return [];
+        }
+    }
+
+    private function buildActivationFunnel(): array
+    {
+        try {
+            $base = DB::table('users');
+            foreach (User::INTERNAL_EMAIL_PATTERNS as $p) {
+                $base->where('email', 'not like', "%{$p}%");
+            }
+            foreach (User::INTERNAL_NAME_PATTERNS as $p) {
+                $base->where('name', 'not like', "%{$p}%");
+            }
+
+            $total    = (clone $base)->count();
+            $verified = (clone $base)->whereNotNull('email_verified_at')->count();
+            $withPlots = (clone $base)
+                ->join('plots', 'plots.viticulturist_id', '=', 'users.id')
+                ->distinct('users.id')
+                ->count('users.id');
+            $withActivities = (clone $base)
+                ->join('agricultural_activities', 'agricultural_activities.viticulturist_id', '=', 'users.id')
+                ->distinct('users.id')
+                ->count('users.id');
+            $active30d = (clone $base)
+                ->where('last_login_at', '>=', now()->subDays(30))
+                ->count();
+
+            return [
+                ['label' => 'Registrados',          'count' => $total,          'pct' => 100],
+                ['label' => 'Email verificado',      'count' => $verified,       'pct' => $total > 0 ? round($verified / $total * 100) : 0],
+                ['label' => 'Primera parcela',       'count' => $withPlots,      'pct' => $total > 0 ? round($withPlots / $total * 100) : 0],
+                ['label' => 'Primera actividad',     'count' => $withActivities, 'pct' => $total > 0 ? round($withActivities / $total * 100) : 0],
+                ['label' => 'Activo últimos 30 días','count' => $active30d,      'pct' => $total > 0 ? round($active30d / $total * 100) : 0],
+            ];
+        } catch (\Throwable) {
+            return [];
+        }
+    }
+
     private function buildSuspiciousUsers(): \Illuminate\Support\Collection
     {
         try {
@@ -267,10 +335,12 @@ class Dashboard extends Component
         });
 
         return view('livewire.admin.dashboard', [
-            'stats'           => $cached['stats'],
-            'cachedAt'        => $cached['cached_at'],
-            'suspiciousUsers' => $this->buildSuspiciousUsers(),
-            'orphanedPlots'   => $this->orphanedPlotsCount(),
+            'stats'               => $cached['stats'],
+            'cachedAt'            => $cached['cached_at'],
+            'suspiciousUsers'     => $this->buildSuspiciousUsers(),
+            'orphanedPlots'       => $this->orphanedPlotsCount(),
+            'registrationsChart'  => $this->buildRegistrationsChart(),
+            'activationFunnel'    => $this->buildActivationFunnel(),
         ])->layout('layouts.app', [
             'title'       => 'Dashboard Administrador - Agro365',
             'description' => 'Panel de control con estadísticas generales del sistema',

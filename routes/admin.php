@@ -55,6 +55,9 @@ Route::middleware(['role:admin'])
             Route::get('/', \App\Livewire\Admin\Organizations\Index::class)->name('index');
         });
 
+        // Jobs fallidos
+        Route::get('/failed-jobs', \App\Livewire\Admin\FailedJobs\Index::class)->name('failed-jobs.index');
+
         // Configuración global
         Route::get('/settings', \App\Livewire\Admin\Settings\Index::class)->name('settings.index');
 
