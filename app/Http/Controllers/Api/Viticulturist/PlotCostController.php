@@ -70,7 +70,7 @@ class PlotCostController extends Controller
         $validated = $request->validate([
             'plot_id'           => 'nullable|integer|exists:plots,id',
             'campaign_id'       => 'nullable|integer|exists:campaigns,id',
-            'category'          => 'required|string|max:100',
+            'category'          => 'required|in:labor,machinery,materials,phytosanitary,fertilizer,water,insurance,transport,subcontracting,other',
             'description'       => 'required|string|max:255',
             'amount'            => 'required|numeric|min:0.01',
             'cost_date'         => 'required|date',

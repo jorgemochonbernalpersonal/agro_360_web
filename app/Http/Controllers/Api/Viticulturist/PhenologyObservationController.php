@@ -62,7 +62,7 @@ class PhenologyObservationController extends Controller
         $validated = $request->validate([
             'plot_planting_id'        => 'required|integer|exists:plot_plantings,id',
             'campaign_id'             => 'nullable|integer|exists:campaigns,id',
-            'event'                   => 'required|string|max:100',
+            'event'                   => 'required|in:budbreak,shoot_growth,flowering,fruit_set,veraison,pre_harvest,harvest',
             'obs_date'                => 'required|date',
             'source'                  => 'nullable|string|in:manual,sensor,model,auto',
             'confidence'              => 'nullable|integer|min:0|max:100',

@@ -56,7 +56,7 @@ class FieldEquipmentController extends Controller
 
         $validated = $request->validate([
             'name'                 => 'required|string|max:255',
-            'equipment_type'       => 'required|string|max:100',
+            'equipment_type'       => 'required|in:sprayer,spreader,irrigation,tractor,harvester,pruner,mower,other',
             'registration_number'  => 'nullable|string|max:100',
             'purchase_date'        => 'nullable|date',
             'next_inspection_date' => 'nullable|date',

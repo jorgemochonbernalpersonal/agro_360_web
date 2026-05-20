@@ -63,7 +63,7 @@ class FieldApplicatorController extends Controller
             'campaign_id'       => 'nullable|integer|exists:campaigns,id',
             'name'              => 'required|string|max:255',
             'ropo_number'       => 'required|string|max:30',
-            'ropo_category'     => 'nullable|string|max:50',
+            'ropo_category'     => 'nullable|in:basic,qualified,fumigator,pilot',
             'ropo_expiry_date'  => 'nullable|date',
             'is_advisor'        => 'nullable|boolean',
             'phone'             => 'nullable|string|max:50',

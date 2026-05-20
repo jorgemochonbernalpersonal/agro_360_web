@@ -70,7 +70,7 @@ class SubcontractingController extends Controller
         $validated = $request->validate([
             'plot_id'        => 'nullable|integer|exists:plots,id',
             'campaign_id'    => 'nullable|integer|exists:campaigns,id',
-            'service_type'   => 'required|string|max:100',
+            'service_type'   => 'required|in:harvesting,pruning,treatment,fertilization,irrigation,soil_work,transport,analysis,other',
             'company_name'   => 'required|string|max:255',
             'service_date'   => 'required|date',
             'amount'         => 'nullable|numeric|min:0',

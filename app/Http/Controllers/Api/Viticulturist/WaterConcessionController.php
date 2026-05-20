@@ -56,7 +56,7 @@ class WaterConcessionController extends Controller
 
         $validated = $request->validate([
             'campaign_id'        => 'nullable|integer|exists:campaigns,id',
-            'concession_type'    => 'required|string|max:100',
+            'concession_type'    => 'required|in:superficial,subterranea,comunidad_regantes,otro',
             'concession_number'  => 'nullable|string|max:100',
             'water_body'         => 'required|string|max:255',
             'authority'          => 'required|string|max:255',

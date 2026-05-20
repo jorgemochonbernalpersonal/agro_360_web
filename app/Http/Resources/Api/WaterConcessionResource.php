@@ -12,7 +12,7 @@ class WaterConcessionResource extends JsonResource
         return [
             'id' => $this->id,
             'campaign_id' => $this->campaign_id,
-            'concession_type' => $this->concession_type,
+            'concession_type' => \App\Models\WaterConcession::CONCESSION_TYPES[$this->concession_type] ?? $this->concession_type,
             'concession_number' => $this->concession_number,
             'water_body' => $this->water_body,
             'authority' => $this->authority,

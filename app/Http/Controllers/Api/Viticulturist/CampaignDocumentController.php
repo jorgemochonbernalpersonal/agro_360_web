@@ -62,7 +62,7 @@ class CampaignDocumentController extends Controller
         $validated = $request->validate([
             'campaign_id'    => 'nullable|integer|exists:campaigns,id',
             'name'           => 'required|string|max:255',
-            'document_type'  => 'required|string|max:100',
+            'document_type'  => 'required|in:invoice,certificate,lab_report,authorization,map,analysis,other',
             'notes'          => 'nullable|string|max:2000',
         ]);
 
