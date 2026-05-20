@@ -71,7 +71,7 @@ class ResidueManagementController extends Controller
         ]);
 
         if (isset($validated['plot_id'])) {
-            \App\Models\Plot::where('user_id', $user->id)->findOrFail($validated['plot_id']);
+            \App\Models\Plot::where('viticulturist_id', $user->id)->findOrFail($validated['plot_id']);
         }
 
         $record = \App\Models\ResidueManagement::create([...$validated, 'viticulturist_id' => $user->id, 'active' => true]);

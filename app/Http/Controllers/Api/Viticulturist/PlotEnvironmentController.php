@@ -60,7 +60,7 @@ class PlotEnvironmentController extends Controller
             'notes'                   => 'nullable|string|max:2000',
         ]);
 
-        \App\Models\Plot::where('user_id', $user->id)->findOrFail($validated['plot_id']);
+        \App\Models\Plot::where('viticulturist_id', $user->id)->findOrFail($validated['plot_id']);
 
         if (empty($validated['campaign_id'])) {
             $validated['campaign_id'] = \App\Models\Campaign::where('viticulturist_id', $user->id)

@@ -161,14 +161,12 @@ class NotebookController extends Controller
 
         $this->updateDetails($activity, $validated);
 
-        // Un único fresh() — evita dos queries de recarga del mismo modelo
         $toLoad = ['plot', 'campaign'];
         $relation = self::DETAIL_RELATIONS[$activity->activity_type] ?? null;
         if ($relation) {
             $toLoad[] = $relation;
         }
         $activity = $activity->fresh($toLoad);
-        $this->loadDetails($activity);
 
         return response()->json(['data' => new ActivityResource($activity)]);
     }

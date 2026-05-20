@@ -69,7 +69,7 @@ class SoilAnalysisController extends Controller
             'notes'           => 'nullable|string|max:2000',
         ]);
 
-        \App\Models\Plot::where('user_id', $user->id)->findOrFail($validated['plot_id']);
+        \App\Models\Plot::where('viticulturist_id', $user->id)->findOrFail($validated['plot_id']);
 
         $record = \App\Models\SoilAnalysis::create([...$validated, 'viticulturist_id' => $user->id]);
         $record->load(['plot']);
