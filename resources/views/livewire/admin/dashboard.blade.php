@@ -335,6 +335,73 @@
     </div>
     @endif
 
+    {{-- Mapa de calor de actividad de campo --}}
+    @if(!empty($activityHeatmap['grid']))
+    <div>
+        <h2 class="text-sm font-semibold text-zinc-500 uppercase tracking-wider mb-3">Actividad de campo — últimas 52 semanas</h2>
+        <x-agro.card>
+            @php
+                $grid = $activityHeatmap['grid'];
+                $max  = $activityHeatmap['max'];
+                $days = ['L','M','X','J','V','S','D'];
+            @endphp
+            <div class="flex gap-0.5 overflow-x-auto pb-1">
+                {{-- Day labels --}}
+                <div class="flex flex-col gap-0.5 mr-1 flex-shrink-0">
+                    @foreach($days as $d)
+                        <div class="h-2.5 w-3 text-[8px] text-zinc-400 leading-none flex items-center">{{ $d }}</div>
+                    @endforeach
+                </div>
+                {{-- Weeks --}}
+                @foreach($grid as $week)
+                    <div class="flex flex-col gap-0.5 flex-shrink-0">
+                        @foreach($week as $day)
+                            @php
+                                $intensity = $day['count'] > 0 ? min(4, (int)ceil(($day['count'] / $max) * 4)) : 0;
+                                $colors = ['bg-zinc-100','bg-agro-200','bg-agro-300','bg-agro-400','bg-agro-600'];
+                            @endphp
+                            <div
+                                class="w-2.5 h-2.5 rounded-[2px] {{ $colors[$intensity] }}"
+                                title="{{ $day['date'] }}: {{ $day['count'] }} actividades"
+                            ></div>
+                        @endforeach
+                    </div>
+                @endforeach
+            </div>
+            <div class="flex items-center gap-1.5 mt-2">
+                <span class="text-[10px] text-zinc-400">Menos</span>
+                @foreach(['bg-zinc-100','bg-agro-200','bg-agro-300','bg-agro-400','bg-agro-600'] as $c)
+                    <div class="w-2.5 h-2.5 rounded-[2px] {{ $c }}"></div>
+                @endforeach
+                <span class="text-[10px] text-zinc-400">Más</span>
+            </div>
+        </x-agro.card>
+    </div>
+    @endif
+
+    {{-- Distribución geográfica --}}
+    @if(!empty($geoDistribution))
+    <div>
+        <h2 class="text-sm font-semibold text-zinc-500 uppercase tracking-wider mb-3">Distribución geográfica — top provincias</h2>
+        <x-agro.card>
+            @php $maxPlots = max(array_column($geoDistribution, 'plots') ?: [1]); @endphp
+            <div class="space-y-2">
+                @foreach($geoDistribution as $row)
+                    <div>
+                        <div class="flex items-center justify-between mb-0.5">
+                            <span class="text-xs text-zinc-700 font-medium">{{ $row->name }}</span>
+                            <span class="text-xs text-zinc-500">{{ $row->plots }} parcelas · {{ number_format($row->area, 1) }} ha</span>
+                        </div>
+                        <div class="h-1.5 bg-zinc-100 rounded-full overflow-hidden">
+                            <div class="h-full bg-agro-500 rounded-full" style="width: {{ round($row->plots / $maxPlots * 100) }}%"></div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </x-agro.card>
+    </div>
+    @endif
+
     {{-- Accesos Rápidos --}}
     <div>
         <h2 class="text-sm font-semibold text-zinc-500 uppercase tracking-wider mb-3">Accesos Rápidos</h2>
@@ -452,6 +519,58 @@
                         <p class="text-xs text-zinc-500 truncate">Cola de trabajos</p>
                     </div>
                     <flux:icon icon="chevron-right" class="size-4 text-zinc-300 ml-auto group-hover:text-red-400 transition-colors" />
+                </a>
+            </x-agro.card>
+
+            <x-agro.card class="hover-lift transition-all duration-200">
+                <a href="{{ route('admin.scheduler.index') }}" class="flex items-center gap-4 group">
+                    <div class="w-10 h-10 rounded-lg bg-teal-50 flex items-center justify-center flex-shrink-0 group-hover:bg-teal-100 transition-colors">
+                        <flux:icon icon="clock" class="size-5 text-teal-600" />
+                    </div>
+                    <div class="min-w-0">
+                        <p class="font-semibold text-zinc-900 group-hover:text-teal-600 transition-colors text-sm">Scheduler</p>
+                        <p class="text-xs text-zinc-500 truncate">Tareas programadas</p>
+                    </div>
+                    <flux:icon icon="chevron-right" class="size-4 text-zinc-300 ml-auto group-hover:text-teal-400 transition-colors" />
+                </a>
+            </x-agro.card>
+
+            <x-agro.card class="hover-lift transition-all duration-200">
+                <a href="{{ route('admin.announcements.index') }}" class="flex items-center gap-4 group">
+                    <div class="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center flex-shrink-0 group-hover:bg-amber-100 transition-colors">
+                        <flux:icon icon="megaphone" class="size-5 text-amber-600" />
+                    </div>
+                    <div class="min-w-0">
+                        <p class="font-semibold text-zinc-900 group-hover:text-amber-600 transition-colors text-sm">Anuncios</p>
+                        <p class="text-xs text-zinc-500 truncate">Banners para usuarios</p>
+                    </div>
+                    <flux:icon icon="chevron-right" class="size-4 text-zinc-300 ml-auto group-hover:text-amber-400 transition-colors" />
+                </a>
+            </x-agro.card>
+
+            <x-agro.card class="hover-lift transition-all duration-200">
+                <a href="{{ route('admin.users.duplicates') }}" class="flex items-center gap-4 group">
+                    <div class="w-10 h-10 rounded-lg bg-violet-50 flex items-center justify-center flex-shrink-0 group-hover:bg-violet-100 transition-colors">
+                        <flux:icon icon="user-group" class="size-5 text-violet-600" />
+                    </div>
+                    <div class="min-w-0">
+                        <p class="font-semibold text-zinc-900 group-hover:text-violet-600 transition-colors text-sm">Duplicados</p>
+                        <p class="text-xs text-zinc-500 truncate">Detectar cuentas dobles</p>
+                    </div>
+                    <flux:icon icon="chevron-right" class="size-4 text-zinc-300 ml-auto group-hover:text-violet-400 transition-colors" />
+                </a>
+            </x-agro.card>
+
+            <x-agro.card class="hover-lift transition-all duration-200">
+                <a href="{{ route('admin.users.approvals') }}" class="flex items-center gap-4 group">
+                    <div class="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center flex-shrink-0 group-hover:bg-indigo-100 transition-colors">
+                        <flux:icon icon="user-plus" class="size-5 text-indigo-600" />
+                    </div>
+                    <div class="min-w-0">
+                        <p class="font-semibold text-zinc-900 group-hover:text-indigo-600 transition-colors text-sm">Aprobaciones</p>
+                        <p class="text-xs text-zinc-500 truncate">Activar nuevos registros</p>
+                    </div>
+                    <flux:icon icon="chevron-right" class="size-4 text-zinc-300 ml-auto group-hover:text-indigo-400 transition-colors" />
                 </a>
             </x-agro.card>
         </div>

@@ -123,6 +123,41 @@
     </x-agro.card>
     @endif
 
+    {{-- Revenue por rol --}}
+    @if($revenueByRole->isNotEmpty())
+    <x-agro.card>
+        <x-slot:header>
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 bg-orange-50 rounded-xl flex items-center justify-center">
+                    <flux:icon icon="chart-pie" class="size-5 text-orange-600" />
+                </div>
+                <div>
+                    <h3 class="font-semibold text-zinc-900">Ingresos por rol</h3>
+                    <p class="text-xs text-zinc-400">Facturación total completada desglosada por tipo de cuenta</p>
+                </div>
+            </div>
+        </x-slot:header>
+        @php $maxRoleRevenue = $revenueByRole->max('revenue') ?: 1; $roleLabels = ['viticulturist' => 'Viticultor','winery' => 'Bodega','supervisor' => 'Supervisor','producer' => 'Productor','admin' => 'Admin']; @endphp
+        <div class="space-y-3">
+            @foreach($revenueByRole as $row)
+                @php $pct = round($row->revenue / $maxRoleRevenue * 100); @endphp
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-sm text-zinc-700 font-medium">{{ $roleLabels[$row->role] ?? ucfirst($row->role) }}</span>
+                        <span class="text-sm font-semibold text-zinc-900">
+                            {{ number_format($row->revenue, 2) }} €
+                            <span class="text-xs font-normal text-zinc-400 ml-1">{{ $row->customers }} cliente(s)</span>
+                        </span>
+                    </div>
+                    <div class="h-2 bg-zinc-100 rounded-full overflow-hidden">
+                        <div class="h-full bg-orange-400 rounded-full" style="width: {{ $pct }}%"></div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </x-agro.card>
+    @endif
+
     {{-- Retención por cohorte --}}
     @if($cohortData->count() > 0)
     <x-agro.card>

@@ -324,7 +324,37 @@
 
                     {{-- Añadir Comentario --}}
                     <div>
-                        <p class="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-2">Añadir Comentario</p>
+                        <div class="flex items-center justify-between mb-2">
+                            <p class="text-xs font-semibold text-zinc-500 uppercase tracking-wide">Añadir Comentario</p>
+                            @if($cannedResponses->isNotEmpty())
+                                <div x-data="{ open: false }" class="relative">
+                                    <button @click="open = !open" class="flex items-center gap-1 text-xs text-zinc-500 hover:text-zinc-700 border border-zinc-200 rounded-md px-2 py-1">
+                                        <flux:icon icon="chat-bubble-left-right" class="size-3" />
+                                        Respuestas rápidas
+                                        <flux:icon icon="chevron-down" class="size-3" />
+                                    </button>
+                                    <div x-show="open" @click.outside="open = false" x-transition
+                                         class="absolute right-0 mt-1 w-72 bg-white rounded-xl shadow-lg border border-zinc-200 z-20 overflow-hidden">
+                                        @foreach($cannedResponses->groupBy('category') as $cat => $items)
+                                            @if($cat)
+                                                <div class="px-3 pt-2 pb-1">
+                                                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider">{{ $cat }}</p>
+                                                </div>
+                                            @endif
+                                            @foreach($items as $r)
+                                                <button
+                                                    wire:click="selectCannedResponse({{ $r->id }})"
+                                                    @click="open = false"
+                                                    class="w-full text-left px-3 py-2 hover:bg-zinc-50 text-sm text-zinc-700 transition-colors"
+                                                >
+                                                    {{ $r->title }}
+                                                </button>
+                                            @endforeach
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
                         <flux:textarea
                             wire:model="newComment"
                             rows="3"

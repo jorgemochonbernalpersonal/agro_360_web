@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Users;
 
+use App\Models\AdminNote;
 use App\Models\User;
 use App\Models\Plot;
 use App\Models\Client;
@@ -33,6 +34,7 @@ class Show extends Component
     public $user_id;
     public $stats     = [];
     public $hierarchy = [];
+    public string $newNote = '';
 
     // Edit modal
     public $showEditModal = false;
@@ -512,6 +514,33 @@ class Show extends Component
         ];
     }
 
+    // ─── Admin notes ─────────────────────────────────────────────────────────
+
+    public function addNote(): void
+    {
+        $this->validate(['newNote' => 'required|string|min:3|max:1000'], [
+            'newNote.required' => 'La nota no puede estar vacía.',
+            'newNote.min'      => 'La nota debe tener al menos 3 caracteres.',
+        ]);
+
+        AdminNote::create([
+            'user_id'  => $this->user->id,
+            'admin_id' => Auth::id(),
+            'note'     => $this->newNote,
+        ]);
+
+        $this->newNote = '';
+        $this->toastSuccess('Nota añadida.');
+    }
+
+    public function deleteNote(int $id): void
+    {
+        $note = AdminNote::findOrFail($id);
+        if ($note->user_id !== $this->user->id) return;
+        $note->delete();
+        $this->toastSuccess('Nota eliminada.');
+    }
+
     // ─── User history ─────────────────────────────────────────────────────────
 
     private function loadUserHistory(): \Illuminate\Support\Collection
@@ -550,6 +579,7 @@ class Show extends Component
             'stats'       => $this->stats,
             'hierarchy'   => $this->hierarchy,
             'userHistory' => $this->loadUserHistory(),
+            'adminNotes'  => AdminNote::with('admin:id,name')->where('user_id', $this->user->id)->orderByDesc('created_at')->get(),
         ])->layout('layouts.app', [
             'title'       => $this->user->name . ' - Usuario - Agro365',
             'description' => 'Detalles del usuario ' . $this->user->name . '. Información, estadísticas y actividad.',

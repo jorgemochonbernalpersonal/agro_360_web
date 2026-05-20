@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\Subscriptions;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Payment;
 use App\Models\Subscription;
+use App\Models\User;
 use App\Services\SecurityLogger;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -184,12 +185,31 @@ class Index extends Component
                 ];
             });
 
+        // Revenue by role
+        $revenueByRole = collect();
+        try {
+            $revenueByRole = DB::table('payments')
+                ->join('subscriptions', 'subscriptions.id', '=', 'payments.subscription_id')
+                ->join('users', 'users.id', '=', 'subscriptions.user_id')
+                ->where('payments.status', Payment::STATUS_COMPLETED)
+                ->select(
+                    'users.role',
+                    DB::raw('SUM(payments.amount) as revenue'),
+                    DB::raw('COUNT(DISTINCT users.id) as customers'),
+                    DB::raw('COUNT(payments.id) as payments_count')
+                )
+                ->groupBy('users.role')
+                ->orderByDesc('revenue')
+                ->get();
+        } catch (\Throwable) {}
+
         return view('livewire.admin.subscriptions.index', [
             'subscriptions' => $subscriptions,
             'stats'         => $stats,
             'monthlyStats'  => $monthlyStats,
             'maxRevenue'    => $maxRevenue,
             'cohortData'    => $cohortData,
+            'revenueByRole' => $revenueByRole,
         ]);
     }
 }

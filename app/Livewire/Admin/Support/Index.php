@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Support;
 
+use App\Models\CannedResponse;
 use App\Models\SupportTicket;
 use App\Models\User;
 use App\Livewire\Concerns\WithToastNotifications;
@@ -129,6 +130,14 @@ class Index extends Component
         $this->toastSuccess("Ticket \"{$title}\" eliminado.");
     }
 
+    public function selectCannedResponse(int $id): void
+    {
+        $response = CannedResponse::find($id);
+        if ($response) {
+            $this->newComment = $response->body;
+        }
+    }
+
     public function addComment()
     {
         $this->validate(['newComment' => 'required|string|min:3']);
@@ -225,9 +234,12 @@ class Index extends Component
             'closed'      => (clone $realBase)->where('status', 'closed')->count(),
         ];
 
+        $cannedResponses = CannedResponse::orderBy('sort_order')->orderBy('title')->get(['id', 'title', 'category']);
+
         return view('livewire.admin.support.index', [
-            'tickets' => $tickets,
-            'stats'   => $stats,
+            'tickets'         => $tickets,
+            'stats'           => $stats,
+            'cannedResponses' => $cannedResponses,
         ])->layout('layouts.app', [
             'title'       => 'Tickets de Soporte - Admin - Agro365',
             'description' => 'Gestiona todos los tickets de soporte del sistema',

@@ -223,6 +223,65 @@ class Dashboard extends Component
         ];
     }
 
+    private function buildActivityHeatmap(): array
+    {
+        try {
+            $query = DB::table('agricultural_activities')
+                ->join('users', 'users.id', '=', 'agricultural_activities.viticulturist_id')
+                ->selectRaw('DATE(activity_date) as date, COUNT(*) as count')
+                ->where('activity_date', '>=', now()->subWeeks(51)->startOfWeek());
+
+            foreach (User::INTERNAL_EMAIL_PATTERNS as $p) {
+                $query->where('users.email', 'not like', "%{$p}%");
+            }
+
+            $raw = $query->groupBy('date')->get()->keyBy('date');
+
+            // Build 52 weeks × 7 days grid
+            $start = now()->startOfWeek()->subWeeks(51);
+            $grid  = [];
+            $max   = 0;
+
+            for ($w = 0; $w < 52; $w++) {
+                $week = [];
+                for ($d = 0; $d < 7; $d++) {
+                    $date  = $start->copy()->addWeeks($w)->addDays($d)->format('Y-m-d');
+                    $count = (int) ($raw[$date]->count ?? 0);
+                    if ($count > $max) $max = $count;
+                    $week[] = ['date' => $date, 'count' => $count];
+                }
+                $grid[] = $week;
+            }
+
+            return ['grid' => $grid, 'max' => max($max, 1)];
+        } catch (\Throwable) {
+            return ['grid' => [], 'max' => 1];
+        }
+    }
+
+    private function buildGeoDistribution(): array
+    {
+        try {
+            return DB::table('plots')
+                ->join('users', 'users.id', '=', 'plots.viticulturist_id')
+                ->join('municipalities', 'municipalities.id', '=', 'plots.municipality_id')
+                ->join('provinces', 'provinces.id', '=', 'municipalities.province_id')
+                ->select('provinces.name', DB::raw('COUNT(plots.id) as plots'), DB::raw('COALESCE(SUM(plots.area),0) as area'))
+                ->where(function ($q) {
+                    foreach (User::INTERNAL_EMAIL_PATTERNS as $p) {
+                        $q->where('users.email', 'not like', "%{$p}%");
+                    }
+                })
+                ->groupBy('provinces.name')
+                ->orderByDesc('plots')
+                ->limit(10)
+                ->get()
+                ->toArray();
+        } catch (\Throwable) {
+            return [];
+        }
+    }
+
     private function buildRegistrationsChart(): array
     {
         try {
@@ -341,6 +400,8 @@ class Dashboard extends Component
             'orphanedPlots'       => $this->orphanedPlotsCount(),
             'registrationsChart'  => $this->buildRegistrationsChart(),
             'activationFunnel'    => $this->buildActivationFunnel(),
+            'activityHeatmap'     => $this->buildActivityHeatmap(),
+            'geoDistribution'     => $this->buildGeoDistribution(),
         ])->layout('layouts.app', [
             'title'       => 'Dashboard Administrador - Agro365',
             'description' => 'Panel de control con estadísticas generales del sistema',

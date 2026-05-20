@@ -683,4 +683,37 @@
             </div>
         </div>
     </flux:modal>
+
+    {{-- Notas internas del admin --}}
+    <div class="mt-6 space-y-3">
+        <h2 class="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Notas internas del admin</h2>
+        <x-agro.card>
+            <div class="space-y-3">
+                @forelse($adminNotes as $note)
+                    <div class="flex items-start gap-3 group">
+                        <div class="w-7 h-7 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <span class="text-xs font-bold text-amber-600">{{ strtoupper(substr($note->admin?->name ?? 'A', 0, 1)) }}</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-semibold text-zinc-700">{{ $note->admin?->name ?? 'Admin' }}</span>
+                                <span class="text-xs text-zinc-400">{{ $note->created_at->diffForHumans() }}</span>
+                            </div>
+                            <p class="text-sm text-zinc-700 mt-0.5 whitespace-pre-wrap">{{ $note->note }}</p>
+                        </div>
+                        <flux:button wire:click="deleteNote({{ $note->id }})" wire:confirm="¿Eliminar esta nota?"
+                            variant="ghost" size="sm" icon="trash"
+                            class="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-600 transition-opacity" />
+                    </div>
+                @empty
+                    <p class="text-sm text-zinc-400 text-center py-2">Sin notas. Solo visibles para administradores.</p>
+                @endforelse
+                <div class="border-t border-zinc-100 pt-3 flex gap-3">
+                    <flux:textarea wire:model="newNote" rows="2" placeholder="Añadir nota interna..." class="flex-1" />
+                    <flux:button wire:click="addNote" variant="primary" size="sm" icon="plus" class="self-end">Añadir</flux:button>
+                </div>
+                @error('newNote') <p class="text-xs text-red-500">{{ $message }}</p> @enderror
+            </div>
+        </x-agro.card>
+    </div>
 </div>

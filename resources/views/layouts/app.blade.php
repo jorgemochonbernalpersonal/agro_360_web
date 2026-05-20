@@ -66,6 +66,28 @@
         <x-sidebar />
         <x-top-bar />
 
+        @if(!auth()->user()->isAdmin())
+            @php
+                $announcement = \App\Models\AdminAnnouncement::visible()->latest()->first();
+            @endphp
+            @if($announcement)
+                @php
+                    $annColors = ['info' => ['bg' => 'bg-blue-50', 'border' => 'border-blue-200', 'text' => 'text-blue-800', 'btn' => 'text-blue-600 hover:text-blue-900'], 'warning' => ['bg' => 'bg-amber-50', 'border' => 'border-amber-200', 'text' => 'text-amber-800', 'btn' => 'text-amber-600 hover:text-amber-900'], 'success' => ['bg' => 'bg-green-50', 'border' => 'border-green-200', 'text' => 'text-green-800', 'btn' => 'text-green-600 hover:text-green-900'], 'danger' => ['bg' => 'bg-red-50', 'border' => 'border-red-200', 'text' => 'text-red-800', 'btn' => 'text-red-600 hover:text-red-900']];
+                    $c = $annColors[$announcement->type] ?? $annColors['info'];
+                @endphp
+                <div x-data="{ open: true }" x-show="open" class="px-4 py-2.5 {{ $c['bg'] }} border-b {{ $c['border'] }} {{ $c['text'] }} flex items-center gap-3 text-sm">
+                    <flux:icon icon="{{ $announcement->typeIcon() }}" class="size-4 flex-shrink-0" />
+                    <div class="flex-1 min-w-0">
+                        <span class="font-semibold">{{ $announcement->title }}:</span>
+                        {{ $announcement->message }}
+                    </div>
+                    <button @click="open = false" class="{{ $c['btn'] }} flex-shrink-0">
+                        <flux:icon icon="x-mark" class="size-4" />
+                    </button>
+                </div>
+            @endif
+        @endif
+
         @if(session('impersonating'))
             @php
                 $startedAt = session('impersonation_started_at');
