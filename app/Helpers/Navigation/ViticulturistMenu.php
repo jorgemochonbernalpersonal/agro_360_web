@@ -4,6 +4,7 @@ namespace App\Helpers\Navigation;
 
 use App\Models\NotebookAccessRequest;
 use App\Models\OnboardingProgress;
+use App\Models\Plot;
 use Illuminate\Support\Facades\Cache;
 
 class ViticulturistMenu
@@ -15,6 +16,11 @@ class ViticulturistMenu
         // ── Determinar acceso al plan ─────────────────────────────────────────
         $isLocked   = !$user->hasActiveAccess();
         $hasWinery  = $user->hasWinery();
+
+        // Ocultar secciones avanzadas hasta que el usuario tenga al menos una parcela
+        $hasPlots = Cache::remember("nav_has_plots_{$user->id}", 120, fn () =>
+            Plot::forUser($user)->exists()
+        );
 
         // ── Main ─────────────────────────────────────────────────────────────
         $menu['main'] = [
@@ -52,24 +58,6 @@ class ViticulturistMenu
             ];
         }
 
-        // ── Cuaderno de Campo ─────────────────────────────────────────────────
-        $menu['notebook_inputs'] = self::notebookInputs('viticulturist', 'Vendimia', $isLocked);
-
-        // ── Seguimiento (cumplimiento + plagas) ───────────────────────────────
-        $menu['monitoring'] = self::monitoring('viticulturist', $isLocked);
-
-        // ── Registros Medioambientales ────────────────────────────────────────
-        $menu['environmental'] = self::environmental('viticulturist', $isLocked);
-
-        // ── Declaraciones y Certificaciones ───────────────────────────────────
-        $declarations = self::officialDeclarations('viticulturist', $isLocked);
-        if (!$hasWinery) {
-            $declarations = array_values(array_filter($declarations, fn($item) =>
-                !isset($item['label']) || $item['label'] !== 'Trazabilidad de Uva'
-            ));
-        }
-        $menu['declarations'] = $declarations;
-
         // ── Finca (geografía + actividades) ───────────────────────────────────
         $menu['estate'] = [
             ['icon' => 'map',                 'label' => 'Parcelas',            'route' => 'plots.index',                          'active' => request()->routeIs('plots.*') && !request()->routeIs('plots.plantings.*')],
@@ -80,48 +68,70 @@ class ViticulturistMenu
             ['icon' => 'pencil-square',       'label' => 'Actividades de Campo','route' => 'viticulturist.field-activities.index', 'active' => request()->routeIs('viticulturist.field-activities*'), 'locked' => $isLocked],
         ];
 
-        // ── Análisis de Finca ─────────────────────────────────────────────────
-        $menu['analytics'] = [
-            ['icon' => 'globe-alt',         'label' => 'Teledetección',       'route' => 'remote-sensing.dashboard',              'active' => request()->routeIs('remote-sensing.*')],
-            ['icon' => 'cloud',             'label' => 'Meteorología',        'route' => 'viticulturist.meteorology.index',       'active' => request()->routeIs('viticulturist.meteorology*'),       'locked' => $isLocked],
-            ['icon' => 'viewfinder-circle', 'label' => 'Entorno de Parcelas', 'route' => 'viticulturist.plot-environments.index', 'active' => request()->routeIs('viticulturist.plot-environments.*'), 'locked' => $isLocked],
-            ['divider' => true],
-            ['icon' => 'beaker',            'label' => 'Análisis de Suelo',   'route' => 'viticulturist.soil-analyses.index',     'active' => request()->routeIs('viticulturist.soil-analyses.*'),     'locked' => $isLocked],
-        ];
+        if ($hasPlots) {
+            // ── Cuaderno de Campo ─────────────────────────────────────────────────
+            $menu['notebook_inputs'] = self::notebookInputs('viticulturist', 'Vendimia', $isLocked);
 
-        // ── Recursos ──────────────────────────────────────────────────────────
-        $menu['resources'] = self::resources('viticulturist', includeContainers: $hasWinery, locked: $isLocked);
+            // ── Seguimiento (cumplimiento + plagas) ───────────────────────────────
+            $menu['monitoring'] = self::monitoring('viticulturist', $isLocked);
 
-        // ── Normativa regulatoria ─────────────────────────────────────────────
-        $menu['compliance'] = self::compliance('viticulturist', $isLocked);
+            // ── Análisis de Finca ─────────────────────────────────────────────────
+            $menu['analytics'] = [
+                ['icon' => 'globe-alt',         'label' => 'Teledetección',       'route' => 'remote-sensing.dashboard',              'active' => request()->routeIs('remote-sensing.*')],
+                ['icon' => 'cloud',             'label' => 'Meteorología',        'route' => 'viticulturist.meteorology.index',       'active' => request()->routeIs('viticulturist.meteorology*'),       'locked' => $isLocked],
+                ['icon' => 'viewfinder-circle', 'label' => 'Entorno de Parcelas', 'route' => 'viticulturist.plot-environments.index', 'active' => request()->routeIs('viticulturist.plot-environments.*'), 'locked' => $isLocked],
+                ['divider' => true],
+                ['icon' => 'beaker',            'label' => 'Análisis de Suelo',   'route' => 'viticulturist.soil-analyses.index',     'active' => request()->routeIs('viticulturist.soil-analyses.*'),     'locked' => $isLocked],
+            ];
 
-        // ── PAC ───────────────────────────────────────────────────────────────
-        $menu['pac'] = self::pac('viticulturist', $isLocked);
+            // ── Recursos ──────────────────────────────────────────────────────────
+            $menu['resources'] = self::resources('viticulturist', includeContainers: $hasWinery, locked: $isLocked);
 
-        // ── Negocio ───────────────────────────────────────────────────────────
-        $billingItems = [
-            ['icon' => 'document-arrow-up', 'label' => 'Facturas Venta Cosecha', 'route' => 'viticulturist.invoices.harvest-sale.index', 'active' => request()->routeIs('viticulturist.invoices.harvest-sale*'), 'locked' => $isLocked],
-        ];
+            // ── Registros Medioambientales ────────────────────────────────────────
+            $menu['environmental'] = self::environmental('viticulturist', $isLocked);
 
-        if ($hasWinery) {
-            $billingItems[] = ['icon' => 'document-arrow-down', 'label' => 'Liquidaciones de Bodega', 'route' => 'viticulturist.invoices.grape-purchase.index', 'active' => request()->routeIs('viticulturist.invoices.grape-purchase*'), 'locked' => $isLocked];
+            // ── Declaraciones y Certificaciones ───────────────────────────────────
+            $declarations = self::officialDeclarations('viticulturist', $isLocked);
+            if (!$hasWinery) {
+                $declarations = array_values(array_filter($declarations, fn($item) =>
+                    !isset($item['label']) || $item['label'] !== 'Trazabilidad de Uva'
+                ));
+            }
+            $menu['declarations'] = $declarations;
+
+            // ── Normativa regulatoria ─────────────────────────────────────────────
+            $menu['compliance'] = self::compliance('viticulturist', $isLocked);
+
+            // ── PAC ───────────────────────────────────────────────────────────────
+            $menu['pac'] = self::pac('viticulturist', $isLocked);
         }
 
-        $billingItems[] = ['divider' => true];
+        // ── Negocio (solo si tiene parcelas — sin cosecha no hay facturas) ────────
+        if ($hasPlots) {
+            $billingItems = [
+                ['icon' => 'document-arrow-up', 'label' => 'Facturas Venta Cosecha', 'route' => 'viticulturist.invoices.harvest-sale.index', 'active' => request()->routeIs('viticulturist.invoices.harvest-sale*'), 'locked' => $isLocked],
+            ];
 
-        if ($hasWinery) {
-            $billingItems[] = ['icon' => 'shopping-cart', 'label' => 'Cosecha Comercializada', 'route' => 'viticulturist.marketed-harvests.index', 'active' => request()->routeIs('viticulturist.marketed-harvests.*'), 'locked' => $isLocked];
+            if ($hasWinery) {
+                $billingItems[] = ['icon' => 'document-arrow-down', 'label' => 'Liquidaciones de Bodega', 'route' => 'viticulturist.invoices.grape-purchase.index', 'active' => request()->routeIs('viticulturist.invoices.grape-purchase*'), 'locked' => $isLocked];
+            }
+
+            $billingItems[] = ['divider' => true];
+
+            if ($hasWinery) {
+                $billingItems[] = ['icon' => 'shopping-cart', 'label' => 'Cosecha Comercializada', 'route' => 'viticulturist.marketed-harvests.index', 'active' => request()->routeIs('viticulturist.marketed-harvests.*'), 'locked' => $isLocked];
+            }
+
+            $billingItems = array_merge($billingItems, [
+                ['icon' => 'table-cells',            'label' => 'Costes por Parcela',       'route' => 'viticulturist.plot-costs.index',  'active' => request()->routeIs('viticulturist.plot-costs*'),         'locked' => $isLocked],
+                ['icon' => 'users',                  'label' => 'Clientes',                 'route' => 'viticulturist.clients.index',     'active' => request()->routeIs('viticulturist.clients.*'),           'locked' => $isLocked],
+                ['divider' => true],
+                ['icon' => 'presentation-chart-bar', 'label' => 'Estadísticas Financieras', 'route' => 'viticulturist.financial-stats',   'active' => request()->routeIs('viticulturist.financial-stats'),     'locked' => $isLocked],
+                ['icon' => 'document-check',         'label' => 'VeriFactu',                'route' => 'viticulturist.verifactu.index',   'active' => request()->routeIs('viticulturist.verifactu*'), 'wip' => true],
+            ]);
+
+            $menu['billing'] = $billingItems;
         }
-
-        $billingItems = array_merge($billingItems, [
-            ['icon' => 'table-cells',            'label' => 'Costes por Parcela',       'route' => 'viticulturist.plot-costs.index',  'active' => request()->routeIs('viticulturist.plot-costs*'),         'locked' => $isLocked],
-            ['icon' => 'users',                  'label' => 'Clientes',                 'route' => 'viticulturist.clients.index',     'active' => request()->routeIs('viticulturist.clients.*'),           'locked' => $isLocked],
-            ['divider' => true],
-            ['icon' => 'presentation-chart-bar', 'label' => 'Estadísticas Financieras', 'route' => 'viticulturist.financial-stats',   'active' => request()->routeIs('viticulturist.financial-stats'),     'locked' => $isLocked],
-            ['icon' => 'document-check',         'label' => 'VeriFactu',                'route' => 'viticulturist.verifactu.index',   'active' => request()->routeIs('viticulturist.verifactu*'), 'wip' => true],
-        ]);
-
-        $menu['billing'] = $billingItems;
 
         // ── Onboarding (solo mientras no esté completo) ───────────────────────
         $onboardingItems = self::onboardingSection($user);

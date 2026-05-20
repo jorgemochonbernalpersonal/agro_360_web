@@ -30,7 +30,10 @@ class RequireCompleteAccess
             $price = number_format($user->viticulturistMonthlyPrice(), 0);
 
             return redirect()->route('subscription.manage')
-                ->with('info', "Esta funcionalidad requiere el plan Completo ({$price}€/mes). Actualiza tu plan para acceder.");
+                ->with('upgrade_required', [
+                    'price'   => $price,
+                    'feature' => $request->route()?->getName() ?? $request->path(),
+                ]);
         }
 
         // Sin acceso en absoluto → página de precios

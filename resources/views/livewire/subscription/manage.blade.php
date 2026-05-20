@@ -7,6 +7,21 @@
         </div>
     </div>
 
+    @if (session()->has('upgrade_required'))
+        @php $upgrade = session('upgrade_required'); @endphp
+        <div class="bg-amber-50 border border-amber-300 rounded-xl p-5 flex items-start gap-4">
+            <div class="flex-shrink-0 bg-amber-100 rounded-full p-2">
+                <flux:icon icon="lock-closed" class="size-5 text-amber-600" />
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="font-semibold text-amber-900">Esta funcionalidad requiere el plan Completo</p>
+                <p class="text-sm text-amber-800 mt-0.5">
+                    Actualiza tu plan por <strong>{{ $upgrade['price'] }}€/mes</strong> para desbloquear funcionalidades avanzadas como PAC, facturación, almacén, maquinaria y más.
+                </p>
+            </div>
+        </div>
+    @endif
+
     @if (session()->has('info'))
         <flux:callout variant="info">
             <flux:callout.text>{{ session('info') }}</flux:callout.text>

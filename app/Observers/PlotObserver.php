@@ -5,6 +5,7 @@ namespace App\Observers;
 use App\Models\Municipality;
 use App\Models\Plot;
 use App\Models\OnboardingProgress;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -24,7 +25,13 @@ class PlotObserver
 
             if (!$progress->isCompleted()) {
                 $progress->markAsCompleted();
+                Cache::forget("nav_onboarding_pending_{$plot->viticulturist_id}");
             }
+        }
+
+        // Invalidar caché de navegación para que el sidebar muestre las secciones avanzadas
+        if ($plot->viticulturist_id) {
+            Cache::forget("nav_has_plots_{$plot->viticulturist_id}");
         }
 
         $this->geocodeMunicipalityIfNeeded($plot->municipality_id);
@@ -83,7 +90,9 @@ class PlotObserver
      */
     public function deleted(Plot $plot): void
     {
-        //
+        if ($plot->viticulturist_id) {
+            Cache::forget("nav_has_plots_{$plot->viticulturist_id}");
+        }
     }
 
     /**

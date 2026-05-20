@@ -74,7 +74,14 @@
                             @endforeach
                         </div>
                     @else
-                        <p class="text-sm text-zinc-400 py-3 text-center">No tienes parcelas activas</p>
+                        <div class="py-4 text-center space-y-3">
+                            <p class="text-sm text-zinc-500">Aún no tienes parcelas registradas.</p>
+                            <a href="{{ route('plots.create') }}" wire:navigate
+                                class="inline-flex items-center gap-1.5 px-4 py-2 bg-agro-600 text-white text-sm font-medium rounded-xl hover:bg-agro-700 transition-colors">
+                                <flux:icon icon="plus" class="size-4" />
+                                Crear mi primera parcela
+                            </a>
+                        </div>
                     @endif
                     @error('plotId') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>

@@ -3,7 +3,6 @@
 namespace App\Livewire\Viticulturist;
 
 use App\Models\AgriculturalActivity;
-use App\Models\Campaign;
 use App\Models\OnboardingProgress;
 use App\Models\PhytosanitaryProduct;
 use App\Models\Plot;
@@ -140,8 +139,9 @@ class OnboardingChecklist extends Component
     private function autoCompleteExistingData(int $userId): void
     {
         $checks = [
-            OnboardingProgress::STEP_REVIEW_CAMPAIGN => fn () =>
-                Campaign::forViticulturist($userId)->where('active', true)->exists(),
+            // Campaña siempre se auto-crea — no hay nada que el usuario deba "revisar"
+            // activamente, así que la marcamos completada automáticamente.
+            OnboardingProgress::STEP_REVIEW_CAMPAIGN => fn () => true,
 
             OnboardingProgress::STEP_CREATE_PLOT => fn () =>
                 Plot::forUser(Auth::user())->exists(),
