@@ -68,7 +68,9 @@
 
         @if(!auth()->user()->isAdmin())
             @php
-                $announcement = \App\Models\AdminAnnouncement::visible()->latest()->first();
+                $announcement = \Illuminate\Support\Facades\Schema::hasTable('admin_announcements')
+                    ? \App\Models\AdminAnnouncement::visible()->latest()->first()
+                    : null;
             @endphp
             @if($announcement)
                 @php

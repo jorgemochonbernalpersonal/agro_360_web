@@ -523,6 +523,10 @@ class Show extends Component
             'newNote.min'      => 'La nota debe tener al menos 3 caracteres.',
         ]);
 
+        if (!\Illuminate\Support\Facades\Schema::hasTable('admin_notes')) {
+            $this->toastError('Ejecuta las migraciones pendientes primero.');
+            return;
+        }
         AdminNote::create([
             'user_id'  => $this->user->id,
             'admin_id' => Auth::id(),
@@ -579,7 +583,9 @@ class Show extends Component
             'stats'       => $this->stats,
             'hierarchy'   => $this->hierarchy,
             'userHistory' => $this->loadUserHistory(),
-            'adminNotes'  => AdminNote::with('admin:id,name')->where('user_id', $this->user->id)->orderByDesc('created_at')->get(),
+            'adminNotes'  => \Illuminate\Support\Facades\Schema::hasTable('admin_notes')
+                ? AdminNote::with('admin:id,name')->where('user_id', $this->user->id)->orderByDesc('created_at')->get()
+                : collect(),
         ])->layout('layouts.app', [
             'title'       => $this->user->name . ' - Usuario - Agro365',
             'description' => 'Detalles del usuario ' . $this->user->name . '. Información, estadísticas y actividad.',

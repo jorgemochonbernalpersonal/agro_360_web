@@ -234,7 +234,9 @@ class Index extends Component
             'closed'      => (clone $realBase)->where('status', 'closed')->count(),
         ];
 
-        $cannedResponses = CannedResponse::orderBy('sort_order')->orderBy('title')->get(['id', 'title', 'category']);
+        $cannedResponses = \Illuminate\Support\Facades\Schema::hasTable('canned_responses')
+            ? CannedResponse::orderBy('sort_order')->orderBy('title')->get(['id', 'title', 'category'])
+            : collect();
 
         return view('livewire.admin.support.index', [
             'tickets'         => $tickets,

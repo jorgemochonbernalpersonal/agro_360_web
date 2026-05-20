@@ -42,7 +42,7 @@ class NavigationHelper
                     'icon'   => 'user-group',
                     'label'  => 'Usuarios',
                     'route'  => 'admin.users.index',
-                    'active' => request()->routeIs('admin.users.*'),
+                    'active' => request()->routeIs('admin.users.index') || request()->routeIs('admin.users.show'),
                 ],
                 [
                     'icon'   => 'building-office-2',
@@ -76,6 +76,19 @@ class NavigationHelper
                     'active' => request()->routeIs('admin.security-log.*'),
                 ],
                 [
+                    'icon'   => 'exclamation-triangle',
+                    'label'  => 'Jobs fallidos',
+                    'route'  => 'admin.failed-jobs.index',
+                    'active' => request()->routeIs('admin.failed-jobs.*'),
+                    'badge'  => Cache::remember('nav_badge_admin_failed_jobs', 120, fn() => \DB::table('failed_jobs')->count()),
+                ],
+                [
+                    'icon'   => 'clock',
+                    'label'  => 'Scheduler',
+                    'route'  => 'admin.scheduler.index',
+                    'active' => request()->routeIs('admin.scheduler.*'),
+                ],
+                [
                     'icon'   => 'map',
                     'label'  => 'Parcelas',
                     'route'  => 'admin.plots.index',
@@ -86,6 +99,31 @@ class NavigationHelper
                     'label'  => 'SIGPAC',
                     'route'  => 'admin.sigpac.index',
                     'active' => request()->routeIs('admin.sigpac.*'),
+                ],
+                [
+                    'icon'   => 'document-duplicate',
+                    'label'  => 'Duplicados',
+                    'route'  => 'admin.users.duplicates',
+                    'active' => request()->routeIs('admin.users.duplicates'),
+                ],
+                [
+                    'icon'   => 'user-plus',
+                    'label'  => 'Aprobaciones',
+                    'route'  => 'admin.users.approvals',
+                    'active' => request()->routeIs('admin.users.approvals'),
+                    'badge'  => Cache::remember('nav_badge_admin_approvals', 300, fn() => \App\Models\User::where('can_login', false)->whereNotNull('email_verified_at')->where('role', '!=', 'admin')->count()),
+                ],
+                [
+                    'icon'   => 'bell-alert',
+                    'label'  => 'Anuncios',
+                    'route'  => 'admin.announcements.index',
+                    'active' => request()->routeIs('admin.announcements.*'),
+                ],
+                [
+                    'icon'   => 'chat-bubble-left-right',
+                    'label'  => 'Resp. rápidas',
+                    'route'  => 'admin.canned-responses.index',
+                    'active' => request()->routeIs('admin.canned-responses.*'),
                 ],
                 [
                     'icon'   => 'cog-6-tooth',
