@@ -16,6 +16,7 @@ class MobileNotebookResource extends JsonResource
     {
         return match ($this->activity_type) {
             'phytosanitary' => $this->treatmentArray(),
+            'fertilization' => $this->fertilizationArray(),
             'irrigation'    => $this->irrigationArray(),
             'observation'   => $this->observationArray(),
             'harvest'       => $this->harvestArray(),
@@ -106,6 +107,21 @@ class MobileNotebookResource extends JsonResource
             'pruning_type'      => $c?->pruning_type,
             'buds_per_vine'     => $c?->productive_buds_per_hectare,
             'pruning_weight_kg' => null,
+        ]);
+    }
+
+    private function fertilizationArray(): array
+    {
+        $f = $this->fertilization;
+        return array_merge($this->base(), [
+            'fertilizer_type'    => $f?->fertilizer_type,
+            'fertilizer_name'    => $f?->fertilizer_name,
+            'quantity'           => $f?->quantity !== null ? (float) $f->quantity : null,
+            'application_method' => $f?->application_method,
+            'area_applied'       => $f?->area_applied !== null ? (float) $f->area_applied : null,
+            'nitrogen_uf'        => $f?->nitrogen_uf !== null ? (float) $f->nitrogen_uf : null,
+            'phosphorus_uf'      => $f?->phosphorus_uf !== null ? (float) $f->phosphorus_uf : null,
+            'potassium_uf'       => $f?->potassium_uf !== null ? (float) $f->potassium_uf : null,
         ]);
     }
 

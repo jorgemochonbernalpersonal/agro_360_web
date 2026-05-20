@@ -162,7 +162,12 @@ class NotebookController extends Controller
         $this->updateDetails($activity, $validated);
 
         // Un único fresh() — evita dos queries de recarga del mismo modelo
-        $activity = $activity->fresh(['plot', 'campaign']);
+        $toLoad = ['plot', 'campaign'];
+        $relation = self::DETAIL_RELATIONS[$activity->activity_type] ?? null;
+        if ($relation) {
+            $toLoad[] = $relation;
+        }
+        $activity = $activity->fresh($toLoad);
         $this->loadDetails($activity);
 
         return response()->json(['data' => new ActivityResource($activity)]);
@@ -206,6 +211,7 @@ class NotebookController extends Controller
 
     private const MOBILE_RELATIONS = [
         'phytosanitary' => ['plot', 'phytosanitaryTreatment.product'],
+        'fertilization' => ['plot', 'fertilization'],
         'irrigation'    => ['plot', 'irrigation'],
         'observation'   => ['plot', 'observation'],
         'harvest'       => ['plot', 'harvest', 'plotPlanting.grapeVariety'],
