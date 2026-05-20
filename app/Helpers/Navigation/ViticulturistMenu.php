@@ -133,8 +133,18 @@ class ViticulturistMenu
             $menu['billing'] = $billingItems;
         }
 
-        // ── Onboarding (solo mientras no esté completo) ───────────────────────
+        // ── Onboarding ────────────────────────────────────────────────────────
+        // Si no tiene parcelas, forzar el tab aunque el onboarding esté completo/skipped.
+        // Un usuario sin parcelas siempre necesita ese primer paso visible.
         $onboardingItems = self::onboardingSection($user);
+        if (empty($onboardingItems) && !$hasPlots) {
+            $prefix = 'viticulturist';
+            $onboardingItems = [
+                ['icon' => 'map',  'label' => 'Añade tus parcelas',     'route' => 'plots.create',                   'active' => request()->routeIs('plots.create')],
+                ['icon' => 'bolt', 'label' => 'Registra una actividad', 'route' => "{$prefix}.quick-entry",          'active' => request()->routeIs("{$prefix}.quick-entry")],
+                ['icon' => 'beaker','label' => 'Añade productos fitosan.','route' => "{$prefix}.phytosanitary-products.index", 'active' => request()->routeIs("{$prefix}.phytosanitary-products.*")],
+            ];
+        }
         if (!empty($onboardingItems)) {
             $menu['onboarding'] = $onboardingItems;
         }
