@@ -14,9 +14,10 @@ class Index extends Component
 {
     use WithPagination, WithToastNotifications;
 
-    public $search       = '';
-    public $activeFilter = '';
-    public $roleFilter   = 'all';
+    public $search        = '';
+    public $activeFilter  = '';
+    public $roleFilter    = 'all';
+    public bool $showInternal = false;
 
     // Reassign modal
     public $showReassignModal    = false;
@@ -25,11 +26,21 @@ class Index extends Component
     public $reassignViticulturistId = '';
     public $reassignSearch       = '';
 
-    protected $queryString = ['search', 'activeFilter', 'roleFilter'];
+    protected $queryString = [
+        'search', 'activeFilter', 'roleFilter',
+        'showInternal' => ['except' => false, 'as' => 'internal'],
+    ];
 
-    public function updatingSearch()      { $this->resetPage(); }
-    public function updatingActiveFilter(){ $this->resetPage(); }
-    public function updatingRoleFilter()  { $this->resetPage(); }
+    public function updatingSearch()       { $this->resetPage(); }
+    public function updatingActiveFilter() { $this->resetPage(); }
+    public function updatingRoleFilter()   { $this->resetPage(); }
+    public function updatingShowInternal() { $this->resetPage(); }
+
+    public function toggleInternal(): void
+    {
+        $this->showInternal = !$this->showInternal;
+        $this->resetPage();
+    }
 
     // ─── Reassign ─────────────────────────────────────────────────────────────
 
@@ -123,6 +134,12 @@ class Index extends Component
                 'sigpacCodes:id,code',
             ]);
 
+        if (!$this->showInternal) {
+            $query->whereHas('viticulturist', function ($q) {
+                $q->excludeDemo();
+            });
+        }
+
         if ($this->search) {
             $search = '%' . strtolower($this->search) . '%';
             $query->where(function ($q) use ($search) {
@@ -158,14 +175,16 @@ class Index extends Component
             ? $viticulturistQuery->orderBy('name')->limit(15)->get(['id', 'name', 'email', 'role'])
             : collect();
 
+        // Stats siempre sin internos
+        $realBase = Plot::whereHas('viticulturist', fn($q) => $q->excludeDemo());
         $stats = [
-            'total'      => Plot::count(),
-            'active'     => Plot::where('active', true)->count(),
-            'total_area' => Plot::sum('area') ?? 0,
+            'total'      => $realBase->count(),
+            'active'     => (clone $realBase)->where('active', true)->count(),
+            'total_area' => (clone $realBase)->sum('area') ?? 0,
             'by_role'    => [
-                'viticulturist' => Plot::whereHas('viticulturist', fn($q) => $q->where('role', 'viticulturist'))->count(),
-                'winery'        => Plot::whereHas('viticulturist', fn($q) => $q->where('role', 'winery'))->count(),
-                'supervisor'    => Plot::whereHas('viticulturist', fn($q) => $q->where('role', 'supervisor'))->count(),
+                'viticulturist' => (clone $realBase)->whereHas('viticulturist', fn($q) => $q->where('role', 'viticulturist'))->count(),
+                'winery'        => (clone $realBase)->whereHas('viticulturist', fn($q) => $q->where('role', 'winery'))->count(),
+                'supervisor'    => (clone $realBase)->whereHas('viticulturist', fn($q) => $q->where('role', 'supervisor'))->count(),
             ],
         ];
 

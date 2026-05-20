@@ -3,7 +3,9 @@
 namespace App\Livewire\Admin\Settings;
 
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Concerns\WithReadOnlyGuard;
 use App\Models\AppSetting;
+use App\Models\SecurityEvent;
 use App\Services\SecurityLogger;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
@@ -11,7 +13,7 @@ use Livewire\Component;
 
 class Index extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithReadOnlyGuard;
 
     // Platform
     public bool   $registration_open = true;
@@ -66,6 +68,7 @@ class Index extends Component
 
     public function savePlatform(): void
     {
+        if ($this->isReadOnly()) return;
         $this->validateOnly('support_email');
 
         $changes = [];
@@ -99,6 +102,7 @@ class Index extends Component
 
     public function saveBeta(): void
     {
+        if ($this->isReadOnly()) return;
         $this->validateOnly('beta_end_date');
 
         $oldDate = AppSetting::get('beta_end_date', '');
@@ -118,6 +122,7 @@ class Index extends Component
 
     public function saveSecurity(): void
     {
+        if ($this->isReadOnly()) return;
         $this->validateOnly('password_min_length');
 
         $changes = [];
@@ -148,6 +153,7 @@ class Index extends Component
 
     public function saveModules(): void
     {
+        if ($this->isReadOnly()) return;
         $changes = [];
         $prev = [
             'module_silicie' => AppSetting::getBool('module_silicie', true),
@@ -174,12 +180,28 @@ class Index extends Component
         $this->toastSuccess('Configuración de módulos guardada.');
     }
 
+    private function lastChangeFor(string $event): ?SecurityEvent
+    {
+        try {
+            return SecurityEvent::where('event', $event)
+                ->orderByDesc('created_at')
+                ->first();
+        } catch (\Throwable) {
+            return null;
+        }
+    }
+
     #[Layout('layouts.app', [
         'title'       => 'Configuración - Agro365',
         'description' => 'Configuración global del sistema',
     ])]
     public function render()
     {
-        return view('livewire.admin.settings.index');
+        return view('livewire.admin.settings.index', [
+            'lastPlatform' => $this->lastChangeFor('settings_platform_changed'),
+            'lastBeta'     => $this->lastChangeFor('settings_beta_date_changed'),
+            'lastSecurity' => $this->lastChangeFor('settings_security_changed'),
+            'lastModules'  => $this->lastChangeFor('settings_modules_changed'),
+        ]);
     }
 }

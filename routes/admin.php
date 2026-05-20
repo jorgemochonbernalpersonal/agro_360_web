@@ -57,4 +57,6 @@ Route::middleware(['role:admin'])
 
         // Configuración global
         Route::get('/settings', \App\Livewire\Admin\Settings\Index::class)->name('settings.index');
+
+        // Búsqueda global (componente inline, no necesita ruta propia)
     });

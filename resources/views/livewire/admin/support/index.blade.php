@@ -71,7 +71,26 @@
             <option value="high">Alta</option>
             <option value="critical">Crítica</option>
         </x-agro.filter-select>
+        <flux:button
+            wire:click="toggleInternal"
+            variant="ghost"
+            size="sm"
+            icon="bug-ant"
+            tooltip="{{ $showInternal ? 'Ocultar tickets internos' : 'Mostrar tickets internos (demo/test)' }}"
+            @class(['text-amber-500 bg-amber-50' => $showInternal])
+        >
+            Internos
+        </flux:button>
     </x-agro.filter-bar>
+
+    {{-- Banner modo interno --}}
+    @if($showInternal)
+    <div class="flex items-center gap-2 rounded-lg bg-amber-50 border border-amber-200 px-4 py-2.5 text-sm text-amber-800">
+        <flux:icon icon="bug-ant" class="size-4 flex-shrink-0" />
+        <span>Mostrando también tickets de cuentas internas (demo / test / maestro). Las estadísticas siempre reflejan solo datos reales.</span>
+        <button wire:click="toggleInternal" class="ml-auto text-amber-600 hover:text-amber-800 font-medium text-xs">Ocultar</button>
+    </div>
+    @endif
 
     {{-- Tabla de Tickets --}}
     <x-agro.data-table

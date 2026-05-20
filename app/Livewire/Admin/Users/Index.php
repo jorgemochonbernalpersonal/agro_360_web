@@ -22,6 +22,8 @@ class Index extends Component
     public $filterActive = '';
     public $filterVerified = '';
     public $filterBeta = '';
+    public $filterDateFrom = '';
+    public $filterDateTo = '';
     public bool $showInternal = false;
 
     // Create modal
@@ -45,12 +47,14 @@ class Index extends Component
     public $selectedUsers = [];
 
     protected $queryString = [
-        'currentTab'    => ['as' => 'tab', 'except' => 'all'],
-        'search'        => ['except' => ''],
-        'filterActive'  => ['except' => ''],
-        'filterVerified'=> ['except' => ''],
-        'filterBeta'    => ['except' => ''],
-        'showInternal'  => ['except' => false, 'as' => 'internal'],
+        'currentTab'     => ['as' => 'tab', 'except' => 'all'],
+        'search'         => ['except' => ''],
+        'filterActive'   => ['except' => ''],
+        'filterVerified' => ['except' => ''],
+        'filterBeta'     => ['except' => ''],
+        'filterDateFrom' => ['except' => '', 'as' => 'from'],
+        'filterDateTo'   => ['except' => '', 'as' => 'to'],
+        'showInternal'   => ['except' => false, 'as' => 'internal'],
     ];
 
     public function switchTab($tab)
@@ -60,11 +64,13 @@ class Index extends Component
         $this->selectedUsers = [];
     }
 
-    public function updatingSearch()        { $this->resetPage(); $this->selectedUsers = []; }
-    public function updatingFilterActive()  { $this->resetPage(); $this->selectedUsers = []; }
-    public function updatingFilterVerified(){ $this->resetPage(); $this->selectedUsers = []; }
-    public function updatingFilterBeta()    { $this->resetPage(); $this->selectedUsers = []; }
-    public function updatingShowInternal()  { $this->resetPage(); $this->selectedUsers = []; }
+    public function updatingSearch()         { $this->resetPage(); $this->selectedUsers = []; }
+    public function updatingFilterActive()   { $this->resetPage(); $this->selectedUsers = []; }
+    public function updatingFilterVerified() { $this->resetPage(); $this->selectedUsers = []; }
+    public function updatingFilterBeta()     { $this->resetPage(); $this->selectedUsers = []; }
+    public function updatingFilterDateFrom() { $this->resetPage(); $this->selectedUsers = []; }
+    public function updatingFilterDateTo()   { $this->resetPage(); $this->selectedUsers = []; }
+    public function updatingShowInternal()   { $this->resetPage(); $this->selectedUsers = []; }
 
     public function toggleInternal(): void
     {
@@ -414,6 +420,14 @@ class Index extends Component
             } elseif ($this->filterBeta === 'never') {
                 $query->where('is_beta_user', false);
             }
+        }
+
+        if ($this->filterDateFrom !== '') {
+            $query->whereDate('created_at', '>=', $this->filterDateFrom);
+        }
+
+        if ($this->filterDateTo !== '') {
+            $query->whereDate('created_at', '<=', $this->filterDateTo);
         }
 
         $users = $query->orderBy('created_at', 'desc')->paginate(20);

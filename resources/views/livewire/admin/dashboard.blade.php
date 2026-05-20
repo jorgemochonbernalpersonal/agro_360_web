@@ -213,6 +213,61 @@
         </div>
     </div>
 
+    {{-- Alertas de seguridad + parcelas huérfanas --}}
+    @if($suspiciousUsers->count() > 0 || $orphanedPlots > 0)
+    <div class="space-y-3">
+        <h2 class="text-sm font-semibold text-zinc-500 uppercase tracking-wider">Alertas</h2>
+
+        @if($suspiciousUsers->count() > 0)
+        <div class="rounded-xl border border-red-200 bg-red-50 p-4">
+            <div class="flex items-start gap-3">
+                <flux:icon icon="shield-exclamation" class="size-5 text-red-600 flex-shrink-0 mt-0.5" />
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-semibold text-red-900">
+                        {{ $suspiciousUsers->count() }} cuenta(s) con intentos de login fallidos en las últimas 24h
+                    </p>
+                    <div class="mt-2 space-y-1">
+                        @foreach($suspiciousUsers as $s)
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="text-red-800 font-medium truncate">{{ $s->email }}</span>
+                            <div class="flex items-center gap-3 flex-shrink-0 ml-2">
+                                <span class="text-red-600 font-semibold">{{ $s->attempts }} intentos</span>
+                                @if($s->ip)
+                                    <span class="text-red-400 font-mono">{{ $s->ip }}</span>
+                                @endif
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                    <a href="{{ route('admin.security-log.index') }}" class="inline-block mt-2 text-xs font-medium text-red-700 hover:text-red-900">
+                        Ver log de seguridad →
+                    </a>
+                </div>
+            </div>
+        </div>
+        @endif
+
+        @if($orphanedPlots > 0)
+        <div class="rounded-xl border border-amber-200 bg-amber-50 p-4">
+            <div class="flex items-center gap-3">
+                <flux:icon icon="map" class="size-5 text-amber-600 flex-shrink-0" />
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-semibold text-amber-900">
+                        {{ $orphanedPlots }} parcela(s) huérfanas — sin viticultor activo vinculado
+                    </p>
+                    <p class="text-xs text-amber-700 mt-0.5">
+                        El propietario está inactivo o fue eliminado.
+                    </p>
+                </div>
+                <a href="{{ route('admin.plots.index') }}" class="flex-shrink-0 text-xs font-medium text-amber-700 hover:text-amber-900">
+                    Ver parcelas →
+                </a>
+            </div>
+        </div>
+        @endif
+    </div>
+    @endif
+
     {{-- Accesos Rápidos --}}
     <div>
         <h2 class="text-sm font-semibold text-zinc-500 uppercase tracking-wider mb-3">Accesos Rápidos</h2>

@@ -20,15 +20,26 @@ class Index extends Component
     public $filterPriority  = 'all';
     public $selectedTicket    = null;
     public $newComment        = '';
-    public bool $isInternal   = false;
+    public bool $isInternal   = false;   // nota interna del ticket abierto
+    public bool $showInternal = false;   // toggle para usuarios demo/test
     public $assignTo          = '';
 
-    protected $queryString = ['search', 'filterStatus', 'filterType', 'filterPriority'];
+    protected $queryString = [
+        'search', 'filterStatus', 'filterType', 'filterPriority',
+        'showInternal' => ['except' => false, 'as' => 'internal'],
+    ];
 
     public function updatingSearch()         { $this->resetPage(); }
     public function updatingFilterStatus()   { $this->resetPage(); }
     public function updatingFilterType()     { $this->resetPage(); }
     public function updatingFilterPriority() { $this->resetPage(); }
+    public function updatingShowInternal()   { $this->resetPage(); }
+
+    public function toggleInternal(): void
+    {
+        $this->showInternal = !$this->showInternal;
+        $this->resetPage();
+    }
 
     public function selectTicket($ticketId)
     {
@@ -171,6 +182,10 @@ class Index extends Component
     {
         $query = SupportTicket::with(['user', 'assignedTo'])->latest();
 
+        if (!$this->showInternal) {
+            $query->whereHas('user', fn($q) => $q->excludeDemo());
+        }
+
         if ($this->search) {
             $query->where(function ($q) {
                 $q->where('title', 'like', '%' . $this->search . '%')
@@ -200,12 +215,14 @@ class Index extends Component
 
         $tickets = $query->paginate(20);
 
+        // Stats siempre sin usuarios internos
+        $realBase = SupportTicket::whereHas('user', fn($q) => $q->excludeDemo());
         $stats = [
-            'total'       => SupportTicket::count(),
-            'open'        => SupportTicket::open()->count(),
-            'in_progress' => SupportTicket::where('status', 'in_progress')->count(),
-            'resolved'    => SupportTicket::where('status', 'resolved')->count(),
-            'closed'      => SupportTicket::where('status', 'closed')->count(),
+            'total'       => $realBase->count(),
+            'open'        => (clone $realBase)->open()->count(),
+            'in_progress' => (clone $realBase)->where('status', 'in_progress')->count(),
+            'resolved'    => (clone $realBase)->where('status', 'resolved')->count(),
+            'closed'      => (clone $realBase)->where('status', 'closed')->count(),
         ];
 
         return view('livewire.admin.support.index', [

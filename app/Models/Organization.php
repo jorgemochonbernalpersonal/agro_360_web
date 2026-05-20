@@ -71,7 +71,21 @@ class Organization extends Model
         return $this->hasMany(User::class, 'organization_id');
     }
 
+    /** Patrones de nombre que identifican organizaciones internas/demo/test. */
+    public const INTERNAL_NAME_PATTERNS = [
+        'demo', 'test', 'maestro', 'hesseng', 'moh123', 'pruebas',
+    ];
+
     // ── Scopes ───────────────────────────────────────────────────────────────
+
+    /** Excluye organizaciones internas/demo/test de los listados. */
+    public function scopeExcludeInternal($query)
+    {
+        foreach (self::INTERNAL_NAME_PATTERNS as $pattern) {
+            $query->where('name', 'not like', "%{$pattern}%");
+        }
+        return $query;
+    }
 
     public function scopeActive($query)
     {
@@ -89,6 +103,16 @@ class Organization extends Model
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────────
+
+    public function isInternal(): bool
+    {
+        foreach (self::INTERNAL_NAME_PATTERNS as $pattern) {
+            if (str_contains(strtolower($this->name), strtolower($pattern))) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public function isWinery(): bool
     {

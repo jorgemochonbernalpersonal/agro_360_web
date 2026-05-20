@@ -521,6 +521,120 @@
         </x-agro.card>
     @endif
 
+    {{-- Historial de cambios --}}
+    @if($userHistory->count() > 0)
+    <x-agro.card>
+        <x-slot:header>
+            <div class="flex items-center gap-2">
+                <div class="p-1.5 rounded-lg bg-zinc-100">
+                    <flux:icon icon="clock" class="size-4 text-zinc-600" />
+                </div>
+                <span class="font-semibold text-zinc-900 text-sm">Historial de actividad</span>
+                <flux:badge color="zinc" size="sm">Últimos 20</flux:badge>
+            </div>
+        </x-slot:header>
+
+        @php
+            $eventLabels = [
+                'user_created_by_admin'           => ['label' => 'Cuenta creada por admin',        'color' => 'agro',   'icon' => 'user-plus'],
+                'user_edited_by_admin'            => ['label' => 'Datos editados por admin',        'color' => 'blue',   'icon' => 'pencil'],
+                'user_account_toggled'            => ['label' => 'Estado activado/desactivado',     'color' => 'yellow', 'icon' => 'power'],
+                'user_beta_toggled'               => ['label' => 'Beta activado/desactivado',       'color' => 'violet', 'icon' => 'beaker'],
+                'email_verified_manually_by_admin'=> ['label' => 'Email verificado por admin',      'color' => 'agro',   'icon' => 'check-badge'],
+                'impersonation_started'           => ['label' => 'Sesión impersonada',              'color' => 'orange', 'icon' => 'arrow-right-end-on-rectangle'],
+                'admin_readonly_toggled'          => ['label' => 'Permiso solo-lectura cambiado',   'color' => 'zinc',   'icon' => 'shield-check'],
+                'login'                           => ['label' => 'Inicio de sesión',                'color' => 'agro',   'icon' => 'arrow-left-end-on-rectangle'],
+                'logout'                          => ['label' => 'Cierre de sesión',                'color' => 'zinc',   'icon' => 'arrow-right-start-on-rectangle'],
+                'failed_login'                    => ['label' => 'Intento de login fallido',        'color' => 'red',    'icon' => 'exclamation-triangle'],
+                'password_reset_requested'        => ['label' => 'Reset de contraseña solicitado', 'color' => 'yellow', 'icon' => 'key'],
+                'password_changed'                => ['label' => 'Contraseña cambiada',             'color' => 'blue',   'icon' => 'key'],
+            ];
+        @endphp
+
+        <div class="relative">
+            <div class="absolute left-4 top-0 bottom-0 w-px bg-zinc-100"></div>
+            <div class="space-y-4 pl-10">
+                @foreach($userHistory as $event)
+                    @php
+                        $info = $eventLabels[$event->event] ?? ['label' => $event->event, 'color' => 'zinc', 'icon' => 'circle-stack'];
+                    @endphp
+                    <div class="relative">
+                        <div class="absolute -left-6 top-1 w-3 h-3 rounded-full border-2 border-white ring-1 ring-zinc-200 bg-white flex items-center justify-center">
+                            <div class="w-1.5 h-1.5 rounded-full
+                                {{ $info['color'] === 'red' ? 'bg-red-500' :
+                                   ($info['color'] === 'agro' ? 'bg-agro-500' :
+                                   ($info['color'] === 'blue' ? 'bg-blue-500' :
+                                   ($info['color'] === 'orange' ? 'bg-orange-500' :
+                                   ($info['color'] === 'violet' ? 'bg-violet-500' :
+                                   ($info['color'] === 'yellow' ? 'bg-yellow-500' : 'bg-zinc-400')))))}}">
+                            </div>
+                        </div>
+                        <div class="flex items-start justify-between gap-4">
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <flux:badge :color="$info['color']" size="sm">{{ $info['label'] }}</flux:badge>
+                                    @if($event->ip)
+                                        <span class="text-xs text-zinc-400 font-mono">{{ $event->ip }}</span>
+                                    @endif
+                                </div>
+                                @if($event->message)
+                                    <p class="text-xs text-zinc-500 mt-0.5">{{ $event->message }}</p>
+                                @endif
+                            </div>
+                            <span class="text-xs text-zinc-400 whitespace-nowrap flex-shrink-0">
+                                {{ $event->created_at->format('d/m/Y H:i') }}
+                            </span>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </x-agro.card>
+    @endif
+
+    {{-- Panel: Read-only admin (solo visible si el usuario visto es admin) --}}
+    @if($user->isAdmin() && $user->id !== auth()->id())
+    <x-agro.card>
+        <x-slot:header>
+            <div class="flex items-center gap-2">
+                <div class="p-1.5 rounded-lg {{ $user->is_readonly_admin ? 'bg-zinc-100' : 'bg-purple-50' }}">
+                    <flux:icon icon="shield-check" class="size-4 {{ $user->is_readonly_admin ? 'text-zinc-500' : 'text-purple-600' }}" />
+                </div>
+                <span class="font-semibold text-zinc-900 text-sm">Permisos de Administrador</span>
+            </div>
+        </x-slot:header>
+
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm font-medium text-zinc-900">Modo solo lectura</p>
+                <p class="text-xs text-zinc-400 mt-0.5">
+                    @if($user->is_readonly_admin)
+                        Este admin puede ver el panel pero no puede realizar cambios.
+                    @else
+                        Este admin tiene acceso completo al panel de administración.
+                    @endif
+                </p>
+            </div>
+            <div class="flex items-center gap-3">
+                @if($user->is_readonly_admin)
+                    <flux:badge color="zinc" size="sm">Solo lectura</flux:badge>
+                @else
+                    <flux:badge color="purple" size="sm">Acceso completo</flux:badge>
+                @endif
+                <flux:button
+                    wire:click="toggleReadOnlyAdmin"
+                    wire:confirm="{{ $user->is_readonly_admin ? '¿Dar acceso completo a ' . $user->name . '?' : '¿Restringir a solo lectura a ' . $user->name . '?' }}"
+                    variant="ghost"
+                    size="sm"
+                    icon="{{ $user->is_readonly_admin ? 'lock-open' : 'lock-closed' }}"
+                >
+                    {{ $user->is_readonly_admin ? 'Dar acceso completo' : 'Restringir a solo lectura' }}
+                </flux:button>
+            </div>
+        </div>
+    </x-agro.card>
+    @endif
+
     {{-- Modal: Editar usuario --}}
     <flux:modal wire:model="showEditModal" class="w-full max-w-lg">
         <div class="p-6">

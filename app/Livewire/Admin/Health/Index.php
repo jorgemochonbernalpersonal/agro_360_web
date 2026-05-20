@@ -29,6 +29,8 @@ class Index extends Component
             'cache'    => $this->checkCache(),
             'disk'     => $this->checkDisk(),
             'security' => $this->checkSecurity(),
+            'email'    => $this->checkEmail(),
+            'paypal'   => $this->checkPayPal(),
             'app'      => $this->appInfo(),
         ];
     }
@@ -163,6 +165,83 @@ class Index extends Component
             ];
         } catch (\Throwable) {
             return ['status' => 'ok', 'total' => 0, 'alerts' => 0, 'warnings' => 0, 'failed_logins' => 0, 'locked' => 0];
+        }
+    }
+
+    private function checkEmail(): array
+    {
+        try {
+            $driver = config('mail.default', 'smtp');
+
+            // For log/array drivers (testing/local) always mark as ok
+            if (in_array($driver, ['log', 'array'])) {
+                return [
+                    'status' => 'ok',
+                    'driver' => $driver,
+                    'note'   => 'Driver local — sin conexión real',
+                ];
+            }
+
+            $host = config("mail.mailers.{$driver}.host");
+            $port = (int) config("mail.mailers.{$driver}.port", 587);
+
+            if ($host) {
+                $start  = microtime(true);
+                $socket = @fsockopen($host, $port, $errno, $errstr, 5);
+                $ms     = round((microtime(true) - $start) * 1000, 1);
+
+                if ($socket) {
+                    fclose($socket);
+                    return [
+                        'status'  => 'ok',
+                        'driver'  => $driver,
+                        'host'    => $host . ':' . $port,
+                        'latency' => $ms,
+                    ];
+                }
+
+                return [
+                    'status' => 'error',
+                    'driver' => $driver,
+                    'host'   => $host . ':' . $port,
+                    'error'  => $errstr ?: 'Sin conexión',
+                ];
+            }
+
+            return ['status' => 'warning', 'driver' => $driver, 'note' => 'Host no configurado'];
+        } catch (\Throwable $e) {
+            return ['status' => 'error', 'driver' => config('mail.default', '?'), 'error' => $e->getMessage()];
+        }
+    }
+
+    private function checkPayPal(): array
+    {
+        try {
+            $mode = config('paypal.mode', config('services.paypal.mode', 'sandbox'));
+            $host = $mode === 'live' ? 'api-m.paypal.com' : 'api-m.sandbox.paypal.com';
+
+            $start  = microtime(true);
+            $socket = @fsockopen('ssl://' . $host, 443, $errno, $errstr, 5);
+            $ms     = round((microtime(true) - $start) * 1000, 1);
+
+            if ($socket) {
+                fclose($socket);
+                return [
+                    'status'  => 'ok',
+                    'mode'    => $mode,
+                    'host'    => $host,
+                    'latency' => $ms,
+                ];
+            }
+
+            return [
+                'status' => 'error',
+                'mode'   => $mode,
+                'host'   => $host,
+                'error'  => $errstr ?: 'Sin conexión',
+            ];
+        } catch (\Throwable $e) {
+            return ['status' => 'error', 'mode' => '?', 'error' => $e->getMessage()];
         }
     }
 

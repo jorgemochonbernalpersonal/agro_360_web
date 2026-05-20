@@ -11,12 +11,14 @@ use App\Models\Campaign;
 use App\Models\Crew;
 use App\Models\Wine;
 use App\Models\Container;
+use App\Models\SecurityEvent;
 use App\Models\SupportTicket;
 use App\Models\SupervisorWinery;
 use App\Models\SupervisorViticulturist;
 use App\Models\WineryViticulturist;
 use Illuminate\Support\Facades\DB;
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Concerns\WithReadOnlyGuard;
 use App\Services\SecurityLogger;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Password;
@@ -25,7 +27,7 @@ use Livewire\Component;
 
 class Show extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithReadOnlyGuard;
 
     public User $user;
     public $user_id;
@@ -289,6 +291,37 @@ class Show extends Component
         return $this->redirect(route($dashboardRoute), navigate: true);
     }
 
+    // ─── Toggle read-only admin ───────────────────────────────────────────────
+
+    public function toggleReadOnlyAdmin(): void
+    {
+        if ($this->isReadOnly()) return;
+
+        if (!$this->user->isAdmin()) {
+            $this->toastError('Solo aplica a administradores.');
+            return;
+        }
+
+        if ($this->user->id === Auth::id()) {
+            $this->toastError('No puedes cambiarte a ti mismo a solo lectura.');
+            return;
+        }
+
+        $this->user->is_readonly_admin = !$this->user->is_readonly_admin;
+        $this->user->save();
+        $this->user->refresh();
+
+        $estado = $this->user->is_readonly_admin ? 'Solo lectura activado' : 'Acceso completo restaurado';
+
+        SecurityLogger::logSecurityEvent('admin_readonly_toggled', [
+            'admin_id'    => Auth::id(),
+            'user_id'     => $this->user->id,
+            'readonly'    => $this->user->is_readonly_admin,
+        ]);
+
+        $this->toastSuccess("{$estado} para {$this->user->name}.");
+    }
+
     // ─── Stats ────────────────────────────────────────────────────────────────
 
     private function getUserStatistics(User $user): array
@@ -479,13 +512,44 @@ class Show extends Component
         ];
     }
 
+    // ─── User history ─────────────────────────────────────────────────────────
+
+    private function loadUserHistory(): \Illuminate\Support\Collection
+    {
+        $userId = $this->user->id;
+
+        return SecurityEvent::where(function ($q) use ($userId) {
+                $q->where('user_id', $userId)
+                  ->orWhere('admin_id', $userId);
+            })
+            ->whereIn('event', [
+                'user_created_by_admin',
+                'user_edited_by_admin',
+                'user_deleted_by_admin',
+                'user_account_toggled',
+                'user_beta_toggled',
+                'email_verified_manually_by_admin',
+                'impersonation_started',
+                'admin_readonly_toggled',
+                'login',
+                'logout',
+                'failed_login',
+                'password_reset_requested',
+                'password_changed',
+            ])
+            ->orderByDesc('created_at')
+            ->limit(20)
+            ->get();
+    }
+
     // ─── Render ───────────────────────────────────────────────────────────────
 
     public function render()
     {
         return view('livewire.admin.users.show', [
-            'stats'     => $this->stats,
-            'hierarchy' => $this->hierarchy,
+            'stats'       => $this->stats,
+            'hierarchy'   => $this->hierarchy,
+            'userHistory' => $this->loadUserHistory(),
         ])->layout('layouts.app', [
             'title'       => $this->user->name . ' - Usuario - Agro365',
             'description' => 'Detalles del usuario ' . $this->user->name . '. Información, estadísticas y actividad.',

@@ -22,13 +22,15 @@
     @endphp
 
     {{-- Resumen de estado --}}
-    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+    <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
         @foreach([
             ['label' => 'Cola',       'key' => 'queue'],
             ['label' => 'Base datos', 'key' => 'database'],
             ['label' => 'Caché',      'key' => 'cache'],
             ['label' => 'Disco',      'key' => 'disk'],
             ['label' => 'Seguridad',  'key' => 'security'],
+            ['label' => 'Email',      'key' => 'email'],
+            ['label' => 'PayPal',     'key' => 'paypal'],
             ['label' => 'App',        'key' => 'app'],
         ] as $item)
             @php $s = $health[$item['key']]['status'] ?? 'ok'; @endphp
@@ -220,6 +222,83 @@
                     Ver log completo →
                 </a>
             </x-slot:footer>
+        </x-agro.card>
+
+        {{-- Email SMTP --}}
+        <x-agro.card>
+            <x-slot:header>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <div class="p-1.5 rounded-lg {{ $statusBg($health['email']['status']) }}">
+                            <flux:icon icon="envelope" class="size-4 {{ $statusColor($health['email']['status']) }}" />
+                        </div>
+                        <span class="font-semibold text-zinc-900 text-sm">Email (SMTP)</span>
+                    </div>
+                    <flux:badge :color="$statusBadge($health['email']['status'])" size="sm">{{ strtoupper($health['email']['status']) }}</flux:badge>
+                </div>
+            </x-slot:header>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-zinc-600">Driver</span>
+                    <span class="text-sm font-semibold text-zinc-900 font-mono">{{ $health['email']['driver'] ?? '—' }}</span>
+                </div>
+                @if(isset($health['email']['host']))
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-zinc-600">Host</span>
+                    <span class="text-sm font-semibold text-zinc-900 font-mono truncate max-w-[140px]">{{ $health['email']['host'] }}</span>
+                </div>
+                @endif
+                @if(isset($health['email']['latency']))
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-zinc-600">Latencia</span>
+                    <span class="text-sm font-semibold text-zinc-900 font-mono">{{ $health['email']['latency'] }} ms</span>
+                </div>
+                @endif
+                @if(isset($health['email']['note']))
+                <p class="text-xs text-zinc-400">{{ $health['email']['note'] }}</p>
+                @endif
+                @if(isset($health['email']['error']))
+                <p class="text-xs text-red-500 font-mono">{{ $health['email']['error'] }}</p>
+                @endif
+            </div>
+        </x-agro.card>
+
+        {{-- PayPal --}}
+        <x-agro.card>
+            <x-slot:header>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <div class="p-1.5 rounded-lg {{ $statusBg($health['paypal']['status']) }}">
+                            <flux:icon icon="credit-card" class="size-4 {{ $statusColor($health['paypal']['status']) }}" />
+                        </div>
+                        <span class="font-semibold text-zinc-900 text-sm">PayPal API</span>
+                    </div>
+                    <flux:badge :color="$statusBadge($health['paypal']['status'])" size="sm">{{ strtoupper($health['paypal']['status']) }}</flux:badge>
+                </div>
+            </x-slot:header>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-zinc-600">Modo</span>
+                    <flux:badge :color="($health['paypal']['mode'] ?? '') === 'live' ? 'agro' : 'yellow'" size="sm">
+                        {{ $health['paypal']['mode'] ?? '—' }}
+                    </flux:badge>
+                </div>
+                @if(isset($health['paypal']['host']))
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-zinc-600">Endpoint</span>
+                    <span class="text-xs font-mono text-zinc-500 truncate max-w-[140px]">{{ $health['paypal']['host'] }}</span>
+                </div>
+                @endif
+                @if(isset($health['paypal']['latency']))
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-zinc-600">Latencia</span>
+                    <span class="text-sm font-semibold text-zinc-900 font-mono">{{ $health['paypal']['latency'] }} ms</span>
+                </div>
+                @endif
+                @if(isset($health['paypal']['error']))
+                <p class="text-xs text-red-500 font-mono">{{ $health['paypal']['error'] }}</p>
+                @endif
+            </div>
         </x-agro.card>
 
         {{-- Información de la app --}}

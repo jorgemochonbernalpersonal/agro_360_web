@@ -55,7 +55,15 @@
         </div>
 
         <x-slot:footer>
-            <div class="flex justify-end">
+            <div class="flex items-center justify-between gap-4">
+                @if($lastPlatform)
+                    <p class="text-xs text-zinc-400">
+                        Último cambio: {{ $lastPlatform->created_at->format('d/m/Y H:i') }}
+                        @if($lastPlatform->email) · por {{ $lastPlatform->email }} @endif
+                    </p>
+                @else
+                    <span></span>
+                @endif
                 <flux:button wire:click="savePlatform" variant="primary" wire:loading.attr="disabled">
                     Guardar configuración
                 </flux:button>
@@ -91,7 +99,15 @@
         </div>
 
         <x-slot:footer>
-            <div class="flex justify-end">
+            <div class="flex items-center justify-between gap-4">
+                @if($lastBeta)
+                    <p class="text-xs text-zinc-400">
+                        Último cambio: {{ $lastBeta->created_at->format('d/m/Y H:i') }}
+                        @if($lastBeta->email) · por {{ $lastBeta->email }} @endif
+                    </p>
+                @else
+                    <span></span>
+                @endif
                 <flux:button wire:click="saveBeta" variant="primary" wire:loading.attr="disabled">
                     Guardar fecha beta
                 </flux:button>
@@ -144,7 +160,15 @@
         </div>
 
         <x-slot:footer>
-            <div class="flex justify-end">
+            <div class="flex items-center justify-between gap-4">
+                @if($lastSecurity)
+                    <p class="text-xs text-zinc-400">
+                        Último cambio: {{ $lastSecurity->created_at->format('d/m/Y H:i') }}
+                        @if($lastSecurity->email) · por {{ $lastSecurity->email }} @endif
+                    </p>
+                @else
+                    <span></span>
+                @endif
                 <flux:button wire:click="saveSecurity" variant="primary" wire:loading.attr="disabled">
                     Guardar política
                 </flux:button>
@@ -185,8 +209,16 @@
         </div>
 
         <x-slot:footer>
-            <div class="flex items-center justify-between">
-                <p class="text-xs text-zinc-400">Los cambios se aplican en el próximo login del usuario</p>
+            <div class="flex items-center justify-between gap-4">
+                <div class="flex flex-col gap-1">
+                    <p class="text-xs text-zinc-400">Los cambios se aplican en el próximo login del usuario</p>
+                    @if($lastModules)
+                        <p class="text-xs text-zinc-400">
+                            Último cambio: {{ $lastModules->created_at->format('d/m/Y H:i') }}
+                            @if($lastModules->email) · por {{ $lastModules->email }} @endif
+                        </p>
+                    @endif
+                </div>
                 <flux:button wire:click="saveModules" variant="primary" wire:loading.attr="disabled">
                     Guardar módulos
                 </flux:button>

@@ -34,6 +34,13 @@
 
         {{-- User section --}}
         <div class="flex items-center gap-3">
+            {{-- Búsqueda global admin --}}
+            @if(auth()->user()->isAdmin())
+                @persist('admin-global-search')
+                    @livewire('admin.global-search')
+                @endpersist
+            @endif
+
             @persist('notifications')
                 @livewire('notifications')
             @endpersist

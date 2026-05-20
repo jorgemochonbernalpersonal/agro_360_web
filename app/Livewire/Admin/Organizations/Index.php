@@ -18,12 +18,14 @@ class Index extends Component
 
     // ── Filters ──────────────────────────────────────────────────────────────
 
-    public string $search     = '';
-    public string $typeFilter = '';
+    public string $search        = '';
+    public string $typeFilter    = '';
+    public bool   $showInternal  = false;
 
     protected $queryString = [
-        'search'     => ['except' => ''],
-        'typeFilter' => ['except' => '', 'as' => 'type'],
+        'search'       => ['except' => ''],
+        'typeFilter'   => ['except' => '', 'as' => 'type'],
+        'showInternal' => ['except' => false, 'as' => 'internal'],
     ];
 
     // ── Modal ─────────────────────────────────────────────────────────────────
@@ -47,8 +49,15 @@ class Index extends Component
 
     // ── Lifecycle ─────────────────────────────────────────────────────────────
 
-    public function updatingSearch(): void     { $this->resetPage(); }
-    public function updatingTypeFilter(): void { $this->resetPage(); }
+    public function updatingSearch(): void       { $this->resetPage(); }
+    public function updatingTypeFilter(): void   { $this->resetPage(); }
+    public function updatingShowInternal(): void { $this->resetPage(); }
+
+    public function toggleInternal(): void
+    {
+        $this->showInternal = !$this->showInternal;
+        $this->resetPage();
+    }
 
     // ── Modal helpers ─────────────────────────────────────────────────────────
 
@@ -228,7 +237,11 @@ class Index extends Component
 
     public function render()
     {
-        $organizations = Organization::query()
+        $baseQuery = $this->showInternal
+            ? Organization::query()
+            : Organization::excludeInternal();
+
+        $organizations = $baseQuery
             ->with(['ownerUser', 'province'])
             ->withCount('members')
             ->when($this->search, fn ($q) => $q->where(fn ($q) =>
@@ -240,12 +253,14 @@ class Index extends Component
             ->orderBy('name')
             ->paginate(20);
 
+        // Stats siempre sobre organizaciones reales (sin internas)
         $stats = [
-            'total'         => Organization::count(),
-            'wineries'      => Organization::wineries()->count(),
-            'denominations' => Organization::denominations()->count(),
+            'total'         => Organization::excludeInternal()->count(),
+            'wineries'      => Organization::excludeInternal()->wineries()->count(),
+            'denominations' => Organization::excludeInternal()->denominations()->count(),
             'orphans'       => User::whereIn('role', [User::ROLE_WINERY, User::ROLE_SUPERVISOR, User::ROLE_PRODUCER])
                                    ->whereNull('organization_id')
+                                   ->excludeDemo()
                                    ->count(),
         ];
 

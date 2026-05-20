@@ -83,6 +83,19 @@
                     <option value="expired">Beta expirado</option>
                     <option value="never">Sin beta</option>
                 </x-agro.filter-select>
+                {{-- Rango de fecha de registro --}}
+                <input
+                    type="date"
+                    wire:model.live="filterDateFrom"
+                    title="Registro desde"
+                    class="text-xs border border-zinc-200 rounded-md px-2 py-1.5 text-zinc-700 focus:outline-none focus:ring-2 focus:ring-agro-500 h-9"
+                />
+                <input
+                    type="date"
+                    wire:model.live="filterDateTo"
+                    title="Registro hasta"
+                    class="text-xs border border-zinc-200 rounded-md px-2 py-1.5 text-zinc-700 focus:outline-none focus:ring-2 focus:ring-agro-500 h-9"
+                />
                 <flux:button
                     wire:click="toggleInternal"
                     variant="ghost"
@@ -209,7 +222,12 @@
                             </x-agro.table-cell>
 
                             <x-agro.table-cell>
-                                <flux:badge :color="$roleInfo['color']" size="sm">{{ $roleInfo['label'] }}</flux:badge>
+                                <div class="flex items-center gap-1.5 flex-wrap">
+                                    <flux:badge :color="$roleInfo['color']" size="sm">{{ $roleInfo['label'] }}</flux:badge>
+                                    @if($user->is_readonly_admin)
+                                        <flux:badge color="zinc" size="sm">Solo lectura</flux:badge>
+                                    @endif
+                                </div>
                             </x-agro.table-cell>
 
                             <x-agro.table-cell>
@@ -244,7 +262,7 @@
                             </x-agro.table-cell>
 
                             <x-agro.table-cell>
-                                <p class="text-sm text-zinc-700">{{ $user->created_at->format('d/m/Y') }}</p>
+                                <p class="text-sm text-zinc-700">{{ $user->created_at->format('d/m/Y H:i') }}</p>
                                 <p class="text-xs text-zinc-400">{{ $user->created_at->diffForHumans() }}</p>
                             </x-agro.table-cell>
 

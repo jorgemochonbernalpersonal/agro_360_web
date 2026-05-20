@@ -123,6 +123,66 @@
     </x-agro.card>
     @endif
 
+    {{-- Retención por cohorte --}}
+    @if($cohortData->count() > 0)
+    <x-agro.card>
+        <x-slot:header>
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 bg-violet-50 rounded-xl flex items-center justify-center">
+                    <flux:icon icon="arrow-trending-up" class="size-5 text-violet-600" />
+                </div>
+                <div>
+                    <h3 class="font-semibold text-zinc-900">Retención por cohorte</h3>
+                    <p class="text-xs text-zinc-400">Últimos 12 meses — % de suscriptores que siguen activos</p>
+                </div>
+            </div>
+        </x-slot:header>
+
+        <div class="overflow-x-auto -mx-5 sm:-mx-6">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="border-b border-zinc-100 bg-zinc-50">
+                        <th class="text-left text-xs font-medium text-zinc-500 px-5 sm:px-6 py-2.5">Cohorte</th>
+                        <th class="text-right text-xs font-medium text-zinc-500 px-4 py-2.5">Total</th>
+                        <th class="text-right text-xs font-medium text-zinc-500 px-4 py-2.5">Activos</th>
+                        <th class="text-right text-xs font-medium text-zinc-500 px-4 py-2.5">Cancelados</th>
+                        <th class="text-right text-xs font-medium text-zinc-500 px-4 py-2.5">Ingresos</th>
+                        <th class="text-left text-xs font-medium text-zinc-500 px-5 sm:px-6 py-2.5">Retención</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-zinc-100">
+                    @foreach($cohortData as $row)
+                    <tr class="hover:bg-zinc-50 transition-colors">
+                        <td class="px-5 sm:px-6 py-2.5 font-medium text-zinc-700">{{ $row['label'] }}</td>
+                        <td class="px-4 py-2.5 text-right text-zinc-700">{{ $row['total'] }}</td>
+                        <td class="px-4 py-2.5 text-right font-semibold text-agro-600">{{ $row['active'] }}</td>
+                        <td class="px-4 py-2.5 text-right {{ $row['cancelled'] > 0 ? 'text-red-500' : 'text-zinc-400' }}">
+                            {{ $row['cancelled'] ?: '—' }}
+                        </td>
+                        <td class="px-4 py-2.5 text-right text-zinc-700">
+                            {{ $row['revenue'] > 0 ? number_format($row['revenue'], 2) . ' €' : '—' }}
+                        </td>
+                        <td class="px-5 sm:px-6 py-2.5">
+                            <div class="flex items-center gap-2">
+                                <div class="flex-1 bg-zinc-100 rounded-full h-1.5 max-w-[80px]">
+                                    <div
+                                        class="h-1.5 rounded-full transition-all {{ $row['retention'] >= 70 ? 'bg-agro-500' : ($row['retention'] >= 40 ? 'bg-yellow-400' : 'bg-red-400') }}"
+                                        style="width: {{ $row['retention'] }}%"
+                                    ></div>
+                                </div>
+                                <span class="text-xs font-semibold {{ $row['retention'] >= 70 ? 'text-agro-600' : ($row['retention'] >= 40 ? 'text-yellow-600' : 'text-red-500') }}">
+                                    {{ $row['retention'] }}%
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </x-agro.card>
+    @endif
+
     {{-- Filtros --}}
     <x-agro.filter-bar>
         <x-agro.filter-input

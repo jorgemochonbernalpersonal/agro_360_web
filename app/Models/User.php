@@ -175,6 +175,14 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Admin de solo lectura (no puede modificar datos)
+     */
+    public function isReadOnlyAdmin(): bool
+    {
+        return $this->isAdmin() && (bool) $this->is_readonly_admin;
+    }
+
+    /**
      * Verificar si el usuario es supervisor / denomination of origin
      */
     public function isSupervisor(): bool

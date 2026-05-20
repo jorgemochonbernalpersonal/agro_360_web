@@ -29,8 +29,27 @@
                     <option value="winery">Bodegas</option>
                     <option value="denomination_of_origin">Denominaciones de Origen</option>
                 </x-agro.filter-select>
+                <flux:button
+                    wire:click="toggleInternal"
+                    variant="ghost"
+                    size="sm"
+                    icon="bug-ant"
+                    tooltip="{{ $showInternal ? 'Ocultar organizaciones internas' : 'Mostrar organizaciones internas (demo/test)' }}"
+                    @class(['text-amber-500 bg-amber-50' => $showInternal])
+                >
+                    Internos
+                </flux:button>
             </x-agro.filter-bar>
         </div>
+
+        {{-- Banner modo interno --}}
+        @if($showInternal)
+        <div class="mx-6 mb-3 flex items-center gap-2 rounded-lg bg-amber-50 border border-amber-200 px-4 py-2.5 text-sm text-amber-800">
+            <flux:icon icon="bug-ant" class="size-4 flex-shrink-0" />
+            <span>Mostrando también organizaciones internas (demo / test / maestro). Las estadísticas siempre reflejan solo organizaciones reales.</span>
+            <button wire:click="toggleInternal" class="ml-auto text-amber-600 hover:text-amber-800 font-medium text-xs">Ocultar</button>
+        </div>
+        @endif
 
         <x-agro.table>
             <x-slot:head>
@@ -47,7 +66,12 @@
                 @forelse($organizations as $org)
                     <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
                         <td class="px-4 py-3 text-sm font-medium text-zinc-900 dark:text-white">
-                            {{ $org->name }}
+                            <div class="flex items-center gap-1.5">
+                                <span>{{ $org->name }}</span>
+                                @if($org->isInternal())
+                                    <flux:badge color="yellow" size="sm">Interno</flux:badge>
+                                @endif
+                            </div>
                             @if($org->parent)
                                 <div class="text-xs text-zinc-400">↳ {{ $org->parent->name }}</div>
                             @endif

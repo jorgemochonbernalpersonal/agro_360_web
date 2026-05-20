@@ -151,11 +151,45 @@ class Index extends Component
 
         $maxRevenue = $monthlyStats->max('revenue') ?: 1;
 
+        // Cohort retention: group by start month (last 6 months), show active/cancelled/churn
+        $cohortData = Subscription::select(
+                DB::raw('YEAR(starts_at) as year'),
+                DB::raw('MONTH(starts_at) as month'),
+                DB::raw('COUNT(*) as total'),
+                DB::raw("SUM(CASE WHEN status = 'active' AND ends_at > NOW() THEN 1 ELSE 0 END) as active"),
+                DB::raw("SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END) as cancelled"),
+                DB::raw("SUM(CASE WHEN status = 'expired' THEN 1 ELSE 0 END) as expired"),
+                DB::raw('COALESCE(SUM(amount), 0) as revenue')
+            )
+            ->whereNotNull('starts_at')
+            ->where('starts_at', '>=', now()->subMonths(11)->startOfMonth())
+            ->groupBy(DB::raw('YEAR(starts_at)'), DB::raw('MONTH(starts_at)'))
+            ->orderByDesc(DB::raw('YEAR(starts_at)'))
+            ->orderByDesc(DB::raw('MONTH(starts_at)'))
+            ->limit(12)
+            ->get()
+            ->map(function ($row) {
+                $total      = (int) $row->total;
+                $active     = (int) $row->active;
+                $retention  = $total > 0 ? round($active / $total * 100) : 0;
+                $monthName  = now()->setYear($row->year)->setMonth($row->month)->translatedFormat('M Y');
+                return [
+                    'label'     => $monthName,
+                    'total'     => $total,
+                    'active'    => $active,
+                    'cancelled' => (int) $row->cancelled,
+                    'expired'   => (int) $row->expired,
+                    'revenue'   => (float) $row->revenue,
+                    'retention' => $retention,
+                ];
+            });
+
         return view('livewire.admin.subscriptions.index', [
             'subscriptions' => $subscriptions,
             'stats'         => $stats,
             'monthlyStats'  => $monthlyStats,
             'maxRevenue'    => $maxRevenue,
+            'cohortData'    => $cohortData,
         ]);
     }
 }

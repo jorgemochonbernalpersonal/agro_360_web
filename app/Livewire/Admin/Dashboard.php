@@ -7,6 +7,7 @@ use App\Models\Plot;
 use App\Models\Client;
 use App\Models\Invoice;
 use App\Models\AgriculturalActivity;
+use App\Models\SecurityEvent;
 use App\Models\SupportTicket;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -222,6 +223,40 @@ class Dashboard extends Component
         ];
     }
 
+    private function buildSuspiciousUsers(): \Illuminate\Support\Collection
+    {
+        try {
+            $since = now()->subHours(24);
+
+            return SecurityEvent::where('event', 'failed_login')
+                ->where('created_at', '>=', $since)
+                ->whereNotNull('email')
+                ->selectRaw('email, COUNT(*) as attempts, MAX(created_at) as last_attempt, MAX(ip) as ip')
+                ->groupBy('email')
+                ->having('attempts', '>=', 3)
+                ->orderByDesc('attempts')
+                ->limit(5)
+                ->get();
+        } catch (\Throwable) {
+            return collect();
+        }
+    }
+
+    private function orphanedPlotsCount(): int
+    {
+        try {
+            return (int) DB::table('plots')
+                ->leftJoin('users', 'users.id', '=', 'plots.viticulturist_id')
+                ->where(function ($q) {
+                    $q->whereNull('users.id')
+                      ->orWhere('users.can_login', false);
+                })
+                ->count();
+        } catch (\Throwable) {
+            return 0;
+        }
+    }
+
     public function render()
     {
         $cached = Cache::remember($this->cacheKey(), now()->addMinutes(5), function () {
@@ -232,8 +267,10 @@ class Dashboard extends Component
         });
 
         return view('livewire.admin.dashboard', [
-            'stats'     => $cached['stats'],
-            'cachedAt'  => $cached['cached_at'],
+            'stats'           => $cached['stats'],
+            'cachedAt'        => $cached['cached_at'],
+            'suspiciousUsers' => $this->buildSuspiciousUsers(),
+            'orphanedPlots'   => $this->orphanedPlotsCount(),
         ])->layout('layouts.app', [
             'title'       => 'Dashboard Administrador - Agro365',
             'description' => 'Panel de control con estadísticas generales del sistema',

@@ -13,13 +13,24 @@ class Index extends Component
 {
     use WithPagination, WithToastNotifications;
 
-    public $search     = '';
-    public $roleFilter = 'all';
+    public $search        = '';
+    public $roleFilter    = 'all';
+    public bool $showInternal = false;
 
-    protected $queryString = ['search', 'roleFilter'];
+    protected $queryString = [
+        'search', 'roleFilter',
+        'showInternal' => ['except' => false, 'as' => 'internal'],
+    ];
 
-    public function updatingSearch()    { $this->resetPage(); }
-    public function updatingRoleFilter(){ $this->resetPage(); }
+    public function updatingSearch()       { $this->resetPage(); }
+    public function updatingRoleFilter()   { $this->resetPage(); }
+    public function updatingShowInternal() { $this->resetPage(); }
+
+    public function toggleInternal(): void
+    {
+        $this->showInternal = !$this->showInternal;
+        $this->resetPage();
+    }
 
     public function deleteOrphaned()
     {
@@ -61,6 +72,10 @@ class Index extends Component
             ->with(['plots.viticulturist:id,name,email,role'])
             ->withCount('plots');
 
+        if (!$this->showInternal) {
+            $query->whereHas('plots.viticulturist', fn($q) => $q->excludeDemo());
+        }
+
         if ($this->search) {
             $search = '%' . strtolower($this->search) . '%';
             $query->where(function ($q) use ($search) {
@@ -78,15 +93,17 @@ class Index extends Component
 
         $sigpacs = $query->orderBy('code')->paginate(20);
 
+        // Stats siempre sin internos
+        $realBase      = SigpacCode::whereHas('plots.viticulturist', fn($q) => $q->excludeDemo());
         $orphanedCount = SigpacCode::doesntHave('plots')->count();
 
         $stats = [
-            'total'    => SigpacCode::count(),
+            'total'    => $realBase->count(),
             'orphaned' => $orphanedCount,
             'by_role'  => [
-                'viticulturist' => SigpacCode::whereHas('plots.viticulturist', fn($q) => $q->where('role', 'viticulturist'))->count(),
-                'winery'        => SigpacCode::whereHas('plots.viticulturist', fn($q) => $q->where('role', 'winery'))->count(),
-                'supervisor'    => SigpacCode::whereHas('plots.viticulturist', fn($q) => $q->where('role', 'supervisor'))->count(),
+                'viticulturist' => (clone $realBase)->whereHas('plots.viticulturist', fn($q) => $q->where('role', 'viticulturist'))->count(),
+                'winery'        => (clone $realBase)->whereHas('plots.viticulturist', fn($q) => $q->where('role', 'winery'))->count(),
+                'supervisor'    => (clone $realBase)->whereHas('plots.viticulturist', fn($q) => $q->where('role', 'supervisor'))->count(),
             ],
         ];
 
