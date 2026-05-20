@@ -80,6 +80,14 @@ class Index extends Component
 
     public function render()
     {
+        if (!\Illuminate\Support\Facades\Schema::hasTable('canned_responses')) {
+            return view('livewire.admin.canned-responses.index', ['responses' => collect(), 'categories' => collect()])
+                ->layout('layouts.app', [
+                    'title'       => 'Respuestas Rápidas - Admin - Agro365',
+                    'description' => 'Gestiona plantillas de respuesta para tickets de soporte',
+                ]);
+        }
+
         $responses = CannedResponse::with('admin:id,name')
             ->orderBy('sort_order')
             ->orderBy('title')
