@@ -3,6 +3,7 @@
 namespace App\Helpers\Navigation;
 
 use App\Models\SupervisorRequest;
+use App\Models\WineryViticulturist;
 use Illuminate\Support\Facades\Cache;
 
 class WineryMenu
