@@ -378,12 +378,13 @@ class PlotController extends Controller
 
         Plot::whereIn('viticulturist_id', $viticulturistIds)->findOrFail($id);
 
+        $perPage    = $this->resolvePerPage($request, 15, 100);
         $activities = AgriculturalActivity::where('plot_id', $id)
             ->where('activity_type', 'harvest')
             ->whereIn('viticulturist_id', $viticulturistIds)
             ->with(['harvest', 'plotPlanting.grapeVariety'])
             ->orderByDesc('activity_date')
-            ->paginate($request->integer('per_page', 15));
+            ->paginate($perPage);
 
         return response()->json([
             'data' => $activities->map(fn ($a) => [
@@ -400,6 +401,7 @@ class PlotController extends Controller
             ]),
             'meta' => [
                 'total'        => $activities->total(),
+                'per_page'     => $activities->perPage(),
                 'current_page' => $activities->currentPage(),
                 'last_page'    => $activities->lastPage(),
             ],
@@ -418,10 +420,11 @@ class PlotController extends Controller
 
         Plot::whereIn('viticulturist_id', $viticulturistIds)->findOrFail($id);
 
+        $perPage    = $this->resolvePerPage($request, 20, 100);
         $activities = AgriculturalActivity::where('plot_id', $id)
             ->whereIn('viticulturist_id', $viticulturistIds)
             ->orderByDesc('activity_date')
-            ->paginate($request->integer('per_page', 20));
+            ->paginate($perPage);
 
         return response()->json([
             'data' => $activities->map(fn ($a) => [
@@ -432,6 +435,7 @@ class PlotController extends Controller
             ]),
             'meta' => [
                 'total'        => $activities->total(),
+                'per_page'     => $activities->perPage(),
                 'current_page' => $activities->currentPage(),
                 'last_page'    => $activities->lastPage(),
             ],

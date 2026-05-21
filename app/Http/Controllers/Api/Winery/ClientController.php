@@ -38,6 +38,7 @@ class ClientController extends Controller
             'data' => ClientResource::collection($clients),
             'meta' => [
                 'total'        => $clients->total(),
+                'per_page'     => $clients->perPage(),
                 'current_page' => $clients->currentPage(),
                 'last_page'    => $clients->lastPage(),
             ],

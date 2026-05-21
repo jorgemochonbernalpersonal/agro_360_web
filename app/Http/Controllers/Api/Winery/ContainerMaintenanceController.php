@@ -262,15 +262,17 @@ class ContainerMaintenanceController extends Controller
 
         Container::where('user_id', $user->id)->findOrFail($containerId);
 
+        $perPage      = $this->resolvePerPage($request, 20, 100);
         $maintenances = ContainerMaintenance::where('container_id', $containerId)
             ->with(['supplies', 'wastes'])
             ->orderByDesc('scheduled_date')
-            ->paginate($request->integer('per_page', 20));
+            ->paginate($perPage);
 
         return response()->json([
             'data' => ContainerMaintenanceResource::collection($maintenances),
             'meta' => [
                 'total'        => $maintenances->total(),
+                'per_page'     => $maintenances->perPage(),
                 'current_page' => $maintenances->currentPage(),
                 'last_page'    => $maintenances->lastPage(),
             ],

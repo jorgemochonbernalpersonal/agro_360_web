@@ -119,7 +119,25 @@ class LabelingController extends Controller
             'notes'            => 'sometimes|nullable|string|max:1000',
         ]);
 
-        $labeling->update($validated);
+        DB::transaction(function () use ($labeling, $validated) {
+            // Recalculate label batch usage when quantity changes
+            if (isset($validated['quantity_labeled']) && $labeling->label_batch_id) {
+                $diff = $validated['quantity_labeled'] - $labeling->quantity_labeled;
+                if ($diff !== 0) {
+                    $batch = LabelBatch::find($labeling->label_batch_id);
+                    if ($batch) {
+                        abort_if(
+                            $diff > 0 && $batch->available_quantity < $diff,
+                            422,
+                            'El lote no tiene suficientes etiquetas disponibles.'
+                        );
+                        $batch->increment('used_quantity', $diff);
+                    }
+                }
+            }
+            $labeling->update($validated);
+        });
+
         $labeling->load(['wine', 'bottling', 'labelBatch']);
 
         return response()->json(['data' => $this->format($labeling)]);

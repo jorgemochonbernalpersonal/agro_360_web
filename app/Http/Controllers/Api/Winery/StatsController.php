@@ -67,7 +67,7 @@ class StatsController extends Controller
         // ── Embotellado ───────────────────────────────────────────────────────
         $bottlingStats = WineBottling::whereHas('wine', fn ($q) => $q->where('user_id', $userId))
             ->whereYear('bottling_date', $year)
-            ->selectRaw('COUNT(*) as total_sessions, SUM(quantity_bottled) as total_bottles')
+            ->selectRaw('COUNT(*) as total_sessions, SUM(quantity_bottles) as total_bottles')
             ->first();
 
         // ── Etiquetas ─────────────────────────────────────────────────────────

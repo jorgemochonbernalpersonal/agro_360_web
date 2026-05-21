@@ -152,6 +152,15 @@ class ExternalGrapePurchaseController extends Controller
             'notes'                    => 'sometimes|nullable|string|max:1000',
         ]);
 
+        // Auto-recalculate total_price when quantity or price changes but total not explicitly provided
+        if (!isset($validated['total_price']) && (isset($validated['quantity_kg']) || isset($validated['price_per_kg']))) {
+            $qty   = $validated['quantity_kg'] ?? $purchase->quantity_kg;
+            $price = $validated['price_per_kg'] ?? $purchase->price_per_kg;
+            if ($price !== null) {
+                $validated['total_price'] = round($qty * $price, 2);
+            }
+        }
+
         $purchase->update($validated);
         $purchase->load(['supplier', 'destinationContainer', 'wine']);
 

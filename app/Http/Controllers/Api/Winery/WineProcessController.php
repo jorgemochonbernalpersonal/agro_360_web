@@ -10,8 +10,10 @@ use App\Models\UnitOfMeasurement;
 use App\Models\Wine;
 use App\Models\WineLoss;
 use App\Models\WineTransfer;
+use App\Services\WineContainerStockService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class WineProcessController extends Controller
 {
@@ -23,7 +25,7 @@ class WineProcessController extends Controller
         $perPage = $this->resolvePerPage($request, 20, 50);
 
         $transfers = WineTransfer::whereHas('wine', fn ($q) => $q->where('user_id', $user->id))
-            ->with(['wine', 'fromContainer', 'toContainer'])
+            ->with(['wine', 'fromContainer', 'toContainer', 'unitOfMeasurement'])
             ->latest('transfer_date')
             ->paginate($perPage);
 
@@ -45,7 +47,7 @@ class WineProcessController extends Controller
         $perPage = $this->resolvePerPage($request, 20, 50);
 
         $losses = WineLoss::whereHas('wine', fn ($q) => $q->where('user_id', $user->id))
-            ->with(['wine', 'container'])
+            ->with(['wine', 'container', 'unitOfMeasurement'])
             ->latest('loss_date')
             ->paginate($perPage);
 
@@ -85,13 +87,17 @@ class WineProcessController extends Controller
         $unitId = $validated['unit_of_measurement_id']
             ?? UnitOfMeasurement::where('symbol', 'L')->value('id');
 
-        $transfer = WineTransfer::create([
-            ...$validated,
-            'unit_of_measurement_id' => $unitId,
-            'created_by'             => $user->id,
-        ]);
+        $transfer = DB::transaction(function () use ($validated, $unitId, $user) {
+            $transfer = WineTransfer::create([
+                ...$validated,
+                'unit_of_measurement_id' => $unitId,
+                'created_by'             => $user->id,
+            ]);
+            app(WineContainerStockService::class)->recordTransfer($transfer);
+            return $transfer;
+        });
 
-        $transfer->load(['wine', 'fromContainer', 'toContainer']);
+        $transfer->load(['wine', 'fromContainer', 'toContainer', 'unitOfMeasurement']);
 
         return response()->json([
             'data'    => new TransferResource($transfer),
@@ -121,12 +127,16 @@ class WineProcessController extends Controller
         Wine::forUser($user->id)->findOrFail($validated['wine_id']);
         Container::where('user_id', $user->id)->findOrFail($validated['container_id']);
 
-        $loss = WineLoss::create([
-            ...$validated,
-            'created_by' => $user->id,
-        ]);
+        $loss = DB::transaction(function () use ($validated, $user) {
+            $loss = WineLoss::create([
+                ...$validated,
+                'created_by' => $user->id,
+            ]);
+            app(WineContainerStockService::class)->recordLoss($loss);
+            return $loss;
+        });
 
-        $loss->load(['wine', 'container']);
+        $loss->load(['wine', 'container', 'unitOfMeasurement']);
 
         return response()->json([
             'data'    => new LossResource($loss),
@@ -155,8 +165,20 @@ class WineProcessController extends Controller
             'notes'             => 'sometimes|nullable|string|max:1000',
         ]);
 
-        $transfer->update($validated);
-        $transfer->load(['wine', 'fromContainer', 'toContainer']);
+        $oldData = [
+            'wine_id'          => $transfer->wine_id,
+            'from_container_id'=> $transfer->from_container_id,
+            'to_container_id'  => $transfer->to_container_id,
+            'quantity'         => $transfer->quantity,
+            'source_wine_id'   => $transfer->source_wine_id,
+        ];
+
+        DB::transaction(function () use ($transfer, $validated, $oldData) {
+            $transfer->update($validated);
+            app(WineContainerStockService::class)->updateTransfer($transfer->fresh(), $oldData);
+        });
+
+        $transfer->load(['wine', 'fromContainer', 'toContainer', 'unitOfMeasurement']);
 
         return response()->json(['data' => new TransferResource($transfer)]);
     }
@@ -182,8 +204,18 @@ class WineProcessController extends Controller
             'notes'                => 'sometimes|nullable|string|max:1000',
         ]);
 
-        $loss->update($validated);
-        $loss->load(['wine', 'container']);
+        $oldData = [
+            'wine_id'      => $loss->wine_id,
+            'container_id' => $loss->container_id,
+            'quantity'     => $loss->quantity,
+        ];
+
+        DB::transaction(function () use ($loss, $validated, $oldData) {
+            $loss->update($validated);
+            app(WineContainerStockService::class)->updateLoss($loss->fresh(), $oldData);
+        });
+
+        $loss->load(['wine', 'container', 'unitOfMeasurement']);
 
         return response()->json(['data' => new LossResource($loss)]);
     }
@@ -199,7 +231,10 @@ class WineProcessController extends Controller
             'wine', fn ($q) => $q->where('user_id', $user->id)
         )->findOrFail($id);
 
-        $transfer->delete();
+        DB::transaction(function () use ($transfer) {
+            app(WineContainerStockService::class)->revertTransfer($transfer);
+            $transfer->delete();
+        });
 
         return response()->json(['message' => 'Trasvase eliminado correctamente.']);
     }
@@ -215,7 +250,10 @@ class WineProcessController extends Controller
             'wine', fn ($q) => $q->where('user_id', $user->id)
         )->findOrFail($id);
 
-        $loss->delete();
+        DB::transaction(function () use ($loss) {
+            app(WineContainerStockService::class)->revertLoss($loss);
+            $loss->delete();
+        });
 
         return response()->json(['message' => 'Merma eliminada correctamente.']);
     }

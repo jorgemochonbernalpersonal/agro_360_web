@@ -10,6 +10,7 @@ use App\Models\ProductLot;
 use App\Models\Wine;
 use App\Models\WineBottling;
 use App\Models\WineBottlingSupply;
+use App\Services\WineContainerStockService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -126,6 +127,8 @@ class BottlingController extends Controller
                 ]);
             }
 
+            app(WineContainerStockService::class)->recordBottling($bottling);
+
             return $bottling;
         });
 
@@ -168,7 +171,17 @@ class BottlingController extends Controller
             Oenologist::where('user_id', $user->id)->findOrFail($validated['oenologist_id']);
         }
 
-        $bottling->update($validated);
+        $oldData = [
+            'wine_id'        => $bottling->wine_id,
+            'container_id'   => $bottling->container_id,
+            'quantity_liters'=> $bottling->quantity_liters,
+        ];
+
+        DB::transaction(function () use ($bottling, $validated, $oldData) {
+            $bottling->update($validated);
+            app(WineContainerStockService::class)->updateBottling($bottling->fresh(), $oldData);
+        });
+
         $bottling->load(['wine', 'container', 'productLot', 'oenologist', 'supplies']);
 
         return response()->json(['data' => new BottlingResource($bottling)]);
@@ -184,6 +197,7 @@ class BottlingController extends Controller
         $bottling = WineBottling::forUser($user->id)->findOrFail($id);
 
         DB::transaction(function () use ($bottling) {
+            app(WineContainerStockService::class)->revertBottling($bottling);
             $bottling->supplies()->delete();
             $bottling->delete();
         });

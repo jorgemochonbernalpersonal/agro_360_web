@@ -203,7 +203,7 @@ class WineController extends Controller
         // Bottling summary
         $bottlingSummary = WineBottling::whereHas('wine', fn ($q) => $q->where('user_id', $user->id))
             ->where('wine_id', $wine->id)
-            ->selectRaw('SUM(quantity_bottled) as total_bottles, MAX(bottling_date) as last_bottling_date')
+            ->selectRaw('SUM(quantity_bottles) as total_bottles, MAX(bottling_date) as last_bottling_date')
             ->first();
 
         return response()->json([

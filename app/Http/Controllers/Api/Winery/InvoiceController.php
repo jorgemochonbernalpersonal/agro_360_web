@@ -39,6 +39,7 @@ class InvoiceController extends Controller
             'data' => InvoiceResource::collection($invoices),
             'meta' => [
                 'total'        => $invoices->total(),
+                'per_page'     => $invoices->perPage(),
                 'current_page' => $invoices->currentPage(),
                 'last_page'    => $invoices->lastPage(),
             ],

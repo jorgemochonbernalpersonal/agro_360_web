@@ -51,10 +51,11 @@ class SupplierController extends Controller
                 'created_at'     => $s->created_at->toIso8601String(),
             ]),
             'meta' => [
-                'total'      => $suppliers->total(),
-                'per_page'   => $suppliers->perPage(),
-                'last_page'  => $suppliers->lastPage(),
-                'categories' => Supplier::CATEGORIES,
+                'total'        => $suppliers->total(),
+                'per_page'     => $suppliers->perPage(),
+                'current_page' => $suppliers->currentPage(),
+                'last_page'    => $suppliers->lastPage(),
+                'categories'   => Supplier::CATEGORIES,
             ],
         ]);
     }

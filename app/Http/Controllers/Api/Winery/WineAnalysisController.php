@@ -34,6 +34,7 @@ class WineAnalysisController extends Controller
             'data' => WineAnalysisResource::collection($analyses),
             'meta' => [
                 'total'        => $analyses->total(),
+                'per_page'     => $analyses->perPage(),
                 'current_page' => $analyses->currentPage(),
                 'last_page'    => $analyses->lastPage(),
             ],
@@ -101,7 +102,7 @@ class WineAnalysisController extends Controller
             'container_id'       => 'nullable|integer',
             'analysis_date'      => 'nullable|date',
             'analysis_type'      => 'nullable|string|in:standard,complete,organic,custom',
-            'laboratory'         => 'nullable|boolean',
+            'laboratory'         => 'nullable|string|max:200',
             'laboratory_name'    => 'nullable|string|max:255',
             'alcoholic_strength' => 'nullable|numeric|between:0,25',
             'total_acidity'      => 'nullable|numeric|between:0,30',

@@ -48,6 +48,7 @@ class WinerySupplyController extends Controller
             'meta' => [
                 'total'           => $supplies->total(),
                 'per_page'        => $supplies->perPage(),
+                'current_page'    => $supplies->currentPage(),
                 'last_page'       => $supplies->lastPage(),
                 'low_stock_count' => $lowStockCount,
                 'supply_types'    => WinerySupply::SUPPLY_TYPES,

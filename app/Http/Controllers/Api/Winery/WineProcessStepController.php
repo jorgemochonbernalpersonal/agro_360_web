@@ -112,7 +112,7 @@ class WineProcessStepController extends Controller
         $validated = $request->validate([
             'process_type'           => 'sometimes|string|in:' . implode(',', array_keys(WineProcessDetail::PROCESS_TYPES)),
             'start_date'             => 'sometimes|date',
-            'end_date'               => 'sometimes|nullable|date',
+            'end_date'               => 'sometimes|nullable|date|after_or_equal:' . $step->start_date->toDateString(),
             'container_id'           => 'sometimes|nullable|integer|exists:containers,id',
             'oenologist_id'          => 'sometimes|nullable|integer|exists:oenologists,id',
             'quantity'               => 'sometimes|nullable|numeric|min:0',

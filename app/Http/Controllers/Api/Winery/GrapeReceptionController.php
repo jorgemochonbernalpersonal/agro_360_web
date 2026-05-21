@@ -41,13 +41,14 @@ class GrapeReceptionController extends Controller
             });
         }
 
-        $harvests = $query->orderByDesc('harvest_start_date')
-            ->paginate($request->integer('per_page', 20));
+        $perPage  = $this->resolvePerPage($request, 20, 100);
+        $harvests = $query->orderByDesc('harvest_start_date')->paginate($perPage);
 
         return response()->json([
             'data' => HarvestResource::collection($harvests->items()),
             'meta' => [
                 'total'        => $harvests->total(),
+                'per_page'     => $harvests->perPage(),
                 'current_page' => $harvests->currentPage(),
                 'last_page'    => $harvests->lastPage(),
             ],

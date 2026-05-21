@@ -19,17 +19,19 @@ class FermentationControlController extends Controller
         $user = $request->user();
         abort_unless($user->hasWineryAccess(), 403);
 
+        $perPage  = $this->resolvePerPage($request, 30, 100);
         $controls = WineFermentationControl::whereHas(
             'wine', fn ($q) => $q->where('user_id', $user->id)
         )
         ->with(['wine', 'container'])
         ->orderByDesc('control_date')
-        ->paginate($request->integer('per_page', 30));
+        ->paginate($perPage);
 
         return response()->json([
             'data' => FermentationControlResource::collection($controls->items()),
             'meta' => [
                 'total'        => $controls->total(),
+                'per_page'     => $controls->perPage(),
                 'current_page' => $controls->currentPage(),
                 'last_page'    => $controls->lastPage(),
             ],
