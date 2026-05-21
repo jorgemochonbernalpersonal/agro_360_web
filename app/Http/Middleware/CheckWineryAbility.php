@@ -38,14 +38,10 @@ class CheckWineryAbility
             fn () => $user->abilities()->pluck('code')->all()
         );
 
-        // Sin abilities → acceso denegado.
-        // Las bodegas existentes tienen todas las abilities via migración de backfill.
-        // Una bodega sin abilities es una cuenta nueva aún no configurada por el supervisor.
-        if (empty($granted)) {
-            abort(403, 'Tu denominación de origen no ha habilitado ningún módulo todavía. Contacta con tu supervisor.');
-        }
-
-        if (! in_array($ability, $granted, true)) {
+        // Sin abilities configuradas → acceso total (retrocompatible con bodegas independientes
+        // y con bodegas existentes antes de que el supervisor configure restricciones).
+        // Alineado con User::hasAbility().
+        if (! empty($granted) && ! in_array($ability, $granted, true)) {
             abort(403, 'Tu denominación de origen no ha habilitado el módulo requerido para acceder a esta sección.');
         }
 
