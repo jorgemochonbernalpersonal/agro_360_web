@@ -38,8 +38,6 @@ class ForgotPassword extends Component
 
         $this->validate();
 
-        $this->email = \App\Models\User::canonicalizeEmail($this->email);
-
         // Enviar enlace de reset usando Laravel's Password broker
         try {
             $status = Password::sendResetLink(
@@ -49,19 +47,8 @@ class ForgotPassword extends Component
             if ($status === Password::RESET_LINK_SENT) {
                 $message = 'Se ha enviado un enlace de restablecimiento de contraseña a tu correo electrónico.';
                 
-                // En desarrollo, añadir información sobre MailHog
                 if (app()->environment('local')) {
-                    $message .= ' (Revisa MailHog en http://localhost:8025)';
-                    
-                    // Log en desarrollo para debugging
-                    Log::info('Password reset link sent', [
-                        'email' => $this->email,
-                        'status' => $status,
-                        'mail_driver' => config('mail.default'),
-                        'mail_host' => config('mail.mailers.smtp.host'),
-                        'mail_port' => config('mail.mailers.smtp.port'),
-                        'environment' => app()->environment(),
-                    ]);
+                    Log::info('Password reset link sent', ['email' => $this->email]);
                 }
                 
                 $this->toastSuccess($message);

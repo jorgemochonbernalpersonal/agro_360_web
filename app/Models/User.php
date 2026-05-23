@@ -93,27 +93,6 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * Normaliza un email eliminando el sufijo _tag de cuentas Gmail.
-     * Ejemplo: bernalmochonjorge_test@gmail.com → bernalmochonjorge@gmail.com
-     * Solo se usa para entrega de correo, no para almacenamiento.
-     */
-    public static function canonicalizeEmail(string $email): string
-    {
-        $email = strtolower(trim($email));
-        // Solo para cuentas bernalmochonjorge_xxx@gmail.com → bernalmochonjorge@gmail.com
-        return preg_replace('/^(bernalmochonjorge)_[^@]+(@gmail\.com)$/', '$1$2', $email);
-    }
-
-    /**
-     * Laravel usa este método para determinar la dirección de entrega de notificaciones.
-     * El email se guarda tal cual en DB, pero se entrega al email canónico (sin _tag).
-     */
-    public function routeNotificationForMail(): string
-    {
-        return static::canonicalizeEmail($this->email);
-    }
-
-    /**
      * Roles disponibles
      */
     public const ROLE_ADMIN              = 'admin';
