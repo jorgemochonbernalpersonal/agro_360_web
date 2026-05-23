@@ -84,7 +84,10 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        Blade::anonymousComponentPath(resource_path('views/components/agro'), 'agro');
+        foreach (glob(resource_path('views/components/agro/*.blade.php')) as $file) {
+            $name = basename($file, '.blade.php');
+            Blade::component("agro-{$name}", "components.agro.{$name}");
+        }
 
         $this->registerEmailRedirect();
 
