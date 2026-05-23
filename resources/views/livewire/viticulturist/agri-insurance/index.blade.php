@@ -140,7 +140,7 @@
                 </x-agro.card>
             @endforeach
         </div>
-        <div class="mt-6">{{ $insurances->links() }}</div>
+        <x-agro-pagination :paginator="$insurances" />
     @else
         <x-agro.empty-state
             icon="shield-exclamation"

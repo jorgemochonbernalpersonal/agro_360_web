@@ -143,9 +143,7 @@
                 @endforeach
             </div>
 
-            <div class="mt-2">
-                {{ $activities->links() }}
-            </div>
+            <x-agro-pagination :paginator="$activities" />
         @else
             <x-agro.empty-state
                 icon="clipboard-document-list"

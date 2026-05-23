@@ -47,9 +47,7 @@
                     </div>
                 @endforeach
             </div>
-            <div class="px-5 py-4 border-t border-zinc-100">
-                {{ $pending->links() }}
-            </div>
+            <x-agro-pagination :paginator="$pending" />
         @endif
     </x-agro.card>
 </div>

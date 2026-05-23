@@ -192,7 +192,7 @@
                 </table>
             </div>
 
-            <div class="mt-4 px-4">{{ $wines->links() }}</div>
+            <x-agro-pagination :paginator="$wines" />
         @endif
     </x-agro.card>
 

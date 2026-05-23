@@ -142,7 +142,7 @@
                         @endforeach
                     </div>
 
-                    <div class="mt-6">{{ $viticulturistList->links() }}</div>
+                    <x-agro-pagination :paginator="$viticulturistList" />
                 @else
                     <x-agro.empty-state icon="users" title="No hay viticultores" description="No hay viticultores adscritos a esta denominación." />
                 @endif

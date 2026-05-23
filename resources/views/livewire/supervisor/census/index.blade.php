@@ -105,7 +105,7 @@
                         @endforeach
                     </div>
 
-                    <div class="mt-6">{{ $items->links() }}</div>
+                    <x-agro-pagination :paginator="$items" />
                 @else
                     <x-agro.empty-state icon="building-office-2" title="No hay bodegas" description="No hay bodegas adscritas a esta denominación." />
                 @endif
@@ -151,7 +151,7 @@
                         @endforeach
                     </div>
 
-                    <div class="mt-6">{{ $items->links() }}</div>
+                    <x-agro-pagination :paginator="$items" />
                 @else
                     <x-agro.empty-state icon="users" title="No hay viticultores" description="No hay viticultores adscritos a esta denominación." />
                 @endif

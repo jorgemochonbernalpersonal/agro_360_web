@@ -149,7 +149,7 @@
             @endforeach
         </div>
 
-        <div class="mt-6">{{ $costs->links() }}</div>
+        <x-agro-pagination :paginator="$costs" />
     @endif
 
 </div>

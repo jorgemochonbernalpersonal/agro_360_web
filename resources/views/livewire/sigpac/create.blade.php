@@ -199,13 +199,9 @@
                                         class="w-full font-mono text-sm border border-zinc-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-agro-500"
                                     >
                                 </div>
-                                <button
-                                    type="button"
-                                    x-on:click="parsePaste({{ $index }})"
-                                    class="px-4 py-2 bg-agro-600 hover:bg-agro-700 text-white text-sm font-medium rounded-lg transition-colors whitespace-nowrap"
-                                >
+                                <flux:button type="button" x-on:click="parsePaste({{ $index }})" variant="primary">
                                     Rellenar campos
-                                </button>
+                                </flux:button>
                             </div>
                             <p x-show="parseError" x-text="parseError" class="mt-1 text-xs text-red-600"></p>
                         </div>

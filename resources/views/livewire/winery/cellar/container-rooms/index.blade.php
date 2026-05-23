@@ -76,7 +76,7 @@
             @endforeach
         </div>
 
-        <div class="mt-6">{{ $rooms->links() }}</div>
+        <x-agro-pagination :paginator="$rooms" />
     @endif
 
 </div>

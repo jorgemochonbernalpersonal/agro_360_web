@@ -123,7 +123,7 @@
             @endforeach
         </div>
 
-        <div class="mt-2">{{ $batches->links() }}</div>
+        <x-agro-pagination :paginator="$batches" />
     @else
         <x-agro.empty-state
             icon="tag"

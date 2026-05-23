@@ -109,7 +109,7 @@
                 @endforeach
             </div>
 
-            <div class="mt-6">{{ $additives->links() }}</div>
+            <x-agro-pagination :paginator="$additives" />
         @else
             <x-agro.empty-state
                 icon="beaker"

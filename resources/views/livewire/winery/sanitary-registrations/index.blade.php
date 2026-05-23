@@ -144,9 +144,7 @@
                 @endforeach
             </div>
 
-            <div class="mt-6">
-                {{ $registrations->links() }}
-            </div>
+            <x-agro-pagination :paginator="$registrations" />
         @else
             <x-agro.empty-state
                 icon="shield-check"

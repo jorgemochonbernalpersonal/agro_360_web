@@ -73,6 +73,6 @@
         @endforelse
     </x-agro.card>
 
-    <div>{{ $inspections->links() }}</div>
+    <x-agro-pagination :paginator="$inspections" />
 
 </div>

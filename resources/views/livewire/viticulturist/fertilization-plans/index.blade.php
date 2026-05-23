@@ -235,9 +235,7 @@
             @endforeach
         </div>
 
-        @if($entries->hasPages())
-            <div class="flex justify-center">{{ $entries->links() }}</div>
-        @endif
+        <x-agro-pagination :paginator="$entries" />
 
     @else
 

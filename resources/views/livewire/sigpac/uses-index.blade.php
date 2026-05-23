@@ -78,7 +78,7 @@
                 </x-agro.table-row>
             @endforeach
             <x-slot name="pagination">
-                {{ $uses->links() }}
+                <x-agro-pagination :paginator="$uses" />
             </x-slot>
         @endif
     </x-agro.data-table>

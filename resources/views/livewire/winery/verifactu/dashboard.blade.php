@@ -144,9 +144,7 @@
                     @endforeach
                 </div>
 
-                @if($pending->hasPages())
-                    <div class="pt-4 border-t border-zinc-100">{{ $pending->links() }}</div>
-                @endif
+                <x-agro-pagination :paginator="$pending" />
             </x-agro.card>
         @else
             <x-agro.empty-state
@@ -212,9 +210,7 @@
                     @endforeach
                 </div>
 
-                @if($sent->hasPages())
-                    <div class="pt-4 border-t border-zinc-100">{{ $sent->links() }}</div>
-                @endif
+                <x-agro-pagination :paginator="$sent" />
             </x-agro.card>
         @else
             <x-agro.empty-state
@@ -274,9 +270,7 @@
                     @endforeach
                 </div>
 
-                @if($errors->hasPages())
-                    <div class="pt-4 border-t border-zinc-100">{{ $errors->links() }}</div>
-                @endif
+                <x-agro-pagination :paginator="$errors" />
             </x-agro.card>
         @else
             <x-agro.empty-state

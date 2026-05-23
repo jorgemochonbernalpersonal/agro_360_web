@@ -342,11 +342,7 @@
             </table>
         </div>
 
-        @if($users->hasPages())
-            <div class="px-6 py-4 border-t border-zinc-200">
-                {{ $users->links() }}
-            </div>
-        @endif
+        <x-agro-pagination :paginator="$users" />
     </x-agro.card>
 
     {{-- Modal: Crear usuario --}}

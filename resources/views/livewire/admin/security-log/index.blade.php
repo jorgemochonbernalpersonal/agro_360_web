@@ -157,11 +157,7 @@
                 </table>
             </div>
 
-            @if($entries->hasPages())
-                <div class="px-6 py-4 border-t border-zinc-200">
-                    {{ $entries->links() }}
-                </div>
-            @endif
+            <x-agro-pagination :paginator="$entries" />
         @endif
     </x-agro.card>
 </div>

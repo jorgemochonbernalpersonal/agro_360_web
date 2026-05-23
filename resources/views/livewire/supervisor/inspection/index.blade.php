@@ -2,10 +2,7 @@
 
     <x-agro.page-header title="Control e Inspección" description="Gestión de inspecciones programadas a bodegas y viticultores.">
         <x-slot name="actions">
-            <button wire:click="toggleCreate" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
-                <flux:icon icon="plus" class="w-4 h-4" />
-                Nueva inspección
-            </button>
+            <flux:button wire:click="toggleCreate" variant="primary" icon="plus">Nueva inspección</flux:button>
         </x-slot>
     </x-agro.page-header>
 
@@ -35,25 +32,25 @@
                         @endforeach
                     @endif
                 </flux:select>
-                @error('subject_id') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                <flux:error name="subject_id" />
             </div>
             <div>
-                <label class="block text-xs font-medium text-zinc-600 mb-1">Fecha inspección</label>
-                <input type="date" wire:model="inspection_date" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" />
-                @error('inspection_date') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                <flux:label>Fecha inspección</flux:label>
+                <flux:input type="date" wire:model="inspection_date" />
+                <flux:error name="inspection_date" />
             </div>
             <div>
-                <label class="block text-xs font-medium text-zinc-600 mb-1">Nº referencia</label>
-                <input type="text" wire:model="reference_number" placeholder="Ej: INSP-2026-001" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" />
+                <flux:label>Nº referencia</flux:label>
+                <flux:input type="text" wire:model="reference_number" placeholder="Ej: INSP-2026-001" />
             </div>
             <div class="sm:col-span-2">
-                <label class="block text-xs font-medium text-zinc-600 mb-1">Notas</label>
-                <textarea wire:model="notes" rows="2" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300"></textarea>
+                <flux:label>Notas</flux:label>
+                <flux:textarea wire:model="notes" rows="2" />
             </div>
         </div>
         <div class="flex gap-3 mt-4">
-            <button wire:click="saveInspection" class="px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">Programar</button>
-            <button wire:click="toggleCreate" class="px-4 py-2 text-sm font-medium text-zinc-600 border border-zinc-200 rounded-lg hover:bg-zinc-50 transition">Cancelar</button>
+            <flux:button wire:click="saveInspection" variant="primary">Programar</flux:button>
+            <flux:button wire:click="toggleCreate" variant="ghost">Cancelar</flux:button>
         </div>
     </x-agro.card>
     @endif
@@ -168,7 +165,7 @@
                         </x-agro.card>
                     @endforeach
                 </div>
-                <div class="mt-6">{{ $inspections->links() }}</div>
+                <x-agro-pagination :paginator="$inspections" />
             @else
                 <x-agro.empty-state icon="clipboard-document-check" title="Sin inspecciones" description="No hay inspecciones registradas con estos filtros." />
             @endif
@@ -181,16 +178,14 @@
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg mx-4">
             <div class="flex items-center justify-between px-6 py-4 border-b border-zinc-100">
                 <h3 class="text-base font-semibold text-zinc-800">Editar inspección</h3>
-                <button wire:click="closeEdit" class="text-zinc-400 hover:text-zinc-600">
-                    <flux:icon icon="x-mark" class="w-5 h-5" />
-                </button>
+                <flux:button wire:click="closeEdit" variant="ghost" size="sm" icon="x-mark" />
             </div>
             <div class="p-6 space-y-4">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-medium text-zinc-600 mb-1">Fecha inspección</label>
-                        <input type="date" wire:model="editInspectionDate" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" />
-                        @error('editInspectionDate') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                        <flux:label>Fecha inspección</flux:label>
+                        <flux:input type="date" wire:model="editInspectionDate" />
+                        <flux:error name="editInspectionDate" />
                     </div>
                     <div>
                         <flux:label>Resultado</flux:label>
@@ -200,26 +195,26 @@
                                 <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
                             @endforeach
                         </flux:select>
-                        @error('editResult') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                        <flux:error name="editResult" />
                     </div>
                     <div class="sm:col-span-2">
-                        <label class="block text-xs font-medium text-zinc-600 mb-1">Nº referencia</label>
-                        <input type="text" wire:model="editReferenceNumber" placeholder="Ej: INSP-2026-001" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" />
-                        @error('editReferenceNumber') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                        <flux:label>Nº referencia</flux:label>
+                        <flux:input type="text" wire:model="editReferenceNumber" placeholder="Ej: INSP-2026-001" />
+                        <flux:error name="editReferenceNumber" />
                     </div>
                     <div class="sm:col-span-2">
-                        <label class="block text-xs font-medium text-zinc-600 mb-1">Hallazgos</label>
-                        <textarea wire:model="editFindings" rows="2" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300"></textarea>
+                        <flux:label>Hallazgos</flux:label>
+                        <flux:textarea wire:model="editFindings" rows="2" />
                     </div>
                     <div class="sm:col-span-2">
-                        <label class="block text-xs font-medium text-zinc-600 mb-1">Notas</label>
-                        <textarea wire:model="editNotes" rows="2" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300"></textarea>
+                        <flux:label>Notas</flux:label>
+                        <flux:textarea wire:model="editNotes" rows="2" />
                     </div>
                 </div>
             </div>
             <div class="flex justify-end gap-3 px-6 py-4 border-t border-zinc-100">
-                <button wire:click="closeEdit" class="px-4 py-2 text-sm font-medium text-zinc-600 border border-zinc-200 rounded-lg hover:bg-zinc-50 transition">Cancelar</button>
-                <button wire:click="updateInspection" class="px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">Guardar cambios</button>
+                <flux:button wire:click="closeEdit" variant="ghost">Cancelar</flux:button>
+                <flux:button wire:click="updateInspection" variant="primary">Guardar cambios</flux:button>
             </div>
         </div>
     </div>

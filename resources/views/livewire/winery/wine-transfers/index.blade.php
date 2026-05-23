@@ -153,9 +153,7 @@
                 @endforeach
             </div>
 
-            <div class="mt-6">
-                {{ $transfers->links() }}
-            </div>
+            <x-agro-pagination :paginator="$transfers" />
         @else
             <x-agro.empty-state
                 icon="arrows-right-left"

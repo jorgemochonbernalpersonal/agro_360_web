@@ -197,9 +197,7 @@
             @endforeach
         </div>
 
-        @if($machinery->hasPages())
-            <div class="flex justify-center">{{ $machinery->links() }}</div>
-        @endif
+        <x-agro-pagination :paginator="$machinery" />
 
     @else
         <x-agro.empty-state

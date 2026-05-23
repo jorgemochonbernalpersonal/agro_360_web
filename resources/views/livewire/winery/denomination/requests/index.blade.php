@@ -181,7 +181,7 @@
                 @endforeach
             </div>
 
-            <div class="mt-6">{{ $requests->links() }}</div>
+            <x-agro-pagination :paginator="$requests" />
         @else
             <x-agro.empty-state
                 icon="document-text"

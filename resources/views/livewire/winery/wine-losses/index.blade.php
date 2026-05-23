@@ -151,9 +151,7 @@
                 @endforeach
             </div>
 
-            <div class="mt-6">
-                {{ $losses->links() }}
-            </div>
+            <x-agro-pagination :paginator="$losses" />
         @else
             <x-agro.empty-state
                 icon="exclamation-triangle"

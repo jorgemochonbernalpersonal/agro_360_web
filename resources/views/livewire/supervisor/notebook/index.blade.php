@@ -121,9 +121,7 @@
             @endforeach
         </div>
 
-        <div class="mt-2">
-            {{ $requests->links() }}
-        </div>
+        <x-agro-pagination :paginator="$requests" />
     @else
         <x-agro.empty-state
             icon="book-open"

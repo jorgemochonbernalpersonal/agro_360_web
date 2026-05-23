@@ -79,9 +79,7 @@
                     @endforeach
                 </div>
 
-                <div class="mt-2">
-                    {{ $subscriptions->links() }}
-                </div>
+                <x-agro-pagination :paginator="$subscriptions" />
             @else
                 <x-agro.empty-state
                     icon="credit-card"

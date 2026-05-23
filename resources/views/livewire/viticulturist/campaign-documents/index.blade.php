@@ -129,7 +129,7 @@
             @endforeach
         </div>
 
-        <div class="mt-6">{{ $entries->links() }}</div>
+        <x-agro-pagination :paginator="$entries" />
     @endif
 
     {{-- Modal subida/edición de documento --}}

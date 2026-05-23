@@ -146,9 +146,7 @@
                 @endforeach
             </div>
 
-            <div class="mt-6">
-                {{ $bottlings->links() }}
-            </div>
+            <x-agro-pagination :paginator="$bottlings" />
         @else
             <x-agro.empty-state
                 icon="archive-box-arrow-down"

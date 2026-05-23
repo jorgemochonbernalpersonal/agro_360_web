@@ -180,9 +180,7 @@
             @endforeach
         </div>
 
-        @if($clients->hasPages())
-            <div class="flex justify-center">{{ $clients->links() }}</div>
-        @endif
+        <x-agro-pagination :paginator="$clients" />
 
     @else
         <x-agro.empty-state

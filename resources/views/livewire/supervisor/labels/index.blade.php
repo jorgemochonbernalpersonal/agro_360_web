@@ -2,10 +2,7 @@
 
     <x-agro.page-header title="Contraetiquetas" description="Solicitudes de contraetiquetas por bodega y añada.">
         <x-slot name="actions">
-            <button wire:click="toggleCreate" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
-                <flux:icon icon="plus" class="w-4 h-4" />
-                Nueva solicitud
-            </button>
+            <flux:button wire:click="toggleCreate" variant="primary" icon="plus">Nueva solicitud</flux:button>
         </x-slot>
     </x-agro.page-header>
 
@@ -29,30 +26,30 @@
                         <flux:select.option value="{{ $w->id }}">{{ $w->name }}</flux:select.option>
                     @endforeach
                 </flux:select>
-                @error('winery_id') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                <flux:error name="winery_id" />
             </div>
             <div>
-                <label class="block text-xs font-medium text-zinc-600 mb-1">Añada</label>
-                <input type="number" wire:model="vintage" min="1990" max="2100" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" />
-                @error('vintage') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                <flux:label>Añada</flux:label>
+                <flux:input type="number" wire:model="vintage" min="1990" max="2100" />
+                <flux:error name="vintage" />
             </div>
             <div>
-                <label class="block text-xs font-medium text-zinc-600 mb-1">Nº de lote</label>
-                <input type="text" wire:model="batch_number" placeholder="Opcional" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" />
+                <flux:label>Nº de lote</flux:label>
+                <flux:input type="text" wire:model="batch_number" placeholder="Opcional" />
             </div>
             <div>
-                <label class="block text-xs font-medium text-zinc-600 mb-1">Cantidad solicitada</label>
-                <input type="number" wire:model="quantity_requested" min="1" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" />
-                @error('quantity_requested') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                <flux:label>Cantidad solicitada</flux:label>
+                <flux:input type="number" wire:model="quantity_requested" min="1" />
+                <flux:error name="quantity_requested" />
             </div>
             <div class="sm:col-span-2">
-                <label class="block text-xs font-medium text-zinc-600 mb-1">Notas</label>
-                <textarea wire:model="notes" rows="2" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300"></textarea>
+                <flux:label>Notas</flux:label>
+                <flux:textarea wire:model="notes" rows="2" />
             </div>
         </div>
         <div class="flex gap-3 mt-4">
-            <button wire:click="saveLabel" class="px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">Registrar solicitud</button>
-            <button wire:click="toggleCreate" class="px-4 py-2 text-sm font-medium text-zinc-600 border border-zinc-200 rounded-lg hover:bg-zinc-50 transition">Cancelar</button>
+            <flux:button wire:click="saveLabel" variant="primary">Registrar solicitud</flux:button>
+            <flux:button wire:click="toggleCreate" variant="ghost">Cancelar</flux:button>
         </div>
     </x-agro.card>
     @endif
@@ -135,7 +132,7 @@
                     @endforeach
                 </div>
 
-                <div class="mt-6">{{ $labels->links() }}</div>
+                <x-agro-pagination :paginator="$labels" />
             @else
                 <x-agro.empty-state icon="tag" title="No hay solicitudes" description="No hay solicitudes de contraetiquetas." />
             @endif

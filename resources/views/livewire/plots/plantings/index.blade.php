@@ -355,11 +355,7 @@
         </div>
 
         {{-- Pagination --}}
-        @if($plantings->hasPages())
-            <div class="flex justify-center">
-                {{ $plantings->links() }}
-            </div>
-        @endif
+        <x-agro-pagination :paginator="$plantings" />
 
     @else
         <x-agro.empty-state

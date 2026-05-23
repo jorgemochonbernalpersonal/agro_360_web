@@ -83,7 +83,7 @@
                 </x-agro.card>
             @endforeach
         </div>
-        <div class="mt-6">{{ $documents->links() }}</div>
+        <x-agro-pagination :paginator="$documents" />
     @else
         <x-agro.empty-state icon="folder-open" title="Sin documentos registrados"
             description="Añade licencias, permisos, certificados y otros documentos oficiales de la bodega." />

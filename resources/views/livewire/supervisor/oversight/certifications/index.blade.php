@@ -135,9 +135,7 @@
             @endforeach
         </div>
 
-        <div class="mt-2">
-            {{ $certifications->links() }}
-        </div>
+        <x-agro-pagination :paginator="$certifications" />
     @else
         <x-agro.empty-state
             icon="check-badge"

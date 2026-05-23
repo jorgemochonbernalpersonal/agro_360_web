@@ -137,9 +137,7 @@
                 @endforeach
             </div>
 
-            <div class="mt-6">
-                {{ $subproducts->links() }}
-            </div>
+            <x-agro-pagination :paginator="$subproducts" />
         @else
             <x-agro.empty-state
                 icon="archive-box"

@@ -78,7 +78,7 @@
                 </x-agro.card>
             @endforeach
         </div>
-        <div class="mt-6">{{ $suppliers->links() }}</div>
+        <x-agro-pagination :paginator="$suppliers" />
     @else
         <x-agro.empty-state icon="truck" title="Sin proveedores registrados"
             description="Añade los proveedores de tu bodega para tenerlos siempre a mano." />

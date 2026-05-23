@@ -130,11 +130,7 @@
         </x-agro.card>
 
         {{-- Paginación --}}
-        @if($exports->hasPages())
-            <div class="px-4 py-3 border-t border-zinc-100">
-                {{ $exports->links() }}
-            </div>
-        @endif
+        <x-agro-pagination :paginator="$exports" />
 
         {{-- Resumen por estado --}}
         <div class="grid grid-cols-2 md:grid-cols-5 gap-4">

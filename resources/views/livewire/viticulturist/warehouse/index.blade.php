@@ -181,9 +181,7 @@
                 @endforeach
             </div>
 
-            @if($stocks->hasPages())
-                <div class="flex justify-center">{{ $stocks->links() }}</div>
-            @endif
+            <x-agro-pagination :paginator="$stocks" />
 
         @else
             <x-agro.empty-state
@@ -393,9 +391,7 @@
                 @endforeach
             </div>
 
-            @if($supplies->hasPages())
-                <div class="flex justify-center">{{ $supplies->links() }}</div>
-            @endif
+            <x-agro-pagination :paginator="$supplies" />
         @endif
 
     {{-- =====================================================
@@ -508,9 +504,7 @@
                 @endforeach
             </div>
 
-            @if($warehouses->hasPages())
-                <div class="flex justify-center">{{ $warehouses->links() }}</div>
-            @endif
+            <x-agro-pagination :paginator="$warehouses" />
 
         @else
             <x-agro.empty-state

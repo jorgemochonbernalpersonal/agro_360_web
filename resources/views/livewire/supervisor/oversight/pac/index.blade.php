@@ -210,9 +210,7 @@
             @endforeach
         </div>
 
-        <div class="mt-2">
-            {{ $plots->links() }}
-        </div>
+        <x-agro-pagination :paginator="$plots" />
     @else
         <x-agro.empty-state
             icon="map"

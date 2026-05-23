@@ -173,9 +173,7 @@
                 @endforeach
             </div>
 
-            <div class="mt-6">
-                {{ $analyses->links() }}
-            </div>
+            <x-agro-pagination :paginator="$analyses" />
         @else
             <x-agro.empty-state
                 icon="beaker"

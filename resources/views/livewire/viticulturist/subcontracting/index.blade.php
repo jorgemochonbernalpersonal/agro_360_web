@@ -164,7 +164,7 @@
             @endforeach
         </div>
 
-        <div class="mt-6">{{ $records->links() }}</div>
+        <x-agro-pagination :paginator="$records" />
     @endif
 
     {{-- Modal Filtros --}}

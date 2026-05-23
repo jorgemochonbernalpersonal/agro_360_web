@@ -149,9 +149,7 @@
             @endforeach
         </div>
 
-        @if($entries->hasPages())
-            <div class="mt-6">{{ $entries->links() }}</div>
-        @endif
+        <x-agro-pagination :paginator="$entries" />
     @endif
 
 </div>

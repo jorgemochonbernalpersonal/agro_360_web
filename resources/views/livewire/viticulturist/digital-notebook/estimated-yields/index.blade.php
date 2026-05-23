@@ -154,9 +154,7 @@
             @endforeach
         </div>
 
-        @if($estimatedYields->hasPages())
-            <div class="flex justify-center">{{ $estimatedYields->links() }}</div>
-        @endif
+        <x-agro-pagination :paginator="$estimatedYields" />
 
     @else
         <x-agro.empty-state

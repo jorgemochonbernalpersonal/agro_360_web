@@ -89,9 +89,7 @@
             </table>
         </div>
 
-        <div class="mt-4">
-            {{ $blends->links() }}
-        </div>
+        <x-agro-pagination :paginator="$blends" />
     @else
         <x-agro.empty-state
             icon="funnel"

@@ -121,9 +121,7 @@
         @endforeach
     </div>
 
-    <div class="mt-4">
-        {{ $notifications->links() }}
-    </div>
+    <x-agro-pagination :paginator="$notifications" />
 @else
     <x-agro.empty-state
         icon="bell"

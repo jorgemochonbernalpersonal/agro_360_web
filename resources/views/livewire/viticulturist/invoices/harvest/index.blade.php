@@ -96,7 +96,7 @@
                     @endforeach
                 </div>
 
-                <div class="mt-6">{{ $harvests->links() }}</div>
+                <x-agro-pagination :paginator="$harvests" />
             @endif
         </div>
     @endif

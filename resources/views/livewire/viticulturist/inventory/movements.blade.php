@@ -91,7 +91,7 @@
         @endforelse
 
         <x-slot:pagination>
-            {{ $movements->links() }}
+            <x-agro-pagination :paginator="$movements" />
         </x-slot:pagination>
     </x-agro.data-table>
 </div>

@@ -181,11 +181,7 @@
             </div>
         </x-agro.card>
 
-        @if($invoices->hasPages())
-            <div class="flex justify-center">
-                {{ $invoices->links() }}
-            </div>
-        @endif
+        <x-agro-pagination :paginator="$invoices" />
 
     @else
         <x-agro.empty-state

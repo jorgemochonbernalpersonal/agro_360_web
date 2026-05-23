@@ -336,9 +336,7 @@
                 @endforeach
             </div>
 
-            <div class="mt-6">
-                {{ $plots->links() }}
-            </div>
+            <x-agro-pagination :paginator="$plots" />
         @else
             <x-agro.empty-state
                 message="No hay parcelas {{ $currentTab === 'active' ? 'activas' : 'inactivas' }}"

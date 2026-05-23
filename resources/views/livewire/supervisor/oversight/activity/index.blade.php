@@ -159,9 +159,7 @@
             @endforelse
         </div>
 
-        <div class="mt-4">
-            {{ $activities->links() }}
-        </div>
+        <x-agro-pagination :paginator="$activities" />
 
     @endif
 

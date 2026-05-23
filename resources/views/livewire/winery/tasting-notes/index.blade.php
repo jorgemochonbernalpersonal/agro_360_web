@@ -93,7 +93,7 @@
             </table>
         </div>
 
-        <div class="mt-2">{{ $tastingNotes->links() }}</div>
+        <x-agro-pagination :paginator="$tastingNotes" />
     @else
         <x-agro.empty-state
             icon="beaker"

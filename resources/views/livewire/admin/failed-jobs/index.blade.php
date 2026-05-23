@@ -116,10 +116,6 @@
             </div>
         @endif
 
-        @if($jobs->hasPages())
-            <div class="px-5 py-4 border-t border-zinc-100 dark:border-zinc-700/50">
-                {{ $jobs->links() }}
-            </div>
-        @endif
+        <x-agro-pagination :paginator="$jobs" />
     </x-agro.card>
 </div>

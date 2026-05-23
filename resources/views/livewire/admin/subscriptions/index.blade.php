@@ -323,7 +323,7 @@
             @endforeach
 
             <x-slot name="pagination">
-                {{ $subscriptions->links() }}
+                <x-agro-pagination :paginator="$subscriptions" />
             </x-slot>
         @endif
     </x-agro.data-table>

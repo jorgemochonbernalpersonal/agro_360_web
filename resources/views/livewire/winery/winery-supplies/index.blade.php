@@ -84,7 +84,7 @@
                 </x-agro.card>
             @endforeach
         </div>
-        <div class="mt-6">{{ $supplies->links() }}</div>
+        <x-agro-pagination :paginator="$supplies" />
     @else
         <x-agro.empty-state icon="beaker" title="Sin insumos"
             description="Añade productos de limpieza, aditivos y otros insumos de bodega." />

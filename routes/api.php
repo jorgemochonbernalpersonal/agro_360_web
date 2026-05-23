@@ -112,6 +112,11 @@ use App\Http\Controllers\Api\Producer\InvoiceController as ProducerInvoiceContro
 use App\Http\Controllers\Api\Producer\HarvestDeliveryController as ProducerHarvestDeliveryController;
 use App\Http\Controllers\Api\Supervisor\DashboardController as SupervisorDashboard;
 use App\Http\Controllers\Api\Supervisor\OversightController;
+use App\Http\Controllers\Api\Admin\DashboardController as AdminDashboard;
+use App\Http\Controllers\Api\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Api\Admin\SettingsController as AdminSettingsController;
+use App\Http\Controllers\Api\Admin\SecurityLogController as AdminSecurityLogController;
+use App\Http\Controllers\Api\Admin\AnnouncementController as AdminAnnouncementController;
 use App\Http\Controllers\Api\FeedbackController;
 use Illuminate\Support\Facades\Route;
 
@@ -835,5 +840,35 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
         Route::get('/wineries/{id}',       [OversightController::class, 'winery'])->middleware('throttle:60,1');
         Route::get('/viticulturists',      [OversightController::class, 'viticulturists'])->middleware('throttle:60,1');
         Route::get('/viticulturists/{id}', [OversightController::class, 'viticulturist'])->middleware('throttle:60,1');
+    });
+
+    // ── Admin ─────────────────────────────────────────────────────────────────
+    Route::prefix('admin')->middleware('api.role:admin')->group(function () {
+
+        // Dashboard
+        Route::get('/dashboard', AdminDashboard::class)->middleware('throttle:30,1');
+
+        // Usuarios
+        Route::get('/users',                          [AdminUserController::class, 'index'])->middleware('throttle:30,1');
+        Route::get('/users/pending',                  [AdminUserController::class, 'pending'])->middleware('throttle:30,1');
+        Route::get('/users/{id}',                     [AdminUserController::class, 'show'])->middleware('throttle:60,1');
+        Route::put('/users/{id}',                     [AdminUserController::class, 'update'])->middleware('throttle:20,1');
+        Route::post('/users/{id}/approve',            [AdminUserController::class, 'approve'])->middleware('throttle:20,1');
+        Route::post('/users/{id}/activate',           [AdminUserController::class, 'activate'])->middleware('throttle:20,1');
+        Route::post('/users/{id}/deactivate',         [AdminUserController::class, 'deactivate'])->middleware('throttle:20,1');
+        Route::post('/users/{id}/notes',              [AdminUserController::class, 'addNote'])->middleware('throttle:20,1');
+
+        // Configuración
+        Route::get('/settings', [AdminSettingsController::class, 'show'])->middleware('throttle:30,1');
+        Route::put('/settings', [AdminSettingsController::class, 'update'])->middleware('throttle:10,1');
+
+        // Log de seguridad
+        Route::get('/security-log', [AdminSecurityLogController::class, 'index'])->middleware('throttle:30,1');
+
+        // Anuncios
+        Route::get('/announcements',         [AdminAnnouncementController::class, 'index'])->middleware('throttle:30,1');
+        Route::post('/announcements',        [AdminAnnouncementController::class, 'store'])->middleware('throttle:20,1');
+        Route::put('/announcements/{id}',    [AdminAnnouncementController::class, 'update'])->middleware('throttle:20,1');
+        Route::delete('/announcements/{id}', [AdminAnnouncementController::class, 'destroy'])->middleware('throttle:20,1');
     });
 });

@@ -3,9 +3,7 @@
     {{-- Header --}}
     <div class="flex items-center gap-3">
         @if($step > 1)
-            <button wire:click="back" class="p-2 rounded-xl hover:bg-zinc-100 transition-colors">
-                <flux:icon icon="arrow-left" class="size-5 text-zinc-600" />
-            </button>
+            <flux:button wire:click="back" variant="ghost" icon="arrow-left" />
         @endif
         <div>
             <h1 class="text-xl font-bold text-zinc-900">Entrada rápida</h1>

@@ -193,7 +193,7 @@
             @endforeach
 
             <x-slot name="pagination">
-                {{ $plots->links() }}
+                <x-agro-pagination :paginator="$plots" />
             </x-slot>
         @else
             <x-slot name="emptyAction">

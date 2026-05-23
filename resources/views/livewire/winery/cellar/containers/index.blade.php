@@ -200,9 +200,7 @@
             @endforeach
         </div>
 
-        <div class="mt-2">
-            {{ $containers->links() }}
-        </div>
+        <x-agro-pagination :paginator="$containers" />
     @else
         <x-agro.empty-state
             icon="cube"

@@ -161,7 +161,7 @@
                 @endforeach
             </div>
 
-            <div class="mt-6">{{ $maintenances->links() }}</div>
+            <x-agro-pagination :paginator="$maintenances" />
         @else
             <x-agro.empty-state
                 icon="wrench-screwdriver"

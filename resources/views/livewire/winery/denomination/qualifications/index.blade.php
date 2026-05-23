@@ -77,6 +77,6 @@
         @endforelse
     </x-agro.card>
 
-    <div>{{ $qualifications->links() }}</div>
+    <x-agro-pagination :paginator="$qualifications" />
 
 </div>

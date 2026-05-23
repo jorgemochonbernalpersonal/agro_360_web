@@ -133,7 +133,7 @@
             @endforeach
 
             <x-slot name="pagination">
-                {{ $sigpacs->links() }}
+                <x-agro-pagination :paginator="$sigpacs" />
             </x-slot>
         @endif
     </x-agro.data-table>

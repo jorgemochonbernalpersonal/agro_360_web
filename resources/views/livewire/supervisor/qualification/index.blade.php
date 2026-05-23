@@ -2,10 +2,7 @@
 
     <x-agro.page-header title="Calificación" description="Registro de catas y calificación de vinos por añada.">
         <x-slot name="actions">
-            <button wire:click="toggleCreate" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
-                <flux:icon icon="plus" class="w-4 h-4" />
-                Registrar vino
-            </button>
+            <flux:button wire:click="toggleCreate" variant="primary" icon="plus">Registrar vino</flux:button>
         </x-slot>
     </x-agro.page-header>
 
@@ -29,16 +26,16 @@
                         <flux:select.option value="{{ $w->id }}">{{ $w->name }}</flux:select.option>
                     @endforeach
                 </flux:select>
-                @error('winery_id') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                <flux:error name="winery_id" />
             </div>
             <div>
-                <label class="block text-xs font-medium text-zinc-600 mb-1">Nombre del vino</label>
-                <input type="text" wire:model="wine_name" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" />
-                @error('wine_name') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                <flux:label>Nombre del vino</flux:label>
+                <flux:input type="text" wire:model="wine_name" />
+                <flux:error name="wine_name" />
             </div>
             <div>
-                <label class="block text-xs font-medium text-zinc-600 mb-1">Añada</label>
-                <input type="number" wire:model="vintage" min="1990" max="2100" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" />
+                <flux:label>Añada</flux:label>
+                <flux:input type="number" wire:model="vintage" min="1990" max="2100" />
             </div>
             <div>
                 <flux:label>Color</flux:label>
@@ -50,21 +47,21 @@
                 </flux:select>
             </div>
             <div>
-                <label class="block text-xs font-medium text-zinc-600 mb-1">Grado alcohólico (%)</label>
-                <input type="number" wire:model="alcohol_percentage" step="0.01" min="0" max="25" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" />
+                <flux:label>Grado alcohólico (%)</flux:label>
+                <flux:input type="number" wire:model="alcohol_percentage" step="0.01" min="0" max="25" />
             </div>
             <div>
-                <label class="block text-xs font-medium text-zinc-600 mb-1">Fecha de cata</label>
-                <input type="date" wire:model="qualification_date" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" />
+                <flux:label>Fecha de cata</flux:label>
+                <flux:input type="date" wire:model="qualification_date" />
             </div>
             <div class="sm:col-span-2">
-                <label class="block text-xs font-medium text-zinc-600 mb-1">Notas de cata</label>
-                <textarea wire:model="tasting_notes" rows="2" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300"></textarea>
+                <flux:label>Notas de cata</flux:label>
+                <flux:textarea wire:model="tasting_notes" rows="2" />
             </div>
         </div>
         <div class="flex gap-3 mt-4">
-            <button wire:click="saveQualification" class="px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">Guardar</button>
-            <button wire:click="toggleCreate" class="px-4 py-2 text-sm font-medium text-zinc-600 border border-zinc-200 rounded-lg hover:bg-zinc-50 transition">Cancelar</button>
+            <flux:button wire:click="saveQualification" variant="primary">Guardar</flux:button>
+            <flux:button wire:click="toggleCreate" variant="ghost">Cancelar</flux:button>
         </div>
     </x-agro.card>
     @endif
@@ -175,7 +172,7 @@
                         </x-agro.card>
                     @endforeach
                 </div>
-                <div class="mt-6">{{ $qualifications->links() }}</div>
+                <x-agro-pagination :paginator="$qualifications" />
             @else
                 <x-agro.empty-state icon="star" title="Sin calificaciones" description="No hay registros de calificación con estos filtros." />
             @endif
@@ -188,21 +185,19 @@
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between px-6 py-4 border-b border-zinc-100">
                 <h3 class="text-base font-semibold text-zinc-800">Editar calificación</h3>
-                <button wire:click="closeEdit" class="text-zinc-400 hover:text-zinc-600">
-                    <flux:icon icon="x-mark" class="w-5 h-5" />
-                </button>
+                <flux:button wire:click="closeEdit" variant="ghost" size="sm" icon="x-mark" />
             </div>
             <div class="p-6 space-y-4">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-medium text-zinc-600 mb-1">Nombre del vino</label>
-                        <input type="text" wire:model="editWineName" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" />
-                        @error('editWineName') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                        <flux:label>Nombre del vino</flux:label>
+                        <flux:input type="text" wire:model="editWineName" />
+                        <flux:error name="editWineName" />
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-zinc-600 mb-1">Añada</label>
-                        <input type="number" wire:model="editVintage" min="1990" max="2100" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" />
-                        @error('editVintage') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                        <flux:label>Añada</flux:label>
+                        <flux:input type="number" wire:model="editVintage" min="1990" max="2100" />
+                        <flux:error name="editVintage" />
                     </div>
                     <div>
                         <flux:label>Color</flux:label>
@@ -214,68 +209,68 @@
                         </flux:select>
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-zinc-600 mb-1">Fecha de cata</label>
-                        <input type="date" wire:model="editQualificationDate" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" />
-                        @error('editQualificationDate') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                        <flux:label>Fecha de cata</flux:label>
+                        <flux:input type="date" wire:model="editQualificationDate" />
+                        <flux:error name="editQualificationDate" />
                     </div>
                 </div>
 
                 <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide pt-2">Parámetros analíticos</p>
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     <div>
-                        <label class="block text-xs font-medium text-zinc-600 mb-1">Alcohol (%)</label>
-                        <input type="number" wire:model="editAlcohol" step="0.01" min="0" max="25" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" />
-                        @error('editAlcohol') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                        <flux:label>Alcohol (%)</flux:label>
+                        <flux:input type="number" wire:model="editAlcohol" step="0.01" min="0" max="25" />
+                        <flux:error name="editAlcohol" />
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-zinc-600 mb-1">Brix (°Bx)</label>
-                        <input type="number" wire:model="editBrix" step="0.01" min="0" max="50" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" />
-                        @error('editBrix') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                        <flux:label>Brix (°Bx)</flux:label>
+                        <flux:input type="number" wire:model="editBrix" step="0.01" min="0" max="50" />
+                        <flux:error name="editBrix" />
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-zinc-600 mb-1">Acidez (g/L)</label>
-                        <input type="number" wire:model="editAcidity" step="0.01" min="0" max="30" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" />
-                        @error('editAcidity') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                        <flux:label>Acidez (g/L)</flux:label>
+                        <flux:input type="number" wire:model="editAcidity" step="0.01" min="0" max="30" />
+                        <flux:error name="editAcidity" />
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-zinc-600 mb-1">pH</label>
-                        <input type="number" wire:model="editPh" step="0.01" min="2" max="5" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" />
-                        @error('editPh') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                        <flux:label>pH</flux:label>
+                        <flux:input type="number" wire:model="editPh" step="0.01" min="2" max="5" />
+                        <flux:error name="editPh" />
                     </div>
                 </div>
 
                 <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide pt-2">Puntuaciones de cata (0–10)</p>
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     <div>
-                        <label class="block text-xs font-medium text-zinc-600 mb-1">Visual</label>
-                        <input type="number" wire:model="editVisualScore" step="0.1" min="0" max="10" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" />
-                        @error('editVisualScore') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                        <flux:label>Visual</flux:label>
+                        <flux:input type="number" wire:model="editVisualScore" step="0.1" min="0" max="10" />
+                        <flux:error name="editVisualScore" />
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-zinc-600 mb-1">Aroma</label>
-                        <input type="number" wire:model="editAromaScore" step="0.1" min="0" max="10" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" />
-                        @error('editAromaScore') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                        <flux:label>Aroma</flux:label>
+                        <flux:input type="number" wire:model="editAromaScore" step="0.1" min="0" max="10" />
+                        <flux:error name="editAromaScore" />
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-zinc-600 mb-1">Gusto</label>
-                        <input type="number" wire:model="editTasteScore" step="0.1" min="0" max="10" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" />
-                        @error('editTasteScore') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                        <flux:label>Gusto</flux:label>
+                        <flux:input type="number" wire:model="editTasteScore" step="0.1" min="0" max="10" />
+                        <flux:error name="editTasteScore" />
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-zinc-600 mb-1">Global (0–100)</label>
-                        <input type="number" wire:model="editOverallScore" step="0.1" min="0" max="100" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" />
-                        @error('editOverallScore') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                        <flux:label>Global (0–100)</flux:label>
+                        <flux:input type="number" wire:model="editOverallScore" step="0.1" min="0" max="100" />
+                        <flux:error name="editOverallScore" />
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-medium text-zinc-600 mb-1">Notas de cata</label>
-                    <textarea wire:model="editTastingNotes" rows="3" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300"></textarea>
+                    <flux:label>Notas de cata</flux:label>
+                    <flux:textarea wire:model="editTastingNotes" rows="3" />
                 </div>
             </div>
             <div class="flex justify-end gap-3 px-6 py-4 border-t border-zinc-100">
-                <button wire:click="closeEdit" class="px-4 py-2 text-sm font-medium text-zinc-600 border border-zinc-200 rounded-lg hover:bg-zinc-50 transition">Cancelar</button>
-                <button wire:click="updateQualification" class="px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">Guardar cambios</button>
+                <flux:button wire:click="closeEdit" variant="ghost">Cancelar</flux:button>
+                <flux:button wire:click="updateQualification" variant="primary">Guardar cambios</flux:button>
             </div>
         </div>
     </div>

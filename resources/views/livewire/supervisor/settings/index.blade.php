@@ -13,28 +13,22 @@
         </h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-                <label class="block text-xs font-medium text-zinc-600 mb-1">Nombre</label>
-                <input
-                    type="text"
-                    wire:model="name"
-                    class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300"
-                />
-                @error('name') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                <flux:label>Nombre</flux:label>
+                <flux:input type="text" wire:model="name"
+                    />
+                <flux:error name="name" />
             </div>
             <div>
-                <label class="block text-xs font-medium text-zinc-600 mb-1">Email de contacto</label>
-                <input
-                    type="email"
-                    wire:model="email"
-                    class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300"
-                />
-                @error('email') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                <flux:label>Email de contacto</flux:label>
+                <flux:input type="email" wire:model="email"
+                    />
+                <flux:error name="email" />
             </div>
         </div>
         <div class="mt-4">
-            <button wire:click="updateProfile" class="px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+            <flux:button wire:click="updateProfile" variant="primary">
                 Guardar cambios
-            </button>
+            </flux:button>
         </div>
     </x-agro.card>
 
@@ -46,36 +40,27 @@
         </h3>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-                <label class="block text-xs font-medium text-zinc-600 mb-1">Contraseña actual</label>
-                <input
-                    type="password"
-                    wire:model="current_password"
-                    class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300"
-                />
-                @error('current_password') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                <flux:label>Contraseña actual</flux:label>
+                <flux:input type="password" wire:model="current_password"
+                    />
+                <flux:error name="current_password" />
             </div>
             <div>
-                <label class="block text-xs font-medium text-zinc-600 mb-1">Nueva contraseña</label>
-                <input
-                    type="password"
-                    wire:model="new_password"
-                    class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300"
-                />
-                @error('new_password') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                <flux:label>Nueva contraseña</flux:label>
+                <flux:input type="password" wire:model="new_password"
+                    />
+                <flux:error name="new_password" />
             </div>
             <div>
-                <label class="block text-xs font-medium text-zinc-600 mb-1">Confirmar contraseña</label>
-                <input
-                    type="password"
-                    wire:model="confirm_password"
-                    class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300"
-                />
+                <flux:label>Confirmar contraseña</flux:label>
+                <flux:input type="password" wire:model="confirm_password"
+                    />
             </div>
         </div>
         <div class="mt-4">
-            <button wire:click="updatePassword" class="px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+            <flux:button wire:click="updatePassword" variant="primary">
                 Cambiar contraseña
-            </button>
+            </flux:button>
         </div>
     </x-agro.card>
 

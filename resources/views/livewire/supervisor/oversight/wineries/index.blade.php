@@ -138,9 +138,7 @@
             @endforeach
         </div>
 
-        <div class="mt-2">
-            {{ $wineries->links() }}
-        </div>
+        <x-agro-pagination :paginator="$wineries" />
     @else
         <x-agro.empty-state
             icon="building-office-2"

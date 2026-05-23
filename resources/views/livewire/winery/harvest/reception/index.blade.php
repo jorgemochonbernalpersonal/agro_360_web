@@ -252,9 +252,7 @@
                 @endforeach
             </div>
 
-            <div class="mt-6">
-                {{ $receptions->links() }}
-            </div>
+            <x-agro-pagination :paginator="$receptions" />
         @else
             <x-agro.empty-state
                 icon="scale"

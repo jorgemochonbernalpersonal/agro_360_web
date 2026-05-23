@@ -214,9 +214,7 @@
                 @endforeach
             </div>
 
-            <div class="mt-6">
-                {{ $lots->links() }}
-            </div>
+            <x-agro-pagination :paginator="$lots" />
         @elseif ($currentTab === 'active')
             <x-agro.empty-state
                 icon="beaker"

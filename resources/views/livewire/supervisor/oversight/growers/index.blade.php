@@ -107,9 +107,7 @@
             @endforeach
         </div>
 
-        <div class="mt-2">
-            {{ $growers->links() }}
-        </div>
+        <x-agro-pagination :paginator="$growers" />
     @else
         <x-agro.empty-state
             icon="users"

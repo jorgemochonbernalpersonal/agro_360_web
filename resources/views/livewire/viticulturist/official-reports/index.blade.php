@@ -180,9 +180,7 @@
             @endforeach
         </div>
 
-        @if($reports->hasPages())
-            <div class="flex justify-center">{{ $reports->links() }}</div>
-        @endif
+        <x-agro-pagination :paginator="$reports" />
 
     @else
         <x-agro.empty-state

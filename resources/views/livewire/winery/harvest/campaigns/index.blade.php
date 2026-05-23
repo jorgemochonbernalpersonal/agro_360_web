@@ -178,9 +178,7 @@
                 @endforeach
             </div>
 
-            <div class="mt-6">
-                {{ $campaigns->links() }}
-            </div>
+            <x-agro-pagination :paginator="$campaigns" />
         @else
             <x-agro.empty-state
                 icon="clipboard-document-list"

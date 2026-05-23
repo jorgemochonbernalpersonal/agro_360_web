@@ -194,7 +194,7 @@
                 @endforeach
             </div>
 
-            <div class="mt-6">{{ $wines->links() }}</div>
+            <x-agro-pagination :paginator="$wines" />
         @else
             <x-agro.empty-state
                 icon="document-text"

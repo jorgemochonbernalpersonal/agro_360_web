@@ -149,9 +149,7 @@
                 @endforeach
             </div>
 
-            <div class="mt-6">
-                {{ $authorizations->links() }}
-            </div>
+            <x-agro-pagination :paginator="$authorizations" />
         @else
             <x-agro.empty-state
                 icon="identification"

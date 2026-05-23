@@ -111,9 +111,7 @@
             @endforeach
         </div>
 
-        @if($oenologists->hasPages())
-            <div class="flex justify-center">{{ $oenologists->links() }}</div>
-        @endif
+        <x-agro-pagination :paginator="$oenologists" />
 
     @else
         <x-agro.empty-state

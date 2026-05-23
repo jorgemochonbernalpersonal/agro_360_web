@@ -131,9 +131,7 @@
             </x-slot:body>
         </x-agro.table>
 
-        <div class="px-6 py-4">
-            {{ $organizations->links() }}
-        </div>
+        <x-agro-pagination :paginator="$organizations" />
     </x-agro.card>
 
     {{-- Create / Edit Modal --}}

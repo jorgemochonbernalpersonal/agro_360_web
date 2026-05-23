@@ -218,9 +218,7 @@
                 @endforeach
             </div>
 
-            <div class="mt-6">
-                {{ $relations->links() }}
-            </div>
+            <x-agro-pagination :paginator="$relations" />
         @else
             <x-agro.empty-state
                 icon="users"

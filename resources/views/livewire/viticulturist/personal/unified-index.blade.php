@@ -264,9 +264,7 @@
                 @endforeach
             </div>
 
-            @if($viticulturists->hasPages())
-                <div class="flex justify-center">{{ $viticulturists->links() }}</div>
-            @endif
+            <x-agro-pagination :paginator="$viticulturists" />
 
         @else
             <x-agro.empty-state
@@ -368,9 +366,7 @@
                 @endforeach
             </div>
 
-            @if($crewsPaginated->hasPages())
-                <div class="flex justify-center">{{ $crewsPaginated->links() }}</div>
-            @endif
+            <x-agro-pagination :paginator="$crewsPaginated" />
 
         @else
             <x-agro.empty-state

@@ -92,8 +92,6 @@
         </div>
 
         {{-- Paginación --}}
-        <div class="mt-4">
-            {{ $paginatedPlots->links() }}
-        </div>
+        <x-agro-pagination :paginator="$paginatedPlots" />
     @endif
 </div>

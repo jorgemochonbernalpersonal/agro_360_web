@@ -94,7 +94,7 @@
                     </x-agro.card>
                 @endforeach
             </div>
-            <div class="mt-6">{{ $tickets->links() }}</div>
+            <x-agro-pagination :paginator="$tickets" />
         @else
             <x-agro.empty-state
                 icon="ticket"

@@ -72,7 +72,7 @@
                 </x-agro.card>
             @endforeach
         </div>
-        <div class="mt-6">{{ $additives->links() }}</div>
+        <x-agro-pagination :paginator="$additives" />
     @else
         <x-agro.empty-state icon="beaker" title="Sin aditivos registrados"
             description="Registra los aditivos aplicados a este depósito (SO₂, bentonita, etc.)." />

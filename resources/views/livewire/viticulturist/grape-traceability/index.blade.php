@@ -129,8 +129,6 @@
         </div>
     </div>
 
-    @if ($entries->hasPages())
-        <div class="mt-4">{{ $entries->links() }}</div>
-    @endif
+    <x-agro-pagination :paginator="$entries" />
 
 </div>

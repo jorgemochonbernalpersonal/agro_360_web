@@ -174,9 +174,7 @@
             @endforeach
         </div>
 
-        @if($workers->hasPages())
-            <div class="flex justify-center">{{ $workers->links() }}</div>
-        @endif
+        <x-agro-pagination :paginator="$workers" />
 
     @else
         <x-agro.empty-state
