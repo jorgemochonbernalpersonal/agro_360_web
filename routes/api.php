@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\Winery\GrapeReceptionController;
 use App\Http\Controllers\Api\Winery\ViticulturistController;
 use App\Http\Controllers\Api\Winery\WineController;
 use App\Http\Controllers\Api\Winery\WineProcessController;
+use App\Http\Controllers\Api\Winery\ContainerStockEntryController;
 use App\Http\Controllers\Api\Winery\InvoiceController;
 use App\Http\Controllers\Api\Winery\ClientController;
 use App\Http\Controllers\Api\Winery\WineAnalysisController;
@@ -225,7 +226,7 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
         Route::post('/viticulturists/{id}/invite',   [ViticulturistController::class, 'invite'])->middleware('throttle:5,1');
         Route::delete('/viticulturists/{id}/invite', [ViticulturistController::class, 'revokeInvite'])->middleware('throttle:10,1');
 
-        // Trasvases y mermas
+        // Trasvases, mermas y entradas de stock
         Route::middleware('winery.ability:wine_process')->group(function () {
             Route::get('/transfers',         [WineProcessController::class, 'indexTransfers'])->middleware('throttle:60,1');
             Route::post('/transfers',        [WineProcessController::class, 'storeTransfer'])->middleware('throttle:60,1');
@@ -235,6 +236,9 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
             Route::post('/losses',           [WineProcessController::class, 'storeLoss'])->middleware('throttle:60,1');
             Route::put('/losses/{id}',       [WineProcessController::class, 'updateLoss'])->middleware('throttle:60,1');
             Route::delete('/losses/{id}',    [WineProcessController::class, 'destroyLoss'])->middleware('throttle:60,1');
+            Route::get('/container-stock-entries',         [ContainerStockEntryController::class, 'index'])->middleware('throttle:60,1');
+            Route::post('/container-stock-entries',        [ContainerStockEntryController::class, 'store'])->middleware('throttle:60,1');
+            Route::delete('/container-stock-entries/{id}', [ContainerStockEntryController::class, 'destroy'])->middleware('throttle:60,1');
         });
 
         // Facturas

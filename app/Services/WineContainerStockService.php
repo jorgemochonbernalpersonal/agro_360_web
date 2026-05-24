@@ -6,6 +6,7 @@ use App\Models\Container;
 use App\Models\ContainerCurrentState;
 use App\Models\ContainerHistory;
 use App\Models\WineBottling;
+use App\Models\WineContainerStockEntry;
 use App\Models\WineLoss;
 use App\Models\WineTransfer;
 use Illuminate\Support\Facades\Auth;
@@ -412,6 +413,89 @@ class WineContainerStockService
             $fake = new WineBottling($oldData);
             $this->revertBottling($fake);
             $this->recordBottling($bottling);
+        });
+    }
+
+    // ─── Entrada inicial de vino ─────────────────────────────────────────────
+
+    /**
+     * Registra una entrada de stock: incrementa wine_volume_liters en el contenedor.
+     * Sirve para cargar stock inicial o corregir inventario de forma auditada.
+     */
+    public function recordStockEntry(WineContainerStockEntry $entry): void
+    {
+        if (! $entry->container_id) {
+            return;
+        }
+
+        DB::transaction(function () use ($entry) {
+            $qty = (float) $entry->quantity_liters;
+
+            $container = Container::lockForUpdate()->find($entry->container_id);
+            if (! $container) {
+                return;
+            }
+
+            $container->wine_volume_liters = $container->wine_volume_liters + $qty;
+            $container->save();
+
+            $this->updateCurrentState($container, $entry->wine_id, $qty);
+
+            ContainerHistory::create([
+                'container_id'   => $container->id,
+                'wine_id'        => $entry->wine_id,
+                'operation_type' => 'wine_stock_entry',
+                'quantity'       => $qty,
+                'created_by'     => Auth::id(),
+                'start_date'     => now(),
+            ]);
+
+            Log::info('[WineContainerStockService] Entrada de stock registrada', [
+                'entry_id'     => $entry->id,
+                'container_id' => $entry->container_id,
+                'wine_id'      => $entry->wine_id,
+                'quantity_l'   => $qty,
+                'source'       => $entry->source,
+            ]);
+        });
+    }
+
+    /**
+     * Revierte una entrada de stock: descuenta los litros del contenedor.
+     */
+    public function revertStockEntry(WineContainerStockEntry $entry): void
+    {
+        if (! $entry->container_id) {
+            return;
+        }
+
+        DB::transaction(function () use ($entry) {
+            $qty = (float) $entry->quantity_liters;
+
+            $container = Container::lockForUpdate()->find($entry->container_id);
+            if (! $container) {
+                return;
+            }
+
+            $container->wine_volume_liters = max(0, $container->wine_volume_liters - $qty);
+            $container->save();
+
+            $this->updateCurrentState($container, null, -$qty);
+
+            ContainerHistory::create([
+                'container_id'   => $container->id,
+                'wine_id'        => $entry->wine_id,
+                'operation_type' => 'wine_stock_entry_revert',
+                'quantity'       => -$qty,
+                'created_by'     => Auth::id(),
+                'start_date'     => now(),
+            ]);
+
+            Log::info('[WineContainerStockService] Entrada de stock revertida', [
+                'entry_id'     => $entry->id,
+                'container_id' => $entry->container_id,
+                'quantity_l'   => $qty,
+            ]);
         });
     }
 
