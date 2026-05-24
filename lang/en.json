@@ -4100,5 +4100,17 @@
     "Solicitudes pendientes": "Pending requests",
     "Solicitudes rechazadas": "Rejected requests",
     "Solo las bodegas y denominaciones de origen a las que hayas aprobado el acceso pueden ver tus actividades de campo. Puedes revocar el acceso en cualquier momento.": "Only the wineries and designations of origin you have approved can view your field activities. You can revoke access at any time.",
-    "Tu cuaderno es privado por defecto": "Your notebook is private by default"
+    "Tu cuaderno es privado por defecto": "Your notebook is private by default",
+    "Aquí aparecerán los avisos del sistema: alertas de plagas, vencimientos, comunicaciones de bodega y más.": "System notices will appear here: pest alerts, expiries, winery communications and more.",
+    "Centro de notificaciones del sistema": "System notification centre",
+    "Limpiar historial": "Clear history",
+    "Marcar como leído": "Mark as read",
+    "Marcar todo leído": "Mark all as read",
+    "Notificación": "Notification",
+    "Sin leer": "Unread",
+    "Sin notificaciones": "No notifications",
+    "notificaciones sin leer": "unread notifications",
+    "notificación sin leer": "unread notification",
+    "¿Eliminar esta notificación?": "Delete this notification?",
+    "¿Eliminar todo el historial de notificaciones?": "Delete the entire notification history?"
 }
