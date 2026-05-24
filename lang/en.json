@@ -4086,5 +4086,19 @@
     "Seleccionar cuadrilla": "Select crew",
     "Sin viticultores registrados": "No viticulturists registered",
     "Total viticultores": "Total viticulturists",
-    "¿Estás seguro de eliminar este viticultor? Esta acción no se puede deshacer.": "Are you sure you want to delete this viticulturist? This action cannot be undone."
+    "¿Estás seguro de eliminar este viticultor? Esta acción no se puede deshacer.": "Are you sure you want to delete this viticulturist? This action cannot be undone.",
+    "Acceso al Cuaderno de Campo": "Field Notebook Access",
+    "Acceso desde": "Access since",
+    "Accesos activos": "Active accesses",
+    "Aprobar": "Approve",
+    "Controla qué bodegas y denominaciones de origen pueden ver tus actividades de campo. Solo tú decides quién tiene acceso.": "Control which wineries and designations of origin can view your field activities. Only you decide who has access.",
+    "Ninguna bodega ni denominación tiene acceso a tu cuaderno ahora mismo.": "No winery or denomination currently has access to your notebook.",
+    "Rechazada el": "Rejected on",
+    "Rechazar": "Reject",
+    "Revocar": "Revoke",
+    "Solicitud recibida el": "Request received on",
+    "Solicitudes pendientes": "Pending requests",
+    "Solicitudes rechazadas": "Rejected requests",
+    "Solo las bodegas y denominaciones de origen a las que hayas aprobado el acceso pueden ver tus actividades de campo. Puedes revocar el acceso en cualquier momento.": "Only the wineries and designations of origin you have approved can view your field activities. You can revoke access at any time.",
+    "Tu cuaderno es privado por defecto": "Your notebook is private by default"
 }
