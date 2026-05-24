@@ -4112,5 +4112,16 @@
     "notificaciones sin leer": "unread notifications",
     "notificación sin leer": "unread notification",
     "¿Eliminar esta notificación?": "Delete this notification?",
-    "¿Eliminar todo el historial de notificaciones?": "Delete the entire notification history?"
+    "¿Eliminar todo el historial de notificaciones?": "Delete the entire notification history?",
+    "Cosecha / Vendimia": "Harvest / Vintage",
+    "Gestionar campañas": "Manage campaigns",
+    "Labores de poda": "Pruning tasks",
+    "No se encontró ninguna campaña activa. Crea una para empezar a registrar actividades.": "No active campaign found. Create one to start recording activities.",
+    "Previsión de producción": "Production forecast",
+    "Secciones del cuaderno": "Notebook sections",
+    "Selecciona una campaña para ver las actividades": "Select a campaign to view activities",
+    "Total actividades": "Total activities",
+    "Tratamientos Post-Vendimia": "Post-Harvest Treatments",
+    "Tratamientos tras la cosecha": "Post-harvest treatments",
+    "inactiva": "inactive"
 }
