@@ -24,7 +24,7 @@
                     @if(!empty($alert['action_url']))
                         <a href="{{ $alert['action_url'] }}" wire:navigate
                            class="flex-shrink-0 text-xs font-semibold px-3 py-1.5 rounded-lg bg-white/80 hover:bg-white transition-colors">
-                            {{ $alert['action_text'] ?? 'Ver' }}
+                            {{ $alert['action_text'] ?? __('Ver') }}
                         </a>
                     @endif
                 </div>
@@ -35,8 +35,8 @@
     {{-- Header --}}
     <x-page-header
         icon='<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>'
-        title="Dashboard"
-        description="Resumen de tu viñedo"
+        :title="__('Dashboard')"
+        :description="__('Resumen de tu viñedo')"
         icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
     />
 
@@ -48,10 +48,9 @@
                     🌱
                 </div>
                 <div>
-                    <h3 class="font-bold text-green-900">Tu viñedo digital te espera</h3>
+                    <h3 class="font-bold text-green-900">{{ __('Tu viñedo digital te espera') }}</h3>
                     <p class="text-sm text-green-700 mt-1">
-                        Registra tu primera actividad en el cuaderno y empieza a llevar el control de tu explotación.
-                        El cuaderno de campo es obligatorio para el cumplimiento PAC.
+                        {{ __('Registra tu primera actividad en el cuaderno y empieza a llevar el control de tu explotación. El cuaderno de campo es obligatorio para el cumplimiento PAC.') }}
                     </p>
                     <div class="flex gap-3 mt-3">
                         <a href="{{ route('viticulturist.quick-entry') }}" wire:navigate
@@ -59,11 +58,11 @@
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                             </svg>
-                            Registrar actividad
+                            {{ __('Registrar actividad') }}
                         </a>
                         <a href="{{ route('viticulturist.digital-notebook') }}" wire:navigate
                            class="inline-flex items-center gap-2 px-4 py-2 bg-white hover:bg-green-50 text-green-700 text-sm font-semibold rounded-lg border border-green-300 transition-colors">
-                            Ver cuaderno
+                            {{ __('Ver cuaderno') }}
                         </a>
                     </div>
                 </div>
@@ -75,13 +74,13 @@
                 <span class="text-xl">📝</span>
                 <div class="flex-1">
                     <p class="text-sm font-medium text-amber-900">
-                        Llevas <strong>{{ $this->daysSinceLastActivity }} {{ $this->daysSinceLastActivity === 1 ? 'día' : 'días' }}</strong> sin registrar actividades.
+                        {{ __('Llevas') }} <strong>{{ $this->daysSinceLastActivity }} {{ $this->daysSinceLastActivity === 1 ? __('día') : __('días') }}</strong> {{ __('sin registrar actividades.') }}
                     </p>
-                    <p class="text-xs text-amber-700">Mantener el cuaderno al día es clave para el cumplimiento PAC.</p>
+                    <p class="text-xs text-amber-700">{{ __('Mantener el cuaderno al día es clave para el cumplimiento PAC.') }}</p>
                 </div>
                 <a href="{{ route('viticulturist.quick-entry') }}" wire:navigate
                    class="flex-shrink-0 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold rounded-lg transition-colors">
-                    Registrar ahora
+                    {{ __('Registrar ahora') }}
                 </a>
             </div>
         </div>
@@ -91,17 +90,17 @@
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4" data-cy="dashboard-kpi-cards">
         {{-- Parcelas + Área --}}
         <div data-cy="kpi-plots">
-            <x-agro-stat-card label="Parcelas" :value="$this->totalPlots" :description="number_format($this->totalArea, 1).' ha'" icon="map" color="green" />
+            <x-agro-stat-card :label="__('Parcelas')" :value="$this->totalPlots" :description="number_format($this->totalArea, 1).' ha'" icon="map" color="green" />
         </div>
 
         {{-- Actividades --}}
         <div data-cy="kpi-activities">
-            <x-agro-stat-card label="Actividades" :value="$this->activitiesThisMonth" description="este mes" icon="document-text" color="purple" />
+            <x-agro-stat-card :label="__('Actividades')" :value="$this->activitiesThisMonth" :description="__('este mes')" icon="document-text" color="purple" />
         </div>
 
         {{-- Cosechado --}}
         <div data-cy="kpi-harvest">
-            <x-agro-stat-card label="Cosechado" :value="number_format($this->totalHarvested / 1000, 1).' t'" :description="'toneladas '.now()->year" icon="star" color="amber" />
+            <x-agro-stat-card :label="__('Cosechado')" :value="number_format($this->totalHarvested / 1000, 1).' t'" :description="__('toneladas').' '.now()->year" icon="star" color="amber" />
         </div>
 
         {{-- Teledetección - condicional --}}
@@ -125,9 +124,9 @@
             <a href="{{ route('remote-sensing.dashboard') }}" wire:navigate class="bg-gradient-to-br from-green-50 to-emerald-100 rounded-xl shadow-lg border-2 border-green-200 p-5 hover:shadow-xl hover:border-green-300 transition-all" data-cy="kpi-remote-sensing">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-green-700">Teledetección</p>
-                        <p class="text-base font-bold text-green-800">Ver mapa NDVI</p>
-                        <p class="text-xs text-green-600">Análisis satelital</p>
+                        <p class="text-sm font-medium text-green-700">{{ __('Teledetección') }}</p>
+                        <p class="text-base font-bold text-green-800">{{ __('Ver mapa NDVI') }}</p>
+                        <p class="text-xs text-green-600">{{ __('Análisis satelital') }}</p>
                     </div>
                     <div class="w-10 h-10 rounded-lg bg-green-200 flex items-center justify-center">
                         <svg class="w-5 h-5 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -140,8 +139,8 @@
             <a href="{{ route('plots.index') }}" wire:navigate class="bg-white rounded-xl shadow-lg border-2 border-dashed border-green-300 p-5 hover:shadow-xl hover:border-green-400 transition-all" data-cy="kpi-remote-sensing-setup">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-green-700">Teledetección</p>
-                        <p class="text-xs font-semibold text-zinc-600 mt-1">Vincula tus parcelas con SIGPAC para ver análisis satelital gratis</p>
+                        <p class="text-sm font-medium text-green-700">{{ __('Teledetección') }}</p>
+                        <p class="text-xs font-semibold text-zinc-600 mt-1">{{ __('Vincula tus parcelas con SIGPAC para ver análisis satelital gratis') }}</p>
                     </div>
                     <div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
                         <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -180,8 +179,8 @@
                     </svg>
                 </div>
                 <div class="text-left">
-                    <span class="text-lg font-bold text-zinc-900">Cumplimiento PAC</span>
-                    <p class="text-xs text-zinc-500">Obligatorio para recibir ayudas de la PAC</p>
+                    <span class="text-lg font-bold text-zinc-900">{{ __('Cumplimiento PAC') }}</span>
+                    <p class="text-xs text-zinc-500">{{ __('Obligatorio para recibir ayudas de la PAC') }}</p>
                 </div>
             </div>
             <svg class="w-5 h-5 text-zinc-400 transition-transform" :class="{ 'rotate-180': pacOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -191,11 +190,11 @@
 
         <div x-show="pacOpen" x-collapse class="px-6 pb-6 space-y-6">
             <div>
-                <h4 class="font-semibold text-zinc-700 mb-3">Parcelas</h4>
+                <h4 class="font-semibold text-zinc-700 mb-3">{{ __('Parcelas') }}</h4>
                 @livewire('viticulturist.plots-dashboard')
             </div>
             <div>
-                <h4 class="font-semibold text-zinc-700 mb-3">Plantaciones</h4>
+                <h4 class="font-semibold text-zinc-700 mb-3">{{ __('Plantaciones') }}</h4>
                 @livewire('viticulturist.plantings-dashboard')
             </div>
         </div>
@@ -205,7 +204,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {{-- Distribución por Variedad --}}
         <x-agro-card data-cy="chart-variety">
-            <h3 class="text-base font-bold text-zinc-900 mb-4">Distribución por Variedad</h3>
+            <h3 class="text-base font-bold text-zinc-900 mb-4">{{ __('Distribución por Variedad') }}</h3>
 
             @if($this->plotsByVariety->count() > 0)
                 <div class="space-y-3">
@@ -217,8 +216,8 @@
                         @endphp
                         <div>
                             <div class="flex items-center justify-between mb-1">
-                                <span class="text-sm font-medium text-zinc-700">{{ $variety->grapeVariety->name ?? 'Sin variedad' }}</span>
-                                <span class="text-sm font-bold text-zinc-900">{{ $variety->count }} parcelas</span>
+                                <span class="text-sm font-medium text-zinc-700">{{ $variety->grapeVariety->name ?? __('Sin variedad') }}</span>
+                                <span class="text-sm font-bold text-zinc-900">{{ $variety->count }} {{ __('parcelas') }}</span>
                             </div>
                             <div class="w-full bg-zinc-200 rounded-full h-2">
                                 <div class="{{ $color }} h-2 rounded-full" style="width: {{ $percentage }}%"></div>
@@ -227,10 +226,10 @@
                     @endforeach
                 </div>
             @else
-                <x-agro-empty-state icon="map" title="Sin plantaciones" description="Aún no tienes plantaciones registradas">
+                <x-agro-empty-state icon="map" :title="__('Sin plantaciones')" :description="__('Aún no tienes plantaciones registradas')">
                     <a href="{{ route('plots.index') }}" wire:navigate
                        class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-lg transition-colors">
-                        Añadir plantaciones a tus parcelas
+                        {{ __('Añadir plantaciones a tus parcelas') }}
                     </a>
                 </x-agro-empty-state>
             @endif
@@ -238,11 +237,22 @@
 
         {{-- Actividades Recientes --}}
         <x-agro-card data-cy="recent-activities">
+            @php
+                $activityTypeLabels = [
+                    'treatment'     => __('Tratamiento'),
+                    'harvest'       => __('Cosecha'),
+                    'pruning'       => __('Poda'),
+                    'fertilization' => __('Fertilización'),
+                    'irrigation'    => __('Riego'),
+                    'cultural_work' => __('Labor cultural'),
+                    'observation'   => __('Observación'),
+                ];
+            @endphp
             <div class="flex items-center justify-between mb-4">
-                <h3 class="text-base font-bold text-zinc-900">Actividades Recientes</h3>
+                <h3 class="text-base font-bold text-zinc-900">{{ __('Actividades Recientes') }}</h3>
                 @if($this->recentActivities->count() > 0)
                     <a href="{{ route('viticulturist.digital-notebook') }}" wire:navigate class="text-sm font-medium text-agro-600 hover:underline">
-                        Ver todas
+                        {{ __('Ver todas') }}
                     </a>
                 @endif
             </div>
@@ -264,18 +274,18 @@
                                 @endswitch
                             </div>
                             <div class="flex-1 min-w-0">
-                                <p class="text-sm font-medium text-zinc-900 truncate">{{ ucfirst($activity->activity_type) }}</p>
-                                <p class="text-xs text-zinc-500">{{ $activity->plot->name ?? 'Sin parcela' }}</p>
+                                <p class="text-sm font-medium text-zinc-900 truncate">{{ $activityTypeLabels[$activity->activity_type] ?? ucfirst($activity->activity_type) }}</p>
+                                <p class="text-xs text-zinc-500">{{ $activity->plot->name ?? __('Sin parcela') }}</p>
                             </div>
                             <span class="text-xs text-zinc-400">{{ $activity->activity_date->format('d/m') }}</span>
                         </div>
                     @endforeach
                 </div>
             @else
-                <x-agro-empty-state icon="document-text" title="Cuaderno vacío" description="Registra tratamientos, riegos, fertilizaciones y más">
+                <x-agro-empty-state icon="document-text" :title="__('Cuaderno vacío')" :description="__('Registra tratamientos, riegos, fertilizaciones y más')">
                     <a href="{{ route('viticulturist.quick-entry') }}" wire:navigate
                        class="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold rounded-lg transition-colors">
-                        Primera actividad
+                        {{ __('Primera actividad') }}
                     </a>
                 </x-agro-empty-state>
             @endif
@@ -292,8 +302,8 @@
                     </svg>
                 </div>
                 <div>
-                    <p class="font-semibold text-zinc-900">Entrada rápida</p>
-                    <p class="text-xs text-green-600 font-medium">Actividad en 2 pasos</p>
+                    <p class="font-semibold text-zinc-900">{{ __('Entrada rápida') }}</p>
+                    <p class="text-xs text-green-600 font-medium">{{ __('Actividad en 2 pasos') }}</p>
                 </div>
             </a>
 
@@ -304,8 +314,8 @@
                     </svg>
                 </div>
                 <div>
-                    <p class="font-semibold text-zinc-900">Cuaderno Digital</p>
-                    <p class="text-xs text-zinc-500">Tu cuaderno de campo</p>
+                    <p class="font-semibold text-zinc-900">{{ __('Cuaderno Digital') }}</p>
+                    <p class="text-xs text-zinc-500">{{ __('Tu cuaderno de campo') }}</p>
                 </div>
             </a>
 
@@ -316,8 +326,8 @@
                     </svg>
                 </div>
                 <div>
-                    <p class="font-semibold text-zinc-900">Parcelas</p>
-                    <p class="text-xs text-zinc-500">Gestionar terrenos</p>
+                    <p class="font-semibold text-zinc-900">{{ __('Parcelas') }}</p>
+                    <p class="text-xs text-zinc-500">{{ __('Gestionar terrenos') }}</p>
                 </div>
             </a>
 
@@ -329,7 +339,7 @@
                 </div>
                 <div class="flex-1 min-w-0">
                     <p class="font-semibold text-zinc-900">PAC</p>
-                    <p class="text-xs text-zinc-500">Cumplimiento normativo</p>
+                    <p class="text-xs text-zinc-500">{{ __('Cumplimiento normativo') }}</p>
                 </div>
                 @if(!$this->hasActiveAccess)
                     <svg class="w-3.5 h-3.5 flex-shrink-0 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
@@ -343,8 +353,8 @@
                     </svg>
                 </div>
                 <div>
-                    <p class="font-semibold text-zinc-900">Entrada rápida</p>
-                    <p class="text-xs text-zinc-500">Actividad en 2 pasos</p>
+                    <p class="font-semibold text-zinc-900">{{ __('Entrada rápida') }}</p>
+                    <p class="text-xs text-zinc-500">{{ __('Actividad en 2 pasos') }}</p>
                 </div>
             </a>
 
@@ -355,8 +365,8 @@
                     </svg>
                 </div>
                 <div>
-                    <p class="font-semibold text-zinc-900">Cuaderno Digital</p>
-                    <p class="text-xs text-zinc-500">Registrar actividades</p>
+                    <p class="font-semibold text-zinc-900">{{ __('Cuaderno Digital') }}</p>
+                    <p class="text-xs text-zinc-500">{{ __('Registrar actividades') }}</p>
                 </div>
             </a>
 
@@ -367,8 +377,8 @@
                     </svg>
                 </div>
                 <div class="flex-1 min-w-0">
-                    <p class="font-semibold text-zinc-900">Facturación</p>
-                    <p class="text-xs text-zinc-500">Ver estadísticas</p>
+                    <p class="font-semibold text-zinc-900">{{ __('Facturación') }}</p>
+                    <p class="text-xs text-zinc-500">{{ __('Ver estadísticas') }}</p>
                 </div>
                 @if(!$this->hasActiveAccess)
                     <svg class="w-3.5 h-3.5 flex-shrink-0 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
@@ -382,8 +392,8 @@
                     </svg>
                 </div>
                 <div>
-                    <p class="font-semibold text-zinc-900">Parcelas</p>
-                    <p class="text-xs text-zinc-500">Gestionar terrenos</p>
+                    <p class="font-semibold text-zinc-900">{{ __('Parcelas') }}</p>
+                    <p class="text-xs text-zinc-500">{{ __('Gestionar terrenos') }}</p>
                 </div>
             </a>
         @endif
@@ -392,12 +402,12 @@
     {{-- Cosechas Recientes --}}
     @if($this->recentHarvests->count() > 0)
         <x-agro-card data-cy="recent-harvests">
-            <h3 class="text-base font-bold text-zinc-900 mb-4">Cosechas Recientes</h3>
+            <h3 class="text-base font-bold text-zinc-900 mb-4">{{ __('Cosechas Recientes') }}</h3>
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 @foreach($this->recentHarvests as $harvest)
                     <div class="p-3 rounded-lg border border-zinc-200 hover:border-purple-300 transition-colors">
-                        <p class="text-sm font-semibold text-zinc-900 truncate">{{ $harvest->plotPlanting->grapeVariety->name ?? 'Sin variedad' }}</p>
-                        <p class="text-xs text-zinc-500 truncate">{{ $harvest->activity->plot->name ?? 'Sin parcela' }}</p>
+                        <p class="text-sm font-semibold text-zinc-900 truncate">{{ $harvest->plotPlanting->grapeVariety->name ?? __('Sin variedad') }}</p>
+                        <p class="text-xs text-zinc-500 truncate">{{ $harvest->activity->plot->name ?? __('Sin parcela') }}</p>
                         <p class="text-sm font-bold text-purple-600 mt-1">{{ number_format($harvest->total_weight, 0) }} kg</p>
                         <p class="text-xs text-zinc-400">{{ $harvest->harvest_start_date->format('d/m/Y') }}</p>
                     </div>

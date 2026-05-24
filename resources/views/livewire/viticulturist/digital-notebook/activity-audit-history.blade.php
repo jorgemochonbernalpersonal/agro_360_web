@@ -2,7 +2,7 @@
     {{-- Header --}}
     <div class="flex items-start justify-between gap-4">
         <div>
-            <flux:heading size="lg">Historial de Auditoría</flux:heading>
+            <flux:heading size="lg">{{ __('Historial de Auditoría') }}</flux:heading>
             <flux:subheading>
                 {{ $activity->activity_type }} — {{ $activity->activity_date->format('d/m/Y') }}
             </flux:subheading>
@@ -15,33 +15,33 @@
     {{-- Filtros --}}
     <x-agro.filter-bar>
         <x-agro.filter-select wire:model.live="filterUser">
-            <option value="">Todos los usuarios</option>
+            <option value="">{{ __('Todos los usuarios') }}</option>
             @foreach($users as $user)
                 <option value="{{ $user->id }}">{{ $user->name }}</option>
             @endforeach
         </x-agro.filter-select>
 
         <x-agro.filter-select wire:model.live="filterAction">
-            <option value="">Todas las acciones</option>
+            <option value="">{{ __('Todas las acciones') }}</option>
             @foreach($actions as $action)
                 <option value="{{ $action }}">{{ ucfirst($action) }}</option>
             @endforeach
         </x-agro.filter-select>
 
         <div class="flex flex-col gap-1">
-            <label class="text-xs font-medium text-zinc-600">Desde</label>
+            <label class="text-xs font-medium text-zinc-600">{{ __('Desde') }}</label>
             <flux:input type="date" wire:model.live="filterDateFrom" size="sm" />
         </div>
 
         <div class="flex flex-col gap-1">
-            <label class="text-xs font-medium text-zinc-600">Hasta</label>
+            <label class="text-xs font-medium text-zinc-600">{{ __('Hasta') }}</label>
             <flux:input type="date" wire:model.live="filterDateTo" size="sm" />
         </div>
 
         @if($filterUser || $filterAction || $filterDateFrom || $filterDateTo)
             <div class="flex items-end">
                 <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">
-                    Limpiar
+                    {{ __('Limpiar') }}
                 </flux:button>
             </div>
         @endif
@@ -71,14 +71,14 @@
                     <div class="flex-1 min-w-0">
                         <div class="flex items-start justify-between gap-2">
                             <p class="text-sm font-semibold text-zinc-900">{{ $log->action_description }}</p>
-                            <span class="text-xs text-zinc-400 flex-shrink-0 flex items-center gap-1" title="Dirección IP">
+                            <span class="text-xs text-zinc-400 flex-shrink-0 flex items-center gap-1" title="{{ __('Dirección IP') }}">
                                 <flux:icon icon="globe-alt" class="size-3" />
                                 {{ $log->ip_address }}
                             </span>
                         </div>
 
                         <div class="flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-1 text-xs text-zinc-500">
-                            <span class="font-medium text-zinc-700">{{ $log->user->name ?? 'Sistema' }}</span>
+                            <span class="font-medium text-zinc-700">{{ $log->user->name ?? __('Sistema') }}</span>
                             <span>·</span>
                             <span>{{ $log->created_at->format('d/m/Y H:i:s') }}</span>
                             <span>·</span>
@@ -89,17 +89,17 @@
                         @php $diff = $this->getChangeDiff($log); @endphp
                         @if(!empty($diff))
                             <div class="mt-3 pt-3 border-t border-zinc-100 space-y-2">
-                                <p class="text-xs font-semibold text-zinc-500 uppercase tracking-wide">Cambios realizados</p>
+                                <p class="text-xs font-semibold text-zinc-500 uppercase tracking-wide">{{ __('Cambios realizados') }}</p>
                                 @foreach($diff as $change)
                                     <div class="text-xs">
                                         <p class="font-semibold text-zinc-700 mb-1">{{ $change['field'] }}</p>
                                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                             <div class="bg-red-50 border border-red-100 rounded-lg px-3 py-2">
-                                                <p class="text-red-500 font-medium mb-0.5">Antes</p>
+                                                <p class="text-red-500 font-medium mb-0.5">{{ __('Antes') }}</p>
                                                 <p class="text-zinc-700">{!! $change['old'] !!}</p>
                                             </div>
                                             <div class="bg-agro-50 border border-agro-100 rounded-lg px-3 py-2">
-                                                <p class="text-agro-600 font-medium mb-0.5">Después</p>
+                                                <p class="text-agro-600 font-medium mb-0.5">{{ __('Después') }}</p>
                                                 <p class="text-zinc-700">{!! $change['new'] !!}</p>
                                             </div>
                                         </div>
@@ -113,8 +113,8 @@
         @empty
             <x-agro.empty-state
                 icon="document-text"
-                message="Sin registros de auditoría"
-                description="No hay registros de auditoría para esta actividad con los filtros aplicados"
+                :message="__('Sin registros de auditoría')"
+                :description="__('No hay registros de auditoría para esta actividad con los filtros aplicados')"
             />
         @endforelse
     </div>

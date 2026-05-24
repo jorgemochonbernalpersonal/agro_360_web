@@ -1,15 +1,15 @@
 <x-agro.form-card
-    title="Editar Declaración de Vendimia"
-    description="Modifica los datos de la declaración oficial de cosecha"
+    :title="__('Editar Declaración de Vendimia')"
+    :description="__('Modifica los datos de la declaración oficial de cosecha')"
     :back-url="roleRoute('viticulturist.harvest-declarations.index')"
 >
     <form wire:submit="save" class="space-y-8">
 
-        <x-agro.form-section title="Datos de la Declaración">
+        <x-agro.form-section :title="__('Datos de la Declaración')">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                 <flux:field>
-                    <flux:label required>Campaña</flux:label>
+                    <flux:label required>{{ __('Campaña') }}</flux:label>
                     <flux:select wire:model="campaign_id">
                         @foreach($campaigns as $c)
                             <flux:select.option value="{{ $c->id }}">{{ $c->name }}</flux:select.option>
@@ -19,37 +19,37 @@
                 </flux:field>
 
                 <flux:field>
-                    <flux:label required>Año de vendimia</flux:label>
+                    <flux:label required>{{ __('Año de vendimia') }}</flux:label>
                     <flux:input wire:model="declaration_year" type="number" min="2000" max="2100" />
                     <flux:error name="declaration_year" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label required>Fecha de declaración</flux:label>
+                    <flux:label required>{{ __('Fecha de declaración') }}</flux:label>
                     <flux:input wire:model="declaration_date" type="date" />
                     <flux:error name="declaration_date" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Fecha de presentación</flux:label>
+                    <flux:label>{{ __('Fecha de presentación') }}</flux:label>
                     <flux:input wire:model="submission_date" type="date" />
                     <flux:error name="submission_date" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label required>Organismo receptor</flux:label>
+                    <flux:label required>{{ __('Organismo receptor') }}</flux:label>
                     <flux:input wire:model="authority" type="text" />
                     <flux:error name="authority" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Nº referencia oficial</flux:label>
-                    <flux:input wire:model="reference_number" type="text" placeholder="Número asignado por el organismo" />
+                    <flux:label>{{ __('Nº referencia oficial') }}</flux:label>
+                    <flux:input wire:model="reference_number" type="text" :placeholder="__('Número asignado por el organismo')" />
                     <flux:error name="reference_number" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label required>Estado</flux:label>
+                    <flux:label required>{{ __('Estado') }}</flux:label>
                     <flux:select wire:model="status">
                         @foreach($statuses as $key => $label)
                             <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
@@ -60,7 +60,7 @@
 
                 @if($status === 'rejected')
                     <flux:field>
-                        <flux:label>Motivo de rechazo</flux:label>
+                        <flux:label>{{ __('Motivo de rechazo') }}</flux:label>
                         <flux:textarea wire:model="rejection_reason" rows="2" />
                         <flux:error name="rejection_reason" />
                     </flux:field>
@@ -69,36 +69,36 @@
             </div>
         </x-agro.form-section>
 
-        <x-agro.form-section title="Detalle por Variedad / Parcela">
+        <x-agro.form-section :title="__('Detalle por Variedad / Parcela')">
             <div class="space-y-4">
                 @foreach($lines as $i => $line)
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 p-4 bg-zinc-50 rounded-xl border border-zinc-200" wire:key="line-{{ $i }}">
                         <flux:field>
-                            <flux:label>Variedad</flux:label>
+                            <flux:label>{{ __('Variedad') }}</flux:label>
                             <flux:input wire:model.live="lines.{{ $i }}.variety" type="text" />
                         </flux:field>
                         <flux:field>
-                            <flux:label>Parcela / Pago</flux:label>
+                            <flux:label>{{ __('Parcela / Pago') }}</flux:label>
                             <flux:input wire:model.live="lines.{{ $i }}.plot_name" type="text" />
                         </flux:field>
                         <flux:field>
-                            <flux:label>Superficie (ha)</flux:label>
+                            <flux:label>{{ __('Superficie (ha)') }}</flux:label>
                             <flux:input wire:model.live="lines.{{ $i }}.surface_ha" type="number" step="0.0001" min="0" />
                         </flux:field>
                         <flux:field>
-                            <flux:label>Producción (kg)</flux:label>
+                            <flux:label>{{ __('Producción (kg)') }}</flux:label>
                             <flux:input wire:model.live="lines.{{ $i }}.kg" type="number" step="0.01" min="0" />
                         </flux:field>
                         <flux:field>
-                            <flux:label>Destino</flux:label>
+                            <flux:label>{{ __('Destino') }}</flux:label>
                             <flux:input wire:model.live="lines.{{ $i }}.destination" type="text" />
                         </flux:field>
                         <flux:field>
-                            <flux:label>Código REGA</flux:label>
+                            <flux:label>{{ __('Código REGA') }}</flux:label>
                             <flux:input wire:model.live="lines.{{ $i }}.rega_code" type="text" />
                         </flux:field>
                         <flux:field>
-                            <flux:label>Comprador</flux:label>
+                            <flux:label>{{ __('Comprador') }}</flux:label>
                             <flux:input wire:model.live="lines.{{ $i }}.buyer" type="text" />
                         </flux:field>
                         <div class="flex items-end pb-1">
@@ -112,27 +112,27 @@
                     </div>
                 @endforeach
                 <flux:button type="button" wire:click="addLine" variant="outline" icon="plus" size="sm">
-                    Añadir línea
+                    {{ __('Añadir línea') }}
                 </flux:button>
             </div>
         </x-agro.form-section>
 
-        <x-agro.form-section title="Totales">
+        <x-agro.form-section :title="__('Totales')">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <flux:field>
-                    <flux:label>Superficie total (ha)</flux:label>
+                    <flux:label>{{ __('Superficie total (ha)') }}</flux:label>
                     <flux:input wire:model="total_surface_ha" type="number" step="0.0001" readonly />
                 </flux:field>
                 <flux:field>
-                    <flux:label>Producción total (kg)</flux:label>
+                    <flux:label>{{ __('Producción total (kg)') }}</flux:label>
                     <flux:input wire:model="total_kg" type="number" step="0.01" readonly />
                 </flux:field>
             </div>
         </x-agro.form-section>
 
-        <x-agro.form-section title="Observaciones">
+        <x-agro.form-section :title="__('Observaciones')">
             <flux:field>
-                <flux:label>Notas</flux:label>
+                <flux:label>{{ __('Notas') }}</flux:label>
                 <flux:textarea wire:model="notes" rows="3" />
                 <flux:error name="notes" />
             </flux:field>
@@ -140,7 +140,7 @@
 
         <x-agro.form-actions
             :cancel-url="roleRoute('viticulturist.harvest-declarations.index')"
-            submit-label="Guardar Cambios"
+            :submit-label="__('Guardar Cambios')"
         />
     </form>
 </x-agro.form-card>

@@ -8,8 +8,8 @@
     {{-- Tabs Activas / Bloqueadas --}}
     <x-agro.tabs
         :tabs="[
-            'unlocked' => ['label' => 'Activas',   'count' => $stats['unlocked']],
-            'locked'   => ['label' => 'Bloqueadas', 'count' => $stats['locked']],
+            'unlocked' => ['label' => __('Activas'),    'count' => $stats['unlocked']],
+            'locked'   => ['label' => __('Bloqueadas'), 'count' => $stats['locked']],
         ]"
         :active="$currentTab"
         wireMethod="switchTab"
@@ -23,7 +23,7 @@
 
     <div class="flex items-center gap-3">
 
-        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar por parcela o notas..." />
+        <x-agro.search-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar por parcela o notas...')" />
 
         <x-agro.filter-button modal="activity-filters" :count="$filterCount" />
 
@@ -31,7 +31,7 @@
 
         @can('create', \App\Models\AgriculturalActivity::class)
             <flux:button href="{{ $createRoute }}" variant="primary" icon="plus">
-                Nuevo
+                {{ __('Nuevo') }}
             </flux:button>
         @endcan
 
@@ -44,15 +44,15 @@
                 <x-agro.filter-chip icon="magnifying-glass" :label="'\"' . $search . '\"'" wireRemove="$set('search', '')" />
             @endif
             @if($plotFilter)
-                @php $plotName = $plots->firstWhere('id', $plotFilter)?->name ?? 'Parcela'; @endphp
+                @php $plotName = $plots->firstWhere('id', $plotFilter)?->name ?? __('Parcela'); @endphp
                 <x-agro.filter-chip icon="map" :label="$plotName" wireRemove="$set('plotFilter', '')" />
             @endif
             @if($campaignFilter)
-                @php $campaignName = $campaigns->firstWhere('id', $campaignFilter)?->name ?? 'Campaña'; @endphp
+                @php $campaignName = $campaigns->firstWhere('id', $campaignFilter)?->name ?? __('Campaña'); @endphp
                 <x-agro.filter-chip icon="calendar" :label="$campaignName" wireRemove="$set('campaignFilter', '')" />
             @endif
             <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">
-                Limpiar todo
+                {{ __('Limpiar todo') }}
             </button>
         </div>
     @endif
@@ -91,11 +91,11 @@
                                     @endif
                                 </div>
                                 @if($activity->is_locked)
-                                    <flux:badge color="yellow" size="sm" class="shrink-0">Bloqueada</flux:badge>
+                                    <flux:badge color="yellow" size="sm" class="shrink-0">{{ __('Bloqueada') }}</flux:badge>
                                 @elseif($typeBadgeColor)
-                                    <flux:badge color="{{ $typeBadgeColor }}" size="sm" class="shrink-0">Abierta</flux:badge>
+                                    <flux:badge color="{{ $typeBadgeColor }}" size="sm" class="shrink-0">{{ __('Abierta') }}</flux:badge>
                                 @else
-                                    <flux:badge size="sm" class="shrink-0">Abierta</flux:badge>
+                                    <flux:badge size="sm" class="shrink-0">{{ __('Abierta') }}</flux:badge>
                                 @endif
                             </div>
                         </x-slot:header>
@@ -120,12 +120,12 @@
                                 </p>
                                 @if($activity->phytosanitaryTreatment->area_treated)
                                     <p class="text-xs text-zinc-500">
-                                        Área: {{ number_format($activity->phytosanitaryTreatment->area_treated, 2) }} ha
+                                        {{ __('Área') }}: {{ number_format($activity->phytosanitaryTreatment->area_treated, 2) }} ha
                                     </p>
                                 @endif
                                 @if($activity->phytosanitaryTreatment->pest)
                                     <p class="text-xs text-zinc-500">
-                                        Objetivo: {{ $activity->phytosanitaryTreatment->pest->name }}
+                                        {{ __('Objetivo') }}: {{ $activity->phytosanitaryTreatment->pest->name }}
                                     </p>
                                 @endif
                                 @php
@@ -141,19 +141,19 @@
                                 @if($safetyDays > 0)
                                     <p class="text-xs {{ $isPassed ? 'text-green-600' : 'text-red-600' }} font-medium">
                                         {{ $isPassed
-                                            ? '✓ Puede cosechar'
-                                            : 'Esperar ' . abs($daysLeft) . 'd (hasta ' . $safeDate->format('d/m') . ')'
+                                            ? __('✓ Puede cosechar')
+                                            : __('Esperar') . ' ' . abs($daysLeft) . 'd (' . __('hasta') . ' ' . $safeDate->format('d/m') . ')'
                                         }}
                                     </p>
                                 @endif
 
                             @elseif($activityType === 'fertilization' && $activity->fertilization)
                                 <p class="text-xs font-semibold text-zinc-700">
-                                    {{ $activity->fertilization->fertilizer_name ?: 'Fertilización' }}
+                                    {{ $activity->fertilization->fertilizer_name ?: __('Fertilización') }}
                                 </p>
                                 @if($activity->fertilization->quantity)
                                     <p class="text-xs text-zinc-500">
-                                        Cantidad: {{ number_format($activity->fertilization->quantity, 2) }} kg
+                                        {{ __('Cantidad') }}: {{ number_format($activity->fertilization->quantity, 2) }} kg
                                     </p>
                                 @endif
                                 @if($activity->fertilization->fertilizer_type)
@@ -161,10 +161,10 @@
                                 @endif
 
                             @elseif($activityType === 'irrigation' && $activity->irrigation)
-                                <p class="text-xs font-semibold text-zinc-700">Riego</p>
+                                <p class="text-xs font-semibold text-zinc-700">{{ __('Riego') }}</p>
                                 @if($activity->irrigation->water_volume)
                                     <p class="text-xs text-zinc-500">
-                                        Volumen: {{ number_format($activity->irrigation->water_volume, 2) }} L
+                                        {{ __('Volumen') }}: {{ number_format($activity->irrigation->water_volume, 2) }} L
                                     </p>
                                 @endif
                                 @if($activity->irrigation->irrigation_type)
@@ -173,45 +173,45 @@
 
                             @elseif($activityType === 'cultural' && $activity->culturalWork)
                                 <p class="text-xs font-semibold text-zinc-700">
-                                    {{ $activity->culturalWork->work_type ?: 'Labor cultural' }}
+                                    {{ $activity->culturalWork->work_type ?: __('Labor cultural') }}
                                 </p>
                                 @if($activity->culturalWork->hours_worked)
                                     <p class="text-xs text-zinc-500">
-                                        Duración: {{ number_format($activity->culturalWork->hours_worked, 1) }} h
+                                        {{ __('Duración') }}: {{ number_format($activity->culturalWork->hours_worked, 1) }} h
                                     </p>
                                 @endif
 
                             @elseif($activityType === 'observation' && $activity->observation)
                                 <p class="text-xs font-semibold text-zinc-700">
-                                    {{ $activity->observation->observation_type ?: 'Observación' }}
+                                    {{ $activity->observation->observation_type ?: __('Observación') }}
                                 </p>
                                 @if($activity->observation->severity)
                                     <p class="text-xs text-zinc-500">
-                                        Severidad: {{ ucfirst($activity->observation->severity) }}
+                                        {{ __('Severidad') }}: {{ ucfirst($activity->observation->severity) }}
                                     </p>
                                 @endif
 
                             @elseif($activityType === 'pruning' && $activity->culturalWork)
                                 @php
                                     $pruningLabels = [
-                                        'guyot'       => 'Guyot',
-                                        'doble_guyot' => 'Doble Guyot',
-                                        'vaso'        => 'Vaso',
-                                        'cordon'      => 'Cordón',
-                                        'other'       => 'Otro',
+                                        'guyot'       => __('Guyot'),
+                                        'doble_guyot' => __('Doble Guyot'),
+                                        'vaso'        => __('Vaso'),
+                                        'cordon'      => __('Cordón'),
+                                        'other'       => __('Otro'),
                                     ];
                                 @endphp
                                 <p class="text-xs font-semibold text-lime-700">
-                                    {{ $pruningLabels[$activity->culturalWork->pruning_type] ?? 'Poda' }}
+                                    {{ $pruningLabels[$activity->culturalWork->pruning_type] ?? __('Poda') }}
                                 </p>
                                 @if($activity->culturalWork->productive_buds_per_hectare)
                                     <p class="text-xs text-zinc-500">
-                                        {{ number_format($activity->culturalWork->productive_buds_per_hectare) }} yemas/ha
+                                        {{ number_format($activity->culturalWork->productive_buds_per_hectare) }} {{ __('yemas/ha') }}
                                     </p>
                                 @endif
                                 @if($activity->culturalWork->hours_worked)
                                     <p class="text-xs text-zinc-500">
-                                        Duración: {{ number_format($activity->culturalWork->hours_worked, 1) }} h
+                                        {{ __('Duración') }}: {{ number_format($activity->culturalWork->hours_worked, 1) }} h
                                     </p>
                                 @endif
 
@@ -221,7 +221,7 @@
                                 </p>
                                 @if($activity->postHarvestTreatment->treated_area_ha)
                                     <p class="text-xs text-zinc-500">
-                                        Superficie: {{ number_format($activity->postHarvestTreatment->treated_area_ha, 2) }} ha
+                                        {{ __('Superficie') }}: {{ number_format($activity->postHarvestTreatment->treated_area_ha, 2) }} ha
                                     </p>
                                 @endif
                                 @if($activity->postHarvestTreatment->product)
@@ -229,7 +229,7 @@
                                 @endif
 
                             @else
-                                <p class="text-xs text-zinc-400 italic">Sin detalles disponibles</p>
+                                <p class="text-xs text-zinc-400 italic">{{ __('Sin detalles disponibles') }}</p>
                             @endif
 
                         </div>
@@ -252,7 +252,7 @@
                                     <x-agro.action-button
                                         variant="map"
                                         href="{{ roleRoute('viticulturist.plots.index') }}"
-                                        title="Ver parcelas"
+                                        :title="__('Ver parcelas')"
                                     />
                                 </div>
                                 <div class="flex items-center gap-1">
@@ -261,19 +261,19 @@
                                             <x-agro.action-button
                                                 variant="edit"
                                                 href="{{ route($editRouteName, $activity->id) }}"
-                                                title="Editar"
+                                                :title="__('Editar')"
                                             />
                                         @endcan
                                         @can('delete', $activity)
                                             <x-agro.action-button
                                                 variant="delete"
                                                 wire:click="delete({{ $activity->id }})"
-                                                wire:confirm="¿Estás seguro de eliminar esta actividad? Esta acción no se puede deshacer."
-                                                title="Eliminar"
+                                                wire:confirm="{{ __('¿Estás seguro de eliminar esta actividad? Esta acción no se puede deshacer.') }}"
+                                                :title="__('Eliminar')"
                                             />
                                         @endcan
                                     @else
-                                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-300 cursor-not-allowed" title="Actividad bloqueada — cumplimiento PAC">
+                                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-300 cursor-not-allowed" :title="__('Actividad bloqueada — cumplimiento PAC')">
                                             <flux:icon icon="lock-closed" class="size-4" />
                                         </span>
                                     @endif
@@ -291,22 +291,22 @@
         @else
             <x-agro.empty-state
                 :icon="$typeIcon"
-                :title="$currentTab === 'unlocked' ? 'No hay registros activos' : 'No hay registros bloqueados'"
+                :title="$currentTab === 'unlocked' ? __('No hay registros activos') : __('No hay registros bloqueados')"
                 :description="($search || $plotFilter || $campaignFilter)
-                    ? 'Ningún registro coincide con los filtros aplicados.'
+                    ? __('Ningún registro coincide con los filtros aplicados.')
                     : ($currentTab === 'unlocked'
-                        ? 'Empieza añadiendo tu primer registro de ' . strtolower($pageTitle) . '.'
-                        : 'Los registros se bloquean automáticamente para cumplimiento PAC.')"
+                        ? __('Empieza añadiendo tu primer registro de') . ' ' . strtolower($pageTitle) . '.'
+                        : __('Los registros se bloquean automáticamente para cumplimiento PAC.'))"
             >
                 @if($search || $plotFilter || $campaignFilter)
                     <x-slot:action>
-                        <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
+                        <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">{{ __('Limpiar filtros') }}</flux:button>
                     </x-slot:action>
                 @elseif($currentTab === 'unlocked')
                     <x-slot:action>
                         @can('create', \App\Models\AgriculturalActivity::class)
                             <flux:button href="{{ $createRoute }}" variant="primary" icon="plus">
-                                Nuevo registro
+                                {{ __('Nuevo registro') }}
                             </flux:button>
                         @endcan
                     </x-slot:action>
@@ -323,7 +323,7 @@
                     <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
                         <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
                     </div>
-                    <h3 class="text-base font-semibold text-zinc-900">Filtros</h3>
+                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Filtros') }}</h3>
                 </div>
                 <flux:button x-on:click="$dispatch('close-modal', 'activity-filters')" variant="ghost" size="sm" icon="x-mark" />
             </div>
@@ -331,9 +331,9 @@
 
         <div class="px-6 py-5 space-y-5">
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Campaña</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Campaña') }}</label>
                 <flux:select wire:model.live="campaignFilter">
-                    <option value="">Todas las campañas</option>
+                    <option value="">{{ __('Todas las campañas') }}</option>
                     @foreach($campaigns as $campaign)
                         <option value="{{ $campaign->id }}">
                             {{ $campaign->name }} ({{ $campaign->year }}){{ $campaign->active ? ' ★' : '' }}
@@ -342,9 +342,9 @@
                 </flux:select>
             </div>
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Parcela</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Parcela') }}</label>
                 <flux:select wire:model.live="plotFilter">
-                    <option value="">Todas las parcelas</option>
+                    <option value="">{{ __('Todas las parcelas') }}</option>
                     @foreach($plots as $plot)
                         <option value="{{ $plot->id }}">{{ $plot->name }}</option>
                     @endforeach
@@ -359,13 +359,13 @@
                     x-on:click="$dispatch('close-modal', 'activity-filters')"
                     class="text-sm text-zinc-400 hover:text-zinc-600 transition-colors"
                 >
-                    Limpiar filtros
+                    {{ __('Limpiar filtros') }}
                 </button>
             @else
                 <span></span>
             @endif
             <flux:button x-on:click="$dispatch('close-modal', 'activity-filters')" variant="primary" size="sm">
-                Aplicar
+                {{ __('Aplicar') }}
             </flux:button>
         </div>
     </x-agro.modal>

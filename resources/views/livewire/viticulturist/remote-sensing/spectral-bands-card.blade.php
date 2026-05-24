@@ -19,8 +19,8 @@
     {{-- Header: título + selector de fecha en una sola línea --}}
     <div class="flex items-center justify-between mb-5">
         <div>
-            <h3 class="text-lg font-bold text-zinc-900">Índices espectrales</h3>
-            <p class="text-xs text-zinc-400 mt-0.5">Sentinel-2 · resolución 10 m</p>
+            <h3 class="text-lg font-bold text-zinc-900">{{ __('Índices espectrales') }}</h3>
+            <p class="text-xs text-zinc-400 mt-0.5">Sentinel-2 · {{ __('resolución 10 m') }}</p>
         </div>
 
         <div class="flex items-center gap-2">
@@ -29,7 +29,7 @@
                 @php $ratio = $spectralData['valid_pixel_ratio']; @endphp
                 <span class="text-xs px-2 py-1 rounded-full font-medium
                     {{ $ratio >= 70 ? 'bg-green-100 text-green-700' : ($ratio >= 40 ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700') }}">
-                    {{ $ratio }}% sin nubes
+                    {{ $ratio }}% {{ __('sin nubes') }}
                 </span>
             @endif
 
@@ -53,7 +53,7 @@
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
             </svg>
-            Cargando...
+            {{ __('Cargando...') }}
         </div>
     @endif
 
@@ -105,16 +105,16 @@
         {{-- Bandas crudas (si disponibles desde Sentinel-2) --}}
         @if(isset($spectralData['red_band']) || isset($spectralData['nir_band']) || isset($spectralData['green_band']))
             <div class="mt-4 pt-4 border-t border-zinc-100">
-                <p class="text-xs font-medium text-zinc-400 uppercase tracking-wide mb-2">Reflectancias brutas</p>
+                <p class="text-xs font-medium text-zinc-400 uppercase tracking-wide mb-2">{{ __('Reflectancias brutas') }}</p>
                 <div class="flex gap-4 text-xs text-zinc-600">
                     @if(isset($spectralData['red_band']))
-                        <span><span class="font-semibold text-red-500">Rojo</span> {{ number_format($spectralData['red_band'], 4) }}</span>
+                        <span><span class="font-semibold text-red-500">{{ __('Rojo') }}</span> {{ number_format($spectralData['red_band'], 4) }}</span>
                     @endif
                     @if(isset($spectralData['nir_band']))
                         <span><span class="font-semibold text-purple-500">NIR</span> {{ number_format($spectralData['nir_band'], 4) }}</span>
                     @endif
                     @if(isset($spectralData['green_band']))
-                        <span><span class="font-semibold text-green-500">Verde</span> {{ number_format($spectralData['green_band'], 4) }}</span>
+                        <span><span class="font-semibold text-green-500">{{ __('Verde') }}</span> {{ number_format($spectralData['green_band'], 4) }}</span>
                     @endif
                 </div>
             </div>

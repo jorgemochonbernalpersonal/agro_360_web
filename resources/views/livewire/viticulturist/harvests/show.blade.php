@@ -2,33 +2,33 @@
 
     <x-agro.page-header
         :title="($planting->grapeVariety?->name ?? $planting->name) . ' · ' . $vintageYear"
-        :description="'Parcela: ' . ($planting->plot?->name ?? '—') . ' · ' . number_format($planting->area_planted, 2) . ' ha'"
+        :description="__('Parcela: :plot · :area ha', ['plot' => $planting->plot?->name ?? '—', 'area' => number_format($planting->area_planted, 2)])"
         :back="roleRoute('viticulturist.harvests.index')"
     />
 
     {{-- Resumen global --}}
     <div class="{{ $cupoKg ? 'grid-cols-4' : 'grid-cols-3' }} grid gap-4">
         <x-agro.stat-card
-            label="Cosechado (cuaderno)"
+            :label="__('Cosechado (cuaderno)')"
             :value="$totalNotebook > 0 ? number_format($totalNotebook, 0) . ' kg' : '—'"
             icon="document-text"
             color="agro"
         />
         <x-agro.stat-card
-            label="Recibido por bodega"
+            :label="__('Recibido por bodega')"
             :value="$totalWinery > 0 ? number_format($totalWinery, 0) . ' kg' : '—'"
             icon="building-storefront"
             color="blue"
         />
         <x-agro.stat-card
-            label="Diferencia"
+            :label="__('Diferencia')"
             :value="$globalDiscrepancy !== null ? number_format($globalDiscrepancy, 0) . ' kg' : '—'"
             icon="arrows-right-left"
             :color="$globalDiscrepancy > 0 ? 'amber' : 'green'"
         />
         @if($cupoKg)
             <x-agro.stat-card
-                label="Cupo PAC"
+                :label="__('Cupo PAC')"
                 :value="number_format($cupoKg, 0) . ' kg'"
                 icon="shield-check"
                 :color="$cupoExceeded ? 'red' : ($cupoPct >= 80 ? 'amber' : 'zinc')"
@@ -47,16 +47,16 @@
             <div class="flex justify-between items-center mb-2">
                 <div class="flex items-center gap-2">
                     <flux:icon icon="shield-check" class="size-4 {{ $cupoExceeded ? 'text-red-500' : 'text-zinc-400' }}" />
-                    <span class="text-sm font-semibold text-zinc-700">Uso del cupo PAC</span>
+                    <span class="text-sm font-semibold text-zinc-700">{{ __('Uso del cupo PAC') }}</span>
                     <span class="text-xs text-zinc-400">
                         · {{ number_format($totalWinery > 0 ? $totalWinery : $totalDeclared, 0) }} kg
-                        de {{ number_format($cupoKg, 0) }} kg permitidos
+                        {{ __('de :total kg permitidos', ['total' => number_format($cupoKg, 0)]) }}
                     </span>
                 </div>
                 <span class="text-sm font-bold {{ $textColor }}">
                     {{ $cupoPct }}%
                     @if($cupoExceeded)
-                        &nbsp;·&nbsp;<span class="text-red-600 font-semibold">EXCEDIDO</span>
+                        &nbsp;·&nbsp;<span class="text-red-600 font-semibold">{{ __('EXCEDIDO') }}</span>
                     @endif
                 </span>
             </div>
@@ -66,13 +66,12 @@
             @if($cupoExceeded)
                 <p class="text-xs text-red-600 mt-2 flex items-center gap-1.5">
                     <flux:icon icon="exclamation-triangle" class="size-3.5 shrink-0" />
-                    Has superado el cupo permitido en {{ number_format(($totalWinery > 0 ? $totalWinery : $totalDeclared) - $cupoKg, 0) }} kg.
-                    Revisa con tu asesor o con la Denominación de Origen.
+                    {{ __('Has superado el cupo permitido en :kg kg. Revisa con tu asesor o con la Denominación de Origen.', ['kg' => number_format(($totalWinery > 0 ? $totalWinery : $totalDeclared) - $cupoKg, 0)]) }}
                 </p>
             @elseif($cupoPct >= 80)
                 <p class="text-xs text-amber-600 mt-2 flex items-center gap-1.5">
                     <flux:icon icon="exclamation-triangle" class="size-3.5 shrink-0" />
-                    Estás cerca del límite del cupo ({{ number_format($cupoKg - ($totalWinery > 0 ? $totalWinery : $totalDeclared), 0) }} kg restantes).
+                    {{ __('Estás cerca del límite del cupo (:kg kg restantes).', ['kg' => number_format($cupoKg - ($totalWinery > 0 ? $totalWinery : $totalDeclared), 0)]) }}
                 </p>
             @endif
         </div>
@@ -86,11 +85,11 @@
                     <flux:icon icon="building-storefront" class="size-4 text-blue-600" />
                 </div>
                 <div>
-                    <p class="text-sm font-semibold text-zinc-900">Recepciones de bodega</p>
-                    <p class="text-xs text-zinc-400">Lo que la bodega ha registrado de tus entregas</p>
+                    <p class="text-sm font-semibold text-zinc-900">{{ __('Recepciones de bodega') }}</p>
+                    <p class="text-xs text-zinc-400">{{ __('Lo que la bodega ha registrado de tus entregas') }}</p>
                 </div>
                 <span class="ml-auto text-xs font-semibold text-blue-700">
-                    {{ number_format($totalWinery, 0) }} kg total
+                    {{ number_format($totalWinery, 0) }} kg {{ __('total') }}
                 </span>
             </div>
         </x-slot:header>
@@ -101,28 +100,28 @@
                     @php
                         $delivery = $reception->delivery;
                         $statusConfig = match($delivery?->status) {
-                            'matched'  => ['color' => 'green', 'label' => 'Coincide'],
-                            'disputed' => ['color' => 'amber', 'label' => 'Diferencia'],
-                            'resolved' => ['color' => 'blue',  'label' => 'Resuelta'],
+                            'matched'  => ['color' => 'green', 'label' => __('Coincide')],
+                            'disputed' => ['color' => 'amber', 'label' => __('Diferencia')],
+                            'resolved' => ['color' => 'blue',  'label' => __('Resuelta')],
                             default    => ['color' => null,    'label' => null],
                         };
                     @endphp
                     <div class="py-3 flex items-start gap-4">
                         <div class="flex-1 grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
                             <div>
-                                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-wide mb-0.5">Bodega</p>
+                                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-wide mb-0.5">{{ __('Bodega') }}</p>
                                 <p class="text-zinc-800 font-medium">{{ $reception->winery?->name ?? '—' }}</p>
                             </div>
                             <div>
-                                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-wide mb-0.5">Fecha</p>
+                                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-wide mb-0.5">{{ __('Fecha') }}</p>
                                 <p class="text-zinc-700">{{ $reception->harvest_start_date?->format('d/m/Y') ?? '—' }}</p>
                             </div>
                             <div>
-                                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-wide mb-0.5">Kg recibidos</p>
+                                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-wide mb-0.5">{{ __('Kg recibidos') }}</p>
                                 <p class="text-blue-700 font-bold">{{ number_format($reception->total_weight, 0) }} kg</p>
                             </div>
                             <div>
-                                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-wide mb-0.5">Calidad</p>
+                                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-wide mb-0.5">{{ __('Calidad') }}</p>
                                 <p class="text-zinc-700">
                                     @if($reception->baume_degree)
                                         {{ $reception->baume_degree }}° Baumé
@@ -143,7 +142,7 @@
                                     @endif
                                 </flux:badge>
                             @else
-                                <flux:badge size="sm">Sin declaración</flux:badge>
+                                <flux:badge size="sm">{{ __('Sin declaración') }}</flux:badge>
                             @endif
                         </div>
                     </div>
@@ -153,14 +152,14 @@
                         <div class="pb-3 -mt-1">
                             <p class="text-xs text-red-600 flex items-center gap-1.5">
                                 <flux:icon icon="x-circle" class="size-3.5" />
-                                Descalificado: {{ $reception->disqualified_reason ?? 'sin motivo' }}
+                                {{ __('Descalificado: :reason', ['reason' => $reception->disqualified_reason ?? __('sin motivo')]) }}
                             </p>
                         </div>
                     @endif
                 @endforeach
             </div>
         @else
-            <p class="text-sm text-zinc-400 py-4 text-center">La bodega aún no ha registrado ninguna recepción para esta plantación.</p>
+            <p class="text-sm text-zinc-400 py-4 text-center">{{ __('La bodega aún no ha registrado ninguna recepción para esta plantación.') }}</p>
         @endif
     </x-agro.card>
 
@@ -172,13 +171,13 @@
                     <flux:icon icon="truck" class="size-4 text-violet-600" />
                 </div>
                 <div>
-                    <p class="text-sm font-semibold text-zinc-900">Mis entregas declaradas</p>
-                    <p class="text-xs text-zinc-400">Lo que tú has registrado como entregado</p>
+                    <p class="text-sm font-semibold text-zinc-900">{{ __('Mis entregas declaradas') }}</p>
+                    <p class="text-xs text-zinc-400">{{ __('Lo que tú has registrado como entregado') }}</p>
                 </div>
                 <flux:button
                     href="{{ roleRoute('viticulturist.harvests.delivery.create', ['planting' => $planting->id, 'vintage' => $vintageYear]) }}"
                     variant="ghost" size="sm" icon="plus" class="ml-auto">
-                    Nueva entrega
+                    {{ __('Nueva entrega') }}
                 </flux:button>
             </div>
         </x-slot:header>
@@ -188,51 +187,51 @@
                 @foreach($declaredDeliveries as $delivery)
                     @php
                         $badgeConfig = match($delivery->status) {
-                            'matched'  => ['color' => 'green',  'label' => 'Confirmada por bodega'],
-                            'disputed' => ['color' => 'amber',  'label' => 'Con diferencia (' . number_format($delivery->discrepancy_kg, 0) . ' kg)'],
-                            'resolved' => ['color' => 'blue',   'label' => 'Resuelta por bodega'],
-                            default    => ['color' => null,     'label' => 'Pendiente de confirmar'],
+                            'matched'  => ['color' => 'green',  'label' => __('Confirmada por bodega')],
+                            'disputed' => ['color' => 'amber',  'label' => __('Con diferencia (:kg kg)', ['kg' => number_format($delivery->discrepancy_kg, 0)])],
+                            'resolved' => ['color' => 'blue',   'label' => __('Resuelta por bodega')],
+                            default    => ['color' => null,     'label' => __('Pendiente de confirmar')],
                         };
                     @endphp
                     <div class="py-3 flex items-start gap-4">
                         <div class="flex-1 grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
                             <div>
-                                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-wide mb-0.5">Comprador</p>
+                                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-wide mb-0.5">{{ __('Comprador') }}</p>
                                 <p class="text-zinc-800 font-medium {{ $delivery->disqualified ? 'line-through text-zinc-400' : '' }}">
                                     {{ $delivery->buyer_name }}
                                 </p>
                             </div>
                             <div>
-                                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-wide mb-0.5">Fecha</p>
+                                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-wide mb-0.5">{{ __('Fecha') }}</p>
                                 <p class="text-zinc-700">{{ $delivery->delivery_date?->format('d/m/Y') ?? '—' }}</p>
                             </div>
                             <div>
-                                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-wide mb-0.5">Kg declarados</p>
+                                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-wide mb-0.5">{{ __('Kg declarados') }}</p>
                                 <p class="{{ $delivery->disqualified ? 'text-red-400 line-through' : 'text-violet-700 font-bold' }}">
                                     {{ number_format($delivery->delivered_kg, 0) }} kg
                                 </p>
                             </div>
                             <div>
-                                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-wide mb-0.5">Ticket</p>
+                                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-wide mb-0.5">{{ __('Ticket') }}</p>
                                 <p class="text-zinc-500 font-mono text-xs">{{ $delivery->ticket_number ?? '—' }}</p>
                             </div>
                         </div>
 
                         <div class="shrink-0 flex items-center gap-2">
                             @if($delivery->disqualified)
-                                <flux:badge color="red" size="sm">Descartada</flux:badge>
+                                <flux:badge color="red" size="sm">{{ __('Descartada') }}</flux:badge>
                             @else
                                 <flux:badge color="{{ $badgeConfig['color'] }}" size="sm">{{ $badgeConfig['label'] }}</flux:badge>
                             @endif
                             <a href="{{ roleRoute('viticulturist.harvests.delivery.albaran', $delivery) }}"
                                target="_blank"
                                class="p-1.5 rounded-lg text-zinc-400 hover:text-violet-600 hover:bg-violet-50 transition-colors"
-                               title="Descargar albarán PDF">
+                               title="{{ __('Descargar albarán PDF') }}">
                                 <flux:icon icon="document-arrow-down" class="size-4" />
                             </a>
                             <a href="{{ roleRoute('viticulturist.harvests.delivery.edit', $delivery) }}"
                                class="p-1.5 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors"
-                               title="Editar">
+                               title="{{ __('Editar') }}">
                                 <flux:icon icon="pencil-square" class="size-4" />
                             </a>
                         </div>
@@ -248,7 +247,7 @@
                                     <div class="flex items-center gap-2 mb-1.5">
                                         <flux:icon icon="exclamation-triangle" class="size-3.5 text-amber-600 shrink-0" />
                                         <p class="text-xs font-semibold text-amber-700">
-                                            Reclamación enviada el {{ $delivery->dispute_submitted_at->format('d/m/Y \a \l\a\s H:i') }}
+                                            {{ __('Reclamación enviada el :date', ['date' => $delivery->dispute_submitted_at->format('d/m/Y \a \l\a\s H:i')]) }}
                                         </p>
                                     </div>
                                     <p class="text-xs text-amber-800 whitespace-pre-line">{{ $delivery->dispute_note }}</p>
@@ -258,13 +257,13 @@
                                 <div class="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 space-y-3">
                                     <p class="text-xs font-semibold text-amber-700 flex items-center gap-1.5">
                                         <flux:icon icon="exclamation-triangle" class="size-3.5" />
-                                        Explica la diferencia de {{ number_format($delivery->discrepancy_kg, 0) }} kg
+                                        {{ __('Explica la diferencia de :kg kg', ['kg' => number_format($delivery->discrepancy_kg, 0)]) }}
                                     </p>
                                     <textarea
                                         wire:model="disputeNote"
                                         rows="3"
                                         maxlength="1000"
-                                        placeholder="Describe el motivo de la reclamación: pesaje incorrecto, mermas no acordadas, ticket erróneo..."
+                                        placeholder="{{ __('Describe el motivo de la reclamación: pesaje incorrecto, mermas no acordadas, ticket erróneo...') }}"
                                         class="w-full text-xs rounded-lg border border-amber-300 bg-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-400 resize-none"
                                     ></textarea>
                                     @error('disputeNote')
@@ -272,10 +271,10 @@
                                     @enderror
                                     <div class="flex gap-2 justify-end">
                                         <flux:button wire:click="cancelDispute" variant="ghost" size="sm">
-                                            Cancelar
+                                            {{ __('Cancelar') }}
                                         </flux:button>
                                         <flux:button wire:click="submitDispute" variant="primary" size="sm" icon="paper-airplane">
-                                            Enviar reclamación
+                                            {{ __('Enviar reclamación') }}
                                         </flux:button>
                                     </div>
                                 </div>
@@ -286,7 +285,7 @@
                                     class="inline-flex items-center gap-1.5 text-xs font-medium text-amber-700 hover:text-amber-900 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-lg px-3 py-1.5 transition-colors"
                                 >
                                     <flux:icon icon="exclamation-triangle" class="size-3.5" />
-                                    Reclamar diferencia
+                                    {{ __('Reclamar diferencia') }}
                                 </button>
                             @endif
 
@@ -296,7 +295,7 @@
                                     <div class="flex items-center gap-2 mb-1.5">
                                         <flux:icon icon="check-circle" class="size-3.5 text-blue-600 shrink-0" />
                                         <p class="text-xs font-semibold text-blue-700">
-                                            Respuesta de la bodega
+                                            {{ __('Respuesta de la bodega') }}
                                             <span class="font-normal text-blue-500">· {{ $delivery->dispute_resolved_at->format('d/m/Y \a \l\a\s H:i') }}</span>
                                         </p>
                                     </div>
@@ -310,11 +309,11 @@
             </div>
         @else
             <div class="py-6 text-center">
-                <p class="text-sm text-zinc-400 mb-3">Aún no has declarado ninguna entrega para esta plantación.</p>
+                <p class="text-sm text-zinc-400 mb-3">{{ __('Aún no has declarado ninguna entrega para esta plantación.') }}</p>
                 <flux:button
                     href="{{ roleRoute('viticulturist.harvests.delivery.create', ['planting' => $planting->id, 'vintage' => $vintageYear]) }}"
                     variant="outline" icon="plus" size="sm">
-                    Registrar primera entrega
+                    {{ __('Registrar primera entrega') }}
                 </flux:button>
             </div>
         @endif
@@ -328,11 +327,11 @@
                     <flux:icon icon="document-text" class="size-4 text-agro-600" />
                 </div>
                 <div>
-                    <p class="text-sm font-semibold text-zinc-900">Registros del cuaderno de campo</p>
-                    <p class="text-xs text-zinc-400">Cosechas anotadas en tu cuaderno digital</p>
+                    <p class="text-sm font-semibold text-zinc-900">{{ __('Registros del cuaderno de campo') }}</p>
+                    <p class="text-xs text-zinc-400">{{ __('Cosechas anotadas en tu cuaderno digital') }}</p>
                 </div>
                 <span class="ml-auto text-xs font-semibold text-agro-700">
-                    {{ number_format($totalNotebook, 0) }} kg total
+                    {{ number_format($totalNotebook, 0) }} kg {{ __('total') }}
                 </span>
             </div>
         </x-slot:header>
@@ -342,21 +341,21 @@
                 @foreach($notebookHarvests as $harvest)
                     <div class="py-3 grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
                         <div>
-                            <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-wide mb-0.5">Fecha</p>
+                            <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-wide mb-0.5">{{ __('Fecha') }}</p>
                             <p class="text-zinc-700">{{ $harvest->activity?->activity_date?->format('d/m/Y') ?? '—' }}</p>
                         </div>
                         <div>
-                            <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-wide mb-0.5">Kg cosechados</p>
+                            <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-wide mb-0.5">{{ __('Kg cosechados') }}</p>
                             <p class="text-agro-700 font-bold">{{ number_format($harvest->total_weight, 0) }} kg</p>
                         </div>
                         <div>
-                            <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-wide mb-0.5">Rendimiento</p>
+                            <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-wide mb-0.5">{{ __('Rendimiento') }}</p>
                             <p class="text-zinc-600">
                                 {{ $harvest->yield_per_hectare ? number_format($harvest->yield_per_hectare, 0) . ' kg/ha' : '—' }}
                             </p>
                         </div>
                         <div>
-                            <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-wide mb-0.5">Calidad</p>
+                            <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-wide mb-0.5">{{ __('Calidad') }}</p>
                             <p class="text-zinc-600">
                                 {{ $harvest->baume_degree ? $harvest->baume_degree . '° Baumé' : '—' }}
                             </p>
@@ -365,7 +364,7 @@
                 @endforeach
             </div>
         @else
-            <p class="text-sm text-zinc-400 py-4 text-center">No hay registros de cosecha en el cuaderno para esta plantación y añada.</p>
+            <p class="text-sm text-zinc-400 py-4 text-center">{{ __('No hay registros de cosecha en el cuaderno para esta plantación y añada.') }}</p>
         @endif
     </x-agro.card>
 

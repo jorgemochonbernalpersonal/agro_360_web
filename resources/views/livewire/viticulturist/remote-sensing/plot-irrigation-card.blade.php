@@ -1,9 +1,9 @@
 <div class="bg-white rounded-xl shadow-sm border border-zinc-200 p-6">
     <div class="flex items-center justify-between mb-4">
         <h3 class="text-lg font-semibold text-zinc-900 flex items-center gap-2">
-            💧 Recomendación de Riego
+            💧 {{ __('Recomendación de Riego') }}
         </h3>
-        <button wire:click="loadData" class="text-zinc-400 hover:text-zinc-600 transition-colors" title="Actualizar">
+        <button wire:click="loadData" class="text-zinc-400 hover:text-zinc-600 transition-colors" :title="__('Actualizar')">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
             </svg>
@@ -12,7 +12,7 @@
 
     @if(!empty($recommendation))
         {{-- Main Recommendation --}}
-        <div class="rounded-xl p-6 mb-4 
+        <div class="rounded-xl p-6 mb-4
             @if($recommendation['level_color'] === 'red') bg-red-50 border-2 border-red-200
             @elseif($recommendation['level_color'] === 'orange') bg-orange-50 border-2 border-orange-200
             @elseif($recommendation['level_color'] === 'yellow') bg-yellow-50 border-2 border-yellow-200
@@ -24,7 +24,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <div class="text-3xl mb-2">{{ $recommendation['level_icon'] }}</div>
-                    <div class="text-xl font-bold 
+                    <div class="text-xl font-bold
                         @if($recommendation['level_color'] === 'red') text-red-700
                         @elseif($recommendation['level_color'] === 'orange') text-orange-700
                         @elseif($recommendation['level_color'] === 'yellow') text-yellow-700
@@ -37,7 +37,7 @@
                     </div>
                 </div>
                 <div class="text-right">
-                    <div class="text-sm text-zinc-500">Cantidad estimada</div>
+                    <div class="text-sm text-zinc-500">{{ __('Cantidad estimada') }}</div>
                     <div class="text-2xl font-bold text-zinc-900">
                         {{ $recommendation['water_amount_text'] }}
                     </div>
@@ -48,7 +48,7 @@
         {{-- Stress Factors --}}
         @if(count($recommendation['stress_factors']) > 0)
             <div class="mb-4">
-                <h4 class="text-sm font-medium text-zinc-700 mb-2">Factores de estrés detectados:</h4>
+                <h4 class="text-sm font-medium text-zinc-700 mb-2">{{ __('Factores de estrés detectados:') }}</h4>
                 <ul class="space-y-1">
                     @foreach($recommendation['stress_factors'] as $factor)
                         <li class="flex items-center gap-2 text-sm text-zinc-600">
@@ -66,7 +66,7 @@
                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                     </svg>
-                    No se detectan signos de estrés hídrico
+                    {{ __('No se detectan signos de estrés hídrico') }}
                 </p>
             </div>
         @endif
@@ -86,7 +86,7 @@
                 </div>
             </div>
             <div class="bg-zinc-50 rounded-lg p-3 text-center">
-                <div class="text-zinc-500 text-xs">Humedad Suelo</div>
+                <div class="text-zinc-500 text-xs">{{ __('Humedad Suelo') }}</div>
                 <div class="font-semibold {{ $recommendation['soil_moisture'] !== null && $recommendation['soil_moisture'] < 20 ? 'text-amber-600' : 'text-zinc-900' }}">
                     {{ $recommendation['soil_moisture'] !== null ? number_format($recommendation['soil_moisture'], 0) . '%' : 'N/A' }}
                 </div>
@@ -101,7 +101,7 @@
 
         @if($recommendation['last_updated'])
             <div class="mt-4 text-xs text-zinc-400 text-center">
-                Datos del {{ $recommendation['last_updated'] }}
+                {{ __('Datos del') }} {{ $recommendation['last_updated'] }}
             </div>
         @endif
     @else
@@ -109,7 +109,7 @@
             <svg class="w-12 h-12 mx-auto mb-3 text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
             </svg>
-            <p>Sin datos de teledetección</p>
+            <p>{{ __('Sin datos de teledetección') }}</p>
         </div>
     @endif
 </div>

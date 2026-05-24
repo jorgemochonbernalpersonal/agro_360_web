@@ -1,16 +1,16 @@
 <div class="space-y-6 animate-fade-in" @if($hasPendingReports) wire:poll.5s @endif>
 
     <x-agro.page-header
-        title="Informes Oficiales"
-        description="Gestiona tus informes firmados electrónicamente para administración y certificaciones"
+        :title="__('Informes Oficiales')"
+        :description="__('Gestiona tus informes firmados electrónicamente para administración y certificaciones')"
     />
 
     {{-- Tabs --}}
     <x-agro.tabs
         :tabs="[
-            'all'     => ['label' => 'Todos',       'count' => $totalCount],
-            'valid'   => ['label' => 'Válidos',     'count' => $validCount],
-            'invalid' => ['label' => 'Invalidados', 'count' => $invalidCount],
+            'all'     => ['label' => __('Todos'),       'count' => $totalCount],
+            'valid'   => ['label' => __('Válidos'),     'count' => $validCount],
+            'invalid' => ['label' => __('Invalidados'), 'count' => $invalidCount],
         ]"
         :active="$statusFilter"
         wireMethod="switchTab"
@@ -19,16 +19,16 @@
     {{-- Toolbar --}}
     <div class="flex items-center gap-3">
 
-        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar por código de verificación o tipo..." />
+        <x-agro.search-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar por código de verificación o tipo...')" />
 
         @if($search)
-            <flux:button wire:click="resetFilters" variant="ghost" icon="x-mark" size="sm">Limpiar</flux:button>
+            <flux:button wire:click="resetFilters" variant="ghost" icon="x-mark" size="sm">{{ __('Limpiar') }}</flux:button>
         @endif
 
         <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
         <flux:button href="{{ roleRoute('viticulturist.official-reports.create') }}" wire:navigate variant="primary" icon="plus">
-            Generar Informe
+            {{ __('Generar Informe') }}
         </flux:button>
 
     </div>
@@ -57,13 +57,13 @@
                                 <p class="text-xs text-zinc-400 leading-tight mt-0.5 font-mono">{{ substr($report->verification_code, 0, 14) }}…</p>
                             </div>
                             <div class="flex flex-col items-end gap-1 shrink-0">
-                                <x-agro.status-badge :active="$report->isValid()" active-text="Válido" inactive-text="Invalidado" />
+                                <x-agro.status-badge :active="$report->isValid()" :active-text="__('Válido')" :inactive-text="__('Invalidado')" />
                                 @if($report->processing_status === 'pending')
-                                    <flux:badge color="yellow" size="sm">Pendiente</flux:badge>
+                                    <flux:badge color="yellow" size="sm">{{ __('Pendiente') }}</flux:badge>
                                 @elseif($report->processing_status === 'processing')
-                                    <flux:badge color="blue" size="sm">Procesando…</flux:badge>
+                                    <flux:badge color="blue" size="sm">{{ __('Procesando…') }}</flux:badge>
                                 @elseif($report->processing_status === 'failed')
-                                    <flux:badge color="red" size="sm">Error</flux:badge>
+                                    <flux:badge color="red" size="sm">{{ __('Error') }}</flux:badge>
                                 @endif
                             </div>
                         </div>
@@ -80,7 +80,7 @@
                         <div class="flex items-center gap-2">
                             <flux:icon icon="clock" class="size-3.5 text-zinc-400 shrink-0" />
                             <span class="text-xs text-zinc-600">
-                                Generado {{ $report->created_at->format('d/m/Y H:i') }}
+                                {{ __('Generado') }} {{ $report->created_at->format('d/m/Y H:i') }}
                             </span>
                         </div>
                         @if($report->formatted_pdf_size)
@@ -101,9 +101,9 @@
                             @if($pac['is_compliant'])
                                 <flux:badge color="green" size="sm" icon="check-circle">PAC OK ({{ number_format($pacPct, 1) }}%)</flux:badge>
                             @elseif($pac['has_warnings'] && empty($pac['errors']))
-                                <flux:badge color="yellow" size="sm" icon="exclamation-triangle">Revisar ({{ number_format($pacPct, 1) }}%)</flux:badge>
+                                <flux:badge color="yellow" size="sm" icon="exclamation-triangle">{{ __('Revisar') }} ({{ number_format($pacPct, 1) }}%)</flux:badge>
                             @else
-                                <flux:badge color="red" size="sm" icon="x-circle">No Cumple ({{ number_format($pacPct, 1) }}%)</flux:badge>
+                                <flux:badge color="red" size="sm" icon="x-circle">{{ __('No Cumple') }} ({{ number_format($pacPct, 1) }}%)</flux:badge>
                             @endif
                         </div>
                     @endif
@@ -115,7 +115,7 @@
                                 <x-agro.action-button
                                     variant="view"
                                     wire:click="openPreviewModal({{ $report->id }})"
-                                    title="Vista previa"
+                                    :title="__('Vista previa')"
                                 />
 
                                 {{-- Verify --}}
@@ -123,7 +123,7 @@
                                     icon="shield-check"
                                     variant="default"
                                     href="{{ route('reports.verify', ['code' => $report->verification_code]) }}"
-                                    title="Verificar autenticidad"
+                                    :title="__('Verificar autenticidad')"
                                 />
 
                                 {{-- Share --}}
@@ -131,7 +131,7 @@
                                     icon="envelope"
                                     variant="primary"
                                     wire:click="openShareModal({{ $report->id }})"
-                                    title="Compartir por email"
+                                    :title="__('Compartir por email')"
                                 />
                             </div>
 
@@ -139,7 +139,7 @@
                                 {{-- Download dropdown --}}
                                 @if($report->processing_status === 'completed')
                                     <div x-data="{ open: false }" @click.away="open = false" class="relative">
-                                        <button @click="open = !open" class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors" title="Descargar">
+                                        <button @click="open = !open" class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors" :title="__('Descargar')">
                                             <flux:icon icon="arrow-down-tray" class="size-4" />
                                         </button>
                                         <div
@@ -170,7 +170,7 @@
                                     <x-agro.action-button
                                         variant="deactivate"
                                         wire:click="openInvalidateModal({{ $report->id }})"
-                                        title="Invalidar informe"
+                                        :title="__('Invalidar informe')"
                                     />
                                 @endif
                             </div>
@@ -185,8 +185,8 @@
     @else
         <x-agro.empty-state
             icon="document-text"
-            message="No hay informes generados"
-            :description="$search ? 'No se encontraron informes con ese código de verificación.' : 'Comienza generando tu primer informe oficial.'"
+            :message="__('No hay informes generados')"
+            :description="$search ? __('No se encontraron informes con ese código de verificación.') : __('Comienza generando tu primer informe oficial.')"
         />
     @endif
 

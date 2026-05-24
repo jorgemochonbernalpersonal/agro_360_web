@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Translatable\HasTranslations;
 
 class GrapeVariety extends Model
 {
+    use HasTranslations;
     const CROP_TYPES = [
         'wine'  => 'Uva (vino)',
         'olive' => 'Aceituna (aceite)',
@@ -18,6 +20,8 @@ class GrapeVariety extends Model
         'olive' => 'sun',
         'other' => 'sparkles',
     ];
+
+    public array $translatable = ['name', 'description'];
 
     protected $fillable = [
         'name',

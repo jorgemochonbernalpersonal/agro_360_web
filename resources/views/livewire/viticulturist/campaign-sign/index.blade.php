@@ -1,7 +1,7 @@
 <div class="space-y-6 animate-fade-in">
     <x-agro.page-header
-        title="Firma y Cierre de Campaña"
-        subtitle="Validación intermedia y cierre definitivo del cuaderno de campo"
+        :title="__('Firma y Cierre de Campaña')"
+        :subtitle="__('Validación intermedia y cierre definitivo del cuaderno de campo')"
         icon="shield-check"
     />
 
@@ -9,15 +9,15 @@
     @if($campaigns->count() > 1)
         <x-agro.card>
             <flux:field>
-                <flux:label>Campaña a firmar</flux:label>
+                <flux:label>{{ __('Campaña a firmar') }}</flux:label>
                 <flux:select wire:model.live="selectedCampaignId">
                     @foreach($campaigns as $c)
                         <option value="{{ $c->id }}">
                             {{ $c->name }}
-                            @if($c->locked_at) (Cerrada)
-                            @elseif($c->final_validation_signed) (Firma final)
-                            @elseif($c->mid_validation_signed) (Intermedia firmada)
-                            @elseif($c->active) (Activa)
+                            @if($c->locked_at) ({{ __('Cerrada') }})
+                            @elseif($c->final_validation_signed) ({{ __('Firma final') }})
+                            @elseif($c->mid_validation_signed) ({{ __('Intermedia firmada') }})
+                            @elseif($c->active) ({{ __('Activa') }})
                             @endif
                         </option>
                     @endforeach
@@ -28,7 +28,7 @@
 
     @if(!$campaign)
         <flux:callout variant="warning" icon="exclamation-triangle">
-            No se ha encontrado ninguna campaña activa. Crea o activa una campaña antes de proceder.
+            {{ __('No se ha encontrado ninguna campaña activa. Crea o activa una campaña antes de proceder.') }}
         </flux:callout>
     @else
         {{-- Info de campaña --}}
@@ -42,19 +42,19 @@
                 </div>
                 @if($campaign->locked_at)
                     <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-100 text-red-800 text-sm font-medium">
-                        <flux:icon icon="lock-closed" class="w-4 h-4" /> Campaña cerrada y bloqueada
+                        <flux:icon icon="lock-closed" class="w-4 h-4" /> {{ __('Campaña cerrada y bloqueada') }}
                     </span>
                 @elseif($campaign->final_validation_signed)
                     <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-100 text-emerald-800 text-sm font-medium">
-                        <flux:icon icon="check-circle" class="w-4 h-4" /> Validación final firmada
+                        <flux:icon icon="check-circle" class="w-4 h-4" /> {{ __('Validación final firmada') }}
                     </span>
                 @elseif($campaign->mid_validation_signed)
                     <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-100 text-amber-800 text-sm font-medium">
-                        <flux:icon icon="clock" class="w-4 h-4" /> Validación intermedia firmada
+                        <flux:icon icon="clock" class="w-4 h-4" /> {{ __('Validación intermedia firmada') }}
                     </span>
                 @else
                     <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-100 text-zinc-600 text-sm font-medium">
-                        <flux:icon icon="pencil" class="w-4 h-4" /> En curso
+                        <flux:icon icon="pencil" class="w-4 h-4" /> {{ __('En curso') }}
                     </span>
                 @endif
             </div>
@@ -75,13 +75,13 @@
                             </div>
                         @endif
                         <div>
-                            <h3 class="font-semibold text-zinc-900">Validación Intermedia (Mitad de campaña)</h3>
+                            <h3 class="font-semibold text-zinc-900">{{ __('Validación Intermedia (Mitad de campaña)') }}</h3>
                             @if($campaign->mid_validation_signed)
                                 <p class="text-sm text-emerald-600">
-                                    Firmado el {{ $campaign->mid_validation_date?->format('d/m/Y H:i') }}
+                                    {{ __('Firmado el') }} {{ $campaign->mid_validation_date?->format('d/m/Y H:i') }}
                                 </p>
                             @else
-                                <p class="text-sm text-zinc-500">Revisión de todas las actividades hasta la fecha</p>
+                                <p class="text-sm text-zinc-500">{{ __('Revisión de todas las actividades hasta la fecha') }}</p>
                             @endif
                         </div>
                     </div>
@@ -93,18 +93,18 @@
                 <div x-show="open" x-transition class="mt-4 pt-4 border-t border-zinc-100">
                     @if($campaign->mid_validation_signed)
                         <flux:callout variant="success" icon="check-circle">
-                            Validación intermedia firmada correctamente el {{ $campaign->mid_validation_date?->format('d/m/Y \a \l\a\s H:i') }}.
+                            {{ __('Validación intermedia firmada correctamente el') }} {{ $campaign->mid_validation_date?->format('d/m/Y \a \l\a\s H:i') }}.
                         </flux:callout>
                     @else
                         <flux:callout variant="warning" icon="exclamation-triangle" class="mb-4">
-                            Al firmar la validación intermedia declaras que todos los registros del cuaderno de campo hasta la fecha son correctos y completos.
+                            {{ __('Al firmar la validación intermedia declaras que todos los registros del cuaderno de campo hasta la fecha son correctos y completos.') }}
                         </flux:callout>
 
                         <div class="space-y-4">
                             <label class="flex items-start gap-3 cursor-pointer">
                                 <flux:checkbox wire:model="confirmMid" class="mt-0.5" />
                                 <span class="text-sm text-zinc-700">
-                                    Confirmo que he revisado todos los registros de actividades agrícolas, tratamientos fitosanitarios, fertilizaciones, riegos y cosechas hasta la fecha, y que son correctos y completos conforme a la normativa vigente.
+                                    {{ __('Confirmo que he revisado todos los registros de actividades agrícolas, tratamientos fitosanitarios, fertilizaciones, riegos y cosechas hasta la fecha, y que son correctos y completos conforme a la normativa vigente.') }}
                                 </span>
                             </label>
                             @error('confirmMid') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
@@ -113,10 +113,10 @@
                                 variant="primary"
                                 icon="shield-check"
                                 wire:click="signMidValidation"
-                                wire:confirm="¿Firmar la validación intermedia? Esta acción quedará registrada con tu usuario y fecha."
+                                wire:confirm="{{ __('¿Firmar la validación intermedia? Esta acción quedará registrada con tu usuario y fecha.') }}"
                                 :disabled="!$campaign->mid_validation_signed && !$confirmMid"
                             >
-                                Firmar Validación Intermedia
+                                {{ __('Firmar Validación Intermedia') }}
                             </flux:button>
                         </div>
                     @endif
@@ -144,16 +144,16 @@
                         @endif
                         <div>
                             <h3 class="font-semibold text-zinc-900 {{ !$campaign->mid_validation_signed ? 'text-zinc-400' : '' }}">
-                                Cierre y Firma Final (Fin de campaña)
+                                {{ __('Cierre y Firma Final (Fin de campaña)') }}
                             </h3>
                             @if($campaign->final_validation_signed)
                                 <p class="text-sm text-emerald-600">
-                                    Campaña cerrada el {{ $campaign->final_validation_date?->format('d/m/Y H:i') }}
+                                    {{ __('Campaña cerrada el') }} {{ $campaign->final_validation_date?->format('d/m/Y H:i') }}
                                 </p>
                             @elseif(!$campaign->mid_validation_signed)
-                                <p class="text-sm text-zinc-400">Requiere la validación intermedia primero</p>
+                                <p class="text-sm text-zinc-400">{{ __('Requiere la validación intermedia primero') }}</p>
                             @else
-                                <p class="text-sm text-zinc-500">Cierre definitivo del cuaderno de campaña</p>
+                                <p class="text-sm text-zinc-500">{{ __('Cierre definitivo del cuaderno de campaña') }}</p>
                             @endif
                         </div>
                     </div>
@@ -165,23 +165,23 @@
                 <div x-show="open" x-transition class="mt-4 pt-4 border-t border-zinc-100">
                     @if(!$campaign->mid_validation_signed)
                         <flux:callout variant="info" icon="information-circle">
-                            Debes completar la validación intermedia (Paso 1) antes de cerrar la campaña.
+                            {{ __('Debes completar la validación intermedia (Paso 1) antes de cerrar la campaña.') }}
                         </flux:callout>
                     @elseif($campaign->final_validation_signed)
                         <flux:callout variant="success" icon="lock-closed">
-                            Campaña cerrada y bloqueada el {{ $campaign->locked_at?->format('d/m/Y \a \l\a\s H:i') }}.
-                            No se pueden realizar más modificaciones.
+                            {{ __('Campaña cerrada y bloqueada el') }} {{ $campaign->locked_at?->format('d/m/Y \a \l\a\s H:i') }}.
+                            {{ __('No se pueden realizar más modificaciones.') }}
                         </flux:callout>
                     @else
                         <flux:callout variant="danger" icon="exclamation-triangle" class="mb-4">
-                            <strong>Atención:</strong> El cierre de campaña es irreversible. Una vez firmado, el cuaderno quedará bloqueado y no podrás añadir ni modificar registros.
+                            <strong>{{ __('Atención:') }}</strong> {{ __('El cierre de campaña es irreversible. Una vez firmado, el cuaderno quedará bloqueado y no podrás añadir ni modificar registros.') }}
                         </flux:callout>
 
                         <div class="space-y-4">
                             <label class="flex items-start gap-3 cursor-pointer">
                                 <flux:checkbox wire:model="confirmFinal" class="mt-0.5" />
                                 <span class="text-sm text-zinc-700">
-                                    Confirmo que el cuaderno de campo de la campaña <strong>{{ $campaign->name }}</strong> está completo, es correcto y cumple con todos los requisitos legales. Autorizo el cierre definitivo y el bloqueo de edición.
+                                    {{ __('Confirmo que el cuaderno de campo de la campaña') }} <strong>{{ $campaign->name }}</strong> {{ __('está completo, es correcto y cumple con todos los requisitos legales. Autorizo el cierre definitivo y el bloqueo de edición.') }}
                                 </span>
                             </label>
                             @error('confirmFinal') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
@@ -190,10 +190,10 @@
                                 variant="danger"
                                 icon="lock-closed"
                                 wire:click="signFinalValidation"
-                                wire:confirm="¿Cerrar definitivamente la campaña? Esta acción BLOQUEARÁ el cuaderno de campo y no se podrán hacer más cambios."
+                                wire:confirm="{{ __('¿Cerrar definitivamente la campaña? Esta acción BLOQUEARÁ el cuaderno de campo y no se podrán hacer más cambios.') }}"
                                 :disabled="!$confirmFinal"
                             >
-                                Cerrar y Firmar Campaña Definitivamente
+                                {{ __('Cerrar y Firmar Campaña Definitivamente') }}
                             </flux:button>
                         </div>
                     @endif

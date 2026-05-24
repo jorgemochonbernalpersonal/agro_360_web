@@ -1,4 +1,4 @@
-﻿<div class="space-y-6 animate-fade-in">
+<div class="space-y-6 animate-fade-in">
     <!-- Mensajes Flash -->
     @if(session('message'))
         <flux:callout variant="success">
@@ -14,12 +14,12 @@
 
     <!-- Header -->
     <x-agro.page-header
-        title="Editar Campaña"
-        :description="'Modifica los datos de la campaña ' . $campaign->name"
+        :title="__('Editar Campaña')"
+        :description="__('Modifica los datos de la campaña') . ' ' . $campaign->name"
     >
         <x-slot:actions>
             <flux:button href="{{ roleRoute('viticulturist.campaign.index') }}" variant="outline" icon="arrow-left">
-                Volver
+                {{ __('Volver') }}
             </flux:button>
         </x-slot:actions>
     </x-agro.page-header>
@@ -28,18 +28,18 @@
     <x-agro.card data-cy="campaign-edit-form">
         <form wire:submit="save" class="space-y-8" data-cy="campaign-form">
             <!-- Información Básica -->
-            <x-agro.form-section title="Información Básica">
+            <x-agro.form-section :title="__('Información Básica')">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Nombre -->
                     <flux:field>
-                        <flux:label>Nombre de la Campaña</flux:label>
+                        <flux:label>{{ __('Nombre de la Campaña') }}</flux:label>
                         <flux:input
                             wire:model="name"
                             value="{{ $name }}"
                             type="text"
                             id="name"
                             data-cy="campaign-name-input"
-                            placeholder="Ej: Campaña 2025"
+                            :placeholder="__('Ej: Campaña 2025')"
                             required
                         />
                         <flux:error name="name" />
@@ -47,7 +47,7 @@
 
                     <!-- Año -->
                     <flux:field>
-                        <flux:label>Año</flux:label>
+                        <flux:label>{{ __('Año') }}</flux:label>
                         <flux:input
                             wire:model="year"
                             value="{{ $year }}"
@@ -65,13 +65,13 @@
                 <!-- Descripción -->
                 <div class="mt-6">
                     <flux:field>
-                        <flux:label>Descripción</flux:label>
+                        <flux:label>{{ __('Descripción') }}</flux:label>
                         <flux:textarea
                             wire:model="description"
                             id="description"
                             data-cy="campaign-description-input"
                             rows="3"
-                            placeholder="Descripción de la campaña..."
+                            :placeholder="__('Descripción de la campaña...')"
                         >{{ $description }}</flux:textarea>
                         <flux:error name="description" />
                     </flux:field>
@@ -79,11 +79,11 @@
             </x-agro.form-section>
 
             <!-- Período -->
-            <x-agro.form-section title="Período de la Campaña">
+            <x-agro.form-section :title="__('Período de la Campaña')">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Fecha Inicio -->
                     <flux:field>
-                        <flux:label>Fecha de Inicio</flux:label>
+                        <flux:label>{{ __('Fecha de Inicio') }}</flux:label>
                         <flux:input
                             wire:model="start_date"
                             value="{{ $start_date }}"
@@ -96,7 +96,7 @@
 
                     <!-- Fecha Fin -->
                     <flux:field>
-                        <flux:label>Fecha de Fin</flux:label>
+                        <flux:label>{{ __('Fecha de Fin') }}</flux:label>
                         <flux:input
                             wire:model="end_date"
                             value="{{ $end_date }}"
@@ -110,24 +110,24 @@
             </x-agro.form-section>
 
             <!-- Opciones -->
-            <x-agro.form-section title="Opciones">
+            <x-agro.form-section :title="__('Opciones')">
                 <div class="flex items-center">
                     <flux:checkbox
                         wire:model="active"
                         :checked="$active"
                         id="active"
                         data-cy="campaign-active-checkbox"
-                        label="Activar esta campaña"
+                        :label="__('Activar esta campaña')"
                     />
                 </div>
                 <p class="mt-2 text-xs text-zinc-500">
-                    Si se activa, se desactivarán automáticamente las demás campañas.
+                    {{ __('Si se activa, se desactivarán automáticamente las demás campañas.') }}
                 </p>
                 <flux:error name="active" />
             </x-agro.form-section>
 
             <!-- Botones -->
-            <x-agro.form-actions cancelUrl="{{ roleRoute('viticulturist.campaign.index') }}" submitLabel="Guardar Cambios" />
+            <x-agro.form-actions :cancelUrl="roleRoute('viticulturist.campaign.index')" :submitLabel="__('Guardar Cambios')" />
         </form>
     </x-agro.card>
 </div>

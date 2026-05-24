@@ -1,15 +1,15 @@
 <div class="space-y-6 animate-fade-in">
 
 <x-agro.page-header
-    title="Meteorologia"
-    description="Datos meteorologicos en tiempo real de tus parcelas: temperatura, humedad, suelo, radiacion y pronostico."
+    :title="__('Meteorología')"
+    :description="__('Datos meteorológicos en tiempo real de tus parcelas: temperatura, humedad, suelo, radiación y pronóstico.')"
     icon="cloud"
 >
     <x-slot:actions>
         <div class="flex items-center gap-2">
             @if($selectedPlot)
                 <flux:button wire:click="refreshData" size="sm" variant="ghost" icon="arrow-path">
-                    Actualizar
+                    {{ __('Actualizar') }}
                 </flux:button>
             @endif
         </div>
@@ -19,9 +19,9 @@
 {{-- Selector de parcela --}}
 <div class="flex flex-wrap items-end gap-4">
     <flux:field class="min-w-[260px]">
-        <flux:label>Parcela</flux:label>
+        <flux:label>{{ __('Parcela') }}</flux:label>
         <flux:select wire:model.live="selectedPlot">
-            <option value="">Seleccionar parcela...</option>
+            <option value="">{{ __('Seleccionar parcela...') }}</option>
             @foreach($plots as $p)
                 <option value="{{ $p->id }}">{{ $p->name }} @if($p->municipality) ({{ $p->municipality->name }}) @endif</option>
             @endforeach
@@ -32,7 +32,7 @@
 {{-- Resumen de todas las parcelas --}}
 @if(count($plotSummaries) > 1)
     <div>
-        <h3 class="text-sm font-semibold text-zinc-500 uppercase tracking-wider mb-3">Vista general</h3>
+        <h3 class="text-sm font-semibold text-zinc-500 uppercase tracking-wider mb-3">{{ __('Vista general') }}</h3>
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
             @foreach($plotSummaries as $plotId => $summary)
                 <button
@@ -52,7 +52,7 @@
                             @endif
                         </div>
                     @else
-                        <p class="text-xs text-zinc-300 mt-2">Sin datos</p>
+                        <p class="text-xs text-zinc-300 mt-2">{{ __('Sin datos') }}</p>
                     @endif
                 </button>
             @endforeach
@@ -64,75 +64,75 @@
 @if(!$selectedPlot)
     <x-agro.empty-state
         icon="cloud"
-        title="Selecciona una parcela"
-        description="Elige una parcela para ver sus datos meteorologicos en tiempo real."
+        :title="__('Selecciona una parcela')"
+        :description="__('Elige una parcela para ver sus datos meteorológicos en tiempo real.')"
     />
 @elseif($error)
     <x-agro.empty-state
         icon="exclamation-triangle"
         :title="$error"
-        description="Intenta de nuevo mas tarde o selecciona otra parcela."
+        :description="__('Intenta de nuevo más tarde o selecciona otra parcela.')"
     />
 @else
     {{-- Tiempo actual --}}
     <div>
-        <h3 class="text-sm font-semibold text-zinc-500 uppercase tracking-wider mb-3">Tiempo actual</h3>
+        <h3 class="text-sm font-semibold text-zinc-500 uppercase tracking-wider mb-3">{{ __('Tiempo actual') }}</h3>
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {{-- Temperatura --}}
             <div class="bg-gradient-to-br from-orange-50 to-red-50 rounded-2xl p-5 ring-1 ring-orange-200/60">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-xs font-bold uppercase tracking-wider text-orange-700">Temperatura</span>
+                    <span class="text-xs font-bold uppercase tracking-wider text-orange-700">{{ __('Temperatura') }}</span>
                     <div class="w-7 h-7 rounded-lg bg-orange-500 flex items-center justify-center">
                         <flux:icon icon="fire" class="size-3.5 text-white" />
                     </div>
                 </div>
                 <p class="text-3xl font-bold text-zinc-900">{{ $weather['temperature'] ?? '--' }}°C</p>
                 <p class="text-xs text-zinc-500 mt-1">
-                    Min {{ $weather['temperature_min'] ?? '--' }}° / Max {{ $weather['temperature_max'] ?? '--' }}°
+                    {{ __('Min') }} {{ $weather['temperature_min'] ?? '--' }}° / {{ __('Max') }} {{ $weather['temperature_max'] ?? '--' }}°
                 </p>
             </div>
 
             {{-- Humedad --}}
             <div class="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl p-5 ring-1 ring-blue-200/60">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-xs font-bold uppercase tracking-wider text-blue-700">Humedad</span>
+                    <span class="text-xs font-bold uppercase tracking-wider text-blue-700">{{ __('Humedad') }}</span>
                     <div class="w-7 h-7 rounded-lg bg-blue-500 flex items-center justify-center">
                         <flux:icon icon="eye-dropper" class="size-3.5 text-white" />
                     </div>
                 </div>
                 <p class="text-3xl font-bold text-zinc-900">{{ $weather['humidity'] ?? '--' }}%</p>
-                <p class="text-xs text-zinc-500 mt-1">Humedad relativa del aire</p>
+                <p class="text-xs text-zinc-500 mt-1">{{ __('Humedad relativa del aire') }}</p>
             </div>
 
             {{-- Precipitacion --}}
             <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-5 ring-1 ring-indigo-200/60">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-xs font-bold uppercase tracking-wider text-indigo-700">Precipitacion</span>
+                    <span class="text-xs font-bold uppercase tracking-wider text-indigo-700">{{ __('Precipitación') }}</span>
                     <div class="w-7 h-7 rounded-lg bg-indigo-500 flex items-center justify-center">
                         <flux:icon icon="cloud" class="size-3.5 text-white" />
                     </div>
                 </div>
                 <p class="text-3xl font-bold text-zinc-900">{{ $weather['precipitation'] ?? 0 }} mm</p>
-                <p class="text-xs text-zinc-500 mt-1">Ultimas 24 horas</p>
+                <p class="text-xs text-zinc-500 mt-1">{{ __('Últimas 24 horas') }}</p>
             </div>
 
             {{-- Viento --}}
             <div class="bg-gradient-to-br from-teal-50 to-emerald-50 rounded-2xl p-5 ring-1 ring-teal-200/60">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-xs font-bold uppercase tracking-wider text-teal-700">Viento</span>
+                    <span class="text-xs font-bold uppercase tracking-wider text-teal-700">{{ __('Viento') }}</span>
                     <div class="w-7 h-7 rounded-lg bg-teal-500 flex items-center justify-center">
                         <flux:icon icon="signal" class="size-3.5 text-white" />
                     </div>
                 </div>
                 <p class="text-3xl font-bold text-zinc-900">{{ $weather['wind_speed'] ?? '--' }} km/h</p>
-                <p class="text-xs text-zinc-500 mt-1">Velocidad media</p>
+                <p class="text-xs text-zinc-500 mt-1">{{ __('Velocidad media') }}</p>
             </div>
         </div>
     </div>
 
     {{-- Suelo, Solar, Estres hidrico --}}
     <div>
-        <h3 class="text-sm font-semibold text-zinc-500 uppercase tracking-wider mb-3">Suelo y radiacion</h3>
+        <h3 class="text-sm font-semibold text-zinc-500 uppercase tracking-wider mb-3">{{ __('Suelo y radiación') }}</h3>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             {{-- Humedad del suelo --}}
             <x-agro.card>
@@ -141,7 +141,7 @@
                         <div class="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
                             <flux:icon icon="eye-dropper" class="size-4 text-amber-600" />
                         </div>
-                        <span class="text-sm font-semibold text-zinc-800">Humedad del suelo</span>
+                        <span class="text-sm font-semibold text-zinc-800">{{ __('Humedad del suelo') }}</span>
                     </div>
                 </div>
                 <p class="text-3xl font-bold text-amber-700">{{ $soil['soil_moisture'] ?? '--' }}%</p>
@@ -151,12 +151,12 @@
                          style="width: {{ $moisture }}%"></div>
                 </div>
                 <div class="flex items-center justify-between mt-2 text-xs text-zinc-400">
-                    <span>Seco</span>
-                    <span>Optimo</span>
-                    <span>Saturado</span>
+                    <span>{{ __('Seco') }}</span>
+                    <span>{{ __('Óptimo') }}</span>
+                    <span>{{ __('Saturado') }}</span>
                 </div>
                 <p class="text-xs text-zinc-500 mt-3">
-                    Temp. suelo: <span class="font-semibold text-zinc-700">{{ $soil['soil_temperature'] ?? '--' }}°C</span>
+                    {{ __('Temp. suelo:') }} <span class="font-semibold text-zinc-700">{{ $soil['soil_temperature'] ?? '--' }}°C</span>
                 </p>
             </x-agro.card>
 
@@ -167,18 +167,18 @@
                         <div class="w-8 h-8 rounded-lg bg-yellow-50 flex items-center justify-center">
                             <flux:icon icon="sun" class="size-4 text-yellow-600" />
                         </div>
-                        <span class="text-sm font-semibold text-zinc-800">Radiacion solar</span>
+                        <span class="text-sm font-semibold text-zinc-800">{{ __('Radiación solar') }}</span>
                     </div>
                 </div>
                 <p class="text-3xl font-bold text-yellow-600">{{ $solar['solar_radiation'] ?? '--' }} <span class="text-base font-normal text-zinc-400">MJ/m2</span></p>
                 <div class="grid grid-cols-2 gap-3 mt-4">
                     <div>
-                        <p class="text-xs text-zinc-400">Horas de sol</p>
+                        <p class="text-xs text-zinc-400">{{ __('Horas de sol') }}</p>
                         <p class="text-lg font-bold text-zinc-800">{{ number_format($solar['sunshine_hours'] ?? 0, 1) }}h</p>
                     </div>
                     <div>
-                        <p class="text-xs text-zinc-400">ET0 (evapotransp.)</p>
-                        <p class="text-lg font-bold text-zinc-800">{{ $solar['et0'] ?? '--' }} mm/dia</p>
+                        <p class="text-xs text-zinc-400">{{ __('ET0 (evapotransp.)') }}</p>
+                        <p class="text-lg font-bold text-zinc-800">{{ $solar['et0'] ?? '--' }} {{ __('mm/día') }}</p>
                     </div>
                 </div>
             </x-agro.card>
@@ -190,20 +190,20 @@
                         <div class="w-8 h-8 rounded-lg bg-{{ $waterStress['color'] }}-50 flex items-center justify-center">
                             <flux:icon :icon="$waterStress['icon']" class="size-4 text-{{ $waterStress['color'] }}-600" />
                         </div>
-                        <span class="text-sm font-semibold text-zinc-800">Estres hidrico</span>
+                        <span class="text-sm font-semibold text-zinc-800">{{ __('Estrés hídrico') }}</span>
                     </div>
                 </div>
                 <p class="text-3xl font-bold text-{{ $waterStress['color'] }}-600">{{ $waterStress['text'] }}</p>
                 <p class="text-xs text-zinc-500 mt-2">
-                    Basado en humedad del suelo ({{ $soil['soil_moisture'] ?? '--' }}%) y evapotranspiracion ({{ $solar['et0'] ?? '--' }} mm/dia).
+                    {{ __('Basado en humedad del suelo') }} ({{ $soil['soil_moisture'] ?? '--' }}%) {{ __('y evapotranspiración') }} ({{ $solar['et0'] ?? '--' }} {{ __('mm/día') }}).
                 </p>
                 @if($waterStress['status'] === 'severe')
                     <div class="mt-3 p-2 rounded-lg bg-red-50 border border-red-200">
-                        <p class="text-xs text-red-700 font-medium">Se recomienda riego urgente para evitar danos en la vid.</p>
+                        <p class="text-xs text-red-700 font-medium">{{ __('Se recomienda riego urgente para evitar daños en la vid.') }}</p>
                     </div>
                 @elseif($waterStress['status'] === 'moderate')
                     <div class="mt-3 p-2 rounded-lg bg-orange-50 border border-orange-200">
-                        <p class="text-xs text-orange-700 font-medium">Considerar riego en las proximas 24-48 horas.</p>
+                        <p class="text-xs text-orange-700 font-medium">{{ __('Considerar riego en las próximas 24-48 horas.') }}</p>
                     </div>
                 @endif
             </x-agro.card>
@@ -218,10 +218,10 @@
                     <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
                         <flux:icon icon="calendar-days" class="size-4 text-blue-600" />
                     </div>
-                    <span class="font-semibold text-zinc-900">Pronostico 7 dias</span>
+                    <span class="font-semibold text-zinc-900">{{ __('Pronóstico 7 días') }}</span>
                 </div>
                 <flux:button wire:click="toggleForecast" size="sm" variant="ghost">
-                    {{ $showForecast ? 'Ocultar' : 'Mostrar' }}
+                    {{ $showForecast ? __('Ocultar') : __('Mostrar') }}
                 </flux:button>
             </div>
         </x-slot:header>
@@ -257,9 +257,9 @@
                 @endforeach
             </div>
         @elseif(!$showForecast)
-            <p class="text-sm text-zinc-400 text-center py-4">Pulsa "Mostrar" para ver el pronostico de los proximos 7 dias.</p>
+            <p class="text-sm text-zinc-400 text-center py-4">{{ __('Pulsa "Mostrar" para ver el pronóstico de los próximos 7 días.') }}</p>
         @else
-            <p class="text-sm text-zinc-400 text-center py-4">Sin datos de pronostico disponibles.</p>
+            <p class="text-sm text-zinc-400 text-center py-4">{{ __('Sin datos de pronóstico disponibles.') }}</p>
         @endif
     </x-agro.card>
 
@@ -267,7 +267,7 @@
     @if(isset($weather['mock']) && $weather['mock'])
         <div class="flex items-center justify-center gap-2 text-xs text-amber-600 bg-amber-50 rounded-xl p-2">
             <flux:icon icon="information-circle" class="size-4" />
-            <span>Datos de demostracion — activa la API de Open-Meteo en produccion para datos reales.</span>
+            <span>{{ __('Datos de demostración — activa la API de Open-Meteo en producción para datos reales.') }}</span>
         </div>
     @endif
 @endif

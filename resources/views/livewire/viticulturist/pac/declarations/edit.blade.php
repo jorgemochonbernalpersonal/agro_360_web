@@ -1,35 +1,35 @@
 <div>
     <x-agro.form-card
         :title="'Editar Declaración PAC ' . $declaration->year"
-        description="Solo se pueden editar declaraciones en borrador"
+        :description="__('Solo se pueden editar declaraciones en borrador')"
         :back-url="roleRoute('viticulturist.pac.declarations.show', $declaration)"
     >
         <form wire:submit.prevent="save('draft')" class="space-y-8">
 
             @error('items')
                 <flux:callout variant="danger" icon="x-circle">
-                    <flux:callout.heading>Error</flux:callout.heading>
+                    <flux:callout.heading>{{ __('Error') }}</flux:callout.heading>
                     <flux:callout.text>{{ $message }}</flux:callout.text>
                 </flux:callout>
             @enderror
 
-            <x-agro.form-section title="Datos de la Declaración">
+            <x-agro.form-section :title="__('Datos de la Declaración')">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <flux:field>
-                        <flux:label for="reference_number">Referencia FEGA</flux:label>
-                        <flux:input wire:model="reference_number" type="text" id="reference_number" placeholder="Nº expediente" />
+                        <flux:label for="reference_number">{{ __('Referencia FEGA') }}</flux:label>
+                        <flux:input wire:model="reference_number" type="text" id="reference_number" :placeholder="__('Nº expediente')" />
                         <flux:error name="reference_number" />
                     </flux:field>
                     <flux:field>
-                        <flux:label for="notes">Notas</flux:label>
-                        <flux:input wire:model="notes" type="text" id="notes" placeholder="Observaciones opcionales" />
+                        <flux:label for="notes">{{ __('Notas') }}</flux:label>
+                        <flux:input wire:model="notes" type="text" id="notes" :placeholder="__('Observaciones opcionales')" />
                         <flux:error name="notes" />
                     </flux:field>
                 </div>
             </x-agro.form-section>
 
-            <x-agro.form-section title="Parcelas Declaradas">
-                <p class="text-sm text-zinc-500 mb-4">Activa o desactiva parcelas y ajusta sus superficies y eco-regímenes.</p>
+            <x-agro.form-section :title="__('Parcelas Declaradas')">
+                <p class="text-sm text-zinc-500 mb-4">{{ __('Activa o desactiva parcelas y ajusta sus superficies y eco-regímenes.') }}</p>
 
                 <div class="space-y-3">
                     @foreach($items as $plotId => $item)
@@ -45,24 +45,24 @@
                                     <label for="plot-{{ $plotId }}" class="font-medium text-zinc-900 cursor-pointer">
                                         {{ $item['name'] }}
                                     </label>
-                                    <p class="text-xs text-zinc-400 mt-0.5">Área total: {{ number_format($item['area'], 3) }} ha</p>
+                                    <p class="text-xs text-zinc-400 mt-0.5">{{ __('Área total') }}: {{ number_format($item['area'], 3) }} ha</p>
 
                                     @if($item['selected'] ?? false)
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                                             <flux:field>
-                                                <flux:label>Superficie declarada (ha) *</flux:label>
+                                                <flux:label>{{ __('Superficie declarada (ha)') }} *</flux:label>
                                                 <flux:input wire:model="items.{{ $plotId }}.declared_area"
                                                     type="number" step="0.001" min="0.001" placeholder="0.000" />
                                                 <flux:error name="items.{{ $plotId }}.declared_area" />
                                             </flux:field>
                                             <flux:field>
-                                                <flux:label>Superficie admisible PAC (ha) *</flux:label>
+                                                <flux:label>{{ __('Superficie admisible PAC (ha)') }} *</flux:label>
                                                 <flux:input wire:model="items.{{ $plotId }}.eligible_area"
                                                     type="number" step="0.001" min="0" placeholder="0.000" />
                                                 <flux:error name="items.{{ $plotId }}.eligible_area" />
                                             </flux:field>
                                             <div class="md:col-span-2">
-                                                <flux:label class="text-sm font-medium text-zinc-700 mb-2 block">Eco-regímenes</flux:label>
+                                                <flux:label class="text-sm font-medium text-zinc-700 mb-2 block">{{ __('Eco-regímenes') }}</flux:label>
                                                 <div class="flex flex-wrap gap-3">
                                                     @foreach($ecoSchemes as $key => $label)
                                                         <label class="flex items-center gap-2 cursor-pointer">
@@ -86,21 +86,21 @@
                     <x-slot:header>
                         <div class="flex items-center gap-2">
                             <flux:icon icon="calculator" class="size-4 text-agro-600" />
-                            <span class="font-semibold text-zinc-900 text-sm">Resumen</span>
+                            <span class="font-semibold text-zinc-900 text-sm">{{ __('Resumen') }}</span>
                         </div>
                     </x-slot:header>
                     <div class="grid grid-cols-3 gap-6 text-sm">
                         <div class="text-center">
                             <p class="text-2xl font-bold text-zinc-900">{{ $this->selectedCount }}</p>
-                            <p class="text-zinc-500 mt-1">Parcelas</p>
+                            <p class="text-zinc-500 mt-1">{{ __('Parcelas') }}</p>
                         </div>
                         <div class="text-center">
                             <p class="text-2xl font-bold text-zinc-900">{{ number_format($this->totalDeclared, 2) }} ha</p>
-                            <p class="text-zinc-500 mt-1">Declaradas</p>
+                            <p class="text-zinc-500 mt-1">{{ __('Declaradas') }}</p>
                         </div>
                         <div class="text-center">
                             <p class="text-2xl font-bold text-green-600">{{ number_format($this->totalEligible, 2) }} ha</p>
-                            <p class="text-zinc-500 mt-1">Admisibles</p>
+                            <p class="text-zinc-500 mt-1">{{ __('Admisibles') }}</p>
                         </div>
                     </div>
                 </x-agro.card>
@@ -108,15 +108,15 @@
 
             <div class="flex items-center justify-between pt-4 border-t border-zinc-100">
                 <flux:button variant="ghost" href="{{ roleRoute('viticulturist.pac.declarations.show', $declaration) }}" wire:navigate>
-                    Cancelar
+                    {{ __('Cancelar') }}
                 </flux:button>
                 <div class="flex gap-3">
                     <flux:button type="submit" variant="ghost" icon="document">
-                        Guardar borrador
+                        {{ __('Guardar borrador') }}
                     </flux:button>
                     <flux:button wire:click="save('submitted')" variant="primary" icon="paper-airplane"
-                        wire:confirm="¿Presentar la declaración? Una vez presentada no podrás editarla.">
-                        Guardar y presentar
+                        wire:confirm="{{ __('¿Presentar la declaración? Una vez presentada no podrás editarla.') }}">
+                        {{ __('Guardar y presentar') }}
                     </flux:button>
                 </div>
             </div>

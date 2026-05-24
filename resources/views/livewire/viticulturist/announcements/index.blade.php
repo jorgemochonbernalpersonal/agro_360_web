@@ -1,6 +1,6 @@
 <div class="space-y-6 animate-fade-in">
 
-    <x-agro.page-header title="Avisos de Bodegas" description="Comunicaciones de las bodegas con las que colaboras" />
+    <x-agro.page-header :title="__('Avisos de Bodegas')" :description="__('Comunicaciones de las bodegas con las que colaboras')" />
 
     @if($announcements->count() > 0)
         <div class="space-y-3">
@@ -23,7 +23,7 @@
                                 </span>
                                 <span class="text-xs text-zinc-400">{{ $a->published_at->diffForHumans() }}</span>
                                 @if($a->expires_at)
-                                    <span class="text-xs text-zinc-400">Expira {{ $a->expires_at->format('d/m/Y') }}</span>
+                                    <span class="text-xs text-zinc-400">{{ __('Expira') }} {{ $a->expires_at->format('d/m/Y') }}</span>
                                 @endif
                             </div>
                         </div>
@@ -35,8 +35,8 @@
     @else
         <x-agro.empty-state
             icon="megaphone"
-            message="Sin avisos"
-            description="No hay avisos activos de tus bodegas vinculadas"
+            :message="__('Sin avisos')"
+            :description="__('No hay avisos activos de tus bodegas vinculadas')"
         />
     @endif
 

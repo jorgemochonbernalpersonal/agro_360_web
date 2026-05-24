@@ -1,22 +1,22 @@
-﻿<div>
+<div>
 <x-agro.form-card
-    title="Nueva Maquinaria"
-    description="Registra una nueva maquinaria o equipo agricola"
+    :title="__('Nueva Maquinaria')"
+    :description="__('Registra una nueva maquinaria o equipo agricola')"
     :back-url="roleRoute('viticulturist.machinery.index')"
 >
     <form wire:submit="save" class="space-y-8" enctype="multipart/form-data" data-cy="machinery-create-form">
-        <x-agro.form-section title="Informacion Basica">
+        <x-agro.form-section :title="__('Informacion Basica')">
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Nombre -->
                     <flux:field>
-                        <flux:label>Nombre *</flux:label>
+                        <flux:label>{{ __('Nombre') }} *</flux:label>
                         <flux:input
                             wire:model="name"
                             type="text"
                             id="name"
                             data-cy="machinery-name"
-                            placeholder="Ej: Tractor John Deere"
+                            :placeholder="__('Ej: Tractor John Deere')"
                             required
                         />
                         <flux:error name="name" />
@@ -24,14 +24,14 @@
 
                     <!-- Tipo -->
                     <flux:field>
-                        <flux:label>Tipo *</flux:label>
+                        <flux:label>{{ __('Tipo') }} *</flux:label>
                         <flux:select
                             wire:model="machinery_type_id"
                             id="machinery_type_id"
                             data-cy="machinery-type-id"
                             required
                         >
-                            <option value="">Selecciona un tipo</option>
+                            <option value="">{{ __('Selecciona un tipo') }}</option>
                             @foreach($machineryTypes as $type)
                                 <option value="{{ $type->id }}">{{ $type->name }}</option>
                             @endforeach
@@ -41,20 +41,20 @@
 
                     <!-- Marca -->
                     <flux:field>
-                        <flux:label>Marca</flux:label>
+                        <flux:label>{{ __('Marca') }}</flux:label>
                         <flux:input
                             wire:model="brand"
                             type="text"
                             id="brand"
                             data-cy="machinery-brand"
-                            placeholder="Ej: John Deere"
+                            :placeholder="__('Ej: John Deere')"
                         />
                         <flux:error name="brand" />
                     </flux:field>
 
                     <!-- Modelo -->
                     <flux:field>
-                        <flux:label>Modelo</flux:label>
+                        <flux:label>{{ __('Modelo') }}</flux:label>
                         <flux:input
                             wire:model="model"
                             type="text"
@@ -67,7 +67,7 @@
 
                     <!-- Numero de Serie -->
                     <flux:field>
-                        <flux:label>Numero de Serie</flux:label>
+                        <flux:label>{{ __('Numero de Serie') }}</flux:label>
                         <flux:input
                             wire:model="serial_number"
                             type="text"
@@ -80,7 +80,7 @@
 
                     <!-- Ano -->
                     <flux:field>
-                        <flux:label>Ano</flux:label>
+                        <flux:label>{{ __('Año') }}</flux:label>
                         <flux:input
                             wire:model="year"
                             type="number"
@@ -94,12 +94,12 @@
                 </div>
         </x-agro.form-section>
 
-        <x-agro.form-section title="Registro y Propiedad">
+        <x-agro.form-section :title="__('Registro y Propiedad')">
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Inscripcion ROMA -->
                     <flux:field>
-                        <flux:label>Inscripcion ROMA</flux:label>
+                        <flux:label>{{ __('Inscripcion ROMA') }}</flux:label>
                         <flux:input
                             wire:model="roma_registration"
                             type="text"
@@ -111,7 +111,7 @@
 
                     <!-- Capacidad -->
                     <flux:field>
-                        <flux:label>Capacidad</flux:label>
+                        <flux:label>{{ __('Capacidad') }}</flux:label>
                         <flux:input
                             wire:model="capacity"
                             type="text"
@@ -132,18 +132,18 @@
                         class="w-4 h-4 text-agro-700 border-zinc-300 rounded focus:ring-agro-700"
                     >
                     <label for="is_rented" class="ml-3 text-sm font-semibold text-zinc-700">
-                        Maquinaria alquilada
+                        {{ __('Maquinaria alquilada') }}
                     </label>
                 </div>
                 <flux:error name="is_rented" />
         </x-agro.form-section>
 
-        <x-agro.form-section title="Fechas y Valores">
+        <x-agro.form-section :title="__('Fechas y Valores')">
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Fecha de Compra -->
                     <flux:field>
-                        <flux:label>Fecha de Compra</flux:label>
+                        <flux:label>{{ __('Fecha de Compra') }}</flux:label>
                         <flux:input
                             wire:model="purchase_date"
                             type="date"
@@ -154,7 +154,7 @@
 
                     <!-- Fecha de Ultima Revision -->
                     <flux:field>
-                        <flux:label>Fecha de Ultima Revision</flux:label>
+                        <flux:label>{{ __('Fecha de Ultima Revision') }}</flux:label>
                         <flux:input
                             wire:model="last_revision_date"
                             type="date"
@@ -165,7 +165,7 @@
 
                     <!-- Precio de Compra -->
                     <flux:field>
-                        <flux:label>Precio de Compra (EUR)</flux:label>
+                        <flux:label>{{ __('Precio de Compra (EUR)') }}</flux:label>
                         <flux:input
                             wire:model="purchase_price"
                             type="number"
@@ -179,7 +179,7 @@
 
                     <!-- Valor Actual -->
                     <flux:field>
-                        <flux:label>Valor Actual (EUR)</flux:label>
+                        <flux:label>{{ __('Valor Actual (EUR)') }}</flux:label>
                         <flux:input
                             wire:model="current_value"
                             type="number"
@@ -193,12 +193,12 @@
                 </div>
         </x-agro.form-section>
 
-        <x-agro.form-section title="Imagen y Notas">
+        <x-agro.form-section :title="__('Imagen y Notas')">
 
                 <!-- Imagen -->
                 <div class="mb-6">
                     <label for="image" class="block text-sm font-semibold text-zinc-700 mb-2">
-                        Imagen
+                        {{ __('Imagen') }}
                     </label>
                     <input
                         wire:model="image"
@@ -243,11 +243,11 @@
                     >
                     <flux:error name="image" />
                     <div id="machinery-image-preview-container" wire:ignore class="mt-4 hidden">
-                        <p class="text-sm text-zinc-600 mb-2 font-semibold">Vista previa:</p>
+                        <p class="text-sm text-zinc-600 mb-2 font-semibold">{{ __('Vista previa:') }}</p>
                         <img
                             id="machinery-image-preview"
                             src=""
-                            alt="Vista previa"
+                            alt="{{ __('Vista previa') }}"
                             class="max-w-xs rounded-lg border-2 border-zinc-200 hidden"
                             style="max-height: 300px; object-fit: contain;"
                             onerror="this.style.display='none'; document.getElementById('machinery-image-preview-container').style.display='none'; document.getElementById('machinery-image-preview-container').classList.add('hidden');"
@@ -257,13 +257,13 @@
 
                 <!-- Notas -->
                 <flux:field>
-                    <flux:label>Notas</flux:label>
+                    <flux:label>{{ __('Notas') }}</flux:label>
                     <flux:textarea
                         wire:model="notes"
                         id="notes"
                         data-cy="machinery-notes"
                         rows="4"
-                        placeholder="Notas adicionales sobre la maquinaria..."
+                        :placeholder="__('Notas adicionales sobre la maquinaria...')"
                     />
                     <flux:error name="notes" />
                 </flux:field>
@@ -271,7 +271,7 @@
 
         <x-agro.form-actions
             :cancel-url="roleRoute('viticulturist.machinery.index')"
-            submit-label="Crear Maquinaria"
+            :submit-label="__('Crear Maquinaria')"
         />
     </form>
 </x-agro.form-card>

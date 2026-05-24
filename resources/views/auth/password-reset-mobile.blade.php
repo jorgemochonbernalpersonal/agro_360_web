@@ -49,12 +49,12 @@
             </svg>
         </div>
 
-        <h1>¡Contraseña restablecida!</h1>
-        <p>Tu contraseña de <span class="highlight">Agro365</span> ha sido actualizada correctamente.</p>
+        <h1>{{ __('¡Contraseña restablecida!') }}</h1>
+        <p>{{ __('Tu contraseña de') }} <span class="highlight">Agro365</span> {{ __('ha sido actualizada correctamente.') }}</p>
 
         <hr class="divider">
 
-        <p class="hint">Vuelve a la aplicación e inicia sesión con tu nueva contraseña.</p>
+        <p class="hint">{{ __('Vuelve a la aplicación e inicia sesión con tu nueva contraseña.') }}</p>
     </div>
 </body>
 </html>

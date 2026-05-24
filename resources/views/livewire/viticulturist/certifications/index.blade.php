@@ -2,13 +2,13 @@
 
     {{-- Header --}}
     <x-agro.page-header
-        title="Certificaciones y Sellos"
-        description="Registro de certificaciones oficiales: ecológico, PI, GlobalG.A.P., DO/IGP (Reglamento UE 2018/848)"
+        :title="__('Certificaciones y Sellos')"
+        :description="__('Registro de certificaciones oficiales: ecológico, PI, GlobalG.A.P., DO/IGP (Reglamento UE 2018/848)')"
         icon="shield-check"
     >
         <x-slot:actions>
             <flux:button href="{{ roleRoute('viticulturist.certifications.create') }}" variant="primary" icon="plus">
-                Nueva Certificación
+                {{ __('Nueva Certificación') }}
             </flux:button>
         </x-slot:actions>
     </x-agro.page-header>
@@ -17,27 +17,27 @@
     <x-agro.stats-section key="certifications">
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <x-agro.stat-card
-                label="Certificaciones vigentes"
+                :label="__('Certificaciones vigentes')"
                 :value="$stats['active']"
                 icon="shield-check"
                 color="agro"
             />
             <x-agro.stat-card
-                label="Próximas a vencer"
+                :label="__('Próximas a vencer')"
                 :value="$stats['expiring_soon']"
-                description="En los próximos 60 días"
+                :description="__('En los próximos 60 días')"
                 icon="clock"
                 color="amber"
             />
             <x-agro.stat-card
-                label="Vencidas"
+                :label="__('Vencidas')"
                 :value="$stats['expired']"
-                description="Requieren renovación"
+                :description="__('Requieren renovación')"
                 icon="x-circle"
                 color="red"
             />
             <x-agro.stat-card
-                label="Archivadas"
+                :label="__('Archivadas')"
                 :value="$stats['archived']"
                 icon="archive-box"
                 color="zinc"
@@ -47,8 +47,8 @@
 
     {{-- Tabs --}}
     <x-agro.tabs :tabs="[
-        'active'   => ['label' => 'Vigentes',   'count' => $stats['active']],
-        'archived' => ['label' => 'Archivadas', 'count' => $stats['archived']],
+        'active'   => ['label' => __('Vigentes'),   'count' => $stats['active']],
+        'archived' => ['label' => __('Archivadas'), 'count' => $stats['archived']],
     ]" :active="$currentTab" wireMethod="switchTab" />
 
     {{-- Toolbar --}}
@@ -58,7 +58,7 @@
     <div class="flex items-center gap-3">
 
         {{-- Search --}}
-        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar por organismo, número o alcance..." />
+        <x-agro.search-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar por organismo, número o alcance...')" />
 
         {{-- Filtros --}}
         <x-agro.filter-button modal="certifications-filters" :count="$filterCount" />
@@ -68,7 +68,7 @@
 
         {{-- Nueva Certificación --}}
         <flux:button href="{{ roleRoute('viticulturist.certifications.create') }}" variant="primary" icon="plus">
-            Nueva
+            {{ __('Nueva') }}
         </flux:button>
 
     </div>
@@ -81,7 +81,7 @@
                 wire:click="$set('filterCertificationType', '')"
                 class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors"
             >
-                Limpiar todo
+                {{ __('Limpiar todo') }}
             </button>
         </div>
     @endif
@@ -97,13 +97,13 @@
         @if ($entries->isEmpty())
             <x-agro.empty-state
                 icon="shield-check"
-                title="{{ $currentTab === 'active' ? 'Sin certificaciones vigentes' : 'Sin certificaciones archivadas' }}"
-                description="{{ $currentTab === 'active' ? 'Registra tus certificaciones oficiales: agricultura ecológica, producción integrada, GlobalG.A.P., DO/IGP y más.' : 'Las certificaciones archivadas aparecerán aquí.' }}"
+                :title="$currentTab === 'active' ? __('Sin certificaciones vigentes') : __('Sin certificaciones archivadas')"
+                :description="$currentTab === 'active' ? __('Registra tus certificaciones oficiales: agricultura ecológica, producción integrada, GlobalG.A.P., DO/IGP y más.') : __('Las certificaciones archivadas aparecerán aquí.')"
             >
                 @if ($currentTab === 'active')
                     <x-slot:action>
                         <flux:button href="{{ roleRoute('viticulturist.certifications.create') }}" variant="primary" icon="plus">
-                            Nueva Certificación
+                            {{ __('Nueva Certificación') }}
                         </flux:button>
                     </x-slot:action>
                 @endif
@@ -155,13 +155,13 @@
                             <div class="bg-zinc-50 rounded-xl p-3 space-y-1">
                                 <div class="flex items-center gap-2 text-xs text-zinc-600">
                                     <flux:icon icon="calendar-days" class="size-3.5 text-zinc-400 shrink-0" />
-                                    <span class="text-zinc-400">Emisión:</span>
+                                    <span class="text-zinc-400">{{ __('Emisión') }}:</span>
                                     <span class="font-medium">{{ $entry->issue_date->format('d/m/Y') }}</span>
                                 </div>
                                 @if ($entry->expiry_date)
                                     <div class="flex items-center gap-2 text-xs">
                                         <flux:icon icon="calendar-days" class="size-3.5 text-zinc-400 shrink-0" />
-                                        <span class="text-zinc-400">Vencimiento:</span>
+                                        <span class="text-zinc-400">{{ __('Vencimiento') }}:</span>
                                         <span class="font-medium {{ $entry->is_expired ? 'text-red-600' : ($entry->is_expiring_soon ? 'text-amber-600' : 'text-zinc-600') }}">
                                             {{ $entry->expiry_date->format('d/m/Y') }}
                                         </span>
@@ -169,7 +169,7 @@
                                 @else
                                     <div class="flex items-center gap-2 text-xs text-zinc-400">
                                         <flux:icon icon="calendar-days" class="size-3.5 shrink-0" />
-                                        <span>Sin fecha de vencimiento</span>
+                                        <span>{{ __('Sin fecha de vencimiento') }}</span>
                                     </div>
                                 @endif
                             </div>
@@ -179,14 +179,14 @@
                                 <div class="flex items-center gap-1.5">
                                     <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-700">
                                         <flux:icon icon="x-circle" class="size-3" />
-                                        Vencida
+                                        {{ __('Vencida') }}
                                     </span>
                                 </div>
                             @elseif ($entry->is_expiring_soon && $daysLeft !== null && $daysLeft >= 0)
                                 <div class="flex items-center gap-1.5">
                                     <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">
                                         <flux:icon icon="clock" class="size-3" />
-                                        Vence en {{ $daysLeft }} días
+                                        {{ __('Vence en') }} {{ $daysLeft }} {{ __('días') }}
                                     </span>
                                 </div>
                             @endif
@@ -195,7 +195,7 @@
                             @if ($entry->audit_date)
                                 <div class="flex items-center gap-2 text-xs text-zinc-600">
                                     <flux:icon icon="clipboard-document-check" class="size-3.5 text-zinc-400 shrink-0" />
-                                    <span class="text-zinc-400">Auditoría:</span>
+                                    <span class="text-zinc-400">{{ __('Auditoría') }}:</span>
                                     <span class="font-medium">{{ $entry->audit_date->format('d/m/Y') }}</span>
                                 </div>
                             @endif
@@ -215,29 +215,29 @@
                                 <x-agro.action-button
                                     variant="edit"
                                     href="{{ roleRoute('viticulturist.certifications.edit', $entry) }}"
-                                    title="Editar"
+                                    :title="__('Editar')"
                                 />
                                 @if ($currentTab === 'active')
                                     <x-agro.action-button
                                         variant="archive"
                                         wire:click="archive({{ $entry->id }})"
-                                        wire:confirm="¿Archivar esta certificación?"
-                                        title="Archivar"
+                                        wire:confirm="{{ __('¿Archivar esta certificación?') }}"
+                                        :title="__('Archivar')"
                                     />
                                 @else
                                     <x-agro.action-button
                                         variant="restore"
                                         icon="arrow-path"
                                         wire:click="unarchive({{ $entry->id }})"
-                                        wire:confirm="¿Restaurar esta certificación?"
-                                        title="Restaurar"
+                                        wire:confirm="{{ __('¿Restaurar esta certificación?') }}"
+                                        :title="__('Restaurar')"
                                     />
                                 @endif
                                 <x-agro.action-button
                                     variant="delete"
                                     wire:click="delete({{ $entry->id }})"
-                                    wire:confirm="¿Eliminar esta certificación? Esta acción no se puede deshacer."
-                                    title="Eliminar"
+                                    wire:confirm="{{ __('¿Eliminar esta certificación? Esta acción no se puede deshacer.') }}"
+                                    :title="__('Eliminar')"
                                 />
                             </div>
                         </x-slot:footer>
@@ -257,7 +257,7 @@
                     <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
                         <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
                     </div>
-                    <h3 class="text-base font-semibold text-zinc-900">Filtros</h3>
+                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Filtros') }}</h3>
                 </div>
                 <flux:button x-on:click="$dispatch('close-modal', 'certifications-filters')" variant="ghost" size="sm" icon="x-mark" />
             </div>
@@ -265,9 +265,9 @@
 
         <div class="px-6 py-5 space-y-5">
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Tipo de Certificación</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Tipo de Certificación') }}</label>
                 <flux:select wire:model.live="filterCertificationType">
-                    <option value="">Todos los tipos</option>
+                    <option value="">{{ __('Todos los tipos') }}</option>
                     @foreach ($certificationTypes as $key => $label)
                         <option value="{{ $key }}">{{ $label }}</option>
                     @endforeach
@@ -281,13 +281,13 @@
                     wire:click="$set('filterCertificationType', '')"
                     class="text-sm text-zinc-400 hover:text-zinc-600 transition-colors"
                 >
-                    Limpiar filtros
+                    {{ __('Limpiar filtros') }}
                 </button>
             @else
                 <span></span>
             @endif
             <flux:button x-on:click="$dispatch('close-modal', 'certifications-filters')" variant="primary" size="sm">
-                Aplicar
+                {{ __('Aplicar') }}
             </flux:button>
         </div>
     </x-agro.modal>

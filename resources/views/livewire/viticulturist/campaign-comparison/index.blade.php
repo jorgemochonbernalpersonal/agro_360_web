@@ -2,8 +2,8 @@
 
     {{-- Header --}}
     <x-agro.page-header
-        title="Comparativa entre Campañas"
-        description="Compara rendimientos, calidad, actividades y costes entre campañas para tomar mejores decisiones."
+        :title="__('Comparativa entre Campañas')"
+        :description="__('Compara rendimientos, calidad, actividades y costes entre campañas para tomar mejores decisiones.')"
         icon="chart-bar-square"
     />
 
@@ -11,27 +11,27 @@
     <div class="bg-white rounded-2xl border border-zinc-200 shadow-sm p-5">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <flux:field>
-                <flux:label>Campaña A</flux:label>
+                <flux:label>{{ __('Campaña A') }}</flux:label>
                 <flux:select wire:model.live="campaignA">
-                    <option value="">Seleccionar...</option>
+                    <option value="">{{ __('Seleccionar...') }}</option>
                     @foreach ($campaigns as $c)
                         <option value="{{ $c->id }}">{{ $c->name }} ({{ $c->year }})</option>
                     @endforeach
                 </flux:select>
             </flux:field>
             <flux:field>
-                <flux:label>Campaña B</flux:label>
+                <flux:label>{{ __('Campaña B') }}</flux:label>
                 <flux:select wire:model.live="campaignB">
-                    <option value="">Seleccionar...</option>
+                    <option value="">{{ __('Seleccionar...') }}</option>
                     @foreach ($campaigns as $c)
                         <option value="{{ $c->id }}">{{ $c->name }} ({{ $c->year }})</option>
                     @endforeach
                 </flux:select>
             </flux:field>
             <flux:field>
-                <flux:label>Filtrar por parcela</flux:label>
+                <flux:label>{{ __('Filtrar por parcela') }}</flux:label>
                 <flux:select wire:model.live="filterPlot">
-                    <option value="">Todas las parcelas</option>
+                    <option value="">{{ __('Todas las parcelas') }}</option>
                     @foreach ($plots as $plot)
                         <option value="{{ $plot->id }}">{{ $plot->name }}</option>
                     @endforeach
@@ -43,8 +43,8 @@
     @if (!$campaignA && !$campaignB)
         <x-agro.empty-state
             icon="chart-bar-square"
-            title="Selecciona al menos una campaña"
-            description="Elige dos campañas para comparar sus resultados lado a lado."
+            :title="__('Selecciona al menos una campaña')"
+            :description="__('Elige dos campañas para comparar sus resultados lado a lado.')"
         />
     @else
         {{-- Comparativa principal --}}
@@ -78,20 +78,20 @@
         @if ($dataA && $dataB)
             <div class="bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden">
                 <div class="px-5 py-4 border-b border-zinc-100">
-                    <h3 class="font-semibold text-zinc-900">Desglose por Parcela</h3>
+                    <h3 class="font-semibold text-zinc-900">{{ __('Desglose por Parcela') }}</h3>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm">
                         <thead>
                             <tr class="bg-zinc-50 text-zinc-500 text-xs uppercase tracking-wide">
-                                <th class="text-left px-5 py-3 font-semibold">Parcela</th>
-                                <th class="text-right px-3 py-3 font-semibold text-blue-600">Kg (A)</th>
-                                <th class="text-right px-3 py-3 font-semibold text-emerald-600">Kg (B)</th>
-                                <th class="text-right px-3 py-3 font-semibold">Diferencia</th>
-                                <th class="text-right px-3 py-3 font-semibold text-blue-600">Rend. (A)</th>
-                                <th class="text-right px-3 py-3 font-semibold text-emerald-600">Rend. (B)</th>
-                                <th class="text-right px-3 py-3 font-semibold text-blue-600">Baumé (A)</th>
-                                <th class="text-right px-5 py-3 font-semibold text-emerald-600">Baumé (B)</th>
+                                <th class="text-left px-5 py-3 font-semibold">{{ __('Parcela') }}</th>
+                                <th class="text-right px-3 py-3 font-semibold text-blue-600">{{ __('Kg (A)') }}</th>
+                                <th class="text-right px-3 py-3 font-semibold text-emerald-600">{{ __('Kg (B)') }}</th>
+                                <th class="text-right px-3 py-3 font-semibold">{{ __('Diferencia') }}</th>
+                                <th class="text-right px-3 py-3 font-semibold text-blue-600">{{ __('Rend. (A)') }}</th>
+                                <th class="text-right px-3 py-3 font-semibold text-emerald-600">{{ __('Rend. (B)') }}</th>
+                                <th class="text-right px-3 py-3 font-semibold text-blue-600">{{ __('Baumé (A)') }}</th>
+                                <th class="text-right px-5 py-3 font-semibold text-emerald-600">{{ __('Baumé (B)') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-zinc-100">
@@ -121,7 +121,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="8" class="px-5 py-8 text-center text-zinc-400">Sin datos de parcelas para comparar</td>
+                                    <td colspan="8" class="px-5 py-8 text-center text-zinc-400">{{ __('Sin datos de parcelas para comparar') }}</td>
                                 </tr>
                             @endforelse
                         </tbody>

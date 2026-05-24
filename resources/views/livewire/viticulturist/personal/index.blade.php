@@ -2,14 +2,14 @@
 
     {{-- Header --}}
     <x-agro.page-header
-        title="Gestión de Cuadrillas"
-        description="Administra tus equipos de trabajo y personal"
+        :title="__('Gestión de Cuadrillas')"
+        :description="__('Administra tus equipos de trabajo y personal')"
         icon="user-group"
     >
         <x-slot:actions>
             @can('create', \App\Models\Crew::class)
                 <flux:button href="{{ roleRoute('viticulturist.personal.create') }}" variant="primary" icon="plus">
-                    Nueva Cuadrilla
+                    {{ __('Nueva Cuadrilla') }}
                 </flux:button>
             @endcan
         </x-slot:actions>
@@ -18,19 +18,19 @@
     {{-- KPIs --}}
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <x-agro.stat-card
-            label="Total cuadrillas"
+            :label="__('Total cuadrillas')"
             :value="$stats['total']"
             icon="user-group"
             color="zinc"
         />
         <x-agro.stat-card
-            label="Total miembros"
+            :label="__('Total miembros')"
             :value="$stats['members']"
             icon="users"
             color="agro"
         />
         <x-agro.stat-card
-            label="Con actividades"
+            :label="__('Con actividades')"
             :value="$stats['with_activities']"
             icon="clipboard-document-list"
             color="agro"
@@ -39,17 +39,17 @@
 
     {{-- Toolbar --}}
     <div class="flex items-center gap-3 flex-wrap">
-        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar por nombre o descripción..." />
+        <x-agro.search-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar por nombre o descripción...')" />
         @if($wineries->count() > 1)
             <flux:select wire:model.live="wineryFilter" class="w-44">
-                <flux:select.option value="">Todas las bodegas</flux:select.option>
+                <flux:select.option value="">{{ __('Todas las bodegas') }}</flux:select.option>
                 @foreach($wineries as $winery)
                     <flux:select.option value="{{ $winery->id }}">{{ $winery->name }}</flux:select.option>
                 @endforeach
             </flux:select>
         @endif
         @if($search || $wineryFilter)
-            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">Limpiar</flux:button>
+            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">{{ __('Limpiar') }}</flux:button>
         @endif
     </div>
 
@@ -57,16 +57,16 @@
     @if($crews->count() === 0)
         <x-agro.empty-state
             icon="user-group"
-            title="{{ $search || $wineryFilter ? 'Ninguna cuadrilla coincide con los filtros' : 'Sin cuadrillas registradas' }}"
-            description="{{ $search || $wineryFilter ? 'Prueba a cambiar o limpiar los filtros.' : 'Crea tu primera cuadrilla para comenzar a gestionar tu equipo de trabajo.' }}"
+            :title="$search || $wineryFilter ? __('Ninguna cuadrilla coincide con los filtros') : __('Sin cuadrillas registradas')"
+            :description="$search || $wineryFilter ? __('Prueba a cambiar o limpiar los filtros.') : __('Crea tu primera cuadrilla para comenzar a gestionar tu equipo de trabajo.')"
         >
             <x-slot:action>
                 @if($search || $wineryFilter)
-                    <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
+                    <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">{{ __('Limpiar filtros') }}</flux:button>
                 @else
                     @can('create', \App\Models\Crew::class)
                         <flux:button href="{{ roleRoute('viticulturist.personal.create') }}" variant="primary" icon="plus">
-                            Crear Primera Cuadrilla
+                            {{ __('Crear Primera Cuadrilla') }}
                         </flux:button>
                     @endcan
                 @endif
@@ -100,18 +100,18 @@
 
                         <div class="grid grid-cols-2 gap-2">
                             <div class="bg-zinc-50 rounded-xl p-3">
-                                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">Miembros</p>
+                                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">{{ __('Miembros') }}</p>
                                 <p class="text-xl font-bold text-zinc-700 leading-none">{{ $crew->members_count }}</p>
                             </div>
                             <div class="bg-zinc-50 rounded-xl p-3">
-                                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">Actividades</p>
+                                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">{{ __('Actividades') }}</p>
                                 <p class="text-xl font-bold text-zinc-700 leading-none">{{ $crew->activities_count }}</p>
                             </div>
                         </div>
 
                         <div class="flex items-center gap-2 text-xs text-zinc-400">
                             <flux:icon icon="calendar-days" class="size-3.5 shrink-0" />
-                            <span>Creada el {{ $crew->created_at->format('d/m/Y') }}</span>
+                            <span>{{ __('Creada el') }} {{ $crew->created_at->format('d/m/Y') }}</span>
                         </div>
                     </div>
 
@@ -120,21 +120,21 @@
                             <x-agro.action-button
                                 variant="view"
                                 href="{{ roleRoute('viticulturist.personal.show', $crew) }}#miembros"
-                                title="Ver cuadrilla"
+                                :title="__('Ver cuadrilla')"
                             />
                             @can('update', $crew)
                                 <x-agro.action-button
                                     variant="edit"
                                     href="{{ roleRoute('viticulturist.personal.edit', $crew) }}"
-                                    title="Editar"
+                                    :title="__('Editar')"
                                 />
                             @endcan
                             @can('delete', $crew)
                                 <x-agro.action-button
                                     variant="delete"
                                     wire:click="delete({{ $crew->id }})"
-                                    wire:confirm="¿Estás seguro de eliminar esta cuadrilla?"
-                                    title="Eliminar"
+                                    wire:confirm="{{ __('¿Estás seguro de eliminar esta cuadrilla?') }}"
+                                    :title="__('Eliminar')"
                                 />
                             @endcan
                         </div>

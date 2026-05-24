@@ -2,36 +2,36 @@
 
     {{-- Header --}}
     <x-agro.page-header
-        title="Análisis de Suelo"
-        description="Registro de análisis edafológicos: pH, materia orgánica, nutrientes y textura de tus parcelas"
+        :title="__('Análisis de Suelo')"
+        :description="__('Registro de análisis edafológicos: pH, materia orgánica, nutrientes y textura de tus parcelas')"
         icon="beaker"
     />
 
     {{-- Stats (colapsables) --}}
     <x-agro.stats-section key="soil-analyses" columns="4">
         <x-agro.stat-card
-            label="Total análisis"
+            :label="__('Total análisis')"
             :value="$stats['total']"
             icon="beaker"
             color="agro"
         />
         <x-agro.stat-card
-            label="Parcelas analizadas"
+            :label="__('Parcelas analizadas')"
             :value="$stats['plots_analyzed']"
             icon="map"
             color="blue"
         />
         <x-agro.stat-card
-            label="pH medio"
+            :label="__('pH medio')"
             :value="$stats['avg_ph'] ?: '—'"
             :description="$stats['avg_ph_label']"
             icon="scale"
             :color="$stats['avg_ph_color']"
         />
         <x-agro.stat-card
-            label="MO media"
+            :label="__('MO media')"
             :value="$stats['avg_organic_matter'] ? $stats['avg_organic_matter'] . '%' : '—'"
-            description="Materia orgánica"
+            :description="__('Materia orgánica')"
             icon="sparkles"
             color="amber"
         />
@@ -44,7 +44,7 @@
     <div class="flex items-center gap-3">
 
         {{-- Search --}}
-        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar por laboratorio o notas..." />
+        <x-agro.search-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar por laboratorio o notas...')" />
 
         {{-- Filtros --}}
         <x-agro.filter-button modal="soil-analyses-filters" :count="$filterCount" />
@@ -54,7 +54,7 @@
 
         {{-- Nuevo Análisis --}}
         <flux:button href="{{ roleRoute('viticulturist.soil-analyses.create') }}" variant="primary" icon="plus">
-            Nuevo
+            {{ __('Nuevo') }}
         </flux:button>
 
     </div>
@@ -75,7 +75,7 @@
                 wire:click="clearFilters"
                 class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors"
             >
-                Limpiar todo
+                {{ __('Limpiar todo') }}
             </button>
         </div>
     @endif
@@ -91,12 +91,12 @@
         @if ($entries->isEmpty())
             <x-agro.empty-state
                 icon="beaker"
-                title="Sin análisis de suelo"
-                description="Registra los resultados de tus análisis edafológicos para llevar un control de la fertilidad de tus parcelas."
+                :title="__('Sin análisis de suelo')"
+                :description="__('Registra los resultados de tus análisis edafológicos para llevar un control de la fertilidad de tus parcelas.')"
             >
                 <x-slot:action>
                     <flux:button href="{{ roleRoute('viticulturist.soil-analyses.create') }}" variant="primary" icon="plus">
-                        Nuevo Análisis
+                        {{ __('Nuevo Análisis') }}
                     </flux:button>
                 </x-slot:action>
             </x-agro.empty-state>
@@ -160,7 +160,7 @@
                                     @endif
                                 </div>
                                 <div class="flex items-center justify-between text-xs">
-                                    <span class="text-zinc-400">Materia orgánica</span>
+                                    <span class="text-zinc-400">{{ __('Materia orgánica') }}</span>
                                     <span class="font-medium text-zinc-600">{{ $entry->organic_matter !== null ? $entry->organic_matter . '%' : '—' }}</span>
                                 </div>
                             </div>
@@ -182,7 +182,7 @@
                             @if ($entry->texture_class)
                                 <div class="flex items-center gap-2 text-xs text-zinc-600">
                                     <flux:icon icon="squares-2x2" class="size-3.5 text-zinc-400 shrink-0" />
-                                    <span class="text-zinc-400">Textura:</span>
+                                    <span class="text-zinc-400">{{ __('Textura') }}:</span>
                                     <span class="font-medium">{{ $entry->texture_label }}</span>
                                 </div>
                             @endif
@@ -208,13 +208,13 @@
                                 <x-agro.action-button
                                     variant="edit"
                                     href="{{ roleRoute('viticulturist.soil-analyses.edit', $entry) }}"
-                                    title="Editar"
+                                    :title="__('Editar')"
                                 />
                                 <x-agro.action-button
                                     variant="delete"
                                     wire:click="delete({{ $entry->id }})"
-                                    wire:confirm="¿Eliminar este análisis de suelo? Esta acción no se puede deshacer."
-                                    title="Eliminar"
+                                    wire:confirm="{{ __('¿Eliminar este análisis de suelo? Esta acción no se puede deshacer.') }}"
+                                    :title="__('Eliminar')"
                                 />
                             </div>
                         </x-slot:footer>
@@ -236,7 +236,7 @@
                     <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
                         <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
                     </div>
-                    <h3 class="text-base font-semibold text-zinc-900">Filtros</h3>
+                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Filtros') }}</h3>
                 </div>
                 <flux:button x-on:click="$dispatch('close-modal', 'soil-analyses-filters')" variant="ghost" size="sm" icon="x-mark" />
             </div>
@@ -244,9 +244,9 @@
 
         <div class="px-6 py-5 space-y-5">
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Parcela</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Parcela') }}</label>
                 <flux:select wire:model.live="filterPlot">
-                    <option value="">Todas las parcelas</option>
+                    <option value="">{{ __('Todas las parcelas') }}</option>
                     @foreach ($plots as $plot)
                         <option value="{{ $plot->id }}">{{ $plot->name }}</option>
                     @endforeach
@@ -254,9 +254,9 @@
             </div>
 
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Campaña</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Campaña') }}</label>
                 <flux:select wire:model.live="filterCampaign">
-                    <option value="">Todas las campañas</option>
+                    <option value="">{{ __('Todas las campañas') }}</option>
                     @foreach ($campaigns as $campaign)
                         <option value="{{ $campaign->id }}">{{ $campaign->name }}</option>
                     @endforeach
@@ -264,9 +264,9 @@
             </div>
 
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Textura</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Textura') }}</label>
                 <flux:select wire:model.live="filterTexture">
-                    <option value="">Todas las texturas</option>
+                    <option value="">{{ __('Todas las texturas') }}</option>
                     @foreach ($textureClasses as $key => $label)
                         <option value="{{ $key }}">{{ $label }}</option>
                     @endforeach
@@ -280,13 +280,13 @@
                     wire:click="clearFilters"
                     class="text-sm text-zinc-400 hover:text-zinc-600 transition-colors"
                 >
-                    Limpiar filtros
+                    {{ __('Limpiar filtros') }}
                 </button>
             @else
                 <span></span>
             @endif
             <flux:button x-on:click="$dispatch('close-modal', 'soil-analyses-filters')" variant="primary" size="sm">
-                Aplicar
+                {{ __('Aplicar') }}
             </flux:button>
         </div>
     </x-agro.modal>

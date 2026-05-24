@@ -1,15 +1,15 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="Productos Fitosanitarios"
-        description="Gestiona el catálogo de productos fitosanitarios para tus tratamientos"
+        :title="__('Productos Fitosanitarios')"
+        :description="__('Gestiona el catálogo de productos fitosanitarios para tus tratamientos')"
     />
 
     {{-- Tabs --}}
     <x-agro.tabs
         :tabs="[
-            'active'   => ['label' => 'Activos',   'count' => $stats['active']],
-            'inactive' => ['label' => 'Inactivos', 'count' => $stats['inactive']],
+            'active'   => ['label' => __('Activos'),   'count' => $stats['active']],
+            'inactive' => ['label' => __('Inactivos'), 'count' => $stats['inactive']],
         ]"
         :active="$currentTab"
         wireMethod="switchTab"
@@ -22,14 +22,14 @@
 
     <div class="flex items-center gap-3">
 
-        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar por nombre, materia activa, registro o fabricante..." data-cy="product-search-input" />
+        <x-agro.search-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar por nombre, materia activa, registro o fabricante...')" data-cy="product-search-input" />
 
         <x-agro.filter-button modal="product-filters" :count="$filterCount" />
 
         <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
         <flux:button href="{{ roleRoute('viticulturist.phytosanitary-products.create') }}" variant="primary" icon="plus" data-cy="create-product-button">
-            Nuevo Producto
+            {{ __('Nuevo Producto') }}
         </flux:button>
 
     </div>
@@ -44,7 +44,7 @@
                 <x-agro.filter-chip :label="ucfirst($typeFilter)" wireRemove="$set('typeFilter', '')" />
             @endif
             <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">
-                Limpiar todo
+                {{ __('Limpiar todo') }}
             </button>
         </div>
     @endif
@@ -81,24 +81,24 @@
                     <div class="bg-zinc-50 rounded-xl p-2.5 mb-3 space-y-1.5">
                         @if($product->active_ingredient)
                             <div class="flex items-start gap-2">
-                                <span class="text-xs text-zinc-400 shrink-0 w-20">Materia act.</span>
+                                <span class="text-xs text-zinc-400 shrink-0 w-20">{{ __('Materia act.') }}</span>
                                 <span class="text-xs font-medium text-zinc-700 truncate">{{ $product->active_ingredient }}</span>
                             </div>
                         @endif
                         @if($product->registration_number)
                             <div class="flex items-start gap-2">
-                                <span class="text-xs text-zinc-400 shrink-0 w-20">Nº Registro</span>
+                                <span class="text-xs text-zinc-400 shrink-0 w-20">{{ __('Nº Registro') }}</span>
                                 <span class="text-xs font-medium text-zinc-700">{{ $product->registration_number }}</span>
                             </div>
                         @endif
                         <div class="flex items-start gap-2">
-                            <span class="text-xs text-zinc-400 shrink-0 w-20">Plazo seg.</span>
+                            <span class="text-xs text-zinc-400 shrink-0 w-20">{{ __('Plazo seg.') }}</span>
                             @if($product->withdrawal_period_days !== null)
                                 <span class="text-xs font-medium {{ $product->withdrawal_period_days > 0 ? 'text-amber-700' : 'text-zinc-500' }}">
-                                    {{ $product->withdrawal_period_days > 0 ? $product->withdrawal_period_days . ' días' : 'Sin plazo' }}
+                                    {{ $product->withdrawal_period_days > 0 ? $product->withdrawal_period_days . ' ' . __('días') : __('Sin plazo') }}
                                 </span>
                             @else
-                                <span class="text-xs text-zinc-400 italic">No definido</span>
+                                <span class="text-xs text-zinc-400 italic">{{ __('No definido') }}</span>
                             @endif
                         </div>
                     </div>
@@ -108,7 +108,7 @@
                             <x-agro.action-button
                                 variant="edit"
                                 href="{{ roleRoute('viticulturist.phytosanitary-products.edit', $product) }}"
-                                title="Editar"
+                                :title="__('Editar')"
                                 data-cy="edit-product-button"
                             />
                             <x-agro.action-button
@@ -116,7 +116,7 @@
                                 wire:click="toggleActive({{ $product->id }})"
                                 wire:loading.attr="disabled"
                                 wire:target="toggleActive({{ $product->id }})"
-                                title="{{ $product->active ? 'Desactivar producto' : 'Activar producto' }}"
+                                :title="$product->active ? __('Desactivar producto') : __('Activar producto')"
                             />
                         </div>
                     </x-slot:footer>
@@ -129,12 +129,12 @@
     @else
         <x-agro.empty-state
             icon="shield-exclamation"
-            message="No hay productos registrados"
-            :description="($search || $typeFilter) ? 'Ningún producto coincide con los filtros aplicados.' : 'Comienza creando tu primer producto fitosanitario.'"
+            :message="__('No hay productos registrados')"
+            :description="($search || $typeFilter) ? __('Ningún producto coincide con los filtros aplicados.') : __('Comienza creando tu primer producto fitosanitario.')"
         >
             @if($search || $typeFilter)
                 <x-slot:action>
-                    <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
+                    <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">{{ __('Limpiar filtros') }}</flux:button>
                 </x-slot:action>
             @endif
         </x-agro.empty-state>
@@ -148,7 +148,7 @@
                     <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
                         <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
                     </div>
-                    <h3 class="text-base font-semibold text-zinc-900">Filtros</h3>
+                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Filtros') }}</h3>
                 </div>
                 <flux:button x-on:click="$dispatch('close-modal', 'product-filters')" variant="ghost" size="sm" icon="x-mark" />
             </div>
@@ -156,7 +156,7 @@
 
         <div class="px-6 py-5 space-y-4">
             <div>
-                <x-agro.filter-select label="Tipo de producto" wire:model.live="typeFilter" placeholder="Todos los tipos" data-cy="product-type-filter">
+                <x-agro.filter-select :label="__('Tipo de producto')" wire:model.live="typeFilter" :placeholder="__('Todos los tipos')" data-cy="product-type-filter">
                     @foreach($types as $type)
                         <flux:select.option value="{{ $type }}">{{ ucfirst($type) }}</flux:select.option>
                     @endforeach
@@ -167,10 +167,10 @@
         <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between rounded-b-2xl">
             <button wire:click="clearFilters" x-on:click="$dispatch('close-modal', 'product-filters')"
                     class="text-sm text-zinc-500 hover:text-zinc-700 transition-colors">
-                Limpiar filtros
+                {{ __('Limpiar filtros') }}
             </button>
             <flux:button x-on:click="$dispatch('close-modal', 'product-filters')" variant="primary" size="sm">
-                Aplicar
+                {{ __('Aplicar') }}
             </flux:button>
         </div>
     </x-agro.modal>

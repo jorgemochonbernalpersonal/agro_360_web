@@ -8,33 +8,33 @@
     {{-- Header --}}
     <div class="flex items-center justify-between mb-6">
         <div class="flex-1">
-            <h3 class="text-xl font-bold text-zinc-900">🗺️ Mapa de Vigor Intra-Parcela</h3>
+            <h3 class="text-xl font-bold text-zinc-900">🗺️ {{ __('Mapa de Vigor Intra-Parcela') }}</h3>
             <p class="text-sm text-zinc-500 mt-1">
-                Variabilidad espacial dentro de la parcela
+                {{ __('Variabilidad espacial dentro de la parcela') }}
             </p>
         </div>
-        
+
         <div class="flex items-center gap-2">
             @if($areaStats && count($availableDates) > 0)
-                <flux:select wire:model.live="selectedDate" 
+                <flux:select wire:model.live="selectedDate"
                         >
-                    <option value="">Último dato</option>
+                    <option value="">{{ __('Último dato') }}</option>
                     @foreach($availableDates as $date)
                         <option value="{{ $date }}">{{ \Carbon\Carbon::parse($date)->format('d/m/Y') }}</option>
                     @endforeach
                 </flux:select>
             @endif
-            
+
             @if($areaStats)
-                <button 
-                    wire:click="loadData" 
+                <button
+                    wire:click="loadData"
                     wire:loading.attr="disabled"
                     class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50"
                 >
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                 </svg>
-                Actualizar
+                {{ __('Actualizar') }}
             </button>
         @endif
     </div>
@@ -48,8 +48,8 @@
                 </svg>
             </div>
             <p class="text-zinc-600 mb-4">{{ $error }}</p>
-            <button 
-                wire:click="requestAreaData" 
+            <button
+                wire:click="requestAreaData"
                 wire:loading.attr="disabled"
                 class="inline-flex items-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50"
             >
@@ -60,9 +60,9 @@
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                Solicitar Mapa de Vigor
+                {{ __('Solicitar Mapa de Vigor') }}
             </button>
-            <p class="text-xs text-zinc-500 mt-2">⏱️ El procesamiento puede tardar 5-10 minutos</p>
+            <p class="text-xs text-zinc-500 mt-2">⏱️ {{ __('El procesamiento puede tardar 5-10 minutos') }}</p>
         </div>
     @endif
 
@@ -71,54 +71,54 @@
         {{-- Stats Grid --}}
         <div class="grid grid-cols-2 gap-4 mb-6">
             <div class="bg-zinc-50 rounded-lg p-3">
-                <span class="text-xs text-zinc-500">Promedio</span>
+                <span class="text-xs text-zinc-500">{{ __('Promedio') }}</span>
                 <div class="text-xl font-bold text-zinc-900">{{ number_format($areaStats['mean'], 3) }}</div>
             </div>
             <div class="bg-red-50 rounded-lg p-3">
-                <span class="text-xs text-zinc-500">Mínimo</span>
+                <span class="text-xs text-zinc-500">{{ __('Mínimo') }}</span>
                 <div class="text-xl font-bold text-red-900">{{ number_format($areaStats['min'], 3) }}</div>
             </div>
             <div class="bg-green-50 rounded-lg p-3">
-                <span class="text-xs text-zinc-500">Máximo</span>
+                <span class="text-xs text-zinc-500">{{ __('Máximo') }}</span>
                 <div class="text-xl font-bold text-green-900">{{ number_format($areaStats['max'], 3) }}</div>
             </div>
             <div class="bg-blue-50 rounded-lg p-3">
-                <span class="text-xs text-zinc-500">Desv. Est.</span>
+                <span class="text-xs text-zinc-500">{{ __('Desv. Est.') }}</span>
                 <div class="text-xl font-bold text-blue-900">{{ number_format($areaStats['stddev'], 3) }}</div>
             </div>
         </div>
 
         {{-- Variability Analysis --}}
         <div class="mb-6">
-            <h4 class="text-lg font-semibold text-zinc-800 mb-3">Análisis de Variabilidad</h4>
+            <h4 class="text-lg font-semibold text-zinc-800 mb-3">{{ __('Análisis de Variabilidad') }}</h4>
             <div class="bg-zinc-50 rounded-lg p-4">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-sm text-zinc-700">Coeficiente de Variación</span>
+                    <span class="text-sm text-zinc-700">{{ __('Coeficiente de Variación') }}</span>
                     <span class="text-lg font-bold text-zinc-900">{{ number_format($areaStats['coefficient_variation'], 1) }}%</span>
                 </div>
                 <div class="text-xs text-zinc-600 mb-3">
                     @if($areaStats['coefficient_variation'] < 10)
-                        ✅ <strong>Baja variabilidad</strong> - Parcela homogénea
+                        ✅ <strong>{{ __('Baja variabilidad') }}</strong> - {{ __('Parcela homogénea') }}
                     @elseif($areaStats['coefficient_variation'] < 20)
-                        ⚠️ <strong>Variabilidad moderada</strong> - Revisar zonas bajas
+                        ⚠️ <strong>{{ __('Variabilidad moderada') }}</strong> - {{ __('Revisar zonas bajas') }}
                     @else
-                        🚨 <strong>Alta variabilidad</strong> - Problemas localizados detectados
+                        🚨 <strong>{{ __('Alta variabilidad') }}</strong> - {{ __('Problemas localizados detectados') }}
                     @endif
                 </div>
-                
+
                 {{-- Percentiles --}}
                 <div class="text-xs text-zinc-600 space-y-1">
                     <div>P25: {{ number_format($areaStats['percentile_25'], 3) }}</div>
-                    <div>P50: {{ number_format($areaStats['percentile_50'], 3) }} (Mediana)</div>
+                    <div>P50: {{ number_format($areaStats['percentile_50'], 3) }} ({{ __('Mediana') }})</div>
                     <div>P75: {{ number_format($areaStats['percentile_75'], 3) }}</div>
                 </div>
             </div>
         </div>
 
-        {{-- Vigor Zones — improvement #5: show real pixel percentages from Sentinel-2 --}}
+        {{-- Vigor Zones --}}
         @if($vigorZones)
             <div>
-                <h4 class="text-lg font-semibold text-zinc-800 mb-3">Zonas de Vigor</h4>
+                <h4 class="text-lg font-semibold text-zinc-800 mb-3">{{ __('Zonas de Vigor') }}</h4>
                 <div class="space-y-3">
                     @foreach($vigorZones as $key => $zone)
                         <div class="border border-{{ $zone['color'] }}-300 bg-{{ $zone['color'] }}-50 rounded-lg p-3">
@@ -139,9 +139,9 @@
                                 <div class="text-right ml-3">
                                     @if(isset($zone['pct']) && $zone['pct'] !== null)
                                         <div class="text-xl font-bold text-{{ $zone['color'] }}-900">{{ number_format($zone['pct'], 1) }}%</div>
-                                        <div class="text-xs text-{{ $zone['color'] }}-600">del recinto</div>
+                                        <div class="text-xs text-{{ $zone['color'] }}-600">{{ __('del recinto') }}</div>
                                     @else
-                                        <div class="text-xs text-{{ $zone['color'] }}-600">Rango NDVI</div>
+                                        <div class="text-xs text-{{ $zone['color'] }}-600">{{ __('Rango NDVI') }}</div>
                                         <div class="text-sm font-mono text-{{ $zone['color'] }}-900">
                                             {{ number_format($zone['range']['min'], 2) }} – {{ number_format($zone['range']['max'], 2) }}
                                         </div>
@@ -157,7 +157,7 @@
         {{-- Pixel Info --}}
         @if(isset($areaStats['pixel_count']))
             <div class="mt-4 text-xs text-zinc-500 text-center">
-                📊 Análisis basado en {{ number_format($areaStats['pixel_count']) }} píxeles
+                📊 {{ __('Análisis basado en') }} {{ number_format($areaStats['pixel_count']) }} {{ __('píxeles') }}
             </div>
         @endif
     @endif

@@ -2,13 +2,13 @@
 
     {{-- Header --}}
     <x-agro.page-header
-        title="Alertas Fitosanitarias"
-        description="Gestiona las alertas fitosanitarias oficiales: plagas, enfermedades, clima y normativa"
+        :title="__('Alertas Fitosanitarias')"
+        :description="__('Gestiona las alertas fitosanitarias oficiales: plagas, enfermedades, clima y normativa')"
         icon="bell-alert"
     >
         <x-slot:actions>
             <flux:button href="{{ roleRoute('viticulturist.phytosanitary-alerts.create') }}" variant="primary" icon="plus">
-                Nueva Alerta
+                {{ __('Nueva Alerta') }}
             </flux:button>
         </x-slot:actions>
     </x-agro.page-header>
@@ -16,28 +16,28 @@
     {{-- Stats (colapsables) --}}
     <x-agro.stats-section key="phyto-alerts" columns="4">
         <x-agro.stat-card
-            label="Alertas activas"
+            :label="__('Alertas activas')"
             :value="$stats['active']"
             icon="bell-alert"
             color="agro"
         />
         <x-agro.stat-card
-            label="Archivadas"
+            :label="__('Archivadas')"
             :value="$stats['archived']"
             icon="archive-box"
             color="zinc"
         />
         <x-agro.stat-card
-            label="Críticas"
+            :label="__('Críticas')"
             :value="$stats['critical']"
-            description="Activas con severidad crítica"
+            :description="__('Activas con severidad crítica')"
             icon="exclamation-triangle"
             color="red"
         />
         <x-agro.stat-card
-            label="Expiradas"
+            :label="__('Expiradas')"
             :value="$stats['expired']"
-            description="Activas con fecha vencida"
+            :description="__('Activas con fecha vencida')"
             icon="x-circle"
             color="amber"
         />
@@ -45,8 +45,8 @@
 
     {{-- Tabs --}}
     <x-agro.tabs :tabs="[
-        'active'   => ['label' => 'Activas',    'count' => $stats['active']],
-        'archived' => ['label' => 'Archivadas', 'count' => $stats['archived']],
+        'active'   => ['label' => __('Activas'),    'count' => $stats['active']],
+        'archived' => ['label' => __('Archivadas'), 'count' => $stats['archived']],
     ]" :active="$currentTab" wireMethod="switchTab" />
 
     {{-- Toolbar --}}
@@ -56,7 +56,7 @@
     <div class="flex items-center gap-3">
 
         {{-- Search --}}
-        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar por título, descripción o zona afectada..." />
+        <x-agro.search-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar por título, descripción o zona afectada...')" />
 
         {{-- Filtros --}}
         <x-agro.filter-button modal="phyto-alerts-filters" :count="$filterCount" />
@@ -66,7 +66,7 @@
 
         {{-- Nueva Alerta --}}
         <flux:button href="{{ roleRoute('viticulturist.phytosanitary-alerts.create') }}" variant="primary" icon="plus">
-            Nueva
+            {{ __('Nueva') }}
         </flux:button>
 
     </div>
@@ -84,7 +84,7 @@
                 wire:click="clearFilters"
                 class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors"
             >
-                Limpiar todo
+                {{ __('Limpiar todo') }}
             </button>
         </div>
     @endif
@@ -100,13 +100,13 @@
         @if ($entries->isEmpty())
             <x-agro.empty-state
                 icon="bell-alert"
-                title="{{ $currentTab === 'active' ? 'Sin alertas activas' : 'Sin alertas archivadas' }}"
-                description="{{ $currentTab === 'active' ? 'Registra alertas fitosanitarias oficiales: plagas, enfermedades, avisos climáticos y normativos.' : 'Las alertas archivadas aparecerán aquí.' }}"
+                :title="$currentTab === 'active' ? __('Sin alertas activas') : __('Sin alertas archivadas')"
+                :description="$currentTab === 'active' ? __('Registra alertas fitosanitarias oficiales: plagas, enfermedades, avisos climáticos y normativos.') : __('Las alertas archivadas aparecerán aquí.')"
             >
                 @if ($currentTab === 'active')
                     <x-slot:action>
                         <flux:button href="{{ roleRoute('viticulturist.phytosanitary-alerts.create') }}" variant="primary" icon="plus">
-                            Nueva Alerta
+                            {{ __('Nueva Alerta') }}
                         </flux:button>
                     </x-slot:action>
                 @endif
@@ -153,13 +153,13 @@
                             <div class="bg-zinc-50 rounded-xl p-3 space-y-1">
                                 <div class="flex items-center gap-2 text-xs text-zinc-600">
                                     <flux:icon icon="calendar-days" class="size-3.5 text-zinc-400 shrink-0" />
-                                    <span class="text-zinc-400">Fecha:</span>
+                                    <span class="text-zinc-400">{{ __('Fecha:') }}</span>
                                     <span class="font-medium">{{ $entry->alert_date->format('d/m/Y') }}</span>
                                 </div>
                                 @if ($entry->expiry_date)
                                     <div class="flex items-center gap-2 text-xs">
                                         <flux:icon icon="calendar-days" class="size-3.5 text-zinc-400 shrink-0" />
-                                        <span class="text-zinc-400">Expira:</span>
+                                        <span class="text-zinc-400">{{ __('Expira:') }}</span>
                                         <span class="font-medium {{ $entry->is_expired ? 'text-red-600' : 'text-zinc-600' }}">
                                             {{ $entry->expiry_date->format('d/m/Y') }}
                                         </span>
@@ -168,7 +168,7 @@
                                 @if ($entry->affected_area)
                                     <div class="flex items-center gap-2 text-xs text-zinc-600">
                                         <flux:icon icon="map-pin" class="size-3.5 text-zinc-400 shrink-0" />
-                                        <span class="text-zinc-400">Zona:</span>
+                                        <span class="text-zinc-400">{{ __('Zona:') }}</span>
                                         <span class="font-medium truncate">{{ $entry->affected_area }}</span>
                                     </div>
                                 @endif
@@ -188,7 +188,7 @@
                                 @if ($entry->is_expired)
                                     <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-700">
                                         <flux:icon icon="x-circle" class="size-3" />
-                                        Expirada
+                                        {{ __('Expirada') }}
                                     </span>
                                 @endif
                             </div>
@@ -208,29 +208,29 @@
                                 <x-agro.action-button
                                     variant="edit"
                                     href="{{ roleRoute('viticulturist.phytosanitary-alerts.edit', $entry) }}"
-                                    title="Editar"
+                                    :title="__('Editar')"
                                 />
                                 @if ($currentTab === 'active')
                                     <x-agro.action-button
                                         variant="archive"
                                         wire:click="archive({{ $entry->id }})"
-                                        wire:confirm="¿Archivar esta alerta?"
-                                        title="Archivar"
+                                        wire:confirm="{{ __('¿Archivar esta alerta?') }}"
+                                        :title="__('Archivar')"
                                     />
                                 @else
                                     <x-agro.action-button
                                         variant="restore"
                                         icon="arrow-path"
                                         wire:click="unarchive({{ $entry->id }})"
-                                        wire:confirm="¿Restaurar esta alerta?"
-                                        title="Restaurar"
+                                        wire:confirm="{{ __('¿Restaurar esta alerta?') }}"
+                                        :title="__('Restaurar')"
                                     />
                                 @endif
                                 <x-agro.action-button
                                     variant="delete"
                                     wire:click="delete({{ $entry->id }})"
-                                    wire:confirm="¿Eliminar esta alerta? Esta acción no se puede deshacer."
-                                    title="Eliminar"
+                                    wire:confirm="{{ __('¿Eliminar esta alerta? Esta acción no se puede deshacer.') }}"
+                                    :title="__('Eliminar')"
                                 />
                             </div>
                         </x-slot:footer>
@@ -250,7 +250,7 @@
                     <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
                         <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
                     </div>
-                    <h3 class="text-base font-semibold text-zinc-900">Filtros</h3>
+                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Filtros') }}</h3>
                 </div>
                 <flux:button x-on:click="$dispatch('close-modal', 'phyto-alerts-filters')" variant="ghost" size="sm" icon="x-mark" />
             </div>
@@ -258,18 +258,18 @@
 
         <div class="px-6 py-5 space-y-5">
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Tipo de Alerta</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Tipo de Alerta') }}</label>
                 <flux:select wire:model.live="filterAlertType">
-                    <option value="">Todos los tipos</option>
+                    <option value="">{{ __('Todos los tipos') }}</option>
                     @foreach ($alertTypes as $key => $label)
                         <option value="{{ $key }}">{{ $label }}</option>
                     @endforeach
                 </flux:select>
             </div>
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Severidad</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Severidad') }}</label>
                 <flux:select wire:model.live="filterSeverity">
-                    <option value="">Todas las severidades</option>
+                    <option value="">{{ __('Todas las severidades') }}</option>
                     @foreach ($severities as $key => $label)
                         <option value="{{ $key }}">{{ $label }}</option>
                     @endforeach
@@ -283,13 +283,13 @@
                     wire:click="clearFilters"
                     class="text-sm text-zinc-400 hover:text-zinc-600 transition-colors"
                 >
-                    Limpiar filtros
+                    {{ __('Limpiar filtros') }}
                 </button>
             @else
                 <span></span>
             @endif
             <flux:button x-on:click="$dispatch('close-modal', 'phyto-alerts-filters')" variant="primary" size="sm">
-                Aplicar
+                {{ __('Aplicar') }}
             </flux:button>
         </div>
     </x-agro.modal>

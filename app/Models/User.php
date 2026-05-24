@@ -44,6 +44,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'beta_access_granted',
         'compra_uva_externa',
         'organization_id',
+        'locale',
         'preferences',
         'notification_preferences',
         'last_login_at',

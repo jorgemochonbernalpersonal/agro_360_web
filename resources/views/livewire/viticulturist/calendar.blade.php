@@ -13,18 +13,18 @@
 
     {{-- Header --}}
     <x-agro.page-header
-        title="Calendario"
-        :description="$currentCampaign ? 'Campaña ' . $currentCampaign->name . ' · ' . $currentCampaign->year : 'Actividades, alertas y hitos de tu explotación'"
+        :title="__('Calendario')"
+        :description="$currentCampaign ? __('Campaña') . ' ' . $currentCampaign->name . ' · ' . $currentCampaign->year : __('Actividades, alertas y hitos de tu explotación')"
     >
         <x-slot:actions>
             @if($currentCampaign)
                 <div class="flex items-center gap-3">
-                    <span class="text-sm font-semibold text-zinc-700">Campaña:</span>
+                    <span class="text-sm font-semibold text-zinc-700">{{ __('Campaña') }}:</span>
                     <flux:select wire:model.live="selectedCampaign" class="min-w-[180px]">
                         @foreach($campaigns as $campaign)
                             <option value="{{ $campaign->id }}">
                                 {{ $campaign->name }} ({{ $campaign->year }})
-                                @if($campaign->active) [Activa] @endif
+                                @if($campaign->active) [{{ __('Activa') }}] @endif
                             </option>
                         @endforeach
                     </flux:select>
@@ -43,19 +43,19 @@
                 </div>
                 <div class="lg:text-center">
                     <div class="text-2xl font-bold text-zinc-900 leading-none">{{ $stats['total'] }}</div>
-                    <div class="text-xs text-zinc-500 mt-0.5">Total</div>
+                    <div class="text-xs text-zinc-500 mt-0.5">{{ __('Total') }}</div>
                 </div>
             </div>
 
             @foreach([
-                ['phytosanitary', 'Tratamientos',    'text-red-600',    'bg-red-50',     'bg-red-100',    'beaker'],
-                ['fertilization', 'Fertilizaciones', 'text-blue-600',   'bg-blue-50',    'bg-blue-100',   'sparkles'],
-                ['irrigation',    'Riegos',           'text-cyan-600',   'bg-cyan-50',    'bg-cyan-100',   'cloud'],
-                ['cultural',      'Labores',          'text-yellow-700', 'bg-yellow-50',  'bg-yellow-100', 'wrench-screwdriver'],
-                ['observation',   'Observaciones',    'text-zinc-600',   'bg-zinc-50',    'bg-zinc-200',   'eye'],
-                ['pruning',       'Podas',            'text-lime-700',   'bg-lime-50',    'bg-lime-100',   'scissors'],
-                ['harvest',       'Vendimias',        'text-amber-700',  'bg-amber-50',   'bg-amber-100',  'sun'],
-                ['post_harvest',  'Post-vendimia',    'text-purple-600', 'bg-purple-50',  'bg-purple-100', 'check-badge'],
+                ['phytosanitary', __('Tratamientos'),    'text-red-600',    'bg-red-50',     'bg-red-100',    'beaker'],
+                ['fertilization', __('Fertilizaciones'), 'text-blue-600',   'bg-blue-50',    'bg-blue-100',   'sparkles'],
+                ['irrigation',    __('Riegos'),           'text-cyan-600',   'bg-cyan-50',    'bg-cyan-100',   'cloud'],
+                ['cultural',      __('Labores'),          'text-yellow-700', 'bg-yellow-50',  'bg-yellow-100', 'wrench-screwdriver'],
+                ['observation',   __('Observaciones'),    'text-zinc-600',   'bg-zinc-50',    'bg-zinc-200',   'eye'],
+                ['pruning',       __('Podas'),            'text-lime-700',   'bg-lime-50',    'bg-lime-100',   'scissors'],
+                ['harvest',       __('Vendimias'),        'text-amber-700',  'bg-amber-50',   'bg-amber-100',  'sun'],
+                ['post_harvest',  __('Post-vendimia'),    'text-purple-600', 'bg-purple-50',  'bg-purple-100', 'check-badge'],
             ] as [$key, $label, $textColor, $bgCard, $bgIcon, $icon])
                 <div class="flex lg:flex-col items-center lg:justify-center gap-3 lg:gap-1 {{ $bgCard }} rounded-xl px-3 py-3">
                     <div class="flex items-center justify-center w-9 h-9 rounded-lg {{ $bgIcon }} flex-shrink-0">
@@ -77,17 +77,17 @@
             class="px-3 py-1.5 rounded-full text-sm font-medium border transition-all
                 {{ $activityType === '' ? 'bg-zinc-800 text-white border-zinc-800' : 'bg-white text-zinc-600 border-zinc-300 hover:border-zinc-400' }}"
         >
-            Todas
+            {{ __('Todas') }}
         </button>
         @foreach([
-            ['phytosanitary', 'Tratamientos',    'border-red-300 text-red-700 bg-red-50',        'bg-red-600 text-white border-red-600'],
-            ['fertilization', 'Fertilizaciones', 'border-blue-300 text-blue-700 bg-blue-50',     'bg-blue-600 text-white border-blue-600'],
-            ['irrigation',    'Riegos',           'border-cyan-300 text-cyan-700 bg-cyan-50',     'bg-cyan-600 text-white border-cyan-600'],
-            ['cultural',      'Labores',          'border-yellow-300 text-yellow-700 bg-yellow-50','bg-yellow-500 text-white border-yellow-500'],
-            ['observation',   'Observaciones',    'border-zinc-300 text-zinc-600 bg-zinc-50',     'bg-zinc-600 text-white border-zinc-600'],
-            ['pruning',       'Podas',            'border-lime-300 text-lime-700 bg-lime-50',     'bg-lime-600 text-white border-lime-600'],
-            ['harvest',       'Vendimias',        'border-amber-300 text-amber-700 bg-amber-50',  'bg-amber-500 text-white border-amber-500'],
-            ['post_harvest',  'Post-vendimia',    'border-purple-300 text-purple-700 bg-purple-50','bg-purple-600 text-white border-purple-600'],
+            ['phytosanitary', __('Tratamientos'),    'border-red-300 text-red-700 bg-red-50',        'bg-red-600 text-white border-red-600'],
+            ['fertilization', __('Fertilizaciones'), 'border-blue-300 text-blue-700 bg-blue-50',     'bg-blue-600 text-white border-blue-600'],
+            ['irrigation',    __('Riegos'),           'border-cyan-300 text-cyan-700 bg-cyan-50',     'bg-cyan-600 text-white border-cyan-600'],
+            ['cultural',      __('Labores'),          'border-yellow-300 text-yellow-700 bg-yellow-50','bg-yellow-500 text-white border-yellow-500'],
+            ['observation',   __('Observaciones'),    'border-zinc-300 text-zinc-600 bg-zinc-50',     'bg-zinc-600 text-white border-zinc-600'],
+            ['pruning',       __('Podas'),            'border-lime-300 text-lime-700 bg-lime-50',     'bg-lime-600 text-white border-lime-600'],
+            ['harvest',       __('Vendimias'),        'border-amber-300 text-amber-700 bg-amber-50',  'bg-amber-500 text-white border-amber-500'],
+            ['post_harvest',  __('Post-vendimia'),    'border-purple-300 text-purple-700 bg-purple-50','bg-purple-600 text-white border-purple-600'],
         ] as [$value, $label, $inactiveClass, $activeClass])
             <button
                 wire:click="$set('activityType', '{{ $value }}')"
@@ -104,24 +104,24 @@
         {{-- Navegación --}}
         <div class="flex items-center justify-between mb-6">
             <div class="flex items-center gap-3">
-                <flux:button wire:click="previousMonth" variant="ghost" icon="chevron-left" title="Mes anterior" />
+                <flux:button wire:click="previousMonth" variant="ghost" icon="chevron-left" :title="__('Mes anterior')" />
                 <h2 class="text-2xl font-bold text-zinc-900">{{ $monthName }} {{ $currentYear }}</h2>
-                <flux:button wire:click="nextMonth" variant="ghost" icon="chevron-right" title="Mes siguiente" />
+                <flux:button wire:click="nextMonth" variant="ghost" icon="chevron-right" :title="__('Mes siguiente')" />
             </div>
-            <flux:button wire:click="goToToday" variant="primary">Hoy</flux:button>
+            <flux:button wire:click="goToToday" variant="primary">{{ __('Hoy') }}</flux:button>
         </div>
 
         {{-- Leyenda inline --}}
         <div class="flex flex-wrap gap-x-4 gap-y-1.5 mb-5 pb-4 border-b border-zinc-100">
             @foreach([
-                ['bg-red-100 border-red-300',      'text-red-700',    'Tratamientos'],
-                ['bg-blue-100 border-blue-300',    'text-blue-700',   'Fertilizaciones'],
-                ['bg-cyan-100 border-cyan-300',    'text-cyan-700',   'Riegos'],
-                ['bg-yellow-100 border-yellow-300','text-yellow-700', 'Labores'],
-                ['bg-zinc-100 border-zinc-300',    'text-zinc-600',   'Observaciones'],
-                ['bg-lime-100 border-lime-300',    'text-lime-700',   'Podas'],
-                ['bg-amber-100 border-amber-300',  'text-amber-700',  'Vendimias'],
-                ['bg-purple-100 border-purple-300','text-purple-700', 'Post-vendimia'],
+                ['bg-red-100 border-red-300',      'text-red-700',    __('Tratamientos')],
+                ['bg-blue-100 border-blue-300',    'text-blue-700',   __('Fertilizaciones')],
+                ['bg-cyan-100 border-cyan-300',    'text-cyan-700',   __('Riegos')],
+                ['bg-yellow-100 border-yellow-300','text-yellow-700', __('Labores')],
+                ['bg-zinc-100 border-zinc-300',    'text-zinc-600',   __('Observaciones')],
+                ['bg-lime-100 border-lime-300',    'text-lime-700',   __('Podas')],
+                ['bg-amber-100 border-amber-300',  'text-amber-700',  __('Vendimias')],
+                ['bg-purple-100 border-purple-300','text-purple-700', __('Post-vendimia')],
             ] as [$bg, $text, $lbl])
                 <div class="flex items-center gap-1.5">
                     <div class="w-3 h-3 rounded border {{ $bg }} flex-shrink-0"></div>
@@ -130,17 +130,17 @@
             @endforeach
             <div class="flex items-center gap-1.5 ml-2 pl-2 border-l border-zinc-200">
                 <div class="w-3 h-3 rounded border border-orange-400 bg-orange-50 flex-shrink-0"></div>
-                <span class="text-xs text-zinc-500">Alertas</span>
+                <span class="text-xs text-zinc-500">{{ __('Alertas') }}</span>
             </div>
             <div class="flex items-center gap-1.5">
                 <div class="w-3 h-3 rounded border border-green-400 bg-green-50 flex-shrink-0"></div>
-                <span class="text-xs text-zinc-500">Hitos campaña</span>
+                <span class="text-xs text-zinc-500">{{ __('Hitos campaña') }}</span>
             </div>
         </div>
 
         {{-- Días de la semana --}}
         <div class="grid grid-cols-7 gap-2 mb-2">
-            @foreach(['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'] as $day)
+            @foreach([__('Lun'), __('Mar'), __('Mié'), __('Jue'), __('Vie'), __('Sáb'), __('Dom')] as $day)
                 <div class="text-center text-sm font-bold text-zinc-700 py-2">{{ $day }}</div>
             @endforeach
         </div>
@@ -195,7 +195,7 @@
                         {{-- "+N más" si hay overflow --}}
                         @php $total = $day['activityCount'] + $day['eventCount']; $shown = min(2, $day['activityCount']) + min(2, $day['eventCount']); @endphp
                         @if($total > $shown)
-                            <div class="text-xs text-zinc-500 font-semibold text-center">+{{ $total - $shown }} más</div>
+                            <div class="text-xs text-zinc-500 font-semibold text-center">+{{ $total - $shown }} {{ __('más') }}</div>
                         @endif
                     </div>
                 </div>
@@ -210,10 +210,10 @@
         <x-agro.card>
             <div class="flex items-center gap-2 mb-4">
                 <flux:icon icon="arrow-right-circle" class="size-5 text-agro-600" />
-                <h3 class="text-sm font-semibold text-zinc-800">Próximos 7 días</h3>
+                <h3 class="text-sm font-semibold text-zinc-800">{{ __('Próximos 7 días') }}</h3>
             </div>
             @if($upcomingActivities->isEmpty())
-                <p class="text-sm text-zinc-400 text-center py-4">Sin actividades programadas</p>
+                <p class="text-sm text-zinc-400 text-center py-4">{{ __('Sin actividades programadas') }}</p>
             @else
                 <div class="space-y-2">
                     @foreach($upcomingActivities as $activity)
@@ -233,7 +233,7 @@
                                 <p class="text-xs text-zinc-500 truncate mt-0.5">{{ $activity->plot->name ?? '—' }}</p>
                             </div>
                             @if(Carbon\Carbon::parse($activity->activity_date)->isToday())
-                                <span class="text-xs font-bold text-agro-600 bg-agro-50 px-2 py-0.5 rounded-full flex-shrink-0">Hoy</span>
+                                <span class="text-xs font-bold text-agro-600 bg-agro-50 px-2 py-0.5 rounded-full flex-shrink-0">{{ __('Hoy') }}</span>
                             @endif
                         </div>
                     @endforeach
@@ -245,10 +245,10 @@
         <x-agro.card>
             <div class="flex items-center gap-2 mb-4">
                 <flux:icon icon="clock" class="size-5 text-zinc-500" />
-                <h3 class="text-sm font-semibold text-zinc-800">Últimos 6 días</h3>
+                <h3 class="text-sm font-semibold text-zinc-800">{{ __('Últimos 6 días') }}</h3>
             </div>
             @if($recentActivities->isEmpty())
-                <p class="text-sm text-zinc-400 text-center py-4">Sin actividades recientes</p>
+                <p class="text-sm text-zinc-400 text-center py-4">{{ __('Sin actividades recientes') }}</p>
             @else
                 <div class="space-y-2">
                     @foreach($recentActivities as $activity)
@@ -291,7 +291,7 @@
 
                 {{-- Actividades --}}
                 @if($selectedActivity && $selectedActivity->count() > 0)
-                    <p class="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-3">Actividades de campo</p>
+                    <p class="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-3">{{ __('Actividades de campo') }}</p>
                     <div class="space-y-3 mb-5">
                         @foreach($selectedActivity as $activity)
                             <div class="border-2 rounded-lg p-4 {{ $this->getActivityTypeColor($activity->activity_type) }}">
@@ -315,58 +315,58 @@
                                     @if($editRoute)
                                         <a href="{{ $editRoute }}" class="flex items-center gap-1 text-xs font-semibold opacity-70 hover:opacity-100 transition-opacity">
                                             <flux:icon icon="pencil-square" class="size-4" />
-                                            Editar
+                                            {{ __('Editar') }}
                                         </a>
                                     @endif
                                 </div>
 
                                 @if($activity->phytosanitaryTreatment)
                                     <div class="text-sm mt-1 space-y-0.5">
-                                        <p><strong>Producto:</strong> {{ $activity->phytosanitaryTreatment->product->name }}</p>
+                                        <p><strong>{{ __('Producto') }}:</strong> {{ $activity->phytosanitaryTreatment->product->name }}</p>
                                         @if($activity->phytosanitaryTreatment->area_treated)
-                                            <p><strong>Área:</strong> {{ number_format($activity->phytosanitaryTreatment->area_treated, 3) }} ha</p>
+                                            <p><strong>{{ __('Área') }}:</strong> {{ number_format($activity->phytosanitaryTreatment->area_treated, 3) }} ha</p>
                                         @endif
                                         @if($activity->phytosanitaryTreatment->pest)
-                                            <p><strong>Objetivo:</strong> {{ $activity->phytosanitaryTreatment->pest->name }}</p>
+                                            <p><strong>{{ __('Objetivo') }}:</strong> {{ $activity->phytosanitaryTreatment->pest->name }}</p>
                                         @endif
                                     </div>
                                 @elseif($activity->fertilization)
                                     <div class="text-sm mt-1 space-y-0.5">
-                                        <p><strong>Fertilizante:</strong> {{ $activity->fertilization->fertilizer_name ?: 'N/A' }}</p>
+                                        <p><strong>{{ __('Fertilizante') }}:</strong> {{ $activity->fertilization->fertilizer_name ?: 'N/A' }}</p>
                                         @if($activity->fertilization->quantity)
-                                            <p><strong>Cantidad:</strong> {{ number_format($activity->fertilization->quantity, 2) }} kg</p>
+                                            <p><strong>{{ __('Cantidad') }}:</strong> {{ number_format($activity->fertilization->quantity, 2) }} kg</p>
                                         @endif
                                     </div>
                                 @elseif($activity->irrigation)
                                     <div class="text-sm mt-1">
                                         @if($activity->irrigation->water_volume)
-                                            <p><strong>Volumen:</strong> {{ number_format($activity->irrigation->water_volume, 2) }} L</p>
+                                            <p><strong>{{ __('Volumen') }}:</strong> {{ number_format($activity->irrigation->water_volume, 2) }} L</p>
                                         @endif
                                     </div>
                                 @elseif($activity->culturalWork)
                                     <div class="text-sm mt-1 space-y-0.5">
-                                        <p><strong>Labor:</strong> {{ $activity->culturalWork->work_type ?: 'N/A' }}</p>
+                                        <p><strong>{{ __('Labor') }}:</strong> {{ $activity->culturalWork->work_type ?: 'N/A' }}</p>
                                         @if($activity->culturalWork->hours_worked)
-                                            <p><strong>Horas:</strong> {{ number_format($activity->culturalWork->hours_worked, 2) }} h</p>
+                                            <p><strong>{{ __('Horas') }}:</strong> {{ number_format($activity->culturalWork->hours_worked, 2) }} h</p>
                                         @endif
                                     </div>
                                 @elseif($activity->observation)
                                     <div class="text-sm mt-1 space-y-0.5">
-                                        <p><strong>Tipo:</strong> {{ $activity->observation->observation_type ?: 'N/A' }}</p>
+                                        <p><strong>{{ __('Tipo') }}:</strong> {{ $activity->observation->observation_type ?: 'N/A' }}</p>
                                         @if($activity->observation->severity)
-                                            <p><strong>Severidad:</strong> {{ ucfirst($activity->observation->severity) }}</p>
+                                            <p><strong>{{ __('Severidad') }}:</strong> {{ ucfirst($activity->observation->severity) }}</p>
                                         @endif
                                     </div>
                                 @endif
 
                                 @if($activity->crew)
-                                    <p class="text-sm mt-1"><strong>Cuadrilla:</strong> {{ $activity->crew->name }}</p>
+                                    <p class="text-sm mt-1"><strong>{{ __('Cuadrilla') }}:</strong> {{ $activity->crew->name }}</p>
                                 @endif
                                 @if($activity->machinery)
-                                    <p class="text-sm mt-1"><strong>Maquinaria:</strong> {{ $activity->machinery->name }}</p>
+                                    <p class="text-sm mt-1"><strong>{{ __('Maquinaria') }}:</strong> {{ $activity->machinery->name }}</p>
                                 @endif
                                 @if($activity->notes)
-                                    <p class="text-sm mt-1"><strong>Notas:</strong> {{ $activity->notes }}</p>
+                                    <p class="text-sm mt-1"><strong>{{ __('Notas') }}:</strong> {{ $activity->notes }}</p>
                                 @endif
                             </div>
                         @endforeach
@@ -375,7 +375,7 @@
 
                 {{-- Eventos / alertas --}}
                 @if($selectedEvents && $selectedEvents->count() > 0)
-                    <p class="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-3">Alertas y eventos</p>
+                    <p class="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-3">{{ __('Alertas y eventos') }}</p>
                     <div class="space-y-2">
                         @foreach($selectedEvents as $event)
                             <div class="border-2 rounded-lg p-3 flex items-start gap-3 {{ $this->getEventColor($event['type'], $event['urgency']) }}">
@@ -386,9 +386,9 @@
                                     @endif
                                 </div>
                                 @if(in_array($event['type'], ['alert_ropo', 'alert_itb', 'alert_authorization']) && $event['urgency'] === 'danger')
-                                    <span class="text-xs font-bold bg-red-600 text-white px-2 py-0.5 rounded-full">Vencido</span>
+                                    <span class="text-xs font-bold bg-red-600 text-white px-2 py-0.5 rounded-full">{{ __('Vencido') }}</span>
                                 @elseif(in_array($event['type'], ['alert_ropo', 'alert_itb', 'alert_authorization']) && $event['urgency'] === 'warning')
-                                    <span class="text-xs font-bold bg-orange-500 text-white px-2 py-0.5 rounded-full">Próximo</span>
+                                    <span class="text-xs font-bold bg-orange-500 text-white px-2 py-0.5 rounded-full">{{ __('Próximo') }}</span>
                                 @endif
                             </div>
                         @endforeach
@@ -397,7 +397,7 @@
 
                 {{-- Empty state si no hay nada --}}
                 @if((!$selectedActivity || $selectedActivity->count() === 0) && (!$selectedEvents || $selectedEvents->count() === 0))
-                    <x-agro.empty-state message="No hay actividades ni eventos registrados para esta fecha" />
+                    <x-agro.empty-state :message="__('No hay actividades ni eventos registrados para esta fecha')" />
                 @endif
             </div>
         </div>

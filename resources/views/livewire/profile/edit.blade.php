@@ -10,7 +10,7 @@
                     >
                         <div class="flex items-center gap-2">
                             <flux:icon icon="user" class="size-5" />
-                            Información Personal
+                            {{ __('Información Personal') }}
                         </div>
                     </button>
                     <button
@@ -19,7 +19,7 @@
                     >
                         <div class="flex items-center gap-2">
                             <flux:icon icon="lock-closed" class="size-5" />
-                            Cambiar Contraseña
+                            {{ __('Cambiar Contraseña') }}
                         </div>
                     </button>
                     <button
@@ -28,7 +28,7 @@
                     >
                         <div class="flex items-center gap-2">
                             <flux:icon icon="envelope" class="size-5" />
-                            Contacto
+                            {{ __('Contacto') }}
                         </div>
                     </button>
                 </nav>
@@ -46,11 +46,11 @@
                         @endif
 
                         <form wire:submit="updatePersonalInfo" class="space-y-6">
-                            <x-agro.form-section title="Información Personal" color="green">
+                            <x-agro.form-section :title="__('Información Personal')" color="green">
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <flux:field>
-                                        <flux:label required>Nombre Completo</flux:label>
-                                        <flux:input wire:model="name" type="text" id="name" placeholder="Tu nombre completo" required />
+                                        <flux:label required>{{ __('Nombre Completo') }}</flux:label>
+                                        <flux:input wire:model="name" type="text" id="name" :placeholder="__('Tu nombre completo')" required />
                                         <flux:error name="name" />
                                     </flux:field>
                                     <flux:field>
@@ -62,7 +62,7 @@
 
                                 {{-- Imagen de Perfil --}}
                                 <div class="mt-6">
-                                    <flux:label>Foto de Perfil</flux:label>
+                                    <flux:label>{{ __('Foto de Perfil') }}</flux:label>
                                     <div class="mt-2 flex items-center gap-6"
                                          x-data="{
                                              preview: @js($current_profile_image ? Storage::disk('public')->url($current_profile_image) : ''),
@@ -115,12 +115,12 @@
                                                     cursor-pointer
                                                     @error('profile_image') border-red-300 @enderror"
                                             >
-                                            <p class="mt-1 text-xs text-zinc-500">JPG, PNG, GIF o WEBP (Máx. 2MB)</p>
+                                            <p class="mt-1 text-xs text-zinc-500">{{ __('JPG, PNG, GIF o WEBP (Máx. 2MB)') }}</p>
 
                                             @if($profile_image_preview)
                                                 <p class="mt-1 text-xs text-agro-700 font-semibold flex items-center gap-1">
                                                     <flux:icon icon="check" class="size-4" />
-                                                    Nueva imagen seleccionada. Click "Guardar Cambios" para confirmar.
+                                                    {{ __('Nueva imagen seleccionada. Click "Guardar Cambios" para confirmar.') }}
                                                 </p>
                                             @endif
 
@@ -133,7 +133,7 @@
                             </x-agro.form-section>
 
                             <div class="flex justify-end">
-                                <flux:button type="submit" variant="primary">Guardar Cambios</flux:button>
+                                <flux:button type="submit" variant="primary">{{ __('Guardar Cambios') }}</flux:button>
                             </div>
                         </form>
                     </div>
@@ -149,17 +149,17 @@
                         @endif
 
                         <form wire:submit="updatePassword" class="space-y-6">
-                            <x-agro.form-section title="Cambiar Contraseña" color="green">
+                            <x-agro.form-section :title="__('Cambiar Contraseña')" color="green">
                                 <div class="space-y-6">
                                     <div>
-                                        <flux:label required>Contraseña Actual</flux:label>
+                                        <flux:label required>{{ __('Contraseña Actual') }}</flux:label>
                                         <div class="relative">
-                                            <input 
-                                                wire:model="current_password" 
-                                                type="password" 
+                                            <input
+                                                wire:model="current_password"
+                                                type="password"
                                                 id="current_password"
                                                 x-bind:type="showCurrentPassword ? 'text' : 'password'"
-                                                placeholder="Tu contraseña actual"
+                                                :placeholder="__('Tu contraseña actual')"
                                                 class="w-full px-4 py-3 pr-12 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-0 border-zinc-300 bg-white text-zinc-900 placeholder-zinc-400 focus:border-agro-700 focus:ring-agro-700/20 @error('current_password') border-red-400 bg-red-50 text-red-900 placeholder-red-300 focus:border-red-500 focus:ring-red-500/20 @enderror"
                                                 required
                                             />
@@ -179,14 +179,14 @@
                                     </div>
 
                                     <div>
-                                        <flux:label required>Nueva Contraseña</flux:label>
+                                        <flux:label required>{{ __('Nueva Contraseña') }}</flux:label>
                                         <div class="relative">
-                                            <input 
-                                                wire:model="password" 
-                                                type="password" 
+                                            <input
+                                                wire:model="password"
+                                                type="password"
                                                 id="password"
                                                 x-bind:type="showPassword ? 'text' : 'password'"
-                                                placeholder="Nueva contraseña"
+                                                :placeholder="__('Nueva contraseña')"
                                                 class="w-full px-4 py-3 pr-12 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-0 border-zinc-300 bg-white text-zinc-900 placeholder-zinc-400 focus:border-agro-700 focus:ring-agro-700/20 @error('password') border-red-400 bg-red-50 text-red-900 placeholder-red-300 focus:border-red-500 focus:ring-red-500/20 @enderror"
                                                 required
                                             />
@@ -206,14 +206,14 @@
                                     </div>
 
                                     <div>
-                                        <flux:label required>Confirmar Nueva Contraseña</flux:label>
+                                        <flux:label required>{{ __('Confirmar Nueva Contraseña') }}</flux:label>
                                         <div class="relative">
-                                            <input 
-                                                wire:model="password_confirmation" 
-                                                type="password" 
+                                            <input
+                                                wire:model="password_confirmation"
+                                                type="password"
                                                 id="password_confirmation"
                                                 x-bind:type="showPasswordConfirmation ? 'text' : 'password'"
-                                                placeholder="Confirma la nueva contraseña"
+                                                :placeholder="__('Confirma la nueva contraseña')"
                                                 class="w-full px-4 py-3 pr-12 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-0 border-zinc-300 bg-white text-zinc-900 placeholder-zinc-400 focus:border-agro-700 focus:ring-agro-700/20"
                                                 required
                                             />
@@ -233,13 +233,13 @@
                                     </div>
 
                                     <flux:callout variant="info">
-                                        <flux:callout.heading>Requisitos de contraseña:</flux:callout.heading>
+                                        <flux:callout.heading>{{ __('Requisitos de contraseña:') }}</flux:callout.heading>
                                         <flux:callout.text>
                                             <ul class="text-xs list-disc list-inside space-y-1">
-                                                <li>Mínimo 8 caracteres</li>
-                                                <li>Al menos una letra mayúscula</li>
-                                                <li>Al menos una letra minúscula</li>
-                                                <li>Al menos un número</li>
+                                                <li>{{ __('Mínimo 8 caracteres') }}</li>
+                                                <li>{{ __('Al menos una letra mayúscula') }}</li>
+                                                <li>{{ __('Al menos una letra minúscula') }}</li>
+                                                <li>{{ __('Al menos un número') }}</li>
                                             </ul>
                                         </flux:callout.text>
                                     </flux:callout>
@@ -247,7 +247,7 @@
                             </x-agro.form-section>
 
                             <div class="flex justify-end">
-                                <flux:button type="submit" variant="primary">Actualizar Contraseña</flux:button>
+                                <flux:button type="submit" variant="primary">{{ __('Actualizar Contraseña') }}</flux:button>
                             </div>
                         </form>
                     </div>
@@ -263,29 +263,29 @@
                         @endif
 
                         <form wire:submit="updateContactInfo" class="space-y-6">
-                            <x-agro.form-section title="Información de Contacto" color="green">
+                            <x-agro.form-section :title="__('Información de Contacto')" color="green">
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div class="md:col-span-2">
                                         <flux:field>
-                                            <flux:label>Dirección</flux:label>
-                                            <flux:input wire:model="address" type="text" id="address" placeholder="Calle, número, piso..." />
+                                            <flux:label>{{ __('Dirección') }}</flux:label>
+                                            <flux:input wire:model="address" type="text" id="address" :placeholder="__('Calle, número, piso...')" />
                                             <flux:error name="address" />
                                         </flux:field>
                                     </div>
                                     <flux:field>
-                                        <flux:label>Ciudad</flux:label>
-                                        <flux:input wire:model="city" type="text" id="city" placeholder="Tu ciudad" />
+                                        <flux:label>{{ __('Ciudad') }}</flux:label>
+                                        <flux:input wire:model="city" type="text" id="city" :placeholder="__('Tu ciudad')" />
                                         <flux:error name="city" />
                                     </flux:field>
                                     <flux:field>
-                                        <flux:label>Código Postal</flux:label>
+                                        <flux:label>{{ __('Código Postal') }}</flux:label>
                                         <flux:input wire:model="postal_code" type="text" id="postal_code" placeholder="12345" />
                                         <flux:error name="postal_code" />
                                     </flux:field>
                                     <flux:field>
-                                        <flux:label>Provincia</flux:label>
+                                        <flux:label>{{ __('Provincia') }}</flux:label>
                                         <flux:select wire:model="province_id" id="province_id">
-                                            <option value="">Seleccionar provincia...</option>
+                                            <option value="">{{ __('Seleccionar provincia...') }}</option>
                                             @foreach($this->provinces as $province)
                                                 <option value="{{ $province->id }}">{{ $province->name }}</option>
                                             @endforeach
@@ -293,7 +293,7 @@
                                         <flux:error name="province_id" />
                                     </flux:field>
                                     <flux:field>
-                                        <flux:label>Teléfono</flux:label>
+                                        <flux:label>{{ __('Teléfono') }}</flux:label>
                                         <flux:input wire:model="phone" type="tel" id="phone" placeholder="+34 600 000 000" />
                                         <flux:error name="phone" />
                                     </flux:field>
@@ -301,7 +301,7 @@
                             </x-agro.form-section>
 
                             <div class="flex justify-end">
-                                <flux:button type="submit" variant="primary">Guardar Contacto</flux:button>
+                                <flux:button type="submit" variant="primary">{{ __('Guardar Contacto') }}</flux:button>
                             </div>
                         </form>
                     </div>
@@ -327,7 +327,7 @@
                 fileInput.value = '';
             }
         });
-        
+
         // Escuchar cuando se actualiza el perfil para refrescar el header
         // (solo se dispara si NO se actualizó la imagen)
         $wire.on('profile-updated', () => {

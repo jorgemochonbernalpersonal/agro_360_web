@@ -7,7 +7,7 @@
                  class="mx-auto max-h-20 object-contain transition-transform hover:scale-105">
         </a>
         <p class="mt-2 text-sm text-zinc-500">
-            @auth Gestión de usuarios @else Crea tu cuenta para comenzar @endauth
+            @auth {{ __('Gestión de usuarios') }} @else {{ __('Crea tu cuenta para comenzar') }} @endauth
         </p>
     </div>
 
@@ -15,13 +15,13 @@
 
         <div class="text-center mb-6">
             <flux:heading size="xl">
-                @auth Crear Usuario @else Registro @endauth
+                @auth {{ __('Crear Usuario') }} @else {{ __('Registro') }} @endauth
             </flux:heading>
             <flux:subheading>
                 @auth
-                    Completa los datos para crear un nuevo usuario
+                    {{ __('Completa los datos para crear un nuevo usuario') }}
                 @else
-                    Únete a Agro365 y gestiona tu actividad agrícola
+                    {{ __('Únete a Agro365 y gestiona tu actividad agrícola') }}
                 @endauth
             </flux:subheading>
         </div>
@@ -34,7 +34,7 @@
         <form wire:submit="register" class="space-y-4">
 
             <flux:field>
-                <flux:label>Nombre Completo</flux:label>
+                <flux:label>{{ __('Nombre Completo') }}</flux:label>
                 <flux:input wire:model="name"
                             placeholder="Juan Pérez"
                             required autocomplete="name" autofocus />
@@ -44,7 +44,7 @@
             <flux:field>
                 <flux:label>Email</flux:label>
                 <flux:input wire:model="email" type="email"
-                            placeholder="correo@ejemplo.com"
+                            :placeholder="__('correo@ejemplo.com')"
                             required autocomplete="email" />
                 <flux:error name="email" />
             </flux:field>
@@ -52,16 +52,16 @@
             @if(auth()->check())
                 {{-- Selector interno (admin/supervisor): select plano sin decoración --}}
                 <flux:field>
-                    <flux:label>Tipo de Cuenta</flux:label>
+                    <flux:label>{{ __('Tipo de Cuenta') }}</flux:label>
                     <flux:select wire:model="role" required>
                         @foreach($this->getAllowedRoles(auth()->user()) as $allowedRole)
                             <flux:select.option value="{{ $allowedRole }}">
                                 {{ match($allowedRole) {
-                                    'admin'         => 'Administrador',
-                                    'supervisor'    => 'Supervisor',
-                                    'winery'        => 'Bodega',
-                                    'viticulturist' => 'Viticultor',
-                                    'producer'      => 'Productor (viticultor + bodega)',
+                                    'admin'         => __('Administrador'),
+                                    'supervisor'    => __('Supervisor'),
+                                    'winery'        => __('Bodega'),
+                                    'viticulturist' => __('Viticultor'),
+                                    'producer'      => __('Productor (viticultor + bodega)'),
                                     default         => ucfirst($allowedRole),
                                 } }}
                             </flux:select.option>
@@ -72,7 +72,7 @@
             @else
                 {{-- Selector público: tarjetas de rol con descripción clara --}}
                 <div x-data>
-                    <flux:label class="mb-2 block">¿Cómo vas a usar Agro365?</flux:label>
+                    <flux:label class="mb-2 block">{{ __('¿Cómo vas a usar Agro365?') }}</flux:label>
                     <div class="grid gap-3">
 
                         {{-- Viticultor --}}
@@ -83,9 +83,9 @@
                                         peer-checked:border-green-500 peer-checked:bg-green-50">
                                 <span class="text-2xl leading-none mt-0.5">🌿</span>
                                 <div class="min-w-0">
-                                    <p class="font-semibold text-zinc-800 text-sm">Viticultor</p>
-                                    <p class="text-xs text-zinc-500 mt-0.5">Cultivo uva y la vendo o entrego a una bodega. Gestiono mis parcelas, cuaderno de campo y entregas.</p>
-                                    <p class="text-xs text-green-700 font-medium mt-1.5">✓ Plan básico gratis · Completo desde 9€/mes</p>
+                                    <p class="font-semibold text-zinc-800 text-sm">{{ __('Viticultor') }}</p>
+                                    <p class="text-xs text-zinc-500 mt-0.5">{{ __('Cultivo uva y la vendo o entrego a una bodega. Gestiono mis parcelas, cuaderno de campo y entregas.') }}</p>
+                                    <p class="text-xs text-green-700 font-medium mt-1.5">{{ __('✓ Plan básico gratis · Completo desde 9€/mes') }}</p>
                                 </div>
                             </div>
                         </label>
@@ -98,9 +98,9 @@
                                         peer-checked:border-red-500 peer-checked:bg-red-50">
                                 <span class="text-2xl leading-none mt-0.5">🍷</span>
                                 <div class="min-w-0">
-                                    <p class="font-semibold text-zinc-800 text-sm">Bodega</p>
-                                    <p class="text-xs text-zinc-500 mt-0.5">Recibo uva de viticultores y gestiono la elaboración. Controlo depósitos, vendimia y facturación a mis proveedores.</p>
-                                    <p class="text-xs text-red-700 font-medium mt-1.5">✓ Desde 14€/mes · Incluye gestión de viticultores</p>
+                                    <p class="font-semibold text-zinc-800 text-sm">{{ __('Bodega') }}</p>
+                                    <p class="text-xs text-zinc-500 mt-0.5">{{ __('Recibo uva de viticultores y gestiono la elaboración. Controlo depósitos, vendimia y facturación a mis proveedores.') }}</p>
+                                    <p class="text-xs text-red-700 font-medium mt-1.5">{{ __('✓ Desde 14€/mes · Incluye gestión de viticultores') }}</p>
                                 </div>
                             </div>
                         </label>
@@ -114,15 +114,14 @@
                                 <span class="text-2xl leading-none mt-0.5">🌿🍷</span>
                                 <div class="min-w-0">
                                     <p class="font-semibold text-zinc-800 text-sm">
-                                        Productor
-                                        <span class="text-xs font-normal text-violet-600 ml-1">Viticultor + Bodega en uno</span>
+                                        {{ __('Productor') }}
+                                        <span class="text-xs font-normal text-violet-600 ml-1">{{ __('Viticultor + Bodega en uno') }}</span>
                                     </p>
                                     <p class="text-xs text-zinc-500 mt-0.5">
-                                        Cultivo mis propias uvas <strong>y</strong> elaboro mi propio vino.
-                                        No vendo la uva — la vinifco yo mismo. Soy viñedo y bodega en uno.
+                                        {{ __('Cultivo mis propias uvas y elaboro mi propio vino. No vendo la uva — la vinifco yo mismo. Soy viñedo y bodega en uno.') }}
                                     </p>
-                                    <p class="text-xs text-zinc-400 mt-1 italic">Solo si elaboras tu propio vino. Si vendes la uva a una bodega, selecciona Viticultor.</p>
-                                    <p class="text-xs text-violet-700 font-medium mt-1.5">✓ Bundle 19€/mes · Acceso completo a viñedo y bodega</p>
+                                    <p class="text-xs text-zinc-400 mt-1 italic">{{ __('Solo si elaboras tu propio vino. Si vendes la uva a una bodega, selecciona Viticultor.') }}</p>
+                                    <p class="text-xs text-violet-700 font-medium mt-1.5">{{ __('✓ Bundle 19€/mes · Acceso completo a viñedo y bodega') }}</p>
                                 </div>
                             </div>
                         </label>
@@ -138,24 +137,24 @@
             @guest
             <div x-show="$wire.role === 'viticulturist'" x-cloak>
                 <flux:field>
-                    <flux:label>DNI / NIF <span class="text-zinc-400 font-normal text-xs">(opcional)</span></flux:label>
+                    <flux:label>{{ __('DNI / NIF') }} <span class="text-zinc-400 font-normal text-xs">({{ __('opcional') }})</span></flux:label>
                     <flux:input wire:model="dni"
                                 placeholder="12345678A"
                                 maxlength="20"
                                 autocomplete="off" />
-                    <flux:description class="text-xs text-zinc-400">Si tu bodega ya te tiene registrado, lo usaremos para vincular tu cuenta automáticamente.</flux:description>
+                    <flux:description class="text-xs text-zinc-400">{{ __('Si tu bodega ya te tiene registrado, lo usaremos para vincular tu cuenta automáticamente.') }}</flux:description>
                     <flux:error name="dni" />
                 </flux:field>
             </div>
             @endguest
 
             <flux:field>
-                <flux:label>Contraseña</flux:label>
+                <flux:label>{{ __('Contraseña') }}</flux:label>
                 <div class="relative">
                     <flux:input wire:model="password"
                                 :type="'password'"
                                 x-bind:type="showPassword ? 'text' : 'password'"
-                                placeholder="Mínimo 8 caracteres"
+                                :placeholder="__('Mínimo 8 caracteres')"
                                 required autocomplete="new-password" />
                     <button type="button"
                             @click="showPassword = !showPassword"
@@ -169,12 +168,12 @@
             </flux:field>
 
             <flux:field>
-                <flux:label>Confirmar Contraseña</flux:label>
+                <flux:label>{{ __('Confirmar Contraseña') }}</flux:label>
                 <div class="relative">
                     <flux:input wire:model="password_confirmation"
                                 :type="'password'"
                                 x-bind:type="showPasswordConfirmation ? 'text' : 'password'"
-                                placeholder="Repite la contraseña"
+                                :placeholder="__('Repite la contraseña')"
                                 required autocomplete="new-password" />
                     <button type="button"
                             @click="showPasswordConfirmation = !showPasswordConfirmation"
@@ -189,11 +188,11 @@
 
             <flux:button type="submit" variant="primary" class="w-full" wire:loading.attr="disabled">
                 <span wire:loading.remove wire:target="register">
-                    @auth Crear Usuario @else Registrarse @endauth
+                    @auth {{ __('Crear Usuario') }} @else {{ __('Registrarse') }} @endauth
                 </span>
                 <span wire:loading wire:target="register" class="flex items-center gap-2">
                     <flux:icon icon="arrow-path" variant="micro" class="animate-spin" />
-                    Procesando...
+                    {{ __('Procesando...') }}
                 </span>
             </flux:button>
 
@@ -201,7 +200,7 @@
 
         @guest
         <div class="mt-5 pt-5 border-t border-zinc-100">
-            <p class="text-xs text-center text-zinc-400 mb-3">O regístrate con</p>
+            <p class="text-xs text-center text-zinc-400 mb-3">{{ __('O regístrate con') }}</p>
             <a href="{{ route('auth.google.redirect') }}"
                class="flex items-center justify-center gap-3 w-full rounded-lg border border-zinc-200 bg-white px-4 py-2.5 text-sm font-medium text-zinc-700 shadow-sm hover:bg-zinc-50 hover:border-zinc-300 transition-colors">
                 <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -210,7 +209,7 @@
                     <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
                     <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
                 </svg>
-                Continuar con Google
+                {{ __('Continuar con Google') }}
             </a>
         </div>
         @endguest
@@ -219,14 +218,14 @@
             @auth
                 <a href="{{ route($this->getRedirectRoute()) }}"
                    class="text-sm text-agro-700 hover:text-agro-900 hover:underline font-medium">
-                    ← Volver al dashboard
+                    {{ __('← Volver al dashboard') }}
                 </a>
             @else
                 <flux:subheading>
-                    ¿Ya tienes cuenta?
+                    {{ __('¿Ya tienes cuenta?') }}
                     <a href="{{ route('login') }}"
                        class="text-agro-700 hover:text-agro-900 hover:underline font-semibold">
-                        Inicia sesión
+                        {{ __('Inicia sesión') }}
                     </a>
                 </flux:subheading>
             @endauth

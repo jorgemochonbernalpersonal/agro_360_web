@@ -1,24 +1,24 @@
 <div class="space-y-6 animate-fade-in">
-    <x-agro.page-header title="Liquidaciones de Vendimia" description="Liquidaciones emitidas por tu bodega por la uva entregada" />
+    <x-agro.page-header :title="__('Liquidaciones de Vendimia')" :description="__('Liquidaciones emitidas por tu bodega por la uva entregada')" />
 
     {{-- Resumen KPIs --}}
     @if ($stats['total_amount'] > 0)
         <x-agro.stats-section key="grape-purchase-invoices" columns="3">
             <x-agro.stat-card
-                label="Total liquidado"
+                :label="__('Total liquidado')"
                 :value="number_format($stats['total_amount'], 2) . ' €'"
                 icon="banknotes"
                 color="green"
             />
             <x-agro.stat-card
-                label="Cobrado"
+                :label="__('Cobrado')"
                 :value="number_format($stats['paid_amount'], 2) . ' €'"
                 icon="check-circle"
                 color="blue"
             />
             <x-agro.stat-card
-                label="Pendiente de pago"
-                :value="$stats['pending_count'] . ' ' . ($stats['pending_count'] === 1 ? 'liquidación' : 'liquidaciones')"
+                :label="__('Pendiente de pago')"
+                :value="$stats['pending_count'] . ' ' . ($stats['pending_count'] === 1 ? __('liquidación') : __('liquidaciones'))"
                 icon="clock"
                 color="orange"
             />
@@ -28,24 +28,24 @@
     <x-agro.filter-bar>
         <x-agro.filter-input
             wire:model.live.debounce.300ms="search"
-            placeholder="Buscar por nº, ref. o bodega..."
+            :placeholder="__('Buscar por nº, ref. o bodega...')"
         />
         @if ($wineries->count() > 1)
             <flux:select wire:model.live="wineryFilter" size="sm" class="w-48">
-                <flux:select.option value="">Todas las bodegas</flux:select.option>
+                <flux:select.option value="">{{ __('Todas las bodegas') }}</flux:select.option>
                 @foreach ($wineries as $w)
                     <flux:select.option value="{{ $w->id }}">{{ $w->name }}</flux:select.option>
                 @endforeach
             </flux:select>
         @endif
         <flux:select wire:model.live="paymentFilter" size="sm" class="w-44">
-            <flux:select.option value="">Todos los pagos</flux:select.option>
-            <flux:select.option value="unpaid">Pendiente</flux:select.option>
-            <flux:select.option value="paid">Cobrada</flux:select.option>
+            <flux:select.option value="">{{ __('Todos los pagos') }}</flux:select.option>
+            <flux:select.option value="unpaid">{{ __('Pendiente') }}</flux:select.option>
+            <flux:select.option value="paid">{{ __('Cobrada') }}</flux:select.option>
         </flux:select>
         @if ($search || $wineryFilter || $paymentFilter)
             <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">
-                Limpiar
+                {{ __('Limpiar') }}
             </flux:button>
         @endif
     </x-agro.filter-bar>
@@ -77,11 +77,11 @@
                                 @endif
                             </div>
                             @if ($invoice->status === 'cancelled')
-                                <flux:badge color="red" size="sm" class="shrink-0">Cancelada</flux:badge>
+                                <flux:badge color="red" size="sm" class="shrink-0">{{ __('Cancelada') }}</flux:badge>
                             @elseif ($invoice->payment_status === 'paid')
-                                <flux:badge color="green" size="sm" class="shrink-0">Cobrada</flux:badge>
+                                <flux:badge color="green" size="sm" class="shrink-0">{{ __('Cobrada') }}</flux:badge>
                             @else
-                                <flux:badge color="orange" size="sm" class="shrink-0">Pendiente</flux:badge>
+                                <flux:badge color="orange" size="sm" class="shrink-0">{{ __('Pendiente') }}</flux:badge>
                             @endif
                         </div>
                     </x-slot:header>
@@ -93,24 +93,24 @@
                         </div>
 
                         <div class="flex items-center justify-between text-zinc-600 dark:text-zinc-300">
-                            <span class="text-zinc-400">Fecha</span>
+                            <span class="text-zinc-400">{{ __('Fecha') }}</span>
                             <span>{{ \Carbon\Carbon::parse($invoice->invoice_date)->format('d/m/Y') }}</span>
                         </div>
 
                         <div class="flex items-center justify-between text-zinc-600 dark:text-zinc-300">
-                            <span class="text-zinc-400">Base</span>
+                            <span class="text-zinc-400">{{ __('Base') }}</span>
                             <span>{{ number_format($invoice->subtotal, 2) }} €</span>
                         </div>
 
                         @if ($invoice->tax_amount > 0)
                             <div class="flex items-center justify-between text-zinc-600 dark:text-zinc-300">
-                                <span class="text-zinc-400">Retención IRPF</span>
+                                <span class="text-zinc-400">{{ __('Retención IRPF') }}</span>
                                 <span class="text-red-500">-{{ number_format($invoice->tax_amount, 2) }} €</span>
                             </div>
                         @endif
 
                         <div class="flex items-center justify-between pt-1 border-t border-zinc-100 dark:border-zinc-700">
-                            <span class="font-medium text-zinc-500">A cobrar</span>
+                            <span class="font-medium text-zinc-500">{{ __('A cobrar') }}</span>
                             <span class="text-lg font-bold text-zinc-900 dark:text-zinc-100">
                                 {{ number_format($invoice->total_amount, 2) }} €
                             </span>
@@ -123,17 +123,17 @@
                                 @if ($invoice->payment_status === 'paid' && $invoice->payment_date)
                                     <span class="flex items-center gap-1">
                                         <flux:icon icon="check-circle" class="size-3 text-green-500" />
-                                        Cobrado el {{ \Carbon\Carbon::parse($invoice->payment_date)->format('d/m/Y') }}
+                                        {{ __('Cobrado el :date', ['date' => \Carbon\Carbon::parse($invoice->payment_date)->format('d/m/Y')]) }}
                                     </span>
                                 @elseif ($invoice->payment_status === 'paid')
                                     <span class="flex items-center gap-1 text-green-600">
                                         <flux:icon icon="check-circle" class="size-3" />
-                                        Liquidación cobrada
+                                        {{ __('Liquidación cobrada') }}
                                     </span>
                                 @else
                                     <span class="flex items-center gap-1">
                                         <flux:icon icon="clock" class="size-3 text-orange-400" />
-                                        Pendiente de cobro
+                                        {{ __('Pendiente de cobro') }}
                                     </span>
                                 @endif
                             </div>
@@ -147,9 +147,8 @@
     @else
         <x-agro.empty-state
             icon="document-text"
-            title="No hay liquidaciones de vendimia"
-            description="Cuando tu bodega emita una liquidación por la uva entregada, aparecerá aquí"
+            :title="__('No hay liquidaciones de vendimia')"
+            :description="__('Cuando tu bodega emita una liquidación por la uva entregada, aparecerá aquí')"
         />
     @endif
 </div>
-

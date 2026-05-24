@@ -1,4 +1,4 @@
-﻿<div class="space-y-6 animate-fade-in">
+<div class="space-y-6 animate-fade-in">
     <!-- Mensajes Flash -->
     @if(session('message'))
         <flux:callout variant="success">
@@ -14,12 +14,12 @@
 
     <!-- Header -->
     <x-agro.page-header
-        title="Crear Viticultor"
-        description="Crea un nuevo viticultor para gestionar en tus cuadrillas"
+        :title="__('Crear Viticultor')"
+        :description="__('Crea un nuevo viticultor para gestionar en tus cuadrillas')"
     >
         <x-slot:actions>
             <flux:button href="{{ roleRoute('viticulturist.personal.index') }}" variant="outline" icon="arrow-left">
-                Volver
+                {{ __('Volver') }}
             </flux:button>
         </x-slot:actions>
     </x-agro.page-header>
@@ -33,18 +33,18 @@
                     <div class="p-1.5 rounded-lg bg-agro-50">
                         <flux:icon icon="user" class="size-4 text-agro-600" />
                     </div>
-                    <span class="font-semibold text-zinc-900">Informacion del Viticultor</span>
+                    <span class="font-semibold text-zinc-900">{{ __('Información del Viticultor') }}</span>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Nombre -->
                     <flux:field>
-                        <flux:label>Nombre Completo *</flux:label>
+                        <flux:label>{{ __('Nombre Completo') }} *</flux:label>
                         <flux:input
                             wire:model="name"
                             type="text"
                             id="name"
-                            placeholder="Ej: Juan Perez"
+                            :placeholder="__('Ej: Juan Pérez')"
                             required
                         />
                         <flux:error name="name" />
@@ -52,7 +52,7 @@
 
                     <!-- Email -->
                     <flux:field>
-                        <flux:label>Email *</flux:label>
+                        <flux:label>{{ __('Email') }} *</flux:label>
                         <flux:input
                             wire:model="email"
                             type="email"
@@ -68,12 +68,12 @@
                 @if($wineries->isNotEmpty())
                 <div class="mt-6">
                     <flux:field>
-                        <flux:label>Bodega <span class="text-zinc-500 font-normal">(opcional)</span></flux:label>
+                        <flux:label>{{ __('Bodega') }} <span class="text-zinc-500 font-normal">({{ __('opcional') }})</span></flux:label>
                         <flux:select
                             wire:model="winery_id"
                             id="winery_id"
                         >
-                            <option value="">Sin bodega</option>
+                            <option value="">{{ __('Sin bodega') }}</option>
                             @foreach($wineries as $winery)
                                 <option value="{{ $winery->id }}">{{ $winery->name }}</option>
                             @endforeach
@@ -86,18 +86,16 @@
 
             <!-- Informacion -->
             <flux:callout variant="info">
-                <p class="text-sm font-semibold mb-1">Nota importante:</p>
+                <p class="text-sm font-semibold mb-1">{{ __('Nota importante:') }}</p>
                 <p class="text-sm">
-                    El viticultor que crees se anadira para gestion interna (cuadrillas, parcelas, etc.),
-                    pero no tendra acceso a la aplicacion hasta que se active su cuenta por parte de un administrador
-                    o mediante un flujo de registro propio.
+                    {{ __('El viticultor que crees se añadirá para gestión interna (cuadrillas, parcelas, etc.), pero no tendrá acceso a la aplicación hasta que se active su cuenta por parte de un administrador o mediante un flujo de registro propio.') }}
                 </p>
             </flux:callout>
 
             <!-- Botones -->
             <div class="flex items-center justify-end gap-4 pt-6 border-t border-zinc-200">
-                <flux:button href="{{ roleRoute('viticulturist.personal.index') }}" variant="outline">Cancelar</flux:button>
-                <flux:button type="submit" variant="primary">Crear Viticultor</flux:button>
+                <flux:button href="{{ roleRoute('viticulturist.personal.index') }}" variant="outline">{{ __('Cancelar') }}</flux:button>
+                <flux:button type="submit" variant="primary">{{ __('Crear Viticultor') }}</flux:button>
             </div>
         </form>
     </x-agro.card>

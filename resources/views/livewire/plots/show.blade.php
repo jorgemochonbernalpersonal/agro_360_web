@@ -1,5 +1,5 @@
-﻿<div class="space-y-6 animate-fade-in">
-    <x-agro.page-header :title="$plot->name" description="Detalles de la parcela">
+<div class="space-y-6 animate-fade-in">
+    <x-agro.page-header :title="$plot->name" :description="__('Detalles de la parcela')">
         <x-slot:actions>
             @can('update', $plot)
                 <flux:button
@@ -7,16 +7,16 @@
                     variant="primary"
                     icon="pencil-square"
                 >
-                    Editar
+                    {{ __('Editar') }}
                 </flux:button>
             @endcan
             @if($fromVisual)
                 <flux:button href="{{ roleRoute('visual') }}" variant="outline" icon="map">
-                    Volver al Mapa
+                    {{ __('Volver al Mapa') }}
                 </flux:button>
             @else
                 <flux:button href="{{ roleRoute('plots.index') }}" variant="outline" icon="arrow-left">
-                    Volver
+                    {{ __('Volver') }}
                 </flux:button>
             @endif
         </x-slot:actions>
@@ -24,7 +24,7 @@
 
     @if($isViticulturist)
         <x-agro.tabs
-            :tabs="['info' => 'Información', 'entorno' => 'Entorno (RD 1311/2012)']"
+            :tabs="['info' => __('Información'), 'entorno' => __('Entorno (RD 1311/2012)')]"
             :active="$currentTab"
             wireMethod="switchTab"
         />
@@ -41,25 +41,25 @@
                         <div class="p-1.5 rounded-lg bg-agro-50">
                             <flux:icon icon="information-circle" class="size-4 text-agro-600" />
                         </div>
-                        <span class="font-semibold text-zinc-900 text-sm">Información General</span>
+                        <span class="font-semibold text-zinc-900 text-sm">{{ __('Información General') }}</span>
                     </div>
                 </x-slot:header>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="text-sm font-semibold text-zinc-500">Nombre</label>
+                        <label class="text-sm font-semibold text-zinc-500">{{ __('Nombre') }}</label>
                         <p class="text-zinc-900 text-lg">{{ $plot->name }}</p>
                     </div>
 
                     @if($plot->area)
                         <div>
-                            <label class="text-sm font-semibold text-zinc-500">Area</label>
-                            <p class="text-zinc-900">{{ number_format($plot->area, 3) }} hectareas</p>
+                            <label class="text-sm font-semibold text-zinc-500">{{ __('Área') }}</label>
+                            <p class="text-zinc-900">{{ number_format($plot->area, 3) }} {{ __('hectáreas') }}</p>
                         </div>
                     @endif
 
                     <div>
-                        <label class="text-sm font-semibold text-zinc-500">Estado</label>
+                        <label class="text-sm font-semibold text-zinc-500">{{ __('Estado') }}</label>
                         <div class="mt-1">
                             <x-agro.status-badge :active="$plot->active" />
                         </div>
@@ -68,71 +68,71 @@
                     @if($plot->tenure_regime)
                         @php
                             $tenureLabels = [
-                                'propiedad'    => 'Propiedad',
-                                'arrendamiento'=> 'Arrendamiento',
-                                'aparceria'    => 'Aparcería',
-                                'cesion_uso'   => 'Cesión de uso',
-                                'otros'        => 'Otros',
+                                'propiedad'    => __('Propiedad'),
+                                'arrendamiento'=> __('Arrendamiento'),
+                                'aparceria'    => __('Aparcería'),
+                                'cesion_uso'   => __('Cesión de uso'),
+                                'otros'        => __('Otros'),
                             ];
                         @endphp
                         <div>
-                            <label class="text-sm font-semibold text-zinc-500">Régimen de Tenencia</label>
+                            <label class="text-sm font-semibold text-zinc-500">{{ __('Régimen de Tenencia') }}</label>
                             <p class="text-zinc-900">{{ $tenureLabels[$plot->tenure_regime] ?? $plot->tenure_regime }}</p>
                         </div>
                     @endif
 
                     @if($plot->soilType)
                         <div>
-                            <label class="text-sm font-semibold text-zinc-500">Tipo de Suelo</label>
+                            <label class="text-sm font-semibold text-zinc-500">{{ __('Tipo de Suelo') }}</label>
                             <p class="text-zinc-900">{{ $plot->soilType->name }}</p>
                         </div>
                     @endif
 
                     @if($plot->topography)
                         <div>
-                            <label class="text-sm font-semibold text-zinc-500">Topografía</label>
+                            <label class="text-sm font-semibold text-zinc-500">{{ __('Topografía') }}</label>
                             <p class="text-zinc-900">{{ $plot->topography->name }}</p>
                         </div>
                     @endif
 
                     @if($plot->orientation)
                         <div>
-                            <label class="text-sm font-semibold text-zinc-500">Orientación</label>
+                            <label class="text-sm font-semibold text-zinc-500">{{ __('Orientación') }}</label>
                             <p class="text-zinc-900">{{ $plot->orientation->name }} ({{ $plot->orientation->abbreviation }})</p>
                         </div>
                     @endif
 
                     @if($plot->slope)
                         <div>
-                            <label class="text-sm font-semibold text-zinc-500">Pendiente</label>
+                            <label class="text-sm font-semibold text-zinc-500">{{ __('Pendiente') }}</label>
                             <p class="text-zinc-900">{{ $plot->slope }}%</p>
                         </div>
                     @endif
 
                     @if($plot->code_parcel)
                         <div>
-                            <label class="text-sm font-semibold text-zinc-500">Código Catastral</label>
+                            <label class="text-sm font-semibold text-zinc-500">{{ __('Código Catastral') }}</label>
                             <p class="text-zinc-900 font-mono text-sm">{{ $plot->code_parcel }}</p>
                         </div>
                     @endif
 
                     @if($plot->total_vines)
                         <div>
-                            <label class="text-sm font-semibold text-zinc-500">Total Cepas</label>
+                            <label class="text-sm font-semibold text-zinc-500">{{ __('Total Cepas') }}</label>
                             <p class="text-zinc-900">{{ number_format($plot->total_vines, 0, ',', '.') }}</p>
                         </div>
                     @endif
 
                     @if($plot->oldest_planting_year)
                         <div>
-                            <label class="text-sm font-semibold text-zinc-500">Plantación más antigua</label>
+                            <label class="text-sm font-semibold text-zinc-500">{{ __('Plantación más antigua') }}</label>
                             <p class="text-zinc-900">{{ $plot->oldest_planting_year }}</p>
                         </div>
                     @endif
 
                     @if($plot->description)
                         <div class="md:col-span-2">
-                            <label class="text-sm font-semibold text-zinc-500">Descripción</label>
+                            <label class="text-sm font-semibold text-zinc-500">{{ __('Descripción') }}</label>
                             <p class="text-zinc-900">{{ $plot->description }}</p>
                         </div>
                     @endif
@@ -147,16 +147,16 @@
                             <div class="p-1.5 rounded-lg bg-agro-50">
                                 <flux:icon icon="book-open" class="size-4 text-agro-600" />
                             </div>
-                            <span class="font-semibold text-zinc-900 text-sm">Plantaciones</span>
+                            <span class="font-semibold text-zinc-900 text-sm">{{ __('Plantaciones') }}</span>
                             @if($plot->plantings->where('status', 'active')->count() > 0)
-                                <span class="text-xs text-zinc-400">({{ $plot->plantings->where('status', 'active')->count() }} activas)</span>
+                                <span class="text-xs text-zinc-400">({{ $plot->plantings->where('status', 'active')->count() }} {{ __('activas') }})</span>
                             @endif
                         </div>
                         @can('update', $plot)
                             <a href="{{ route('plots.plantings.create', $plot) }}"
                                class="inline-flex items-center gap-1 text-xs font-medium text-agro-600 hover:text-agro-700">
                                 <flux:icon icon="plus" class="size-3.5" />
-                                Nueva
+                                {{ __('Nueva') }}
                             </a>
                         @endcan
                     </div>
@@ -170,13 +170,13 @@
                                     <div class="w-2 h-2 rounded-full shrink-0 {{ $planting->status === 'active' ? 'bg-agro-500' : ($planting->status === 'removed' ? 'bg-red-400' : 'bg-amber-400') }}"></div>
                                     <div class="min-w-0">
                                         <p class="text-sm font-medium text-zinc-800 truncate">
-                                            {{ $planting->grapeVariety?->name ?? $planting->name ?? 'Sin variedad' }}
+                                            {{ $planting->grapeVariety?->name ?? $planting->name ?? __('Sin variedad') }}
                                         </p>
                                         <p class="text-xs text-zinc-500">
                                             {{ number_format($planting->area_planted, 3) }} ha
                                             @if($planting->planting_year) · {{ $planting->planting_year }} @endif
-                                            @if($planting->vine_count) · {{ number_format($planting->vine_count, 0, ',', '.') }} cepas @endif
-                                            @if($planting->harvest_limit_kg) · Límite: {{ number_format($planting->harvest_limit_kg, 0, ',', '.') }} kg @endif
+                                            @if($planting->vine_count) · {{ number_format($planting->vine_count, 0, ',', '.') }} {{ __('cepas') }} @endif
+                                            @if($planting->harvest_limit_kg) · {{ __('Límite') }}: {{ number_format($planting->harvest_limit_kg, 0, ',', '.') }} kg @endif
                                         </p>
                                     </div>
                                 </div>
@@ -189,10 +189,10 @@
                                         default => 'bg-zinc-100 text-zinc-500',
                                     } }}">
                                     {{ match($planting->status) {
-                                        'active' => 'Activa',
-                                        'removed' => 'Arrancada',
-                                        'experimental' => 'Experimental',
-                                        'replanting' => 'Replantación',
+                                        'active' => __('Activa'),
+                                        'removed' => __('Arrancada'),
+                                        'experimental' => __('Experimental'),
+                                        'replanting' => __('Replantación'),
                                         default => $planting->status,
                                     } }}
                                 </span>
@@ -202,12 +202,12 @@
                 @else
                     <div class="text-center py-6">
                         <flux:icon icon="book-open" class="size-8 text-zinc-300 mx-auto mb-2" />
-                        <p class="text-sm text-zinc-500">No hay plantaciones en esta parcela.</p>
+                        <p class="text-sm text-zinc-500">{{ __('No hay plantaciones en esta parcela.') }}</p>
                         @can('update', $plot)
                             <a href="{{ route('plots.plantings.create', $plot) }}"
                                class="inline-flex items-center gap-1 text-sm font-medium text-agro-600 hover:text-agro-700 mt-2">
                                 <flux:icon icon="plus" class="size-4" />
-                                Crear primera plantación
+                                {{ __('Crear primera plantación') }}
                             </a>
                         @endcan
                     </div>
@@ -221,21 +221,21 @@
                         <div class="p-1.5 rounded-lg bg-blue-50">
                             <flux:icon icon="building-office" class="size-4 text-blue-600" />
                         </div>
-                        <span class="font-semibold text-zinc-900 text-sm">Asignaciones</span>
+                        <span class="font-semibold text-zinc-900 text-sm">{{ __('Asignaciones') }}</span>
                     </div>
                 </x-slot:header>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     @if($plot->viticulturist && $plot->viticulturist->wineries->isNotEmpty())
                         <div>
-                            <label class="text-sm font-semibold text-zinc-500">Bodega</label>
+                            <label class="text-sm font-semibold text-zinc-500">{{ __('Bodega') }}</label>
                             <p class="text-zinc-900">{{ $plot->viticulturist->wineries->first()->name }}</p>
                         </div>
                     @endif
 
                     @if($plot->viticulturist)
                         <div>
-                            <label class="text-sm font-semibold text-zinc-500">Viticultor Asignado</label>
+                            <label class="text-sm font-semibold text-zinc-500">{{ __('Viticultor Asignado') }}</label>
                             <p class="text-zinc-900">{{ $plot->viticulturist->name }}</p>
                         </div>
                     @endif
@@ -250,26 +250,26 @@
                             <div class="p-1.5 rounded-lg bg-agro-50">
                                 <flux:icon icon="map-pin" class="size-4 text-agro-600" />
                             </div>
-                            <span class="font-semibold text-zinc-900 text-sm">Ubicación</span>
+                            <span class="font-semibold text-zinc-900 text-sm">{{ __('Ubicación') }}</span>
                         </div>
                     </x-slot:header>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
-                            <label class="text-sm font-semibold text-zinc-500">Comunidad Autonoma</label>
+                            <label class="text-sm font-semibold text-zinc-500">{{ __('Comunidad Autónoma') }}</label>
                             <p class="text-zinc-900">{{ $plot->autonomousCommunity->name }}</p>
                         </div>
 
                         @if($plot->province)
                             <div>
-                                <label class="text-sm font-semibold text-zinc-500">Provincia</label>
+                                <label class="text-sm font-semibold text-zinc-500">{{ __('Provincia') }}</label>
                                 <p class="text-zinc-900">{{ $plot->province->name }}</p>
                             </div>
                         @endif
 
                         @if($plot->municipality)
                             <div>
-                                <label class="text-sm font-semibold text-zinc-500">Municipio</label>
+                                <label class="text-sm font-semibold text-zinc-500">{{ __('Municipio') }}</label>
                                 <p class="text-zinc-900">{{ $plot->municipality->name }}</p>
                             </div>
                         @endif
@@ -285,21 +285,21 @@
                         <div class="p-1.5 rounded-lg bg-yellow-50">
                             <flux:icon icon="bell-alert" class="size-4 text-yellow-600" />
                         </div>
-                        <span class="font-semibold text-zinc-900 text-sm">Configuración de Alertas</span>
+                        <span class="font-semibold text-zinc-900 text-sm">{{ __('Configuración de Alertas') }}</span>
                     </div>
                 </x-slot:header>
                 <div class="flex items-center justify-between">
                     <div>
-                        <label class="text-sm font-semibold text-zinc-500">Umbral NDVI (Vigor)</label>
+                        <label class="text-sm font-semibold text-zinc-500">{{ __('Umbral NDVI (Vigor)') }}</label>
                         <p class="text-zinc-900 font-bold text-lg">{{ $plot->ndvi_alert_threshold }}</p>
                     </div>
                     <div>
-                        <label class="text-sm font-semibold text-zinc-500">Alertas por Email</label>
+                        <label class="text-sm font-semibold text-zinc-500">{{ __('Alertas por Email') }}</label>
                         <div class="mt-1">
                             @if($plot->alert_email_enabled)
-                                <flux:badge color="green" icon="check-circle" size="sm">Activado</flux:badge>
+                                <flux:badge color="green" icon="check-circle" size="sm">{{ __('Activado') }}</flux:badge>
                             @else
-                                <flux:badge size="sm">Desactivado</flux:badge>
+                                <flux:badge size="sm">{{ __('Desactivado') }}</flux:badge>
                             @endif
                         </div>
                     </div>
@@ -316,7 +316,7 @@
                                 <div class="p-1.5 rounded-lg bg-blue-50">
                                     <flux:icon icon="hashtag" class="size-4 text-blue-600" />
                                 </div>
-                                <span class="font-semibold text-zinc-900 text-sm">Datos SIGPAC</span>
+                                <span class="font-semibold text-zinc-900 text-sm">{{ __('Datos SIGPAC') }}</span>
                             </div>
                         @if($plot->sigpacCodes->count() > 0)
                             @php
@@ -334,10 +334,10 @@
                                         icon="map"
                                     >
                                         <span wire:loading.remove wire:target="generateMap({{ $plot->id }})">
-                                            Generar Mapa
+                                            {{ __('Generar Mapa') }}
                                         </span>
                                         <span wire:loading wire:target="generateMap({{ $plot->id }})">
-                                            Generando...
+                                            {{ __('Generando...') }}
                                         </span>
                                     </flux:button>
                                 @endif
@@ -348,7 +348,7 @@
 
                     @if($plot->sigpacUses->count() > 0)
                         <div class="mb-4">
-                            <label class="text-sm font-semibold text-zinc-500 block mb-2">Usos SIGPAC</label>
+                            <label class="text-sm font-semibold text-zinc-500 block mb-2">{{ __('Usos SIGPAC') }}</label>
                             <div class="flex flex-wrap gap-2">
                                 @foreach($plot->sigpacUses as $use)
                                     <flux:badge color="green" size="sm">
@@ -361,9 +361,9 @@
 
                     <div class="mb-4">
                         <div class="flex items-center justify-between mb-2">
-                            <label class="text-sm font-semibold text-zinc-500">Codigos SIGPAC</label>
+                            <label class="text-sm font-semibold text-zinc-500">{{ __('Códigos SIGPAC') }}</label>
                             <flux:button href="{{ route('sigpac.codes.create', ['plot_id' => $plot->id]) }}" variant="ghost" size="xs" icon="plus">
-                                Añadir código SIGPAC
+                                {{ __('Añadir código SIGPAC') }}
                             </flux:button>
                         </div>
                         @if($plot->sigpacCodes->count() > 0)
@@ -389,10 +389,10 @@
                                                     icon="map"
                                                 >
                                                     <span wire:loading.remove wire:target="generateMap({{ $plot->id }}, {{ $code->id }})">
-                                                        Generar Mapa
+                                                        {{ __('Generar Mapa') }}
                                                     </span>
                                                     <span wire:loading wire:target="generateMap({{ $plot->id }}, {{ $code->id }})">
-                                                        Generando...
+                                                        {{ __('Generando...') }}
                                                     </span>
                                                 </flux:button>
                                             @endif
@@ -401,7 +401,7 @@
                                 @endforeach
                             </div>
                         @else
-                            <p class="text-sm text-zinc-400 italic">No hay codigos SIGPAC asociados</p>
+                            <p class="text-sm text-zinc-400 italic">{{ __('No hay códigos SIGPAC asociados') }}</p>
                         @endif
                     </div>
                 </x-agro.card>
@@ -442,10 +442,10 @@
                                 <div class="p-1.5 rounded-lg bg-agro-50">
                                     <flux:icon icon="map" class="size-4 text-agro-600" />
                                 </div>
-                                <span class="font-semibold text-zinc-900 text-sm">Mapa de la Parcela</span>
+                                <span class="font-semibold text-zinc-900 text-sm">{{ __('Mapa de la Parcela') }}</span>
                             </div>
                             <flux:button href="/map/{{ $plot->id }}" variant="primary" size="sm" icon="map">
-                                Ver Mapa Completo
+                                {{ __('Ver Mapa Completo') }}
                             </flux:button>
                         </div>
                     </x-slot:header>
@@ -455,26 +455,26 @@
                             <flux:icon icon="map" class="size-6 text-agro-600" />
                         </div>
                         <div class="flex-1">
-                            <p class="font-semibold text-zinc-900 mb-1">Mapa Interactivo Disponible</p>
+                            <p class="font-semibold text-zinc-900 mb-1">{{ __('Mapa Interactivo Disponible') }}</p>
                             <p class="text-zinc-500 text-sm mb-3">
-                                Esta parcela tiene recintos SIGPAC con geometrías generadas. Visualiza el mapa a pantalla completa con selector de recintos.
+                                {{ __('Esta parcela tiene recintos SIGPAC con geometrías generadas. Visualiza el mapa a pantalla completa con selector de recintos.') }}
                             </p>
                             <ul class="text-sm text-zinc-600 space-y-1">
                                 <li class="flex items-center gap-2">
                                     <flux:icon icon="check-circle" class="size-4 text-agro-500 flex-shrink-0" />
-                                    Vista a pantalla completa
+                                    {{ __('Vista a pantalla completa') }}
                                 </li>
                                 <li class="flex items-center gap-2">
                                     <flux:icon icon="check-circle" class="size-4 text-agro-500 flex-shrink-0" />
-                                    Selector de recintos individuales
+                                    {{ __('Selector de recintos individuales') }}
                                 </li>
                                 <li class="flex items-center gap-2">
                                     <flux:icon icon="check-circle" class="size-4 text-agro-500 flex-shrink-0" />
-                                    Zoom y navegación interactiva
+                                    {{ __('Zoom y navegación interactiva') }}
                                 </li>
                                 <li class="flex items-center gap-2">
                                     <flux:icon icon="check-circle" class="size-4 text-agro-500 flex-shrink-0" />
-                                    Colores diferenciados por recinto
+                                    {{ __('Colores diferenciados por recinto') }}
                                 </li>
                             </ul>
                         </div>
@@ -496,7 +496,7 @@
                             <div class="p-1.5 rounded-lg bg-agro-50">
                                 <flux:icon icon="map-pin" class="size-4 text-agro-600" />
                             </div>
-                            <span class="font-semibold text-zinc-900 text-sm">Coordenadas Multiparte</span>
+                            <span class="font-semibold text-zinc-900 text-sm">{{ __('Coordenadas Multiparte') }}</span>
                         </div>
                     </x-slot:header>
 
@@ -504,7 +504,7 @@
                         @foreach($plot->multiplePlotSigpacs as $coord)
                             <div class="p-4 border border-zinc-200 rounded-lg">
                                 <div class="flex justify-between items-start mb-2">
-                                    <span class="text-sm font-semibold text-zinc-700">Coordenadas #{{ $loop->iteration }}</span>
+                                    <span class="text-sm font-semibold text-zinc-700">{{ __('Coordenadas') }} #{{ $loop->iteration }}</span>
                                     @if($coord->sigpacCode)
                                         <flux:badge color="blue" size="sm">
                                             {{ $coord->sigpacCode->code }}
@@ -528,16 +528,16 @@
                         <div class="p-1.5 rounded-lg bg-blue-50">
                             <flux:icon icon="calendar" class="size-4 text-blue-600" />
                         </div>
-                        <span class="font-semibold text-zinc-900 text-sm">Fechas</span>
+                        <span class="font-semibold text-zinc-900 text-sm">{{ __('Fechas') }}</span>
                     </div>
                 </x-slot:header>
                 <div class="space-y-2 text-sm">
                     <div>
-                        <label class="text-zinc-500">Creada</label>
+                        <label class="text-zinc-500">{{ __('Creada') }}</label>
                         <p class="text-zinc-900">{{ $plot->created_at->format('d/m/Y H:i') }}</p>
                     </div>
                     <div>
-                        <label class="text-zinc-500">Actualizada</label>
+                        <label class="text-zinc-500">{{ __('Actualizada') }}</label>
                         <p class="text-zinc-900">{{ $plot->updated_at->format('d/m/Y H:i') }}</p>
                     </div>
                 </div>
@@ -549,8 +549,8 @@
     {{-- TAB: ENTORNO RD 1311/2012 --}}
     @if(!$activeCampaign)
         <flux:callout variant="warning" icon="exclamation-triangle">
-            <flux:callout.heading>Sin campaña activa</flux:callout.heading>
-            <flux:callout.text>Necesitas tener una campaña activa para registrar el entorno de la parcela.</flux:callout.text>
+            <flux:callout.heading>{{ __('Sin campaña activa') }}</flux:callout.heading>
+            <flux:callout.text>{{ __('Necesitas tener una campaña activa para registrar el entorno de la parcela.') }}</flux:callout.text>
         </flux:callout>
     @else
         <div class="max-w-3xl space-y-6">
@@ -558,10 +558,10 @@
             {{-- Cabecera campaña --}}
             <div class="flex items-center gap-2">
                 <flux:badge color="green" icon="calendar">
-                    Campaña {{ $activeCampaign->year }} — {{ $activeCampaign->name }}
+                    {{ __('Campaña') }} {{ $activeCampaign->year }} — {{ $activeCampaign->name }}
                 </flux:badge>
                 @if($env_id)
-                    <flux:badge color="blue" icon="check-circle" size="sm">Datos guardados</flux:badge>
+                    <flux:badge color="blue" icon="check-circle" size="sm">{{ __('Datos guardados') }}</flux:badge>
                 @endif
             </div>
 
@@ -572,25 +572,25 @@
                         <div class="p-1.5 rounded-lg bg-blue-50">
                             <flux:icon icon="beaker" class="size-4 text-blue-600" />
                         </div>
-                        <span class="font-semibold text-zinc-900 text-sm">Captaciones de Agua</span>
+                        <span class="font-semibold text-zinc-900 text-sm">{{ __('Captaciones de Agua') }}</span>
                     </div>
                 </x-slot:header>
 
                 <div class="space-y-4">
                     <flux:field>
-                        <flux:label>¿Existe una captación de agua cercana?</flux:label>
+                        <flux:label>{{ __('¿Existe una captación de agua cercana?') }}</flux:label>
                         <div class="flex items-center gap-3 mt-1">
                             <flux:switch wire:model.live="env_water_intake_nearby" />
                             <span class="text-sm text-zinc-600">
-                                {{ $env_water_intake_nearby ? 'Sí, existe captación de agua cercana' : 'No' }}
+                                {{ $env_water_intake_nearby ? __('Sí, existe captación de agua cercana') : __('No') }}
                             </span>
                         </div>
                     </flux:field>
 
                     @if($env_water_intake_nearby)
                         <flux:field>
-                            <flux:label>Distancia a la captación (metros)</flux:label>
-                            <flux:input wire:model="env_water_intake_distance_m" type="number" min="0" step="0.01" placeholder="Ej: 50" />
+                            <flux:label>{{ __('Distancia a la captación (metros)') }}</flux:label>
+                            <flux:input wire:model="env_water_intake_distance_m" type="number" min="0" step="0.01" :placeholder="__('Ej: 50')" />
                             <flux:error name="env_water_intake_distance_m" />
                         </flux:field>
                     @endif
@@ -604,27 +604,27 @@
                         <div class="p-1.5 rounded-lg bg-yellow-50">
                             <flux:icon icon="shield-exclamation" class="size-4 text-yellow-600" />
                         </div>
-                        <span class="font-semibold text-zinc-900 text-sm">Zonas Protegidas</span>
+                        <span class="font-semibold text-zinc-900 text-sm">{{ __('Zonas Protegidas') }}</span>
                     </div>
                 </x-slot:header>
 
                 <div class="space-y-4">
                     <flux:field>
-                        <flux:label>Zona protegida total (ZEP, LIC, ZEC, ZEPA…)</flux:label>
+                        <flux:label>{{ __('Zona protegida total (ZEP, LIC, ZEC, ZEPA…)') }}</flux:label>
                         <div class="flex items-center gap-3 mt-1">
                             <flux:switch wire:model.live="env_protected_zone_total" />
                             <span class="text-sm text-zinc-600">
-                                {{ $env_protected_zone_total ? 'Sí, zona protegida total' : 'No' }}
+                                {{ $env_protected_zone_total ? __('Sí, zona protegida total') : __('No') }}
                             </span>
                         </div>
                     </flux:field>
 
                     <flux:field>
-                        <flux:label>Zona protegida parcial / tampón</flux:label>
+                        <flux:label>{{ __('Zona protegida parcial / tampón') }}</flux:label>
                         <div class="flex items-center gap-3 mt-1">
                             <flux:switch wire:model.live="env_protected_zone_partial" />
                             <span class="text-sm text-zinc-600">
-                                {{ $env_protected_zone_partial ? 'Sí, zona protegida parcial' : 'No' }}
+                                {{ $env_protected_zone_partial ? __('Sí, zona protegida parcial') : __('No') }}
                             </span>
                         </div>
                     </flux:field>
@@ -632,13 +632,13 @@
                     @if($env_protected_zone_total || $env_protected_zone_partial)
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <flux:field>
-                                <flux:label>Tipo de zona de protección</flux:label>
-                                <flux:input wire:model="env_protection_zone_type" placeholder="Ej: ZEC, LIC, ZEPA..." maxlength="100" />
+                                <flux:label>{{ __('Tipo de zona de protección') }}</flux:label>
+                                <flux:input wire:model="env_protection_zone_type" :placeholder="__('Ej: ZEC, LIC, ZEPA...')" maxlength="100" />
                                 <flux:error name="env_protection_zone_type" />
                             </flux:field>
                             <flux:field>
-                                <flux:label>Zona tampón (metros)</flux:label>
-                                <flux:input wire:model="env_buffer_zone_m" type="number" min="0" step="0.01" placeholder="Ej: 10" />
+                                <flux:label>{{ __('Zona tampón (metros)') }}</flux:label>
+                                <flux:input wire:model="env_buffer_zone_m" type="number" min="0" step="0.01" :placeholder="__('Ej: 10')" />
                                 <flux:error name="env_buffer_zone_m" />
                             </flux:field>
                         </div>
@@ -653,23 +653,23 @@
                         <div class="p-1.5 rounded-lg bg-agro-50">
                             <flux:icon icon="chart-bar" class="size-4 text-agro-600" />
                         </div>
-                        <span class="font-semibold text-zinc-900 text-sm">Características del Terreno</span>
+                        <span class="font-semibold text-zinc-900 text-sm">{{ __('Características del Terreno') }}</span>
                     </div>
                 </x-slot:header>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <flux:field>
-                        <flux:label>Pendiente (%)</flux:label>
-                        <flux:input wire:model="env_slope_pct" type="number" min="0" max="100" step="0.01" placeholder="Ej: 15" />
+                        <flux:label>{{ __('Pendiente (%)') }}</flux:label>
+                        <flux:input wire:model="env_slope_pct" type="number" min="0" max="100" step="0.01" :placeholder="__('Ej: 15')" />
                         <flux:error name="env_slope_pct" />
                     </flux:field>
 
                     <flux:field>
-                        <flux:label>Riesgo de erosión</flux:label>
+                        <flux:label>{{ __('Riesgo de erosión') }}</flux:label>
                         <div class="flex items-center gap-3 mt-2">
                             <flux:switch wire:model="env_erosion_risk" />
                             <span class="text-sm text-zinc-600">
-                                {{ $env_erosion_risk ? 'Sí, riesgo de erosión' : 'No' }}
+                                {{ $env_erosion_risk ? __('Sí, riesgo de erosión') : __('No') }}
                             </span>
                         </div>
                     </flux:field>
@@ -683,12 +683,12 @@
                         <div class="p-1.5 rounded-lg bg-zinc-50">
                             <flux:icon icon="document-text" class="size-4 text-zinc-500" />
                         </div>
-                        <span class="font-semibold text-zinc-900 text-sm">Notas</span>
+                        <span class="font-semibold text-zinc-900 text-sm">{{ __('Notas') }}</span>
                     </div>
                 </x-slot:header>
 
                 <flux:field>
-                    <flux:textarea wire:model="env_notes" rows="3" placeholder="Observaciones sobre el entorno de la parcela..." />
+                    <flux:textarea wire:model="env_notes" rows="3" :placeholder="__('Observaciones sobre el entorno de la parcela...')" />
                     <flux:error name="env_notes" />
                 </flux:field>
             </x-agro.card>
@@ -696,7 +696,7 @@
             {{-- Guardar --}}
             <div class="flex justify-end">
                 <flux:button wire:click="saveEnvironment" variant="primary" icon="check">
-                    Guardar entorno
+                    {{ __('Guardar entorno') }}
                 </flux:button>
             </div>
 

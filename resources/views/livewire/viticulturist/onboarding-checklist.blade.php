@@ -2,7 +2,7 @@
     @if($show)
         <div x-data="{ expanded: false }" class="mb-4">
             {{-- Compact Header (Always Visible) --}}
-            <div @click="expanded = !expanded" 
+            <div @click="expanded = !expanded"
                  class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200 p-3 cursor-pointer hover:shadow-md transition-all">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-3">
@@ -10,10 +10,10 @@
                             🚀
                         </div>
                         <div>
-                            <h3 class="text-sm font-bold text-zinc-900">Primeros pasos en Agro365</h3>
+                            <h3 class="text-sm font-bold text-zinc-900">{{ __('Primeros pasos en Agro365') }}</h3>
                             <div class="flex items-center gap-2 mt-0.5">
                                 <div class="w-32 bg-zinc-200 rounded-full h-1.5">
-                                    <div class="bg-green-500 h-1.5 rounded-full transition-all duration-500" 
+                                    <div class="bg-green-500 h-1.5 rounded-full transition-all duration-500"
                                          style="width: {{ $progressPercentage }}%"></div>
                                 </div>
                                 <span class="text-xs font-medium text-green-600">{{ $progressPercentage }}%</span>
@@ -30,10 +30,10 @@
             </div>
 
             {{-- Expanded Content --}}
-            <div x-show="expanded" 
+            <div x-show="expanded"
                  x-collapse
                  class="mt-2 bg-white rounded-lg border border-zinc-200 p-4">
-                
+
                 {{-- Steps List --}}
                 <div class="space-y-2 mb-3">
                     @foreach($steps as $step)
@@ -58,10 +58,10 @@
 
                             {{-- Action --}}
                             @if(!$step['completed'])
-                                <a href="{{ $step['route'] }}" 
+                                <a href="{{ $step['route'] }}"
                                    wire:navigate
                                    class="flex-shrink-0 px-2 py-1 bg-green-500 hover:bg-green-600 text-white text-xs font-medium rounded transition-colors">
-                                    Ir
+                                    {{ __('Ir') }}
                                 </a>
                             @endif
                         </div>
@@ -70,15 +70,15 @@
 
                 {{-- Actions --}}
                 <div class="flex items-center justify-between pt-3 border-t border-zinc-200">
-                    <button wire:click="skipAll" 
+                    <button wire:click="skipAll"
                             class="text-xs text-zinc-500 hover:text-zinc-700 transition-colors">
-                        Saltar tour
+                        {{ __('Saltar tour') }}
                     </button>
-                    
+
                     @if($progressPercentage === 100)
                         <div class="flex items-center gap-1 text-green-600">
                             <flux:icon icon="check-circle" class="size-4" />
-                            <span class="text-xs font-semibold">¡Completado!</span>
+                            <span class="text-xs font-semibold">{{ __('¡Completado!') }}</span>
                         </div>
                     @endif
                 </div>
@@ -90,17 +90,17 @@
             <div class="bg-green-50 border border-green-200 text-green-700 px-3 py-2 rounded-lg mb-4 text-sm" role="alert">
                 <div class="flex items-center gap-2">
                     <flux:icon icon="check-circle" class="size-4" />
-                    <span class="font-semibold">¡Enhorabuena! Has completado el onboarding.</span>
+                    <span class="font-semibold">{{ __('¡Enhorabuena! Has completado el onboarding.') }}</span>
                 </div>
             </div>
         @endif
     @else
         {{-- Botón discreto para reactivar onboarding cuando está oculto --}}
         <div class="mb-4">
-            <button wire:click="resetOnboarding" 
+            <button wire:click="resetOnboarding"
                     class="text-xs text-zinc-500 hover:text-green-600 transition-colors flex items-center gap-1">
                 <flux:icon icon="arrow-path" class="size-3" />
-                Volver a ver el tour de bienvenida
+                {{ __('Volver a ver el tour de bienvenida') }}
             </button>
         </div>
     @endif

@@ -60,14 +60,14 @@
             </svg>
         </div>
 
-        <h1>¡Email verificado!</h1>
-        <p>Tu cuenta de <span class="highlight">Agro365</span> está activada.</p>
-        <p>Ya puedes iniciar sesión desde la app.</p>
+        <h1>{{ __('¡Email verificado!') }}</h1>
+        <p>{{ __('Tu cuenta de') }} <span class="highlight">Agro365</span> {{ __('está activada.') }}</p>
+        <p>{{ __('Ya puedes iniciar sesión desde la app.') }}</p>
 
         <hr class="divider">
 
-        <p class="hint">Abriendo la app automáticamente…</p>
-        <a href="agro365://email-verified" class="btn">Abrir Agro365</a>
+        <p class="hint">{{ __('Abriendo la app automáticamente…') }}</p>
+        <a href="agro365://email-verified" class="btn">{{ __('Abrir Agro365') }}</a>
     </div>
 </body>
 </html>

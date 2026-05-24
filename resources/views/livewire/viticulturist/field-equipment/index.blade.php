@@ -2,43 +2,43 @@
 
     {{-- Header --}}
     <x-agro.page-header
-        title="Equipos de Aplicación"
-        description="Registro de maquinaria y equipos de aplicación (ITB pulverizadores)"
+        :title="__('Equipos de Aplicación')"
+        :description="__('Registro de maquinaria y equipos de aplicación (ITB pulverizadores)')"
         icon="wrench-screwdriver"
     >
         <x-slot:actions>
             <flux:button href="{{ roleRoute('viticulturist.field-equipment.create') }}" variant="primary" icon="plus">
-                Añadir Equipo
+                {{ __('Añadir Equipo') }}
             </flux:button>
         </x-slot:actions>
     </x-agro.page-header>
 
     <flux:callout variant="info" icon="information-circle">
-        Los pulverizadores deben pasar la <strong>Inspección Técnica de Equipos de Aplicación (ITEA)</strong> cada 3 años (RD 1702/2011). Registra la fecha para recibir alertas de vencimiento.
+        {{ __('Los pulverizadores deben pasar la') }} <strong>{{ __('Inspección Técnica de Equipos de Aplicación (ITEA)') }}</strong> {{ __('cada 3 años (RD 1702/2011). Registra la fecha para recibir alertas de vencimiento.') }}
     </flux:callout>
 
     {{-- KPIs --}}
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <x-agro.stat-card
-            label="Total equipos"
+            :label="__('Total equipos')"
             :value="$stats['total']"
             icon="wrench-screwdriver"
             color="zinc"
         />
         <x-agro.stat-card
-            label="Inspección vencida"
+            :label="__('Inspección vencida')"
             :value="$stats['overdue']"
             icon="x-circle"
             color="amber"
         />
         <x-agro.stat-card
-            label="Próxima inspección"
+            :label="__('Próxima inspección')"
             :value="$stats['due']"
             icon="clock"
             color="agro"
         />
         <x-agro.stat-card
-            label="Sin fecha ITEA"
+            :label="__('Sin fecha ITEA')"
             :value="$stats['no_date']"
             icon="question-mark-circle"
             color="zinc"
@@ -49,12 +49,12 @@
     @if($equipment->isEmpty())
         <x-agro.empty-state
             icon="wrench-screwdriver"
-            title="Sin equipos registrados"
-            description="Registra los equipos de aplicación que utilizas en tu explotación."
+            :title="__('Sin equipos registrados')"
+            :description="__('Registra los equipos de aplicación que utilizas en tu explotación.')"
         >
             <x-slot:action>
                 <flux:button href="{{ roleRoute('viticulturist.field-equipment.create') }}" variant="primary" icon="plus">
-                    Añadir Equipo
+                    {{ __('Añadir Equipo') }}
                 </flux:button>
             </x-slot:action>
         </x-agro.empty-state>
@@ -91,26 +91,26 @@
                     <div class="flex-1 space-y-3">
                         @if($item->last_inspection_date)
                             <div class="flex items-center justify-between text-sm">
-                                <span class="text-zinc-400">Última ITEA</span>
+                                <span class="text-zinc-400">{{ __('Última ITEA') }}</span>
                                 <span class="text-zinc-700">{{ $item->last_inspection_date->format('d/m/Y') }}</span>
                             </div>
                         @endif
 
                         @if($item->next_inspection_date)
                             <div class="{{ $inspBg }} rounded-xl p-3">
-                                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">Próxima ITEA</p>
+                                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">{{ __('Próxima ITEA') }}</p>
                                 <p class="text-base font-bold {{ $inspText }} leading-none">
                                     {{ $item->next_inspection_date->format('d/m/Y') }}
                                     @if($item->isInspectionOverdue())
-                                        <span class="text-xs font-normal ml-1">VENCIDA</span>
+                                        <span class="text-xs font-normal ml-1">{{ __('VENCIDA') }}</span>
                                     @elseif($item->isInspectionDue())
-                                        <span class="text-xs font-normal ml-1">Próxima</span>
+                                        <span class="text-xs font-normal ml-1">{{ __('Próxima') }}</span>
                                     @endif
                                 </p>
                             </div>
                         @else
                             <div class="bg-zinc-50 rounded-xl p-3 text-center">
-                                <p class="text-xs text-zinc-400">Sin fecha de inspección registrada</p>
+                                <p class="text-xs text-zinc-400">{{ __('Sin fecha de inspección registrada') }}</p>
                             </div>
                         @endif
                     </div>
@@ -120,13 +120,13 @@
                             <x-agro.action-button
                                 variant="edit"
                                 href="{{ roleRoute('viticulturist.field-equipment.edit', $item) }}"
-                                title="Editar"
+                                :title="__('Editar')"
                             />
                             <x-agro.action-button
                                 variant="archive"
                                 wire:click="deactivate({{ $item->id }})"
-                                wire:confirm="¿Dar de baja este equipo?"
-                                title="Dar de baja"
+                                wire:confirm="{{ __('¿Dar de baja este equipo?') }}"
+                                :title="__('Dar de baja')"
                             />
                         </div>
                     </x-slot:footer>

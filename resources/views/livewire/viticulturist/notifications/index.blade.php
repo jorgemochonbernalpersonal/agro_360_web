@@ -1,20 +1,20 @@
 <div class="space-y-6 animate-fade-in">
 
 <x-agro.page-header
-    title="Notificaciones"
-    description="Centro de notificaciones del sistema"
+    :title="__('Notificaciones')"
+    :description="__('Centro de notificaciones del sistema')"
     icon="bell"
 >
     <x-slot:actions>
         <div class="flex items-center gap-2">
             @if($unreadCount > 0)
                 <flux:button wire:click="markAllRead" variant="ghost" size="sm" icon="check">
-                    Marcar todo leído
+                    {{ __('Marcar todo leído') }}
                 </flux:button>
             @endif
             @if($notifications->total() > 0)
-                <flux:button wire:click="clearAll" wire:confirm="¿Eliminar todo el historial de notificaciones?" variant="ghost" size="sm" icon="trash">
-                    Limpiar historial
+                <flux:button wire:click="clearAll" wire:confirm="{{ __('¿Eliminar todo el historial de notificaciones?') }}" variant="ghost" size="sm" icon="trash">
+                    {{ __('Limpiar historial') }}
                 </flux:button>
             @endif
         </div>
@@ -24,7 +24,7 @@
 {{-- Badge no leídas --}}
 @if($unreadCount > 0)
     <flux:callout variant="info" icon="bell">
-        Tienes <strong>{{ $unreadCount }}</strong> {{ $unreadCount === 1 ? 'notificación sin leer' : 'notificaciones sin leer' }}.
+        {{ __('Tienes') }} <strong>{{ $unreadCount }}</strong> {{ $unreadCount === 1 ? __('notificación sin leer') : __('notificaciones sin leer') }}.
     </flux:callout>
 @endif
 
@@ -36,14 +36,14 @@
             :variant="$filter === 'all' ? 'primary' : 'ghost'"
             size="sm"
         >
-            Todas
+            {{ __('Todas') }}
         </flux:button>
         <flux:button
             wire:click="$set('filter', 'unread')"
             :variant="$filter === 'unread' ? 'primary' : 'ghost'"
             size="sm"
         >
-            Sin leer @if($unreadCount > 0)<span class="ml-1 inline-flex items-center justify-center w-5 h-5 text-xs font-bold bg-agro-500 text-white rounded-full">{{ $unreadCount }}</span>@endif
+            {{ __('Sin leer') }} @if($unreadCount > 0)<span class="ml-1 inline-flex items-center justify-center w-5 h-5 text-xs font-bold bg-agro-500 text-white rounded-full">{{ $unreadCount }}</span>@endif
         </flux:button>
     </div>
 </x-agro.filter-bar>
@@ -85,7 +85,7 @@
                 <div class="flex-1 min-w-0">
                     <div class="flex items-start justify-between gap-2">
                         <p class="text-sm font-{{ $isRead ? 'normal' : 'semibold' }} text-zinc-900">
-                            {{ $data['title'] ?? 'Notificación' }}
+                            {{ $data['title'] ?? __('Notificación') }}
                             @if(!$isRead)
                                 <span class="inline-block w-2 h-2 rounded-full bg-agro-500 ml-1 align-middle"></span>
                             @endif
@@ -101,19 +101,19 @@
                         @if(!empty($data['link']))
                             <a href="{{ $data['link'] }}" wire:navigate
                                class="text-xs font-medium text-agro-600 hover:text-agro-700">
-                                Ver detalle →
+                                {{ __('Ver detalle') }} →
                             </a>
                         @endif
                         @if(!$isRead)
                             <button wire:click="markRead('{{ $notification->id }}')"
                                     class="text-xs text-zinc-400 hover:text-zinc-600">
-                                Marcar como leído
+                                {{ __('Marcar como leído') }}
                             </button>
                         @endif
                         <button wire:click="delete('{{ $notification->id }}')"
-                                wire:confirm="¿Eliminar esta notificación?"
+                                wire:confirm="{{ __('¿Eliminar esta notificación?') }}"
                                 class="text-xs text-red-400 hover:text-red-600">
-                            Eliminar
+                            {{ __('Eliminar') }}
                         </button>
                     </div>
                 </div>
@@ -125,8 +125,8 @@
 @else
     <x-agro.empty-state
         icon="bell"
-        title="Sin notificaciones"
-        description="Aquí aparecerán los avisos del sistema: alertas de plagas, vencimientos, comunicaciones de bodega y más."
+        :title="__('Sin notificaciones')"
+        :description="__('Aquí aparecerán los avisos del sistema: alertas de plagas, vencimientos, comunicaciones de bodega y más.')"
     />
 @endif
 

@@ -1,6 +1,6 @@
 <x-agro.form-card
-    title="Editar entrega de uva"
-    description="Modifica los datos de esta entrega manual"
+    :title="__('Editar entrega de uva')"
+    :description="__('Modifica los datos de esta entrega manual')"
     icon="truck"
     icon-color="from-blue-500 to-blue-700"
     :back-url="roleRoute('viticulturist.harvests.index')"
@@ -8,23 +8,23 @@
     @if($delivery->harvest_id)
         @if($delivery->isResolved())
             <flux:callout variant="info" icon="check-circle" class="mb-6">
-                <flux:callout.heading>Disputa resuelta por la bodega</flux:callout.heading>
+                <flux:callout.heading>{{ __('Disputa resuelta por la bodega') }}</flux:callout.heading>
                 <flux:callout.text>
-                    Esta entrega tiene una disputa ya resuelta. Si modificas los kg declarados, la plantación o la añada, se perderá la vinculación con la recepción de bodega y quedará pendiente de re-confirmar.
+                    {{ __('Esta entrega tiene una disputa ya resuelta. Si modificas los kg declarados, la plantación o la añada, se perderá la vinculación con la recepción de bodega y quedará pendiente de re-confirmar.') }}
                 </flux:callout.text>
             </flux:callout>
         @elseif($delivery->isMatched())
             <flux:callout variant="success" icon="check-circle" class="mb-6">
-                <flux:callout.heading>Entrega confirmada por la bodega</flux:callout.heading>
+                <flux:callout.heading>{{ __('Entrega confirmada por la bodega') }}</flux:callout.heading>
                 <flux:callout.text>
-                    Esta entrega ya fue confirmada. Si modificas los kg declarados, la plantación o la añada, se perderá la confirmación y quedará pendiente de re-confirmar.
+                    {{ __('Esta entrega ya fue confirmada. Si modificas los kg declarados, la plantación o la añada, se perderá la confirmación y quedará pendiente de re-confirmar.') }}
                 </flux:callout.text>
             </flux:callout>
         @elseif($delivery->isDisputed())
             <flux:callout variant="warning" icon="exclamation-triangle" class="mb-6">
-                <flux:callout.heading>Entrega en reclamación</flux:callout.heading>
+                <flux:callout.heading>{{ __('Entrega en reclamación') }}</flux:callout.heading>
                 <flux:callout.text>
-                    Esta entrega tiene una diferencia en curso con la bodega. Si modificas los kg, la plantación o la añada, se perderá la vinculación y la reclamación quedará sin efecto.
+                    {{ __('Esta entrega tiene una diferencia en curso con la bodega. Si modificas los kg, la plantación o la añada, se perderá la vinculación y la reclamación quedará sin efecto.') }}
                 </flux:callout.text>
             </flux:callout>
         @endif
@@ -33,33 +33,33 @@
     <form wire:submit="save" class="space-y-8">
 
         {{-- Parcela y plantación --}}
-        <x-agro.form-section title="Parcela y plantación" color="green">
+        <x-agro.form-section :title="__('Parcela y plantación')" color="green">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <flux:field>
-                    <flux:label>Parcela <span class="text-zinc-400 font-normal text-xs">(opcional)</span></flux:label>
+                    <flux:label>{{ __('Parcela') }} <span class="text-zinc-400 font-normal text-xs">({{ __('opcional') }})</span></flux:label>
                     <flux:select wire:model.live="plot_id" id="plot_id">
-                        <option value="">Sin parcela concreta</option>
+                        <option value="">{{ __('Sin parcela concreta') }}</option>
                         @foreach($plots as $plot)
                             <option value="{{ $plot->id }}">{{ $plot->name }} ({{ $plot->area }} ha)</option>
                         @endforeach
                     </flux:select>
-                    <flux:description>Solo se muestran parcelas activas</flux:description>
+                    <flux:description>{{ __('Solo se muestran parcelas activas') }}</flux:description>
                     <flux:error name="plot_id" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Plantación / Variedad <span class="text-zinc-400 font-normal text-xs">(opcional)</span></flux:label>
+                    <flux:label>{{ __('Plantación / Variedad') }} <span class="text-zinc-400 font-normal text-xs">({{ __('opcional') }})</span></flux:label>
                     <flux:select wire:model="plot_planting_id" id="plot_planting_id" :disabled="!$plot_id || $availablePlantings->isEmpty()">
-                        <option value="">Sin plantación concreta</option>
+                        <option value="">{{ __('Sin plantación concreta') }}</option>
                         @foreach($availablePlantings as $planting)
                             <option value="{{ $planting->id }}">
                                 @if($planting->name){{ $planting->name }} — @endif
-                                {{ $planting->grapeVariety->name ?? 'Sin variedad' }} ({{ $planting->area_planted }} ha)
+                                {{ $planting->grapeVariety->name ?? __('Sin variedad') }} ({{ $planting->area_planted }} ha)
                             </option>
                         @endforeach
                     </flux:select>
                     @if($plot_id && $availablePlantings->isEmpty())
-                        <flux:description class="text-amber-600">Esta parcela no tiene plantaciones activas</flux:description>
+                        <flux:description class="text-amber-600">{{ __('Esta parcela no tiene plantaciones activas') }}</flux:description>
                     @endif
                     <flux:error name="plot_planting_id" />
                 </flux:field>
@@ -67,23 +67,23 @@
         </x-agro.form-section>
 
         {{-- Datos de la entrega --}}
-        <x-agro.form-section title="Datos de la entrega" color="blue">
+        <x-agro.form-section :title="__('Datos de la entrega')" color="blue">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                 <flux:field>
-                    <flux:label required>Comprador / Destino</flux:label>
+                    <flux:label required>{{ __('Comprador / Destino') }}</flux:label>
                     <flux:input
                         wire:model="buyer_name"
                         type="text"
                         id="buyer_name"
-                        placeholder="Cooperativa, almacenista, particular..."
+                        :placeholder="__('Cooperativa, almacenista, particular...')"
                         required
                     />
                     <flux:error name="buyer_name" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label required>Añada</flux:label>
+                    <flux:label required>{{ __('Añada') }}</flux:label>
                     <flux:input
                         wire:model="vintage_year"
                         type="number"
@@ -96,7 +96,7 @@
                 </flux:field>
 
                 <flux:field>
-                    <flux:label required>Kg entregados</flux:label>
+                    <flux:label required>{{ __('Kg entregados') }}</flux:label>
                     <flux:input
                         wire:model.live="delivered_kg"
                         type="number"
@@ -110,7 +110,7 @@
                 </flux:field>
 
                 <flux:field>
-                    <flux:label required>Fecha de entrega</flux:label>
+                    <flux:label required>{{ __('Fecha de entrega') }}</flux:label>
                     <flux:input
                         wire:model="delivery_date"
                         type="date"
@@ -121,7 +121,7 @@
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Hora de entrega <span class="text-zinc-400 font-normal text-xs">(opcional)</span></flux:label>
+                    <flux:label>{{ __('Hora de entrega') }} <span class="text-zinc-400 font-normal text-xs">({{ __('opcional') }})</span></flux:label>
                     <flux:input
                         wire:model="harvest_time"
                         type="time"
@@ -134,11 +134,11 @@
         </x-agro.form-section>
 
         {{-- Precio --}}
-        <x-agro.form-section title="Precio" color="amber">
+        <x-agro.form-section :title="__('Precio')" color="amber">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
                 <flux:field>
-                    <flux:label>Precio / kg (€) <span class="text-zinc-400 font-normal text-xs">(opcional)</span></flux:label>
+                    <flux:label>{{ __('Precio / kg (€)') }} <span class="text-zinc-400 font-normal text-xs">({{ __('opcional') }})</span></flux:label>
                     <flux:input
                         wire:model.live="price_per_kg"
                         type="number"
@@ -151,7 +151,7 @@
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Importe total (€) <span class="text-zinc-400 font-normal text-xs">(opcional)</span></flux:label>
+                    <flux:label>{{ __('Importe total (€)') }} <span class="text-zinc-400 font-normal text-xs">({{ __('opcional') }})</span></flux:label>
                     @php
                         $computedTotal = ($price_per_kg && $delivered_kg)
                             ? number_format((float) $price_per_kg * (float) $delivered_kg, 3, '.', '')
@@ -163,9 +163,9 @@
                         step="0.001"
                         min="0"
                         id="total_price"
-                        placeholder="{{ $computedTotal ? number_format((float)$computedTotal, 3, '.', '') : 'Se calcula automáticamente' }}"
+                        placeholder="{{ $computedTotal ? number_format((float)$computedTotal, 3, '.', '') : __('Se calcula automáticamente') }}"
                     />
-                    <flux:description>Se calcula desde precio × kg. Puedes introducir un importe pactado diferente.</flux:description>
+                    <flux:description>{{ __('Se calcula desde precio × kg. Puedes introducir un importe pactado diferente.') }}</flux:description>
                     <flux:error name="total_price" />
                 </flux:field>
 
@@ -173,11 +173,11 @@
         </x-agro.form-section>
 
         {{-- Trazabilidad --}}
-        <x-agro.form-section title="Trazabilidad" color="zinc">
+        <x-agro.form-section :title="__('Trazabilidad')" color="zinc">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
                 <flux:field>
-                    <flux:label>Nº ticket / pesada <span class="text-zinc-400 font-normal text-xs">(opcional)</span></flux:label>
+                    <flux:label>{{ __('Nº ticket / pesada') }} <span class="text-zinc-400 font-normal text-xs">({{ __('opcional') }})</span></flux:label>
                     <flux:input
                         wire:model="ticket_number"
                         type="text"
@@ -185,12 +185,12 @@
                         placeholder="Ej: 2026-00123"
                         maxlength="100"
                     />
-                    <flux:description>Número asignado por el comprador en báscula. Se usa para cruzar automáticamente con la recepción de bodega.</flux:description>
+                    <flux:description>{{ __('Número asignado por el comprador en báscula. Se usa para cruzar automáticamente con la recepción de bodega.') }}</flux:description>
                     <flux:error name="ticket_number" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Código REGA destino <span class="text-zinc-400 font-normal text-xs">(opcional)</span></flux:label>
+                    <flux:label>{{ __('Código REGA destino') }} <span class="text-zinc-400 font-normal text-xs">({{ __('opcional') }})</span></flux:label>
                     <flux:input
                         wire:model="destination_rega_code"
                         type="text"
@@ -198,12 +198,12 @@
                         placeholder="Ej: ES12345678"
                         maxlength="20"
                     />
-                    <flux:description>Código de registro de la instalación de destino (PAC)</flux:description>
+                    <flux:description>{{ __('Código de registro de la instalación de destino (PAC)') }}</flux:description>
                     <flux:error name="destination_rega_code" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Matrícula vehículo <span class="text-zinc-400 font-normal text-xs">(opcional)</span></flux:label>
+                    <flux:label>{{ __('Matrícula vehículo') }} <span class="text-zinc-400 font-normal text-xs">({{ __('opcional') }})</span></flux:label>
                     <flux:input
                         wire:model="vehicle_plate"
                         type="text"
@@ -218,30 +218,30 @@
         </x-agro.form-section>
 
         {{-- Parámetros de calidad --}}
-        <x-agro.form-section title="Parámetros de calidad" color="violet">
-            <flux:description class="mb-4">Datos analíticos proporcionados por el comprador en el momento de la recepción. Todos opcionales.</flux:description>
+        <x-agro.form-section :title="__('Parámetros de calidad')" color="violet">
+            <flux:description class="mb-4">{{ __('Datos analíticos proporcionados por el comprador en el momento de la recepción. Todos opcionales.') }}</flux:description>
             <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
 
                 <flux:field>
-                    <flux:label>Baumé (°Bé)</flux:label>
+                    <flux:label>{{ __('Baumé (°Bé)') }}</flux:label>
                     <flux:input wire:model="baume_degree" type="number" step="0.1" min="0" max="20" id="baume_degree" placeholder="0–20" />
                     <flux:error name="baume_degree" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Brix (°Bx)</flux:label>
+                    <flux:label>{{ __('Brix (°Bx)') }}</flux:label>
                     <flux:input wire:model="brix_degree" type="number" step="0.1" min="0" max="40" id="brix_degree" placeholder="0–40" />
                     <flux:error name="brix_degree" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Alc. potencial (%vol)</flux:label>
+                    <flux:label>{{ __('Alc. potencial (%vol)') }}</flux:label>
                     <flux:input wire:model="potential_alcohol" type="number" step="0.01" min="0" max="25" id="potential_alcohol" placeholder="0–25" />
                     <flux:error name="potential_alcohol" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Acidez (g/L)</flux:label>
+                    <flux:label>{{ __('Acidez (g/L)') }}</flux:label>
                     <flux:input wire:model="acidity_level" type="number" step="0.1" min="0" max="20" id="acidity_level" placeholder="0–20" />
                     <flux:error name="acidity_level" />
                 </flux:field>
@@ -256,20 +256,20 @@
         </x-agro.form-section>
 
         {{-- Descarte --}}
-        <x-agro.form-section title="Descarte" color="red">
+        <x-agro.form-section :title="__('Descarte')" color="red">
             <div class="space-y-4">
                 <flux:field>
-                    <flux:checkbox wire:model.live="disqualified" id="disqualified" label="Esta entrega ha sido descartada o rechazada por el comprador" />
-                    <flux:description>Marca esta opción si el comprador rechaza la entrega completa. Si solo rechaza una parte, registra dos entregas separadas.</flux:description>
+                    <flux:checkbox wire:model.live="disqualified" id="disqualified" :label="__('Esta entrega ha sido descartada o rechazada por el comprador')" />
+                    <flux:description>{{ __('Marca esta opción si el comprador rechaza la entrega completa. Si solo rechaza una parte, registra dos entregas separadas.') }}</flux:description>
                 </flux:field>
                 @if($disqualified)
                     <flux:field>
-                        <flux:label>Motivo del descarte <span class="text-zinc-400 font-normal text-xs">(opcional)</span></flux:label>
+                        <flux:label>{{ __('Motivo del descarte') }} <span class="text-zinc-400 font-normal text-xs">({{ __('opcional') }})</span></flux:label>
                         <flux:textarea
                             wire:model="disqualified_reason"
                             id="disqualified_reason"
                             rows="2"
-                            placeholder="Describe el motivo: exceso de botrytis, madurez insuficiente, problemas fitosanitarios..."
+                            :placeholder="__('Describe el motivo: exceso de botrytis, madurez insuficiente, problemas fitosanitarios...')"
                             maxlength="500"
                         />
                         <flux:error name="disqualified_reason" />
@@ -279,14 +279,14 @@
         </x-agro.form-section>
 
         {{-- Notas --}}
-        <x-agro.form-section title="Notas adicionales" color="zinc">
+        <x-agro.form-section :title="__('Notas adicionales')" color="zinc">
             <flux:field>
-                <flux:label>Notas <span class="text-zinc-400 font-normal text-xs">(opcional)</span></flux:label>
+                <flux:label>{{ __('Notas') }} <span class="text-zinc-400 font-normal text-xs">({{ __('opcional') }})</span></flux:label>
                 <flux:textarea
                     wire:model="notes"
                     id="notes"
                     rows="3"
-                    placeholder="Observaciones sobre la entrega, calidad de la uva, condiciones acordadas..."
+                    :placeholder="__('Observaciones sobre la entrega, calidad de la uva, condiciones acordadas...')"
                 />
                 <flux:error name="notes" />
             </flux:field>
@@ -295,23 +295,23 @@
         <div class="flex items-center justify-between pt-6 border-t border-zinc-200">
             <flux:button
                 wire:click="delete"
-                wire:confirm="¿Eliminar esta entrega? Esta acción no se puede deshacer."
+                wire:confirm="{{ __('¿Eliminar esta entrega? Esta acción no se puede deshacer.') }}"
                 variant="danger"
                 icon="trash"
                 type="button"
             >
-                Eliminar entrega
+                {{ __('Eliminar entrega') }}
             </flux:button>
 
             <div class="flex items-center gap-3">
                 <flux:button href="{{ roleRoute('viticulturist.harvests.index') }}" variant="outline">
-                    Cancelar
+                    {{ __('Cancelar') }}
                 </flux:button>
                 <flux:button type="submit" variant="primary" wire:loading.attr="disabled" wire:loading.class="opacity-60 cursor-not-allowed">
-                    <span wire:loading.remove>Guardar cambios</span>
+                    <span wire:loading.remove>{{ __('Guardar cambios') }}</span>
                     <span wire:loading class="flex items-center gap-2">
                         <flux:icon icon="arrow-path" class="w-4 h-4 animate-spin" />
-                        Guardando...
+                        {{ __('Guardando...') }}
                     </span>
                 </flux:button>
             </div>

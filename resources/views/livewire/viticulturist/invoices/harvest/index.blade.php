@@ -1,14 +1,14 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="Facturar Cosechas"
-        description="Gestiona la facturación de tus cosechas y análisis"
+        :title="__('Facturar Cosechas')"
+        :description="__('Gestiona la facturación de tus cosechas y análisis')"
         icon="document-text"
     />
 
     {{-- Tabs --}}
     <x-agro.tabs
-        :tabs="['list' => 'Cosechas Pendientes', 'statistics' => 'Estadísticas']"
+        :tabs="['list' => __('Cosechas Pendientes'), 'statistics' => __('Estadísticas')]"
         :active="$currentTab"
         wire-method="switchTab"
     />
@@ -17,18 +17,18 @@
     @if($currentTab === 'list')
         <div class="space-y-6">
             {{-- Búsqueda --}}
-            <x-agro.search-input wire:model.live="search" placeholder="Buscar por parcela o variedad..." />
+            <x-agro.search-input wire:model.live="search" :placeholder="__('Buscar por parcela o variedad...')" />
 
             {{-- Cards --}}
             @if($harvests->count() === 0)
                 <x-agro.empty-state
                     icon="beaker"
-                    title="{{ $search ? 'Ninguna cosecha coincide con la búsqueda' : 'No hay cosechas pendientes' }}"
-                    description="{{ $search ? 'Prueba a cambiar los términos de búsqueda.' : 'Registra cosechas en el Cuaderno Digital para poder facturarlas.' }}"
+                    :title="$search ? __('Ninguna cosecha coincide con la búsqueda') : __('No hay cosechas pendientes')"
+                    :description="$search ? __('Prueba a cambiar los términos de búsqueda.') : __('Registra cosechas en el Cuaderno Digital para poder facturarlas.')"
                 >
                     @if($search)
                         <x-slot:action>
-                            <flux:button wire:click="$set('search', '')" variant="outline" icon="x-mark">Limpiar búsqueda</flux:button>
+                            <flux:button wire:click="$set('search', '')" variant="outline" icon="x-mark">{{ __('Limpiar búsqueda') }}</flux:button>
                         </x-slot:action>
                     @endif
                 </x-agro.empty-state>
@@ -63,14 +63,14 @@
 
                                 <div class="grid grid-cols-2 gap-2">
                                     <div class="bg-zinc-50 rounded-xl p-3">
-                                        <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">Peso</p>
+                                        <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">{{ __('Peso') }}</p>
                                         <p class="text-xl font-bold text-zinc-700 leading-none">
                                             {{ number_format($harvest->total_weight, 0) }}<span class="text-xs font-normal text-zinc-400 ml-0.5">kg</span>
                                         </p>
                                     </div>
                                     @if($harvest->total_value)
                                         <div class="bg-agro-50 rounded-xl p-3">
-                                            <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">Valor</p>
+                                            <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">{{ __('Valor') }}</p>
                                             <p class="text-xl font-bold text-agro-700 leading-none">
                                                 {{ number_format($harvest->total_value, 2) }}<span class="text-xs font-normal text-zinc-400 ml-0.5">€</span>
                                             </p>
@@ -88,7 +88,7 @@
                                         icon="document-text"
                                         wire:navigate
                                     >
-                                        Facturar
+                                        {{ __('Facturar') }}
                                     </flux:button>
                                 </div>
                             </x-slot:footer>
@@ -115,11 +115,11 @@
 
             {{-- KPIs --}}
             <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
-                <x-agro.stat-card label="Total Cosechado" :value="number_format($advancedStats['totalHarvested'] ?? 0, 0) . ' kg'" :description="'En ' . $yearFilter" icon="beaker" color="blue" />
-                <x-agro.stat-card label="Facturado" :value="number_format($advancedStats['totalInvoiced'] ?? 0, 0) . ' kg'" :description="number_format($advancedStats['invoicedPercentage'] ?? 0, 1) . '% del total'" icon="check-circle" color="agro" />
-                <x-agro.stat-card label="Pendiente" :value="number_format($advancedStats['pendingToInvoice'] ?? 0, 0) . ' kg'" description="Sin facturar" icon="clock" color="amber" />
-                <x-agro.stat-card label="Precio Medio" :value="number_format($advancedStats['avgPricePerKg'] ?? 0, 2) . ' €'" description="Por kilogramo" icon="banknotes" color="agro" />
-                <x-agro.stat-card label="Ingresos Cosechas" :value="number_format($advancedStats['harvestRevenue'] ?? 0, 2) . ' €'" :description="'Facturación total en ' . $yearFilter" icon="currency-euro" color="blue" />
+                <x-agro.stat-card :label="__('Total Cosechado')" :value="number_format($advancedStats['totalHarvested'] ?? 0, 0) . ' kg'" :description="__('En :year', ['year' => $yearFilter])" icon="beaker" color="blue" />
+                <x-agro.stat-card :label="__('Facturado')" :value="number_format($advancedStats['totalInvoiced'] ?? 0, 0) . ' kg'" :description="number_format($advancedStats['invoicedPercentage'] ?? 0, 1) . __('% del total')" icon="check-circle" color="agro" />
+                <x-agro.stat-card :label="__('Pendiente')" :value="number_format($advancedStats['pendingToInvoice'] ?? 0, 0) . ' kg'" :description="__('Sin facturar')" icon="clock" color="amber" />
+                <x-agro.stat-card :label="__('Precio Medio')" :value="number_format($advancedStats['avgPricePerKg'] ?? 0, 2) . ' €'" :description="__('Por kilogramo')" icon="banknotes" color="agro" />
+                <x-agro.stat-card :label="__('Ingresos Cosechas')" :value="number_format($advancedStats['harvestRevenue'] ?? 0, 2) . ' €'" :description="__('Facturación total en :year', ['year' => $yearFilter])" icon="currency-euro" color="blue" />
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -130,7 +130,7 @@
                             <div class="p-1.5 rounded-lg bg-agro-50">
                                 <flux:icon icon="beaker" class="size-4 text-agro-600" />
                             </div>
-                            <span class="font-semibold text-zinc-900 text-sm">Análisis por Variedad</span>
+                            <span class="font-semibold text-zinc-900 text-sm">{{ __('Análisis por Variedad') }}</span>
                         </div>
                     </x-slot:header>
                     <div class="space-y-3">
@@ -142,15 +142,15 @@
                                 </div>
                                 <div class="grid grid-cols-3 gap-2 text-xs">
                                     <div>
-                                        <p class="text-zinc-500">Facturado</p>
+                                        <p class="text-zinc-500">{{ __('Facturado') }}</p>
                                         <p class="font-bold text-green-700">{{ number_format($variety['invoiced'], 0) }} kg</p>
                                     </div>
                                     <div>
-                                        <p class="text-zinc-500">Pendiente</p>
+                                        <p class="text-zinc-500">{{ __('Pendiente') }}</p>
                                         <p class="font-bold text-orange-700">{{ number_format($variety['pending'], 0) }} kg</p>
                                     </div>
                                     <div>
-                                        <p class="text-zinc-500">% Fac.</p>
+                                        <p class="text-zinc-500">{{ __('% Fac.') }}</p>
                                         <p class="font-bold text-blue-700">{{ number_format($variety['percentage'], 1) }}%</p>
                                     </div>
                                 </div>
@@ -159,7 +159,7 @@
                                 </div>
                             </div>
                         @empty
-                            <p class="text-zinc-500 text-center py-4">No hay datos</p>
+                            <p class="text-zinc-500 text-center py-4">{{ __('No hay datos') }}</p>
                         @endforelse
                     </div>
                 </x-agro.card>
@@ -171,7 +171,7 @@
                             <div class="p-1.5 rounded-lg bg-purple-50">
                                 <flux:icon icon="trophy" class="size-4 text-purple-600" />
                             </div>
-                            <span class="font-semibold text-zinc-900 text-sm">Top Parcelas por Rendimiento</span>
+                            <span class="font-semibold text-zinc-900 text-sm">{{ __('Top Parcelas por Rendimiento') }}</span>
                         </div>
                     </x-slot:header>
                     <div class="space-y-3">
@@ -183,13 +183,13 @@
                                     </span>
                                     <div>
                                         <p class="font-semibold text-zinc-900">{{ $plot['plot'] }}</p>
-                                        <p class="text-xs text-zinc-500">{{ $plot['harvests_count'] }} cosechas</p>
+                                        <p class="text-xs text-zinc-500">{{ $plot['harvests_count'] }} {{ __('cosechas') }}</p>
                                     </div>
                                 </div>
                                 <span class="font-bold text-agro-700">{{ number_format($plot['total_weight'], 0) }} kg</span>
                             </div>
                         @empty
-                            <p class="text-zinc-500 text-center py-4">No hay datos</p>
+                            <p class="text-zinc-500 text-center py-4">{{ __('No hay datos') }}</p>
                         @endforelse
                     </div>
                 </x-agro.card>
@@ -202,7 +202,7 @@
                         <div class="p-1.5 rounded-lg bg-agro-50">
                             <flux:icon icon="arrow-trending-up" class="size-4 text-agro-600" />
                         </div>
-                        <span class="font-semibold text-zinc-900 text-sm">Cosechas Mensuales (Últimos 12 meses)</span>
+                        <span class="font-semibold text-zinc-900 text-sm">{{ __('Cosechas Mensuales (Últimos 12 meses)') }}</span>
                     </div>
                 </x-slot:header>
                 <div class="h-64 flex items-end justify-between gap-2">

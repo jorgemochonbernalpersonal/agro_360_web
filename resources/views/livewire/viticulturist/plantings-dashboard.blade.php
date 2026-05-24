@@ -2,11 +2,11 @@
 @if($totalPlantings === 0)
     <x-agro.empty-state
         icon="sparkles"
-        title="Sin plantaciones registradas"
-        description="Añade plantaciones a tus parcelas para el cumplimiento PAC y la trazabilidad."
+        :title="__('Sin plantaciones registradas')"
+        :description="__('Añade plantaciones a tus parcelas para el cumplimiento PAC y la trazabilidad.')"
     >
         <flux:button href="{{ route('plots.plantings.index') }}" wire:navigate icon="plus">
-            Añadir plantaciones
+            {{ __('Añadir plantaciones') }}
         </flux:button>
     </x-agro.empty-state>
 @else
@@ -15,31 +15,31 @@
         {{-- Métricas principales --}}
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <x-agro.stat-card
-                label="Total Plantaciones"
+                :label="__('Total Plantaciones')"
                 :value="$totalPlantings"
-                :description="$varieties . ' variedades'"
+                :description="$varieties . ' ' . __('variedades')"
                 icon="sparkles"
                 color="green"
             />
             <x-agro.stat-card
-                label="Superficie Plantada"
+                :label="__('Superficie Plantada')"
                 :value="$totalSurface . ' ha'"
-                description="hectáreas declaradas"
+                :description="__('hectáreas declaradas')"
                 icon="map"
                 color="blue"
             />
             <x-agro.stat-card
-                label="Cumplimiento PAC"
+                :label="__('Cumplimiento PAC')"
                 :value="$authorizationPercentage . '%'"
-                :description="$withAuthorization . '/' . $needsAuthorization . ' autorizadas'"
+                :description="$withAuthorization . '/' . $needsAuthorization . ' ' . __('autorizadas')"
                 icon="shield-check"
                 :color="$authorizationPercentage >= 90 ? 'green' : 'red'"
             />
             @if($missingAuthorization > 0)
                 <x-agro.stat-card
-                    label="Sin Autorización"
+                    :label="__('Sin Autorización')"
                     :value="$missingAuthorization"
-                    description="requieren atención"
+                    :description="__('requieren atención')"
                     icon="exclamation-triangle"
                     color="red"
                 />
@@ -51,14 +51,14 @@
             <x-slot:header>
                 <div class="flex items-center gap-2">
                     <flux:icon icon="squares-2x2" class="size-4 text-agro-600" />
-                    <span class="font-semibold text-zinc-900">Distribución por Estado</span>
+                    <span class="font-semibold text-zinc-900">{{ __('Distribución por Estado') }}</span>
                 </div>
             </x-slot:header>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                @foreach(['active' => ['label' => 'Activa', 'icon' => 'check-circle', 'color' => 'green'],
-                          'removed' => ['label' => 'Arrancada', 'icon' => 'x-circle', 'color' => 'zinc'],
-                          'experimental' => ['label' => 'Experimental', 'icon' => 'beaker', 'color' => 'blue'],
-                          'replanting' => ['label' => 'Replantación', 'icon' => 'arrow-path', 'color' => 'amber']] as $key => $cfg)
+                @foreach(['active' => ['label' => __('Activa'), 'icon' => 'check-circle', 'color' => 'green'],
+                          'removed' => ['label' => __('Arrancada'), 'icon' => 'x-circle', 'color' => 'zinc'],
+                          'experimental' => ['label' => __('Experimental'), 'icon' => 'beaker', 'color' => 'blue'],
+                          'replanting' => ['label' => __('Replantación'), 'icon' => 'arrow-path', 'color' => 'amber']] as $key => $cfg)
                     @php $stats = $statusStats->get($key, ['count' => 0, 'surface' => 0]); @endphp
                     <x-agro.stat-card
                         :label="$cfg['label']"
@@ -76,16 +76,16 @@
             <x-slot:header>
                 <div class="flex items-center gap-2">
                     <flux:icon icon="clock" class="size-4 text-agro-600" />
-                    <span class="font-semibold text-zinc-900">Distribución por Edad</span>
+                    <span class="font-semibold text-zinc-900">{{ __('Distribución por Edad') }}</span>
                 </div>
             </x-slot:header>
             <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
                 @foreach([
-                    ['label' => 'Jóvenes (< 3 años)', 'key' => 'joven',      'color' => 'text-green-600', 'sub' => '20-40% productividad'],
-                    ['label' => 'Desarrollo (3-8)',    'key' => 'desarrollo',  'color' => 'text-blue-600',  'sub' => '60-80% productividad'],
-                    ['label' => 'Productivas (8-25)',  'key' => 'productiva',  'color' => 'text-green-700', 'sub' => '100% productividad',  'highlight' => true],
-                    ['label' => 'Maduras (25-40)',     'key' => 'madura',      'color' => 'text-amber-600', 'sub' => '80-90% productividad'],
-                    ['label' => 'Viejas (> 40)',       'key' => 'vieja',       'color' => 'text-red-600',   'sub' => 'Replantación'],
+                    ['label' => __('Jóvenes (< 3 años)'), 'key' => 'joven',      'color' => 'text-green-600', 'sub' => __('20-40% productividad')],
+                    ['label' => __('Desarrollo (3-8)'),    'key' => 'desarrollo',  'color' => 'text-blue-600',  'sub' => __('60-80% productividad')],
+                    ['label' => __('Productivas (8-25)'),  'key' => 'productiva',  'color' => 'text-green-700', 'sub' => __('100% productividad'),  'highlight' => true],
+                    ['label' => __('Maduras (25-40)'),     'key' => 'madura',      'color' => 'text-amber-600', 'sub' => __('80-90% productividad')],
+                    ['label' => __('Viejas (> 40)'),       'key' => 'vieja',       'color' => 'text-red-600',   'sub' => __('Replantación')],
                 ] as $row)
                     <div class="border rounded-xl p-4 {{ isset($row['highlight']) ? 'bg-green-50 border-green-200' : 'border-zinc-200' }}">
                         <p class="text-xs font-medium text-zinc-500">{{ $row['label'] }}</p>
@@ -100,7 +100,7 @@
                     <x-agro.alert-banner
                         tone="warning"
                         icon="exclamation-circle"
-                        :message="$needsReplanting . ' plantación(es) necesitan replantación (> 35 años o en declive).'"
+                        :message="$needsReplanting . ' ' . __('plantación(es) necesitan replantación (> 35 años o en declive).')"
                     />
                 </div>
             @endif
@@ -111,28 +111,28 @@
             <x-slot:header>
                 <div class="flex items-center gap-2">
                     <flux:icon icon="academic-cap" class="size-4 text-agro-600" />
-                    <span class="font-semibold text-zinc-900">Certificaciones</span>
+                    <span class="font-semibold text-zinc-900">{{ __('Certificaciones') }}</span>
                 </div>
             </x-slot:header>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <x-agro.stat-card
-                    label="Plantaciones Certificadas"
+                    :label="__('Plantaciones Certificadas')"
                     :value="$certifiedPlantings"
-                    :description="'de ' . $totalPlantings . ' totales'"
+                    :description="__('de') . ' ' . $totalPlantings . ' ' . __('totales')"
                     icon="academic-cap"
                     color="purple"
                 />
                 <x-agro.stat-card
-                    label="Total Certificaciones"
+                    :label="__('Total Certificaciones')"
                     :value="$totalCertifications"
-                    description="activas"
+                    :description="__('activas')"
                     icon="document-check"
                     color="blue"
                 />
                 <x-agro.stat-card
-                    label="Próximas a Vencer"
+                    :label="__('Próximas a Vencer')"
                     :value="$expiringCertifications"
-                    description="en 30 días"
+                    :description="__('en 30 días')"
                     icon="clock"
                     :color="$expiringCertifications > 0 ? 'amber' : 'green'"
                 />
@@ -145,21 +145,21 @@
                 <x-slot:header>
                     <div class="flex items-center gap-2">
                         <flux:icon icon="shield-exclamation" class="size-4 text-agro-600" />
-                        <span class="font-semibold text-zinc-900">Tratamientos Fitosanitarios (últimos 30 días)</span>
+                        <span class="font-semibold text-zinc-900">{{ __('Tratamientos Fitosanitarios (últimos 30 días)') }}</span>
                     </div>
                 </x-slot:header>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <x-agro.stat-card
-                        label="Tratamientos Aplicados"
+                        :label="__('Tratamientos Aplicados')"
                         :value="$activeTreatments"
-                        description="en el último mes"
+                        :description="__('en el último mes')"
                         icon="beaker"
                         color="green"
                     />
                     <x-agro.stat-card
-                        label="Plagas/Enfermedades Tratadas"
+                        :label="__('Plagas/Enfermedades Tratadas')"
                         :value="$uniquePests"
-                        description="diferentes"
+                        :description="__('diferentes')"
                         icon="bug-ant"
                         color="blue"
                     />
@@ -174,10 +174,10 @@
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-2">
                             <flux:icon icon="exclamation-triangle" class="size-4 text-red-600" />
-                            <span class="font-semibold text-zinc-900">Alertas de Cumplimiento</span>
+                            <span class="font-semibold text-zinc-900">{{ __('Alertas de Cumplimiento') }}</span>
                         </div>
                         <flux:badge color="red" size="sm">
-                            {{ $totalAlerts }} {{ $totalAlerts === 1 ? 'alerta' : 'alertas' }}
+                            {{ $totalAlerts }} {{ $totalAlerts === 1 ? __('alerta') : __('alertas') }}
                         </flux:badge>
                     </div>
                 </x-slot:header>
@@ -195,7 +195,7 @@
         @else
             <x-agro.alert-banner
                 tone="success"
-                message="Todas las plantaciones cumplen con los requisitos PAC."
+                :message="__('Todas las plantaciones cumplen con los requisitos PAC.')"
             />
         @endif
 

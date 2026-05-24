@@ -99,14 +99,14 @@
             >
                 <flux:icon icon="envelope" class="size-4 flex-shrink-0" />
                 <div class="flex-1 min-w-0">
-                    <span class="font-semibold">Verifica tu email</span>
-                    — Hemos enviado un enlace a <strong>{{ auth()->user()->email }}</strong>.
-                    Haz clic en él para activar tu cuenta completamente.
+                    <span class="font-semibold">{{ __('Verifica tu email') }}</span>
+                    — {{ __('Hemos enviado un enlace a') }} <strong>{{ auth()->user()->email }}</strong>.
+                    {{ __('Haz clic en él para activar tu cuenta completamente.') }}
                 </div>
                 <form method="POST" action="{{ route('verification.send') }}" class="flex-shrink-0">
                     @csrf
                     <button type="submit" class="text-amber-700 hover:text-amber-900 underline font-medium text-xs">
-                        Reenviar email
+                        {{ __('Reenviar email') }}
                     </button>
                 </form>
                 <button @click="open = false" class="text-amber-600 hover:text-amber-900 flex-shrink-0 ml-1">
@@ -123,10 +123,10 @@
             @endphp
             <div class="fixed top-0 left-0 right-0 z-[9999] bg-amber-500 text-white text-xs font-semibold text-center py-1.5 px-4 flex items-center justify-center gap-3">
                 <flux:icon icon="eye" class="size-3.5 shrink-0" />
-                <span>Impersonando a <strong>{{ auth()->user()->name }}</strong> ({{ auth()->user()->role }}) — {{ $remaining }} min restantes</span>
+                <span>{{ __('Impersonando a') }} <strong>{{ auth()->user()->name }}</strong> ({{ auth()->user()->role }}) — {{ $remaining }} {{ __('min restantes') }}</span>
                 <form method="POST" action="{{ route('admin.users.stop-impersonate') }}">
                     @csrf
-                    <button type="submit" class="underline hover:no-underline ml-2">Salir</button>
+                    <button type="submit" class="underline hover:no-underline ml-2">{{ __('Salir') }}</button>
                 </form>
             </div>
         @endif

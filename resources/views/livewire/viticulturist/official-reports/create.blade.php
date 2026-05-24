@@ -1,12 +1,12 @@
-﻿<div class="space-y-6 animate-fade-in">
+<div class="space-y-6 animate-fade-in">
     {{-- Header --}}
     <x-agro.page-header
-        title="Generar Nuevo Informe"
-        description="Crea informes firmados electrónicamente para administración y certificaciones"
+        :title="__('Generar Nuevo Informe')"
+        :description="__('Crea informes firmados electrónicamente para administración y certificaciones')"
     >
         <x-slot:actions>
             <flux:button href="{{ roleRoute('viticulturist.official-reports.index') }}" wire:navigate variant="outline" icon="arrow-left">
-                Volver
+                {{ __('Volver') }}
             </flux:button>
         </x-slot:actions>
     </x-agro.page-header>
@@ -18,13 +18,13 @@
                 <div class="p-1.5 rounded-lg bg-agro-50">
                     <flux:icon icon="document-text" class="size-4 text-agro-600" />
                 </div>
-                <span class="font-semibold text-zinc-900 text-sm">Configurar Informe</span>
+                <span class="font-semibold text-zinc-900 text-sm">{{ __('Configurar Informe') }}</span>
             </div>
         </x-slot:header>
 
             {{-- Selector de Tipo de Informe --}}
             <div class="mb-6">
-                <label class="block text-sm font-semibold text-zinc-700 mb-3">Tipo de Informe</label>
+                <label class="block text-sm font-semibold text-zinc-700 mb-3">{{ __('Tipo de Informe') }}</label>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {{-- Tratamientos Fitosanitarios --}}
                     <div
@@ -39,8 +39,8 @@
                                 </div>
                             </div>
                             <div class="ml-4">
-                                <h3 class="text-lg font-bold text-zinc-900">Tratamientos Fitosanitarios</h3>
-                                <p class="text-sm text-zinc-600">Informe obligatorio para inspecciones</p>
+                                <h3 class="text-lg font-bold text-zinc-900">{{ __('Tratamientos Fitosanitarios') }}</h3>
+                                <p class="text-sm text-zinc-600">{{ __('Informe obligatorio para inspecciones') }}</p>
                             </div>
                         </div>
                     </div>
@@ -58,8 +58,8 @@
                                 </div>
                             </div>
                             <div class="ml-4">
-                                <h3 class="text-lg font-bold text-zinc-900">Cuaderno Digital Completo</h3>
-                                <p class="text-sm text-zinc-600">Todas las actividades de una campaña</p>
+                                <h3 class="text-lg font-bold text-zinc-900">{{ __('Cuaderno Digital Completo') }}</h3>
+                                <p class="text-sm text-zinc-600">{{ __('Todas las actividades de una campaña') }}</p>
                             </div>
                         </div>
                     </div>
@@ -70,42 +70,42 @@
             @if($reportType === 'phytosanitary_treatments')
                 {{-- Plantillas de Periodos Rápidos --}}
                 <div class="mb-4">
-                    <label class="block text-sm font-semibold text-zinc-700 mb-2">Periodos Rápidos</label>
+                    <label class="block text-sm font-semibold text-zinc-700 mb-2">{{ __('Periodos Rápidos') }}</label>
                     <div class="flex flex-wrap gap-2">
                         <button
                             type="button"
                             wire:click="setQuickPeriod('last_week')"
                             class="px-3 py-1.5 text-sm font-medium text-zinc-700 bg-white border border-zinc-300 rounded-lg hover:bg-zinc-50 hover:border-green-500 transition-colors"
                         >
-                            Última semana
+                            {{ __('Última semana') }}
                         </button>
                         <button
                             type="button"
                             wire:click="setQuickPeriod('this_month')"
                             class="px-3 py-1.5 text-sm font-medium text-zinc-700 bg-white border border-zinc-300 rounded-lg hover:bg-zinc-50 hover:border-green-500 transition-colors"
                         >
-                            Este mes
+                            {{ __('Este mes') }}
                         </button>
                         <button
                             type="button"
                             wire:click="setQuickPeriod('last_month')"
                             class="px-3 py-1.5 text-sm font-medium text-zinc-700 bg-white border border-zinc-300 rounded-lg hover:bg-zinc-50 hover:border-green-500 transition-colors"
                         >
-                            Mes pasado
+                            {{ __('Mes pasado') }}
                         </button>
                         <button
                             type="button"
                             wire:click="setQuickPeriod('last_quarter')"
                             class="px-3 py-1.5 text-sm font-medium text-zinc-700 bg-white border border-zinc-300 rounded-lg hover:bg-zinc-50 hover:border-green-500 transition-colors"
                         >
-                            Últimos 3 meses
+                            {{ __('Últimos 3 meses') }}
                         </button>
                         <button
                             type="button"
                             wire:click="setQuickPeriod('this_year')"
                             class="px-3 py-1.5 text-sm font-medium text-zinc-700 bg-white border border-zinc-300 rounded-lg hover:bg-zinc-50 hover:border-green-500 transition-colors"
                         >
-                            Este año
+                            {{ __('Este año') }}
                         </button>
                     </div>
                 </div>
@@ -113,7 +113,7 @@
                 {{-- Rango de Fechas --}}
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div>
-                        <label class="block text-sm font-semibold text-zinc-700 mb-2">Fecha Inicio</label>
+                        <label class="block text-sm font-semibold text-zinc-700 mb-2">{{ __('Fecha Inicio') }}</label>
                         <input
                             type="date"
                             wire:model.live="startDate"
@@ -122,7 +122,7 @@
                         @error('startDate') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-zinc-700 mb-2">Fecha Fin</label>
+                        <label class="block text-sm font-semibold text-zinc-700 mb-2">{{ __('Fecha Fin') }}</label>
                         <input
                             type="date"
                             wire:model.live="endDate"
@@ -137,9 +137,9 @@
                     <flux:callout :variant="$recordCount > 0 ? 'success' : 'warning'" class="mb-6">
                         <flux:callout.text>
                             @if($recordCount > 0)
-                                <strong>{{ $recordCount }} tratamiento{{ $recordCount != 1 ? 's' : '' }}</strong> encontrado{{ $recordCount != 1 ? 's' : '' }} en este periodo
+                                <strong>{{ $recordCount }} {{ __('tratamiento') }}{{ $recordCount != 1 ? __('s') : '' }}</strong> {{ __('encontrado') }}{{ $recordCount != 1 ? __('s') : '' }} {{ __('en este periodo') }}
                             @else
-                                No hay tratamientos en este periodo
+                                {{ __('No hay tratamientos en este periodo') }}
                             @endif
                         </flux:callout.text>
                     </flux:callout>
@@ -147,12 +147,12 @@
             @else
                 {{-- Selector de Campaña --}}
                 <div class="mb-4">
-                    <label class="block text-sm font-semibold text-zinc-700 mb-2">Campaña</label>
+                    <label class="block text-sm font-semibold text-zinc-700 mb-2">{{ __('Campaña') }}</label>
                     <select
                         wire:model.live="campaignId"
                         class="w-full px-4 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     >
-                        <option value="">Selecciona una campaña</option>
+                        <option value="">{{ __('Selecciona una campaña') }}</option>
                         @foreach($campaigns as $campaign)
                             <option value="{{ $campaign->id }}">{{ $campaign->name }} ({{ $campaign->year }})</option>
                         @endforeach
@@ -165,9 +165,9 @@
                     <flux:callout :variant="$activitiesCount > 0 ? 'success' : 'warning'" class="mb-6">
                         <flux:callout.text>
                             @if($activitiesCount > 0)
-                                <strong>{{ $activitiesCount }} actividad{{ $activitiesCount != 1 ? 'es' : '' }}</strong> registrada{{ $activitiesCount != 1 ? 's' : '' }} en esta campaña
+                                <strong>{{ $activitiesCount }} {{ __('actividad') }}{{ $activitiesCount != 1 ? __('es') : '' }}</strong> {{ __('registrada') }}{{ $activitiesCount != 1 ? __('s') : '' }} {{ __('en esta campaña') }}
                             @else
-                                No hay actividades en esta campaña
+                                {{ __('No hay actividades en esta campaña') }}
                             @endif
                         </flux:callout.text>
                     </flux:callout>
@@ -177,8 +177,8 @@
             {{-- Aviso sobre firma digital --}}
             <flux:callout variant="info" class="mb-6">
                 <flux:callout.text>
-                    <strong>Firma Digital:</strong> Se te pedirá tu contraseña de firma digital al confirmar la generación del informe.
-                    Si no la tienes configurada, créala en <a href="{{ roleRoute('viticulturist.settings', ['tab' => 'signature']) }}" class="underline font-semibold">Configuración - Firma Digital</a>.
+                    <strong>{{ __('Firma Digital') }}:</strong> {{ __('Se te pedirá tu contraseña de firma digital al confirmar la generación del informe.') }}
+                    {{ __('Si no la tienes configurada, créala en') }} <a href="{{ roleRoute('viticulturist.settings', ['tab' => 'signature']) }}" class="underline font-semibold">{{ __('Configuración - Firma Digital') }}</a>.
                 </flux:callout.text>
             </flux:callout>
 
@@ -197,8 +197,8 @@
                 variant="primary"
                 icon="document-text"
             >
-                <span wire:loading.remove wire:target="calculateSummary">Generar y Firmar Informe</span>
-                <span wire:loading wire:target="calculateSummary">Calculando...</span>
+                <span wire:loading.remove wire:target="calculateSummary">{{ __('Generar y Firmar Informe') }}</span>
+                <span wire:loading wire:target="calculateSummary">{{ __('Calculando...') }}</span>
             </flux:button>
     </x-agro.card>
 
@@ -215,12 +215,12 @@
                     <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-4">
                         <flux:icon icon="arrow-path" class="animate-spin size-10 text-green-600" />
                     </div>
-                    <h3 class="text-xl font-bold text-zinc-900 mb-2">Generando Informe</h3>
+                    <h3 class="text-xl font-bold text-zinc-900 mb-2">{{ __('Generando Informe') }}</h3>
                     <p class="text-zinc-600 mb-4">
-                        Por favor, espera mientras se genera y firma tu informe oficial...
+                        {{ __('Por favor, espera mientras se genera y firma tu informe oficial...') }}
                     </p>
                     <p class="text-sm text-zinc-500">
-                        Este proceso puede tardar varios segundos.
+                        {{ __('Este proceso puede tardar varios segundos.') }}
                     </p>
                 </div>
             </div>

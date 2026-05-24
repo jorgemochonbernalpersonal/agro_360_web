@@ -1,31 +1,31 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="Verificación de Eco-regímenes"
-        description="Comprueba si las prácticas de tu cuaderno de campo justifican los eco-regímenes declarados en la PAC."
+        :title="__('Verificación de Eco-regímenes')"
+        :description="__('Comprueba si las prácticas de tu cuaderno de campo justifican los eco-regímenes declarados en la PAC.')"
     />
 
     {{-- Selector de año --}}
     <div class="flex items-center gap-3">
-        <flux:label class="text-sm font-medium">Año:</flux:label>
+        <flux:label class="text-sm font-medium">{{ __('Año') }}:</flux:label>
         <flux:select wire:model.live="yearFilter" class="w-32">
             @foreach($availableYears as $y)
                 <option value="{{ $y }}">{{ $y }}</option>
             @endforeach
         </flux:select>
         @if($declaration)
-            <x-agro.status-badge :color="$declaration->statusColor()" :label="'Declaración ' . $declaration->statusLabel()" />
+            <x-agro.status-badge :color="$declaration->statusColor()" :label="__('Declaración') . ' ' . $declaration->statusLabel()" />
         @else
-            <x-agro.status-badge color="zinc" label="Sin declaración para {{ $year }}" />
+            <x-agro.status-badge color="zinc" :label="__('Sin declaración para') . ' ' . $year" />
         @endif
     </div>
 
     @if(!$declaration)
         <flux:callout variant="warning" icon="exclamation-triangle">
-            <flux:callout.heading>No hay declaración PAC para {{ $year }}</flux:callout.heading>
+            <flux:callout.heading>{{ __('No hay declaración PAC para') }} {{ $year }}</flux:callout.heading>
             <flux:callout.text>
-                Crea una declaración PAC para poder verificar los eco-regímenes.
-                <a href="{{ roleRoute('viticulturist.pac.declarations.create') }}" wire:navigate class="underline ml-1">Crear declaración →</a>
+                {{ __('Crea una declaración PAC para poder verificar los eco-regímenes.') }}
+                <a href="{{ roleRoute('viticulturist.pac.declarations.create') }}" wire:navigate class="underline ml-1">{{ __('Crear declaración') }} →</a>
             </flux:callout.text>
         </flux:callout>
     @endif
@@ -69,19 +69,19 @@
                         <div class="flex items-center gap-2 mb-1">
                             <span class="font-semibold text-zinc-900 text-sm">{{ $label }}</span>
                             @if($declared)
-                                <flux:badge color="green" size="sm">Declarado</flux:badge>
+                                <flux:badge color="green" size="sm">{{ __('Declarado') }}</flux:badge>
                             @else
-                                <flux:badge color="zinc" size="sm">No declarado</flux:badge>
+                                <flux:badge color="zinc" size="sm">{{ __('No declarado') }}</flux:badge>
                             @endif
                         </div>
                         <p class="text-sm text-zinc-600">{{ $ev['detail'] }}</p>
                         @if($declared && $status === 'missing')
                             <p class="text-xs text-red-600 mt-1 font-medium">
-                                ⚠ Declarado pero sin evidencia en el cuaderno — riesgo de penalización
+                                ⚠ {{ __('Declarado pero sin evidencia en el cuaderno — riesgo de penalización') }}
                             </p>
                         @elseif(!$declared && $status === 'ok')
                             <p class="text-xs text-zinc-400 mt-1">
-                                Prácticas compatibles pero no declarado en la PAC
+                                {{ __('Prácticas compatibles pero no declarado en la PAC') }}
                             </p>
                         @endif
                     </div>
@@ -96,7 +96,7 @@
             <x-slot:header>
                 <div class="flex items-center gap-2">
                     <flux:icon icon="clipboard-document-check" class="size-4 text-zinc-500" />
-                    <span class="font-semibold text-zinc-900 text-sm">Resumen de la verificación</span>
+                    <span class="font-semibold text-zinc-900 text-sm">{{ __('Resumen de la verificación') }}</span>
                 </div>
             </x-slot:header>
             @php
@@ -108,26 +108,26 @@
             <div class="grid grid-cols-4 gap-4 text-center text-sm py-2">
                 <div>
                     <p class="text-2xl font-bold text-zinc-900">{{ $declared }}</p>
-                    <p class="text-zinc-500 mt-1">Eco-regímenes declarados</p>
+                    <p class="text-zinc-500 mt-1">{{ __('Eco-regímenes declarados') }}</p>
                 </div>
                 <div>
                     <p class="text-2xl font-bold text-green-600">{{ $ok }}</p>
-                    <p class="text-zinc-500 mt-1">Con evidencia</p>
+                    <p class="text-zinc-500 mt-1">{{ __('Con evidencia') }}</p>
                 </div>
                 <div>
                     <p class="text-2xl font-bold text-amber-500">{{ $warnings }}</p>
-                    <p class="text-zinc-500 mt-1">Con advertencias</p>
+                    <p class="text-zinc-500 mt-1">{{ __('Con advertencias') }}</p>
                 </div>
                 <div>
                     <p class="text-2xl font-bold text-red-500">{{ $missing }}</p>
-                    <p class="text-zinc-500 mt-1">Sin evidencia</p>
+                    <p class="text-zinc-500 mt-1">{{ __('Sin evidencia') }}</p>
                 </div>
             </div>
             @if($missing > 0)
                 <div class="mt-3 pt-3 border-t border-zinc-100">
                     <p class="text-sm text-red-600">
-                        <strong>Atención:</strong> Tienes {{ $missing }} eco-régimen(es) declarado(s) sin evidencia en el cuaderno.
-                        Registra las prácticas correspondientes antes de presentar la declaración.
+                        <strong>{{ __('Atención') }}:</strong> {{ __('Tienes') }} {{ $missing }} {{ __('eco-régimen(es) declarado(s) sin evidencia en el cuaderno.') }}
+                        {{ __('Registra las prácticas correspondientes antes de presentar la declaración.') }}
                     </p>
                 </div>
             @endif

@@ -2,37 +2,37 @@
 
     {{-- Header --}}
     <x-agro.page-header
-        title="Asesores Técnicos"
-        description="Registro de asesores fitosanitarios y técnicos (obligatorio RD 1311/2012)"
+        :title="__('Asesores Técnicos')"
+        :description="__('Registro de asesores fitosanitarios y técnicos (obligatorio RD 1311/2012)')"
         icon="user-group"
     >
         <x-slot:actions>
             <flux:button href="{{ roleRoute('viticulturist.advisory-memberships.create') }}" variant="primary" icon="plus">
-                Nuevo Asesor
+                {{ __('Nuevo Asesor') }}
             </flux:button>
         </x-slot:actions>
     </x-agro.page-header>
 
     <flux:callout variant="info" icon="information-circle">
-        El RD 1311/2012 exige contar con un asesor fitosanitario cualificado para la gestión integrada de plagas (GIP). Su nº de colegiado debe figurar en el cuaderno de campo.
+        {{ __('El RD 1311/2012 exige contar con un asesor fitosanitario cualificado para la gestión integrada de plagas (GIP). Su nº de colegiado debe figurar en el cuaderno de campo.') }}
     </flux:callout>
 
     {{-- KPIs --}}
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <x-agro.stat-card
-            label="Total asesores"
+            :label="__('Total asesores')"
             :value="$stats['total']"
             icon="user-group"
             color="zinc"
         />
         <x-agro.stat-card
-            label="Permanentes"
+            :label="__('Permanentes')"
             :value="$stats['permanent']"
             icon="check-circle"
             color="agro"
         />
         <x-agro.stat-card
-            label="Esta campaña"
+            :label="__('Esta campaña')"
             :value="$stats['this_year']"
             icon="calendar-days"
             color="agro"
@@ -42,14 +42,14 @@
     {{-- Toolbar --}}
     <div class="flex items-center gap-3">
         <flux:select wire:model.live="filterSpecialty" class="w-52">
-            <flux:select.option value="">Todas las especialidades</flux:select.option>
+            <flux:select.option value="">{{ __('Todas las especialidades') }}</flux:select.option>
             @foreach($specialties as $key => $label)
                 <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
             @endforeach
         </flux:select>
         @if($filterSpecialty)
             <flux:button wire:click="$set('filterSpecialty', '')" variant="ghost" size="sm" icon="x-mark">
-                Limpiar
+                {{ __('Limpiar') }}
             </flux:button>
         @endif
     </div>
@@ -58,15 +58,15 @@
     @if($entries->isEmpty())
         <x-agro.empty-state
             icon="user-group"
-            title="{{ $filterSpecialty ? 'Ningún asesor coincide con el filtro' : 'Sin asesores registrados' }}"
-            description="{{ $filterSpecialty ? 'Prueba a cambiar o limpiar el filtro.' : 'Añade tus asesores técnicos y fitosanitarios para cumplir con la normativa.' }}"
+            :title="$filterSpecialty ? __('Ningún asesor coincide con el filtro') : __('Sin asesores registrados')"
+            :description="$filterSpecialty ? __('Prueba a cambiar o limpiar el filtro.') : __('Añade tus asesores técnicos y fitosanitarios para cumplir con la normativa.')"
         >
             <x-slot:action>
                 @if($filterSpecialty)
-                    <flux:button wire:click="$set('filterSpecialty', '')" variant="outline" icon="x-mark">Limpiar filtro</flux:button>
+                    <flux:button wire:click="$set('filterSpecialty', '')" variant="outline" icon="x-mark">{{ __('Limpiar filtro') }}</flux:button>
                 @else
                     <flux:button href="{{ roleRoute('viticulturist.advisory-memberships.create') }}" variant="primary" icon="plus">
-                        Nuevo Asesor
+                        {{ __('Nuevo Asesor') }}
                     </flux:button>
                 @endif
             </x-slot:action>
@@ -96,7 +96,7 @@
 
                     <div class="flex-1 space-y-3">
                         <div class="bg-zinc-50 rounded-xl p-3">
-                            <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">Nº Colegiado</p>
+                            <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">{{ __('Nº Colegiado') }}</p>
                             <p class="text-base font-bold text-zinc-700 font-mono leading-none">{{ $entry->license_number }}</p>
                         </div>
 
@@ -119,7 +119,7 @@
 
                         <div class="flex items-center gap-2 text-xs text-zinc-500">
                             <flux:icon icon="calendar-days" class="size-3.5 text-zinc-400 shrink-0" />
-                            <span>{{ $entry->campaign?->name ?? 'Permanente' }}</span>
+                            <span>{{ $entry->campaign?->name ?? __('Permanente') }}</span>
                         </div>
                     </div>
 
@@ -128,14 +128,14 @@
                             <x-agro.action-button
                                 variant="edit"
                                 href="{{ roleRoute('viticulturist.advisory-memberships.edit', $entry) }}"
-                                title="Editar"
+                                :title="__('Editar')"
                             />
                             <x-agro.action-button
                                 variant="archive"
                                 icon="user-minus"
                                 wire:click="deactivate({{ $entry->id }})"
-                                wire:confirm="¿Desactivar este asesor?"
-                                title="Desactivar"
+                                wire:confirm="{{ __('¿Desactivar este asesor?') }}"
+                                :title="__('Desactivar')"
                             />
                         </div>
                     </x-slot:footer>

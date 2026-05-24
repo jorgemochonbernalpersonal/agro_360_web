@@ -1,15 +1,15 @@
 <x-agro.form-card
-    title="Editar Subproducto"
-    description="Modifica los datos de la salida de subproductos (orujos, raspones, lías)"
+    :title="__('Editar Subproducto')"
+    :description="__('Modifica los datos de la salida de subproductos (orujos, raspones, lías)')"
     :back-url="roleRoute('viticulturist.harvest-byproducts.index')"
 >
     <form wire:submit="save" class="space-y-8">
 
-        <x-agro.form-section title="Datos del Subproducto">
+        <x-agro.form-section :title="__('Datos del Subproducto')">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                 <flux:field>
-                    <flux:label required>Campaña</flux:label>
+                    <flux:label required>{{ __('Campaña') }}</flux:label>
                     <flux:select wire:model="campaign_id">
                         @foreach($campaigns as $c)
                             <flux:select.option value="{{ $c->id }}">{{ $c->name }}</flux:select.option>
@@ -19,13 +19,13 @@
                 </flux:field>
 
                 <flux:field>
-                    <flux:label required>Fecha de entrega</flux:label>
+                    <flux:label required>{{ __('Fecha de entrega') }}</flux:label>
                     <flux:input wire:model="date" type="date" />
                     <flux:error name="date" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label required>Tipo de subproducto</flux:label>
+                    <flux:label required>{{ __('Tipo de subproducto') }}</flux:label>
                     <flux:select wire:model="byproduct_type">
                         @foreach($byproductTypes as $key => $label)
                             <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
@@ -35,19 +35,19 @@
                 </flux:field>
 
                 <flux:field>
-                    <flux:label required>Cantidad (kg)</flux:label>
-                    <flux:input wire:model="quantity_kg" type="number" step="0.001" min="0.001" placeholder="Ej: 5000.000" />
+                    <flux:label required>{{ __('Cantidad (kg)') }}</flux:label>
+                    <flux:input wire:model="quantity_kg" type="number" step="0.001" min="0.001" :placeholder="__('Ej: 5000.000')" />
                     <flux:error name="quantity_kg" />
                 </flux:field>
 
             </div>
         </x-agro.form-section>
 
-        <x-agro.form-section title="Destino">
+        <x-agro.form-section :title="__('Destino')">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                 <flux:field>
-                    <flux:label required>Tipo de destino</flux:label>
+                    <flux:label required>{{ __('Tipo de destino') }}</flux:label>
                     <flux:select wire:model="destination_type">
                         @foreach($destinationTypes as $key => $label)
                             <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
@@ -57,20 +57,20 @@
                 </flux:field>
 
                 <flux:field>
-                    <flux:label required>Nombre del destino</flux:label>
-                    <flux:input wire:model="destination_name" type="text" placeholder="Ej: Destilería García S.L." />
+                    <flux:label required>{{ __('Nombre del destino') }}</flux:label>
+                    <flux:input wire:model="destination_name" type="text" :placeholder="__('Ej: Destilería García S.L.')" />
                     <flux:error name="destination_name" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Nº documento / albarán</flux:label>
-                    <flux:input wire:model="document_reference" type="text" placeholder="Ej: ALB-2025-00123" />
-                    <flux:description>Albarán de entrega o número de documento acreditativo</flux:description>
+                    <flux:label>{{ __('Nº documento / albarán') }}</flux:label>
+                    <flux:input wire:model="document_reference" type="text" :placeholder="__('Ej: ALB-2025-00123')" />
+                    <flux:description>{{ __('Albarán de entrega o número de documento acreditativo') }}</flux:description>
                     <flux:error name="document_reference" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Observaciones</flux:label>
+                    <flux:label>{{ __('Observaciones') }}</flux:label>
                     <flux:textarea wire:model="notes" rows="3" />
                     <flux:error name="notes" />
                 </flux:field>
@@ -80,7 +80,7 @@
 
         <x-agro.form-actions
             :cancel-url="roleRoute('viticulturist.harvest-byproducts.index')"
-            submit-label="Guardar Cambios"
+            :submit-label="__('Guardar Cambios')"
         />
     </form>
 </x-agro.form-card>

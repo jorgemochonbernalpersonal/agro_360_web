@@ -3,30 +3,30 @@
     {{-- Métricas principales --}}
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         <x-agro.stat-card
-            label="Total Parcelas"
+            :label="__('Total Parcelas')"
             :value="$totalPlots"
-            :description="$activePlots . ' activas'"
+            :description="$activePlots . ' ' . __('activas')"
             icon="map-pin"
             color="agro"
         />
         <x-agro.stat-card
-            label="Superficie Total"
+            :label="__('Superficie Total')"
             :value="$totalSurface . ' ha'"
-            description="hectáreas"
+            :description="__('hectáreas')"
             icon="map"
             color="blue"
         />
         <x-agro.stat-card
-            label="Admisible PAC"
+            :label="__('Admisible PAC')"
             :value="$eligibleSurface . ' ha'"
-            :description="$eligibilityPercentage . '% del total'"
+            :description="$eligibilityPercentage . '% ' . __('del total')"
             icon="shield-check"
             color="purple"
         />
         <x-agro.stat-card
-            label="Parcelas Bloqueadas"
+            :label="__('Parcelas Bloqueadas')"
             :value="$lockedPlots"
-            description="protegidas"
+            :description="__('protegidas')"
             icon="lock-closed"
             color="amber"
         />
@@ -39,10 +39,10 @@
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-2">
                         <flux:icon icon="exclamation-triangle" class="size-4 text-red-600" />
-                        <span class="font-semibold text-zinc-900">Alertas de Cumplimiento PAC</span>
+                        <span class="font-semibold text-zinc-900">{{ __('Alertas de Cumplimiento PAC') }}</span>
                     </div>
                     <flux:badge color="red" size="sm">
-                        {{ $totalAlerts }} {{ $totalAlerts === 1 ? 'alerta' : 'alertas' }}
+                        {{ $totalAlerts }} {{ $totalAlerts === 1 ? __('alerta') : __('alertas') }}
                     </flux:badge>
                 </div>
             </x-slot:header>
@@ -60,7 +60,7 @@
     @else
         <x-agro.alert-banner
             tone="success"
-            message="Todas las parcelas cumplen con los requisitos PAC."
+            :message="__('Todas las parcelas cumplen con los requisitos PAC.')"
         />
     @endif
 

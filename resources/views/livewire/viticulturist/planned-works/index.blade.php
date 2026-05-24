@@ -2,13 +2,13 @@
 
     {{-- Header --}}
     <x-agro.page-header
-        title="Plan de Trabajos"
-        description="Planifica y haz seguimiento de las tareas de tu explotación. Vincula cada trabajo con el cuaderno de campo cuando lo ejecutes."
+        :title="__('Plan de Trabajos')"
+        :description="__('Planifica y haz seguimiento de las tareas de tu explotación. Vincula cada trabajo con el cuaderno de campo cuando lo ejecutes.')"
         icon="clipboard-document-list"
     >
         <x-slot:actions>
             <flux:button href="{{ roleRoute('viticulturist.planned-works.create') }}" variant="primary" icon="plus">
-                Nuevo Trabajo
+                {{ __('Nuevo Trabajo') }}
             </flux:button>
         </x-slot:actions>
     </x-agro.page-header>
@@ -16,32 +16,32 @@
     {{-- Stats (colapsables) --}}
     <x-agro.stats-section key="planned-works" columns="5">
         <x-agro.stat-card
-            label="Pendientes"
+            :label="__('Pendientes')"
             :value="$stats['pending']"
             icon="clock"
             color="amber"
         />
         <x-agro.stat-card
-            label="Vencidas"
+            :label="__('Vencidas')"
             :value="$stats['overdue']"
-            description="Sin completar a fecha"
+            :description="__('Sin completar a fecha')"
             icon="exclamation-triangle"
             color="red"
         />
         <x-agro.stat-card
-            label="Próximos 7 días"
+            :label="__('Próximos 7 días')"
             :value="$stats['upcoming']"
             icon="calendar-days"
             color="blue"
         />
         <x-agro.stat-card
-            label="Completadas"
+            :label="__('Completadas')"
             :value="$stats['completed']"
             icon="check-circle"
             color="agro"
         />
         <x-agro.stat-card
-            label="Canceladas"
+            :label="__('Canceladas')"
             :value="$stats['cancelled']"
             icon="x-circle"
             color="zinc"
@@ -50,10 +50,10 @@
 
     {{-- Tabs --}}
     <x-agro.tabs :tabs="[
-        'pending'   => ['label' => 'Pendientes',  'count' => $stats['pending']],
-        'overdue'   => ['label' => 'Vencidas',    'count' => $stats['overdue']],
-        'completed' => ['label' => 'Completadas', 'count' => $stats['completed']],
-        'cancelled' => ['label' => 'Canceladas',  'count' => $stats['cancelled']],
+        'pending'   => ['label' => __('Pendientes'),  'count' => $stats['pending']],
+        'overdue'   => ['label' => __('Vencidas'),    'count' => $stats['overdue']],
+        'completed' => ['label' => __('Completadas'), 'count' => $stats['completed']],
+        'cancelled' => ['label' => __('Canceladas'),  'count' => $stats['cancelled']],
     ]" :active="$currentTab" wireMethod="switchTab" />
 
     {{-- Toolbar --}}
@@ -63,7 +63,7 @@
     <div class="flex items-center gap-3">
 
         {{-- Search --}}
-        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar por título o descripción..." />
+        <x-agro.search-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar por título o descripción...')" />
 
         {{-- Filtros --}}
         <x-agro.filter-button modal="planned-works-filters" :count="$filterCount" />
@@ -73,7 +73,7 @@
 
         {{-- Nuevo Trabajo --}}
         <flux:button href="{{ roleRoute('viticulturist.planned-works.create') }}" variant="primary" icon="plus">
-            Nuevo
+            {{ __('Nuevo') }}
         </flux:button>
     </div>
 
@@ -87,16 +87,16 @@
                 <x-agro.filter-chip :label="\App\Models\PlannedWork::PRIORITIES[$filterPriority] ?? $filterPriority" wireRemove="$set('filterPriority', '')" />
             @endif
             @if ($filterPlot)
-                <x-agro.filter-chip :label="$plots->find($filterPlot)?->name ?? 'Parcela'" wireRemove="$set('filterPlot', '')" />
+                <x-agro.filter-chip :label="$plots->find($filterPlot)?->name ?? __('Parcela')" wireRemove="$set('filterPlot', '')" />
             @endif
             @if ($filterCampaign)
-                <x-agro.filter-chip :label="$campaigns->find($filterCampaign)?->name ?? 'Campaña'" wireRemove="$set('filterCampaign', '')" />
+                <x-agro.filter-chip :label="$campaigns->find($filterCampaign)?->name ?? __('Campaña')" wireRemove="$set('filterCampaign', '')" />
             @endif
             <button
                 wire:click="clearFilters"
                 class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors"
             >
-                Limpiar todo
+                {{ __('Limpiar todo') }}
             </button>
         </div>
     @endif
@@ -112,23 +112,23 @@
         @if ($entries->isEmpty())
             <x-agro.empty-state
                 icon="clipboard-document-list"
-                title="{{ match($currentTab) {
-                    'pending'   => 'Sin trabajos pendientes',
-                    'overdue'   => 'Sin trabajos vencidos',
-                    'completed' => 'Sin trabajos completados',
-                    'cancelled' => 'Sin trabajos cancelados',
-                } }}"
-                description="{{ match($currentTab) {
-                    'pending'   => 'Planifica tus próximas tareas: tratamientos, podas, riegos, vendimia y más.',
-                    'overdue'   => 'No hay tareas pasadas sin completar.',
-                    'completed' => 'Los trabajos que marques como completados aparecerán aquí.',
-                    'cancelled' => 'Los trabajos que canceles aparecerán aquí.',
-                } }}"
+                :title="match($currentTab) {
+                    'pending'   => __('Sin trabajos pendientes'),
+                    'overdue'   => __('Sin trabajos vencidos'),
+                    'completed' => __('Sin trabajos completados'),
+                    'cancelled' => __('Sin trabajos cancelados'),
+                }"
+                :description="match($currentTab) {
+                    'pending'   => __('Planifica tus próximas tareas: tratamientos, podas, riegos, vendimia y más.'),
+                    'overdue'   => __('No hay tareas pasadas sin completar.'),
+                    'completed' => __('Los trabajos que marques como completados aparecerán aquí.'),
+                    'cancelled' => __('Los trabajos que canceles aparecerán aquí.'),
+                }"
             >
                 @if ($currentTab === 'pending')
                     <x-slot:action>
                         <flux:button href="{{ roleRoute('viticulturist.planned-works.create') }}" variant="primary" icon="plus">
-                            Nuevo Trabajo
+                            {{ __('Nuevo Trabajo') }}
                         </flux:button>
                     </x-slot:action>
                 @endif
@@ -175,7 +175,7 @@
                             <div class="bg-zinc-50 rounded-xl p-3 space-y-1">
                                 <div class="flex items-center gap-2 text-xs text-zinc-600">
                                     <flux:icon icon="calendar-days" class="size-3.5 text-zinc-400 shrink-0" />
-                                    <span class="text-zinc-400">Fecha:</span>
+                                    <span class="text-zinc-400">{{ __('Fecha:') }}</span>
                                     <span class="font-medium {{ $isOverdue ? 'text-red-600' : '' }}">
                                         {{ $entry->planned_date->format('d/m/Y') }}
                                         @if ($entry->planned_end_date)
@@ -186,14 +186,14 @@
                                 @if ($entry->plot)
                                     <div class="flex items-center gap-2 text-xs text-zinc-600">
                                         <flux:icon icon="map-pin" class="size-3.5 text-zinc-400 shrink-0" />
-                                        <span class="text-zinc-400">Parcela:</span>
+                                        <span class="text-zinc-400">{{ __('Parcela:') }}</span>
                                         <span class="font-medium">{{ $entry->plot->name }}</span>
                                     </div>
                                 @endif
                                 @if ($entry->campaign)
                                     <div class="flex items-center gap-2 text-xs text-zinc-600">
                                         <flux:icon icon="flag" class="size-3.5 text-zinc-400 shrink-0" />
-                                        <span class="text-zinc-400">Campaña:</span>
+                                        <span class="text-zinc-400">{{ __('Campaña:') }}</span>
                                         <span class="font-medium">{{ $entry->campaign->name }}</span>
                                     </div>
                                 @endif
@@ -210,13 +210,13 @@
                                 @if ($isOverdue)
                                     <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-700">
                                         <flux:icon icon="exclamation-triangle" class="size-3" />
-                                        Vencida
+                                        {{ __('Vencida') }}
                                     </span>
                                 @endif
                                 @if ($entry->is_linked)
                                     <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700">
                                         <flux:icon icon="link" class="size-3" />
-                                        Vinculada
+                                        {{ __('Vinculada') }}
                                     </span>
                                 @endif
                             </div>
@@ -239,41 +239,41 @@
                                             variant="primary"
                                             icon="play"
                                             wire:click="startWork({{ $entry->id }})"
-                                            title="Iniciar"
+                                            :title="__('Iniciar')"
                                         />
                                     @endif
                                     <x-agro.action-button
                                         variant="activate"
                                         wire:click="completeWork({{ $entry->id }})"
-                                        wire:confirm="¿Marcar como completado?"
-                                        title="Completar"
+                                        wire:confirm="{{ __('¿Marcar como completado?') }}"
+                                        :title="__('Completar')"
                                     />
                                     <x-agro.action-button
                                         variant="edit"
                                         href="{{ roleRoute('viticulturist.planned-works.edit', $entry) }}"
-                                        title="Editar"
+                                        :title="__('Editar')"
                                     />
                                     <x-agro.action-button
                                         variant="warning"
                                         icon="x-circle"
                                         wire:click="cancelWork({{ $entry->id }})"
-                                        wire:confirm="¿Cancelar este trabajo?"
-                                        title="Cancelar"
+                                        wire:confirm="{{ __('¿Cancelar este trabajo?') }}"
+                                        :title="__('Cancelar')"
                                     />
                                 @elseif ($entry->status === 'completada' || $entry->status === 'cancelada')
                                     <x-agro.action-button
                                         variant="restore"
                                         icon="arrow-path"
                                         wire:click="reopen({{ $entry->id }})"
-                                        wire:confirm="¿Reabrir este trabajo?"
-                                        title="Reabrir"
+                                        wire:confirm="{{ __('¿Reabrir este trabajo?') }}"
+                                        :title="__('Reabrir')"
                                     />
                                 @endif
                                 <x-agro.action-button
                                     variant="delete"
                                     wire:click="delete({{ $entry->id }})"
-                                    wire:confirm="¿Eliminar este trabajo? Esta acción no se puede deshacer."
-                                    title="Eliminar"
+                                    wire:confirm="{{ __('¿Eliminar este trabajo? Esta acción no se puede deshacer.') }}"
+                                    :title="__('Eliminar')"
                                 />
                             </div>
                         </x-slot:footer>
@@ -293,7 +293,7 @@
                     <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
                         <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
                     </div>
-                    <h3 class="text-base font-semibold text-zinc-900">Filtros</h3>
+                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Filtros') }}</h3>
                 </div>
                 <flux:button x-on:click="$dispatch('close-modal', 'planned-works-filters')" variant="ghost" size="sm" icon="x-mark" />
             </div>
@@ -301,36 +301,36 @@
 
         <div class="px-6 py-5 space-y-5">
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Categoría</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Categoría') }}</label>
                 <flux:select wire:model.live="filterCategory">
-                    <option value="">Todas</option>
+                    <option value="">{{ __('Todas') }}</option>
                     @foreach ($categories as $key => $label)
                         <option value="{{ $key }}">{{ $label }}</option>
                     @endforeach
                 </flux:select>
             </div>
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Prioridad</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Prioridad') }}</label>
                 <flux:select wire:model.live="filterPriority">
-                    <option value="">Todas</option>
+                    <option value="">{{ __('Todas') }}</option>
                     @foreach ($priorities as $key => $label)
                         <option value="{{ $key }}">{{ $label }}</option>
                     @endforeach
                 </flux:select>
             </div>
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Parcela</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Parcela') }}</label>
                 <flux:select wire:model.live="filterPlot">
-                    <option value="">Todas</option>
+                    <option value="">{{ __('Todas') }}</option>
                     @foreach ($plots as $plot)
                         <option value="{{ $plot->id }}">{{ $plot->name }}</option>
                     @endforeach
                 </flux:select>
             </div>
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Campaña</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Campaña') }}</label>
                 <flux:select wire:model.live="filterCampaign">
-                    <option value="">Todas</option>
+                    <option value="">{{ __('Todas') }}</option>
                     @foreach ($campaigns as $campaign)
                         <option value="{{ $campaign->id }}">{{ $campaign->name }} ({{ $campaign->year }})</option>
                     @endforeach
@@ -344,13 +344,13 @@
                     wire:click="clearFilters"
                     class="text-sm text-zinc-400 hover:text-zinc-600 transition-colors"
                 >
-                    Limpiar filtros
+                    {{ __('Limpiar filtros') }}
                 </button>
             @else
                 <span></span>
             @endif
             <flux:button x-on:click="$dispatch('close-modal', 'planned-works-filters')" variant="primary" size="sm">
-                Aplicar
+                {{ __('Aplicar') }}
             </flux:button>
         </div>
     </x-agro.modal>

@@ -1,22 +1,22 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="PAC — Política Agrícola Común"
-        description="Resumen de superficies admisibles, declaraciones y eco-regímenes de tu explotación."
+        :title="__('PAC — Política Agrícola Común')"
+        :description="__('Resumen de superficies admisibles, declaraciones y eco-regímenes de tu explotación.')"
     >
         <x-slot:actions>
             <flux:button variant="primary" icon="plus" href="{{ roleRoute('viticulturist.pac.declarations.create') }}" wire:navigate>
-                Nueva declaración
+                {{ __('Nueva declaración') }}
             </flux:button>
         </x-slot:actions>
     </x-agro.page-header>
 
     {{-- Stats superficies --}}
     <div class="grid grid-cols-2 gap-4">
-        <x-agro.stat-card label="Parcelas activas" :value="$stats['total_plots']" icon="map" color="zinc" />
-        <x-agro.stat-card label="Superficie total" :value="number_format($stats['total_area'], 2) . ' ha'" icon="globe-alt" color="agro" />
-        <x-agro.stat-card label="Superficie admisible PAC" :value="number_format($stats['total_eligible'], 2) . ' ha'" icon="check-circle" color="green" />
-        <x-agro.stat-card label="Sin datos PAC" :value="$stats['plots_without_pac']" icon="exclamation-triangle" color="amber" />
+        <x-agro.stat-card :label="__('Parcelas activas')" :value="$stats['total_plots']" icon="map" color="zinc" />
+        <x-agro.stat-card :label="__('Superficie total')" :value="number_format($stats['total_area'], 2) . ' ha'" icon="globe-alt" color="agro" />
+        <x-agro.stat-card :label="__('Superficie admisible PAC')" :value="number_format($stats['total_eligible'], 2) . ' ha'" icon="check-circle" color="green" />
+        <x-agro.stat-card :label="__('Sin datos PAC')" :value="$stats['plots_without_pac']" icon="exclamation-triangle" color="amber" />
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -26,7 +26,7 @@
             <x-slot:header>
                 <div class="flex items-center gap-2">
                     <flux:icon icon="chart-bar" class="size-4 text-agro-600" />
-                    <span class="font-semibold text-zinc-900 text-sm">Admisibilidad global</span>
+                    <span class="font-semibold text-zinc-900 text-sm">{{ __('Admisibilidad global') }}</span>
                 </div>
             </x-slot:header>
             <div class="flex flex-col items-center py-4">
@@ -39,20 +39,20 @@
                     </svg>
                     <div class="absolute inset-0 flex flex-col items-center justify-center">
                         <span class="text-2xl font-bold text-zinc-900">{{ $stats['eligibility_pct'] }}%</span>
-                        <span class="text-xs text-zinc-400">admisible</span>
+                        <span class="text-xs text-zinc-400">{{ __('admisible') }}</span>
                     </div>
                 </div>
                 <div class="mt-4 space-y-1 w-full text-sm">
                     <div class="flex justify-between">
-                        <span class="text-zinc-500">Admisible</span>
+                        <span class="text-zinc-500">{{ __('Admisible') }}</span>
                         <span class="font-medium text-green-600">{{ number_format($stats['total_eligible'], 2) }} ha</span>
                     </div>
                     <div class="flex justify-between">
-                        <span class="text-zinc-500">No admisible</span>
+                        <span class="text-zinc-500">{{ __('No admisible') }}</span>
                         <span class="font-medium text-red-500">{{ number_format($stats['total_non_eligible'], 2) }} ha</span>
                     </div>
                     <div class="flex justify-between border-t border-zinc-100 pt-1 mt-1">
-                        <span class="text-zinc-500">Total</span>
+                        <span class="text-zinc-500">{{ __('Total') }}</span>
                         <span class="font-medium text-zinc-900">{{ number_format($stats['total_area'], 2) }} ha</span>
                     </div>
                 </div>
@@ -64,29 +64,29 @@
             <x-slot:header>
                 <div class="flex items-center gap-2">
                     <flux:icon icon="document-text" class="size-4 text-blue-600" />
-                    <span class="font-semibold text-zinc-900 text-sm">Declaración {{ $currentYear }}</span>
+                    <span class="font-semibold text-zinc-900 text-sm">{{ __('Declaración') }} {{ $currentYear }}</span>
                 </div>
             </x-slot:header>
             @if($currentDeclaration)
                 <div class="space-y-3 py-2">
                     <div class="flex items-center justify-between">
-                        <span class="text-sm text-zinc-500">Estado</span>
+                        <span class="text-sm text-zinc-500">{{ __('Estado') }}</span>
                         <x-agro.status-badge
                             :color="$currentDeclaration->statusColor()"
                             :label="$currentDeclaration->statusLabel()"
                         />
                     </div>
                     <div class="flex items-center justify-between text-sm">
-                        <span class="text-zinc-500">Superficie declarada</span>
+                        <span class="text-zinc-500">{{ __('Superficie declarada') }}</span>
                         <span class="font-medium">{{ number_format($currentDeclaration->total_declared_area, 2) }} ha</span>
                     </div>
                     <div class="flex items-center justify-between text-sm">
-                        <span class="text-zinc-500">Superficie admisible</span>
+                        <span class="text-zinc-500">{{ __('Superficie admisible') }}</span>
                         <span class="font-medium text-green-600">{{ number_format($currentDeclaration->total_eligible_area, 2) }} ha</span>
                     </div>
                     @if($currentDeclaration->reference_number)
                         <div class="flex items-center justify-between text-sm">
-                            <span class="text-zinc-500">Referencia</span>
+                            <span class="text-zinc-500">{{ __('Referencia') }}</span>
                             <span class="font-mono text-xs text-zinc-600">{{ $currentDeclaration->reference_number }}</span>
                         </div>
                     @endif
@@ -94,17 +94,17 @@
                         <flux:button size="sm" variant="ghost" icon="eye"
                             href="{{ roleRoute('viticulturist.pac.declarations.show', $currentDeclaration) }}"
                             wire:navigate class="w-full">
-                            Ver declaración
+                            {{ __('Ver declaración') }}
                         </flux:button>
                     </div>
                 </div>
             @else
                 <div class="py-6 text-center">
                     <flux:icon icon="document-plus" class="size-10 text-zinc-300 mx-auto mb-2" />
-                    <p class="text-sm text-zinc-500 mb-3">No hay declaración para {{ $currentYear }}</p>
+                    <p class="text-sm text-zinc-500 mb-3">{{ __('No hay declaración para') }} {{ $currentYear }}</p>
                     <flux:button size="sm" variant="primary" icon="plus"
                         href="{{ roleRoute('viticulturist.pac.declarations.create') }}" wire:navigate>
-                        Crear declaración
+                        {{ __('Crear declaración') }}
                     </flux:button>
                 </div>
             @endif
@@ -115,11 +115,11 @@
             <x-slot:header>
                 <div class="flex items-center gap-2">
                     <flux:icon icon="clock" class="size-4 text-zinc-500" />
-                    <span class="font-semibold text-zinc-900 text-sm">Historial</span>
+                    <span class="font-semibold text-zinc-900 text-sm">{{ __('Historial') }}</span>
                 </div>
             </x-slot:header>
             @if($declarations->isEmpty())
-                <p class="text-sm text-zinc-400 py-4 text-center">Sin declaraciones previas</p>
+                <p class="text-sm text-zinc-400 py-4 text-center">{{ __('Sin declaraciones previas') }}</p>
             @else
                 <div class="space-y-2 py-1">
                     @foreach($declarations as $decl)
@@ -136,7 +136,7 @@
                 </div>
                 <div class="mt-2 pt-2 border-t border-zinc-100">
                     <flux:button size="sm" variant="ghost" href="{{ roleRoute('viticulturist.pac.declarations.index') }}" wire:navigate class="w-full">
-                        Ver todas
+                        {{ __('Ver todas') }}
                     </flux:button>
                 </div>
             @endif
@@ -146,11 +146,11 @@
     {{-- Alerta parcelas sin datos PAC --}}
     @if($plotsWithoutPac->isNotEmpty())
         <flux:callout variant="warning" icon="exclamation-triangle">
-            <flux:callout.heading>{{ $plotsWithoutPac->count() }} parcela(s) sin superficie admisible PAC</flux:callout.heading>
+            <flux:callout.heading>{{ $plotsWithoutPac->count() }} {{ __('parcela(s) sin superficie admisible PAC') }}</flux:callout.heading>
             <flux:callout.text>
                 {{ $plotsWithoutPac->pluck('name')->join(', ') }}.
-                Edita cada parcela para añadir su superficie admisible PAC antes de crear la declaración.
-                <a href="{{ roleRoute('viticulturist.pac.surfaces.index') }}" wire:navigate class="underline ml-1">Ver superficies →</a>
+                {{ __('Edita cada parcela para añadir su superficie admisible PAC antes de crear la declaración.') }}
+                <a href="{{ roleRoute('viticulturist.pac.surfaces.index') }}" wire:navigate class="underline ml-1">{{ __('Ver superficies') }} →</a>
             </flux:callout.text>
         </flux:callout>
     @endif

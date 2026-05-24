@@ -2,13 +2,13 @@
 
     {{-- Header --}}
     <x-agro.page-header
-        title="Biodiversidad y Cubiertas"
-        description="Registro de elementos de biodiversidad, cubiertas vegetales y estructuras ecol&oacute;gicas para eco-esquemas PAC"
+        :title="__('Biodiversidad y Cubiertas')"
+        :description="__('Registro de elementos de biodiversidad, cubiertas vegetales y estructuras ecológicas para eco-esquemas PAC')"
         icon="sparkles"
     >
         <x-slot:actions>
             <flux:button href="{{ roleRoute('viticulturist.biodiversity-records.create') }}" variant="primary" icon="plus">
-                Nuevo
+                {{ __('Nuevo') }}
             </flux:button>
         </x-slot:actions>
     </x-agro.page-header>
@@ -23,7 +23,7 @@
     }">
         <button @click="toggle()"
             class="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-widest hover:text-zinc-600 transition-colors mb-3">
-            <span>Estad&iacute;sticas</span>
+            <span>{{ __('Estadísticas') }}</span>
             <flux:icon icon="chevron-up" class="size-3.5 transition-transform duration-200" ::class="{ 'rotate-180': !open }" />
         </button>
         <div x-show="open"
@@ -35,30 +35,30 @@
              x-transition:leave-end="opacity-0 -translate-y-1">
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 <x-agro.stat-card
-                    label="Registros totales"
+                    :label="__('Registros totales')"
                     :value="$stats['total']"
-                    :description="$stats['total'] . ' registros'"
+                    :description="$stats['total'] . ' ' . __('registros')"
                     icon="sparkles"
                     color="agro"
                 />
                 <x-agro.stat-card
-                    label="Superficie total"
-                    :value="number_format($stats['total_area_m2'], 2, ',', '.') . ' m&sup2;'"
-                    description="Superficie documentada"
+                    :label="__('Superficie total')"
+                    :value="number_format($stats['total_area_m2'], 2, ',', '.') . ' m²'"
+                    :description="__('Superficie documentada')"
                     icon="map"
                     color="green"
                 />
                 <x-agro.stat-card
-                    label="Tipos utilizados"
+                    :label="__('Tipos utilizados')"
                     :value="$stats['types_count']"
-                    :description="$stats['types_count'] . ' tipos distintos'"
+                    :description="$stats['types_count'] . ' ' . __('tipos distintos')"
                     icon="tag"
                     color="blue"
                 />
                 <x-agro.stat-card
-                    label="Parcelas cubiertas"
+                    :label="__('Parcelas cubiertas')"
                     :value="$stats['plots_count']"
-                    :description="$stats['plots_count'] . ' parcelas'"
+                    :description="$stats['plots_count'] . ' ' . __('parcelas')"
                     icon="map-pin"
                     color="amber"
                 />
@@ -78,7 +78,7 @@
             <input
                 wire:model.live.debounce.300ms="search"
                 type="text"
-                placeholder="Buscar por descripci&oacute;n, especies, notas..."
+                :placeholder="__('Buscar por descripción, especies, notas...')"
                 class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
             />
         </div>
@@ -87,14 +87,14 @@
             class="relative inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors"
         >
             <flux:icon icon="adjustments-horizontal" class="size-4 text-zinc-500" />
-            Filtros
+            {{ __('Filtros') }}
             @if($filterCount > 0)
                 <span class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-agro-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">{{ $filterCount }}</span>
             @endif
         </button>
         <div class="w-px h-6 bg-zinc-200"></div>
         <flux:button href="{{ roleRoute('viticulturist.biodiversity-records.create') }}" variant="primary" icon="plus">
-            Nuevo
+            {{ __('Nuevo') }}
         </flux:button>
     </div>
 
@@ -130,7 +130,7 @@
                     </button>
                 </span>
             @endif
-            <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">Limpiar todo</button>
+            <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">{{ __('Limpiar todo') }}</button>
         </div>
     @endif
 
@@ -148,13 +148,13 @@
         @if($entries->isEmpty())
             <x-agro.empty-state
                 icon="sparkles"
-                title="Sin registros de biodiversidad"
-                description="{{ $search || $filterRecordType || $filterPlot || $filterCampaign ? 'Ning&uacute;n registro coincide con los filtros aplicados.' : 'Documenta cubiertas vegetales, setos, fauna auxiliar y otros elementos de biodiversidad.' }}"
+                :title="__('Sin registros de biodiversidad')"
+                :description="$search || $filterRecordType || $filterPlot || $filterCampaign ? __('Ningún registro coincide con los filtros aplicados.') : __('Documenta cubiertas vegetales, setos, fauna auxiliar y otros elementos de biodiversidad.')"
             >
                 @if(!$search && !$filterRecordType && !$filterPlot && !$filterCampaign)
                     <x-slot:action>
                         <flux:button href="{{ roleRoute('viticulturist.biodiversity-records.create') }}" variant="primary" icon="plus">
-                            Nuevo Registro
+                            {{ __('Nuevo Registro') }}
                         </flux:button>
                     </x-slot:action>
                 @endif
@@ -211,7 +211,7 @@
                             @if($entry->area_m2)
                                 <div class="flex items-center gap-2 text-sm text-zinc-600">
                                     <flux:icon icon="map" class="size-4 text-zinc-400 shrink-0" />
-                                    <span>{{ number_format($entry->area_m2, 2, ',', '.') }} m&sup2;</span>
+                                    <span>{{ number_format($entry->area_m2, 2, ',', '.') }} m²</span>
                                 </div>
                             @endif
 
@@ -234,13 +234,13 @@
                                 <x-agro.action-button
                                     variant="edit"
                                     href="{{ roleRoute('viticulturist.biodiversity-records.edit', $entry) }}"
-                                    title="Editar"
+                                    :title="__('Editar')"
                                 />
                                 <x-agro.action-button
                                     variant="delete"
                                     wire:click="delete({{ $entry->id }})"
-                                    wire:confirm="&iquest;Eliminar este registro permanentemente?"
-                                    title="Eliminar"
+                                    wire:confirm="{{ __('¿Eliminar este registro permanentemente?') }}"
+                                    :title="__('Eliminar')"
                                 />
                             </div>
                         </x-slot:footer>
@@ -260,34 +260,34 @@
                     <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
                         <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
                     </div>
-                    <h3 class="text-base font-semibold text-zinc-900">Filtros</h3>
+                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Filtros') }}</h3>
                 </div>
                 <flux:button x-on:click="$dispatch('close-modal', 'biodiversity-filters')" variant="ghost" size="sm" icon="x-mark" />
             </div>
         </div>
         <div class="px-6 py-5 space-y-5">
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Tipo de registro</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Tipo de registro') }}</label>
                 <flux:select wire:model.live="filterRecordType">
-                    <flux:select.option value="">Todos los tipos</flux:select.option>
+                    <flux:select.option value="">{{ __('Todos los tipos') }}</flux:select.option>
                     @foreach($recordTypes as $key => $label)
                         <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
                     @endforeach
                 </flux:select>
             </div>
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Parcela</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Parcela') }}</label>
                 <flux:select wire:model.live="filterPlot">
-                    <flux:select.option value="">Todas las parcelas</flux:select.option>
+                    <flux:select.option value="">{{ __('Todas las parcelas') }}</flux:select.option>
                     @foreach($plots as $plot)
                         <flux:select.option value="{{ $plot->id }}">{{ $plot->name }}</flux:select.option>
                     @endforeach
                 </flux:select>
             </div>
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Campa&ntilde;a</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Campaña') }}</label>
                 <flux:select wire:model.live="filterCampaign">
-                    <flux:select.option value="">Todas las campa&ntilde;as</flux:select.option>
+                    <flux:select.option value="">{{ __('Todas las campañas') }}</flux:select.option>
                     @foreach($campaigns as $c)
                         <flux:select.option value="{{ $c->id }}">{{ $c->name }}</flux:select.option>
                     @endforeach
@@ -296,11 +296,11 @@
         </div>
         <div class="px-6 py-4 border-t border-zinc-200 flex items-center justify-between">
             @if($filterRecordType || $filterPlot || $filterCampaign)
-                <button wire:click="clearFilters" class="text-sm text-zinc-400 hover:text-zinc-600 transition-colors">Limpiar filtros</button>
+                <button wire:click="clearFilters" class="text-sm text-zinc-400 hover:text-zinc-600 transition-colors">{{ __('Limpiar filtros') }}</button>
             @else
                 <span></span>
             @endif
-            <flux:button x-on:click="$dispatch('close-modal', 'biodiversity-filters')" variant="primary">Aplicar</flux:button>
+            <flux:button x-on:click="$dispatch('close-modal', 'biodiversity-filters')" variant="primary">{{ __('Aplicar') }}</flux:button>
         </div>
     </x-agro.modal>
 

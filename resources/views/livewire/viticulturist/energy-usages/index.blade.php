@@ -2,13 +2,13 @@
 
     {{-- Header --}}
     <x-agro.page-header
-        title="Consumo Energético"
-        description="Huella de carbono y costes energéticos de la explotación"
+        :title="__('Consumo Energético')"
+        :description="__('Huella de carbono y costes energéticos de la explotación')"
         icon="bolt"
     >
         <x-slot:actions>
             <flux:button href="{{ roleRoute('viticulturist.energy-usages.create') }}" variant="primary" icon="plus">
-                Registrar Consumo
+                {{ __('Registrar Consumo') }}
             </flux:button>
         </x-slot:actions>
     </x-agro.page-header>
@@ -16,8 +16,8 @@
     {{-- Tabs --}}
     <x-agro.tabs
         :tabs="[
-            'active'   => ['label' => 'Activos',    'count' => $stats['active']],
-            'archived' => ['label' => 'Archivados',  'count' => $stats['archived']],
+            'active'   => ['label' => __('Activos'),    'count' => $stats['active']],
+            'archived' => ['label' => __('Archivados'),  'count' => $stats['archived']],
         ]"
         :active="$currentTab"
         wireMethod="switchTab"
@@ -26,19 +26,19 @@
     {{-- Filtros --}}
     <div class="flex items-center gap-3 flex-wrap">
         <flux:select wire:model.live="filterCampaign" class="w-48">
-            <flux:select.option value="">Todas las campañas</flux:select.option>
+            <flux:select.option value="">{{ __('Todas las campañas') }}</flux:select.option>
             @foreach($campaigns as $c)
                 <flux:select.option value="{{ $c->id }}">{{ $c->name }}</flux:select.option>
             @endforeach
         </flux:select>
         <flux:select wire:model.live="filterEnergyType" class="w-44">
-            <flux:select.option value="">Todos los tipos</flux:select.option>
+            <flux:select.option value="">{{ __('Todos los tipos') }}</flux:select.option>
             @foreach($energyTypes as $key => $label)
                 <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
             @endforeach
         </flux:select>
         @if($filterCampaign || $filterEnergyType)
-            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">Limpiar</flux:button>
+            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">{{ __('Limpiar') }}</flux:button>
         @endif
     </div>
 
@@ -63,9 +63,9 @@
                     <flux:icon icon="globe-europe-africa" class="w-6 h-6 text-emerald-600" />
                 </div>
                 <div>
-                    <p class="text-sm text-zinc-500">CO₂ total campaña seleccionada</p>
+                    <p class="text-sm text-zinc-500">{{ __('CO₂ total campaña seleccionada') }}</p>
                     <p class="text-2xl font-bold text-zinc-900">{{ number_format($co2Total, 1, ',', '.') }} kg CO₂e</p>
-                    <p class="text-xs text-zinc-400">{{ number_format($co2Total / 1000, 3, ',', '.') }} toneladas CO₂ equivalente</p>
+                    <p class="text-xs text-zinc-400">{{ number_format($co2Total / 1000, 3, ',', '.') }} {{ __('toneladas CO₂ equivalente') }}</p>
                 </div>
             </div>
         </x-agro.card>
@@ -75,17 +75,17 @@
     @if($entries->isEmpty())
         <x-agro.empty-state
             icon="bolt"
-            title="{{ $currentTab === 'active' ? 'Sin registros energéticos' : 'Sin registros archivados' }}"
-            description="{{ $filterCampaign || $filterEnergyType ? 'Ningún registro coincide con los filtros aplicados.' : 'Registra el consumo de gasóleo, electricidad y otros combustibles para calcular tu huella de carbono.' }}"
+            :title="$currentTab === 'active' ? __('Sin registros energéticos') : __('Sin registros archivados')"
+            :description="$filterCampaign || $filterEnergyType ? __('Ningún registro coincide con los filtros aplicados.') : __('Registra el consumo de gasóleo, electricidad y otros combustibles para calcular tu huella de carbono.')"
         >
             @if($filterCampaign || $filterEnergyType)
                 <x-slot:action>
-                    <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
+                    <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">{{ __('Limpiar filtros') }}</flux:button>
                 </x-slot:action>
             @elseif($currentTab === 'active')
                 <x-slot:action>
                     <flux:button href="{{ roleRoute('viticulturist.energy-usages.create') }}" variant="primary" icon="plus">
-                        Registrar Consumo
+                        {{ __('Registrar Consumo') }}
                     </flux:button>
                 </x-slot:action>
             @endif
@@ -118,7 +118,7 @@
 
                         <div class="grid grid-cols-2 gap-2">
                             <div class="bg-zinc-50 rounded-xl p-3">
-                                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">Cantidad</p>
+                                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">{{ __('Cantidad') }}</p>
                                 <p class="text-base font-bold text-zinc-700 leading-none">
                                     {{ number_format($entry->quantity, 2, ',', '.') }}<span class="text-xs font-normal text-zinc-400 ml-0.5">{{ $entry->unit_label }}</span>
                                 </p>
@@ -135,7 +135,7 @@
 
                         @if($entry->total_cost)
                             <div class="flex items-center justify-between text-sm">
-                                <span class="text-zinc-400">Coste</span>
+                                <span class="text-zinc-400">{{ __('Coste') }}</span>
                                 <span class="font-semibold text-zinc-700">{{ number_format($entry->total_cost, 2, ',', '.') }} €</span>
                             </div>
                         @endif
@@ -147,20 +147,20 @@
                                 <x-agro.action-button
                                     variant="edit"
                                     href="{{ roleRoute('viticulturist.energy-usages.edit', $entry) }}"
-                                    title="Editar"
+                                    :title="__('Editar')"
                                 />
                                 <x-agro.action-button
                                     variant="archive"
                                     wire:click="archive({{ $entry->id }})"
-                                    wire:confirm="¿Archivar este registro?"
-                                    title="Archivar"
+                                    wire:confirm="{{ __('¿Archivar este registro?') }}"
+                                    :title="__('Archivar')"
                                 />
                             @else
                                 <x-agro.action-button
                                     variant="restore"
                                     icon="arrow-uturn-left"
                                     wire:click="unarchive({{ $entry->id }})"
-                                    title="Restaurar"
+                                    :title="__('Restaurar')"
                                 />
                             @endif
                         </div>

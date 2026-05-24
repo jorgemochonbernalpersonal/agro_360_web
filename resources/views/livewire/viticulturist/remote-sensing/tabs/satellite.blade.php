@@ -3,17 +3,17 @@
 {{-- Date Selector --}}
 <div class="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
     <div class="flex flex-col md:flex-row md:items-center gap-2">
-        <span class="text-sm font-medium text-zinc-700">📅 Fecha de análisis:</span>
+        <span class="text-sm font-medium text-zinc-700">📅 {{ __('Fecha de análisis:') }}</span>
         @if(count($satelliteAvailableDates) > 0)
             <flux:select wire:model.live="satelliteSelectedDate">
-                <option value="">Último dato disponible</option>
+                <option value="">{{ __('Último dato disponible') }}</option>
                 @foreach($satelliteAvailableDates as $date)
                     <option value="{{ $date }}">{{ \Carbon\Carbon::parse($date)->format('d/m/Y') }}</option>
                 @endforeach
             </flux:select>
         @else
             <span class="text-sm text-amber-600 font-medium bg-amber-50 px-3 py-2 rounded-lg border border-amber-200">
-                ⚠️ Sin datos históricos - Carga datos para comenzar
+                ⚠️ {{ __('Sin datos históricos - Carga datos para comenzar') }}
             </span>
         @endif
     </div>
@@ -22,7 +22,7 @@
         @if($satelliteSelectedDate && count($satelliteAvailableDates) > 0)
             <button wire:click="$set('satelliteSelectedDate', '')"
                     class="text-sm text-blue-600 hover:text-blue-800 transition font-medium">
-                🔄 Ver último dato
+                🔄 {{ __('Ver último dato') }}
             </button>
         @endif
 
@@ -36,8 +36,8 @@
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
             </svg>
-            <span wire:loading.remove wire:target="requestDataForDate">🛰️ {{ $ndviData && ($ndviData->ndvi_mean ?? 0) > 0 ? 'Actualizar Sentinel-2' : 'Cargar Datos Sentinel-2' }}</span>
-            <span wire:loading wire:target="requestDataForDate">Cargando...</span>
+            <span wire:loading.remove wire:target="requestDataForDate">🛰️ {{ $ndviData && ($ndviData->ndvi_mean ?? 0) > 0 ? __('Actualizar Sentinel-2') : __('Cargar Datos Sentinel-2') }}</span>
+            <span wire:loading wire:target="requestDataForDate">{{ __('Cargando...') }}</span>
         </button>
     </div>
 </div>
@@ -52,25 +52,25 @@
                 </svg>
             </div>
             <div class="ml-4 flex-1">
-                <h4 class="text-base font-semibold text-yellow-900 mb-2">📡 Sin datos para este recinto</h4>
+                <h4 class="text-base font-semibold text-yellow-900 mb-2">📡 {{ __('Sin datos para este recinto') }}</h4>
                 <div class="text-sm text-yellow-800 mb-3">
-                    <p class="mb-2">El recinto <strong>{{ collect($allSigpacs)->firstWhere('id', $selectedSigpacId)['display_name'] ?? $selectedPlot->name }}</strong> aún no tiene imágenes Sentinel-2 cargadas.</p>
-                    <p>Haz clic en <strong>"🛰️ Actualizar Sentinel-2"</strong> — se descargará la imagen más reciente en 30-60 segundos directamente desde Copernicus.</p>
+                    <p class="mb-2">{{ __('El recinto') }} <strong>{{ collect($allSigpacs)->firstWhere('id', $selectedSigpacId)['display_name'] ?? $selectedPlot->name }}</strong> {{ __('aún no tiene imágenes Sentinel-2 cargadas.') }}</p>
+                    <p>{{ __('Haz clic en') }} <strong>"🛰️ {{ __('Actualizar Sentinel-2') }}"</strong> — {{ __('se descargará la imagen más reciente en 30-60 segundos directamente desde Copernicus.') }}</p>
                 </div>
 
                 <div class="bg-white rounded-lg p-3 text-xs border border-yellow-200">
                     @php $sigpacCoords = $this->getSelectedSigpacCoordinates(); @endphp
                     @if($sigpacCoords)
-                        <span class="text-green-600 font-medium">✓ Geometría OK</span>
+                        <span class="text-green-600 font-medium">✓ {{ __('Geometría OK') }}</span>
                         <span class="text-zinc-500 ml-1">(Lat: {{ number_format($sigpacCoords['lat'], 4) }}°, Lon: {{ number_format($sigpacCoords['lng'], 4) }}°)</span>
                     @else
-                        <span class="text-red-600 font-semibold">✗ Este recinto no tiene geometría configurada — no se pueden obtener datos satelitales</span>
+                        <span class="text-red-600 font-semibold">✗ {{ __('Este recinto no tiene geometría configurada — no se pueden obtener datos satelitales') }}</span>
                     @endif
                 </div>
 
                 @if($dataLoadError)
                     <div class="mt-3 bg-red-50 border border-red-200 rounded-lg p-3">
-                        <p class="text-sm text-red-700"><strong>❌ Error:</strong> {{ $dataLoadError }}</p>
+                        <p class="text-sm text-red-700"><strong>❌ {{ __('Error:') }}</strong> {{ $dataLoadError }}</p>
                     </div>
                 @endif
             </div>
@@ -83,9 +83,8 @@
     <div class="mb-4 flex items-start gap-3 px-4 py-3 bg-orange-50 border border-orange-300 rounded-xl text-orange-800 text-sm">
         <flux:icon icon="cloud" class="size-5 shrink-0 text-orange-500 mt-0.5" />
         <div>
-            <span class="font-semibold">Cobertura de nubes elevada ({{ $ndviData->cloud_coverage }}%)</span>
-            — Los valores NDVI de esta fecha pueden ser inexactos.
-            Selecciona otra fecha con menos nubes para obtener datos fiables.
+            <span class="font-semibold">{{ __('Cobertura de nubes elevada') }} ({{ $ndviData->cloud_coverage }}%)</span>
+            — {{ __('Los valores NDVI de esta fecha pueden ser inexactos. Selecciona otra fecha con menos nubes para obtener datos fiables.') }}
         </div>
     </div>
 @endif
@@ -108,17 +107,17 @@
             @elseif($ndviData?->health_status === 'poor') bg-orange-100 text-orange-800
             @else bg-red-100 text-red-800
             @endif">
-            {{ $ndviData?->health_text ?? 'Sin datos' }}
+            {{ $ndviData?->health_text ?? __('Sin datos') }}
         </span>
     </div>
 
     <div class="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-lg p-5 border border-blue-200">
         <div class="flex items-center justify-between mb-2">
-            <span class="text-sm font-semibold text-zinc-600">NDWI (Agua)</span>
+            <span class="text-sm font-semibold text-zinc-600">{{ __('NDWI (Agua)') }}</span>
             <span class="text-2xl">💧</span>
         </div>
         <div class="text-4xl font-bold text-blue-700 mb-2">{{ number_format($ndviData?->ndwi_mean ?? 0, 2) }}</div>
-        <p class="text-xs text-zinc-600">Contenido de agua en vegetación</p>
+        <p class="text-xs text-zinc-600">{{ __('Contenido de agua en vegetación') }}</p>
     </div>
 
     <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg p-5 border border-amber-200">
@@ -155,7 +154,7 @@
         <span>📅 {{ $ndviData?->image_date?->format('d/m/Y') ?? 'N/A' }}</span>
         <span class="flex items-center gap-1 {{ $ndviData->hasHighCloudCoverage() ? 'text-orange-600 font-semibold' : '' }}">
             <flux:icon icon="cloud" variant="micro" class="{{ $ndviData->hasHighCloudCoverage() ? 'text-orange-500' : 'text-zinc-400' }}" />
-            {{ $ndviData?->cloud_coverage ?? 0 }}% nubes
+            {{ $ndviData?->cloud_coverage ?? 0 }}% {{ __('nubes') }}
             &nbsp;·&nbsp; {{ $ndviData?->cloud_quality_label }}
         </span>
     </div>
@@ -163,13 +162,12 @@
 
 {{-- Bandas Espectrales --}}
 <div class="mt-6 pt-6 border-t border-zinc-100">
-    <h3 class="text-sm font-semibold text-zinc-500 uppercase tracking-wide mb-4">Bandas Espectrales</h3>
+    <h3 class="text-sm font-semibold text-zinc-500 uppercase tracking-wide mb-4">{{ __('Bandas Espectrales') }}</h3>
     @livewire('viticulturist.remote-sensing.spectral-bands-card', ['plot' => $selectedPlot, 'sigpacId' => $selectedSigpacId], key('spectral-'.$selectedPlot->id.'-'.$selectedSigpacId))
 </div>
 
 {{-- LAI Oficial NASA --}}
 <div class="mt-6 pt-6 border-t border-zinc-100">
-    <h3 class="text-sm font-semibold text-zinc-500 uppercase tracking-wide mb-4">LAI Oficial NASA</h3>
+    <h3 class="text-sm font-semibold text-zinc-500 uppercase tracking-wide mb-4">{{ __('LAI Oficial NASA') }}</h3>
     @livewire('viticulturist.remote-sensing.official-lai-card', ['plot' => $selectedPlot, 'sigpacId' => $selectedSigpacId], key('lai-official-'.$selectedPlot->id.'-'.$selectedSigpacId))
 </div>
-

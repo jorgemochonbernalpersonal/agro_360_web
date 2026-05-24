@@ -7,7 +7,7 @@
          aria-labelledby="modal-title"
          role="dialog"
          aria-modal="true">
-        
+
         {{-- Backdrop --}}
         <div x-show="show"
              x-transition:enter="ease-out duration-300"
@@ -28,17 +28,17 @@
                  x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
                  x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                  class="relative transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all sm:w-full sm:max-w-2xl">
-                
+
                 {{-- Header with Logo --}}
                 <div class="bg-gradient-to-br from-green-500 to-emerald-600 px-8 py-8 text-center">
                     <div class="mx-auto w-32 h-32 mb-4 bg-white rounded-2xl shadow-lg flex items-center justify-center p-4">
                         <img src="{{ asset('images/logo.png') }}" alt="Agro365" class="w-full h-full object-contain">
                     </div>
                     <h2 class="text-2xl font-bold text-white mb-2">
-                        ¡Bienvenido a tu viñedo digital!
+                        {{ __('¡Bienvenido a tu viñedo digital!') }}
                     </h2>
                     <p class="text-green-50 text-base">
-                        Gestiona tu explotación vitícola de forma profesional
+                        {{ __('Gestiona tu explotación vitícola de forma profesional') }}
                     </p>
                 </div>
 
@@ -50,8 +50,8 @@
                                 <flux:icon icon="calendar-days" class="size-6 text-green-600" />
                             </div>
                             <div>
-                                <h3 class="font-semibold text-zinc-900 text-sm">Campañas</h3>
-                                <p class="text-xs text-zinc-600">Organiza por año vitícola</p>
+                                <h3 class="font-semibold text-zinc-900 text-sm">{{ __('Campañas') }}</h3>
+                                <p class="text-xs text-zinc-600">{{ __('Organiza por año vitícola') }}</p>
                             </div>
                         </div>
 
@@ -60,8 +60,8 @@
                                 <flux:icon icon="map" class="size-6 text-blue-600" />
                             </div>
                             <div>
-                                <h3 class="font-semibold text-zinc-900 text-sm">Parcelas</h3>
-                                <p class="text-xs text-zinc-600">Con datos SIGPAC y plantaciones</p>
+                                <h3 class="font-semibold text-zinc-900 text-sm">{{ __('Parcelas') }}</h3>
+                                <p class="text-xs text-zinc-600">{{ __('Con datos SIGPAC y plantaciones') }}</p>
                             </div>
                         </div>
 
@@ -70,8 +70,8 @@
                                 <span class="text-xl">🧪</span>
                             </div>
                             <div>
-                                <h3 class="font-semibold text-zinc-900 text-sm">Productos fitosanitarios</h3>
-                                <p class="text-xs text-zinc-600">Catálogo con números ROPO</p>
+                                <h3 class="font-semibold text-zinc-900 text-sm">{{ __('Productos fitosanitarios') }}</h3>
+                                <p class="text-xs text-zinc-600">{{ __('Catálogo con números ROPO') }}</p>
                             </div>
                         </div>
 
@@ -80,8 +80,8 @@
                                 <flux:icon icon="book-open" class="size-6 text-amber-600" />
                             </div>
                             <div>
-                                <h3 class="font-semibold text-zinc-900 text-sm">Cuaderno digital</h3>
-                                <p class="text-xs text-zinc-600">Tratamientos, riegos y labores</p>
+                                <h3 class="font-semibold text-zinc-900 text-sm">{{ __('Cuaderno digital') }}</h3>
+                                <p class="text-xs text-zinc-600">{{ __('Tratamientos, riegos y labores') }}</p>
                             </div>
                         </div>
                     </div>
@@ -93,10 +93,10 @@
                             </div>
                             <div>
                                 <p class="text-sm text-zinc-700 font-medium">
-                                    4 pasos para empezar a trabajar
+                                    {{ __('4 pasos para empezar a trabajar') }}
                                 </p>
                                 <p class="text-xs text-zinc-600 mt-1">
-                                    Campaña → Parcelas → Primera actividad → Productos fitosanitarios
+                                    {{ __('Campaña → Parcelas → Primera actividad → Productos fitosanitarios') }}
                                 </p>
                             </div>
                         </div>
@@ -108,12 +108,12 @@
                     <button wire:click="skipTour"
                             type="button"
                             class="text-sm text-zinc-600 hover:text-zinc-800 transition-colors font-medium">
-                        Saltar introducción
+                        {{ __('Saltar introducción') }}
                     </button>
                     <button wire:click="startTour"
                             type="button"
                             class="px-6 py-2.5 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all flex items-center gap-2">
-                        Comenzar
+                        {{ __('Comenzar') }}
                         <flux:icon icon="arrow-right" class="size-4" />
                     </button>
                 </div>

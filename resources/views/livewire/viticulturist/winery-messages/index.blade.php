@@ -1,9 +1,9 @@
 <div class="space-y-6 animate-fade-in">
-    <x-agro.page-header title="Comunicación con Bodega" description="Notificaciones sobre tus entregas y liquidaciones">
+    <x-agro.page-header :title="__('Comunicación con Bodega')" :description="__('Notificaciones sobre tus entregas y liquidaciones')">
         @if ($unreadCount > 0)
             <x-slot:actions>
                 <flux:button wire:click="markAllRead" variant="ghost" size="sm" icon="check">
-                    Marcar todo como leído
+                    {{ __('Marcar todo como leído') }}
                 </flux:button>
             </x-slot:actions>
         @endif
@@ -11,7 +11,7 @@
 
     @if ($unreadCount > 0)
         <flux:callout variant="info" icon="bell">
-            Tienes {{ $unreadCount }} {{ $unreadCount === 1 ? 'notificación sin leer' : 'notificaciones sin leer' }}.
+            {{ __('Tienes :count :label.', ['count' => $unreadCount, 'label' => $unreadCount === 1 ? __('notificación sin leer') : __('notificaciones sin leer')]) }}
         </flux:callout>
     @endif
 
@@ -65,7 +65,7 @@
                             @if (!empty($data['link']))
                                 <a href="{{ $data['link'] }}" wire:navigate
                                    class="text-xs font-medium text-agro-600 hover:text-agro-700 dark:text-agro-400">
-                                    Ver detalle →
+                                    {{ __('Ver detalle') }} →
                                 </a>
                             @endif
                             @if (!$isRead)
@@ -73,7 +73,7 @@
                                     wire:click="markRead('{{ $notification->id }}')"
                                     class="text-xs text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
                                 >
-                                    Marcar como leído
+                                    {{ __('Marcar como leído') }}
                                 </button>
                             @endif
                         </div>
@@ -86,8 +86,8 @@
     @else
         <x-agro.empty-state
             icon="bell"
-            title="Sin notificaciones"
-            description="Aquí aparecerán los mensajes de tu bodega: confirmaciones de entrega, liquidaciones y resoluciones de disputas"
+            :title="__('Sin notificaciones')"
+            :description="__('Aquí aparecerán los mensajes de tu bodega: confirmaciones de entrega, liquidaciones y resoluciones de disputas')"
         />
     @endif
 </div>

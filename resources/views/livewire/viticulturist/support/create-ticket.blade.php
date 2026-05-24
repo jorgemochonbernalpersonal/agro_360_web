@@ -1,13 +1,13 @@
-﻿<x-agro.form-card
-    title="Nuevo Ticket de Soporte"
-    description="Cuéntanos qué necesitas y te ayudaremos lo antes posible"
+<x-agro.form-card
+    :title="__('Nuevo Ticket de Soporte')"
+    :description="__('Cuéntanos qué necesitas y te ayudaremos lo antes posible')"
     :back-url="roleRoute('viticulturist.support.index')"
 >
     <form wire:submit="save" class="space-y-8">
-        <x-agro.form-section title="Tipo y Prioridad">
+        <x-agro.form-section :title="__('Tipo y Prioridad')">
             {{-- Tipo de Ticket --}}
             <div>
-                <flux:label class="mb-3">Tipo de Ticket *</flux:label>
+                <flux:label class="mb-3">{{ __('Tipo de Ticket') }} *</flux:label>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
                     <label class="cursor-pointer">
                         <input type="radio" wire:model="type" value="bug" class="sr-only peer">
@@ -19,22 +19,22 @@
                     <label class="cursor-pointer">
                         <input type="radio" wire:model="type" value="feature" class="sr-only peer">
                         <div class="p-4 text-center border-2 rounded-lg peer-checked:border-agro-500 peer-checked:bg-agro-50 hover:border-zinc-400 transition">
-                            <div class="text-2xl mb-1">Nueva</div>
-                            <div class="text-sm font-medium">Nueva Funcionalidad</div>
+                            <div class="text-2xl mb-1">{{ __('Nueva') }}</div>
+                            <div class="text-sm font-medium">{{ __('Nueva Funcionalidad') }}</div>
                         </div>
                     </label>
                     <label class="cursor-pointer">
                         <input type="radio" wire:model="type" value="improvement" class="sr-only peer">
                         <div class="p-4 text-center border-2 rounded-lg peer-checked:border-agro-500 peer-checked:bg-agro-50 hover:border-zinc-400 transition">
-                            <div class="text-2xl mb-1">Mejora</div>
-                            <div class="text-sm font-medium">Mejora</div>
+                            <div class="text-2xl mb-1">{{ __('Mejora') }}</div>
+                            <div class="text-sm font-medium">{{ __('Mejora') }}</div>
                         </div>
                     </label>
                     <label class="cursor-pointer">
                         <input type="radio" wire:model="type" value="question" class="sr-only peer" checked>
                         <div class="p-4 text-center border-2 rounded-lg peer-checked:border-agro-500 peer-checked:bg-agro-50 hover:border-zinc-400 transition">
-                            <div class="text-2xl mb-1">Pregunta</div>
-                            <div class="text-sm font-medium">Pregunta</div>
+                            <div class="text-2xl mb-1">{{ __('Pregunta') }}</div>
+                            <div class="text-sm font-medium">{{ __('Pregunta') }}</div>
                         </div>
                     </label>
                 </div>
@@ -45,30 +45,30 @@
 
             {{-- Prioridad --}}
             <div class="mt-6">
-                <flux:label class="mb-3">Prioridad *</flux:label>
+                <flux:label class="mb-3">{{ __('Prioridad') }} *</flux:label>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
                     <label class="cursor-pointer">
                         <input type="radio" wire:model="priority" value="low" class="sr-only peer">
                         <div class="p-3 text-center border-2 rounded-lg peer-checked:border-agro-500 peer-checked:bg-agro-50 hover:border-zinc-400 transition">
-                            <div class="text-sm font-medium">Baja</div>
+                            <div class="text-sm font-medium">{{ __('Baja') }}</div>
                         </div>
                     </label>
                     <label class="cursor-pointer">
                         <input type="radio" wire:model="priority" value="medium" class="sr-only peer" checked>
                         <div class="p-3 text-center border-2 rounded-lg peer-checked:border-agro-500 peer-checked:bg-agro-50 hover:border-zinc-400 transition">
-                            <div class="text-sm font-medium">Media</div>
+                            <div class="text-sm font-medium">{{ __('Media') }}</div>
                         </div>
                     </label>
                     <label class="cursor-pointer">
                         <input type="radio" wire:model="priority" value="high" class="sr-only peer">
                         <div class="p-3 text-center border-2 rounded-lg peer-checked:border-agro-500 peer-checked:bg-agro-50 hover:border-zinc-400 transition">
-                            <div class="text-sm font-medium">Alta</div>
+                            <div class="text-sm font-medium">{{ __('Alta') }}</div>
                         </div>
                     </label>
                     <label class="cursor-pointer">
                         <input type="radio" wire:model="priority" value="urgent" class="sr-only peer">
                         <div class="p-3 text-center border-2 rounded-lg peer-checked:border-agro-500 peer-checked:bg-agro-50 hover:border-zinc-400 transition">
-                            <div class="text-sm font-medium">Urgente</div>
+                            <div class="text-sm font-medium">{{ __('Urgente') }}</div>
                         </div>
                     </label>
                 </div>
@@ -78,14 +78,14 @@
             </div>
         </x-agro.form-section>
 
-        <x-agro.form-section title="Información del Ticket">
+        <x-agro.form-section :title="__('Información del Ticket')">
             {{-- Título --}}
             <flux:field>
-                <flux:label for="title">Título *</flux:label>
+                <flux:label for="title">{{ __('Título') }} *</flux:label>
                 <flux:input
                     wire:model="title"
                     id="title"
-                    placeholder="Resume tu consulta en pocas palabras"
+                    :placeholder="__('Resume tu consulta en pocas palabras')"
                     required
                 />
                 <flux:error name="title" />
@@ -93,22 +93,22 @@
 
             {{-- Descripción --}}
             <flux:field class="mt-6">
-                <flux:label for="description">Descripción *</flux:label>
+                <flux:label for="description">{{ __('Descripción') }} *</flux:label>
                 <flux:textarea
                     wire:model="description"
                     id="description"
                     rows="6"
-                    placeholder="Describe detalladamente tu problema, sugerencia o pregunta..."
+                    :placeholder="__('Describe detalladamente tu problema, sugerencia o pregunta...')"
                     required
                 />
                 <flux:error name="description" />
                 <p class="text-xs text-zinc-500 mt-1">
-                    Cuanto más detalles proporciones, mejor podremos ayudarte.
+                    {{ __('Cuanto más detalles proporciones, mejor podremos ayudarte.') }}
                 </p>
             </flux:field>
         </x-agro.form-section>
 
-        <x-agro.form-section title="Archivos Adjuntos">
+        <x-agro.form-section :title="__('Archivos Adjuntos')">
             <div x-data="{
                 previews: [],
                 dragging: false,
@@ -157,8 +157,8 @@
                 >
                     <flux:icon icon="photo" class="size-8 text-zinc-400" />
                     <div class="text-center">
-                        <span class="text-sm font-medium text-zinc-700">Arrastra imágenes aquí o <span class="text-agro-600 underline">selecciona</span></span>
-                        <p class="text-xs text-zinc-400 mt-0.5">PNG, JPG, WEBP · máx. 5MB por imagen · <span x-text="5 - previews.length"></span> restantes</p>
+                        <span class="text-sm font-medium text-zinc-700">{{ __('Arrastra imágenes aquí o') }} <span class="text-agro-600 underline">{{ __('selecciona') }}</span></span>
+                        <p class="text-xs text-zinc-400 mt-0.5">PNG, JPG, WEBP · {{ __('máx. 5MB por imagen') }} · <span x-text="5 - previews.length"></span> {{ __('restantes') }}</p>
                     </div>
                     <input
                         type="file"
@@ -171,7 +171,7 @@
                     >
                 </label>
 
-                <p x-show="!canAdd" class="text-xs text-zinc-500 mt-1">Límite de 5 imágenes alcanzado. Elimina alguna para añadir más.</p>
+                <p x-show="!canAdd" class="text-xs text-zinc-500 mt-1">{{ __('Límite de 5 imágenes alcanzado. Elimina alguna para añadir más.') }}</p>
 
                 @error('images') <flux:error>{{ $message }}</flux:error> @enderror
                 @error('images.*') <flux:error>{{ $message }}</flux:error> @enderror
@@ -195,14 +195,14 @@
                                     type="button"
                                     x-on:click.stop="removePreview(index)"
                                     class="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center shadow opacity-0 group-hover:opacity-100 transition-opacity"
-                                    title="Eliminar"
+                                    :title="'{{ __('Eliminar') }}'"
                                 >
                                     <flux:icon icon="x-mark" class="size-3.5" />
                                 </button>
                             </div>
                         </template>
                     </div>
-                    <p class="text-xs text-zinc-400 mt-2">Haz clic en una imagen para ampliarla · Pasa el cursor para eliminarla</p>
+                    <p class="text-xs text-zinc-400 mt-2">{{ __('Haz clic en una imagen para ampliarla · Pasa el cursor para eliminarla') }}</p>
                 </div>
 
                 {{-- Lightbox --}}
@@ -224,19 +224,19 @@
 
         {{-- Información Adicional --}}
         <flux:callout variant="info">
-            <flux:callout.heading>Información</flux:callout.heading>
+            <flux:callout.heading>{{ __('Información') }}</flux:callout.heading>
             <flux:callout.text>
                 <ul class="text-sm space-y-1">
-                    <li>Responderemos tu ticket lo antes posible.</li>
-                    <li>Recibirás notificaciones por email cuando haya actualizaciones.</li>
-                    <li>Puedes seguir el progreso desde la sección de Soporte.</li>
+                    <li>{{ __('Responderemos tu ticket lo antes posible.') }}</li>
+                    <li>{{ __('Recibirás notificaciones por email cuando haya actualizaciones.') }}</li>
+                    <li>{{ __('Puedes seguir el progreso desde la sección de Soporte.') }}</li>
                 </ul>
             </flux:callout.text>
         </flux:callout>
 
         <x-agro.form-actions
             :cancel-url="roleRoute('viticulturist.support.index')"
-            submit-label="Enviar Ticket"
+            :submit-label="__('Enviar Ticket')"
         />
     </form>
 </x-agro.form-card>

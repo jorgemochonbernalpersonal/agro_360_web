@@ -2,13 +2,13 @@
 
     {{-- Header --}}
     <x-agro.page-header
-        title="Gestión de Envases Fitosanitarios"
-        description="Registro de entregas de envases vacíos en puntos SIGFITO / FIELD (RD 1311/2012)"
+        :title="__('Gestión de Envases Fitosanitarios')"
+        :description="__('Registro de entregas de envases vacíos en puntos SIGFITO / FIELD (RD 1311/2012)')"
         icon="archive-box-x-mark"
     >
         <x-slot:actions>
             <flux:button href="{{ roleRoute('viticulturist.container-returns.create') }}" variant="primary" icon="plus">
-                Registrar Entrega
+                {{ __('Registrar Entrega') }}
             </flux:button>
         </x-slot:actions>
     </x-agro.page-header>
@@ -17,30 +17,30 @@
     <x-agro.stats-section key="container-returns">
         <div class="grid grid-cols-2 gap-4">
             <x-agro.stat-card
-                label="Total registros"
+                :label="__('Total registros')"
                 :value="$stats['active'] + $stats['archived']"
-                :description="$stats['active'] . ' activos · ' . $stats['archived'] . ' archivados'"
+                :description="$stats['active'] . ' ' . __('activos') . ' · ' . $stats['archived'] . ' ' . __('archivados')"
                 icon="archive-box-x-mark"
                 color="agro"
             />
             <x-agro.stat-card
-                label="Envases entregados"
+                :label="__('Envases entregados')"
                 :value="number_format($stats['total_containers'], 0, ',', '.')"
-                description="Campaña seleccionada"
+                :description="__('Campaña seleccionada')"
                 icon="cube"
                 color="green"
             />
             <x-agro.stat-card
-                label="Activos"
+                :label="__('Activos')"
                 :value="$stats['active']"
-                description="Registros en curso"
+                :description="__('Registros en curso')"
                 icon="check-circle"
                 color="blue"
             />
             <x-agro.stat-card
-                label="Archivados"
+                :label="__('Archivados')"
                 :value="$stats['archived']"
-                :description="$stats['archived'] > 0 ? 'Fuera de activo' : 'Ninguno archivado'"
+                :description="$stats['archived'] > 0 ? __('Fuera de activo') : __('Ninguno archivado')"
                 icon="archive-box"
                 color="zinc"
             />
@@ -50,8 +50,8 @@
     {{-- Tabs --}}
     <x-agro.tabs
         :tabs="[
-            'active'   => ['label' => 'Activos',    'count' => $stats['active']],
-            'archived' => ['label' => 'Archivados', 'count' => $stats['archived']],
+            'active'   => ['label' => __('Activos'),    'count' => $stats['active']],
+            'archived' => ['label' => __('Archivados'), 'count' => $stats['archived']],
         ]"
         :active="$currentTab"
         wireMethod="switchTab"
@@ -62,7 +62,7 @@
         $filterCount = (int) !empty($filterCampaign) + (int) !empty($filterCollectionSystem);
     @endphp
     <div class="flex items-center gap-3">
-        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar por producto, punto de recogida..." />
+        <x-agro.search-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar por producto, punto de recogida...')" />
         <x-agro.filter-button modal="container-returns-filters" :count="$filterCount" />
     </div>
 
@@ -76,7 +76,7 @@
             @if($filterCollectionSystem)
                 <x-agro.filter-chip icon="archive-box-x-mark" :label="$collectionSystems[$filterCollectionSystem] ?? $filterCollectionSystem" wireRemove="$set('filterCollectionSystem', '')" />
             @endif
-            <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">Limpiar todo</button>
+            <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">{{ __('Limpiar todo') }}</button>
         </div>
     @endif
 
@@ -88,13 +88,13 @@
         @if($entries->isEmpty())
             <x-agro.empty-state
                 icon="archive-box-x-mark"
-                title="{{ $currentTab === 'active' ? 'Sin entregas registradas' : 'Sin registros archivados' }}"
-                description="{{ $search || $filterCampaign || $filterCollectionSystem ? 'Ningún registro coincide con los filtros aplicados.' : 'Registra cada entrega de envases vacíos en puntos de recogida autorizados.' }}"
+                :title="$currentTab === 'active' ? __('Sin entregas registradas') : __('Sin registros archivados')"
+                :description="$search || $filterCampaign || $filterCollectionSystem ? __('Ningún registro coincide con los filtros aplicados.') : __('Registra cada entrega de envases vacíos en puntos de recogida autorizados.')"
             >
                 @if(!$search && !$filterCampaign && !$filterCollectionSystem && $currentTab === 'active')
                     <x-slot:action>
                         <flux:button href="{{ roleRoute('viticulturist.container-returns.create') }}" variant="primary" icon="plus">
-                            Registrar Entrega
+                            {{ __('Registrar Entrega') }}
                         </flux:button>
                     </x-slot:action>
                 @endif
@@ -134,14 +134,14 @@
                         <div class="flex-1 space-y-4">
                             <div class="grid grid-cols-2 gap-3">
                                 <div class="bg-green-50 rounded-xl p-3">
-                                    <p class="text-[10px] font-semibold text-green-400 uppercase tracking-widest mb-1">Envases</p>
+                                    <p class="text-[10px] font-semibold text-green-400 uppercase tracking-widest mb-1">{{ __('Envases') }}</p>
                                     <p class="text-2xl font-bold text-green-700 leading-none">
                                         {{ $entry->containers_quantity }}
-                                        <span class="text-xs font-medium text-zinc-400 ml-0.5">uds.</span>
+                                        <span class="text-xs font-medium text-zinc-400 ml-0.5">{{ __('uds.') }}</span>
                                     </p>
                                 </div>
                                 <div class="bg-zinc-50 rounded-xl p-3">
-                                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">Tipo</p>
+                                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">{{ __('Tipo') }}</p>
                                     <p class="text-sm font-semibold text-zinc-600 leading-tight">{{ $entry->container_type_label }}</p>
                                 </div>
                             </div>
@@ -160,7 +160,7 @@
                                 @if($entry->transport_document)
                                     <div class="flex items-center gap-2 text-zinc-500">
                                         <flux:icon icon="document-text" class="size-4 text-zinc-400 shrink-0" />
-                                        <span class="truncate text-xs">Alb. {{ $entry->transport_document }}</span>
+                                        <span class="truncate text-xs">{{ __('Alb.') }} {{ $entry->transport_document }}</span>
                                     </div>
                                 @endif
                             </div>
@@ -172,26 +172,26 @@
                                     <x-agro.action-button
                                         variant="edit"
                                         href="{{ roleRoute('viticulturist.container-returns.edit', $entry) }}"
-                                        title="Editar"
+                                        :title="__('Editar')"
                                     />
                                     <x-agro.action-button
                                         variant="archive"
                                         wire:click="archive({{ $entry->id }})"
-                                        wire:confirm="¿Archivar este registro?"
-                                        title="Archivar"
+                                        wire:confirm="{{ __('¿Archivar este registro?') }}"
+                                        :title="__('Archivar')"
                                     />
                                 @else
                                     <x-agro.action-button
                                         variant="restore"
                                         icon="arrow-uturn-left"
                                         wire:click="unarchive({{ $entry->id }})"
-                                        title="Restaurar"
+                                        :title="__('Restaurar')"
                                     />
                                     <x-agro.action-button
                                         variant="delete"
                                         wire:click="delete({{ $entry->id }})"
-                                        wire:confirm="¿Eliminar este registro permanentemente?"
-                                        title="Eliminar"
+                                        wire:confirm="{{ __('¿Eliminar este registro permanentemente?') }}"
+                                        :title="__('Eliminar')"
                                     />
                                 @endif
                             </div>
@@ -212,25 +212,25 @@
                     <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
                         <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
                     </div>
-                    <h3 class="text-base font-semibold text-zinc-900">Filtros</h3>
+                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Filtros') }}</h3>
                 </div>
                 <flux:button x-on:click="$dispatch('close-modal', 'container-returns-filters')" variant="ghost" size="sm" icon="x-mark" />
             </div>
         </div>
         <div class="px-6 py-5 space-y-5">
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Campaña</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Campaña') }}</label>
                 <flux:select wire:model.live="filterCampaign">
-                    <flux:select.option value="">Todas las campañas</flux:select.option>
+                    <flux:select.option value="">{{ __('Todas las campañas') }}</flux:select.option>
                     @foreach($campaigns as $c)
                         <flux:select.option value="{{ $c->id }}">{{ $c->name }}</flux:select.option>
                     @endforeach
                 </flux:select>
             </div>
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Sistema de recogida</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Sistema de recogida') }}</label>
                 <flux:select wire:model.live="filterCollectionSystem">
-                    <flux:select.option value="">Todos los sistemas</flux:select.option>
+                    <flux:select.option value="">{{ __('Todos los sistemas') }}</flux:select.option>
                     @foreach($collectionSystems as $key => $label)
                         <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
                     @endforeach
@@ -239,11 +239,11 @@
         </div>
         <div class="px-6 py-4 border-t border-zinc-200 flex items-center justify-between">
             @if($filterCampaign || $filterCollectionSystem)
-                <button wire:click="clearFilters" class="text-sm text-zinc-400 hover:text-zinc-600 transition-colors">Limpiar filtros</button>
+                <button wire:click="clearFilters" class="text-sm text-zinc-400 hover:text-zinc-600 transition-colors">{{ __('Limpiar filtros') }}</button>
             @else
                 <span></span>
             @endif
-            <flux:button x-on:click="$dispatch('close-modal', 'container-returns-filters')" variant="primary">Aplicar</flux:button>
+            <flux:button x-on:click="$dispatch('close-modal', 'container-returns-filters')" variant="primary">{{ __('Aplicar') }}</flux:button>
         </div>
     </x-agro.modal>
 

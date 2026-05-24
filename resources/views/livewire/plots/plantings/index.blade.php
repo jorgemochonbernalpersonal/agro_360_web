@@ -1,8 +1,8 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="Plantaciones"
-        description="Gestiona las plantaciones de variedades en tus parcelas"
+        :title="__('Plantaciones')"
+        :description="__('Gestiona las plantaciones de variedades en tus parcelas')"
     />
 
     {{-- Stats --}}
@@ -17,7 +17,7 @@
             @click="toggle()"
             class="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-widest hover:text-zinc-600 transition-colors mb-3"
         >
-            <span>Estadísticas</span>
+            <span>{{ __('Estadísticas') }}</span>
             <flux:icon icon="chevron-up" class="size-3.5 transition-transform duration-200" ::class="{ 'rotate-180': !open }" />
         </button>
         <div
@@ -31,30 +31,30 @@
         >
             <div class="grid grid-cols-2 gap-4">
                 <x-agro.stat-card
-                    label="Total plantaciones"
+                    :label="__('Total plantaciones')"
                     :value="$stats['total']"
-                    :description="$stats['active'] . ' activas · ' . $stats['inactive'] . ' inactivas'"
+                    :description="$stats['active'] . ' ' . __('activas') . ' · ' . $stats['inactive'] . ' ' . __('inactivas')"
                     icon="scissors"
                     color="agro"
                 />
                 <x-agro.stat-card
-                    label="Superficie total"
+                    :label="__('Superficie total')"
                     :value="number_format($stats['total_area'], 2) . ' ha'"
-                    description="Área plantada declarada"
+                    :description="__('Área plantada declarada')"
                     icon="square-2-stack"
                     color="blue"
                 />
                 <x-agro.stat-card
-                    label="Activas"
+                    :label="__('Activas')"
                     :value="$stats['active']"
-                    description="En producción"
+                    :description="__('En producción')"
                     icon="check-circle"
                     color="agro"
                 />
                 <x-agro.stat-card
-                    label="Inactivas"
+                    :label="__('Inactivas')"
                     :value="$stats['inactive']"
-                    :description="$stats['inactive'] > 0 ? 'Archivadas' : 'Todas activas'"
+                    :description="$stats['inactive'] > 0 ? __('Archivadas') : __('Todas activas')"
                     icon="archive-box"
                     color="zinc"
                 />
@@ -64,8 +64,8 @@
     {{-- Tabs --}}
     <x-agro.tabs
         :tabs="[
-            'active'   => ['label' => 'Activas',   'count' => $stats['active']],
-            'inactive' => ['label' => 'Inactivas',  'count' => $stats['inactive']],
+            'active'   => ['label' => __('Activas'),   'count' => $stats['active']],
+            'inactive' => ['label' => __('Inactivas'),  'count' => $stats['inactive']],
         ]"
         :active="$currentTab"
         wireMethod="switchTab"
@@ -83,7 +83,8 @@
                 <input
                     wire:model.live.debounce.300ms="search"
                     type="text"
-                    placeholder="Buscar por nombre, parcela o variedad..."
+                    :placeholder="__('Buscar por nombre, parcela o variedad...')"
+                    placeholder="{{ __('Buscar por nombre, parcela o variedad...') }}"
                     class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
                 />
             </div>
@@ -95,7 +96,7 @@
                 class="relative inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors"
             >
                 <flux:icon icon="adjustments-horizontal" class="size-4 text-zinc-500" />
-                Filtros
+                {{ __('Filtros') }}
                 @if($filterCount > 0)
                     <span class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-agro-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
                         {{ $filterCount }}
@@ -113,7 +114,7 @@
                     variant="primary"
                     icon="plus"
                 >
-                    Nueva
+                    {{ __('Nueva') }}
                 </flux:button>
             @endcan
 
@@ -122,7 +123,7 @@
         {{-- Active filter chips --}}
         @if($search || $status !== '' || $year !== '' || (!$wineryOnly && $cropType !== ''))
             <div class="flex flex-wrap items-center gap-2">
-                <span class="text-xs text-zinc-400">Filtros activos:</span>
+                <span class="text-xs text-zinc-400">{{ __('Filtros activos') }}:</span>
 
                 @if($search)
                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
@@ -137,14 +138,14 @@
                 @if($status !== '')
                     @php
                         $statusLabels = [
-                            'active'       => 'Activa',
-                            'removed'      => 'Arrancada',
-                            'experimental' => 'Experimental',
-                            'replanting'   => 'Replantación',
+                            'active'       => __('Activa'),
+                            'removed'      => __('Arrancada'),
+                            'experimental' => __('Experimental'),
+                            'replanting'   => __('Replantación'),
                         ];
                     @endphp
                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                        Estado: {{ $statusLabels[$status] ?? $status }}
+                        {{ __('Estado') }}: {{ $statusLabels[$status] ?? $status }}
                         <button wire:click="$set('status', '')" class="hover:text-agro-900 ml-0.5">
                             <flux:icon icon="x-mark" class="size-3" />
                         </button>
@@ -153,7 +154,7 @@
 
                 @if($year !== '')
                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                        Año: {{ $year }}
+                        {{ __('Año') }}: {{ $year }}
                         <button wire:click="$set('year', '')" class="hover:text-agro-900 ml-0.5">
                             <flux:icon icon="x-mark" class="size-3" />
                         </button>
@@ -163,7 +164,7 @@
                 @if(!$wineryOnly && $cropType !== '')
                     @php $cropLabels = \App\Models\GrapeVariety::CROP_TYPES; @endphp
                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                        Cultivo: {{ $cropLabels[$cropType] ?? $cropType }}
+                        {{ __('Cultivo') }}: {{ $cropLabels[$cropType] ?? $cropType }}
                         <button wire:click="$set('cropType', '')" class="hover:text-agro-900 ml-0.5">
                             <flux:icon icon="x-mark" class="size-3" />
                         </button>
@@ -171,7 +172,7 @@
                 @endif
 
                 <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 underline">
-                    Limpiar todo
+                    {{ __('Limpiar todo') }}
                 </button>
             </div>
         @endif
@@ -216,7 +217,7 @@
                             {{-- Nombre + parcela --}}
                             <div class="flex-1 min-w-0">
                                 <p class="font-semibold text-zinc-900 text-sm truncate leading-tight">
-                                    {{ $planting->name ?: 'Sin nombre' }}
+                                    {{ $planting->name ?: __('Sin nombre') }}
                                 </p>
                                 <a href="{{ route('plots.show', $planting->plot) }}"
                                    class="text-xs text-agro-600 hover:underline truncate block leading-tight mt-0.5">
@@ -234,10 +235,10 @@
                                     default => 'bg-zinc-100 text-zinc-500',
                                 } }}">
                                 {{ match($planting->status) {
-                                    'active' => 'Activa',
-                                    'removed' => 'Arrancada',
-                                    'experimental' => 'Experimental',
-                                    'replanting' => 'Replantación',
+                                    'active' => __('Activa'),
+                                    'removed' => __('Arrancada'),
+                                    'experimental' => __('Experimental'),
+                                    'replanting' => __('Replantación'),
                                     default => $planting->status,
                                 } }}
                             </span>
@@ -254,9 +255,9 @@
                                 default => 'bg-zinc-300',
                             };
                             $dotLabel = match($planting->grapeVariety->color ?? '') {
-                                'red'   => 'Tinto',
-                                'white' => 'Blanco',
-                                'rose'  => 'Rosado',
+                                'red'   => __('Tinto'),
+                                'white' => __('Blanco'),
+                                'rose'  => __('Rosado'),
                                 default => null,
                             };
                             $cropType = $planting->grapeVariety->crop_type ?? 'wine';
@@ -284,22 +285,22 @@
                     @else
                         <div class="flex items-center gap-2 mb-3">
                             <flux:icon icon="tag" class="size-3.5 text-zinc-300 shrink-0" />
-                            <span class="text-xs text-zinc-400 italic">Sin variedad asignada</span>
+                            <span class="text-xs text-zinc-400 italic">{{ __('Sin variedad asignada') }}</span>
                         </div>
                     @endif
 
                     {{-- Metric tiles --}}
                     <div class="grid grid-cols-3 gap-2 mb-3">
                         <div class="bg-agro-50 rounded-xl p-2.5">
-                            <p class="text-[10px] text-agro-600 font-medium uppercase tracking-wide mb-0.5">Superficie</p>
+                            <p class="text-[10px] text-agro-600 font-medium uppercase tracking-wide mb-0.5">{{ __('Superficie') }}</p>
                             <p class="text-sm font-bold text-agro-700">{{ number_format($planting->area_planted, 3) }} ha</p>
                         </div>
                         <div class="bg-zinc-50 rounded-xl p-2.5">
-                            <p class="text-[10px] text-zinc-500 font-medium uppercase tracking-wide mb-0.5">Plantación</p>
+                            <p class="text-[10px] text-zinc-500 font-medium uppercase tracking-wide mb-0.5">{{ __('Plantación') }}</p>
                             <p class="text-sm font-bold text-zinc-700">{{ $planting->planting_year ?? '—' }}</p>
                         </div>
                         <div class="bg-amber-50 rounded-xl p-2.5">
-                            <p class="text-[10px] text-amber-600 font-medium uppercase tracking-wide mb-0.5">Límite</p>
+                            <p class="text-[10px] text-amber-600 font-medium uppercase tracking-wide mb-0.5">{{ __('Límite') }}</p>
                             <p class="text-sm font-bold text-amber-700">{{ $planting->harvest_limit_kg ? number_format($planting->harvest_limit_kg, 0, ',', '.') . ' kg' : '—' }}</p>
                         </div>
                     </div>
@@ -309,7 +310,7 @@
                         @if($planting->vine_count)
                             <span class="inline-flex items-center gap-1">
                                 <flux:icon icon="sparkles" class="size-3.5 text-zinc-400" />
-                                {{ number_format($planting->vine_count, 0, ',', '.') }} cepas
+                                {{ number_format($planting->vine_count, 0, ',', '.') }} {{ __('cepas') }}
                             </span>
                         @endif
                         @if($planting->trainingSystem)
@@ -321,7 +322,7 @@
                         @if($planting->irrigated)
                             <span class="inline-flex items-center gap-1 text-blue-600">
                                 <flux:icon icon="cloud" class="size-3.5" />
-                                Con riego
+                                {{ __('Con riego') }}
                             </span>
                         @endif
                     </div>
@@ -330,22 +331,22 @@
                         <div class="flex items-center justify-between">
                             {{-- Left: navegar --}}
                             <div class="flex items-center gap-1">
-                                <x-agro.action-button variant="map" href="{{ route('plots.show', $planting->plot) }}" title="Ver parcela" />
+                                <x-agro.action-button variant="map" href="{{ route('plots.show', $planting->plot) }}" :title="__('Ver parcela')" />
                                 @can('update', $planting->plot)
-                                    <x-agro.action-button variant="edit" href="{{ route('plots.plantings.edit', $planting) }}" title="Editar plantación" />
+                                    <x-agro.action-button variant="edit" href="{{ route('plots.plantings.edit', $planting) }}" :title="__('Editar plantación')" />
                                 @endcan
                                 @if(auth()->user()->hasViticulturistAccess())
-                                <x-agro.action-button icon="sun" variant="default" href="{{ roleRoute('phenology.index', ['filter_planting_id' => $planting->id]) }}" title="Ver fenología" />
-                                <x-agro.action-button icon="plus-circle" variant="default" href="{{ roleRoute('phenology.create', ['planting_id' => $planting->id]) }}" title="Registrar estadio fenológico" />
+                                <x-agro.action-button icon="sun" variant="default" href="{{ roleRoute('phenology.index', ['filter_planting_id' => $planting->id]) }}" :title="__('Ver fenología')" />
+                                <x-agro.action-button icon="plus-circle" variant="default" href="{{ roleRoute('phenology.create', ['planting_id' => $planting->id]) }}" :title="__('Registrar estadio fenológico')" />
                                 @endif
                             </div>
 
                             {{-- Right: toggle activo --}}
                             @can('update', $planting->plot)
                                 @if($planting->active)
-                                    <x-agro.action-button variant="deactivate" wire:click="toggleActive({{ $planting->id }})" wire:loading.attr="disabled" wire:target="toggleActive({{ $planting->id }})" title="Desactivar plantación" />
+                                    <x-agro.action-button variant="deactivate" wire:click="toggleActive({{ $planting->id }})" wire:loading.attr="disabled" wire:target="toggleActive({{ $planting->id }})" :title="__('Desactivar plantación')" />
                                 @else
-                                    <x-agro.action-button variant="activate" wire:click="toggleActive({{ $planting->id }})" wire:loading.attr="disabled" wire:target="toggleActive({{ $planting->id }})" title="Activar plantación" />
+                                    <x-agro.action-button variant="activate" wire:click="toggleActive({{ $planting->id }})" wire:loading.attr="disabled" wire:target="toggleActive({{ $planting->id }})" :title="__('Activar plantación')" />
                                 @endif
                             @endcan
                         </div>
@@ -360,20 +361,20 @@
     @else
         <x-agro.empty-state
             icon="scissors"
-            title="{{ $currentTab === 'active' ? 'No hay plantaciones activas' : 'No hay plantaciones inactivas' }}"
-            description="{{ $search || $status !== '' || $year !== '' ? 'Ninguna plantación coincide con los filtros aplicados.' : 'Las plantaciones se crean desde la página de detalle de cada parcela.' }}"
+            :title="$currentTab === 'active' ? __('No hay plantaciones activas') : __('No hay plantaciones inactivas')"
+            :description="$search || $status !== '' || $year !== '' ? __('Ninguna plantación coincide con los filtros aplicados.') : __('Las plantaciones se crean desde la página de detalle de cada parcela.')"
         >
             @if($search || $status !== '' || $year !== '')
                 <x-slot:action>
                     <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">
-                        Limpiar filtros
+                        {{ __('Limpiar filtros') }}
                     </flux:button>
                 </x-slot:action>
             @else
                 @can('create', App\Models\PlotPlanting::class)
                     <x-slot:action>
                         <flux:button href="{{ route('plots.index') }}" variant="primary" icon="map">
-                            Ir a Parcelas
+                            {{ __('Ir a Parcelas') }}
                         </flux:button>
                     </x-slot:action>
                 @endcan
@@ -390,8 +391,8 @@
                         <flux:icon icon="map" class="size-4 text-agro-600" />
                     </div>
                     <div>
-                        <h3 class="text-base font-semibold text-zinc-900">Nueva plantación</h3>
-                        <p class="text-xs text-zinc-500">Elige la parcela donde añadir la plantación</p>
+                        <h3 class="text-base font-semibold text-zinc-900">{{ __('Nueva plantación') }}</h3>
+                        <p class="text-xs text-zinc-500">{{ __('Elige la parcela donde añadir la plantación') }}</p>
                     </div>
                 </div>
                 <flux:button
@@ -407,7 +408,7 @@
             <input
                 wire:model.live.debounce.200ms="plotSearch"
                 type="text"
-                placeholder="Buscar parcela..."
+                placeholder="{{ __('Buscar parcela...') }}"
                 class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent"
             />
 
@@ -425,7 +426,7 @@
                     </a>
                 @empty
                     <p class="text-sm text-zinc-400 text-center py-4">
-                        {{ $plotSearch ? 'No se encontraron parcelas' : 'No hay parcelas activas' }}
+                        {{ $plotSearch ? __('No se encontraron parcelas') : __('No hay parcelas activas') }}
                     </p>
                 @endforelse
             </div>
@@ -440,7 +441,7 @@
                     <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
                         <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
                     </div>
-                    <h3 class="text-base font-semibold text-zinc-900">Filtros</h3>
+                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Filtros') }}</h3>
                 </div>
                 <flux:button x-on:click="$dispatch('close-modal', 'planting-filters')" variant="ghost" size="sm" icon="x-mark" />
             </div>
@@ -450,7 +451,7 @@
 
             {{-- Tipo de cultivo (solo viticultor/producer) --}}
             @if(!$wineryOnly)
-            <x-agro.filter-select label="Tipo de cultivo" wire:model.live="cropType" placeholder="Todos los cultivos">
+            <x-agro.filter-select :label="__('Tipo de cultivo')" wire:model.live="cropType" :placeholder="__('Todos los cultivos')">
                 @foreach(\App\Models\GrapeVariety::CROP_TYPES as $key => $label)
                     <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
                 @endforeach
@@ -458,15 +459,15 @@
             @endif
 
             {{-- Estado operativo --}}
-            <x-agro.filter-select label="Estado operativo" wire:model.live="status" placeholder="Todos los estados">
-                <flux:select.option value="active">Activa</flux:select.option>
-                <flux:select.option value="removed">Arrancada</flux:select.option>
-                <flux:select.option value="experimental">Experimental</flux:select.option>
-                <flux:select.option value="replanting">Replantación</flux:select.option>
+            <x-agro.filter-select :label="__('Estado operativo')" wire:model.live="status" :placeholder="__('Todos los estados')">
+                <flux:select.option value="active">{{ __('Activa') }}</flux:select.option>
+                <flux:select.option value="removed">{{ __('Arrancada') }}</flux:select.option>
+                <flux:select.option value="experimental">{{ __('Experimental') }}</flux:select.option>
+                <flux:select.option value="replanting">{{ __('Replantación') }}</flux:select.option>
             </x-agro.filter-select>
 
             {{-- Año de plantación --}}
-            <x-agro.filter-select label="Año de plantación" wire:model.live="year" placeholder="Todos los años">
+            <x-agro.filter-select :label="__('Año de plantación')" wire:model.live="year" :placeholder="__('Todos los años')">
                 @foreach($years as $yearOption)
                     <flux:select.option value="{{ $yearOption }}">{{ $yearOption }}</flux:select.option>
                 @endforeach
@@ -477,10 +478,10 @@
         <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between rounded-b-2xl">
             <button wire:click="clearFilters" x-on:click="$dispatch('close-modal', 'planting-filters')"
                     class="text-sm text-zinc-500 hover:text-zinc-700 transition-colors">
-                Limpiar filtros
+                {{ __('Limpiar filtros') }}
             </button>
             <flux:button x-on:click="$dispatch('close-modal', 'planting-filters')" variant="primary" size="sm">
-                Aplicar
+                {{ __('Aplicar') }}
             </flux:button>
         </div>
     </x-agro.modal>

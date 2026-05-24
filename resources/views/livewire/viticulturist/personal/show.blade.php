@@ -1,17 +1,17 @@
-﻿<div class="space-y-6 animate-fade-in">
+<div class="space-y-6 animate-fade-in">
     <!-- Header -->
     <x-agro.page-header
         :title="$crew->name"
-        :description="$crew->description ?? 'Detalles de la cuadrilla'"
+        :description="$crew->description ?? __('Detalles de la cuadrilla')"
     >
         <x-slot:actions>
             @can('update', $crew)
                 <flux:button href="{{ roleRoute('viticulturist.personal.edit', $crew) }}" data-cy="edit-crew-button" variant="primary">
-                    Editar
+                    {{ __('Editar') }}
                 </flux:button>
             @endcan
             <flux:button href="{{ roleRoute('viticulturist.personal.index') }}" data-cy="back-button" variant="outline">
-                Volver
+                {{ __('Volver') }}
             </flux:button>
         </x-slot:actions>
     </x-agro.page-header>
@@ -23,17 +23,17 @@
                 <div class="p-1.5 rounded-lg bg-agro-50">
                     <flux:icon icon="chart-bar" class="size-4 text-agro-600" />
                 </div>
-                <span class="font-semibold text-zinc-900 text-sm">Estadisticas de la Cuadrilla</span>
+                <span class="font-semibold text-zinc-900 text-sm">{{ __('Estadísticas de la Cuadrilla') }}</span>
             </div>
         </x-slot:header>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4" data-cy="crew-stats-grid">
             <div class="text-center p-4 bg-agro-50 rounded-lg">
                 <div class="text-3xl font-bold text-agro-700">{{ $stats['members_count'] }}</div>
-                <div class="text-sm text-zinc-600 mt-1">Miembros</div>
+                <div class="text-sm text-zinc-600 mt-1">{{ __('Miembros') }}</div>
             </div>
             <div class="text-center p-4 bg-green-50 rounded-lg">
                 <div class="text-3xl font-bold text-green-600">{{ $stats['activities_count'] }}</div>
-                <div class="text-sm text-zinc-600 mt-1">Actividades</div>
+                <div class="text-sm text-zinc-600 mt-1">{{ __('Actividades') }}</div>
             </div>
         </div>
     </x-agro.card>
@@ -46,26 +46,26 @@
                     <div class="p-1.5 rounded-lg bg-agro-50">
                         <flux:icon icon="information-circle" class="size-4 text-agro-600" />
                     </div>
-                    <span class="font-semibold text-zinc-900 text-sm">Informacion General</span>
+                    <span class="font-semibold text-zinc-900 text-sm">{{ __('Información General') }}</span>
                 </div>
             </x-slot:header>
             <div class="space-y-4">
                 <div>
-                    <span class="text-sm font-semibold text-zinc-600">Bodega:</span>
-                    <span class="ml-2 text-zinc-900">{{ $crew->winery->name ?? 'Sin bodega' }}</span>
+                    <span class="text-sm font-semibold text-zinc-600">{{ __('Bodega:') }}</span>
+                    <span class="ml-2 text-zinc-900">{{ $crew->winery->name ?? __('Sin bodega') }}</span>
                 </div>
                 <div>
-                    <span class="text-sm font-semibold text-zinc-600">Lider:</span>
+                    <span class="text-sm font-semibold text-zinc-600">{{ __('Líder:') }}</span>
                     <span class="ml-2 text-zinc-900">{{ $crew->viticulturist->name }}</span>
                 </div>
                 @if($crew->description)
                 <div>
-                    <span class="text-sm font-semibold text-zinc-600">Descripcion:</span>
+                    <span class="text-sm font-semibold text-zinc-600">{{ __('Descripción:') }}</span>
                     <p class="mt-1 text-zinc-900">{{ $crew->description }}</p>
                 </div>
                 @endif
                 <div>
-                    <span class="text-sm font-semibold text-zinc-600">Creada:</span>
+                    <span class="text-sm font-semibold text-zinc-600">{{ __('Creada:') }}</span>
                     <span class="ml-2 text-zinc-900">{{ $crew->created_at->format('d/m/Y H:i') }}</span>
                 </div>
             </div>
@@ -78,13 +78,13 @@
                     <div class="p-1.5 rounded-lg bg-agro-50">
                         <flux:icon icon="users" class="size-4 text-agro-600" />
                     </div>
-                    <span class="font-semibold text-zinc-900 text-sm">Miembros de la Cuadrilla</span>
+                    <span class="font-semibold text-zinc-900 text-sm">{{ __('Miembros de la Cuadrilla') }}</span>
                 </div>
             </x-slot:header>
             <p class="text-xs text-zinc-500 mb-4">
-                Para anadir nuevos miembros, usa la pantalla de
+                {{ __('Para añadir nuevos miembros, usa la pantalla de') }}
                 <a href="{{ roleRoute('viticulturist.personal.index', ['viewMode' => 'personal']) }}" class="text-agro-700 underline">
-                    Equipos y Personal
+                    {{ __('Equipos y Personal') }}
                 </a>.
             </p>
 
@@ -112,25 +112,25 @@
                                             @endphp
                                             <flux:badge :color="$licColor" size="sm">{{ $status }}</flux:badge>
                                         @else
-                                            <flux:badge size="sm">Sin carnet</flux:badge>
+                                            <flux:badge size="sm">{{ __('Sin carnet') }}</flux:badge>
                                         @endif
                                     </div>
                                     <div class="text-sm text-zinc-500">{{ $member->viticulturist->email }}</div>
                                     @if($member->phytosanitary_license_number)
                                         <div class="text-xs text-zinc-600 mt-1">
-                                            <span class="font-medium">Carnet:</span> {{ $member->phytosanitary_license_number }}
+                                            <span class="font-medium">{{ __('Carnet:') }}</span> {{ $member->phytosanitary_license_number }}
                                             @if($member->license_expiry_date)
-                                                · <span class="font-medium">Vence:</span> {{ \Carbon\Carbon::parse($member->license_expiry_date)->format('d/m/Y') }}
+                                                · <span class="font-medium">{{ __('Vence:') }}</span> {{ \Carbon\Carbon::parse($member->license_expiry_date)->format('d/m/Y') }}
                                             @endif
                                         </div>
                                     @endif
                                 </div>
                             </div>
-                            <flux:button wire:click="removeMember({{ $member->id }})" wire:confirm="Estas seguro de remover este miembro?" variant="ghost" size="sm" icon="x-mark" class="text-red-600 hover:bg-red-50" title="Remover" />
+                            <flux:button wire:click="removeMember({{ $member->id }})" wire:confirm="{{ __('¿Estás seguro de remover este miembro?') }}" variant="ghost" size="sm" icon="x-mark" class="text-red-600 hover:bg-red-50" :title="__('Remover')" />
                         </div>
                     @endforeach
                 @else
-                    <x-agro.empty-state icon="users" message="No hay miembros en esta cuadrilla" />
+                    <x-agro.empty-state icon="users" :message="__('No hay miembros en esta cuadrilla')" />
                 @endif
             </div>
         </x-agro.card>
@@ -138,13 +138,13 @@
 
     <!-- Actividades Recientes -->
     @if($crew->activities->count() > 0)
-    <x-agro.data-table :headers="['Fecha', 'Tipo', 'Parcela']" empty-message="Sin actividades">
+    <x-agro.data-table :headers="[__('Fecha'), __('Tipo'), __('Parcela')]" :empty-message="__('Sin actividades')">
         <x-slot:header>
             <div class="flex items-center gap-2">
                 <div class="p-1.5 rounded-lg bg-agro-50">
                     <flux:icon icon="clipboard-document-list" class="size-4 text-agro-600" />
                 </div>
-                <span class="font-semibold text-zinc-900 text-sm">Actividades Recientes</span>
+                <span class="font-semibold text-zinc-900 text-sm">{{ __('Actividades Recientes') }}</span>
             </div>
         </x-slot:header>
         @foreach($crew->activities->take(10) as $activity)

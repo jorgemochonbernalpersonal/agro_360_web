@@ -1,11 +1,11 @@
 <div class="bg-white rounded-xl shadow-sm border border-zinc-200 p-6">
     <div class="flex items-center justify-between mb-6">
         <h3 class="text-lg font-semibold text-zinc-900 flex items-center gap-2">
-            📊 Comparativa Año a Año
+            📊 {{ __('Comparativa Año a Año') }}
         </h3>
         <div class="flex items-center gap-4">
             <div class="flex items-center gap-2">
-                <label class="text-sm text-zinc-600">Año 1:</label>
+                <label class="text-sm text-zinc-600">{{ __('Año 1:') }}</label>
                 <flux:select wire:model.live="year1" >
                     @foreach($availableYears as $year)
                         <option value="{{ $year }}">{{ $year }}</option>
@@ -17,7 +17,7 @@
             </div>
             <span class="text-zinc-400">vs</span>
             <div class="flex items-center gap-2">
-                <label class="text-sm text-zinc-600">Año 2:</label>
+                <label class="text-sm text-zinc-600">{{ __('Año 2:') }}</label>
                 <flux:select wire:model.live="year2" >
                     @foreach($availableYears as $year)
                         <option value="{{ $year }}">{{ $year }}</option>
@@ -34,18 +34,18 @@
         {{-- Summary Cards --}}
         <div class="grid grid-cols-3 gap-4 mb-6">
             <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-4 border border-green-200">
-                <div class="text-sm text-zinc-600 mb-1">NDVI Promedio {{ $year1 }}</div>
+                <div class="text-sm text-zinc-600 mb-1">{{ __('NDVI Promedio') }} {{ $year1 }}</div>
                 <div class="text-2xl font-bold text-green-700">
                     {{ $comparisonData['year1']['summary']['avg_ndvi'] !== null ? number_format($comparisonData['year1']['summary']['avg_ndvi'], 3) : 'N/A' }}
                 </div>
             </div>
             <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-200">
-                <div class="text-sm text-zinc-600 mb-1">NDVI Promedio {{ $year2 }}</div>
+                <div class="text-sm text-zinc-600 mb-1">{{ __('NDVI Promedio') }} {{ $year2 }}</div>
                 <div class="text-2xl font-bold text-blue-700">
                     {{ $comparisonData['year2']['summary']['avg_ndvi'] !== null ? number_format($comparisonData['year2']['summary']['avg_ndvi'], 3) : 'N/A' }}
                 </div>
             </div>
-            <div class="rounded-lg p-4 border 
+            <div class="rounded-lg p-4 border
                 @if(isset($comparisonData['comparison']['ndvi_trend']))
                     @if($comparisonData['comparison']['ndvi_trend'] === 'improving')
                         bg-gradient-to-br from-green-50 to-green-100 border-green-300
@@ -58,7 +58,7 @@
                     bg-gradient-to-br from-zinc-50 to-zinc-100 border-zinc-300
                 @endif
             ">
-                <div class="text-sm text-zinc-600 mb-1">Variación</div>
+                <div class="text-sm text-zinc-600 mb-1">{{ __('Variación') }}</div>
                 <div class="text-2xl font-bold
                     @if(isset($comparisonData['comparison']['ndvi_change_percent']))
                         @if($comparisonData['comparison']['ndvi_change_percent'] > 0)
@@ -91,15 +91,15 @@
             <table class="min-w-full text-sm">
                 <thead class="bg-zinc-50">
                     <tr>
-                        <th class="px-4 py-2 text-left text-zinc-600">Mes</th>
+                        <th class="px-4 py-2 text-left text-zinc-600">{{ __('Mes') }}</th>
                         <th class="px-4 py-2 text-right text-green-700">NDVI {{ $year1 }}</th>
                         <th class="px-4 py-2 text-right text-blue-700">NDVI {{ $year2 }}</th>
-                        <th class="px-4 py-2 text-right text-zinc-600">Diferencia</th>
+                        <th class="px-4 py-2 text-right text-zinc-600">{{ __('Diferencia') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-zinc-100">
                     @php
-                        $months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+                        $months = [__('Ene'), __('Feb'), __('Mar'), __('Abr'), __('May'), __('Jun'), __('Jul'), __('Ago'), __('Sep'), __('Oct'), __('Nov'), __('Dic')];
                     @endphp
                     @for($m = 1; $m <= 12; $m++)
                         @php
@@ -132,7 +132,7 @@
             <svg class="w-12 h-12 mx-auto mb-4 text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
             </svg>
-            <p>No hay datos disponibles para la comparación</p>
+            <p>{{ __('No hay datos disponibles para la comparación') }}</p>
         </div>
     @endif
 </div>

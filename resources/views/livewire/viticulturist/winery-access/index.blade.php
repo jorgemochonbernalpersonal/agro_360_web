@@ -1,7 +1,7 @@
 <div class="space-y-6 animate-fade-in">
     <x-agro.page-header
-        title="Acceso al Cuaderno de Campo"
-        description="Controla qué bodegas y denominaciones de origen pueden ver tus actividades de campo. Solo tú decides quién tiene acceso."
+        :title="__('Acceso al Cuaderno de Campo')"
+        :description="__('Controla qué bodegas y denominaciones de origen pueden ver tus actividades de campo. Solo tú decides quién tiene acceso.')"
     />
 
     {{-- Pending requests --}}
@@ -12,7 +12,7 @@
                 <div class="p-1.5 rounded-lg bg-amber-50">
                     <flux:icon icon="clock" class="size-4 text-amber-500" />
                 </div>
-                <span class="font-semibold text-zinc-900 text-sm">Solicitudes pendientes</span>
+                <span class="font-semibold text-zinc-900 text-sm">{{ __('Solicitudes pendientes') }}</span>
                 <flux:badge color="amber" size="sm">{{ $pending->count() }}</flux:badge>
             </div>
         </x-slot:header>
@@ -22,7 +22,7 @@
                 @php
                     $isSupervisor = $request->isFromSupervisor();
                     $requester    = $isSupervisor ? $request->supervisor : $request->winery;
-                    $label        = $isSupervisor ? 'Denominación de Origen' : 'Bodega';
+                    $label        = $isSupervisor ? __('Denominación de Origen') : __('Bodega');
                     $iconBg       = $isSupervisor ? 'bg-indigo-100' : 'bg-zinc-100';
                     $iconColor    = $isSupervisor ? 'text-indigo-600' : 'text-zinc-500';
                 @endphp
@@ -34,7 +34,7 @@
                         <div>
                             <p class="text-sm font-medium text-zinc-900">{{ $requester?->name }}</p>
                             <p class="text-xs text-zinc-400">
-                                {{ $label }} · Solicitud recibida el {{ $request->requested_at->format('d/m/Y') }}
+                                {{ $label }} · {{ __('Solicitud recibida el') }} {{ $request->requested_at->format('d/m/Y') }}
                             </p>
                         </div>
                     </div>
@@ -44,9 +44,9 @@
                             variant="ghost"
                             icon="x-mark"
                             wire:click="reject({{ $request->id }})"
-                            wire:confirm="¿Rechazar el acceso al cuaderno para {{ $requester?->name }}?"
+                            wire:confirm="{{ __('¿Rechazar el acceso al cuaderno para :name?', ['name' => $requester?->name]) }}"
                         >
-                            Rechazar
+                            {{ __('Rechazar') }}
                         </flux:button>
                         <flux:button
                             size="sm"
@@ -54,7 +54,7 @@
                             icon="check"
                             wire:click="approve({{ $request->id }})"
                         >
-                            Aprobar
+                            {{ __('Aprobar') }}
                         </flux:button>
                     </div>
                 </div>
@@ -70,14 +70,14 @@
                 <div class="p-1.5 rounded-lg bg-green-50">
                     <flux:icon icon="book-open" class="size-4 text-green-600" />
                 </div>
-                <span class="font-semibold text-zinc-900 text-sm">Accesos activos</span>
+                <span class="font-semibold text-zinc-900 text-sm">{{ __('Accesos activos') }}</span>
             </div>
         </x-slot:header>
 
         @if($granted->isEmpty())
             <div class="py-8 text-center">
                 <flux:icon icon="lock-closed" class="size-8 text-zinc-300 mx-auto mb-2" />
-                <p class="text-sm text-zinc-400">Ninguna bodega ni denominación tiene acceso a tu cuaderno ahora mismo.</p>
+                <p class="text-sm text-zinc-400">{{ __('Ninguna bodega ni denominación tiene acceso a tu cuaderno ahora mismo.') }}</p>
             </div>
         @else
             <div class="divide-y divide-zinc-100">
@@ -86,7 +86,7 @@
                         $isSupervisor = $item->type === 'supervisor';
                         $iconBg       = $isSupervisor ? 'bg-indigo-50' : 'bg-green-50';
                         $iconColor    = $isSupervisor ? 'text-indigo-600' : 'text-green-600';
-                        $label        = $isSupervisor ? 'Denominación de Origen' : 'Bodega';
+                        $label        = $isSupervisor ? __('Denominación de Origen') : __('Bodega');
                     @endphp
                     <div class="flex items-center justify-between gap-4 py-4 first:pt-0 last:pb-0">
                         <div class="flex items-center gap-3">
@@ -96,7 +96,7 @@
                             <div>
                                 <p class="text-sm font-medium text-zinc-900">{{ $item->name }}</p>
                                 <p class="text-xs text-zinc-400">
-                                    {{ $label }} · Acceso desde {{ $item->granted_at?->format('d/m/Y') ?? '—' }}
+                                    {{ $label }} · {{ __('Acceso desde') }} {{ $item->granted_at?->format('d/m/Y') ?? '—' }}
                                 </p>
                             </div>
                         </div>
@@ -105,9 +105,9 @@
                             variant="ghost"
                             icon="lock-closed"
                             wire:click="revoke({{ $item->id }}, '{{ $item->type }}')"
-                            wire:confirm="¿Revocar el acceso al cuaderno para {{ $item->name }}? Dejarán de ver tus actividades de campo."
+                            wire:confirm="{{ __('¿Revocar el acceso al cuaderno para :name? Dejarán de ver tus actividades de campo.', ['name' => $item->name]) }}"
                         >
-                            Revocar
+                            {{ __('Revocar') }}
                         </flux:button>
                     </div>
                 @endforeach
@@ -123,7 +123,7 @@
                 <div class="p-1.5 rounded-lg bg-zinc-100">
                     <flux:icon icon="x-circle" class="size-4 text-zinc-400" />
                 </div>
-                <span class="font-semibold text-zinc-900 text-sm">Solicitudes rechazadas</span>
+                <span class="font-semibold text-zinc-900 text-sm">{{ __('Solicitudes rechazadas') }}</span>
             </div>
         </x-slot:header>
 
@@ -131,7 +131,7 @@
             @foreach($rejected as $request)
                 @php
                     $requester = $request->requester();
-                    $label     = $request->isFromSupervisor() ? 'Denominación de Origen' : 'Bodega';
+                    $label     = $request->isFromSupervisor() ? __('Denominación de Origen') : __('Bodega');
                 @endphp
                 <div class="flex items-center justify-between gap-4 py-4 first:pt-0 last:pb-0">
                     <div class="flex items-center gap-3">
@@ -141,7 +141,7 @@
                         <div>
                             <p class="text-sm font-medium text-zinc-500">{{ $requester?->name }}</p>
                             <p class="text-xs text-zinc-400">
-                                {{ $label }} · Rechazada el {{ $request->responded_at?->format('d/m/Y') ?? '—' }}
+                                {{ $label }} · {{ __('Rechazada el') }} {{ $request->responded_at?->format('d/m/Y') ?? '—' }}
                             </p>
                         </div>
                     </div>
@@ -153,10 +153,9 @@
 
     {{-- Info box --}}
     <flux:callout variant="info" icon="shield-check">
-        <flux:callout.heading>Tu cuaderno es privado por defecto</flux:callout.heading>
+        <flux:callout.heading>{{ __('Tu cuaderno es privado por defecto') }}</flux:callout.heading>
         <flux:callout.text>
-            Solo las bodegas y denominaciones de origen a las que hayas aprobado el acceso pueden ver tus actividades de campo.
-            Puedes revocar el acceso en cualquier momento.
+            {{ __('Solo las bodegas y denominaciones de origen a las que hayas aprobado el acceso pueden ver tus actividades de campo. Puedes revocar el acceso en cualquier momento.') }}
         </flux:callout.text>
     </flux:callout>
 </div>

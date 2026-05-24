@@ -1,20 +1,20 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        :title="'Declaración PAC ' . $declaration->year"
-        :description="'Solicitud Única — ' . $declaration->statusLabel()"
+        :title="__('Declaración PAC') . ' ' . $declaration->year"
+        :description="__('Solicitud Única — ') . $declaration->statusLabel()"
         :back-url="roleRoute('viticulturist.pac.declarations.index')"
     >
         <x-slot:actions>
             @if($declaration->isDraft())
                 <flux:button variant="ghost" icon="pencil"
                     href="{{ roleRoute('viticulturist.pac.declarations.edit', $declaration) }}" wire:navigate>
-                    Editar
+                    {{ __('Editar') }}
                 </flux:button>
                 <flux:button variant="primary" icon="paper-airplane"
                     wire:click="submit"
-                    wire:confirm="¿Presentar esta declaración? Una vez presentada no podrás editarla.">
-                    Presentar declaración
+                    wire:confirm="{{ __('¿Presentar esta declaración? Una vez presentada no podrás editarla.') }}">
+                    {{ __('Presentar declaración') }}
                 </flux:button>
             @endif
             <a href="{{ roleRoute('viticulturist.pac.declarations.pdf', $declaration) }}" target="_blank">
@@ -25,10 +25,10 @@
 
     {{-- Stats --}}
     <div class="grid grid-cols-2 gap-4">
-        <x-agro.stat-card label="Parcelas" :value="$declaration->items->count()" icon="map" color="zinc" />
-        <x-agro.stat-card label="Superficie declarada" :value="number_format($declaration->total_declared_area, 2) . ' ha'" icon="globe-alt" color="agro" />
-        <x-agro.stat-card label="Superficie admisible" :value="number_format($declaration->total_eligible_area, 2) . ' ha'" icon="check-circle" color="green" />
-        <x-agro.stat-card label="Estado" :value="$declaration->statusLabel()" icon="document-text" :color="$declaration->statusColor()" />
+        <x-agro.stat-card :label="__('Parcelas')" :value="$declaration->items->count()" icon="map" color="zinc" />
+        <x-agro.stat-card :label="__('Superficie declarada')" :value="number_format($declaration->total_declared_area, 2) . ' ha'" icon="globe-alt" color="agro" />
+        <x-agro.stat-card :label="__('Superficie admisible')" :value="number_format($declaration->total_eligible_area, 2) . ' ha'" icon="check-circle" color="green" />
+        <x-agro.stat-card :label="__('Estado')" :value="$declaration->statusLabel()" icon="document-text" :color="$declaration->statusColor()" />
     </div>
 
     {{-- Metadatos --}}
@@ -36,32 +36,32 @@
         <x-slot:header>
             <div class="flex items-center gap-2">
                 <flux:icon icon="information-circle" class="size-4 text-zinc-500" />
-                <span class="font-semibold text-zinc-900 text-sm">Datos de la declaración</span>
+                <span class="font-semibold text-zinc-900 text-sm">{{ __('Datos de la declaración') }}</span>
             </div>
         </x-slot:header>
         <dl class="grid grid-cols-2 gap-4 text-sm">
             <div>
-                <dt class="text-zinc-500">Año</dt>
+                <dt class="text-zinc-500">{{ __('Año') }}</dt>
                 <dd class="font-bold text-zinc-900 text-lg">{{ $declaration->year }}</dd>
             </div>
             <div>
-                <dt class="text-zinc-500">Estado</dt>
+                <dt class="text-zinc-500">{{ __('Estado') }}</dt>
                 <dd class="mt-1">
                     <x-agro.status-badge :color="$declaration->statusColor()" :label="$declaration->statusLabel()" />
                 </dd>
             </div>
             <div>
-                <dt class="text-zinc-500">Referencia FEGA</dt>
+                <dt class="text-zinc-500">{{ __('Referencia FEGA') }}</dt>
                 <dd class="font-mono text-zinc-700">{{ $declaration->reference_number ?? '—' }}</dd>
             </div>
             <div>
-                <dt class="text-zinc-500">Fecha presentación</dt>
+                <dt class="text-zinc-500">{{ __('Fecha presentación') }}</dt>
                 <dd class="text-zinc-700">{{ $declaration->submitted_at?->format('d/m/Y H:i') ?? '—' }}</dd>
             </div>
         </dl>
         @if($declaration->notes)
             <div class="mt-4 pt-4 border-t border-zinc-100 text-sm">
-                <span class="text-zinc-500">Notas: </span>
+                <span class="text-zinc-500">{{ __('Notas') }}: </span>
                 <span class="text-zinc-700">{{ $declaration->notes }}</span>
             </div>
         @endif
@@ -72,10 +72,10 @@
         <x-slot:header>
             <div class="flex items-center gap-2">
                 <flux:icon icon="map" class="size-4 text-agro-600" />
-                <span class="font-semibold text-zinc-900 text-sm">Parcelas declaradas</span>
+                <span class="font-semibold text-zinc-900 text-sm">{{ __('Parcelas declaradas') }}</span>
             </div>
         </x-slot:header>
-        <x-agro.data-table :headers="['Parcela', 'Municipio', 'Sup. declarada', 'Sup. admisible', 'Coef. admis.', 'Eco-regímenes']">
+        <x-agro.data-table :headers="[__('Parcela'), __('Municipio'), __('Sup. declarada'), __('Sup. admisible'), __('Coef. admis.'), __('Eco-regímenes')]">
             @foreach($declaration->items as $item)
                 @php
                     $coef = $item->declared_area > 0
@@ -114,7 +114,7 @@
                                 @endforeach
                             </div>
                         @else
-                            <span class="text-zinc-400 text-sm">Ninguno</span>
+                            <span class="text-zinc-400 text-sm">{{ __('Ninguno') }}</span>
                         @endif
                     </x-agro.table-cell>
                 </x-agro.table-row>
@@ -123,10 +123,10 @@
 
         {{-- Totales --}}
         <div class="border-t border-zinc-200 mt-2 pt-3 px-4 pb-2 flex justify-end gap-8 text-sm font-medium">
-            <span class="text-zinc-500">Total declarado:
+            <span class="text-zinc-500">{{ __('Total declarado') }}:
                 <span class="text-zinc-900 ml-1">{{ number_format($declaration->total_declared_area, 3) }} ha</span>
             </span>
-            <span class="text-zinc-500">Total admisible:
+            <span class="text-zinc-500">{{ __('Total admisible') }}:
                 <span class="text-green-700 ml-1">{{ number_format($declaration->total_eligible_area, 3) }} ha</span>
             </span>
         </div>

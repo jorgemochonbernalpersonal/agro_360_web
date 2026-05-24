@@ -21,6 +21,7 @@
         "rap2hpoutre/laravel-log-viewer": "*",
         "sentry/sentry-laravel": "^4.20",
         "spatie/laravel-sitemap": "^7.3",
+        "spatie/laravel-translatable": "^6.12",
         "srmklive/paypal": "^3.0"
     },
     "require-dev": {

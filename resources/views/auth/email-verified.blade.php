@@ -10,20 +10,20 @@
                     <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-4">
                         <flux:icon icon="check" class="size-10 text-green-600" />
                     </div>
-                    <flux:heading size="xl">¡Cuenta Verificada!</flux:heading>
-                    <flux:subheading class="mt-2">Tu email ha sido verificado exitosamente. Ya puedes acceder a todas las funcionalidades de Agro365.</flux:subheading>
+                    <flux:heading size="xl">{{ __('¡Cuenta Verificada!') }}</flux:heading>
+                    <flux:subheading class="mt-2">{{ __('Tu email ha sido verificado exitosamente. Ya puedes acceder a todas las funcionalidades de Agro365.') }}</flux:subheading>
                 </div>
 
                 <flux:callout variant="success" icon="check-circle" class="mb-6">
-                    <flux:callout.text>Bienvenido a Agro365, <strong>{{ auth()->user()->name }}</strong></flux:callout.text>
+                    <flux:callout.text>{{ __('Bienvenido a Agro365,') }} <strong>{{ auth()->user()->name }}</strong></flux:callout.text>
                 </flux:callout>
 
                 <div class="space-y-3">
                     <flux:button href="{{ route($dashboardRoute) }}" variant="primary" class="w-full">
-                        Ir al Dashboard
+                        {{ __('Ir al Dashboard') }}
                     </flux:button>
                     <p class="text-xs text-zinc-500 text-center">
-                        Serás redirigido automáticamente en <span id="countdown">5</span> segundos...
+                        {{ __('Serás redirigido automáticamente en') }} <span id="countdown">5</span> {{ __('segundos...') }}
                     </p>
                 </div>
             </x-agro.card>

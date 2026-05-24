@@ -3,8 +3,8 @@
     {{-- Header + selector de campaña --}}
     <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
         <x-agro.page-header
-            title="Cuaderno de Campo"
-            :description="$currentCampaign ? $currentCampaign->name : 'Selecciona una campaña para ver las actividades'"
+            :title="__('Cuaderno de Campo')"
+            :description="$currentCampaign ? $currentCampaign->name : __('Selecciona una campaña para ver las actividades')"
         />
 
         @if($campaigns->count() > 1)
@@ -14,7 +14,7 @@
                         class="text-sm text-zinc-700 bg-white border border-zinc-200 rounded-lg px-2 py-1.5 pr-7 focus:outline-none focus:ring-1 focus:ring-agro-400 focus:border-agro-400 appearance-none cursor-pointer">
                     @foreach($campaigns as $campaign)
                         <option value="{{ $campaign->id }}">
-                            {{ $campaign->name }}{{ $campaign->active ? '' : ' (inactiva)' }}
+                            {{ $campaign->name }}{{ $campaign->active ? '' : ' ('.__('inactiva').')' }}
                         </option>
                     @endforeach
                 </select>
@@ -27,25 +27,25 @@
         {{-- Stats de la campaña --}}
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <x-agro.stat-card
-                label="Total actividades"
+                :label="__('Total actividades')"
                 :value="$stats['total']"
                 icon="book-open"
                 color="agro"
             />
             <x-agro.stat-card
-                label="Tratamientos"
+                :label="__('Tratamientos')"
                 :value="$stats['phytosanitary']"
                 icon="shield-exclamation"
                 color="red"
             />
             <x-agro.stat-card
-                label="Fertilizaciones"
+                :label="__('Fertilizaciones')"
                 :value="$stats['fertilization']"
                 icon="beaker"
                 color="blue"
             />
             <x-agro.stat-card
-                label="Riegos"
+                :label="__('Riegos')"
                 :value="$stats['irrigation']"
                 icon="cloud"
                 color="cyan"
@@ -57,7 +57,7 @@
             <x-slot:header>
                 <div class="flex items-center gap-2">
                     <flux:icon icon="squares-2x2" class="size-4 text-agro-600" />
-                    <span class="text-sm font-semibold text-zinc-900">Secciones del cuaderno</span>
+                    <span class="text-sm font-semibold text-zinc-900">{{ __('Secciones del cuaderno') }}</span>
                 </div>
             </x-slot:header>
 
@@ -70,8 +70,8 @@
                         <flux:icon icon="shield-exclamation" class="size-5 text-red-600" />
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="text-sm font-semibold text-zinc-900">Tratamientos Fitosanitarios</p>
-                        <p class="text-xs text-zinc-500 mt-0.5">{{ $stats['phytosanitary'] }} registros</p>
+                        <p class="text-sm font-semibold text-zinc-900">{{ __('Tratamientos Fitosanitarios') }}</p>
+                        <p class="text-xs text-zinc-500 mt-0.5">{{ $stats['phytosanitary'] }} {{ __('registros') }}</p>
                     </div>
                     <flux:icon icon="chevron-right" class="size-4 text-zinc-300 group-hover:text-red-400 shrink-0 transition-colors" />
                 </a>
@@ -83,8 +83,8 @@
                         <flux:icon icon="beaker" class="size-5 text-blue-600" />
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="text-sm font-semibold text-zinc-900">Fertilización</p>
-                        <p class="text-xs text-zinc-500 mt-0.5">{{ $stats['fertilization'] }} registros</p>
+                        <p class="text-sm font-semibold text-zinc-900">{{ __('Fertilización') }}</p>
+                        <p class="text-xs text-zinc-500 mt-0.5">{{ $stats['fertilization'] }} {{ __('registros') }}</p>
                     </div>
                     <flux:icon icon="chevron-right" class="size-4 text-zinc-300 group-hover:text-blue-400 shrink-0 transition-colors" />
                 </a>
@@ -96,8 +96,8 @@
                         <flux:icon icon="cloud" class="size-5 text-cyan-600" />
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="text-sm font-semibold text-zinc-900">Riego</p>
-                        <p class="text-xs text-zinc-500 mt-0.5">{{ $stats['irrigation'] }} registros</p>
+                        <p class="text-sm font-semibold text-zinc-900">{{ __('Riego') }}</p>
+                        <p class="text-xs text-zinc-500 mt-0.5">{{ $stats['irrigation'] }} {{ __('registros') }}</p>
                     </div>
                     <flux:icon icon="chevron-right" class="size-4 text-zinc-300 group-hover:text-cyan-400 shrink-0 transition-colors" />
                 </a>
@@ -109,8 +109,8 @@
                         <flux:icon icon="wrench-screwdriver" class="size-5 text-amber-600" />
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="text-sm font-semibold text-zinc-900">Labores Culturales</p>
-                        <p class="text-xs text-zinc-500 mt-0.5">{{ $stats['cultural'] }} registros</p>
+                        <p class="text-sm font-semibold text-zinc-900">{{ __('Labores Culturales') }}</p>
+                        <p class="text-xs text-zinc-500 mt-0.5">{{ $stats['cultural'] }} {{ __('registros') }}</p>
                     </div>
                     <flux:icon icon="chevron-right" class="size-4 text-zinc-300 group-hover:text-amber-400 shrink-0 transition-colors" />
                 </a>
@@ -122,8 +122,8 @@
                         <flux:icon icon="eye" class="size-5 text-zinc-600" />
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="text-sm font-semibold text-zinc-900">Observaciones</p>
-                        <p class="text-xs text-zinc-500 mt-0.5">{{ $stats['observation'] }} registros</p>
+                        <p class="text-sm font-semibold text-zinc-900">{{ __('Observaciones') }}</p>
+                        <p class="text-xs text-zinc-500 mt-0.5">{{ $stats['observation'] }} {{ __('registros') }}</p>
                     </div>
                     <flux:icon icon="chevron-right" class="size-4 text-zinc-300 group-hover:text-zinc-500 shrink-0 transition-colors" />
                 </a>
@@ -135,8 +135,8 @@
                         <flux:icon icon="scissors" class="size-5 text-purple-600" />
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="text-sm font-semibold text-zinc-900">Cosecha / Vendimia</p>
-                        <p class="text-xs text-zinc-500 mt-0.5">{{ $stats['harvest'] }} registros</p>
+                        <p class="text-sm font-semibold text-zinc-900">{{ __('Cosecha / Vendimia') }}</p>
+                        <p class="text-xs text-zinc-500 mt-0.5">{{ $stats['harvest'] }} {{ __('registros') }}</p>
                     </div>
                     <flux:icon icon="chevron-right" class="size-4 text-zinc-300 group-hover:text-purple-400 shrink-0 transition-colors" />
                 </a>
@@ -148,8 +148,8 @@
                         <flux:icon icon="scissors" class="size-5 text-lime-600" />
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="text-sm font-semibold text-zinc-900">Podas</p>
-                        <p class="text-xs text-zinc-500 mt-0.5">Labores de poda</p>
+                        <p class="text-sm font-semibold text-zinc-900">{{ __('Podas') }}</p>
+                        <p class="text-xs text-zinc-500 mt-0.5">{{ __('Labores de poda') }}</p>
                     </div>
                     <flux:icon icon="chevron-right" class="size-4 text-zinc-300 group-hover:text-lime-500 shrink-0 transition-colors" />
                 </a>
@@ -161,8 +161,8 @@
                         <flux:icon icon="beaker" class="size-5 text-indigo-600" />
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="text-sm font-semibold text-zinc-900">Tratamientos Post-Vendimia</p>
-                        <p class="text-xs text-zinc-500 mt-0.5">Tratamientos tras la cosecha</p>
+                        <p class="text-sm font-semibold text-zinc-900">{{ __('Tratamientos Post-Vendimia') }}</p>
+                        <p class="text-xs text-zinc-500 mt-0.5">{{ __('Tratamientos tras la cosecha') }}</p>
                     </div>
                     <flux:icon icon="chevron-right" class="size-4 text-zinc-300 group-hover:text-indigo-400 shrink-0 transition-colors" />
                 </a>
@@ -174,8 +174,8 @@
                         <flux:icon icon="chart-bar" class="size-5 text-emerald-600" />
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="text-sm font-semibold text-zinc-900">Rendimientos Estimados</p>
-                        <p class="text-xs text-zinc-500 mt-0.5">Previsión de producción</p>
+                        <p class="text-sm font-semibold text-zinc-900">{{ __('Rendimientos Estimados') }}</p>
+                        <p class="text-xs text-zinc-500 mt-0.5">{{ __('Previsión de producción') }}</p>
                     </div>
                     <flux:icon icon="chevron-right" class="size-4 text-zinc-300 group-hover:text-emerald-500 shrink-0 transition-colors" />
                 </a>
@@ -186,12 +186,12 @@
     @else
         <x-agro.empty-state
             icon="book-open"
-            message="Sin campaña activa"
-            description="No se encontró ninguna campaña activa. Crea una para empezar a registrar actividades."
+            :message="__('Sin campaña activa')"
+            :description="__('No se encontró ninguna campaña activa. Crea una para empezar a registrar actividades.')"
         >
             <x-slot:action>
                 <flux:button href="{{ roleRoute('viticulturist.campaign.index') }}" wire:navigate variant="primary" icon="plus">
-                    Gestionar campañas
+                    {{ __('Gestionar campañas') }}
                 </flux:button>
             </x-slot:action>
         </x-agro.empty-state>

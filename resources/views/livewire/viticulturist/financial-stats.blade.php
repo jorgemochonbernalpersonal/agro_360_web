@@ -1,7 +1,7 @@
 <div class="space-y-6 animate-fade-in">
     <x-agro.page-header
-        title="Estadísticas Financieras"
-        description="Análisis completo de tu negocio vitivinícola"
+        :title="__('Estadísticas Financieras')"
+        :description="__('Análisis completo de tu negocio vitivinícola')"
     />
 
     {{-- Filtros --}}
@@ -15,10 +15,10 @@
 
     {{-- KPIs Ingresos --}}
     <div>
-        <h3 class="text-sm font-semibold text-zinc-500 uppercase tracking-wider mb-3">Ingresos</h3>
+        <h3 class="text-sm font-semibold text-zinc-500 uppercase tracking-wider mb-3">{{ __('Ingresos') }}</h3>
         <div class="grid grid-cols-2 gap-4">
             <x-agro.stat-card
-                :label="'Facturado ' . $selectedYear"
+                :label="__('Facturado') . ' ' . $selectedYear"
                 :value="number_format($totalInvoiced, 2) . ' €'"
                 :description="$growthPercentage != 0 ? 'vs ' . ($selectedYear - 1) : null"
                 icon="currency-euro"
@@ -26,20 +26,20 @@
                 :trend="$growthPercentage != 0 ? $growthPercentage : null"
             />
             <x-agro.stat-card
-                label="Pendiente Cobro"
+                :label="__('Pendiente Cobro')"
                 :value="number_format($pendingAmount, 2) . ' €'"
                 icon="clock"
                 color="orange"
             />
             <x-agro.stat-card
-                label="Vencido"
+                :label="__('Vencido')"
                 :value="number_format($overdueAmount, 2) . ' €'"
-                :description="$overdueCount . ' factura(s)'"
+                :description="$overdueCount . ' ' . __('factura(s)')"
                 icon="exclamation-triangle"
                 color="red"
             />
             <x-agro.stat-card
-                label="Tasa de Cobro"
+                :label="__('Tasa de Cobro')"
                 :value="number_format($collectionRate, 1) . '%'"
                 icon="check-circle"
                 color="blue"
@@ -49,19 +49,19 @@
 
     {{-- KPIs Comerciales --}}
     <div>
-        <h3 class="text-sm font-semibold text-zinc-500 uppercase tracking-wider mb-3">Comercial</h3>
+        <h3 class="text-sm font-semibold text-zinc-500 uppercase tracking-wider mb-3">{{ __('Comercial') }}</h3>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <x-agro.stat-card
-                label="Clientes Activos"
+                :label="__('Clientes Activos')"
                 :value="$activeClients"
-                :description="'con compras en ' . $selectedYear"
+                :description="__('con compras en') . ' ' . $selectedYear"
                 icon="users"
                 color="purple"
             />
             <x-agro.stat-card
-                label="Factura Media"
+                :label="__('Factura Media')"
                 :value="number_format($averageInvoice, 2) . ' €'"
-                :description="$invoiceCount . ' facturas'"
+                :description="$invoiceCount . ' ' . __('facturas')"
                 icon="document-text"
                 color="purple"
             />
@@ -69,9 +69,9 @@
                 <x-agro.card class="h-full hover:border-agro-300 hover:shadow-sm transition-all cursor-pointer">
                     <div class="flex items-center justify-between">
                         <div>
-                            <flux:subheading>Clientes</flux:subheading>
-                            <p class="mt-1 text-lg font-bold text-zinc-900">Ver estadísticas</p>
-                            <p class="text-xs text-zinc-500 mt-1">Análisis detallado</p>
+                            <flux:subheading>{{ __('Clientes') }}</flux:subheading>
+                            <p class="mt-1 text-lg font-bold text-zinc-900">{{ __('Ver estadísticas') }}</p>
+                            <p class="text-xs text-zinc-500 mt-1">{{ __('Análisis detallado') }}</p>
                         </div>
                         <flux:icon icon="chevron-right" class="size-6 text-zinc-400" />
                     </div>
@@ -83,7 +83,7 @@
     {{-- Evolución de Ingresos --}}
     <x-agro.card>
         <x-slot:header>
-            <h3 class="text-base font-bold text-zinc-900">Evolución de Ingresos (12 meses)</h3>
+            <h3 class="text-base font-bold text-zinc-900">{{ __('Evolución de Ingresos (12 meses)') }}</h3>
         </x-slot:header>
 
         @if(count($monthlyIncome) > 0)
@@ -103,7 +103,7 @@
                 @endforeach
             </div>
         @else
-            <x-agro.empty-state message="No hay datos disponibles" />
+            <x-agro.empty-state :message="__('No hay datos disponibles')" />
         @endif
     </x-agro.card>
 
@@ -113,9 +113,9 @@
         <x-agro.card>
             <x-slot:header>
                 <div class="flex items-center justify-between">
-                    <h3 class="text-base font-bold text-zinc-900">Top 10 Clientes</h3>
+                    <h3 class="text-base font-bold text-zinc-900">{{ __('Top 10 Clientes') }}</h3>
                     <a href="{{ roleRoute('viticulturist.clients.index') }}" wire:navigate class="text-sm font-medium text-agro-700 hover:text-agro-900">
-                        Ver todos →
+                        {{ __('Ver todos →') }}
                     </a>
                 </div>
             </x-slot:header>
@@ -137,14 +137,14 @@
                     @endforeach
                 </div>
             @else
-                <x-agro.empty-state message="No hay datos de clientes" />
+                <x-agro.empty-state :message="__('No hay datos de clientes')" />
             @endif
         </x-agro.card>
 
         {{-- Ventas por Variedad --}}
         <x-agro.card>
             <x-slot:header>
-                <h3 class="text-base font-bold text-zinc-900">Ventas por Variedad</h3>
+                <h3 class="text-base font-bold text-zinc-900">{{ __('Ventas por Variedad') }}</h3>
             </x-slot:header>
 
             @if($salesByVariety->count() > 0)
@@ -167,7 +167,7 @@
                     @endforeach
                 </div>
             @else
-                <x-agro.empty-state message="No hay ventas registradas" />
+                <x-agro.empty-state :message="__('No hay ventas registradas')" />
             @endif
         </x-agro.card>
     </div>
@@ -178,8 +178,8 @@
         <x-agro.card>
             <x-slot:header>
                 <div class="flex items-center justify-between">
-                    <h3 class="text-base font-bold text-zinc-900">Pendientes de Pago</h3>
-                    <span class="text-xs text-zinc-500">Más antiguas primero</span>
+                    <h3 class="text-base font-bold text-zinc-900">{{ __('Pendientes de Pago') }}</h3>
+                    <span class="text-xs text-zinc-500">{{ __('Más antiguas primero') }}</span>
                 </div>
             </x-slot:header>
 
@@ -192,7 +192,7 @@
                             </div>
                             <div class="flex-1 min-w-0">
                                 <p class="text-sm font-medium text-zinc-900">{{ $invoice->invoice_number }}</p>
-                                <p class="text-xs text-zinc-500">{{ $invoice->client->full_name ?? 'Sin cliente' }}</p>
+                                <p class="text-xs text-zinc-500">{{ $invoice->client->full_name ?? __('Sin cliente') }}</p>
                                 <p class="text-sm font-bold text-zinc-900 mt-0.5">{{ number_format($invoice->total_amount, 2) }} €</p>
                                 <p class="text-xs text-zinc-400">{{ $invoice->invoice_date->format('d/m/Y') }}</p>
                             </div>
@@ -200,14 +200,14 @@
                     @endforeach
                 </div>
             @else
-                <x-agro.empty-state message="No hay facturas pendientes de pago" />
+                <x-agro.empty-state :message="__('No hay facturas pendientes de pago')" />
             @endif
         </x-agro.card>
 
         {{-- Stock por Variedad --}}
         <x-agro.card>
             <x-slot:header>
-                <h3 class="text-base font-bold text-zinc-900">Estado de Stock por Variedad</h3>
+                <h3 class="text-base font-bold text-zinc-900">{{ __('Estado de Stock por Variedad') }}</h3>
             </x-slot:header>
 
             @if($stockByVariety->count() > 0)
@@ -223,15 +223,15 @@
                             <p class="text-sm font-semibold text-zinc-900 mb-2">{{ $variety }}</p>
                             <div class="grid grid-cols-3 gap-2 text-xs mb-2">
                                 <div>
-                                    <span class="text-zinc-500">Disponible</span>
+                                    <span class="text-zinc-500">{{ __('Disponible') }}</span>
                                     <p class="font-bold text-green-600">{{ number_format($stock['available'], 0) }} kg</p>
                                 </div>
                                 <div>
-                                    <span class="text-zinc-500">Reservado</span>
+                                    <span class="text-zinc-500">{{ __('Reservado') }}</span>
                                     <p class="font-bold text-orange-600">{{ number_format($stock['reserved'], 0) }} kg</p>
                                 </div>
                                 <div>
-                                    <span class="text-zinc-500">Vendido</span>
+                                    <span class="text-zinc-500">{{ __('Vendido') }}</span>
                                     <p class="font-bold text-blue-600">{{ number_format($stock['sold'], 0) }} kg</p>
                                 </div>
                             </div>
@@ -244,7 +244,7 @@
                     @endforeach
                 </div>
             @else
-                <x-agro.empty-state message="No hay datos de stock disponibles" />
+                <x-agro.empty-state :message="__('No hay datos de stock disponibles')" />
             @endif
         </x-agro.card>
     </div>

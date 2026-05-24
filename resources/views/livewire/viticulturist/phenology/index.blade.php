@@ -1,8 +1,8 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="Fenología"
-        description="Registro de estadios fenológicos por plantación y campaña"
+        :title="__('Fenología')"
+        :description="__('Registro de estadios fenológicos por plantación y campaña')"
         icon="sun"
     >
         <x-slot:actions>
@@ -11,7 +11,7 @@
                 variant="primary"
                 icon="plus"
             >
-                Registrar Estadio
+                {{ __('Registrar Estadio') }}
             </flux:button>
         </x-slot:actions>
     </x-agro.page-header>
@@ -23,11 +23,11 @@
                 <flux:icon icon="scissors" class="size-4 text-zinc-400 shrink-0" />
                 <div>
                     <span class="text-sm font-medium text-zinc-900">{{ $filteredPlanting->plot->name }}</span>
-                    <span class="text-sm text-zinc-500"> — {{ $filteredPlanting->grapeVariety->name ?? $filteredPlanting->name ?? 'Sin nombre' }}</span>
+                    <span class="text-sm text-zinc-500"> — {{ $filteredPlanting->grapeVariety->name ?? $filteredPlanting->name ?? __('Sin nombre') }}</span>
                 </div>
             </div>
             <flux:button href="{{ route('plots.plantings.index') }}" variant="ghost" size="sm" icon="arrow-left">
-                Volver a plantaciones
+                {{ __('Volver a plantaciones') }}
             </flux:button>
         </div>
     @endif
@@ -36,13 +36,13 @@
     @if($campaigns->count() > 1)
         <div class="flex items-center gap-3">
             <flux:select wire:model.live="filter_campaign_id" class="w-48">
-                <flux:select.option value="">Todas las campañas</flux:select.option>
+                <flux:select.option value="">{{ __('Todas las campañas') }}</flux:select.option>
                 @foreach($campaigns as $campaign)
-                    <flux:select.option value="{{ $campaign->id }}">Campaña {{ $campaign->year }}</flux:select.option>
+                    <flux:select.option value="{{ $campaign->id }}">{{ __('Campaña') }} {{ $campaign->year }}</flux:select.option>
                 @endforeach
             </flux:select>
             @if($filter_campaign_id)
-                <flux:button wire:click="$set('filter_campaign_id', '')" variant="ghost" size="sm" icon="x-mark">Limpiar</flux:button>
+                <flux:button wire:click="$set('filter_campaign_id', '')" variant="ghost" size="sm" icon="x-mark">{{ __('Limpiar') }}</flux:button>
             @endif
         </div>
     @endif
@@ -51,13 +51,13 @@
     @if($observations->isEmpty())
         <x-agro.empty-state
             icon="sun"
-            title="Sin observaciones fenológicas"
-            description="Registra los estadios fenológicos de tus plantaciones para hacer seguimiento de la campaña."
+            :title="__('Sin observaciones fenológicas')"
+            :description="__('Registra los estadios fenológicos de tus plantaciones para hacer seguimiento de la campaña.')"
         >
             @if($filter_planting_id)
                 <x-slot:action>
                     <flux:button href="{{ roleRoute('viticulturist.phenology.create', ['planting_id' => $filter_planting_id]) }}" variant="primary" icon="plus">
-                        Registrar primer estadio
+                        {{ __('Registrar primer estadio') }}
                     </flux:button>
                 </x-slot:action>
             @endif
@@ -111,18 +111,18 @@
                         @if($obs->campaign)
                             <div class="flex items-center gap-2 text-xs text-zinc-500">
                                 <flux:icon icon="calendar" class="size-3.5 text-zinc-400 shrink-0" />
-                                <span>Campaña {{ $obs->campaign->year }}</span>
+                                <span>{{ __('Campaña') }} {{ $obs->campaign->year }}</span>
                             </div>
                         @endif
 
                         <div class="grid grid-cols-2 gap-2">
                             <div class="bg-zinc-50 rounded-xl p-3 {{ $obs->degree_days_accumulated ? '' : 'col-span-2' }}">
-                                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">Confianza</p>
+                                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">{{ __('Confianza') }}</p>
                                 <p class="text-xl font-bold {{ $confidenceColor }} leading-none">{{ $obs->confidence }}<span class="text-xs font-normal text-zinc-400 ml-0.5">%</span></p>
                             </div>
                             @if($obs->degree_days_accumulated)
                                 <div class="bg-zinc-50 rounded-xl p-3">
-                                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">GD Acum.</p>
+                                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">{{ __('GD Acum.') }}</p>
                                     <p class="text-xl font-bold text-zinc-700 leading-none">{{ number_format($obs->degree_days_accumulated, 0) }}</p>
                                 </div>
                             @endif
@@ -145,13 +145,13 @@
                             <x-agro.action-button
                                 variant="edit"
                                 href="{{ roleRoute('viticulturist.phenology.edit', $obs->id) }}"
-                                title="Editar"
+                                :title="__('Editar')"
                             />
                             <x-agro.action-button
                                 variant="delete"
                                 wire:click="delete({{ $obs->id }})"
-                                wire:confirm="¿Eliminar esta observación?"
-                                title="Eliminar"
+                                wire:confirm="{{ __('¿Eliminar esta observación?') }}"
+                                :title="__('Eliminar')"
                             />
                         </div>
                     </x-slot:footer>

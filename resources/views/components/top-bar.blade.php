@@ -34,6 +34,22 @@
 
         {{-- User section --}}
         <div class="flex items-center gap-3">
+            {{-- Selector de idioma --}}
+            <flux:dropdown position="bottom" align="end">
+                <flux:button variant="ghost" size="sm" class="!px-2 text-zinc-600 font-medium uppercase text-xs tracking-wide">
+                    {{ strtoupper(app()->getLocale()) }}
+                </flux:button>
+                <flux:menu>
+                    @foreach(['es' => '🇪🇸 Español', 'en' => '🇬🇧 English', 'ca' => '🏴 Català', 'eu' => '🏴 Euskera', 'gl' => '🏴 Galego'] as $code => $label)
+                        <flux:menu.item
+                            href="{{ request()->fullUrlWithQuery(['lang' => $code]) }}"
+                            class="{{ app()->getLocale() === $code ? 'font-semibold' : '' }}"
+                        >
+                            {{ $label }}
+                        </flux:menu.item>
+                    @endforeach
+                </flux:menu>
+            </flux:dropdown>
             {{-- Búsqueda global admin --}}
             @if(auth()->user()->isAdmin())
                 @persist('admin-global-search')
@@ -63,17 +79,17 @@
                         <p class="text-sm font-medium">{{ $user->name }}</p>
                         <p class="text-xs text-zinc-500">{{ $user->email }}</p>
                     </div>
-                    <flux:menu.item href="{{ route('profile.show') }}" wire:navigate icon="user">Ver Perfil</flux:menu.item>
-                    <flux:menu.item href="{{ route('profile.edit') }}" wire:navigate icon="pencil-square">Editar Perfil</flux:menu.item>
+                    <flux:menu.item href="{{ route('profile.show') }}" wire:navigate icon="user">{{ __('Ver Perfil') }}</flux:menu.item>
+                    <flux:menu.item href="{{ route('profile.edit') }}" wire:navigate icon="pencil-square">{{ __('Editar Perfil') }}</flux:menu.item>
                     @if($user->hasViticulturistAccess())
-                        <flux:menu.item href="{{ route('viticulturist.settings') }}" wire:navigate icon="cog-6-tooth">Configuración</flux:menu.item>
+                        <flux:menu.item href="{{ route('viticulturist.settings') }}" wire:navigate icon="cog-6-tooth">{{ __('Configuración') }}</flux:menu.item>
                     @endif
-                    <flux:menu.item href="{{ route('subscription.manage') }}" wire:navigate icon="credit-card">Ver Suscripción</flux:menu.item>
+                    <flux:menu.item href="{{ route('subscription.manage') }}" wire:navigate icon="credit-card">{{ __('Ver Suscripción') }}</flux:menu.item>
                     <flux:separator />
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <flux:menu.item type="submit" icon="arrow-right-start-on-rectangle" class="!text-red-600">
-                            Cerrar Sesión
+                            {{ __('Cerrar Sesión') }}
                         </flux:menu.item>
                     </form>
                 </flux:menu>

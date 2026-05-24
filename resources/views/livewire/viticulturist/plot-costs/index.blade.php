@@ -2,13 +2,13 @@
 
     {{-- Header --}}
     <x-agro.page-header
-        title="Costes por Parcela"
-        description="Registro y análisis de costes por parcela y campaña"
+        :title="__('Costes por Parcela')"
+        :description="__('Registro y análisis de costes por parcela y campaña')"
         icon="banknotes"
     >
         <x-slot:actions>
             <flux:button href="{{ roleRoute('viticulturist.plot-costs.create') }}" variant="primary" icon="plus">
-                Registrar Coste
+                {{ __('Registrar Coste') }}
             </flux:button>
         </x-slot:actions>
     </x-agro.page-header>
@@ -16,19 +16,19 @@
     {{-- KPIs --}}
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <x-agro.stat-card
-            label="Total registros"
+            :label="__('Total registros')"
             :value="$stats['total']"
             icon="document-text"
             color="zinc"
         />
         <x-agro.stat-card
-            label="Importe total"
+            :label="__('Importe total')"
             :value="number_format($stats['total_amount'], 2) . ' €'"
             icon="banknotes"
             color="zinc"
         />
         <x-agro.stat-card
-            label="Importe filtrado"
+            :label="__('Importe filtrado')"
             :value="number_format($stats['filtered_amount'], 2) . ' €'"
             icon="funnel"
             color="agro"
@@ -38,25 +38,25 @@
     {{-- Toolbar --}}
     <div class="flex items-center gap-3 flex-wrap">
         <flux:select wire:model.live="filter_campaign_id" class="w-48">
-            <flux:select.option value="">Todas las campañas</flux:select.option>
+            <flux:select.option value="">{{ __('Todas las campañas') }}</flux:select.option>
             @foreach($campaigns as $campaign)
-                <flux:select.option value="{{ $campaign->id }}">Campaña {{ $campaign->year }}</flux:select.option>
+                <flux:select.option value="{{ $campaign->id }}">{{ __('Campaña') }} {{ $campaign->year }}</flux:select.option>
             @endforeach
         </flux:select>
         <flux:select wire:model.live="filter_plot_id" class="w-44">
-            <flux:select.option value="">Todas las parcelas</flux:select.option>
+            <flux:select.option value="">{{ __('Todas las parcelas') }}</flux:select.option>
             @foreach($plots as $plot)
                 <flux:select.option value="{{ $plot->id }}">{{ $plot->name }}</flux:select.option>
             @endforeach
         </flux:select>
         <flux:select wire:model.live="filter_category" class="w-44">
-            <flux:select.option value="">Todas las categorías</flux:select.option>
+            <flux:select.option value="">{{ __('Todas las categorías') }}</flux:select.option>
             @foreach($categories as $value => $label)
                 <flux:select.option value="{{ $value }}">{{ $label }}</flux:select.option>
             @endforeach
         </flux:select>
         @if($filter_campaign_id || $filter_plot_id || $filter_category)
-            <flux:button wire:click="$set('filter_campaign_id', ''); $set('filter_plot_id', ''); $set('filter_category', '')" variant="ghost" size="sm" icon="x-mark">Limpiar</flux:button>
+            <flux:button wire:click="$set('filter_campaign_id', ''); $set('filter_plot_id', ''); $set('filter_category', '')" variant="ghost" size="sm" icon="x-mark">{{ __('Limpiar') }}</flux:button>
         @endif
     </div>
 
@@ -64,15 +64,15 @@
     @if($costs->count() === 0)
         <x-agro.empty-state
             icon="banknotes"
-            title="{{ $filter_campaign_id || $filter_plot_id || $filter_category ? 'Ningún coste coincide con los filtros' : 'Sin costes registrados' }}"
-            description="{{ $filter_campaign_id || $filter_plot_id || $filter_category ? 'Prueba a cambiar o limpiar los filtros.' : 'Registra los costes de tus parcelas: mano de obra, fitosanitarios, maquinaria y más.' }}"
+            :title="$filter_campaign_id || $filter_plot_id || $filter_category ? __('Ningún coste coincide con los filtros') : __('Sin costes registrados')"
+            :description="$filter_campaign_id || $filter_plot_id || $filter_category ? __('Prueba a cambiar o limpiar los filtros.') : __('Registra los costes de tus parcelas: mano de obra, fitosanitarios, maquinaria y más.')"
         >
             <x-slot:action>
                 @if($filter_campaign_id || $filter_plot_id || $filter_category)
-                    <flux:button wire:click="$set('filter_campaign_id', ''); $set('filter_plot_id', ''); $set('filter_category', '')" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
+                    <flux:button wire:click="$set('filter_campaign_id', ''); $set('filter_plot_id', ''); $set('filter_category', '')" variant="outline" icon="x-mark">{{ __('Limpiar filtros') }}</flux:button>
                 @else
                     <flux:button href="{{ roleRoute('viticulturist.plot-costs.create') }}" variant="primary" icon="plus">
-                        Registrar primer coste
+                        {{ __('Registrar primer coste') }}
                     </flux:button>
                 @endif
             </x-slot:action>
@@ -118,12 +118,12 @@
                         @if($cost->campaign)
                             <div class="flex items-center gap-2 text-xs text-zinc-400">
                                 <flux:icon icon="calendar-days" class="size-3.5 shrink-0" />
-                                <span>Campaña {{ $cost->campaign->year }}</span>
+                                <span>{{ __('Campaña') }} {{ $cost->campaign->year }}</span>
                             </div>
                         @endif
 
                         <div class="bg-red-50 rounded-xl p-3">
-                            <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">Importe</p>
+                            <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">{{ __('Importe') }}</p>
                             <p class="text-xl font-bold text-red-700 leading-none">
                                 {{ number_format($cost->amount, 2) }}<span class="text-xs font-normal text-zinc-400 ml-0.5">€</span>
                             </p>
@@ -135,13 +135,13 @@
                             <x-agro.action-button
                                 variant="edit"
                                 href="{{ roleRoute('viticulturist.plot-costs.edit', $cost->id) }}"
-                                title="Editar"
+                                :title="__('Editar')"
                             />
                             <x-agro.action-button
                                 variant="delete"
                                 wire:click="delete({{ $cost->id }})"
-                                wire:confirm="¿Eliminar este coste?"
-                                title="Eliminar"
+                                wire:confirm="{{ __('¿Eliminar este coste?') }}"
+                                :title="__('Eliminar')"
                             />
                         </div>
                     </x-slot:footer>

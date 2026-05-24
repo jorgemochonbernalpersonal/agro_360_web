@@ -55,104 +55,104 @@
     $chapterColors['onboarding']   = ['accent' => '#f59e0b', 'bg' => 'rgba(245,158,11,0.12)',  'border' => 'rgba(245,158,11,0.5)'];   // amber (primeros pasos)
 
     $viticulturistChapters = [
-        ['key' => 'onboarding',  'icon' => 'rocket-launch',            'label' => 'Primeros Pasos',    'sections' => ['onboarding']],
-        ['key' => 'campaign',    'icon' => 'pencil-square',            'label' => 'Campaña',           'sections' => ['campaigns']],
-        ['key' => 'winery_rel',  'icon' => 'building-office-2',        'label' => 'Bodega',            'sections' => ['winery_rel', 'denomination'], 'section_labels' => ['winery_rel' => 'Comunicación', 'denomination' => 'Denominación']],
-        ['key' => 'notebook',    'icon' => 'document-text',            'label' => 'Cuaderno de Campo', 'sections' => ['notebook_inputs']],
-        ['key' => 'estate',      'icon' => 'map',                      'label' => 'Finca',             'sections' => ['estate', 'analytics'],        'section_labels' => ['estate' => 'Parcelas', 'analytics' => 'Análisis']],
-        ['key' => 'medioambiente','icon' => 'globe-europe-africa',      'label' => 'Medioambiente',     'sections' => ['monitoring', 'environmental'], 'section_labels' => ['monitoring' => 'Seguimiento', 'environmental' => 'Medioambiente']],
-        ['key' => 'resources',   'icon' => 'wrench-screwdriver',       'label' => 'Recursos',          'sections' => ['resources']],
-        ['key' => 'compliance',  'icon' => 'shield-check',             'label' => 'Regulatorio',       'sections' => ['declarations', 'compliance', 'pac'], 'section_labels' => ['declarations' => 'Declaraciones', 'compliance' => 'Normativa', 'pac' => 'PAC']],
-        ['key' => 'business',    'icon' => 'calculator',               'label' => 'Negocio',           'sections' => ['billing']],
+        ['key' => 'onboarding',  'icon' => 'rocket-launch',            'label' => __('Primeros Pasos'),    'sections' => ['onboarding']],
+        ['key' => 'campaign',    'icon' => 'pencil-square',            'label' => __('Campaña'),           'sections' => ['campaigns']],
+        ['key' => 'winery_rel',  'icon' => 'building-office-2',        'label' => __('Bodega'),            'sections' => ['winery_rel', 'denomination'], 'section_labels' => ['winery_rel' => __('Comunicación'), 'denomination' => __('Denominación')]],
+        ['key' => 'notebook',    'icon' => 'document-text',            'label' => __('Cuaderno de Campo'), 'sections' => ['notebook_inputs']],
+        ['key' => 'estate',      'icon' => 'map',                      'label' => __('Finca'),             'sections' => ['estate', 'analytics'],        'section_labels' => ['estate' => __('Parcelas'), 'analytics' => __('Análisis')]],
+        ['key' => 'medioambiente','icon' => 'globe-europe-africa',      'label' => __('Medioambiente'),     'sections' => ['monitoring', 'environmental'], 'section_labels' => ['monitoring' => __('Seguimiento'), 'environmental' => __('Medioambiente')]],
+        ['key' => 'resources',   'icon' => 'wrench-screwdriver',       'label' => __('Recursos'),          'sections' => ['resources']],
+        ['key' => 'compliance',  'icon' => 'shield-check',             'label' => __('Regulatorio'),       'sections' => ['declarations', 'compliance', 'pac'], 'section_labels' => ['declarations' => __('Declaraciones'), 'compliance' => __('Normativa'), 'pac' => 'PAC']],
+        ['key' => 'business',    'icon' => 'calculator',               'label' => __('Negocio'),           'sections' => ['billing']],
     ];
 
     $wineryChapters = [
-        ['key' => 'harvest',      'icon' => 'archive-box-arrow-down', 'label' => 'Vendimia',      'sections' => ['harvest', 'denomination'], 'section_labels' => ['harvest' => 'Vendimia', 'denomination' => 'Denominación de Origen']],
-        ['key' => 'cellar',       'icon' => 'cube',                   'label' => 'Bodega',        'sections' => ['cellar_infra']],
-        ['key' => 'wines',        'icon' => 'beaker',                 'label' => 'Vinos',         'sections' => ['cellar_wines']],
-        ['key' => 'output',       'icon' => 'archive-box',            'label' => 'Producto',      'sections' => ['cellar_output']],
-        ['key' => 'territory',    'icon' => 'map',                    'label' => 'Parcelas',      'sections' => ['territory', 'analytics'], 'section_labels' => ['territory' => 'Parcelas', 'analytics' => 'Análisis de Finca']],
-        ['key' => 'compliance',   'icon' => 'shield-check',           'label' => 'Normativa',     'sections' => ['winery_compliance', 'registrations'], 'section_labels' => ['winery_compliance' => 'Normativa Bodega', 'registrations' => 'Registros y Autorizaciones']],
-        ['key' => 'business',     'icon' => 'calculator',             'label' => 'Negocio',       'sections' => ['billing']],
-        ['key' => 'system',       'icon' => 'cog-6-tooth',            'label' => 'Recursos y Sistema', 'sections' => ['winery_resources', 'winery_docs', 'system'], 'section_labels' => ['winery_resources' => 'Insumos y Proveedores', 'winery_docs' => 'Documentos', 'system' => 'Sistema']],
+        ['key' => 'harvest',      'icon' => 'archive-box-arrow-down', 'label' => __('Vendimia'),      'sections' => ['harvest', 'denomination'], 'section_labels' => ['harvest' => __('Vendimia'), 'denomination' => __('Denominación de Origen')]],
+        ['key' => 'cellar',       'icon' => 'cube',                   'label' => __('Bodega'),        'sections' => ['cellar_infra']],
+        ['key' => 'wines',        'icon' => 'beaker',                 'label' => __('Vinos'),         'sections' => ['cellar_wines']],
+        ['key' => 'output',       'icon' => 'archive-box',            'label' => __('Producto'),      'sections' => ['cellar_output']],
+        ['key' => 'territory',    'icon' => 'map',                    'label' => __('Parcelas'),      'sections' => ['territory', 'analytics'], 'section_labels' => ['territory' => __('Parcelas'), 'analytics' => __('Análisis de Finca')]],
+        ['key' => 'compliance',   'icon' => 'shield-check',           'label' => __('Normativa'),     'sections' => ['winery_compliance', 'registrations'], 'section_labels' => ['winery_compliance' => __('Normativa Bodega'), 'registrations' => __('Registros y Autorizaciones')]],
+        ['key' => 'business',     'icon' => 'calculator',             'label' => __('Negocio'),       'sections' => ['billing']],
+        ['key' => 'system',       'icon' => 'cog-6-tooth',            'label' => __('Recursos y Sistema'), 'sections' => ['winery_resources', 'winery_docs', 'system'], 'section_labels' => ['winery_resources' => __('Insumos y Proveedores'), 'winery_docs' => __('Documentos'), 'system' => __('Sistema')]],
     ];
 
     // ── Producer: capítulos viñedo (alineado con viticulturist: 8 capítulos) ─
     // Finca es transversal — visible en ambos tabs
     $producerFixedChapters = [
-        ['key' => 'estate',      'icon' => 'map',                      'label' => 'Finca',            'sections' => ['estate', 'analytics'],         'section_labels' => ['estate' => 'Parcelas', 'analytics' => 'Análisis']],
+        ['key' => 'estate',      'icon' => 'map',                      'label' => __('Finca'),            'sections' => ['estate', 'analytics'],         'section_labels' => ['estate' => __('Parcelas'), 'analytics' => __('Análisis')]],
     ];
 
     $producerViticulturistChapters = [
-        ['key' => 'campaign',    'icon' => 'pencil-square',            'label' => 'Campaña',          'sections' => ['campaigns']],
-        ['key' => 'notebook',    'icon' => 'document-text',            'label' => 'Cuaderno de Campo', 'sections' => ['notebook_inputs']],
-        ['key' => 'medioambiente','icon' => 'globe-europe-africa',      'label' => 'Medioambiente',    'sections' => ['monitoring', 'environmental'],  'section_labels' => ['monitoring' => 'Seguimiento', 'environmental' => 'Medioambiente']],
-        ['key' => 'resources',   'icon' => 'wrench-screwdriver',       'label' => 'Recursos',         'sections' => ['resources']],
-        ['key' => 'compliance',  'icon' => 'shield-check',             'label' => 'Regulatorio',      'sections' => ['declarations', 'compliance', 'pac'], 'section_labels' => ['declarations' => 'Declaraciones', 'compliance' => 'Normativa', 'pac' => 'PAC']],
-        ['key' => 'business',    'icon' => 'calculator',               'label' => 'Negocio Viñedo',   'sections' => ['billing']],
+        ['key' => 'campaign',    'icon' => 'pencil-square',            'label' => __('Campaña'),          'sections' => ['campaigns']],
+        ['key' => 'notebook',    'icon' => 'document-text',            'label' => __('Cuaderno de Campo'), 'sections' => ['notebook_inputs']],
+        ['key' => 'medioambiente','icon' => 'globe-europe-africa',      'label' => __('Medioambiente'),    'sections' => ['monitoring', 'environmental'],  'section_labels' => ['monitoring' => __('Seguimiento'), 'environmental' => __('Medioambiente')]],
+        ['key' => 'resources',   'icon' => 'wrench-screwdriver',       'label' => __('Recursos'),         'sections' => ['resources']],
+        ['key' => 'compliance',  'icon' => 'shield-check',             'label' => __('Regulatorio'),      'sections' => ['declarations', 'compliance', 'pac'], 'section_labels' => ['declarations' => __('Declaraciones'), 'compliance' => __('Normativa'), 'pac' => 'PAC']],
+        ['key' => 'business',    'icon' => 'calculator',               'label' => __('Negocio Viñedo'),   'sections' => ['billing']],
     ];
 
     // ── Producer: capítulos bodega (7 capítulos, denominación condicional) ───
     $producerWineryChapters = [
-        ['key' => 'harvest',       'icon' => 'archive-box-arrow-down', 'label' => 'Vendimia',         'sections' => ['harvest', 'denomination'], 'section_labels' => ['harvest' => 'Vendimia', 'denomination' => 'Denominación de Origen']],
-        ['key' => 'bodega',        'icon' => 'beaker',                 'label' => 'Bodega',           'sections' => ['cellar_elaboration', 'cellar_output'], 'section_labels' => ['cellar_elaboration' => 'Elaboración', 'cellar_output' => 'Salida']],
-        ['key' => 'compliance_w',  'icon' => 'shield-check',           'label' => 'Normativa y Recursos', 'sections' => ['winery_compliance', 'winery_resources', 'winery_docs'], 'section_labels' => ['winery_compliance' => 'Normativa Bodega', 'winery_resources' => 'Insumos y Proveedores', 'winery_docs' => 'Documentos']],
-        ['key' => 'business_w',    'icon' => 'calculator',             'label' => 'Negocio Bodega',   'sections' => ['winery_billing']],
+        ['key' => 'harvest',       'icon' => 'archive-box-arrow-down', 'label' => __('Vendimia'),         'sections' => ['harvest', 'denomination'], 'section_labels' => ['harvest' => __('Vendimia'), 'denomination' => __('Denominación de Origen')]],
+        ['key' => 'bodega',        'icon' => 'beaker',                 'label' => __('Bodega'),           'sections' => ['cellar_elaboration', 'cellar_output'], 'section_labels' => ['cellar_elaboration' => __('Elaboración'), 'cellar_output' => __('Salida')]],
+        ['key' => 'compliance_w',  'icon' => 'shield-check',           'label' => __('Normativa y Recursos'), 'sections' => ['winery_compliance', 'winery_resources', 'winery_docs'], 'section_labels' => ['winery_compliance' => __('Normativa Bodega'), 'winery_resources' => __('Insumos y Proveedores'), 'winery_docs' => __('Documentos')]],
+        ['key' => 'business_w',    'icon' => 'calculator',             'label' => __('Negocio Bodega'),   'sections' => ['winery_billing']],
     ];
 
     $doChapters = [
         [
             'key'            => 'do_registry',
             'icon'           => 'users',
-            'label'          => 'Registro',
+            'label'          => __('Registro'),
             'sections'       => ['do_census', 'do_growers'],
-            'section_labels' => ['do_census' => 'Censo DO', 'do_growers' => 'Mis Viticultores'],
+            'section_labels' => ['do_census' => __('Censo DO'), 'do_growers' => __('Mis Viticultores')],
         ],
         [
             'key'            => 'do_supervision',
             'icon'           => 'eye',
-            'label'          => 'Supervisión',
+            'label'          => __('Supervisión'),
             'sections'       => ['do_oversight_wineries', 'do_oversight_growers'],
-            'section_labels' => ['do_oversight_wineries' => 'Bodegas', 'do_oversight_growers' => 'Viticultores'],
+            'section_labels' => ['do_oversight_wineries' => __('Bodegas'), 'do_oversight_growers' => __('Viticultores')],
         ],
         [
             'key'            => 'do_campaigns_general',
             'icon'           => 'flag',
-            'label'          => 'Campañas',
+            'label'          => __('Campañas'),
             'sections'       => ['do_campaigns'],
         ],
         [
             'key'            => 'do_quality',
             'icon'           => 'star',
-            'label'          => 'Calidad',
+            'label'          => __('Calidad'),
             'sections'       => ['do_qualification', 'do_labels'],
-            'section_labels' => ['do_qualification' => 'Calificación', 'do_labels' => 'Contraetiquetas'],
+            'section_labels' => ['do_qualification' => __('Calificación'), 'do_labels' => __('Contraetiquetas')],
         ],
         [
             'key'            => 'do_control_general',
             'icon'           => 'shield-check',
-            'label'          => 'Control',
+            'label'          => __('Control'),
             'sections'       => ['do_inspection', 'do_regulation', 'do_documents'],
-            'section_labels' => ['do_inspection' => 'Inspección', 'do_regulation' => 'Normativa', 'do_documents' => 'Documentos DO'],
+            'section_labels' => ['do_inspection' => __('Inspección'), 'do_regulation' => __('Normativa'), 'do_documents' => __('Documentos DO')],
         ],
         [
             'key'            => 'do_territory',
             'icon'           => 'map',
-            'label'          => 'Territorio',
+            'label'          => __('Territorio'),
             'sections'       => ['do_territory'],
         ],
         [
             'key'            => 'do_statistics',
             'icon'           => 'chart-bar',
-            'label'          => 'Estadísticas',
+            'label'          => __('Estadísticas'),
             'sections'       => ['do_statistics'],
         ],
         [
             'key'            => 'do_admin',
             'icon'           => 'cog-6-tooth',
-            'label'          => 'Administración',
+            'label'          => __('Administración'),
             'sections'       => ['do_finance', 'do_settings'],
-            'section_labels' => ['do_finance' => 'Finanzas', 'do_settings' => 'Sistema'],
+            'section_labels' => ['do_finance' => __('Finanzas'), 'do_settings' => __('Sistema')],
         ],
     ];
 
@@ -236,7 +236,7 @@
             try {
                 $href = route($item['route']);
                 if (!in_array($href, $searchIndexHrefs)) {
-                    $searchIndex[] = ['href' => $href, 'label' => $item['label'], 'chapter' => 'Principal'];
+                    $searchIndex[] = ['href' => $href, 'label' => $item['label'], 'chapter' => __('Principal')];
                     $searchIndexHrefs[] = $href;
                 }
             } catch (\Exception $e) { /* ruta no registrada, skip */ }
@@ -265,7 +265,7 @@
             try {
                 $href = route($item['route']);
                 if (!in_array($href, $searchIndexHrefs)) {
-                    $searchIndex[] = ['href' => $href, 'label' => $item['label'], 'chapter' => 'Sistema'];
+                    $searchIndex[] = ['href' => $href, 'label' => $item['label'], 'chapter' => __('Sistema')];
                     $searchIndexHrefs[] = $href;
                 }
             } catch (\Exception $e) { /* ruta no registrada, skip */ }
@@ -338,10 +338,10 @@
         </a>
 
         {{-- Buscar (Cmd+K) --}}
-        <button type="button" @click="openCmdk()" title="Buscar (Ctrl+K)"
+        <button type="button" @click="openCmdk()" title="{{ __('Buscar') }} (Ctrl+K)"
                 class="relative group flex items-center justify-center w-11 h-11 rounded-xl transition-all duration-150 text-white/45 hover:bg-white/10 hover:text-white flex-shrink-0">
             <flux:icon icon="magnifying-glass" class="w-5 h-5" />
-            <span class="rail-tooltip">Buscar <kbd class="ml-1 px-1 py-0.5 text-[9px] bg-white/20 rounded">Ctrl+K</kbd></span>
+            <span class="rail-tooltip">{{ __('Buscar') }} <kbd class="ml-1 px-1 py-0.5 text-[9px] bg-white/20 rounded">Ctrl+K</kbd></span>
         </button>
 
         <div class="w-8 border-t border-white/10 mb-1"></div>
@@ -374,7 +374,7 @@
                 <svg class="w-5 h-5 tab-icon transition-colors duration-150" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                 </svg>
-                <span class="rail-tooltip" style="border-left: 2px solid #f59e0b">Frecuentes</span>
+                <span class="rail-tooltip" style="border-left: 2px solid #f59e0b">{{ __('Frecuentes') }}</span>
             </button>
         </template>
 
@@ -445,14 +445,14 @@
                 $chIsAllLocked = in_array($ch['key'], $allLockedChapterKeys);
             @endphp
             <button type="button" x-on:click="$store.nav.toggle('{{ $ch['key'] }}')"
-                title="{{ $ch['label'] }}{{ $chIsAllLocked ? ' — Plan Completo' : '' }}"
+                title="{{ $ch['label'] }}{{ $chIsAllLocked ? ' — ' . __('Plan Completo') : '' }}"
                 class="notebook-tab flex-shrink-0 relative group flex items-center justify-center w-11 h-11 rounded-xl transition-all duration-200"
                 :class="$store.nav.open === '{{ $ch['key'] }}' ? 'tab-open' : ''"
                 data-key="{{ $ch['key'] }}" data-active="{{ $isActive ? 'true' : 'false' }}"
                 style="--tab-accent: {{ $color['accent'] }}; --tab-bg: {{ $color['bg'] }}; --tab-border: {{ $color['border'] }};">
                 <flux:icon icon="{{ $ch['icon'] }}" class="w-5 h-5 tab-icon transition-colors duration-150" />
                 @if($chIsAllLocked)
-                    <span class="absolute top-0.5 right-0.5 w-2 h-2 rounded-full bg-amber-400 border border-[#1a2a1a]" title="Plan Completo"></span>
+                    <span class="absolute top-0.5 right-0.5 w-2 h-2 rounded-full bg-amber-400 border border-[#1a2a1a]" title="{{ __('Plan Completo') }}"></span>
                 @endif
                 <span class="rail-tooltip" style="border-left: 2px solid {{ $color['accent'] }}">{{ $ch['label'] }}</span>
             </button>
@@ -467,18 +467,18 @@
             <div class="w-full px-2 mb-1 flex-shrink-0">
                 <div class="flex rounded-xl bg-white/[0.06] ring-1 ring-white/[0.09] p-0.5 gap-0.5">
                     <a href="{{ route('winery.dashboard') }}" wire:navigate
-                       title="Vista con menú lateral"
+                       title="{{ __('Vista con menú lateral') }}"
                        class="flex-1 flex flex-col items-center justify-center py-2 gap-1 rounded-[10px] transition-all duration-200
                               {{ !$isVisual ? 'bg-white/[0.18] text-white shadow-sm' : 'text-white/35 hover:text-white/65 hover:bg-white/[0.08]' }}">
                         <flux:icon icon="bars-3" class="w-4 h-4 shrink-0" />
                         <span class="text-[8px] font-semibold tracking-wide leading-none">Nav</span>
                     </a>
                     <a href="{{ route('winery.visual') }}" wire:navigate
-                       title="Vista mapa + bodega"
+                       title="{{ __('Vista mapa + bodega') }}"
                        class="flex-1 flex flex-col items-center justify-center py-2 gap-1 rounded-[10px] transition-all duration-200
                               {{ $isVisual ? 'bg-white/[0.18] text-white shadow-sm' : 'text-white/35 hover:text-white/65 hover:bg-white/[0.08]' }}">
                         <flux:icon icon="map" class="w-4 h-4 shrink-0" />
-                        <span class="text-[8px] font-semibold tracking-wide leading-none">Mapa</span>
+                        <span class="text-[8px] font-semibold tracking-wide leading-none">{{ __('Mapa') }}</span>
                     </a>
                 </div>
             </div>
@@ -525,7 +525,7 @@
             <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: rgba(245,158,11,0.12); box-shadow: 0 0 0 1px rgba(245,158,11,0.5);">
                 <svg class="w-4 h-4" fill="#f59e0b" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
             </div>
-            <span class="text-sm font-semibold text-zinc-800 tracking-wide">Frecuentes</span>
+            <span class="text-sm font-semibold text-zinc-800 tracking-wide">{{ __('Frecuentes') }}</span>
             <button type="button" x-on:click="$store.nav.close()"
                     class="ml-auto w-7 h-7 flex items-center justify-center rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-200/60 transition-colors">
                 <flux:icon icon="x-mark" class="w-4 h-4" />
@@ -545,22 +545,22 @@
                         <button type="button"
                             @click.prevent.stop="togglePin(pin.href, pin.label)"
                             class="flex-shrink-0 w-6 h-6 mr-2 flex items-center justify-center text-amber-400 hover:text-red-400 transition-colors rounded"
-                            title="Quitar de frecuentes">
+                            title="{{ __('Quitar de frecuentes') }}">
                             <flux:icon icon="x-mark" class="w-3.5 h-3.5" />
                         </button>
                     </div>
                 </template>
                 <div class="mx-4 mt-4 mb-2 flex items-center gap-2">
-                    <span class="text-[9px] font-semibold tracking-wider uppercase text-zinc-400 whitespace-nowrap">Tip</span>
+                    <span class="text-[9px] font-semibold tracking-wider uppercase text-zinc-400 whitespace-nowrap">{{ __('Tip') }}</span>
                     <div class="flex-1 border-t border-zinc-300/40"></div>
                 </div>
                 <p class="px-4 text-[11px] text-zinc-400 leading-relaxed">
-                    Haz clic en <svg class="inline w-3 h-3 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg> en cualquier ítem del menú para añadirlo aquí.
+                    {{ __('Haz clic en') }} <svg class="inline w-3 h-3 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg> {{ __('en cualquier ítem del menú para añadirlo aquí.') }}
                 </p>
             </nav>
         </div>
         <div class="px-4 py-2.5 border-t border-zinc-300/50 flex-shrink-0">
-            <p class="text-[10px] font-semibold tracking-widest uppercase" style="color: #f59e0b;">Frecuentes</p>
+            <p class="text-[10px] font-semibold tracking-widest uppercase" style="color: #f59e0b;">{{ __('Frecuentes') }}</p>
         </div>
     </div>
     @endif
@@ -628,17 +628,17 @@
                     </div>
                     <div>
                         <p class="text-sm font-bold text-zinc-800">{{ $ch['label'] }}</p>
-                        <p class="text-xs text-zinc-500 mt-1 leading-relaxed">Este módulo está disponible<br>en el Plan Completo.</p>
+                        <p class="text-xs text-zinc-500 mt-1 leading-relaxed">{{ __('Este módulo está disponible en el Plan Completo.') }}</p>
                     </div>
                     @if($_upgradePrice)
                         <span class="px-3 py-1 text-xs font-bold rounded-full" style="background: {{ $color['bg'] }}; color: {{ $color['accent'] }}; box-shadow: 0 0 0 1px {{ $color['border'] }};">
-                            Desde {{ $_upgradePrice }}€/mes
+                            {{ __('Desde :price€/mes', ['price' => $_upgradePrice]) }}
                         </span>
                     @endif
                     <a href="{{ route('subscription.manage') }}" wire:navigate x-on:click="$store.nav.close()"
                        class="w-full px-4 py-2.5 text-white text-sm font-bold rounded-xl transition-colors text-center"
                        style="background: {{ $color['accent'] }};">
-                        Activar Plan Completo
+                        {{ __('Activar Plan Completo') }}
                     </a>
                 </div>
                 @else
@@ -675,9 +675,9 @@
                                 @if(isset($item['badge']) && $item['badge'] > 0)
                                     <span class="px-1.5 py-0.5 text-[10px] font-bold bg-red-500 text-white rounded-full">{{ $item['badge'] }}</span>
                                 @elseif(isset($item['wip']) && $item['wip'])
-                                    <span class="px-1.5 py-0.5 text-[9px] font-bold bg-amber-100 text-amber-600 rounded-full whitespace-nowrap">Pronto</span>
+                                    <span class="px-1.5 py-0.5 text-[9px] font-bold bg-amber-100 text-amber-600 rounded-full whitespace-nowrap">{{ __('Pronto') }}</span>
                                 @elseif(isset($item['new']) && $item['new'])
-                                    <span class="px-1.5 py-0.5 text-[9px] font-bold bg-emerald-100 text-emerald-600 rounded-full whitespace-nowrap">Nuevo</span>
+                                    <span class="px-1.5 py-0.5 text-[9px] font-bold bg-emerald-100 text-emerald-600 rounded-full whitespace-nowrap">{{ __('Nuevo') }}</span>
                                 @elseif(isset($item['locked']) && $item['locked'])
                                     <svg class="w-3 h-3 flex-shrink-0 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                                 @elseif($item['active'] ?? false)
@@ -791,11 +791,11 @@
                 <button type="button"
                     @click="setProducerTab('vineyard'); mobileChapter = null"
                     :class="producerTab === 'vineyard' ? 'bg-green-500/20 text-green-400 ring-1 ring-inset ring-green-500/40' : 'text-white/40 hover:text-white/70 hover:bg-white/8'"
-                    class="flex-1 py-1.5 rounded-lg text-xs font-bold transition">🌿 Viñedo</button>
+                    class="flex-1 py-1.5 rounded-lg text-xs font-bold transition">🌿 {{ __('Viñedo') }}</button>
                 <button type="button"
                     @click="setProducerTab('bodega'); mobileChapter = null"
                     :class="producerTab === 'bodega' ? 'bg-red-500/20 text-red-400 ring-1 ring-inset ring-red-500/40' : 'text-white/40 hover:text-white/70 hover:bg-white/8'"
-                    class="flex-1 py-1.5 rounded-lg text-xs font-bold transition">🏛 Bodega</button>
+                    class="flex-1 py-1.5 rounded-lg text-xs font-bold transition">🏛 {{ __('Bodega') }}</button>
             </div>
             @endif
 
@@ -859,14 +859,14 @@
                             <svg class="w-6 h-6" fill="none" stroke="{{ $color['accent'] }}" stroke-width="1.8" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                             </svg>
-                            <p class="text-xs text-white/70">Disponible en el <strong class="text-white">Plan Completo</strong>.</p>
+                            <p class="text-xs text-white/70">{{ __('Disponible en el Plan Completo.') }}</p>
                             @if($_upgradePrice)
-                                <p class="text-[10px] text-white/40">Desde {{ $_upgradePrice }}€/mes</p>
+                                <p class="text-[10px] text-white/40">{{ __('Desde :price€/mes', ['price' => $_upgradePrice]) }}</p>
                             @endif
                             <a href="{{ route('subscription.manage') }}" wire:navigate @click="mobileOpen = false"
                                class="px-4 py-2 text-xs font-bold rounded-lg text-white transition-colors"
                                style="background: {{ $color['accent'] }};">
-                                Activar Plan Completo
+                                {{ __('Activar Plan Completo') }}
                             </a>
                         </div>
                         @else
@@ -960,7 +960,7 @@
                        @keydown.down.prevent="cmdkDown()"
                        @keydown.up.prevent="cmdkUp()"
                        @keydown.enter.prevent="cmdkEnter()"
-                       placeholder="Buscar sección..."
+                       placeholder="{{ __('Buscar sección...') }}"
                        class="flex-1 py-4 text-sm bg-transparent border-0 outline-none text-zinc-900 placeholder:text-zinc-400 focus:ring-0">
                 <kbd class="px-1.5 py-0.5 text-[10px] font-medium bg-zinc-100 text-zinc-500 rounded border border-zinc-200">ESC</kbd>
             </div>
@@ -981,16 +981,16 @@
                 </template>
                 <template x-if="cmdkFiltered.length === 0">
                     <div class="px-4 py-8 text-center text-sm text-zinc-400">
-                        Sin resultados para "<span x-text="cmdkQuery"></span>"
+                        {{ __('Sin resultados para') }} "<span x-text="cmdkQuery"></span>"
                     </div>
                 </template>
             </div>
 
             {{-- Footer --}}
             <div class="px-4 py-2 border-t border-zinc-100 flex items-center gap-4 text-[11px] text-zinc-400">
-                <span class="flex items-center gap-1"><kbd class="px-1 py-0.5 bg-zinc-100 rounded text-[10px]">&uarr;&darr;</kbd> navegar</span>
-                <span class="flex items-center gap-1"><kbd class="px-1 py-0.5 bg-zinc-100 rounded text-[10px]">&crarr;</kbd> ir</span>
-                <span class="flex items-center gap-1"><kbd class="px-1 py-0.5 bg-zinc-100 rounded text-[10px]">esc</kbd> cerrar</span>
+                <span class="flex items-center gap-1"><kbd class="px-1 py-0.5 bg-zinc-100 rounded text-[10px]">&uarr;&darr;</kbd> {{ __('navegar') }}</span>
+                <span class="flex items-center gap-1"><kbd class="px-1 py-0.5 bg-zinc-100 rounded text-[10px]">&crarr;</kbd> {{ __('ir') }}</span>
+                <span class="flex items-center gap-1"><kbd class="px-1 py-0.5 bg-zinc-100 rounded text-[10px]">esc</kbd> {{ __('cerrar') }}</span>
             </div>
         </div>
     </div>

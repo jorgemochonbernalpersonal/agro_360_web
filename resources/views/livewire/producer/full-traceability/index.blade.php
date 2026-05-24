@@ -1,16 +1,16 @@
 <div>
     <x-agro.page-header
-        title="Trazabilidad Cepa a Botella"
-        description="Flujo completo desde la parcela hasta el producto final embotellado"
+        :title="__('Trazabilidad Cepa a Botella')"
+        :description="__('Flujo completo desde la parcela hasta el producto final embotellado')"
         icon="arrow-trending-up"
     />
 
     {{-- Filtros --}}
     <div class="flex flex-wrap items-end gap-4 mb-6">
         <flux:field class="min-w-[200px]">
-            <flux:label>Campaña</flux:label>
+            <flux:label>{{ __('Campaña') }}</flux:label>
             <flux:select wire:model.live="filterCampaign">
-                <option value="">Seleccionar campaña...</option>
+                <option value="">{{ __('Seleccionar campaña...') }}</option>
                 @foreach($campaigns as $c)
                     <option value="{{ $c->id }}">{{ $c->name }} ({{ $c->year }})</option>
                 @endforeach
@@ -18,9 +18,9 @@
         </flux:field>
 
         <flux:field class="min-w-[200px]">
-            <flux:label>Parcela</flux:label>
+            <flux:label>{{ __('Parcela') }}</flux:label>
             <flux:select wire:model.live="filterPlot">
-                <option value="">Todas</option>
+                <option value="">{{ __('Todas') }}</option>
                 @foreach($plots as $p)
                     <option value="{{ $p->id }}">{{ $p->name }}</option>
                 @endforeach
@@ -28,9 +28,9 @@
         </flux:field>
 
         <flux:field class="min-w-[200px]">
-            <flux:label>Vino</flux:label>
+            <flux:label>{{ __('Vino') }}</flux:label>
             <flux:select wire:model.live="filterWine">
-                <option value="">Todos</option>
+                <option value="">{{ __('Todos') }}</option>
                 @foreach($wines as $w)
                     <option value="{{ $w->id }}">{{ $w->name }} ({{ $w->vintage }})</option>
                 @endforeach
@@ -41,11 +41,11 @@
     @if(!$filterCampaign)
         <x-agro.empty-state
             icon="arrow-trending-up"
-            title="Selecciona una campaña"
-            description="Elige una campaña para rastrear el flujo de uva desde la cepa hasta la botella."
+            :title="__('Selecciona una campaña')"
+            :description="__('Elige una campaña para rastrear el flujo de uva desde la cepa hasta la botella.')"
         />
     @elseif(!$traceData)
-        <x-agro.empty-state icon="arrow-trending-up" title="Sin datos" description="No se encontraron datos de trazabilidad." />
+        <x-agro.empty-state icon="arrow-trending-up" :title="__('Sin datos')" :description="__('No se encontraron datos de trazabilidad.')" />
     @else
         {{-- Pipeline visual: 4 etapas --}}
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -55,10 +55,10 @@
                     <div class="w-7 h-7 rounded-lg bg-green-500 flex items-center justify-center">
                         <flux:icon icon="sun" class="size-3.5 text-white" />
                     </div>
-                    <span class="text-xs font-bold uppercase tracking-wider text-green-700">1. Campo</span>
+                    <span class="text-xs font-bold uppercase tracking-wider text-green-700">{{ __('1. Campo') }}</span>
                 </div>
                 <p class="text-2xl font-bold text-zinc-900">{{ number_format($traceData['fieldStats']->total_kg ?? 0) }} kg</p>
-                <p class="text-xs text-zinc-500 mt-1">{{ $traceData['fieldStats']->entries ?? 0 }} vendimias · {{ $traceData['fieldStats']->plots_count ?? 0 }} parcelas</p>
+                <p class="text-xs text-zinc-500 mt-1">{{ $traceData['fieldStats']->entries ?? 0 }} {{ __('vendimias') }} · {{ $traceData['fieldStats']->plots_count ?? 0 }} {{ __('parcelas') }}</p>
                 <div class="hidden lg:block absolute -right-3 top-1/2 -translate-y-1/2 text-green-300 z-10">
                     <flux:icon icon="chevron-right" class="size-6" />
                 </div>
@@ -70,10 +70,10 @@
                     <div class="w-7 h-7 rounded-lg bg-amber-500 flex items-center justify-center">
                         <flux:icon icon="archive-box-arrow-down" class="size-3.5 text-white" />
                     </div>
-                    <span class="text-xs font-bold uppercase tracking-wider text-amber-700">2. Recepción</span>
+                    <span class="text-xs font-bold uppercase tracking-wider text-amber-700">{{ __('2. Recepción') }}</span>
                 </div>
                 <p class="text-2xl font-bold text-zinc-900">{{ number_format($traceData['receptionStats']->total_kg ?? 0) }} kg</p>
-                <p class="text-xs text-zinc-500 mt-1">{{ $traceData['receptionStats']->entries ?? 0 }} entradas · {{ $traceData['receptionStats']->batches_count ?? 0 }} lotes</p>
+                <p class="text-xs text-zinc-500 mt-1">{{ $traceData['receptionStats']->entries ?? 0 }} {{ __('entradas') }} · {{ $traceData['receptionStats']->batches_count ?? 0 }} {{ __('lotes') }}</p>
                 <div class="hidden lg:block absolute -right-3 top-1/2 -translate-y-1/2 text-amber-300 z-10">
                     <flux:icon icon="chevron-right" class="size-6" />
                 </div>
@@ -85,10 +85,10 @@
                     <div class="w-7 h-7 rounded-lg bg-purple-500 flex items-center justify-center">
                         <flux:icon icon="beaker" class="size-3.5 text-white" />
                     </div>
-                    <span class="text-xs font-bold uppercase tracking-wider text-purple-700">3. Elaboración</span>
+                    <span class="text-xs font-bold uppercase tracking-wider text-purple-700">{{ __('3. Elaboración') }}</span>
                 </div>
-                <p class="text-2xl font-bold text-zinc-900">{{ $traceData['wineStats']['total_wines'] }} vinos</p>
-                <p class="text-xs text-zinc-500 mt-1">{{ number_format($traceData['wineStats']['total_volume'] ?? 0) }} L en depósitos</p>
+                <p class="text-2xl font-bold text-zinc-900">{{ $traceData['wineStats']['total_wines'] }} {{ __('vinos') }}</p>
+                <p class="text-xs text-zinc-500 mt-1">{{ number_format($traceData['wineStats']['total_volume'] ?? 0) }} L {{ __('en depósitos') }}</p>
                 <div class="hidden lg:block absolute -right-3 top-1/2 -translate-y-1/2 text-purple-300 z-10">
                     <flux:icon icon="chevron-right" class="size-6" />
                 </div>
@@ -100,10 +100,10 @@
                     <div class="w-7 h-7 rounded-lg bg-rose-500 flex items-center justify-center">
                         <flux:icon icon="archive-box" class="size-3.5 text-white" />
                     </div>
-                    <span class="text-xs font-bold uppercase tracking-wider text-rose-700">4. Producto</span>
+                    <span class="text-xs font-bold uppercase tracking-wider text-rose-700">{{ __('4. Producto') }}</span>
                 </div>
-                <p class="text-2xl font-bold text-zinc-900">{{ $traceData['productStats']->total_lots ?? 0 }} lotes</p>
-                <p class="text-xs text-zinc-500 mt-1">{{ number_format($traceData['productStats']->sold_units ?? 0) }} / {{ number_format($traceData['productStats']->total_units ?? 0) }} uds vendidas</p>
+                <p class="text-2xl font-bold text-zinc-900">{{ $traceData['productStats']->total_lots ?? 0 }} {{ __('lotes') }}</p>
+                <p class="text-xs text-zinc-500 mt-1">{{ number_format($traceData['productStats']->sold_units ?? 0) }} / {{ number_format($traceData['productStats']->total_units ?? 0) }} {{ __('uds vendidas') }}</p>
             </div>
         </div>
 
@@ -113,7 +113,7 @@
                 <x-slot:header>
                     <div class="flex items-center gap-2">
                         <flux:icon icon="map" class="size-4 text-green-600" />
-                        <span class="text-sm font-semibold text-zinc-800">Origen: parcela y variedad</span>
+                        <span class="text-sm font-semibold text-zinc-800">{{ __('Origen: parcela y variedad') }}</span>
                     </div>
                 </x-slot:header>
                 @if($traceData['flowByPlot']->isNotEmpty())
@@ -121,9 +121,9 @@
                         <table class="w-full text-sm">
                             <thead>
                                 <tr class="bg-zinc-50 text-zinc-500 text-xs uppercase">
-                                    <th class="text-left px-3 py-2">Parcela</th>
-                                    <th class="text-left px-3 py-2">Variedad</th>
-                                    <th class="text-right px-3 py-2">Vendimias</th>
+                                    <th class="text-left px-3 py-2">{{ __('Parcela') }}</th>
+                                    <th class="text-left px-3 py-2">{{ __('Variedad') }}</th>
+                                    <th class="text-right px-3 py-2">{{ __('Vendimias') }}</th>
                                     <th class="text-right px-3 py-2">kg</th>
                                 </tr>
                             </thead>
@@ -140,7 +140,7 @@
                         </table>
                     </div>
                 @else
-                    <p class="text-sm text-zinc-400">Sin vendimias de campo en esta campaña.</p>
+                    <p class="text-sm text-zinc-400">{{ __('Sin vendimias de campo en esta campaña.') }}</p>
                 @endif
             </x-agro.card>
 
@@ -149,7 +149,7 @@
                 <x-slot:header>
                     <div class="flex items-center gap-2">
                         <flux:icon icon="archive-box-arrow-down" class="size-4 text-amber-600" />
-                        <span class="text-sm font-semibold text-zinc-800">Lotes de recepción</span>
+                        <span class="text-sm font-semibold text-zinc-800">{{ __('Lotes de recepción') }}</span>
                     </div>
                 </x-slot:header>
                 @if($traceData['batches']->isNotEmpty())
@@ -160,18 +160,18 @@
                                     <flux:icon icon="archive-box-arrow-down" class="size-4 text-amber-600" />
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                    <p class="text-sm font-medium text-zinc-900 truncate">{{ $batch->plotPlanting?->plot?->name ?? 'Sin parcela' }}</p>
-                                    <p class="text-xs text-zinc-400 truncate">{{ $batch->plotPlanting?->grapeVariety?->name ?? '—' }} · {{ $batch->receptions_count }} recepciones</p>
+                                    <p class="text-sm font-medium text-zinc-900 truncate">{{ $batch->plotPlanting?->plot?->name ?? __('Sin parcela') }}</p>
+                                    <p class="text-xs text-zinc-400 truncate">{{ $batch->plotPlanting?->grapeVariety?->name ?? '—' }} · {{ $batch->receptions_count }} {{ __('recepciones') }}</p>
                                 </div>
                                 <div class="text-right shrink-0">
                                     <p class="text-sm font-bold text-zinc-800">{{ number_format($batch->receptions_sum_total_weight ?? 0) }} kg</p>
-                                    <flux:badge size="sm" :color="$batch->status === 'closed' ? 'green' : 'amber'">{{ $batch->status === 'closed' ? 'Cerrado' : 'Abierto' }}</flux:badge>
+                                    <flux:badge size="sm" :color="$batch->status === 'closed' ? 'green' : 'amber'">{{ $batch->status === 'closed' ? __('Cerrado') : __('Abierto') }}</flux:badge>
                                 </div>
                             </div>
                         @endforeach
                     </div>
                 @else
-                    <p class="text-sm text-zinc-400">Sin lotes de recepción.</p>
+                    <p class="text-sm text-zinc-400">{{ __('Sin lotes de recepción.') }}</p>
                 @endif
             </x-agro.card>
         </div>
@@ -183,7 +183,7 @@
                     <div class="flex items-center justify-between w-full">
                         <div class="flex items-center gap-2">
                             <flux:icon icon="beaker" class="size-4 text-purple-600" />
-                            <span class="text-sm font-semibold text-zinc-800">Vinos elaborados</span>
+                            <span class="text-sm font-semibold text-zinc-800">{{ __('Vinos elaborados') }}</span>
                         </div>
                         <div class="flex gap-2">
                             @foreach($traceData['wineStats']['types'] as $type => $count)
@@ -196,12 +196,12 @@
                     <table class="w-full text-sm">
                         <thead>
                             <tr class="bg-zinc-50 text-zinc-500 text-xs uppercase">
-                                <th class="text-left px-3 py-2">Vino</th>
-                                <th class="text-left px-3 py-2">Tipo</th>
-                                <th class="text-left px-3 py-2">Enólogo</th>
-                                <th class="text-right px-3 py-2">Vendimias</th>
-                                <th class="text-right px-3 py-2">Trasiegos</th>
-                                <th class="text-right px-3 py-2">Embotellados</th>
+                                <th class="text-left px-3 py-2">{{ __('Vino') }}</th>
+                                <th class="text-left px-3 py-2">{{ __('Tipo') }}</th>
+                                <th class="text-left px-3 py-2">{{ __('Enólogo') }}</th>
+                                <th class="text-right px-3 py-2">{{ __('Vendimias') }}</th>
+                                <th class="text-right px-3 py-2">{{ __('Trasiegos') }}</th>
+                                <th class="text-right px-3 py-2">{{ __('Embotellados') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-zinc-100">

@@ -1,42 +1,42 @@
 <x-agro.form-card
-    title="Edit Warehouse"
-    description="Update the details of this warehouse"
+    :title="__('Editar Almacén')"
+    :description="__('Actualiza los datos de este almacén')"
     :back-url="roleRoute('viticulturist.warehouse.index', ['tab' => 'almacenes'])"
 >
     <form wire:submit="save" class="space-y-6">
 
-        <x-agro.form-section title="Warehouse Information">
+        <x-agro.form-section :title="__('Información del Almacén')">
             <div class="grid grid-cols-1 gap-6">
                 <flux:field>
-                    <flux:label required>Name</flux:label>
+                    <flux:label required>{{ __('Nombre') }}</flux:label>
                     <flux:input wire:model="name" type="text" required />
                     <flux:error name="name" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Location</flux:label>
-                    <flux:input wire:model="location" type="text" placeholder="e.g. Building A, Ground Floor, Room 3..." />
+                    <flux:label>{{ __('Ubicación') }}</flux:label>
+                    <flux:input wire:model="location" type="text" :placeholder="__('Ej: Nave A, Planta Baja, Sala 3...')" />
                     <flux:error name="location" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Description</flux:label>
-                    <flux:textarea wire:model="description" rows="3" placeholder="Additional information about this warehouse..." />
+                    <flux:label>{{ __('Descripción') }}</flux:label>
+                    <flux:textarea wire:model="description" rows="3" :placeholder="__('Información adicional sobre este almacén...')" />
                     <flux:error name="description" />
                 </flux:field>
 
                 <div class="flex items-center gap-3">
                     <input wire:model="active" type="checkbox" id="active"
                         class="w-4 h-4 text-agro-700 border-zinc-300 rounded focus:ring-agro-700">
-                    <label for="active" class="text-sm font-semibold text-zinc-700">Active warehouse</label>
-                    <p class="text-xs text-zinc-500">Inactive warehouses will not appear in filters when registering stock</p>
+                    <label for="active" class="text-sm font-semibold text-zinc-700">{{ __('Almacén activo') }}</label>
+                    <p class="text-xs text-zinc-500">{{ __('Los almacenes inactivos no aparecerán en los filtros al registrar stock') }}</p>
                 </div>
             </div>
         </x-agro.form-section>
 
         <x-agro.form-actions
             :cancel-url="roleRoute('viticulturist.warehouse.index', ['tab' => 'almacenes'])"
-            submit-label="Save Changes"
+            :submit-label="__('Guardar Cambios')"
         />
     </form>
 </x-agro.form-card>

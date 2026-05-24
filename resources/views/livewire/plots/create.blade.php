@@ -1,26 +1,26 @@
-﻿<div>
-    <x-agro.form-card title="Nueva Parcela" description="Crea una nueva parcela agricola" :back-url="roleRoute('plots.index')">
+<div>
+    <x-agro.form-card :title="__('Nueva Parcela')" :description="__('Crea una nueva parcela agrícola')" :back-url="roleRoute('plots.index')">
         <form wire:submit.prevent="save" class="space-y-8" data-cy="plot-create-form">
             @error('general')
                 <flux:callout variant="danger" icon="x-circle">
-                    <flux:callout.heading>Error</flux:callout.heading>
+                    <flux:callout.heading>{{ __('Error') }}</flux:callout.heading>
                     <flux:callout.text>{{ $message }}</flux:callout.text>
                 </flux:callout>
             @enderror
 
             <!-- 1. Datos Principales -->
-            <x-agro.form-section title="Datos Principales">
+            <x-agro.form-section :title="__('Datos Principales')">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     @if (in_array(auth()->user()->role, ['admin', 'supervisor', 'winery', 'viticulturist', 'producer']))
                         <div class="md:col-span-2">
                             <flux:field>
-                                <flux:label for="viticulturist_id">Viticultor Asignado *</flux:label>
+                                <flux:label for="viticulturist_id">{{ __('Viticultor Asignado') }} *</flux:label>
                                 <flux:select wire:model="viticulturist_id" id="viticulturist_id" data-cy="plot-viticulturist-id" required>
-                                    <option value="">Seleccionar...</option>
+                                    <option value="">{{ __('Seleccionar...') }}</option>
                                     @forelse ($this->viticulturists as $viticulturist)
-                                        <option value="{{ $viticulturist->id }}">{{ $viticulturist->name }}@if($viticulturist->id === auth()->id()) (Yo)@endif</option>
+                                        <option value="{{ $viticulturist->id }}">{{ $viticulturist->name }}@if($viticulturist->id === auth()->id()) ({{ __('Yo') }})@endif</option>
                                     @empty
-                                        <option value="" disabled>No hay viticultores disponibles</option>
+                                        <option value="" disabled>{{ __('No hay viticultores disponibles') }}</option>
                                     @endforelse
                                 </flux:select>
                                 <flux:error name="viticulturist_id" />
@@ -29,21 +29,21 @@
                     @endif
 
                     <flux:field>
-                        <flux:label for="name">Nombre de la Parcela *</flux:label>
-                        <flux:input wire:model="name" type="text" id="name" data-cy="plot-name" placeholder="Ej: Parcela Norte" required />
+                        <flux:label for="name">{{ __('Nombre de la Parcela') }} *</flux:label>
+                        <flux:input wire:model="name" type="text" id="name" data-cy="plot-name" :placeholder="__('Ej: Parcela Norte')" required />
                         <flux:error name="name" />
                     </flux:field>
 
                     <flux:field>
-                        <flux:label for="area">Área (hectáreas) *</flux:label>
+                        <flux:label for="area">{{ __('Área (hectáreas)') }} *</flux:label>
                         <flux:input wire:model="area" type="number" step="0.001" min="0.001" id="area" data-cy="plot-area" placeholder="0.000" />
                         <flux:error name="area" />
                     </flux:field>
 
                     <flux:field>
-                        <flux:label for="property_type_id">Régimen de Tenencia</flux:label>
+                        <flux:label for="property_type_id">{{ __('Régimen de Tenencia') }}</flux:label>
                         <flux:select wire:model="property_type_id" id="property_type_id">
-                            <option value="">Sin especificar</option>
+                            <option value="">{{ __('Sin especificar') }}</option>
                             @foreach ($propertyTypes as $pt)
                                 <option value="{{ $pt->id }}">{{ $pt->name }}</option>
                             @endforeach
@@ -53,9 +53,9 @@
 
                     <div class="md:col-span-2">
                         <flux:field>
-                            <flux:label for="description">Descripción</flux:label>
+                            <flux:label for="description">{{ __('Descripción') }}</flux:label>
                             <flux:textarea wire:model="description" id="description" data-cy="plot-description" rows="3"
-                                placeholder="Descripción de la parcela..." />
+                                :placeholder="__('Descripción de la parcela...')" />
                             <flux:error name="description" />
                         </flux:field>
                     </div>
@@ -63,7 +63,7 @@
             </x-agro.form-section>
 
             <!-- 2. Ubicacion -->
-            <x-agro.form-section title="Ubicación">
+            <x-agro.form-section :title="__('Ubicación')">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6"
                     x-data="{
                         communityId: '{{ $autonomous_community_id }}',
@@ -99,11 +99,11 @@
                         }
                     }">
                     <flux:field>
-                        <flux:label for="autonomous_community_id">Comunidad Autónoma *</flux:label>
+                        <flux:label for="autonomous_community_id">{{ __('Comunidad Autónoma') }} *</flux:label>
                         <flux:select wire:model="autonomous_community_id" id="autonomous_community_id"
                             data-cy="plot-autonomous-community-id" required
                             x-on:change="onCommunityChange($event.target.value)">
-                            <option value="">Seleccionar...</option>
+                            <option value="">{{ __('Seleccionar...') }}</option>
                             @foreach ($autonomousCommunities as $community)
                                 <option value="{{ $community->id }}">
                                     {{ $community->code === '15' ? 'Comunidad Foral de Navarra' : $community->name }}
@@ -114,12 +114,12 @@
                     </flux:field>
 
                     <flux:field>
-                        <flux:label for="province_id">Provincia *</flux:label>
+                        <flux:label for="province_id">{{ __('Provincia') }} *</flux:label>
                         <flux:select wire:model="province_id" id="province_id" data-cy="plot-province-id" required
                             x-bind:disabled="!communityId"
                             x-bind:value="provinceId"
                             x-on:change="onProvinceChange($event.target.value)">
-                            <option value="">Seleccionar...</option>
+                            <option value="">{{ __('Seleccionar...') }}</option>
                             <template x-for="province in filteredProvinces" :key="province.id">
                                 <option :value="province.id" x-text="province.name"></option>
                             </template>
@@ -128,11 +128,11 @@
                     </flux:field>
 
                     <flux:field>
-                        <flux:label for="municipality_id">Municipio *</flux:label>
+                        <flux:label for="municipality_id">{{ __('Municipio') }} *</flux:label>
                         <flux:select wire:model="municipality_id" id="municipality_id" data-cy="plot-municipality-id" required
                             x-bind:disabled="!provinceId"
                             x-bind:value="municipalityId">
-                            <option value="">Seleccionar...</option>
+                            <option value="">{{ __('Seleccionar...') }}</option>
                             <template x-for="mun in municipalities" :key="mun.id">
                                 <option :value="mun.id" x-text="mun.name"></option>
                             </template>
@@ -141,9 +141,9 @@
                     </flux:field>
 
                     <flux:field>
-                        <flux:label for="site_id">Paraje</flux:label>
+                        <flux:label for="site_id">{{ __('Paraje') }}</flux:label>
                         <flux:select wire:model="site_id" id="site_id">
-                            <option value="">Sin especificar</option>
+                            <option value="">{{ __('Sin especificar') }}</option>
                             @foreach ($sites as $s)
                                 <option value="{{ $s->id }}">{{ $s->name }}</option>
                             @endforeach
@@ -152,9 +152,9 @@
                     </flux:field>
 
                     <flux:field>
-                        <flux:label for="valley_id">Valle / Zona</flux:label>
+                        <flux:label for="valley_id">{{ __('Valle / Zona') }}</flux:label>
                         <flux:select wire:model="valley_id" id="valley_id">
-                            <option value="">Sin especificar</option>
+                            <option value="">{{ __('Sin especificar') }}</option>
                             @foreach ($valleys as $v)
                                 <option value="{{ $v->id }}">{{ $v->name }}</option>
                             @endforeach
@@ -165,46 +165,46 @@
             </x-agro.form-section>
 
             <!-- 3. Identificacion Catastral -->
-            <x-agro.form-section title="Identificación Catastral">
+            <x-agro.form-section :title="__('Identificación Catastral')">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <flux:field>
-                        <flux:label for="code_parcel">Código de Parcela Catastral</flux:label>
-                        <flux:input wire:model="code_parcel" type="text" id="code_parcel" placeholder="Ej: 14-023-A-001-0001" />
+                        <flux:label for="code_parcel">{{ __('Código de Parcela Catastral') }}</flux:label>
+                        <flux:input wire:model="code_parcel" type="text" id="code_parcel" :placeholder="__('Ej: 14-023-A-001-0001')" />
                         <flux:error name="code_parcel" />
                     </flux:field>
                     <flux:field>
-                        <flux:label for="enclosure">Recinto / Enclave</flux:label>
-                        <flux:input wire:model="enclosure" type="text" id="enclosure" placeholder="Ref. recinto" />
+                        <flux:label for="enclosure">{{ __('Recinto / Enclave') }}</flux:label>
+                        <flux:input wire:model="enclosure" type="text" id="enclosure" :placeholder="__('Ref. recinto')" />
                         <flux:error name="enclosure" />
                     </flux:field>
                     <flux:field>
-                        <flux:label for="cadastral_area">Superficie Catastral (ha)</flux:label>
+                        <flux:label for="cadastral_area">{{ __('Superficie Catastral (ha)') }}</flux:label>
                         <flux:input wire:model="cadastral_area" type="number" step="0.001" min="0" id="cadastral_area" placeholder="0.000" />
-                        <flux:description>Superficie según el catastro (puede diferir del área agrícola)</flux:description>
+                        <flux:description>{{ __('Superficie según el catastro (puede diferir del área agrícola)') }}</flux:description>
                         <flux:error name="cadastral_area" />
                     </flux:field>
                     <flux:field>
-                        <flux:label for="pac_eligible_area">Superficie Admisible PAC (ha)</flux:label>
+                        <flux:label for="pac_eligible_area">{{ __('Superficie Admisible PAC (ha)') }}</flux:label>
                         <flux:input wire:model="pac_eligible_area" type="number" step="0.001" min="0" id="pac_eligible_area" placeholder="0.000" />
-                        <flux:description>Superficie reconocida como elegible para ayudas PAC (FEGA)</flux:description>
+                        <flux:description>{{ __('Superficie reconocida como elegible para ayudas PAC (FEGA)') }}</flux:description>
                         <flux:error name="pac_eligible_area" />
                     </flux:field>
                     <flux:field>
-                        <flux:label for="non_eligible_area">Superficie No Admisible (ha)</flux:label>
+                        <flux:label for="non_eligible_area">{{ __('Superficie No Admisible (ha)') }}</flux:label>
                         <flux:input wire:model="non_eligible_area" type="number" step="0.001" min="0" id="non_eligible_area" placeholder="0.000" />
-                        <flux:description>Caminos, construcciones, linderos excluidos de la PAC</flux:description>
+                        <flux:description>{{ __('Caminos, construcciones, linderos excluidos de la PAC') }}</flux:description>
                         <flux:error name="non_eligible_area" />
                     </flux:field>
                 </div>
             </x-agro.form-section>
 
             <!-- 4. Caracteristicas de la Parcela -->
-            <x-agro.form-section title="Características de la Parcela">
+            <x-agro.form-section :title="__('Características de la Parcela')">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <flux:field>
-                        <flux:label for="soil_type_id">Tipo de Suelo</flux:label>
+                        <flux:label for="soil_type_id">{{ __('Tipo de Suelo') }}</flux:label>
                         <flux:select wire:model="soil_type_id" id="soil_type_id">
-                            <option value="">Sin especificar</option>
+                            <option value="">{{ __('Sin especificar') }}</option>
                             @foreach ($soilTypes as $st)
                                 <option value="{{ $st->id }}">{{ $st->name }}</option>
                             @endforeach
@@ -212,9 +212,9 @@
                         <flux:error name="soil_type_id" />
                     </flux:field>
                     <flux:field>
-                        <flux:label for="topography_id">Topografía</flux:label>
+                        <flux:label for="topography_id">{{ __('Topografía') }}</flux:label>
                         <flux:select wire:model="topography_id" id="topography_id">
-                            <option value="">Sin especificar</option>
+                            <option value="">{{ __('Sin especificar') }}</option>
                             @foreach ($topographies as $t)
                                 <option value="{{ $t->id }}">{{ $t->name }}</option>
                             @endforeach
@@ -222,9 +222,9 @@
                         <flux:error name="topography_id" />
                     </flux:field>
                     <flux:field>
-                        <flux:label for="orientation_id">Orientación</flux:label>
+                        <flux:label for="orientation_id">{{ __('Orientación') }}</flux:label>
                         <flux:select wire:model="orientation_id" id="orientation_id">
-                            <option value="">Sin especificar</option>
+                            <option value="">{{ __('Sin especificar') }}</option>
                             @foreach ($orientations as $o)
                                 <option value="{{ $o->id }}">{{ $o->name }} ({{ $o->abbreviation }})</option>
                             @endforeach
@@ -232,14 +232,14 @@
                         <flux:error name="orientation_id" />
                     </flux:field>
                     <flux:field>
-                        <flux:label for="slope">Pendiente (%)</flux:label>
-                        <flux:input wire:model="slope" type="number" step="0.01" min="0" max="100" id="slope" placeholder="Ej: 12.5" />
+                        <flux:label for="slope">{{ __('Pendiente (%)') }}</flux:label>
+                        <flux:input wire:model="slope" type="number" step="0.01" min="0" max="100" id="slope" :placeholder="__('Ej: 12.5')" />
                         <flux:error name="slope" />
                     </flux:field>
                     <flux:field>
-                        <flux:label for="irrigation_type_id">Tipo de Riego</flux:label>
+                        <flux:label for="irrigation_type_id">{{ __('Tipo de Riego') }}</flux:label>
                         <flux:select wire:model="irrigation_type_id" id="irrigation_type_id">
-                            <option value="">Sin especificar</option>
+                            <option value="">{{ __('Sin especificar') }}</option>
                             @foreach ($irrigationTypes as $it)
                                 <option value="{{ $it->id }}">{{ $it->name }}</option>
                             @endforeach
@@ -250,33 +250,33 @@
             </x-agro.form-section>
 
             <!-- 5. Cultivo -->
-            <x-agro.form-section title="Cultivo">
+            <x-agro.form-section :title="__('Cultivo')">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <flux:field>
-                        <flux:label for="planting_pattern">Marco de Plantación</flux:label>
-                        <flux:input wire:model="planting_pattern" type="text" id="planting_pattern" placeholder="Ej: 2.5x1.2 tresbolillo" />
+                        <flux:label for="planting_pattern">{{ __('Marco de Plantación') }}</flux:label>
+                        <flux:input wire:model="planting_pattern" type="text" id="planting_pattern" :placeholder="__('Ej: 2.5x1.2 tresbolillo')" />
                         <flux:error name="planting_pattern" />
                     </flux:field>
                     <div class="md:col-span-2 mt-1">
-                        <flux:checkbox wire:model="is_organic" id="is_organic" label="Producción Ecológica" description="La parcela está bajo un programa de agricultura ecológica certificada." />
+                        <flux:checkbox wire:model="is_organic" id="is_organic" :label="__('Producción Ecológica')" :description="__('La parcela está bajo un programa de agricultura ecológica certificada.')" />
                     </div>
                 </div>
-                <p class="text-xs text-zinc-500 mt-3">El año de plantación, sistema de conducción y número de cepas se gestionan en cada plantación.</p>
+                <p class="text-xs text-zinc-500 mt-3">{{ __('El año de plantación, sistema de conducción y número de cepas se gestionan en cada plantación.') }}</p>
             </x-agro.form-section>
 
             <!-- 6. Avanzado -->
-            <x-agro.form-section title="Avanzado">
+            <x-agro.form-section :title="__('Avanzado')">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <flux:field>
-                        <flux:label for="degree_day_base">Temperatura Base Grados-Día (°C)</flux:label>
+                        <flux:label for="degree_day_base">{{ __('Temperatura Base Grados-Día (°C)') }}</flux:label>
                         <flux:input wire:model="degree_day_base" type="number" step="0.1" min="0" max="30" id="degree_day_base" placeholder="10.0" />
-                        <flux:description>Por defecto 10 °C (estándar vitícola)</flux:description>
+                        <flux:description>{{ __('Por defecto 10 °C (estándar vitícola)') }}</flux:description>
                         <flux:error name="degree_day_base" />
                     </flux:field>
                 </div>
             </x-agro.form-section>
 
-            <x-agro.form-actions :cancel-url="roleRoute('plots.index')" submit-label="Crear Parcela" />
+            <x-agro.form-actions :cancel-url="roleRoute('plots.index')" :submit-label="__('Crear Parcela')" />
         </form>
     </x-agro.form-card>
 </div>

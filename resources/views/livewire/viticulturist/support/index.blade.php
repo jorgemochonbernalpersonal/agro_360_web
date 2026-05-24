@@ -1,42 +1,42 @@
 <div class="space-y-6 animate-fade-in">
     <x-agro.page-header
-        title="Soporte Técnico"
-        description="Reporta bugs, solicita mejoras o haz preguntas"
+        :title="__('Soporte Técnico')"
+        :description="__('Reporta bugs, solicita mejoras o haz preguntas')"
     >
         <x-slot:actions>
             <flux:button href="{{ roleRoute('viticulturist.support.create') }}" variant="primary" icon="plus">
-                Nuevo Ticket
+                {{ __('Nuevo Ticket') }}
             </flux:button>
         </x-slot:actions>
     </x-agro.page-header>
 
     {{-- Stats Cards --}}
     <x-agro.stats-section key="viticulturist-support" columns="4">
-        <x-agro.stat-card label="Total" :value="$stats['total']" icon="ticket" color="agro" />
-        <x-agro.stat-card label="Abiertos" :value="$stats['open']" icon="envelope-open" color="blue" />
-        <x-agro.stat-card label="En Progreso" :value="$stats['in_progress']" icon="arrow-path" color="yellow" />
-        <x-agro.stat-card label="Resueltos" :value="$stats['resolved']" icon="check-circle" color="green" />
+        <x-agro.stat-card :label="__('Total')" :value="$stats['total']" icon="ticket" color="agro" />
+        <x-agro.stat-card :label="__('Abiertos')" :value="$stats['open']" icon="envelope-open" color="blue" />
+        <x-agro.stat-card :label="__('En Progreso')" :value="$stats['in_progress']" icon="arrow-path" color="yellow" />
+        <x-agro.stat-card :label="__('Resueltos')" :value="$stats['resolved']" icon="check-circle" color="green" />
     </x-agro.stats-section>
 
     {{-- Filtros --}}
     <x-agro.filter-bar>
         <x-agro.filter-input
             wire:model.live="search"
-            placeholder="Buscar tickets..."
+            :placeholder="__('Buscar tickets...')"
         />
         <x-agro.filter-select wire:model.live="filterStatus">
-            <option value="all">Todos los estados</option>
-            <option value="open">Abiertos</option>
-            <option value="in_progress">En Progreso</option>
-            <option value="resolved">Resueltos</option>
-            <option value="closed">Cerrados</option>
+            <option value="all">{{ __('Todos los estados') }}</option>
+            <option value="open">{{ __('Abiertos') }}</option>
+            <option value="in_progress">{{ __('En Progreso') }}</option>
+            <option value="resolved">{{ __('Resueltos') }}</option>
+            <option value="closed">{{ __('Cerrados') }}</option>
         </x-agro.filter-select>
         <x-agro.filter-select wire:model.live="filterType">
-            <option value="all">Todos los tipos</option>
+            <option value="all">{{ __('Todos los tipos') }}</option>
             <option value="bug">Bugs</option>
-            <option value="feature">Nuevas Funcionalidades</option>
-            <option value="improvement">Mejoras</option>
-            <option value="question">Preguntas</option>
+            <option value="feature">{{ __('Nuevas Funcionalidades') }}</option>
+            <option value="improvement">{{ __('Mejoras') }}</option>
+            <option value="question">{{ __('Preguntas') }}</option>
         </x-agro.filter-select>
     </x-agro.filter-bar>
 
@@ -77,7 +77,7 @@
                             @if($ticket->comments_count > 0)
                                 <div class="flex items-center gap-1 text-xs text-zinc-400">
                                     <flux:icon icon="chat-bubble-left" class="size-3" />
-                                    {{ $ticket->comments_count }} {{ $ticket->comments_count === 1 ? 'comentario' : 'comentarios' }}
+                                    {{ $ticket->comments_count }} {{ $ticket->comments_count === 1 ? __('comentario') : __('comentarios') }}
                                 </div>
                             @endif
                         </div>
@@ -87,7 +87,7 @@
                                 <x-agro.action-button
                                     variant="view"
                                     wire:click.stop="selectTicket({{ $ticket->id }})"
-                                    title="Ver detalles"
+                                    :title="__('Ver detalles')"
                                 />
                             </div>
                         </x-slot:footer>
@@ -98,12 +98,12 @@
         @else
             <x-agro.empty-state
                 icon="ticket"
-                title="No hay tickets que mostrar"
-                description="Comienza creando tu primer ticket de soporte"
+                :title="__('No hay tickets que mostrar')"
+                :description="__('Comienza creando tu primer ticket de soporte')"
             >
                 <x-slot:action>
                     <flux:button href="{{ roleRoute('viticulturist.support.create') }}" variant="primary" icon="plus">
-                        Crear mi primer ticket
+                        {{ __('Crear mi primer ticket') }}
                     </flux:button>
                 </x-slot:action>
             </x-agro.empty-state>
@@ -133,19 +133,19 @@
                     <div class="p-6 overflow-y-auto max-h-[60vh]">
                         {{-- Descripción --}}
                         <div class="mb-6">
-                            <div class="font-semibold text-zinc-900 mb-2">Descripción</div>
+                            <div class="font-semibold text-zinc-900 mb-2">{{ __('Descripción') }}</div>
                             <p class="text-zinc-700 whitespace-pre-wrap">{{ $selectedTicket->description }}</p>
 
                             {{-- Imágenes adjuntas --}}
                             @if(!empty($selectedTicket->image_urls))
                                 <div class="mt-4">
-                                    <div class="text-sm font-medium text-zinc-700 mb-2">Imágenes adjuntas ({{ count($selectedTicket->image_urls) }}):</div>
+                                    <div class="text-sm font-medium text-zinc-700 mb-2">{{ __('Imágenes adjuntas') }} ({{ count($selectedTicket->image_urls) }}):</div>
                                     <div class="grid grid-cols-2 gap-2">
                                         @foreach($selectedTicket->image_urls as $url)
                                             <a href="{{ $url }}" target="_blank" class="block">
                                                 <img
                                                     src="{{ $url }}"
-                                                    alt="Imagen del ticket"
+                                                    :alt="__('Imagen del ticket')"
                                                     loading="lazy"
                                                     class="w-full h-40 object-cover rounded-lg border border-zinc-300 hover:opacity-90 transition cursor-pointer"
                                                 >
@@ -155,13 +155,13 @@
                                 </div>
                             @endif
 
-                            <p class="text-xs text-zinc-500 mt-2">Creado {{ $selectedTicket->created_at->diffForHumans() }}</p>
+                            <p class="text-xs text-zinc-500 mt-2">{{ __('Creado') }} {{ $selectedTicket->created_at->diffForHumans() }}</p>
                         </div>
 
                         {{-- Comentarios --}}
                         @if($selectedTicket->comments->count() > 0)
                             <div class="mb-6">
-                                <div class="font-semibold text-zinc-900 mb-3">Comentarios</div>
+                                <div class="font-semibold text-zinc-900 mb-3">{{ __('Comentarios') }}</div>
                                 <div class="space-y-3">
                                     @foreach($selectedTicket->comments as $comment)
                                         <div class="bg-zinc-50 rounded-lg p-3">
@@ -179,15 +179,15 @@
                         {{-- Añadir Comentario --}}
                         @if($selectedTicket->isOpen() || $selectedTicket->status === 'in_progress')
                             <div>
-                                <div class="font-semibold text-zinc-900 mb-2">Añadir Comentario</div>
+                                <div class="font-semibold text-zinc-900 mb-2">{{ __('Añadir Comentario') }}</div>
                                 <flux:textarea
                                     wire:model="newComment"
                                     rows="3"
-                                    placeholder="Escribe tu comentario..."
+                                    :placeholder="__('Escribe tu comentario...')"
                                 />
                                 @error('newComment') <flux:error>{{ $message }}</flux:error> @enderror
                                 <flux:button wire:click="addComment" variant="primary" size="sm" class="mt-2">
-                                    Añadir Comentario
+                                    {{ __('Añadir Comentario') }}
                                 </flux:button>
                             </div>
                         @endif
@@ -196,7 +196,7 @@
                     {{-- Footer --}}
                     <div class="p-4 border-t border-zinc-200 flex justify-end">
                         <flux:button wire:click="closeTicketDetail" variant="outline">
-                            Cerrar
+                            {{ __('Cerrar') }}
                         </flux:button>
                     </div>
                 </div>

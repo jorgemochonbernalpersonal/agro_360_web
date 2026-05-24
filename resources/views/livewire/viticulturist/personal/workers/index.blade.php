@@ -1,12 +1,12 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="Trabajadores Individuales"
-        description="Gestiona trabajadores que no pertenecen a ninguna cuadrilla"
+        :title="__('Trabajadores Individuales')"
+        :description="__('Gestiona trabajadores que no pertenecen a ninguna cuadrilla')"
     >
         <x-slot:actions>
             <flux:button href="{{ roleRoute('viticulturist.personal.index') }}" variant="outline" icon="arrow-left">
-                Cuadrillas
+                {{ __('Cuadrillas') }}
             </flux:button>
         </x-slot:actions>
     </x-agro.page-header>
@@ -18,16 +18,16 @@
                 <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center shrink-0">
                     <flux:icon icon="user-plus" class="size-4 text-agro-600" />
                 </div>
-                <span class="font-semibold text-zinc-900 text-sm">Agregar Trabajador Individual</span>
+                <span class="font-semibold text-zinc-900 text-sm">{{ __('Agregar Trabajador Individual') }}</span>
             </div>
         </x-slot:header>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             @if($wineries->isNotEmpty() && $wineries->count() > 1)
                 <div>
-                    <label class="block text-sm font-medium text-zinc-700 mb-1.5">Bodega <span class="text-zinc-400 font-normal">(opcional)</span></label>
+                    <label class="block text-sm font-medium text-zinc-700 mb-1.5">{{ __('Bodega') }} <span class="text-zinc-400 font-normal">({{ __('opcional') }})</span></label>
                     <flux:select wire:model.live="selectedWineryId">
-                        <option value="">Sin bodega (solo mis viticultores)</option>
+                        <option value="">{{ __('Sin bodega (solo mis viticultores)') }}</option>
                         @foreach($wineries as $winery)
                             <option value="{{ $winery->id }}">{{ $winery->name }}</option>
                         @endforeach
@@ -38,9 +38,9 @@
             @endif
 
             <div>
-                <label class="block text-sm font-medium text-zinc-700 mb-1.5">Viticultor</label>
+                <label class="block text-sm font-medium text-zinc-700 mb-1.5">{{ __('Viticultor') }}</label>
                 <flux:select wire:model="newWorkerId">
-                    <option value="">Selecciona un viticultor</option>
+                    <option value="">{{ __('Selecciona un viticultor') }}</option>
                     @foreach($availableViticulturists as $viticulturist)
                         <option value="{{ $viticulturist->id }}">{{ $viticulturist->name }}</option>
                     @endforeach
@@ -49,7 +49,7 @@
 
             <div class="flex items-end">
                 <flux:button wire:click="addWorker" variant="primary" class="w-full">
-                    Agregar Trabajador
+                    {{ __('Agregar Trabajador') }}
                 </flux:button>
             </div>
         </div>
@@ -66,7 +66,7 @@
                     wire:model.live="wineryFilter"
                     class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm text-zinc-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition appearance-none"
                 >
-                    <option value="">Todas las bodegas</option>
+                    <option value="">{{ __('Todas las bodegas') }}</option>
                     @foreach($wineries as $winery)
                         <option value="{{ $winery->id }}">{{ $winery->name }}</option>
                     @endforeach
@@ -107,18 +107,18 @@
                         @if($worker->crew)
                             <span class="text-xs text-agro-700 font-medium">{{ $worker->crew->name }}</span>
                         @else
-                            <span class="text-xs text-zinc-400 italic">Sin cuadrilla</span>
+                            <span class="text-xs text-zinc-400 italic">{{ __('Sin cuadrilla') }}</span>
                         @endif
                     </div>
 
                     {{-- Asignado por + fecha --}}
                     <div class="grid grid-cols-2 gap-2">
                         <div class="bg-zinc-50 rounded-xl p-2.5">
-                            <p class="text-[10px] text-zinc-500 font-medium uppercase tracking-wide mb-0.5">Asignado por</p>
+                            <p class="text-[10px] text-zinc-500 font-medium uppercase tracking-wide mb-0.5">{{ __('Asignado por') }}</p>
                             <p class="text-xs font-semibold text-zinc-700 truncate">{{ $worker->assignedBy?->name ?? 'N/A' }}</p>
                         </div>
                         <div class="bg-zinc-50 rounded-xl p-2.5">
-                            <p class="text-[10px] text-zinc-500 font-medium uppercase tracking-wide mb-0.5">Fecha</p>
+                            <p class="text-[10px] text-zinc-500 font-medium uppercase tracking-wide mb-0.5">{{ __('Fecha') }}</p>
                             <p class="text-xs font-semibold text-zinc-700">{{ $worker->created_at->format('d/m/Y') }}</p>
                         </div>
                     </div>
@@ -128,7 +128,7 @@
                             {{-- Asignar a cuadrilla --}}
                             @if($crews->count() > 0)
                                 <div x-data="{ open: false }" class="relative">
-                                    <button @click="open = !open" class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors" title="Asignar a cuadrilla">
+                                    <button @click="open = !open" class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors" :title="__('Asignar a cuadrilla')">
                                         <flux:icon icon="user-group" class="size-4" />
                                     </button>
                                     <div
@@ -137,9 +137,9 @@
                                         x-transition
                                         class="absolute left-0 bottom-10 w-64 bg-white rounded-xl shadow-xl z-10 border border-zinc-200 p-4"
                                     >
-                                        <p class="text-sm font-semibold text-zinc-700 mb-3">Asignar a cuadrilla</p>
+                                        <p class="text-sm font-semibold text-zinc-700 mb-3">{{ __('Asignar a cuadrilla') }}</p>
                                         <flux:select wire:model="assignToCrewId" class="mb-3">
-                                            <flux:select.option value="">Selecciona una cuadrilla</flux:select.option>
+                                            <flux:select.option value="">{{ __('Selecciona una cuadrilla') }}</flux:select.option>
                                             @foreach($crews as $crew)
                                                 <flux:select.option value="{{ $crew->id }}">{{ $crew->name }}</flux:select.option>
                                             @endforeach
@@ -151,7 +151,7 @@
                                             class="w-full"
                                             size="sm"
                                         >
-                                            Asignar
+                                            {{ __('Asignar') }}
                                         </flux:button>
                                     </div>
                                 </div>
@@ -162,9 +162,9 @@
                             {{-- Eliminar --}}
                             <button
                                 wire:click="removeWorker({{ $worker->id }})"
-                                wire:confirm="¿Seguro que deseas remover este trabajador individual?"
+                                wire:confirm="{{ __('¿Seguro que deseas remover este trabajador individual?') }}"
                                 class="{{ $btnDanger }}"
-                                title="Remover trabajador"
+                                :title="__('Remover trabajador')"
                             >
                                 <flux:icon icon="trash" class="size-4" />
                             </button>
@@ -179,8 +179,8 @@
     @else
         <x-agro.empty-state
             icon="users"
-            message="No hay trabajadores individuales"
-            description="Agrega trabajadores que no pertenezcan a ninguna cuadrilla para gestionarlos individualmente."
+            :message="__('No hay trabajadores individuales')"
+            :description="__('Agrega trabajadores que no pertenezcan a ninguna cuadrilla para gestionarlos individualmente.')"
         />
     @endif
 

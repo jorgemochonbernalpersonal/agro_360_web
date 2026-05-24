@@ -6,10 +6,10 @@
             <flux:button wire:click="back" variant="ghost" icon="arrow-left" />
         @endif
         <div>
-            <h1 class="text-xl font-bold text-zinc-900">Entrada rápida</h1>
+            <h1 class="text-xl font-bold text-zinc-900">{{ __('Entrada rápida') }}</h1>
             <p class="text-sm text-zinc-400">
-                @if($step === 1) Elige el tipo de actividad
-                @elseif($step === 2) Selecciona parcela y fecha
+                @if($step === 1) {{ __('Elige el tipo de actividad') }}
+                @elseif($step === 2) {{ __('Selecciona parcela y fecha') }}
                 @endif
             </p>
         </div>
@@ -49,14 +49,14 @@
                         <span class="text-2xl">{{ $selectedType['icon'] }}</span>
                         <div>
                             <p class="text-sm font-semibold text-agro-800">{{ $selectedType['label'] }}</p>
-                            <p class="text-xs text-agro-600">Actividad seleccionada</p>
+                            <p class="text-xs text-agro-600">{{ __('Actividad seleccionada') }}</p>
                         </div>
                     </div>
                 @endif
 
                 {{-- Parcela --}}
                 <div>
-                    <label class="block text-xs font-semibold text-zinc-700 mb-1.5">Parcela *</label>
+                    <label class="block text-xs font-semibold text-zinc-700 mb-1.5">{{ __('Parcela') }} *</label>
                     @if($plots->count() > 0)
                         <div class="space-y-1 max-h-48 overflow-y-auto border border-zinc-200 rounded-xl p-1">
                             @foreach($plots as $plot)
@@ -73,11 +73,11 @@
                         </div>
                     @else
                         <div class="py-4 text-center space-y-3">
-                            <p class="text-sm text-zinc-500">Aún no tienes parcelas registradas.</p>
+                            <p class="text-sm text-zinc-500">{{ __('Aún no tienes parcelas registradas.') }}</p>
                             <a href="{{ route('plots.create') }}" wire:navigate
                                 class="inline-flex items-center gap-1.5 px-4 py-2 bg-agro-600 text-white text-sm font-medium rounded-xl hover:bg-agro-700 transition-colors">
                                 <flux:icon icon="plus" class="size-4" />
-                                Crear mi primera parcela
+                                {{ __('Crear mi primera parcela') }}
                             </a>
                         </div>
                     @endif
@@ -86,7 +86,7 @@
 
                 {{-- Fecha --}}
                 <div>
-                    <label class="block text-xs font-semibold text-zinc-700 mb-1.5">Fecha *</label>
+                    <label class="block text-xs font-semibold text-zinc-700 mb-1.5">{{ __('Fecha') }} *</label>
                     <flux:input
                         type="date"
                         wire:model="activityDate"
@@ -98,12 +98,12 @@
                 {{-- Notas --}}
                 <div>
                     <label class="block text-xs font-semibold text-zinc-700 mb-1.5">
-                        Notas <span class="font-normal text-zinc-400">(opcional)</span>
+                        {{ __('Notas') }} <span class="font-normal text-zinc-400">({{ __('opcional') }})</span>
                     </label>
                     <flux:textarea
                         wire:model="notes"
                         rows="3"
-                        placeholder="Observaciones rápidas..."
+                        :placeholder="__('Observaciones rápidas...')"
                     />
                 </div>
 
@@ -115,7 +115,7 @@
                     class="w-full"
                     :disabled="!$plotId"
                 >
-                    Registrar actividad
+                    {{ __('Registrar actividad') }}
                 </flux:button>
 
             </div>
@@ -126,7 +126,7 @@
     <div class="text-center">
         <a href="{{ roleRoute('viticulturist.digital-notebook') }}" wire:navigate
             class="text-xs text-zinc-400 hover:text-agro-600 transition-colors">
-            Ir al cuaderno de campo completo →
+            {{ __('Ir al cuaderno de campo completo') }} →
         </a>
     </div>
 

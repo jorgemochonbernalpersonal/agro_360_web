@@ -2,37 +2,37 @@
 
     {{-- Header --}}
     <x-agro.page-header
-        title="Gestión de Parcelas"
-        description="Administra y visualiza todas tus parcelas agrícolas"
+        :title="__('Gestión de Parcelas')"
+        :description="__('Administra y visualiza todas tus parcelas agrícolas')"
     />
 
     {{-- Stats (colapsables) --}}
     <x-agro.stats-section key="plots">
         <x-agro.stat-card
-            label="Total parcelas"
+            :label="__('Total parcelas')"
             :value="$stats['total']"
-            :description="$stats['active'] . ' activas · ' . $stats['inactive'] . ' inactivas'"
+            :description="$stats['active'] . ' ' . __('activas') . ' · ' . $stats['inactive'] . ' ' . __('inactivas')"
             icon="map-pin"
             color="agro"
         />
         <x-agro.stat-card
-            label="Superficie total"
+            :label="__('Superficie total')"
             :value="number_format($stats['total_area'], 2) . ' ha'"
-            description="Área declarada"
+            :description="__('Área declarada')"
             icon="square-2-stack"
             color="blue"
         />
         <x-agro.stat-card
-            label="Con SIGPAC"
+            :label="__('Con SIGPAC')"
             :value="$stats['with_sigpac']"
-            :description="($stats['total'] - $stats['with_sigpac']) . ' sin código'"
+            :description="($stats['total'] - $stats['with_sigpac']) . ' ' . __('sin código')"
             icon="rectangle-group"
             color="orange"
         />
         <x-agro.stat-card
-            label="Inactivas"
+            :label="__('Inactivas')"
             :value="$stats['inactive']"
-            :description="$stats['inactive'] > 0 ? 'Archivadas' : 'Todas activas'"
+            :description="$stats['inactive'] > 0 ? __('Archivadas') : __('Todas activas')"
             icon="archive-box"
             color="zinc"
         />
@@ -40,8 +40,8 @@
 
     {{-- Tabs: Activas / Inactivas --}}
     <x-agro.tabs :tabs="[
-        'active'   => ['label' => 'Activas',   'count' => $stats['active']],
-        'inactive' => ['label' => 'Inactivas', 'count' => $stats['inactive']],
+        'active'   => ['label' => __('Activas'),   'count' => $stats['active']],
+        'inactive' => ['label' => __('Inactivas'), 'count' => $stats['inactive']],
     ]" :active="$currentTab" wireMethod="switchTab" />
 
     {{-- Toolbar: search + filtros + acciones --}}
@@ -55,7 +55,7 @@
     <div class="flex items-center gap-3">
 
         {{-- Search --}}
-        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar parcela por nombre..." />
+        <x-agro.search-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar parcela por nombre...')" />
 
         {{-- Filtros --}}
         <x-agro.filter-button modal="plot-filters" :count="$filterCount" />
@@ -66,13 +66,13 @@
         {{-- Nueva Parcela --}}
         @can('create', \App\Models\Plot::class)
             <flux:button href="{{ roleRoute('plots.create') }}" variant="primary" icon="plus">
-                Nueva
+                {{ __('Nueva') }}
             </flux:button>
         @endcan
 
         {{-- Ver Plantaciones --}}
         <flux:button href="{{ route('plots.plantings.index') }}" variant="outline" icon="scissors">
-            Plantaciones
+            {{ __('Plantaciones') }}
         </flux:button>
 
     </div>
@@ -105,7 +105,7 @@
                 wire:click="$set('filterAutonomousCommunity', ''); $set('filterProvince', ''); $set('filterMunicipality', '')"
                 class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors"
             >
-                Limpiar todo
+                {{ __('Limpiar todo') }}
             </button>
         </div>
     @endif
@@ -120,7 +120,7 @@
                     </div>
                     <div>
                         <h3 class="text-lg font-bold text-zinc-900">
-                            Acciones para {{ $this->municipalities[$filterMunicipality] ?? 'Municipio' }}
+                            {{ __('Acciones para') }} {{ $this->municipalities[$filterMunicipality] ?? __('Municipio') }}
                         </h3>
                         <p class="text-sm text-zinc-600">
                             {{ $this->provinces[$filterProvince] ?? '' }},
@@ -135,8 +135,8 @@
                         variant="primary"
                         icon="plus"
                     >
-                        <span wire:loading.remove wire:target="generateAllMapsForMunicipality">Generar Todos los Mapas</span>
-                        <span wire:loading wire:target="generateAllMapsForMunicipality">Generando...</span>
+                        <span wire:loading.remove wire:target="generateAllMapsForMunicipality">{{ __('Generar Todos los Mapas') }}</span>
+                        <span wire:loading wire:target="generateAllMapsForMunicipality">{{ __('Generando...') }}</span>
                     </flux:button>
                     @if ($firstPlotForMap)
                         <flux:button
@@ -144,7 +144,7 @@
                             variant="primary"
                             icon="eye"
                         >
-                            Ver Todos los Mapas
+                            {{ __('Ver Todos los Mapas') }}
                         </flux:button>
                     @endif
                 </div>
@@ -219,7 +219,7 @@
                             {{-- Stats: superficie + SIGPAC --}}
                             <div class="grid grid-cols-2 gap-3">
                                 <div class="bg-agro-50 rounded-xl p-3">
-                                    <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-1">Superficie</p>
+                                    <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-1">{{ __('Superficie') }}</p>
                                     @if ($plot->area)
                                         <p class="text-2xl font-bold text-agro-700 leading-none">
                                             {{ number_format($plot->area, 2) }}
@@ -260,7 +260,7 @@
                                     <div class="flex items-center gap-2 text-zinc-600">
                                         <flux:icon icon="arrow-trending-up" class="size-4 text-zinc-400 shrink-0" />
                                         <span class="truncate">
-                                            {{ $plot->orientation?->name ?? '' }}{{ $plot->orientation && $plot->slope ? ' · ' : '' }}{{ $plot->slope ? $plot->slope . '% pend.' : '' }}
+                                            {{ $plot->orientation?->name ?? '' }}{{ $plot->orientation && $plot->slope ? ' · ' : '' }}{{ $plot->slope ? $plot->slope . '% ' . __('pend.') : '' }}
                                         </span>
                                     </div>
                                 @endif
@@ -268,7 +268,7 @@
                                     <div class="flex items-center gap-2 text-zinc-600">
                                         <flux:icon icon="sparkles" class="size-4 text-zinc-400 shrink-0" />
                                         <span class="truncate">
-                                            {{ $plot->total_vines ? number_format($plot->total_vines, 0, ',', '.') . ' cepas' : '' }}{{ $plot->total_vines && $plot->oldest_planting_year ? ' · ' : '' }}{{ $plot->oldest_planting_year ? 'Plantación ' . $plot->oldest_planting_year : '' }}
+                                            {{ $plot->total_vines ? number_format($plot->total_vines, 0, ',', '.') . ' ' . __('cepas') : '' }}{{ $plot->total_vines && $plot->oldest_planting_year ? ' · ' : '' }}{{ $plot->oldest_planting_year ? __('Plantación') . ' ' . $plot->oldest_planting_year : '' }}
                                         </span>
                                     </div>
                                 @endif
@@ -276,7 +276,7 @@
                                     <div class="flex items-center gap-2 text-zinc-600">
                                         <flux:icon icon="book-open" class="size-4 text-zinc-400 shrink-0" />
                                         <span class="truncate">
-                                            {{ $plot->active_plantings_count }} {{ $plot->active_plantings_count === 1 ? 'plantación' : 'plantaciones' }}
+                                            {{ $plot->active_plantings_count }} {{ $plot->active_plantings_count === 1 ? __('plantación') : __('plantaciones') }}
                                             @php $varieties = $plot->plantings->pluck('grapeVariety.name')->filter()->unique()->take(3); @endphp
                                             @if ($varieties->isNotEmpty())
                                                 · {{ $varieties->implode(', ') }}{{ $plot->plantings->pluck('grapeVariety.name')->filter()->unique()->count() > 3 ? '…' : '' }}
@@ -289,7 +289,7 @@
                                     <span class="truncate">
                                         {{ $plot->viticulturist?->name }}
                                         @if ($plot->viticulturist && $plot->viticulturist->id === auth()->id())
-                                            <span class="text-agro-600 font-semibold">(Yo)</span>
+                                            <span class="text-agro-600 font-semibold">({{ __('Yo') }})</span>
                                         @endif
                                     </span>
                                 </div>
@@ -302,18 +302,18 @@
                             <div class="flex items-center justify-between">
                                 {{-- Izquierda: navegar --}}
                                 <div class="flex items-center gap-0.5">
-                                    <x-agro.action-button variant="view" href="{{ route('plots.show', $plot) }}" title="Ver parcela" />
+                                    <x-agro.action-button variant="view" href="{{ route('plots.show', $plot) }}" :title="__('Ver parcela')" />
                                     @if ($hasMap)
-                                        <x-agro.action-button variant="map" href="{{ route('map', ['id' => $plot->id, 'return' => 'plots']) }}" title="Ver mapa" />
+                                        <x-agro.action-button variant="map" href="{{ route('map', ['id' => $plot->id, 'return' => 'plots']) }}" :title="__('Ver mapa')" />
                                     @elseif($plot->sigpacCodes->isNotEmpty())
                                         @can('update', $plot)
-                                            <x-agro.action-button icon="cpu-chip" variant="default" wire:click="generateMap(null, {{ $plot->id }})" title="Generar mapa desde SIGPAC" />
+                                            <x-agro.action-button icon="cpu-chip" variant="default" wire:click="generateMap(null, {{ $plot->id }})" :title="__('Generar mapa desde SIGPAC')" />
                                         @endcan
                                     @endif
                                     @can('update', $plot)
-                                        <x-agro.action-button icon="scissors" variant="default" href="{{ route('plots.plantings.create', $plot) }}" title="Nueva plantación" />
+                                        <x-agro.action-button icon="scissors" variant="default" href="{{ route('plots.plantings.create', $plot) }}" :title="__('Nueva plantación')" />
                                     @endcan
-                                    <x-agro.action-button icon="list-bullet" variant="default" wire:click="selectAuditPlot({{ $plot->id }})" title="Historial de cambios" />
+                                    <x-agro.action-button icon="list-bullet" variant="default" wire:click="selectAuditPlot({{ $plot->id }})" :title="__('Historial de cambios')" />
                                 </div>
 
                                 {{-- Separador --}}
@@ -322,11 +322,11 @@
                                 {{-- Derecha: gestionar --}}
                                 <div class="flex items-center gap-0.5">
                                     @can('update', $plot)
-                                        <x-agro.action-button variant="edit" href="{{ route('plots.edit', $plot) }}" title="Editar" />
+                                        <x-agro.action-button variant="edit" href="{{ route('plots.edit', $plot) }}" :title="__('Editar')" />
                                         @if ($plot->active)
-                                            <x-agro.action-button variant="deactivate" wire:click="toggleActive({{ $plot->id }})" title="Desactivar" />
+                                            <x-agro.action-button variant="deactivate" wire:click="toggleActive({{ $plot->id }})" :title="__('Desactivar')" />
                                         @else
-                                            <x-agro.action-button variant="activate" wire:click="toggleActive({{ $plot->id }})" title="Activar" />
+                                            <x-agro.action-button variant="activate" wire:click="toggleActive({{ $plot->id }})" :title="__('Activar')" />
                                         @endif
                                     @endcan
                                 </div>
@@ -339,15 +339,15 @@
             <x-agro-pagination :paginator="$plots" />
         @else
             <x-agro.empty-state
-                message="No hay parcelas {{ $currentTab === 'active' ? 'activas' : 'inactivas' }}"
-                description="{{ $currentTab === 'active' ? 'Comienza agregando tu primera parcela al sistema' : 'Todas las parcelas están actualmente activas' }}"
+                :message="__('No hay parcelas') . ' ' . ($currentTab === 'active' ? __('activas') : __('inactivas'))"
+                :description="$currentTab === 'active' ? __('Comienza agregando tu primera parcela al sistema') : __('Todas las parcelas están actualmente activas')"
                 icon="inbox"
             >
                 @if ($currentTab === 'active')
                     @can('create', \App\Models\Plot::class)
                         <x-slot name="action">
                             <flux:button href="{{ roleRoute('plots.create') }}" variant="primary" icon="plus">
-                                Crear mi primera parcela
+                                {{ __('Crear mi primera parcela') }}
                             </flux:button>
                         </x-slot>
                     @endcan
@@ -364,7 +364,7 @@
                     <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
                         <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
                     </div>
-                    <h3 class="text-base font-semibold text-zinc-900">Filtros</h3>
+                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Filtros') }}</h3>
                 </div>
                 <flux:button x-on:click="$dispatch('close-modal', 'plot-filters')" variant="ghost" size="sm" icon="x-mark" />
             </div>
@@ -372,9 +372,9 @@
 
         <div class="px-6 py-5 space-y-5">
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Comunidad Autónoma</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Comunidad Autónoma') }}</label>
                 <flux:select wire:model.live="filterAutonomousCommunity">
-                    <option value="">Todas las comunidades</option>
+                    <option value="">{{ __('Todas las comunidades') }}</option>
                     @foreach ($this->autonomousCommunities as $id => $name)
                         <option value="{{ $id }}">{{ $name }}</option>
                     @endforeach
@@ -382,9 +382,9 @@
             </div>
             @if ($filterAutonomousCommunity)
                 <div>
-                    <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Provincia</label>
+                    <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Provincia') }}</label>
                     <flux:select wire:model.live="filterProvince">
-                        <option value="">Todas las provincias</option>
+                        <option value="">{{ __('Todas las provincias') }}</option>
                         @foreach ($this->provinces as $id => $name)
                             <option value="{{ $id }}">{{ $name }}</option>
                         @endforeach
@@ -393,9 +393,9 @@
             @endif
             @if ($filterProvince)
                 <div>
-                    <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Municipio</label>
+                    <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Municipio') }}</label>
                     <flux:select wire:model.live="filterMunicipality">
-                        <option value="">Todos los municipios</option>
+                        <option value="">{{ __('Todos los municipios') }}</option>
                         @foreach ($this->municipalities as $id => $name)
                             <option value="{{ $id }}">{{ $name }}</option>
                         @endforeach
@@ -410,13 +410,13 @@
                     wire:click="$set('filterAutonomousCommunity', ''); $set('filterProvince', ''); $set('filterMunicipality', '')"
                     class="text-sm text-zinc-400 hover:text-zinc-600 transition-colors"
                 >
-                    Limpiar filtros
+                    {{ __('Limpiar filtros') }}
                 </button>
             @else
                 <span></span>
             @endif
             <flux:button x-on:click="$dispatch('close-modal', 'plot-filters')" variant="primary">
-                Aplicar
+                {{ __('Aplicar') }}
             </flux:button>
         </div>
     </x-agro.modal>
@@ -426,7 +426,7 @@
     <x-agro.modal name="plot-audit" maxWidth="3xl">
         <div class="bg-zinc-50 px-6 py-4 border-b border-zinc-200 rounded-t-xl">
             <div class="flex items-center justify-between">
-                <h3 class="text-lg font-semibold text-zinc-900">Historial de Auditoría</h3>
+                <h3 class="text-lg font-semibold text-zinc-900">{{ __('Historial de Auditoría') }}</h3>
                 <flux:button x-on:click="$dispatch('close-modal', 'plot-audit')" variant="ghost" size="sm" icon="x-mark" />
             </div>
         </div>
@@ -436,14 +436,13 @@
             @else
                 <div class="py-8 text-center text-zinc-500">
                     <flux:icon icon="clock" class="size-10 mx-auto mb-2 text-zinc-300" />
-                    <p>Selecciona una parcela para ver su historial</p>
+                    <p>{{ __('Selecciona una parcela para ver su historial') }}</p>
                 </div>
             @endif
         </div>
         <div class="bg-zinc-50 px-6 py-3 border-t border-zinc-200 rounded-b-xl flex justify-end">
-            <flux:button x-on:click="$dispatch('close-modal', 'plot-audit')" variant="outline">Cerrar</flux:button>
+            <flux:button x-on:click="$dispatch('close-modal', 'plot-audit')" variant="outline">{{ __('Cerrar') }}</flux:button>
         </div>
     </x-agro.modal>
 
 </div>
-

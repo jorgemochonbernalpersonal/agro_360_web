@@ -2,33 +2,33 @@
 
     {{-- Header --}}
     <x-agro.page-header
-        title="Trazabilidad de Uva"
-        description="Seguimiento de la uva desde la parcela hasta el destino final. Cumple con la normativa EU de trazabilidad alimentaria."
+        :title="__('Trazabilidad de Uva')"
+        :description="__('Seguimiento de la uva desde la parcela hasta el destino final. Cumple con la normativa EU de trazabilidad alimentaria.')"
         icon="arrow-trending-up"
     />
 
     {{-- Stats --}}
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <x-agro.stat-card
-            label="Entradas registradas"
+            :label="__('Entradas registradas')"
             :value="$stats->total_entries"
             icon="clipboard-document-list"
             color="blue"
         />
         <x-agro.stat-card
-            label="Parcelas de origen"
+            :label="__('Parcelas de origen')"
             :value="$stats->plots_count"
             icon="map"
             color="cyan"
         />
         <x-agro.stat-card
-            label="Total transportado"
+            :label="__('Total transportado')"
             :value="number_format($stats->total_kg, 0, ',', '.') . ' kg'"
             icon="truck"
             color="agro"
         />
         <x-agro.stat-card
-            label="Destinos"
+            :label="__('Destinos')"
             :value="$stats->destinations_count"
             icon="building-office-2"
             color="violet"
@@ -44,18 +44,18 @@
             <input
                 wire:model.live.debounce.300ms="search"
                 type="text"
-                placeholder="Buscar por parcela, variedad, destino, transportista..."
+                :placeholder="__('Buscar por parcela, variedad, destino, transportista...')"
                 class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
             />
         </div>
         <flux:select wire:model.live="filterCampaign" class="w-48">
-            <option value="">Todas las campañas</option>
+            <option value="">{{ __('Todas las campañas') }}</option>
             @foreach ($campaigns as $c)
                 <option value="{{ $c->id }}">{{ $c->name }} ({{ $c->year }})</option>
             @endforeach
         </flux:select>
         <flux:select wire:model.live="filterPlot" class="w-48">
-            <option value="">Todas las parcelas</option>
+            <option value="">{{ __('Todas las parcelas') }}</option>
             @foreach ($plots as $plot)
                 <option value="{{ $plot->id }}">{{ $plot->name }}</option>
             @endforeach
@@ -68,15 +68,15 @@
             <table class="w-full text-sm">
                 <thead>
                     <tr class="bg-zinc-50 text-zinc-500 text-xs uppercase tracking-wide">
-                        <th class="text-left px-5 py-3 font-semibold">Fecha</th>
-                        <th class="text-left px-3 py-3 font-semibold">Parcela</th>
-                        <th class="text-left px-3 py-3 font-semibold">Variedad</th>
-                        <th class="text-right px-3 py-3 font-semibold">Peso (kg)</th>
-                        <th class="text-right px-3 py-3 font-semibold">Baumé</th>
-                        <th class="text-left px-3 py-3 font-semibold">Destino</th>
-                        <th class="text-left px-3 py-3 font-semibold">Comprador</th>
-                        <th class="text-left px-3 py-3 font-semibold">Documento</th>
-                        <th class="text-left px-5 py-3 font-semibold">Vehículo</th>
+                        <th class="text-left px-5 py-3 font-semibold">{{ __('Fecha') }}</th>
+                        <th class="text-left px-3 py-3 font-semibold">{{ __('Parcela') }}</th>
+                        <th class="text-left px-3 py-3 font-semibold">{{ __('Variedad') }}</th>
+                        <th class="text-right px-3 py-3 font-semibold">{{ __('Peso (kg)') }}</th>
+                        <th class="text-right px-3 py-3 font-semibold">{{ __('Baumé') }}</th>
+                        <th class="text-left px-3 py-3 font-semibold">{{ __('Destino') }}</th>
+                        <th class="text-left px-3 py-3 font-semibold">{{ __('Comprador') }}</th>
+                        <th class="text-left px-3 py-3 font-semibold">{{ __('Documento') }}</th>
+                        <th class="text-left px-5 py-3 font-semibold">{{ __('Vehículo') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-zinc-100">
@@ -119,7 +119,7 @@
                             <td colspan="9" class="px-5 py-12 text-center">
                                 <div class="flex flex-col items-center gap-2">
                                     <flux:icon icon="arrow-trending-up" class="size-8 text-zinc-300" />
-                                    <p class="text-sm text-zinc-400">Sin registros de trazabilidad para los filtros seleccionados</p>
+                                    <p class="text-sm text-zinc-400">{{ __('Sin registros de trazabilidad para los filtros seleccionados') }}</p>
                                 </div>
                             </td>
                         </tr>

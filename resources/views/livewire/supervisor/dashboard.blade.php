@@ -4,10 +4,10 @@
     <div class="flex items-start justify-between">
         <div>
             <h1 class="text-2xl font-bold text-zinc-900">
-                {{ now()->hour < 14 ? 'Buenos días' : 'Buenas tardes' }}, {{ Auth::user()->name }}
+                {{ now()->hour < 14 ? __('Buenos días') : __('Buenas tardes') }}, {{ Auth::user()->name }}
             </h1>
             <p class="text-sm text-zinc-400 mt-0.5">
-                Panel de la <span class="font-semibold text-indigo-600">Denominación de Origen</span>
+                {{ __('Panel de la Denominación de Origen') }}
                 &mdash; {{ now()->format('d/m/Y') }}
             </p>
         </div>
@@ -19,12 +19,12 @@
     {{-- Empty state --}}
     @if($wineryCount === 0 && $viticulturistCount === 0)
         <flux:callout variant="warning" icon="exclamation-triangle">
-            <flux:callout.heading>Tu denominación de origen aún no tiene entidades vinculadas</flux:callout.heading>
+            <flux:callout.heading>{{ __('Tu denominación de origen aún no tiene entidades vinculadas') }}</flux:callout.heading>
             <flux:callout.text>
-                Para empezar a trabajar necesitas añadir al menos una bodega o un viticultor.
+                {{ __('Para empezar a trabajar necesitas añadir al menos una bodega o un viticultor.') }}
                 <span class="flex flex-wrap gap-3 mt-3">
-                    <a href="{{ route('supervisor.oversight.wineries.index') }}" wire:navigate class="text-sm font-medium text-amber-800 underline underline-offset-2 hover:text-amber-900">Añadir bodegas →</a>
-                    <a href="{{ route('supervisor.growers.index') }}" wire:navigate class="text-sm font-medium text-amber-800 underline underline-offset-2 hover:text-amber-900">Añadir viticultores →</a>
+                    <a href="{{ route('supervisor.oversight.wineries.index') }}" wire:navigate class="text-sm font-medium text-amber-800 underline underline-offset-2 hover:text-amber-900">{{ __('Añadir bodegas') }} →</a>
+                    <a href="{{ route('supervisor.growers.index') }}" wire:navigate class="text-sm font-medium text-amber-800 underline underline-offset-2 hover:text-amber-900">{{ __('Añadir viticultores') }} →</a>
                 </span>
             </flux:callout.text>
         </flux:callout>
@@ -36,40 +36,40 @@
            class="block bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm hover:border-indigo-300 transition-colors group">
             <flux:icon icon="building-office-2" class="size-5 text-indigo-400 mb-2 group-hover:text-indigo-500" />
             <p class="text-2xl font-bold text-indigo-600 leading-none">{{ $wineryCount }}</p>
-            <p class="text-[11px] text-zinc-400 mt-1">Bodegas</p>
+            <p class="text-[11px] text-zinc-400 mt-1">{{ __('Bodegas') }}</p>
         </a>
         <a href="{{ route('supervisor.growers.index') }}" wire:navigate
            class="block bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm hover:border-emerald-300 transition-colors group">
             <flux:icon icon="users" class="size-5 text-emerald-400 mb-2 group-hover:text-emerald-500" />
             <p class="text-2xl font-bold text-emerald-600 leading-none">{{ $viticulturistCount }}</p>
-            <p class="text-[11px] text-zinc-400 mt-1">Viticultores</p>
+            <p class="text-[11px] text-zinc-400 mt-1">{{ __('Viticultores') }}</p>
         </a>
         <a href="{{ route('supervisor.qualification.index') }}" wire:navigate
            class="block bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm hover:border-amber-300 transition-colors group">
             <flux:icon icon="star" class="size-5 text-amber-400 mb-2 group-hover:text-amber-500" />
             <p class="text-2xl font-bold text-amber-600 leading-none">{{ $pendingQualifications }}</p>
-            <p class="text-[11px] text-zinc-400 mt-1">Calificaciones</p>
+            <p class="text-[11px] text-zinc-400 mt-1">{{ __('Calificaciones') }}</p>
         </a>
         <a href="{{ route('supervisor.labels.index', ['tab' => 'issued']) }}" wire:navigate
            class="block bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm hover:border-rose-300 transition-colors group">
             <flux:icon icon="tag" class="size-5 text-rose-400 mb-2 group-hover:text-rose-500" />
             <p class="text-2xl font-bold text-rose-600 leading-none">{{ number_format($issuedLabelsThisYear) }}</p>
-            <p class="text-[11px] text-zinc-400 mt-1">Emitidas {{ now()->year }}</p>
+            <p class="text-[11px] text-zinc-400 mt-1">{{ __('Emitidas') }} {{ now()->year }}</p>
             @if($pendingLabels > 0)
-                <p class="text-[10px] text-rose-500 mt-0.5 font-medium">{{ $pendingLabels }} pendiente{{ $pendingLabels !== 1 ? 's' : '' }}</p>
+                <p class="text-[10px] text-rose-500 mt-0.5 font-medium">{{ $pendingLabels }} {{ $pendingLabels !== 1 ? __('pendientes') : __('pendiente') }}</p>
             @endif
         </a>
         <a href="{{ route('supervisor.requests.index') }}" wire:navigate
            class="block bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm hover:border-blue-300 transition-colors group">
             <flux:icon icon="inbox" class="size-5 text-blue-400 mb-2 group-hover:text-blue-500" />
             <p class="text-2xl font-bold text-blue-600 leading-none">{{ $pendingRequests }}</p>
-            <p class="text-[11px] text-zinc-400 mt-1">Solicitudes</p>
+            <p class="text-[11px] text-zinc-400 mt-1">{{ __('Solicitudes') }}</p>
         </a>
         <a href="{{ route('supervisor.requests.index') }}" wire:navigate
            class="block bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm {{ $overdueRequests > 0 ? 'border-red-300 bg-red-50/30' : '' }} hover:border-red-300 transition-colors group">
             <flux:icon icon="clock" class="size-5 {{ $overdueRequests > 0 ? 'text-red-400' : 'text-zinc-300' }} mb-2" />
             <p class="text-2xl font-bold {{ $overdueRequests > 0 ? 'text-red-600' : 'text-zinc-400' }} leading-none">{{ $overdueRequests }}</p>
-            <p class="text-[11px] text-zinc-400 mt-1">Vencidas</p>
+            <p class="text-[11px] text-zinc-400 mt-1">{{ __('Vencidas') }}</p>
         </a>
     </div>
 
@@ -80,35 +80,35 @@
                 <a href="{{ route('supervisor.requests.index') }}" wire:navigate
                    class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-red-50 border border-red-200 text-sm text-red-700 hover:bg-red-100 transition">
                     <flux:icon icon="exclamation-circle" class="size-4" />
-                    {{ $overdueRequests }} solicitud{{ $overdueRequests !== 1 ? 'es' : '' }} vencida{{ $overdueRequests !== 1 ? 's' : '' }}
+                    {{ $overdueRequests }} {{ $overdueRequests !== 1 ? __('solicitudes vencidas') : __('solicitud vencida') }}
                 </a>
             @endif
             @if($nonCompliantInspections > 0)
                 <a href="{{ route('supervisor.inspection.index') }}" wire:navigate
                    class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-red-50 border border-red-200 text-sm text-red-700 hover:bg-red-100 transition">
                     <flux:icon icon="shield-exclamation" class="size-4" />
-                    {{ $nonCompliantInspections }} inspección{{ $nonCompliantInspections !== 1 ? 'es' : '' }} no conforme{{ $nonCompliantInspections !== 1 ? 's' : '' }}
+                    {{ $nonCompliantInspections }} {{ $nonCompliantInspections !== 1 ? __('inspecciones no conformes') : __('inspección no conforme') }}
                 </a>
             @endif
             @if($pendingLabels > 0)
                 <a href="{{ route('supervisor.labels.index') }}" wire:navigate
                    class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-rose-50 border border-rose-200 text-sm text-rose-700 hover:bg-rose-100 transition">
                     <flux:icon icon="tag" class="size-4" />
-                    {{ $pendingLabels }} contraetiqueta{{ $pendingLabels !== 1 ? 's' : '' }} pendiente{{ $pendingLabels !== 1 ? 's' : '' }}
+                    {{ $pendingLabels }} {{ $pendingLabels !== 1 ? __('contraetiquetas pendientes') : __('contraetiqueta pendiente') }}
                 </a>
             @endif
             @if($pendingNotebookCount > 0)
                 <a href="{{ route('supervisor.notebook.index') }}" wire:navigate
                    class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-50 border border-amber-200 text-sm text-amber-700 hover:bg-amber-100 transition">
                     <flux:icon icon="book-open" class="size-4" />
-                    {{ $pendingNotebookCount }} solicitud{{ $pendingNotebookCount !== 1 ? 'es' : '' }} de cuaderno pendiente{{ $pendingNotebookCount !== 1 ? 's' : '' }}
+                    {{ $pendingNotebookCount }} {{ $pendingNotebookCount !== 1 ? __('solicitudes de cuaderno pendientes') : __('solicitud de cuaderno pendiente') }}
                 </a>
             @endif
             @if($expiringCertifications->count() > 0)
                 <a href="{{ route('supervisor.oversight.certifications.index') }}" wire:navigate
                    class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-orange-50 border border-orange-200 text-sm text-orange-700 hover:bg-orange-100 transition">
                     <flux:icon icon="check-badge" class="size-4" />
-                    {{ $expiringCertifications->count() }} certificación{{ $expiringCertifications->count() !== 1 ? 'es' : '' }} por vencer
+                    {{ $expiringCertifications->count() }} {{ $expiringCertifications->count() !== 1 ? __('certificaciones por vencer') : __('certificación por vencer') }}
                 </a>
             @endif
         </div>
@@ -126,11 +126,11 @@
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-2">
                             <flux:icon icon="shield-check" class="size-4 text-zinc-400" />
-                            <span class="font-medium text-zinc-700">Próximas inspecciones</span>
-                            <span class="text-xs text-zinc-400">(21 días)</span>
+                            <span class="font-medium text-zinc-700">{{ __('Próximas inspecciones') }}</span>
+                            <span class="text-xs text-zinc-400">(21 {{ __('días') }})</span>
                         </div>
                         <a href="{{ route('supervisor.inspection.index') }}" wire:navigate
-                           class="text-xs text-indigo-600 hover:underline">Ver todas</a>
+                           class="text-xs text-indigo-600 hover:underline">{{ __('Ver todas') }}</a>
                     </div>
                 </x-slot:header>
 
@@ -148,13 +148,13 @@
                         </div>
                         <div class="flex-1 min-w-0">
                             <p class="text-sm font-medium text-zinc-800 truncate">
-                                {{ $insp->reference_number ?? 'Inspección #' . $insp->id }}
+                                {{ $insp->reference_number ?? __('Inspección') . ' #' . $insp->id }}
                             </p>
                             <p class="text-xs text-zinc-400">
-                                {{ ucfirst($insp->subject_type ?? 'Sin sujeto') }}
-                                @if($daysLeft === 0) · Hoy
-                                @elseif($daysLeft === 1) · Mañana
-                                @else · En {{ $daysLeft }} días
+                                {{ ucfirst($insp->subject_type ?? __('Sin sujeto')) }}
+                                @if($daysLeft === 0) · {{ __('Hoy') }}
+                                @elseif($daysLeft === 1) · {{ __('Mañana') }}
+                                @else · {{ __('En :n días', ['n' => $daysLeft]) }}
                                 @endif
                             </p>
                         </div>
@@ -163,7 +163,7 @@
                 @empty
                     <div class="py-6 text-center text-sm text-zinc-400">
                         <flux:icon icon="calendar" class="size-8 mx-auto mb-2 text-zinc-300" />
-                        Sin inspecciones programadas en los próximos 21 días.
+                        {{ __('Sin inspecciones programadas en los próximos 21 días.') }}
                     </div>
                 @endforelse
             </x-agro.card>
@@ -175,10 +175,10 @@
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <flux:icon icon="inbox" class="size-4 text-zinc-400" />
-                                <span class="font-medium text-zinc-700">Solicitudes activas</span>
+                                <span class="font-medium text-zinc-700">{{ __('Solicitudes activas') }}</span>
                             </div>
                             <a href="{{ route('supervisor.requests.index') }}" wire:navigate
-                               class="text-xs text-indigo-600 hover:underline">Ver todas</a>
+                               class="text-xs text-indigo-600 hover:underline">{{ __('Ver todas') }}</a>
                         </div>
                     </x-slot:header>
 
@@ -188,10 +188,10 @@
                                 <p class="text-sm font-medium text-zinc-800 truncate">{{ $req->title }}</p>
                                 <p class="text-xs text-zinc-400">
                                     @if($req->due_date)
-                                        Vence {{ $req->due_date->format('d/m/Y') }}
-                                        @if($req->due_date->isPast()) &nbsp;<span class="text-red-500 font-medium">· Vencida</span> @endif
+                                        {{ __('Vence') }} {{ $req->due_date->format('d/m/Y') }}
+                                        @if($req->due_date->isPast()) &nbsp;<span class="text-red-500 font-medium">· {{ __('Vencida') }}</span> @endif
                                     @else
-                                        Sin fecha límite
+                                        {{ __('Sin fecha límite') }}
                                     @endif
                                 </p>
                             </div>
@@ -212,7 +212,7 @@
                     <x-slot:header>
                         <div class="flex items-center gap-2">
                             <flux:icon icon="book-open" class="size-4 text-amber-500" />
-                            <span class="font-medium text-zinc-700">Cuaderno pendiente</span>
+                            <span class="font-medium text-zinc-700">{{ __('Cuaderno pendiente') }}</span>
                         </div>
                     </x-slot:header>
 
@@ -223,7 +223,7 @@
                             </div>
                             <div class="flex-1 min-w-0">
                                 <p class="text-sm font-medium text-zinc-800 truncate">{{ $req->viticulturist?->name }}</p>
-                                <p class="text-xs text-zinc-400">Solicitado {{ $req->requested_at->diffForHumans() }}</p>
+                                <p class="text-xs text-zinc-400">{{ __('Solicitado') }} {{ $req->requested_at->diffForHumans() }}</p>
                             </div>
                         </div>
                     @endforeach
@@ -231,7 +231,7 @@
                     <div class="pt-2">
                         <a href="{{ route('supervisor.notebook.index') }}" wire:navigate
                            class="block text-center text-xs text-indigo-600 hover:underline py-1">
-                            Gestionar accesos al cuaderno →
+                            {{ __('Gestionar accesos al cuaderno') }} →
                         </a>
                     </div>
                 </x-agro.card>
@@ -243,7 +243,7 @@
                     <x-slot:header>
                         <div class="flex items-center gap-2">
                             <flux:icon icon="check-badge" class="size-4 text-orange-500" />
-                            <span class="font-medium text-zinc-700">Certificaciones por vencer</span>
+                            <span class="font-medium text-zinc-700">{{ __('Certificaciones por vencer') }}</span>
                         </div>
                     </x-slot:header>
 
@@ -258,7 +258,7 @@
                                 <p class="text-xs text-zinc-500 truncate">{{ $cert->certification_type_label }}</p>
                             </div>
                             <span class="text-xs font-semibold {{ $color }} shrink-0">
-                                {{ $daysLeft === 0 ? 'Hoy' : "En {$daysLeft}d" }}
+                                {{ $daysLeft === 0 ? __('Hoy') : __('En :nd', ['n' => $daysLeft]) }}
                             </span>
                         </div>
                     @endforeach
@@ -267,19 +267,19 @@
 
             {{-- Quick nav --}}
             <div class="bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm">
-                <h2 class="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-3">Acceso rápido</h2>
+                <h2 class="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-3">{{ __('Acceso rápido') }}</h2>
                 <div class="space-y-0.5">
                     @foreach([
-                        ['route' => 'supervisor.census.index',          'icon' => 'users',                  'label' => 'Censo'],
-                        ['route' => 'supervisor.growers.index',         'icon' => 'user-group',             'label' => 'Viticultores DO'],
-                        ['route' => 'supervisor.oversight.wineries.index','icon' => 'building-office-2',   'label' => 'Bodegas'],
-                        ['route' => 'supervisor.requests.index',        'icon' => 'inbox',                  'label' => 'Solicitudes'],
-                        ['route' => 'supervisor.qualification.index',   'icon' => 'star',                   'label' => 'Calificación'],
-                        ['route' => 'supervisor.labels.index',          'icon' => 'tag',                    'label' => 'Contraetiquetas'],
-                        ['route' => 'supervisor.inspection.index',      'icon' => 'shield-check',           'label' => 'Inspecciones'],
-                        ['route' => 'supervisor.documents.index',       'icon' => 'document-duplicate',     'label' => 'Documentos DO'],
-                        ['route' => 'supervisor.regulation.index',      'icon' => 'document-text',          'label' => 'Normativa'],
-                        ['route' => 'supervisor.statistics.index',      'icon' => 'chart-bar',              'label' => 'Estadísticas'],
+                        ['route' => 'supervisor.census.index',              'icon' => 'users',                'label' => __('Censo')],
+                        ['route' => 'supervisor.growers.index',             'icon' => 'user-group',           'label' => __('Viticultores DO')],
+                        ['route' => 'supervisor.oversight.wineries.index',  'icon' => 'building-office-2',    'label' => __('Bodegas')],
+                        ['route' => 'supervisor.requests.index',            'icon' => 'inbox',                'label' => __('Solicitudes')],
+                        ['route' => 'supervisor.qualification.index',       'icon' => 'star',                 'label' => __('Calificación')],
+                        ['route' => 'supervisor.labels.index',              'icon' => 'tag',                  'label' => __('Contraetiquetas')],
+                        ['route' => 'supervisor.inspection.index',          'icon' => 'shield-check',         'label' => __('Inspecciones')],
+                        ['route' => 'supervisor.documents.index',           'icon' => 'document-duplicate',   'label' => __('Documentos DO')],
+                        ['route' => 'supervisor.regulation.index',          'icon' => 'document-text',        'label' => __('Normativa')],
+                        ['route' => 'supervisor.statistics.index',          'icon' => 'chart-bar',            'label' => __('Estadísticas')],
                     ] as $link)
                         <a href="{{ route($link['route']) }}" wire:navigate
                            class="flex items-center gap-3 px-2 py-1.5 rounded-lg text-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900 transition group">

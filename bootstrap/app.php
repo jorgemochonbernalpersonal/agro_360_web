@@ -48,6 +48,9 @@ return Application::configure(basePath: dirname(__DIR__))
         // Timeout automático de impersonación (60 min)
         $middleware->append(\App\Http\Middleware\ImpersonationTimeout::class);
 
+        // Locale del usuario
+        $middleware->append(\App\Http\Middleware\SetLocale::class);
+
         $middleware->alias([
             'role'             => \App\Http\Middleware\CheckRole::class,
             'api.role'         => \App\Http\Middleware\ApiRole::class,

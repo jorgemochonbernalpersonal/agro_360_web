@@ -14,9 +14,9 @@
             <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-agro-100 mb-4">
                 <flux:icon icon="lock-closed" class="size-6 text-agro-700" />
             </div>
-            <flux:heading size="xl">Cambio de Contraseña Obligatorio</flux:heading>
+            <flux:heading size="xl">{{ __('Cambio de Contraseña Obligatorio') }}</flux:heading>
             <flux:subheading class="mt-1">
-                Por seguridad, debes cambiar tu contraseña temporal antes de continuar.
+                {{ __('Por seguridad, debes cambiar tu contraseña temporal antes de continuar.') }}
             </flux:subheading>
         </div>
 
@@ -29,12 +29,12 @@
         <form wire:submit.prevent="updatePassword" class="space-y-4">
 
             <flux:field>
-                <flux:label>Contraseña Temporal</flux:label>
+                <flux:label>{{ __('Contraseña Temporal') }}</flux:label>
                 <div class="relative">
                     <flux:input wire:model="current_password"
                                 :type="'password'"
                                 x-bind:type="showCurrentPassword ? 'text' : 'password'"
-                                placeholder="Contraseña temporal recibida por email"
+                                :placeholder="__('Contraseña temporal recibida por email')"
                                 required autocomplete="current-password" autofocus />
                     <button type="button"
                             @click="showCurrentPassword = !showCurrentPassword"
@@ -48,12 +48,12 @@
             </flux:field>
 
             <flux:field>
-                <flux:label>Nueva Contraseña</flux:label>
+                <flux:label>{{ __('Nueva Contraseña') }}</flux:label>
                 <div class="relative">
                     <flux:input wire:model="new_password"
                                 :type="'password'"
                                 x-bind:type="showNewPassword ? 'text' : 'password'"
-                                placeholder="Mínimo 8 caracteres"
+                                :placeholder="__('Mínimo 8 caracteres')"
                                 required autocomplete="new-password" />
                     <button type="button"
                             @click="showNewPassword = !showNewPassword"
@@ -64,16 +64,16 @@
                     </button>
                 </div>
                 <flux:error name="new_password" />
-                <flux:description>Mínimo 8 caracteres</flux:description>
+                <flux:description>{{ __('Mínimo 8 caracteres') }}</flux:description>
             </flux:field>
 
             <flux:field>
-                <flux:label>Confirmar Nueva Contraseña</flux:label>
+                <flux:label>{{ __('Confirmar Nueva Contraseña') }}</flux:label>
                 <div class="relative">
                     <flux:input wire:model="new_password_confirmation"
                                 :type="'password'"
                                 x-bind:type="showNewPasswordConfirmation ? 'text' : 'password'"
-                                placeholder="Repite tu nueva contraseña"
+                                :placeholder="__('Repite tu nueva contraseña')"
                                 required autocomplete="new-password" />
                     <button type="button"
                             @click="showNewPasswordConfirmation = !showNewPasswordConfirmation"
@@ -88,15 +88,15 @@
 
             <flux:callout icon="information-circle">
                 <flux:callout.text>
-                    Al cambiar tu contraseña, tu email quedará automáticamente verificado y tendrás acceso completo al sistema.
+                    {{ __('Al cambiar tu contraseña, tu email quedará automáticamente verificado y tendrás acceso completo al sistema.') }}
                 </flux:callout.text>
             </flux:callout>
 
             <flux:button type="submit" variant="primary" class="w-full" wire:loading.attr="disabled">
-                <span wire:loading.remove wire:target="updatePassword">Actualizar Contraseña</span>
+                <span wire:loading.remove wire:target="updatePassword">{{ __('Actualizar Contraseña') }}</span>
                 <span wire:loading wire:target="updatePassword" class="flex items-center gap-2">
                     <flux:icon icon="arrow-path" variant="micro" class="animate-spin" />
-                    Procesando...
+                    {{ __('Procesando...') }}
                 </span>
             </flux:button>
 

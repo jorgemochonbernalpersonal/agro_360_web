@@ -9,27 +9,27 @@
     {{-- Header --}}
     <div class="flex items-center justify-between mb-6">
         <div class="flex-1">
-            <h3 class="text-xl font-bold text-zinc-900">🌿 LAI Oficial NASA</h3>
+            <h3 class="text-xl font-bold text-zinc-900">🌿 {{ __('LAI Oficial NASA') }}</h3>
             <p class="text-sm text-zinc-500 mt-1">
-                Leaf Area Index + Eficiencia Fotosintética
+                {{ __('Leaf Area Index + Eficiencia Fotosintética') }}
                 @if($laiData)
                     - {{ $laiData['date'] }}
                 @endif
             </p>
         </div>
-        
+
         <div class="flex items-center gap-2">
             {{-- Date Selector --}}
             @if(count($availableDates) > 0)
-                <flux:select wire:model.live="selectedDate" 
+                <flux:select wire:model.live="selectedDate"
                         >
-                    <option value="">Último dato</option>
+                    <option value="">{{ __('Último dato') }}</option>
                     @foreach($availableDates as $date)
                         <option value="{{ $date }}">{{ \Carbon\Carbon::parse($date)->format('d/m/Y') }}</option>
                     @endforeach
                 </flux:select>
             @endif
-            
+
             <button
                 wire:click="loadData"
                 wire:loading.attr="disabled"
@@ -42,7 +42,7 @@
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                Actualizar
+                {{ __('Actualizar') }}
             </button>
         </div>
     </div>
@@ -63,7 +63,7 @@
                     <div class="flex items-center gap-3">
                         <span class="text-4xl">{{ $laiData['icon'] }}</span>
                         <div>
-                            <div class="text-sm text-zinc-600">LAI Oficial</div>
+                            <div class="text-sm text-zinc-600">{{ __('LAI Oficial') }}</div>
                             <div class="text-4xl font-bold text-{{ $laiData['color'] }}-700">
                                 {{ number_format($laiData['value'], 2) }}
                             </div>
@@ -76,11 +76,11 @@
                     </span>
                 </div>
             </div>
-            
+
             <p class="text-sm text-zinc-700 mb-3">{{ $laiData['description'] }}</p>
-            
+
             <div class="bg-white rounded p-3">
-                <div class="text-xs text-zinc-600 mb-1">Recomendación:</div>
+                <div class="text-xs text-zinc-600 mb-1">{{ __('Recomendación:') }}</div>
                 <div class="text-sm font-medium text-zinc-900">{{ $laiData['recommendation'] }}</div>
             </div>
         </div>
@@ -90,33 +90,33 @@
             <div class="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-6">
                 <h4 class="text-lg font-semibold text-purple-900 mb-3 flex items-center gap-2">
                     <span>🍇</span>
-                    <span>Estimación de Rendimiento</span>
+                    <span>{{ __('Estimación de Rendimiento') }}</span>
                 </h4>
-                
+
                 <div class="grid grid-cols-2 gap-4">
                     <div class="bg-white rounded-lg p-3">
-                        <div class="text-xs text-zinc-600">Por Hectárea</div>
+                        <div class="text-xs text-zinc-600">{{ __('Por Hectárea') }}</div>
                         <div class="text-2xl font-bold text-purple-900">
                             {{ number_format($yieldEstimate['yield_per_ha'], 2) }} <span class="text-sm">t/ha</span>
                         </div>
                     </div>
-                    
+
                     <div class="bg-white rounded-lg p-3">
-                        <div class="text-xs text-zinc-600">Total Parcela</div>
+                        <div class="text-xs text-zinc-600">{{ __('Total Parcela') }}</div>
                         <div class="text-2xl font-bold text-purple-900">
                             {{ number_format($yieldEstimate['total_yield_kg'], 0) }} <span class="text-sm">kg</span>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="mt-3 text-xs text-purple-700">
-                    <span class="font-semibold">Confianza:</span>
+                    <span class="font-semibold">{{ __('Confianza:') }}</span>
                     @if($yieldEstimate['confidence'] === 'high')
-                        <span class="text-green-700">Alta ✓</span>
+                        <span class="text-green-700">{{ __('Alta') }} ✓</span>
                     @elseif($yieldEstimate['confidence'] === 'medium')
-                        <span class="text-yellow-700">Media</span>
+                        <span class="text-yellow-700">{{ __('Media') }}</span>
                     @else
-                        <span class="text-orange-700">Baja</span>
+                        <span class="text-orange-700">{{ __('Baja') }}</span>
                     @endif
                 </div>
             </div>
@@ -125,8 +125,8 @@
         {{-- FPAR --}}
         @if($fparData)
             <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                <h4 class="text-lg font-semibold text-yellow-900 mb-3">☀️ FPAR - Eficiencia Fotosintética</h4>
-                
+                <h4 class="text-lg font-semibold text-yellow-900 mb-3">☀️ {{ __('FPAR - Eficiencia Fotosintética') }}</h4>
+
                 <div class="flex items-center justify-between mb-3">
                     <div class="flex-1">
                         <div class="text-sm text-yellow-700">{{ $fparData['label'] }}</div>
@@ -137,15 +137,15 @@
                         <div class="text-xs text-yellow-600">{{ $fparData['photosynthetic_efficiency'] }}</div>
                     </div>
                 </div>
-                
+
                 {{-- FPAR Bar --}}
                 <div class="relative h-3 bg-zinc-200 rounded-full overflow-hidden">
-                    <div class="absolute top-0 left-0 h-full bg-gradient-to-r from-orange-400 via-yellow-400 to-green-500" 
+                    <div class="absolute top-0 left-0 h-full bg-gradient-to-r from-orange-400 via-yellow-400 to-green-500"
                          style="width: {{ $fparData['fpar'] * 100 }}%"></div>
                 </div>
                 <div class="flex justify-between text-xs text-zinc-600 mt-1">
-                    <span>0 (Baja)</span>
-                    <span>1 (Máxima)</span>
+                    <span>0 ({{ __('Baja') }})</span>
+                    <span>1 ({{ __('Máxima') }})</span>
                 </div>
             </div>
         @endif
@@ -155,11 +155,11 @@
             <div class="flex items-center">
                 <span class="text-lg mr-2">🛰️</span>
                 <div class="text-xs text-blue-700">
-                    <strong>Fuente:</strong> {{ $laiData['source'] }}
+                    <strong>{{ __('Fuente:') }}</strong> {{ $laiData['source'] }}
                     @if(str_contains($laiData['source'], 'MODIS'))
-                        — Algoritmo calibrado específicamente para vegetación. <strong>+15% más preciso</strong> que estimaciones desde NDVI.
+                        — {{ __('Algoritmo calibrado específicamente para vegetación.') }} <strong>+15% {{ __('más preciso') }}</strong> {{ __('que estimaciones desde NDVI.') }}
                     @else
-                        — Estimación empírica basada en NDVI Sentinel-2 (fórmula LAI = -ln(1-NDVI) × 0.9).
+                        — {{ __('Estimación empírica basada en NDVI Sentinel-2 (fórmula LAI = -ln(1-NDVI) × 0.9).') }}
                     @endif
                 </div>
             </div>

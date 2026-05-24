@@ -24,8 +24,8 @@
     {{-- Header: título + selector de fecha en una sola línea --}}
     <div class="flex items-center justify-between mb-5">
         <div>
-            <h3 class="text-lg font-bold text-zinc-900">Análisis Térmico</h3>
-            <p class="text-xs text-zinc-400 mt-0.5">Temperatura de superficie · MODIS LST</p>
+            <h3 class="text-lg font-bold text-zinc-900">{{ __('Análisis Térmico') }}</h3>
+            <p class="text-xs text-zinc-400 mt-0.5">{{ __('Temperatura de superficie · MODIS LST') }}</p>
         </div>
 
         <div class="flex items-center gap-2">
@@ -41,7 +41,7 @@
 
             <flux:button wire:click="reloadData" variant="ghost" size="sm"
                 wire:loading.attr="disabled" wire:target="reloadData"
-                title="Actualizar datos térmicos desde NASA">
+                :title="__('Actualizar datos térmicos desde NASA')">
                 <svg wire:loading.remove wire:target="reloadData" class="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                 </svg>
@@ -60,7 +60,7 @@
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
             </svg>
-            Cargando...
+            {{ __('Cargando...') }}
         </div>
     @endif
 
@@ -75,19 +75,19 @@
         {{-- Temperatura: 3 tarjetas compactas --}}
         <div class="grid grid-cols-3 gap-3 mb-4">
             <div class="bg-zinc-50 rounded-xl p-4 border border-zinc-100">
-                <div class="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1">Día</div>
+                <div class="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1">{{ __('Día') }}</div>
                 <div class="text-2xl font-bold text-orange-600">{{ $fmt($lstData['day']) }}</div>
-                <div class="text-xs text-zinc-400 mt-0.5">superficie</div>
+                <div class="text-xs text-zinc-400 mt-0.5">{{ __('superficie') }}</div>
             </div>
             <div class="bg-zinc-50 rounded-xl p-4 border border-zinc-100">
-                <div class="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1">Noche</div>
+                <div class="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1">{{ __('Noche') }}</div>
                 <div class="text-2xl font-bold text-blue-600">{{ $fmt($lstData['night']) }}</div>
-                <div class="text-xs text-zinc-400 mt-0.5">mínima</div>
+                <div class="text-xs text-zinc-400 mt-0.5">{{ __('mínima') }}</div>
             </div>
             <div class="bg-zinc-50 rounded-xl p-4 border border-zinc-100">
-                <div class="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1">Amplitud</div>
+                <div class="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1">{{ __('Amplitud') }}</div>
                 <div class="text-2xl font-bold text-zinc-700">{{ $fmt($lstData['diff']) }}</div>
-                <div class="text-xs text-zinc-400 mt-0.5">día − noche</div>
+                <div class="text-xs text-zinc-400 mt-0.5">{{ __('día − noche') }}</div>
             </div>
         </div>
 
@@ -96,7 +96,7 @@
             <div class="bg-zinc-50 rounded-xl p-4 border border-zinc-100 mb-4">
                 <div class="flex items-start justify-between mb-2">
                     <div>
-                        <div class="text-xs font-semibold text-zinc-500 uppercase tracking-wide">CWSI · Estrés Hídrico</div>
+                        <div class="text-xs font-semibold text-zinc-500 uppercase tracking-wide">{{ __('CWSI · Estrés Hídrico') }}</div>
                         <div class="text-xs text-zinc-400 mt-0.5">{{ $cwsiData['description'] }}</div>
                     </div>
                     <div class="text-right">
@@ -109,8 +109,8 @@
                          style="width: {{ min(100, $cwsiData['value'] * 100) }}%"></div>
                 </div>
                 <div class="flex justify-between text-xs text-zinc-400 mt-1">
-                    <span>Sin estrés</span>
-                    <span>Máximo</span>
+                    <span>{{ __('Sin estrés') }}</span>
+                    <span>{{ __('Máximo') }}</span>
                 </div>
             </div>
         @endif
@@ -124,11 +124,11 @@
                     </svg>
                     <div class="flex-1">
                         <div class="flex items-center gap-2 mb-1">
-                            <span class="text-sm font-semibold text-red-900">Estrés Térmico</span>
+                            <span class="text-sm font-semibold text-red-900">{{ __('Estrés Térmico') }}</span>
                             <span class="text-xs px-1.5 py-0.5 rounded bg-red-200 text-red-900 font-medium">{{ strtoupper($heatStress['severity']) }}</span>
                         </div>
                         <p class="text-xs text-red-800">
-                            {{ number_format($heatStress['lst_day'], 1) }}°C · +{{ number_format($heatStress['excess'], 1) }}°C sobre umbral de {{ $heatStress['threshold'] }}°C
+                            {{ number_format($heatStress['lst_day'], 1) }}°C · +{{ number_format($heatStress['excess'], 1) }}°C {{ __('sobre umbral de') }} {{ $heatStress['threshold'] }}°C
                         </p>
                         <p class="text-xs text-red-700 mt-1">{{ $heatStress['recommendation'] }}</p>
                     </div>
@@ -145,11 +145,11 @@
                     </svg>
                     <div class="flex-1">
                         <div class="flex items-center gap-2 mb-1">
-                            <span class="text-sm font-semibold text-blue-900">Riesgo de Helada</span>
+                            <span class="text-sm font-semibold text-blue-900">{{ __('Riesgo de Helada') }}</span>
                             <span class="text-xs px-1.5 py-0.5 rounded bg-blue-200 text-blue-900 font-medium">{{ strtoupper($frostRisk['severity']) }}</span>
                         </div>
                         <p class="text-xs text-blue-800">
-                            {{ $fmt($frostRisk['lst_night']) }} nocturna · {{ $frostRisk['risk_level'] }}
+                            {{ $fmt($frostRisk['lst_night']) }} {{ __('nocturna') }} · {{ $frostRisk['risk_level'] }}
                         </p>
                         <p class="text-xs text-blue-700 mt-1">{{ $frostRisk['recommendation'] }}</p>
                     </div>

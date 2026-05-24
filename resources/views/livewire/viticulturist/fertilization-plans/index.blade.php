@@ -1,13 +1,13 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="Plan de Fertilización"
-        description="Gestión de planes de fertilización y nitrógenos por campaña"
+        :title="__('Plan de Fertilización')"
+        :description="__('Gestión de planes de fertilización y nitrógenos por campaña')"
         icon="funnel"
     >
         <x-slot:actions>
             <flux:button href="{{ roleRoute('viticulturist.fertilization-plans.create') }}" variant="primary" icon="plus">
-                Nuevo Plan
+                {{ __('Nuevo Plan') }}
             </flux:button>
         </x-slot:actions>
     </x-agro.page-header>
@@ -16,27 +16,27 @@
     <x-agro.stats-section key="fertilization-plans">
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <x-agro.stat-card
-                label="Borradores"
+                :label="__('Borradores')"
                 :value="$stats['draft']"
                 icon="document"
                 color="zinc"
             />
             <x-agro.stat-card
-                label="Activos"
+                :label="__('Activos')"
                 :value="$stats['active']"
                 icon="check-circle"
                 color="green"
             />
             <x-agro.stat-card
-                label="Archivados"
+                :label="__('Archivados')"
                 :value="$stats['archived']"
                 icon="archive-box"
                 color="amber"
             />
             <x-agro.stat-card
-                label="Zona vulnerable nitratos"
+                :label="__('Zona vulnerable nitratos')"
                 :value="$stats['nitrate_zone']"
-                description="Planes en zona VN"
+                :description="__('Planes en zona VN')"
                 icon="exclamation-triangle"
                 color="red"
             />
@@ -50,7 +50,7 @@
 
     <div class="flex items-center gap-3 flex-wrap">
 
-        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar por preparador o año..." />
+        <x-agro.search-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar por preparador o año...')" />
 
         <x-agro.filter-button modal="fertilization-plans-filters" :count="$filterCount" />
 
@@ -64,13 +64,13 @@
             @endif
             @if($filterCampaign)
                 @php $selectedCampaign = $campaigns->firstWhere('id', $filterCampaign); @endphp
-                <x-agro.filter-chip :label="'Campaña ' . ($selectedCampaign?->year ?? $filterCampaign)" wireRemove="$set('filterCampaign', '')" />
+                <x-agro.filter-chip :label="__('Campaña') . ' ' . ($selectedCampaign?->year ?? $filterCampaign)" wireRemove="$set('filterCampaign', '')" />
             @endif
             @if($filterStatus)
                 <x-agro.filter-chip :label="$statuses[$filterStatus] ?? $filterStatus" wireRemove="$set('filterStatus', '')" />
             @endif
             <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">
-                Limpiar todo
+                {{ __('Limpiar todo') }}
             </button>
         </div>
     @endif
@@ -128,7 +128,7 @@
                         @if($plan->nitrate_zone)
                             <div class="inline-flex items-center gap-1.5 px-2 py-1 bg-red-50 border border-red-200 rounded-lg">
                                 <flux:icon icon="exclamation-triangle" class="size-3.5 text-red-500 shrink-0" />
-                                <span class="text-xs font-semibold text-red-700">Zona VN</span>
+                                <span class="text-xs font-semibold text-red-700">{{ __('Zona VN') }}</span>
                             </div>
                         @endif
 
@@ -136,7 +136,7 @@
                         @if($plan->campaign)
                             <div class="flex items-center gap-2 text-xs text-zinc-500">
                                 <flux:icon icon="calendar-days" class="size-3.5 text-zinc-400 shrink-0" />
-                                <span>Campaña {{ $plan->campaign->year }}</span>
+                                <span>{{ __('Campaña') }} {{ $plan->campaign->year }}</span>
                             </div>
                         @endif
 
@@ -144,7 +144,7 @@
                         @if($plan->approval_date)
                             <div class="flex items-center gap-2 text-xs text-zinc-500">
                                 <flux:icon icon="check-badge" class="size-3.5 text-zinc-400 shrink-0" />
-                                <span>Aprobado: {{ $plan->approval_date->format('d/m/Y') }}</span>
+                                <span>{{ __('Aprobado') }}: {{ $plan->approval_date->format('d/m/Y') }}</span>
                             </div>
                         @endif
 
@@ -187,7 +187,7 @@
                         @if(!empty($plan->plan_lines))
                             <div class="flex items-center gap-2 text-xs text-zinc-400">
                                 <flux:icon icon="list-bullet" class="size-3.5 shrink-0" />
-                                <span>{{ count($plan->plan_lines) }} parcela(s)</span>
+                                <span>{{ count($plan->plan_lines) }} {{ __('parcela(s)') }}</span>
                             </div>
                         @endif
 
@@ -198,7 +198,7 @@
                             <x-agro.action-button
                                 variant="edit"
                                 href="{{ roleRoute('viticulturist.fertilization-plans.edit', $plan) }}"
-                                title="Editar"
+                                :title="__('Editar')"
                             />
 
                             @if($plan->status === 'draft')
@@ -206,7 +206,7 @@
                                     variant="activate"
                                     wire:click="activate({{ $plan->id }})"
                                     wire:loading.attr="disabled"
-                                    title="Activar plan"
+                                    :title="__('Activar plan')"
                                 />
                             @endif
 
@@ -215,8 +215,8 @@
                                     variant="archive"
                                     wire:click="archive({{ $plan->id }})"
                                     wire:loading.attr="disabled"
-                                    wire:confirm="¿Archivar este plan? Quedará inactivo."
-                                    title="Archivar plan"
+                                    wire:confirm="{{ __('¿Archivar este plan? Quedará inactivo.') }}"
+                                    :title="__('Archivar plan')"
                                 />
                             @endif
 
@@ -225,8 +225,8 @@
                                     variant="delete"
                                     wire:click="delete({{ $plan->id }})"
                                     wire:loading.attr="disabled"
-                                    wire:confirm="¿Eliminar este plan de fertilización? Esta acción no se puede deshacer."
-                                    title="Eliminar plan"
+                                    wire:confirm="{{ __('¿Eliminar este plan de fertilización? Esta acción no se puede deshacer.') }}"
+                                    :title="__('Eliminar plan')"
                                 />
                             @endif
                         </div>
@@ -241,17 +241,17 @@
 
         <x-agro.empty-state
             icon="funnel"
-            message="No hay planes de fertilización"
-            :description="($search || $filterCampaign || $filterStatus) ? 'Ningún plan coincide con los filtros aplicados.' : 'Crea tu primer plan de fertilización para esta campaña.'"
+            :message="__('No hay planes de fertilización')"
+            :description="($search || $filterCampaign || $filterStatus) ? __('Ningún plan coincide con los filtros aplicados.') : __('Crea tu primer plan de fertilización para esta campaña.')"
         >
             @if($search || $filterCampaign || $filterStatus)
                 <x-slot:action>
-                    <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
+                    <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">{{ __('Limpiar filtros') }}</flux:button>
                 </x-slot:action>
             @else
                 <x-slot:action>
                     <flux:button href="{{ roleRoute('viticulturist.fertilization-plans.create') }}" variant="primary" icon="plus">
-                        Crear primer plan
+                        {{ __('Crear primer plan') }}
                     </flux:button>
                 </x-slot:action>
             @endif
@@ -267,7 +267,7 @@
     >
         <div class="flex items-center gap-3 bg-white rounded-2xl shadow-xl px-6 py-4 border border-zinc-100">
             <flux:icon icon="arrow-path" class="animate-spin size-5 text-agro-500" />
-            <span class="text-sm font-medium text-zinc-600">Cargando...</span>
+            <span class="text-sm font-medium text-zinc-600">{{ __('Cargando...') }}</span>
         </div>
     </div>
 
@@ -279,20 +279,20 @@
                     <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
                         <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
                     </div>
-                    <h3 class="text-base font-semibold text-zinc-900">Filtros</h3>
+                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Filtros') }}</h3>
                 </div>
                 <flux:button x-on:click="$dispatch('close-modal', 'fertilization-plans-filters')" variant="ghost" size="sm" icon="x-mark" />
             </div>
         </div>
 
         <div class="px-6 py-5 space-y-4">
-            <x-agro.filter-select label="Campaña" wire:model.live="filterCampaign" placeholder="Todas las campañas">
+            <x-agro.filter-select :label="__('Campaña')" wire:model.live="filterCampaign" :placeholder="__('Todas las campañas')">
                 @foreach($campaigns as $campaign)
-                    <flux:select.option value="{{ $campaign->id }}">Campaña {{ $campaign->year }}</flux:select.option>
+                    <flux:select.option value="{{ $campaign->id }}">{{ __('Campaña') }} {{ $campaign->year }}</flux:select.option>
                 @endforeach
             </x-agro.filter-select>
 
-            <x-agro.filter-select label="Estado" wire:model.live="filterStatus" placeholder="Todos los estados">
+            <x-agro.filter-select :label="__('Estado')" wire:model.live="filterStatus" :placeholder="__('Todos los estados')">
                 @foreach($statuses as $value => $label)
                     <flux:select.option value="{{ $value }}">{{ $label }}</flux:select.option>
                 @endforeach
@@ -302,10 +302,10 @@
         <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between rounded-b-2xl">
             <button wire:click="clearFilters" x-on:click="$dispatch('close-modal', 'fertilization-plans-filters')"
                     class="text-sm text-zinc-500 hover:text-zinc-700 transition-colors">
-                Limpiar filtros
+                {{ __('Limpiar filtros') }}
             </button>
             <flux:button x-on:click="$dispatch('close-modal', 'fertilization-plans-filters')" variant="primary" size="sm">
-                Aplicar
+                {{ __('Aplicar') }}
             </flux:button>
         </div>
     </x-agro.modal>

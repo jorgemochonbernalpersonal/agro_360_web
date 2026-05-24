@@ -10,7 +10,7 @@
                             🚀
                         </div>
                         <div>
-                            <h3 class="text-sm font-bold text-zinc-900">Configura tu campo y bodega</h3>
+                            <h3 class="text-sm font-bold text-zinc-900">{{ __('Configura tu campo y bodega') }}</h3>
                             <div class="flex items-center gap-2 mt-0.5">
                                 <div class="w-32 bg-zinc-200 rounded-full h-1.5">
                                     <div class="bg-agro-600 h-1.5 rounded-full transition-all duration-500"
@@ -54,7 +54,7 @@
                             @if(!$step['completed'])
                                 <a href="{{ $step['route'] }}" wire:navigate
                                    class="flex-shrink-0 px-2 py-1 bg-agro-600 hover:bg-agro-700 text-white text-xs font-medium rounded transition-colors">
-                                    Ir
+                                    {{ __('Ir') }}
                                 </a>
                             @endif
                         </div>
@@ -63,12 +63,12 @@
 
                 <div class="flex items-center justify-between pt-3 border-t border-zinc-200">
                     <button wire:click="skipAll" class="text-xs text-zinc-500 hover:text-zinc-700 transition-colors">
-                        Saltar tour
+                        {{ __('Saltar tour') }}
                     </button>
                     @if($progressPercentage === 100)
                         <div class="flex items-center gap-1 text-agro-700">
                             <flux:icon icon="check-circle" class="size-4" />
-                            <span class="text-xs font-semibold">¡Campo y bodega listos!</span>
+                            <span class="text-xs font-semibold">{{ __('¡Campo y bodega listos!') }}</span>
                         </div>
                     @endif
                 </div>
@@ -79,7 +79,7 @@
             <button wire:click="resetOnboarding"
                     class="text-xs text-zinc-500 hover:text-agro-600 transition-colors flex items-center gap-1">
                 <flux:icon icon="arrow-path" class="size-3" />
-                Volver a ver el tour de bienvenida
+                {{ __('Volver a ver el tour de bienvenida') }}
             </button>
         </div>
     @endif

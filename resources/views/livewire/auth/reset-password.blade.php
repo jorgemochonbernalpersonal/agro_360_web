@@ -6,7 +6,7 @@
             <img src="{{ asset('images/logo.png') }}" alt="Agro365" width="160"
                  class="mx-auto max-h-20 object-contain transition-transform hover:scale-105">
         </a>
-        <p class="mt-2 text-sm text-zinc-500">Cuaderno de campo digital para viticultores</p>
+        <p class="mt-2 text-sm text-zinc-500">{{ __('Cuaderno de campo digital para viticultores') }}</p>
     </div>
 
     <x-agro.card>
@@ -15,8 +15,8 @@
             <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-agro-100 mb-4">
                 <flux:icon icon="lock-closed" class="size-6 text-agro-700" />
             </div>
-            <flux:heading size="xl">Nueva Contraseña</flux:heading>
-            <flux:subheading class="mt-1">Elige una contraseña segura para tu cuenta</flux:subheading>
+            <flux:heading size="xl">{{ __('Nueva Contraseña') }}</flux:heading>
+            <flux:subheading class="mt-1">{{ __('Elige una contraseña segura para tu cuenta') }}</flux:subheading>
         </div>
 
         @if(session('status'))
@@ -28,7 +28,7 @@
         @if(session('error'))
             <flux:callout variant="danger" icon="x-circle" class="mb-5">
                 <flux:callout.text>{{ session('error') }}</flux:callout.text>
-                <flux:callout.link href="{{ route('password.request') }}">Solicitar nuevo enlace</flux:callout.link>
+                <flux:callout.link href="{{ route('password.request') }}">{{ __('Solicitar nuevo enlace') }}</flux:callout.link>
             </flux:callout>
         @else
 
@@ -37,18 +37,18 @@
                 <flux:field>
                     <flux:label>Email</flux:label>
                     <flux:input wire:model="email" type="email"
-                                placeholder="correo@ejemplo.com"
+                                :placeholder="__('correo@ejemplo.com')"
                                 required autofocus autocomplete="email" />
                     <flux:error name="email" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Nueva Contraseña</flux:label>
+                    <flux:label>{{ __('Nueva Contraseña') }}</flux:label>
                     <div class="relative">
                         <flux:input wire:model="password"
                                     :type="'password'"
                                     x-bind:type="showPassword ? 'text' : 'password'"
-                                    placeholder="Mínimo 8 caracteres"
+                                    :placeholder="__('Mínimo 8 caracteres')"
                                     required autocomplete="new-password" />
                         <button type="button"
                                 @click="showPassword = !showPassword"
@@ -59,16 +59,16 @@
                         </button>
                     </div>
                     <flux:error name="password" />
-                    <flux:description>Mínimo 8 caracteres</flux:description>
+                    <flux:description>{{ __('Mínimo 8 caracteres') }}</flux:description>
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Confirmar Nueva Contraseña</flux:label>
+                    <flux:label>{{ __('Confirmar Nueva Contraseña') }}</flux:label>
                     <div class="relative">
                         <flux:input wire:model="password_confirmation"
                                     :type="'password'"
                                     x-bind:type="showPasswordConfirmation ? 'text' : 'password'"
-                                    placeholder="Repite la nueva contraseña"
+                                    :placeholder="__('Repite la nueva contraseña')"
                                     required autocomplete="new-password" />
                         <button type="button"
                                 @click="showPasswordConfirmation = !showPasswordConfirmation"
@@ -82,10 +82,10 @@
                 </flux:field>
 
                 <flux:button type="submit" variant="primary" class="w-full" wire:loading.attr="disabled">
-                    <span wire:loading.remove wire:target="resetPassword">Restablecer Contraseña</span>
+                    <span wire:loading.remove wire:target="resetPassword">{{ __('Restablecer Contraseña') }}</span>
                     <span wire:loading wire:target="resetPassword" class="flex items-center gap-2">
                         <flux:icon icon="arrow-path" variant="micro" class="animate-spin" />
-                        Procesando...
+                        {{ __('Procesando...') }}
                     </span>
                 </flux:button>
 
@@ -96,7 +96,7 @@
         <div class="mt-6 pt-5 border-t border-zinc-100 text-center">
             <a href="{{ route('login') }}"
                class="text-sm text-agro-700 hover:text-agro-900 hover:underline font-medium">
-                ← Volver al inicio de sesión
+                {{ __('← Volver al inicio de sesión') }}
             </a>
         </div>
 

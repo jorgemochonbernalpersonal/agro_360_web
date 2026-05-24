@@ -24,7 +24,7 @@
         @if($announcements->count() >= 3)
             <a href="{{ roleRoute('viticulturist.announcements') }}" wire:navigate
                class="text-xs text-agro-600 hover:underline font-medium">
-                Ver todos los avisos →
+                {{ __('Ver todos los avisos →') }}
             </a>
         @endif
     </div>

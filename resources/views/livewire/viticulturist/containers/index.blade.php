@@ -1,15 +1,15 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="Contenedores"
-        description="Gestiona tus barricas, depósitos y tanques de bodega"
+        :title="__('Contenedores')"
+        :description="__('Gestiona tus barricas, depósitos y tanques de bodega')"
     />
 
     {{-- Tabs --}}
     <x-agro.tabs
         :tabs="[
-            'active'   => ['label' => 'Activos',     'count' => $stats['active']],
-            'archived' => ['label' => 'Archivados',  'count' => $stats['archived']],
+            'active'   => ['label' => __('Activos'),     'count' => $stats['active']],
+            'archived' => ['label' => __('Archivados'),  'count' => $stats['archived']],
         ]"
         :active="$currentTab"
         wireMethod="switchTab"
@@ -19,7 +19,7 @@
     <div class="space-y-3">
         <div class="flex items-center gap-3">
 
-            <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar por nombre o número de serie..." />
+            <x-agro.search-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar por nombre o número de serie...')" />
 
             @php $filterCount = ($filterStatus !== '' ? 1 : 0); @endphp
             <x-agro.filter-button modal="container-filters" :count="$filterCount" />
@@ -27,7 +27,7 @@
             <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
             <flux:button href="{{ roleRoute('viticulturist.containers.create') }}" variant="primary" icon="plus">
-                Nuevo
+                {{ __('Nuevo') }}
             </flux:button>
 
         </div>
@@ -35,7 +35,7 @@
         {{-- Active filter chips --}}
         @if($search || $filterStatus !== '')
             <div class="flex flex-wrap items-center gap-2">
-                <span class="text-xs text-zinc-400">Filtros activos:</span>
+                <span class="text-xs text-zinc-400">{{ __('Filtros activos') }}:</span>
 
                 @if($search)
                     <x-agro.filter-chip icon="magnifying-glass" :label="'\"' . $search . '\"'" wireRemove="$set('search', '')" />
@@ -43,13 +43,13 @@
 
                 @if($filterStatus !== '')
                     @php
-                        $statusLabels = ['empty' => 'Vacíos', 'available' => 'Disponibles', 'full' => 'Llenos'];
+                        $statusLabels = ['empty' => __('Vacíos'), 'available' => __('Disponibles'), 'full' => __('Llenos')];
                     @endphp
-                    <x-agro.filter-chip :label="'Estado: ' . ($statusLabels[$filterStatus] ?? $filterStatus)" wireRemove="$set('filterStatus', '')" />
+                    <x-agro.filter-chip :label="__('Estado') . ': ' . ($statusLabels[$filterStatus] ?? $filterStatus)" wireRemove="$set('filterStatus', '')" />
                 @endif
 
                 <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 underline">
-                    Limpiar todo
+                    {{ __('Limpiar todo') }}
                 </button>
             </div>
         @endif
@@ -66,9 +66,9 @@
                 @php
                     $occupancy = $container->getOccupancyPercentage();
                     [$statusLabel, $statusDot] = match(true) {
-                        $container->isEmpty() => ['Vacío',      'bg-blue-400'],
-                        $container->isFull()  => ['Lleno',      'bg-red-400'],
-                        default               => ['Disponible', 'bg-agro-400'],
+                        $container->isEmpty() => [__('Vacío'),      'bg-blue-400'],
+                        $container->isFull()  => [__('Lleno'),      'bg-red-400'],
+                        default               => [__('Disponible'), 'bg-agro-400'],
                     };
                 @endphp
 
@@ -93,7 +93,7 @@
                     {{-- Ocupación --}}
                     <div class="mb-3">
                         <div class="flex justify-between mb-1.5">
-                            <span class="text-xs text-zinc-500">Ocupación</span>
+                            <span class="text-xs text-zinc-500">{{ __('Ocupación') }}</span>
                             <span class="text-xs font-semibold text-zinc-700">{{ $occupancy }}%</span>
                         </div>
                         <div class="w-full bg-zinc-100 rounded-full h-2">
@@ -106,8 +106,8 @@
 
                     {{-- Capacidad --}}
                     <div class="grid grid-cols-2 gap-2">
-                        <x-agro.metric-cell label="Capacidad" :value="number_format($container->capacity, 0) . ' L'" color="agro" />
-                        <x-agro.metric-cell label="Disponible" :value="number_format($container->getAvailableCapacity(), 0) . ' L'" color="zinc" />
+                        <x-agro.metric-cell :label="__('Capacidad')" :value="number_format($container->capacity, 0) . ' L'" color="agro" />
+                        <x-agro.metric-cell :label="__('Disponible')" :value="number_format($container->getAvailableCapacity(), 0) . ' L'" color="zinc" />
                     </div>
 
                     <x-slot:footer>
@@ -116,12 +116,12 @@
                                 <x-agro.action-button
                                     variant="view"
                                     href="{{ roleRoute('viticulturist.containers.show', $container->id) }}"
-                                    title="Ver contenedor"
+                                    :title="__('Ver contenedor')"
                                 />
                                 <x-agro.action-button
                                     variant="edit"
                                     href="{{ roleRoute('viticulturist.containers.edit', $container->id) }}"
-                                    title="Editar"
+                                    :title="__('Editar')"
                                 />
                             </div>
                             <div class="flex items-center gap-1">
@@ -129,21 +129,21 @@
                                     <x-agro.action-button
                                         variant="archive"
                                         wire:click="archive({{ $container->id }})"
-                                        title="Archivar"
+                                        :title="__('Archivar')"
                                     />
                                 @else
                                     <x-agro.action-button
                                         variant="restore"
                                         icon="arrow-uturn-left"
                                         wire:click="unarchive({{ $container->id }})"
-                                        title="Restaurar"
+                                        :title="__('Restaurar')"
                                     />
                                     @if($container->isEmpty())
                                         <x-agro.action-button
                                             variant="delete"
                                             wire:click="delete({{ $container->id }})"
-                                            wire:confirm="¿Seguro que deseas eliminar este contenedor?"
-                                            title="Eliminar"
+                                            wire:confirm="{{ __('¿Seguro que deseas eliminar este contenedor?') }}"
+                                            :title="__('Eliminar')"
                                         />
                                     @endif
                                 @endif
@@ -159,17 +159,17 @@
     @else
         <x-agro.empty-state
             icon="beaker"
-            message="{{ $currentTab === 'active' ? 'No hay contenedores activos' : 'No hay contenedores archivados' }}"
-            description="{{ $search || $filterStatus !== '' ? 'Ningún contenedor coincide con los filtros aplicados.' : 'Crea tu primer contenedor para gestionar tu bodega.' }}"
+            :message="$currentTab === 'active' ? __('No hay contenedores activos') : __('No hay contenedores archivados')"
+            :description="$search || $filterStatus !== '' ? __('Ningún contenedor coincide con los filtros aplicados.') : __('Crea tu primer contenedor para gestionar tu bodega.')"
         >
             @if($search || $filterStatus !== '')
                 <x-slot:action>
-                    <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
+                    <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">{{ __('Limpiar filtros') }}</flux:button>
                 </x-slot:action>
             @elseif($currentTab === 'active')
                 <x-slot:action>
                     <flux:button href="{{ roleRoute('viticulturist.containers.create') }}" variant="primary" icon="plus">
-                        Nuevo Contenedor
+                        {{ __('Nuevo Contenedor') }}
                     </flux:button>
                 </x-slot:action>
             @endif
@@ -184,27 +184,27 @@
                     <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
                         <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
                     </div>
-                    <h3 class="text-base font-semibold text-zinc-900">Filtros</h3>
+                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Filtros') }}</h3>
                 </div>
                 <flux:button x-on:click="$dispatch('close-modal', 'container-filters')" variant="ghost" size="sm" icon="x-mark" />
             </div>
         </div>
 
         <div class="px-6 py-5">
-            <x-agro.filter-select label="Estado de ocupación" wire:model.live="filterStatus" placeholder="Todos">
-                <flux:select.option value="empty">Vacíos</flux:select.option>
-                <flux:select.option value="available">Disponibles</flux:select.option>
-                <flux:select.option value="full">Llenos</flux:select.option>
+            <x-agro.filter-select :label="__('Estado de ocupación')" wire:model.live="filterStatus" :placeholder="__('Todos')">
+                <flux:select.option value="empty">{{ __('Vacíos') }}</flux:select.option>
+                <flux:select.option value="available">{{ __('Disponibles') }}</flux:select.option>
+                <flux:select.option value="full">{{ __('Llenos') }}</flux:select.option>
             </x-agro.filter-select>
         </div>
 
         <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between rounded-b-2xl">
             <button wire:click="clearFilters" x-on:click="$dispatch('close-modal', 'container-filters')"
                     class="text-sm text-zinc-500 hover:text-zinc-700 transition-colors">
-                Limpiar filtros
+                {{ __('Limpiar filtros') }}
             </button>
             <flux:button x-on:click="$dispatch('close-modal', 'container-filters')" variant="primary" size="sm">
-                Aplicar
+                {{ __('Aplicar') }}
             </flux:button>
         </div>
     </x-agro.modal>

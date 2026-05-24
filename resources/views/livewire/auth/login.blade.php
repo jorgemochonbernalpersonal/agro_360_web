@@ -6,14 +6,14 @@
             <img src="{{ asset('images/logo.png') }}" alt="Agro365" width="160"
                  class="mx-auto max-h-20 object-contain transition-transform hover:scale-105">
         </a>
-        <p class="mt-2 text-sm text-zinc-500">Cuaderno de campo digital para viticultores</p>
+        <p class="mt-2 text-sm text-zinc-500">{{ __('Cuaderno de campo digital para viticultores') }}</p>
     </div>
 
     <x-agro.card>
 
         <div class="text-center mb-6">
-            <flux:heading size="xl">Iniciar Sesión</flux:heading>
-            <flux:subheading>Accede a tu cuenta de Agro365</flux:subheading>
+            <flux:heading size="xl">{{ __('Iniciar Sesión') }}</flux:heading>
+            <flux:subheading>{{ __('Accede a tu cuenta de Agro365') }}</flux:subheading>
         </div>
 
         {{-- Error de autenticación (credenciales, rate limit, captcha) --}}
@@ -33,16 +33,16 @@
             <flux:field>
                 <flux:label>Email</flux:label>
                 <flux:input wire:model="email" type="email"
-                            placeholder="correo@ejemplo.com"
+                            :placeholder="__('correo@ejemplo.com')"
                             required autocomplete="email" autofocus />
             </flux:field>
 
             <flux:field>
                 <div class="flex items-center justify-between mb-1">
-                    <flux:label>Contraseña</flux:label>
+                    <flux:label>{{ __('Contraseña') }}</flux:label>
                     <a href="{{ route('password.request') }}"
                        class="text-xs text-agro-700 hover:text-agro-900 hover:underline font-medium">
-                        ¿Olvidaste tu contraseña?
+                        {{ __('¿Olvidaste tu contraseña?') }}
                     </a>
                 </div>
                 <div class="relative">
@@ -64,7 +64,7 @@
             {{-- reCAPTCHA tras varios intentos fallidos --}}
             @if($showCaptcha)
                 <flux:callout variant="warning" icon="shield-exclamation">
-                    <flux:callout.text>Por seguridad, verifica que no eres un robot</flux:callout.text>
+                    <flux:callout.text>{{ __('Por seguridad, verifica que no eres un robot') }}</flux:callout.text>
                     <div class="flex justify-center mt-3"
                          x-data="{
                              widgetId: null,
@@ -93,14 +93,14 @@
             @endif
 
             <div class="flex items-center">
-                <flux:checkbox wire:model="remember" label="Recordarme en este dispositivo" />
+                <flux:checkbox wire:model="remember" :label="__('Recordarme en este dispositivo')" />
             </div>
 
             <flux:button type="submit" variant="primary" class="w-full" wire:loading.attr="disabled">
-                <span wire:loading.remove wire:target="login">Iniciar Sesión</span>
+                <span wire:loading.remove wire:target="login">{{ __('Iniciar Sesión') }}</span>
                 <span wire:loading wire:target="login" class="flex items-center gap-2">
                     <flux:icon icon="arrow-path" variant="micro" class="animate-spin" />
-                    Iniciando sesión...
+                    {{ __('Iniciando sesión...') }}
                 </span>
             </flux:button>
 
@@ -116,15 +116,15 @@
                     <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
                     <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
                 </svg>
-                Continuar con Google
+                {{ __('Continuar con Google') }}
             </a>
         </div>
 
         <div class="mt-5 text-center">
             <flux:subheading>
-                ¿No tienes cuenta?
+                {{ __('¿No tienes cuenta?') }}
                 <a href="{{ route('register') }}" class="text-agro-700 hover:text-agro-900 hover:underline font-semibold">
-                    Regístrate aquí
+                    {{ __('Regístrate aquí') }}
                 </a>
             </flux:subheading>
         </div>

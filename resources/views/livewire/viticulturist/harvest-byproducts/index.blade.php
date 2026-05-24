@@ -2,13 +2,13 @@
 
     {{-- Header --}}
     <x-agro.page-header
-        title="Subproductos de Vendimia"
-        description="Registro de salida de orujos, raspones y lías (Reglamento UE 2018/273)"
+        :title="__('Subproductos de Vendimia')"
+        :description="__('Registro de salida de orujos, raspones y lías (Reglamento UE 2018/273)')"
         icon="beaker"
     >
         <x-slot:actions>
             <flux:button href="{{ roleRoute('viticulturist.harvest-byproducts.create') }}" variant="primary" icon="plus">
-                Registrar Subproducto
+                {{ __('Registrar Subproducto') }}
             </flux:button>
         </x-slot:actions>
     </x-agro.page-header>
@@ -17,30 +17,30 @@
     <x-agro.stats-section key="harvest-byproducts">
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <x-agro.stat-card
-                label="Registros activos"
+                :label="__('Registros activos')"
                 :value="$stats['active']"
-                :description="$stats['active'] . ' en total'"
+                :description="$stats['active'] . ' ' . __('en total')"
                 icon="beaker"
                 color="agro"
             />
             <x-agro.stat-card
-                label="kg totales campaña"
+                :label="__('kg totales campaña')"
                 :value="number_format($stats['total_kg'], 0, ',', '.') . ' kg'"
-                description="Campaña seleccionada"
+                :description="__('Campaña seleccionada')"
                 icon="scale"
                 color="green"
             />
             <x-agro.stat-card
-                label="Orujo + Hollejo"
+                :label="__('Orujo + Hollejo')"
                 :value="number_format($stats['pomace_kg'], 0, ',', '.') . ' kg'"
-                description="Campaña seleccionada"
+                :description="__('Campaña seleccionada')"
                 icon="cube"
                 color="amber"
             />
             <x-agro.stat-card
-                label="Archivados"
+                :label="__('Archivados')"
                 :value="$stats['archived']"
-                :description="$stats['archived'] > 0 ? 'Fuera de activo' : 'Ninguno archivado'"
+                :description="$stats['archived'] > 0 ? __('Fuera de activo') : __('Ninguno archivado')"
                 icon="archive-box"
                 color="zinc"
             />
@@ -50,8 +50,8 @@
     {{-- Tabs --}}
     <x-agro.tabs
         :tabs="[
-            'active'   => ['label' => 'Activos',    'count' => $stats['active']],
-            'archived' => ['label' => 'Archivados', 'count' => $stats['archived']],
+            'active'   => ['label' => __('Activos'),    'count' => $stats['active']],
+            'archived' => ['label' => __('Archivados'), 'count' => $stats['archived']],
         ]"
         :active="$currentTab"
         wireMethod="switchTab"
@@ -62,7 +62,7 @@
         $filterCount = (int) !empty($filterCampaign) + (int) !empty($filterByproductType);
     @endphp
     <div class="flex items-center gap-3">
-        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar por destino, nº documento..." />
+        <x-agro.search-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar por destino, nº documento...')" />
         <x-agro.filter-button modal="harvest-byproducts-filters" :count="$filterCount" />
     </div>
 
@@ -76,7 +76,7 @@
             @if($filterByproductType)
                 <x-agro.filter-chip icon="beaker" :label="$byproductTypes[$filterByproductType] ?? $filterByproductType" wireRemove="$set('filterByproductType', '')" />
             @endif
-            <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">Limpiar todo</button>
+            <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">{{ __('Limpiar todo') }}</button>
         </div>
     @endif
 
@@ -88,13 +88,13 @@
         @if($entries->isEmpty())
             <x-agro.empty-state
                 icon="beaker"
-                title="{{ $currentTab === 'active' ? 'Sin subproductos registrados' : 'Sin registros archivados' }}"
-                description="{{ $search || $filterCampaign || $filterByproductType ? 'Ningún registro coincide con los filtros aplicados.' : 'Registra la salida de orujos, raspones y lías conforme al Reglamento UE 2018/273.' }}"
+                :title="$currentTab === 'active' ? __('Sin subproductos registrados') : __('Sin registros archivados')"
+                :description="$search || $filterCampaign || $filterByproductType ? __('Ningún registro coincide con los filtros aplicados.') : __('Registra la salida de orujos, raspones y lías conforme al Reglamento UE 2018/273.')"
             >
                 @if(!$search && !$filterCampaign && !$filterByproductType && $currentTab === 'active')
                     <x-slot:action>
                         <flux:button href="{{ roleRoute('viticulturist.harvest-byproducts.create') }}" variant="primary" icon="plus">
-                            Registrar Subproducto
+                            {{ __('Registrar Subproducto') }}
                         </flux:button>
                     </x-slot:action>
                 @endif
@@ -141,7 +141,7 @@
                         <div class="flex-1 space-y-3">
                             {{-- Cantidad destacada --}}
                             <div class="bg-zinc-50 rounded-xl p-3">
-                                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">Cantidad</p>
+                                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">{{ __('Cantidad') }}</p>
                                 <p class="text-2xl font-bold text-zinc-700 leading-none">
                                     {{ number_format($entry->quantity_kg, 3, ',', '.') }}
                                     <span class="text-xs font-normal text-zinc-400 ml-0.5">kg</span>
@@ -175,26 +175,26 @@
                                     <x-agro.action-button
                                         variant="edit"
                                         href="{{ roleRoute('viticulturist.harvest-byproducts.edit', $entry) }}"
-                                        title="Editar"
+                                        :title="__('Editar')"
                                     />
                                     <x-agro.action-button
                                         variant="archive"
                                         wire:click="archive({{ $entry->id }})"
-                                        wire:confirm="¿Archivar este registro?"
-                                        title="Archivar"
+                                        wire:confirm="{{ __('¿Archivar este registro?') }}"
+                                        :title="__('Archivar')"
                                     />
                                 @else
                                     <x-agro.action-button
                                         variant="restore"
                                         icon="arrow-uturn-left"
                                         wire:click="unarchive({{ $entry->id }})"
-                                        title="Restaurar"
+                                        :title="__('Restaurar')"
                                     />
                                     <x-agro.action-button
                                         variant="delete"
                                         wire:click="delete({{ $entry->id }})"
-                                        wire:confirm="¿Eliminar este registro permanentemente?"
-                                        title="Eliminar"
+                                        wire:confirm="{{ __('¿Eliminar este registro permanentemente?') }}"
+                                        :title="__('Eliminar')"
                                     />
                                 @endif
                             </div>
@@ -215,25 +215,25 @@
                     <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
                         <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
                     </div>
-                    <h3 class="text-base font-semibold text-zinc-900">Filtros</h3>
+                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Filtros') }}</h3>
                 </div>
                 <flux:button x-on:click="$dispatch('close-modal', 'harvest-byproducts-filters')" variant="ghost" size="sm" icon="x-mark" />
             </div>
         </div>
         <div class="px-6 py-5 space-y-5">
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Campaña</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Campaña') }}</label>
                 <flux:select wire:model.live="filterCampaign">
-                    <flux:select.option value="">Todas las campañas</flux:select.option>
+                    <flux:select.option value="">{{ __('Todas las campañas') }}</flux:select.option>
                     @foreach($campaigns as $c)
                         <flux:select.option value="{{ $c->id }}">{{ $c->name }}</flux:select.option>
                     @endforeach
                 </flux:select>
             </div>
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Tipo de subproducto</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Tipo de subproducto') }}</label>
                 <flux:select wire:model.live="filterByproductType">
-                    <flux:select.option value="">Todos los tipos</flux:select.option>
+                    <flux:select.option value="">{{ __('Todos los tipos') }}</flux:select.option>
                     @foreach($byproductTypes as $key => $label)
                         <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
                     @endforeach
@@ -242,11 +242,11 @@
         </div>
         <div class="px-6 py-4 border-t border-zinc-200 flex items-center justify-between">
             @if($filterCampaign || $filterByproductType)
-                <button wire:click="clearFilters" class="text-sm text-zinc-400 hover:text-zinc-600 transition-colors">Limpiar filtros</button>
+                <button wire:click="clearFilters" class="text-sm text-zinc-400 hover:text-zinc-600 transition-colors">{{ __('Limpiar filtros') }}</button>
             @else
                 <span></span>
             @endif
-            <flux:button x-on:click="$dispatch('close-modal', 'harvest-byproducts-filters')" variant="primary">Aplicar</flux:button>
+            <flux:button x-on:click="$dispatch('close-modal', 'harvest-byproducts-filters')" variant="primary">{{ __('Aplicar') }}</flux:button>
         </div>
     </x-agro.modal>
 

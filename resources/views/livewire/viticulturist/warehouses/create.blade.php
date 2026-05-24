@@ -1,27 +1,27 @@
 <x-agro.form-card
-    title="New Warehouse"
-    description="Register a new warehouse or storage location"
+    :title="__('Nuevo Almacén')"
+    :description="__('Registra un nuevo almacén o ubicación de almacenamiento')"
     :back-url="roleRoute('viticulturist.warehouse.index', ['tab' => 'almacenes'])"
 >
     <form wire:submit="save" class="space-y-6">
 
-        <x-agro.form-section title="Warehouse Information">
+        <x-agro.form-section :title="__('Información del Almacén')">
             <div class="grid grid-cols-1 gap-6">
                 <flux:field>
-                    <flux:label required>Name</flux:label>
-                    <flux:input wire:model="name" type="text" placeholder="e.g. Main Warehouse, North Shed..." required />
+                    <flux:label required>{{ __('Nombre') }}</flux:label>
+                    <flux:input wire:model="name" type="text" :placeholder="__('Ej: Almacén Principal, Nave Norte...')" required />
                     <flux:error name="name" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Location</flux:label>
-                    <flux:input wire:model="location" type="text" placeholder="e.g. Building A, Ground Floor, Room 3..." />
+                    <flux:label>{{ __('Ubicación') }}</flux:label>
+                    <flux:input wire:model="location" type="text" :placeholder="__('Ej: Nave A, Planta Baja, Sala 3...')" />
                     <flux:error name="location" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Description</flux:label>
-                    <flux:textarea wire:model="description" rows="3" placeholder="Additional information about this warehouse..." />
+                    <flux:label>{{ __('Descripción') }}</flux:label>
+                    <flux:textarea wire:model="description" rows="3" :placeholder="__('Información adicional sobre este almacén...')" />
                     <flux:error name="description" />
                 </flux:field>
             </div>
@@ -29,7 +29,7 @@
 
         <x-agro.form-actions
             :cancel-url="roleRoute('viticulturist.warehouse.index', ['tab' => 'almacenes'])"
-            submit-label="Create Warehouse"
+            :submit-label="__('Crear Almacén')"
         />
     </form>
 </x-agro.form-card>

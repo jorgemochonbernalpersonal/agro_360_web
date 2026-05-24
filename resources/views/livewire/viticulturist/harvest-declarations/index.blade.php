@@ -2,13 +2,13 @@
 
     {{-- Header --}}
     <x-agro.page-header
-        title="Declaraciones de Vendimia"
-        description="Declaraciones oficiales de cosecha ante CCAA / DO (Reglamento UE 2018/273)"
+        :title="__('Declaraciones de Vendimia')"
+        :description="__('Declaraciones oficiales de cosecha ante CCAA / DO (Reglamento UE 2018/273)')"
         icon="document-arrow-up"
     >
         <x-slot:actions>
             <flux:button href="{{ roleRoute('viticulturist.harvest-declarations.create') }}" variant="primary" icon="plus">
-                Nueva Declaración
+                {{ __('Nueva Declaración') }}
             </flux:button>
         </x-slot:actions>
     </x-agro.page-header>
@@ -17,30 +17,30 @@
     <x-agro.stats-section key="harvest-declarations">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <x-agro.stat-card
-                label="Borradores"
+                :label="__('Borradores')"
                 :value="$stats['draft']"
-                description="Pendientes de presentar"
+                :description="__('Pendientes de presentar')"
                 icon="document"
                 color="zinc"
             />
             <x-agro.stat-card
-                label="Presentadas"
+                :label="__('Presentadas')"
                 :value="$stats['submitted']"
-                description="Enviadas al organismo"
+                :description="__('Enviadas al organismo')"
                 icon="paper-airplane"
                 color="blue"
             />
             <x-agro.stat-card
-                label="Aceptadas"
+                :label="__('Aceptadas')"
                 :value="$stats['accepted']"
-                description="Confirmadas oficialmente"
+                :description="__('Confirmadas oficialmente')"
                 icon="check-circle"
                 color="green"
             />
             <x-agro.stat-card
-                label="Rechazadas"
+                :label="__('Rechazadas')"
                 :value="$stats['rejected']"
-                :description="$stats['rejected'] > 0 ? 'Requieren corrección' : 'Sin rechazos'"
+                :description="$stats['rejected'] > 0 ? __('Requieren corrección') : __('Sin rechazos')"
                 icon="x-circle"
                 color="red"
             />
@@ -52,7 +52,7 @@
         $filterCount = (int) !empty($filterCampaign) + (int) !empty($filterStatus);
     @endphp
     <div class="flex items-center gap-3">
-        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar por organismo, referencia, año..." />
+        <x-agro.search-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar por organismo, referencia, año...')" />
         <x-agro.filter-button modal="harvest-declarations-filters" :count="$filterCount" />
     </div>
 
@@ -66,7 +66,7 @@
             @if($filterStatus)
                 <x-agro.filter-chip icon="document-arrow-up" :label="$statuses[$filterStatus] ?? $filterStatus" wireRemove="$set('filterStatus', '')" />
             @endif
-            <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">Limpiar todo</button>
+            <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">{{ __('Limpiar todo') }}</button>
         </div>
     @endif
 
@@ -78,13 +78,13 @@
         @if($entries->isEmpty())
             <x-agro.empty-state
                 icon="document-arrow-up"
-                title="{{ $search || $filterCampaign || $filterStatus ? 'Sin resultados' : 'Sin declaraciones registradas' }}"
-                description="{{ $search || $filterCampaign || $filterStatus ? 'Ninguna declaración coincide con los filtros aplicados.' : 'Crea la declaración de vendimia anual obligatoria ante la CCAA o Denominación de Origen correspondiente.' }}"
+                :title="$search || $filterCampaign || $filterStatus ? __('Sin resultados') : __('Sin declaraciones registradas')"
+                :description="$search || $filterCampaign || $filterStatus ? __('Ninguna declaración coincide con los filtros aplicados.') : __('Crea la declaración de vendimia anual obligatoria ante la CCAA o Denominación de Origen correspondiente.')"
             >
                 @if(!$search && !$filterCampaign && !$filterStatus)
                     <x-slot:action>
                         <flux:button href="{{ roleRoute('viticulturist.harvest-declarations.create') }}" variant="primary" icon="plus">
-                            Nueva Declaración
+                            {{ __('Nueva Declaración') }}
                         </flux:button>
                     </x-slot:action>
                 @endif
@@ -126,7 +126,7 @@
                         <div class="flex-1 space-y-4">
                             <div class="grid grid-cols-2 gap-3">
                                 <div class="bg-agro-50 rounded-xl p-3">
-                                    <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-1">Total kg</p>
+                                    <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-1">{{ __('Total kg') }}</p>
                                     <p class="text-xl font-bold text-agro-700 leading-none">
                                         {{ $entry->total_kg ? number_format($entry->total_kg, 0, ',', '.') : '—' }}
                                         @if($entry->total_kg)
@@ -135,7 +135,7 @@
                                     </p>
                                 </div>
                                 <div class="bg-zinc-50 rounded-xl p-3">
-                                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">Sup. (ha)</p>
+                                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">{{ __('Sup. (ha)') }}</p>
                                     <p class="text-xl font-bold text-zinc-600 leading-none">
                                         {{ $entry->total_surface_ha ? number_format($entry->total_surface_ha, 2, ',', '.') : '—' }}
                                     </p>
@@ -152,7 +152,7 @@
                                 @if($entry->submission_date)
                                     <div class="flex items-center gap-2 text-zinc-500">
                                         <flux:icon icon="paper-airplane" class="size-4 text-zinc-400 shrink-0" />
-                                        <span class="truncate text-xs">Pres. {{ $entry->submission_date->format('d/m/Y') }}</span>
+                                        <span class="truncate text-xs">{{ __('Pres.') }} {{ $entry->submission_date->format('d/m/Y') }}</span>
                                     </div>
                                 @endif
                                 @if($entry->reference_number)
@@ -174,28 +174,28 @@
                                 <x-agro.action-button
                                     variant="edit"
                                     href="{{ roleRoute('viticulturist.harvest-declarations.edit', $entry) }}"
-                                    title="Editar"
+                                    :title="__('Editar')"
                                 />
                                 @if($entry->status === 'draft')
                                     <x-agro.action-button
                                         icon="paper-airplane"
                                         variant="primary"
                                         wire:click="markSubmitted({{ $entry->id }})"
-                                        wire:confirm="¿Marcar como presentada ante {{ $entry->authority }}?"
-                                        title="Marcar como presentada"
+                                        wire:confirm="{{ __('¿Marcar como presentada ante') }} {{ $entry->authority }}?"
+                                        :title="__('Marcar como presentada')"
                                     />
                                     <x-agro.action-button
                                         variant="delete"
                                         wire:click="delete({{ $entry->id }})"
-                                        wire:confirm="¿Eliminar este borrador permanentemente?"
-                                        title="Eliminar borrador"
+                                        wire:confirm="{{ __('¿Eliminar este borrador permanentemente?') }}"
+                                        :title="__('Eliminar borrador')"
                                     />
                                 @elseif($entry->status === 'submitted')
                                     <x-agro.action-button
                                         variant="activate"
                                         wire:click="markAccepted({{ $entry->id }})"
-                                        wire:confirm="¿Confirmar aceptación de la declaración?"
-                                        title="Marcar como aceptada"
+                                        wire:confirm="{{ __('¿Confirmar aceptación de la declaración?') }}"
+                                        :title="__('Marcar como aceptada')"
                                     />
                                 @endif
                             </div>
@@ -216,25 +216,25 @@
                     <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
                         <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
                     </div>
-                    <h3 class="text-base font-semibold text-zinc-900">Filtros</h3>
+                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Filtros') }}</h3>
                 </div>
                 <flux:button x-on:click="$dispatch('close-modal', 'harvest-declarations-filters')" variant="ghost" size="sm" icon="x-mark" />
             </div>
         </div>
         <div class="px-6 py-5 space-y-5">
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Campaña</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Campaña') }}</label>
                 <flux:select wire:model.live="filterCampaign">
-                    <flux:select.option value="">Todas las campañas</flux:select.option>
+                    <flux:select.option value="">{{ __('Todas las campañas') }}</flux:select.option>
                     @foreach($campaigns as $c)
                         <flux:select.option value="{{ $c->id }}">{{ $c->name }}</flux:select.option>
                     @endforeach
                 </flux:select>
             </div>
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Estado</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Estado') }}</label>
                 <flux:select wire:model.live="filterStatus">
-                    <flux:select.option value="">Todos los estados</flux:select.option>
+                    <flux:select.option value="">{{ __('Todos los estados') }}</flux:select.option>
                     @foreach($statuses as $key => $label)
                         <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
                     @endforeach
@@ -243,11 +243,11 @@
         </div>
         <div class="px-6 py-4 border-t border-zinc-200 flex items-center justify-between">
             @if($filterCampaign || $filterStatus)
-                <button wire:click="clearFilters" class="text-sm text-zinc-400 hover:text-zinc-600 transition-colors">Limpiar filtros</button>
+                <button wire:click="clearFilters" class="text-sm text-zinc-400 hover:text-zinc-600 transition-colors">{{ __('Limpiar filtros') }}</button>
             @else
                 <span></span>
             @endif
-            <flux:button x-on:click="$dispatch('close-modal', 'harvest-declarations-filters')" variant="primary">Aplicar</flux:button>
+            <flux:button x-on:click="$dispatch('close-modal', 'harvest-declarations-filters')" variant="primary">{{ __('Aplicar') }}</flux:button>
         </div>
     </x-agro.modal>
 
