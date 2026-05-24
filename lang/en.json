@@ -4145,5 +4145,13 @@
     "Sin registros de trazabilidad para los filtros seleccionados": "No traceability records for the selected filters",
     "Total transportado": "Total transported",
     "Trazabilidad de Uva": "Grape Traceability",
-    "Vehículo": "Vehicle"
+    "Vehículo": "Vehicle",
+    "Admisible PAC": "CAP Eligible",
+    "Alertas de Cumplimiento PAC": "CAP Compliance Alerts",
+    "Parcelas Bloqueadas": "Blocked Plots",
+    "Superficie Total": "Total Area",
+    "Todas las parcelas cumplen con los requisitos PAC.": "All plots meet CAP requirements.",
+    "Total Parcelas": "Total Plots",
+    "del total": "of total",
+    "protegidas": "protected"
 }
