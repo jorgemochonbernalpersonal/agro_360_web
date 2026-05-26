@@ -76,7 +76,7 @@ class PhytosanitaryAlertController extends Controller
 
         return response()->json([
             'data'    => new \App\Http\Resources\Api\PhytosanitaryAlertResource($record),
-            'message' => 'Alerta fitosanitaria registrada correctamente.',
+            'message' => __('Alerta fitosanitaria registrada correctamente.'),
         ], 201);
     }
 }

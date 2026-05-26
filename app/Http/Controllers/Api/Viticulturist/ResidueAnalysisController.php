@@ -68,14 +68,14 @@ class ResidueAnalysisController extends Controller
         }
 
         if (empty($validated['campaign_id'])) {
-            return response()->json(['error' => 'No hay una campaña activa. Activa una campaña antes de registrar.'], 422);
+            return response()->json(['error' => __('No hay una campaña activa. Activa una campaña antes de registrar.')], 422);
         }
 
         $record = \App\Models\ResidueAnalysis::create([...$validated, 'viticulturist_id' => $user->id, 'active' => true]);
 
         return response()->json([
             'data'    => new \App\Http\Resources\Api\ResidueAnalysisResource($record),
-            'message' => 'Análisis de residuos registrado correctamente.',
+            'message' => __('Análisis de residuos registrado correctamente.'),
         ], 201);
     }
 }

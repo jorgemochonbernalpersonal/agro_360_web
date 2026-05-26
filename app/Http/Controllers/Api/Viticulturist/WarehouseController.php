@@ -65,7 +65,7 @@ class WarehouseController extends Controller
 
         return response()->json([
             'data'    => $record,
-            'message' => 'Almacén registrado correctamente.',
+            'message' => __('Almacén registrado correctamente.'),
         ], 201);
     }
 }

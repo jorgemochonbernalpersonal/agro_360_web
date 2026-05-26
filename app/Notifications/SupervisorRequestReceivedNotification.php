@@ -68,7 +68,7 @@ class SupervisorRequestReceivedNotification extends Notification implements Shou
             'icon'         => '📩',
             'message'      => ($req->winery?->name ?? 'Bodega') . ' — ' . $typeLabel,
             'action_url'   => route('supervisor.requests.index'),
-            'action_text'  => 'Ver solicitudes',
+            'action_text'  => __('Ver solicitudes'),
         ];
     }
 }

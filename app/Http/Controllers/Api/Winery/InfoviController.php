@@ -110,7 +110,7 @@ class InfoviController extends Controller
         if ($isLarge) {
             $nextMonth   = $now->copy()->addMonth()->startOfMonth();
             $deadlines[] = [
-                'label' => 'Declaración mensual ' . $nextMonth->translatedFormat('F Y'),
+                'label' => __('Declaración mensual ') . $nextMonth->translatedFormat('F Y'),
                 'date'  => $nextMonth->copy()->setDay(19)->toDateString(),
                 'type'  => 'monthly',
             ];
@@ -126,7 +126,7 @@ class InfoviController extends Controller
                     $date  = \Carbon\Carbon::parse($d);
                     $month = $date->month === 12 ? 'noviembre' : 'julio';
                     $deadlines[] = [
-                        'label' => 'Declaración ampliada ' . $month . ' ' . $date->year,
+                        'label' => __('Declaración ampliada ') . $month . ' ' . $date->year,
                         'date'  => $d,
                         'type'  => 'semi_annual',
                     ];

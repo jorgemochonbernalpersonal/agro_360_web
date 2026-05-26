@@ -32,14 +32,14 @@ class InfoviController extends Controller
         $mosto       = $this->buildCuadroMosto($wineryId, $campaign, $campaignStart, $campaignEnd);
 
         $wineLabels = [
-            'red'        => 'Vino tinto tranquilo',
-            'white'      => 'Vino blanco tranquilo',
-            'rose'       => 'Vino rosado tranquilo',
-            'sparkling'  => 'Vino espumoso',
-            'fortified'  => 'Vino licoroso / generoso',
-            'sweet'      => 'Vino dulce natural',
-            'semi_sweet' => 'Vino semidulce',
-            'other'      => 'Otros vinos',
+            'red'        => __('Vino tinto tranquilo'),
+            'white'      => __('Vino blanco tranquilo'),
+            'rose'       => __('Vino rosado tranquilo'),
+            'sparkling'  => __('Vino espumoso'),
+            'fortified'  => __('Vino licoroso / generoso'),
+            'sweet'      => __('Vino dulce natural'),
+            'semi_sweet' => __('Vino semidulce'),
+            'other'      => __('Otros vinos'),
         ];
 
         $pdf = Pdf::loadView('reports.infovi', compact(

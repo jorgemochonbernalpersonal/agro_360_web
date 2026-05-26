@@ -57,8 +57,8 @@ class RecommendationGenerator
             $recommendations[] = [
                 'type' => 'success',
                 'icon' => '✅',
-                'title' => 'Condiciones óptimas',
-                'text' => 'Todos los indicadores están en rangos normales.',
+                'title' => __('Condiciones óptimas'),
+                'text' => __('Todos los indicadores están en rangos normales.'),
             ];
         }
 
@@ -77,7 +77,7 @@ class RecommendationGenerator
             $recommendations[] = [
                 'type' => 'warning',
                 'icon' => '🌱',
-                'title' => 'Vigor bajo detectado',
+                'title' => __('Vigor bajo detectado'),
                 'text' => sprintf(
                     'El NDVI es bajo (%.2f). Revisa posibles deficiencias nutricionales o estrés hídrico.',
                     $ndvi
@@ -87,7 +87,7 @@ class RecommendationGenerator
             $recommendations[] = [
                 'type' => 'info',
                 'icon' => '📊',
-                'title' => 'Vigor moderado',
+                'title' => __('Vigor moderado'),
                 'text' => sprintf(
                     'El NDVI es moderado (%.2f). Considera un análisis foliar para verificar nutrición.',
                     $ndvi
@@ -100,8 +100,8 @@ class RecommendationGenerator
             $recommendations[] = [
                 'type' => 'warning',
                 'icon' => '📉',
-                'title' => 'Tendencia decreciente',
-                'text' => 'El vigor vegetativo está disminuyendo. Monitoriza la evolución en los próximos días.',
+                'title' => __('Tendencia decreciente'),
+                'text' => __('El vigor vegetativo está disminuyendo. Monitoriza la evolución en los próximos días.'),
             ];
         }
 
@@ -120,7 +120,7 @@ class RecommendationGenerator
             $recommendations[] = [
                 'type' => 'danger',
                 'icon' => '❄️',
-                'title' => 'Riesgo de helada',
+                'title' => __('Riesgo de helada'),
                 'text' => sprintf(
                     'Temperatura bajo cero (%.1f°C). Considera medidas de protección contra heladas.',
                     $temp
@@ -130,7 +130,7 @@ class RecommendationGenerator
             $recommendations[] = [
                 'type' => 'warning',
                 'icon' => '🌡️',
-                'title' => 'Temperaturas bajas',
+                'title' => __('Temperaturas bajas'),
                 'text' => sprintf(
                     'Temperatura muy baja (%.1f°C). Monitoriza riesgo de heladas nocturnas.',
                     $temp
@@ -140,7 +140,7 @@ class RecommendationGenerator
             $recommendations[] = [
                 'type' => 'warning',
                 'icon' => '🔥',
-                'title' => 'Estrés térmico',
+                'title' => __('Estrés térmico'),
                 'text' => sprintf(
                     'Temperatura elevada (%.1f°C). Monitoriza riego y posible estrés hídrico.',
                     $temp
@@ -150,7 +150,7 @@ class RecommendationGenerator
             $recommendations[] = [
                 'type' => 'danger',
                 'icon' => '🔥',
-                'title' => 'Calor extremo',
+                'title' => __('Calor extremo'),
                 'text' => sprintf(
                     'Temperatura muy alta (%.1f°C). Riego urgente y protección contra insolación.',
                     $temp
@@ -173,7 +173,7 @@ class RecommendationGenerator
             $recommendations[] = [
                 'type' => 'warning',
                 'icon' => '💧',
-                'title' => 'Suelo seco',
+                'title' => __('Suelo seco'),
                 'text' => sprintf(
                     'Humedad del suelo baja (%.0f%%). Considera riego para evitar estrés hídrico.',
                     $moisture
@@ -183,7 +183,7 @@ class RecommendationGenerator
             $recommendations[] = [
                 'type' => 'danger',
                 'icon' => '🏜️',
-                'title' => 'Suelo muy seco',
+                'title' => __('Suelo muy seco'),
                 'text' => sprintf(
                     'Humedad del suelo crítica (%.0f%%). Riego urgente necesario.',
                     $moisture
@@ -193,7 +193,7 @@ class RecommendationGenerator
             $recommendations[] = [
                 'type' => 'info',
                 'icon' => '💦',
-                'title' => 'Suelo húmedo',
+                'title' => __('Suelo húmedo'),
                 'text' => sprintf(
                     'Alta humedad del suelo (%.0f%%). Evita riego para prevenir encharcamiento.',
                     $moisture
@@ -203,7 +203,7 @@ class RecommendationGenerator
             $recommendations[] = [
                 'type' => 'warning',
                 'icon' => '🌊',
-                'title' => 'Suelo saturado',
+                'title' => __('Suelo saturado'),
                 'text' => sprintf(
                     'Humedad del suelo muy alta (%.0f%%). Riesgo de encharcamiento y asfixia radicular.',
                     $moisture
@@ -233,7 +233,7 @@ class RecommendationGenerator
             $recommendations[] = [
                 'type' => 'info',
                 'icon' => '🌧️',
-                'title' => 'Lluvia prevista',
+                'title' => __('Lluvia prevista'),
                 'text' => sprintf(
                     'Se esperan %d días de lluvia esta semana (%.1f mm total). Planifica tratamientos fitosanitarios.',
                     $rainDays,
@@ -244,7 +244,7 @@ class RecommendationGenerator
             $recommendations[] = [
                 'type' => 'warning',
                 'icon' => '⛈️',
-                'title' => 'Lluvias intensas',
+                'title' => __('Lluvias intensas'),
                 'text' => sprintf(
                     'Se esperan lluvias abundantes (%.1f mm). Verifica drenaje y pospón tratamientos.',
                     $totalRain
@@ -254,8 +254,8 @@ class RecommendationGenerator
             $recommendations[] = [
                 'type' => 'info',
                 'icon' => '☀️',
-                'title' => 'Semana seca',
-                'text' => 'No se espera lluvia en los próximos 7 días. Monitoriza necesidades de riego.',
+                'title' => __('Semana seca'),
+                'text' => __('No se espera lluvia en los próximos 7 días. Monitoriza necesidades de riego.'),
             ];
         }
 
@@ -281,28 +281,28 @@ class RecommendationGenerator
             $stressIndex <= 0 => [
                 'status' => 'optimal',
                 'emoji' => '💧',
-                'text' => 'Óptimo',
+                'text' => __('Óptimo'),
                 'color' => 'text-green-600',
                 'bg' => 'bg-green-100',
             ],
             $stressIndex <= 20 => [
                 'status' => 'mild',
                 'emoji' => '💦',
-                'text' => 'Leve',
+                'text' => __('Leve'),
                 'color' => 'text-yellow-600',
                 'bg' => 'bg-yellow-100',
             ],
             $stressIndex <= 40 => [
                 'status' => 'moderate',
                 'emoji' => '🏜️',
-                'text' => 'Moderado',
+                'text' => __('Moderado'),
                 'color' => 'text-orange-600',
                 'bg' => 'bg-orange-100',
             ],
             default => [
                 'status' => 'severe',
                 'emoji' => '⚠️',
-                'text' => 'Severo',
+                'text' => __('Severo'),
                 'color' => 'text-red-600',
                 'bg' => 'bg-red-100',
             ],

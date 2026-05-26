@@ -78,7 +78,7 @@ class LabelBatchController extends Controller
 
         return response()->json([
             'data'    => $this->format($batch),
-            'message' => 'Lote de etiquetas creado correctamente.',
+            'message' => __('Lote de etiquetas creado correctamente.'),
         ], 201);
     }
 
@@ -115,7 +115,7 @@ class LabelBatchController extends Controller
 
         $batch->delete();
 
-        return response()->json(['message' => 'Lote de etiquetas eliminado correctamente.']);
+        return response()->json(['message' => __('Lote de etiquetas eliminado correctamente.')]);
     }
 
     private function format(LabelBatch $b): array

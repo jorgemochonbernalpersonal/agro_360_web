@@ -26,6 +26,6 @@ class ApiRole
             'api_role_mismatch: required=' . implode(',', $roles) . ' actual=' . $user->role
         );
 
-        return response()->json(['message' => 'No tienes permiso para acceder a este recurso.'], 403);
+        return response()->json(['message' => __('No tienes permiso para acceder a este recurso.')], 403);
     }
 }

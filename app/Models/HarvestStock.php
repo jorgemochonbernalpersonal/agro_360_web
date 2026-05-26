@@ -139,15 +139,15 @@ class HarvestStock extends Model
     public function getMovementDescription(): string
     {
         return match($this->movement_type) {
-            'initial' => 'Registro inicial de cosecha',
+            'initial' => __('Registro inicial de cosecha'),
             'adjustment' => $this->quantity_change > 0 ? 'Ajuste positivo (+)' : 'Ajuste negativo (-)',
-            'reserve' => 'Reservado para venta',
-            'sale' => 'Venta confirmada',
-            'unreserve' => 'Reserva cancelada',
-            'gift' => 'Donación/Regalo',
-            'loss' => 'Pérdida/Merma',
-            'return' => 'Devolución',
-            default => 'Movimiento desconocido',
+            'reserve' => __('Reservado para venta'),
+            'sale' => __('Venta confirmada'),
+            'unreserve' => __('Reserva cancelada'),
+            'gift' => __('Donación/Regalo'),
+            'loss' => __('Pérdida/Merma'),
+            'return' => __('Devolución'),
+            default => __('Movimiento desconocido'),
         };
     }
 }

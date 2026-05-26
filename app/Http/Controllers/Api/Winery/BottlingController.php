@@ -136,7 +136,7 @@ class BottlingController extends Controller
 
         return response()->json([
             'data'    => new BottlingResource($bottling),
-            'message' => 'Embotellado registrado correctamente.',
+            'message' => __('Embotellado registrado correctamente.'),
         ], 201);
     }
 
@@ -202,6 +202,6 @@ class BottlingController extends Controller
             $bottling->delete();
         });
 
-        return response()->json(['message' => 'Embotellado eliminado correctamente.']);
+        return response()->json(['message' => __('Embotellado eliminado correctamente.')]);
     }
 }

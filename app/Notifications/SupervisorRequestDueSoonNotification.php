@@ -49,7 +49,7 @@ class SupervisorRequestDueSoonNotification extends Notification implements Shoul
             ->greeting(__('Hola :name', ['name' => $notifiable->name ?: '']))
             ->line("Tu solicitud de tipo **{$typeLabel}** vence **{$daysText}** ({$req->due_date->format('d/m/Y')}).")
             ->when($req->title, fn ($m) => $m->line('**Asunto:** ' . $req->title))
-            ->line('Si aún no has respondido, hazlo antes de que se supere la fecha límite.')
+            ->line(__('Si aún no has respondido, hazlo antes de que se supere la fecha límite.'))
             ->action(__('Responder ahora'), $url)
             ->salutation(__('Saludos,\nAgro365'));
     }
@@ -69,7 +69,7 @@ class SupervisorRequestDueSoonNotification extends Notification implements Shoul
             'icon'         => '⏰',
             'message'      => "Vence {$daysText}: {$typeLabel}",
             'action_url'   => route('winery.denomination.requests.index'),
-            'action_text'  => 'Ver solicitud',
+            'action_text'  => __('Ver solicitud'),
         ];
     }
 }

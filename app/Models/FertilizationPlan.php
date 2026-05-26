@@ -26,9 +26,9 @@ class FertilizationPlan extends Model
     ];
 
     const STATUSES = [
-        'draft'    => 'Borrador',
-        'active'   => 'Activo',
-        'archived' => 'Archivado',
+        'draft'    => __('Borrador'),
+        'active'   => __('Activo'),
+        'archived' => __('Archivado'),
     ];
 
     const STATUS_COLORS = [

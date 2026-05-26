@@ -37,12 +37,12 @@ class NotebookAccessRequestedNotification extends Notification implements Should
         }
 
         return (new MailMessage)
-            ->subject('Nueva solicitud de acceso al cuaderno — ' . $this->winery->name)
+            ->subject(__('Nueva solicitud de acceso al cuaderno — ') . $this->winery->name)
             ->greeting(__('Hola :name', ['name' => $notifiable->name ?: '']))
-            ->line('La bodega **' . $this->winery->name . '** ha solicitado acceso a tu cuaderno de campo digital.')
-            ->line('Puedes aprobar o rechazar esta solicitud desde tu panel de control. Recuerda que tú tienes el control total: puedes revocar el acceso en cualquier momento.')
+            ->line(__('La bodega **') . $this->winery->name . '** ha solicitado acceso a tu cuaderno de campo digital.')
+            ->line(__('Puedes aprobar o rechazar esta solicitud desde tu panel de control. Recuerda que tú tienes el control total: puedes revocar el acceso en cualquier momento.'))
             ->action(__('Ver solicitudes de acceso'), $url)
-            ->line('Si no conoces esta bodega, simplemente rechaza la solicitud.')
+            ->line(__('Si no conoces esta bodega, simplemente rechaza la solicitud.'))
             ->salutation(__('Saludos,\nAgro365'));
     }
 

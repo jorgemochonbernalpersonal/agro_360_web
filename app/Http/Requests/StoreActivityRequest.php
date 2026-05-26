@@ -41,17 +41,17 @@ class StoreActivityRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'plot_id.required' => 'Debe seleccionar una parcela.',
-            'plot_id.exists' => 'La parcela seleccionada no existe.',
-            'campaign_id.required' => 'Debe seleccionar una campaña.',
-            'activity_type.required' => 'El tipo de actividad es obligatorio.',
-            'activity_type.in' => 'El tipo de actividad no es válido.',
-            'activity_date.required' => 'La fecha es obligatoria.',
-            'activity_date.date' => 'La fecha no es válida.',
-            'activity_date.before_or_equal' => 'La fecha no puede ser futura.',
-            'temperature.numeric' => 'La temperatura debe ser un número.',
-            'temperature.min' => 'La temperatura mínima es -50°C.',
-            'temperature.max' => 'La temperatura máxima es 60°C.',
+            'plot_id.required' => __('Debe seleccionar una parcela.'),
+            'plot_id.exists' => __('La parcela seleccionada no existe.'),
+            'campaign_id.required' => __('Debe seleccionar una campaña.'),
+            'activity_type.required' => __('El tipo de actividad es obligatorio.'),
+            'activity_type.in' => __('El tipo de actividad no es válido.'),
+            'activity_date.required' => __('La fecha es obligatoria.'),
+            'activity_date.date' => __('La fecha no es válida.'),
+            'activity_date.before_or_equal' => __('La fecha no puede ser futura.'),
+            'temperature.numeric' => __('La temperatura debe ser un número.'),
+            'temperature.min' => __('La temperatura mínima es -50°C.'),
+            'temperature.max' => __('La temperatura máxima es 60°C.'),
         ];
     }
 

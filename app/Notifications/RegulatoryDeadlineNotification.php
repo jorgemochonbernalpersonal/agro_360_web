@@ -39,8 +39,8 @@ class RegulatoryDeadlineNotification extends Notification implements ShouldQueue
 
         return (new MailMessage)
             ->subject($prefix . 'INFOVI — Declaración vence en ' . $this->daysLeft . ' ' . $dayWord)
-            ->greeting('Hola, ' . $notifiable->name . ':')
-            ->line('Tu próxima declaración **INFOVI** está a punto de vencer.')
+            ->greeting(__('Hola, ') . $notifiable->name . ':')
+            ->line(__('Tu próxima declaración **INFOVI** está a punto de vencer.'))
             ->line('**Declaración:** ' . $this->deadlineLabel)
             ->line('**Fecha límite:** ' . $date)
             ->line('**Tipo de productor:** ' . ucfirst($this->producerType) . ' productor ('
@@ -50,8 +50,8 @@ class RegulatoryDeadlineNotification extends Notification implements ShouldQueue
             ->line('1. Abre Agro365 → SILICIE → INFOVI y comprueba los cuadros de existencias.')
             ->line('2. Exporta el CSV SILICIE desde el panel SILICIE.')
             ->line('3. Accede a **mapa.gob.es/infovi** y envía la declaración.')
-            ->action('Abrir INFOVI en Agro365', route('winery.silicie.infovi'))
-            ->line('Si ya has realizado la declaración puedes ignorar este recordatorio.');
+            ->action(__('Abrir INFOVI en Agro365'), route('winery.silicie.infovi'))
+            ->line(__('Si ya has realizado la declaración puedes ignorar este recordatorio.'));
     }
 
     public function toArray(object $notifiable): array

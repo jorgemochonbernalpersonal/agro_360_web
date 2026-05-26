@@ -98,7 +98,7 @@ class NasaETService
             'et_daily'  => $et8day  ? round($et8day  / 8, 2) : null,
             'pet_daily' => $pet8day ? round($pet8day / 8, 2) : null,
             'et_8day'   => $et8day  ? round($et8day, 1)      : null,
-            'et_source' => 'NASA MODIS MOD16A2.061',
+            'et_source' => __('NASA MODIS MOD16A2.061'),
         ];
     }
 
@@ -144,7 +144,7 @@ class NasaETService
             return [
                 'kc' => 0,
                 'status' => 'error',
-                'message' => 'PET es 0',
+                'message' => __('PET es 0'),
             ];
         }
 
@@ -226,7 +226,7 @@ class NasaETService
             'et_daily' => round($etDaily, 2),
             'pet_daily' => round($petDaily, 2),
             'et_8day' => round($etDaily * 8, 1),
-            'et_source' => 'NASA MODIS MOD16A2.061 (Mock)',
+            'et_source' => __('NASA MODIS MOD16A2.061 (Mock)'),
         ];
     }
 

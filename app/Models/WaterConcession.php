@@ -25,10 +25,10 @@ class WaterConcession extends Model
     ];
 
     const CONCESSION_TYPES = [
-        'superficial'        => 'Aguas superficiales',
-        'subterranea'        => 'Aguas subterráneas',
-        'comunidad_regantes' => 'Comunidad de regantes',
-        'otro'               => 'Otro',
+        'superficial'        => __('Aguas superficiales'),
+        'subterranea'        => __('Aguas subterráneas'),
+        'comunidad_regantes' => __('Comunidad de regantes'),
+        'otro'               => __('Otro'),
     ];
 
     public function viticulturist(): BelongsTo

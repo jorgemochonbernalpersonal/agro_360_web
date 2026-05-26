@@ -82,7 +82,7 @@ class AgriInsuranceController extends Controller
 
         return response()->json([
             'data'    => new AgriInsuranceResource($record),
-            'message' => 'Seguro agrario registrado correctamente.',
+            'message' => __('Seguro agrario registrado correctamente.'),
         ], 201);
     }
 }

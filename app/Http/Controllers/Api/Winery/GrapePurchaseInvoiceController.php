@@ -174,7 +174,7 @@ class GrapePurchaseInvoiceController extends Controller
 
         return response()->json([
             'data'    => new GrapePurchaseInvoiceResource($invoice),
-            'message' => 'Liquidación creada correctamente.',
+            'message' => __('Liquidación creada correctamente.'),
         ], 201);
     }
 
@@ -226,7 +226,7 @@ class GrapePurchaseInvoiceController extends Controller
             $invoice->delete();
         });
 
-        return response()->json(['message' => 'Liquidación eliminada correctamente.']);
+        return response()->json(['message' => __('Liquidación eliminada correctamente.')]);
     }
 
     // ─── POST /winery/grape-invoices/{id}/items ───────────────────────────────
@@ -281,7 +281,7 @@ class GrapePurchaseInvoiceController extends Controller
 
         return response()->json([
             'data'    => new GrapePurchaseInvoiceResource($invoice),
-            'message' => 'Línea añadida correctamente.',
+            'message' => __('Línea añadida correctamente.'),
         ]);
     }
 
@@ -340,7 +340,7 @@ class GrapePurchaseInvoiceController extends Controller
             $this->recalculateInvoiceTotals($invoice);
         });
 
-        return response()->json(['message' => 'Línea eliminada correctamente.']);
+        return response()->json(['message' => __('Línea eliminada correctamente.')]);
     }
 
     // ─── POST /winery/grape-invoices/{id}/confirm ─────────────────────────────
@@ -361,7 +361,7 @@ class GrapePurchaseInvoiceController extends Controller
 
         return response()->json([
             'data'    => new GrapePurchaseInvoiceResource($invoice),
-            'message' => 'Liquidación confirmada correctamente.',
+            'message' => __('Liquidación confirmada correctamente.'),
         ]);
     }
 
@@ -393,7 +393,7 @@ class GrapePurchaseInvoiceController extends Controller
 
         return response()->json([
             'data'    => new GrapePurchaseInvoiceResource($invoice),
-            'message' => 'Liquidación marcada como pagada.',
+            'message' => __('Liquidación marcada como pagada.'),
         ]);
     }
 

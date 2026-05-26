@@ -69,7 +69,7 @@ class PhytosanitaryProductController extends Controller
 
         return response()->json([
             'data'    => new \App\Http\Resources\Api\PhytosanitaryProductResource($record),
-            'message' => 'Producto fitosanitario registrado correctamente.',
+            'message' => __('Producto fitosanitario registrado correctamente.'),
         ], 201);
     }
 }

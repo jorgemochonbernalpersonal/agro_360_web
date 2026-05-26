@@ -107,7 +107,7 @@ class AnomalyDetector
                     $dropPercent >= 20 => 'high',
                     default => 'medium',
                 },
-                'title' => 'Caída Rápida de Vigor',
+                'title' => __('Caída Rápida de Vigor'),
                 'description' => sprintf(
                     'NDVI cayó %.1f%% en los últimos 7 días (%.3f → %.3f)',
                     $dropPercent,
@@ -145,41 +145,41 @@ class AnomalyDetector
         // Very rapid drop = likely disease or pest
         if ($dropPercent > 25) {
             $causes[] = [
-                'cause' => 'Enfermedad fúngica grave',
+                'cause' => __('Enfermedad fúngica grave'),
                 'probability' => 'high',
-                'examples' => 'Mildiu severo, Oídio avanzado',
+                'examples' => __('Mildiu severo, Oídio avanzado'),
             ];
             $causes[] = [
-                'cause' => 'Ataque de plaga masivo',
+                'cause' => __('Ataque de plaga masivo'),
                 'probability' => 'high',
-                'examples' => 'Polilla del racimo, Langosta',
+                'examples' => __('Polilla del racimo, Langosta'),
             ];
         }
 
         // Moderate drop + low soil moisture = water stress
         if ($dropPercent > 15 && $data->soil_moisture_mean < 0.15) {
             $causes[] = [
-                'cause' => 'Estrés hídrico severo',
+                'cause' => __('Estrés hídrico severo'),
                 'probability' => 'high',
-                'examples' => 'Fallo de riego, Sequía',
+                'examples' => __('Fallo de riego, Sequía'),
             ];
         }
 
         // Moderate drop + normal moisture = disease
         if ($dropPercent > 15 && $data->soil_moisture_mean >= 0.15) {
             $causes[] = [
-                'cause' => 'Enfermedad foliar',
+                'cause' => __('Enfermedad foliar'),
                 'probability' => 'medium',
-                'examples' => 'Mildiu, Botritis, Yesca',
+                'examples' => __('Mildiu, Botritis, Yesca'),
             ];
         }
 
         // High temperature stress
         if ($data->temperature_mean > 35) {
             $causes[] = [
-                'cause' => 'Daño por calor extremo',
+                'cause' => __('Daño por calor extremo'),
                 'probability' => 'medium',
-                'examples' => 'Quemaduras foliares',
+                'examples' => __('Quemaduras foliares'),
             ];
         }
 
@@ -222,7 +222,7 @@ class AnomalyDetector
                 $anomalies[] = [
                     'type' => 'statistical_outlier',
                     'severity' => abs($zScore) > 3 ? 'high' : 'medium',
-                    'title' => 'Valor Estadísticamente Anómalo',
+                    'title' => __('Valor Estadísticamente Anómalo'),
                     'description' => sprintf(
                         '%s fuera de rango normal (Z-score: %.1f)',
                         $this->getMetricLabel($metric),
@@ -270,7 +270,7 @@ class AnomalyDetector
             return [
                 'type' => 'water_stress',
                 'severity' => $current->soil_moisture_mean < 0.15 ? 'high' : 'medium',
-                'title' => 'Estrés Hídrico Detectado',
+                'title' => __('Estrés Hídrico Detectado'),
                 'description' => sprintf(
                     'NDWI cayó %.2f y humedad del suelo al %.0f%%',
                     $drop,
@@ -363,7 +363,7 @@ class AnomalyDetector
             return [
                 'type' => 'spatial_heterogeneity',
                 'severity' => $data->ndvi_stddev > 0.20 ? 'high' : 'medium',
-                'title' => 'Alta Variabilidad Intra-parcela',
+                'title' => __('Alta Variabilidad Intra-parcela'),
                 'description' => sprintf(
                     'Variación NDVI dentro de la parcela: %.3f (desviación estándar)',
                     $data->ndvi_stddev
@@ -445,10 +445,10 @@ class AnomalyDetector
     {
         return match ($metric) {
             'ndvi_mean' => 'NDVI',
-            'ndwi_mean' => 'NDWI (Agua)',
-            'evi_mean' => 'EVI (Vigor)',
-            'temperature_mean' => 'Temperatura',
-            'soil_moisture_mean' => 'Humedad del Suelo',
+            'ndwi_mean' => __('NDWI (Agua)'),
+            'evi_mean' => __('EVI (Vigor)'),
+            'temperature_mean' => __('Temperatura'),
+            'soil_moisture_mean' => __('Humedad del Suelo'),
             default => $metric,
         };
     }

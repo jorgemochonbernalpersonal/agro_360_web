@@ -25,11 +25,11 @@ class PacPayment extends Model
     ];
 
     public const PAYMENT_TYPES = [
-        'basic_payment'   => 'Pago básico',
-        'eco_scheme'      => 'Eco-régimen',
-        'associated_aid'  => 'Ayuda asociada viñedo',
-        'transitional'    => 'Pago transitorio',
-        'other'           => 'Otro',
+        'basic_payment'   => __('Pago básico'),
+        'eco_scheme'      => __('Eco-régimen'),
+        'associated_aid'  => __('Ayuda asociada viñedo'),
+        'transitional'    => __('Pago transitorio'),
+        'other'           => __('Otro'),
     ];
 
     public function viticulturist(): BelongsTo

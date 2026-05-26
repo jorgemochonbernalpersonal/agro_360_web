@@ -80,7 +80,7 @@ class SupplierController extends Controller
 
         return response()->json([
             'data'    => $supplier,
-            'message' => 'Proveedor creado correctamente.',
+            'message' => __('Proveedor creado correctamente.'),
         ], 201);
     }
 
@@ -126,6 +126,6 @@ class SupplierController extends Controller
         $supplier = Supplier::forUser($user->id)->findOrFail($id);
         $supplier->update(['active' => false]);
 
-        return response()->json(['message' => 'Proveedor desactivado correctamente.']);
+        return response()->json(['message' => __('Proveedor desactivado correctamente.')]);
     }
 }

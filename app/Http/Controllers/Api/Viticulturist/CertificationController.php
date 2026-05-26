@@ -75,7 +75,7 @@ class CertificationController extends Controller
 
         return response()->json([
             'data'    => new CertificationResource($record),
-            'message' => 'Certificación registrada correctamente.',
+            'message' => __('Certificación registrada correctamente.'),
         ], 201);
     }
 }

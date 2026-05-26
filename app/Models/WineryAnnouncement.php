@@ -26,9 +26,9 @@ class WineryAnnouncement extends Model
     public const TARGET_SPECIFIC = 'specific';
 
     public const TYPE_LABELS = [
-        self::TYPE_INFO            => 'Informativo',
-        self::TYPE_ACTION_REQUIRED => 'Acción requerida',
-        self::TYPE_HARVEST_ALERT   => 'Alerta de vendimia',
+        self::TYPE_INFO            => __('Informativo'),
+        self::TYPE_ACTION_REQUIRED => __('Acción requerida'),
+        self::TYPE_HARVEST_ALERT   => __('Alerta de vendimia'),
     ];
 
     public const TYPE_COLORS = [

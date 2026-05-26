@@ -85,7 +85,7 @@ class BiodiversityRecordController extends Controller
 
         return response()->json([
             'data'    => new \App\Http\Resources\Api\BiodiversityRecordResource($record),
-            'message' => 'Registro de biodiversidad creado correctamente.',
+            'message' => __('Registro de biodiversidad creado correctamente.'),
         ], 201);
     }
 }

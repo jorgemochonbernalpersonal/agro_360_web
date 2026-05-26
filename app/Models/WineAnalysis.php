@@ -11,16 +11,16 @@ class WineAnalysis extends Model
     // ─── Constants ─────────────────────────────────────────────────────────────
 
     const ANALYSIS_TYPES = [
-        'standard'   => 'Estándar',
-        'complete'   => 'Completo',
-        'organic'    => 'Ecológico',
-        'custom'     => 'Personalizado',
+        'standard'   => __('Estándar'),
+        'complete'   => __('Completo'),
+        'organic'    => __('Ecológico'),
+        'custom'     => __('Personalizado'),
     ];
 
     const RESULTS = [
-        'pending' => 'Pendiente',
-        'passed'  => 'Conforme',
-        'failed'  => 'No conforme',
+        'pending' => __('Pendiente'),
+        'passed'  => __('Conforme'),
+        'failed'  => __('No conforme'),
     ];
 
     // ─── Fillable ──────────────────────────────────────────────────────────────

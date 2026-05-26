@@ -41,10 +41,10 @@ class ViticulturistAssignedToWineryNotification extends Notification implements 
         }
 
         return (new MailMessage)
-            ->subject('Has sido asignado a la bodega ' . $this->winery->name)
+            ->subject(__('Has sido asignado a la bodega ') . $this->winery->name)
             ->greeting(__('Hola :name', ['name' => $notifiable->name ?: '']))
-            ->line('La Denominación de Origen **' . $this->supervisor->name . '** te ha asignado a la bodega **' . $this->winery->name . '**.')
-            ->line('Podrás colaborar con esta bodega desde tu panel de Agro365.')
+            ->line(__('La Denominación de Origen **') . $this->supervisor->name . '** te ha asignado a la bodega **' . $this->winery->name . '**.')
+            ->line(__('Podrás colaborar con esta bodega desde tu panel de Agro365.'))
             ->action(__('Ver mi denominación'), $url)
             ->salutation(__('Saludos,\nAgro365'));
     }
@@ -57,9 +57,9 @@ class ViticulturistAssignedToWineryNotification extends Notification implements 
             'supervisor_id'   => $this->supervisor->id,
             'supervisor_name' => $this->supervisor->name,
             'icon'            => '🏭',
-            'message'         => 'Asignado a ' . $this->winery->name . ' por ' . $this->supervisor->name,
+            'message'         => __('Asignado a ') . $this->winery->name . ' por ' . $this->supervisor->name,
             'action_url'      => route('viticulturist.denomination.index'),
-            'action_text'     => 'Ver mi DO',
+            'action_text'     => __('Ver mi DO'),
         ];
     }
 }

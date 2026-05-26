@@ -71,6 +71,6 @@ class WineryMessageController extends Controller
             ->where('id', $id)
             ->update(['read_at' => now()]);
 
-        return response()->json(['message' => 'Mensaje marcado como leído.']);
+        return response()->json(['message' => __('Mensaje marcado como leído.')]);
     }
 }

@@ -8,12 +8,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class WineryDocument extends Model
 {
     const DOCUMENT_TYPES = [
-        'license'     => 'Licencia',
-        'permit'      => 'Permiso',
-        'certificate' => 'Certificado',
-        'insurance'   => 'Seguro',
-        'contract'    => 'Contrato',
-        'other'       => 'Otro',
+        'license'     => __('Licencia'),
+        'permit'      => __('Permiso'),
+        'certificate' => __('Certificado'),
+        'insurance'   => __('Seguro'),
+        'contract'    => __('Contrato'),
+        'other'       => __('Otro'),
     ];
 
     protected $fillable = [

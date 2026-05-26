@@ -48,6 +48,6 @@ class AnnouncementController extends Controller
         $announcement = WineryAnnouncement::active()->visibleTo($user)->findOrFail($id);
         $announcement->viticulturists()->updateExistingPivot($user->id, ['read_at' => now()]);
 
-        return response()->json(['message' => 'Anuncio marcado como leído.']);
+        return response()->json(['message' => __('Anuncio marcado como leído.')]);
     }
 }

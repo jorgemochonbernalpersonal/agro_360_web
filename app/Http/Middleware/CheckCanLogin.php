@@ -19,7 +19,7 @@ class CheckCanLogin
 
             SecurityLogger::logAccessDenied($user->id, $request->path(), 'can_login=false');
 
-            return response()->json(['message' => 'Cuenta desactivada. Contacta con soporte.'], 403);
+            return response()->json(['message' => __('Cuenta desactivada. Contacta con soporte.')], 403);
         }
 
         return $next($request);

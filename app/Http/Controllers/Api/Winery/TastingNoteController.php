@@ -90,7 +90,7 @@ class TastingNoteController extends Controller
 
         return response()->json([
             'data'    => $this->format($note),
-            'message' => 'Nota de cata registrada correctamente.',
+            'message' => __('Nota de cata registrada correctamente.'),
         ], 201);
     }
 
@@ -133,7 +133,7 @@ class TastingNoteController extends Controller
         $note = WineTastingNote::forUser($user->id)->findOrFail($id);
         $note->delete();
 
-        return response()->json(['message' => 'Nota de cata eliminada correctamente.']);
+        return response()->json(['message' => __('Nota de cata eliminada correctamente.')]);
     }
 
     private function format(WineTastingNote $n): array

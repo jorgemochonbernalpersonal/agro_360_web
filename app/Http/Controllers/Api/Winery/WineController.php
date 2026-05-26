@@ -150,7 +150,7 @@ class WineController extends Controller
         $wine = Wine::forUser($user->id)->findOrFail($id);
         $wine->update(['status' => 'cancelled']);
 
-        return response()->json(['message' => 'Vino cancelado correctamente.']);
+        return response()->json(['message' => __('Vino cancelado correctamente.')]);
     }
 
     // ─── GET /winery/wines/{id}/fermentation-controls ─────────────────────────

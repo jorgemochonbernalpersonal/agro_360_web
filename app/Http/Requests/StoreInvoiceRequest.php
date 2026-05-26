@@ -44,16 +44,16 @@ class StoreInvoiceRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'client_id.required' => 'Debe seleccionar un cliente.',
-            'invoice_date.required' => 'La fecha de factura es obligatoria.',
-            'delivery_note_code.required' => 'El código de albarán es obligatorio.',
-            'items.required' => 'Debe agregar al menos un ítem a la factura.',
-            'items.min' => 'Debe agregar al menos un ítem a la factura.',
-            'items.*.description.required' => 'La descripción del ítem es obligatoria.',
-            'items.*.quantity.required' => 'La cantidad es obligatoria.',
-            'items.*.quantity.min' => 'La cantidad debe ser mayor a 0.',
-            'items.*.unit_price.required' => 'El precio unitario es obligatorio.',
-            'items.*.tax_id.required' => 'Debe seleccionar un impuesto.',
+            'client_id.required' => __('Debe seleccionar un cliente.'),
+            'invoice_date.required' => __('La fecha de factura es obligatoria.'),
+            'delivery_note_code.required' => __('El código de albarán es obligatorio.'),
+            'items.required' => __('Debe agregar al menos un ítem a la factura.'),
+            'items.min' => __('Debe agregar al menos un ítem a la factura.'),
+            'items.*.description.required' => __('La descripción del ítem es obligatoria.'),
+            'items.*.quantity.required' => __('La cantidad es obligatoria.'),
+            'items.*.quantity.min' => __('La cantidad debe ser mayor a 0.'),
+            'items.*.unit_price.required' => __('El precio unitario es obligatorio.'),
+            'items.*.tax_id.required' => __('Debe seleccionar un impuesto.'),
         ];
     }
 
@@ -63,10 +63,10 @@ class StoreInvoiceRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'client_id' => 'cliente',
-            'invoice_date' => 'fecha de factura',
-            'delivery_note_code' => 'código de albarán',
-            'items' => 'ítems',
+            'client_id' => __('cliente'),
+            'invoice_date' => __('fecha de factura'),
+            'delivery_note_code' => __('código de albarán'),
+            'items' => __('ítems'),
         ];
     }
 

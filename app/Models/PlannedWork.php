@@ -34,29 +34,29 @@ class PlannedWork extends Model
     // ── Constantes ───────────────────────────────────────────────────────��───
 
     public const CATEGORIES = [
-        'tratamiento'    => 'Tratamiento Fitosanitario',
-        'fertilizacion'  => 'Fertilización',
-        'riego'          => 'Riego',
-        'labor_cultural' => 'Labor Cultural',
-        'poda'           => 'Poda',
-        'vendimia'       => 'Vendimia',
-        'observacion'    => 'Observación',
-        'post_vendimia'  => 'Post-Vendimia',
-        'otro'           => 'Otro',
+        'tratamiento'    => __('Tratamiento Fitosanitario'),
+        'fertilizacion'  => __('Fertilización'),
+        'riego'          => __('Riego'),
+        'labor_cultural' => __('Labor Cultural'),
+        'poda'           => __('Poda'),
+        'vendimia'       => __('Vendimia'),
+        'observacion'    => __('Observación'),
+        'post_vendimia'  => __('Post-Vendimia'),
+        'otro'           => __('Otro'),
     ];
 
     public const PRIORITIES = [
-        'baja'    => 'Baja',
-        'media'   => 'Media',
-        'alta'    => 'Alta',
-        'urgente' => 'Urgente',
+        'baja'    => __('Baja'),
+        'media'   => __('Media'),
+        'alta'    => __('Alta'),
+        'urgente' => __('Urgente'),
     ];
 
     public const STATUSES = [
-        'pendiente'   => 'Pendiente',
-        'en_progreso' => 'En progreso',
-        'completada'  => 'Completada',
-        'cancelada'   => 'Cancelada',
+        'pendiente'   => __('Pendiente'),
+        'en_progreso' => __('En progreso'),
+        'completada'  => __('Completada'),
+        'cancelada'   => __('Cancelada'),
     ];
 
     public const PRIORITY_COLORS = [

@@ -80,7 +80,7 @@ class HarvestDeliveryAutoDisputedNotification extends Notification implements Sh
             'type'        => 'delivery_disputed',
             'icon'        => 'exclamation-triangle',
             'color'       => 'orange',
-            'title'       => 'Diferencia detectada en entrega',
+            'title'       => __('Diferencia detectada en entrega'),
             'body'        => "La bodega {$winery} registró una diferencia de " . number_format((float) $delivery->discrepancy_kg, 0) . " kg en tu entrega de {$variety} ({$delivery->vintage_year}).",
             'link'        => route('viticulturist.harvests.show', [
                 'planting' => $delivery->plot_planting_id,

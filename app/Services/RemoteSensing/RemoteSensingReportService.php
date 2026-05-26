@@ -23,7 +23,7 @@ class RemoteSensingReportService
         $historicalData = $service->getHistoricalData($plot, $days);
 
         if (!$latestData) {
-            return ['success' => false, 'error' => 'No data available'];
+            return ['success' => false, 'error' => __('No data available')];
         }
 
         $data = [

@@ -147,6 +147,6 @@ class ContainerController extends Controller
         $container = Container::where('user_id', $user->id)->findOrFail($id);
         $container->update(['archived' => true]);
 
-        return response()->json(['message' => 'Depósito archivado correctamente.']);
+        return response()->json(['message' => __('Depósito archivado correctamente.')]);
     }
 }

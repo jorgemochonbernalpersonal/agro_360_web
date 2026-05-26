@@ -110,7 +110,7 @@ class WineAdditiveController extends Controller
 
         return response()->json([
             'data'    => $this->format($additive),
-            'message' => 'Aditivo registrado correctamente.',
+            'message' => __('Aditivo registrado correctamente.'),
         ], 201);
     }
 
@@ -145,7 +145,7 @@ class WineAdditiveController extends Controller
         $additive = WineAdditive::whereHas('wine', fn ($q) => $q->where('user_id', $user->id))->findOrFail($id);
         $additive->delete();
 
-        return response()->json(['message' => 'Aditivo eliminado correctamente.']);
+        return response()->json(['message' => __('Aditivo eliminado correctamente.')]);
     }
 
     private function format(WineAdditive $a): array

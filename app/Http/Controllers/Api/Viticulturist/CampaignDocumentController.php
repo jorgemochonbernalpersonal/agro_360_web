@@ -76,7 +76,7 @@ class CampaignDocumentController extends Controller
 
         return response()->json([
             'data'    => new \App\Http\Resources\Api\CampaignDocumentResource($record),
-            'message' => 'Documento registrado correctamente.',
+            'message' => __('Documento registrado correctamente.'),
         ], 201);
     }
 }

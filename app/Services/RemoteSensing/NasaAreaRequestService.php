@@ -74,7 +74,7 @@ class NasaAreaRequestService
                         ],
                         'layers' => [
                             [
-                                'product' => 'MOD13Q1.061',
+                                'product' => __('MOD13Q1.061'),
                                 'layer' => '_250m_16_days_NDVI',
                             ]
                         ],
@@ -83,11 +83,11 @@ class NasaAreaRequestService
                             'projection' => 'native',
                         ],
                         'geo' => [
-                            'type'     => 'FeatureCollection',
+                            'type'     => __('FeatureCollection'),
                             'features' => [[
-                                'type'       => 'Feature',
+                                'type'       => __('Feature'),
                                 'geometry'   => [
-                                    'type'        => 'Polygon',
+                                    'type'        => __('Polygon'),
                                     'coordinates' => [array_map(
                                         fn($p) => [$p['longitude'], $p['latitude']],
                                         $polygon
@@ -325,33 +325,33 @@ class NasaAreaRequestService
         
         return [
             'low_vigor' => [
-                'label' => 'Bajo Vigor',
+                'label' => __('Bajo Vigor'),
                 'color' => 'red',
                 'range' => [
                     'min' => $statistics['min'],
                     'max' => $mean - $stddev,
                 ],
-                'description' => 'Zonas con problemas - Requieren atención',
+                'description' => __('Zonas con problemas - Requieren atención'),
                 'icon' => '🔴',
             ],
             'medium_vigor' => [
-                'label' => 'Vigor Medio',
+                'label' => __('Vigor Medio'),
                 'color' => 'yellow',
                 'range' => [
                     'min' => $mean - $stddev,
                     'max' => $mean + $stddev,
                 ],
-                'description' => 'Zonas normales',
+                'description' => __('Zonas normales'),
                 'icon' => '🟡',
             ],
             'high_vigor' => [
-                'label' => 'Alto Vigor',
+                'label' => __('Alto Vigor'),
                 'color' => 'green',
                 'range' => [
                     'min' => $mean + $stddev,
                     'max' => $statistics['max'],
                 ],
-                'description' => 'Zonas con excelente desarrollo',
+                'description' => __('Zonas con excelente desarrollo'),
                 'icon' => '🟢',
             ],
         ];

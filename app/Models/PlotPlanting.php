@@ -412,12 +412,12 @@ class PlotPlanting extends Model
         $stage = $this->life_cycle_stage;
         
         return match($stage) {
-            'joven' => 'Baja (20-40% del máximo)',
-            'desarrollo' => 'Media (60-80%)',
-            'productiva' => 'Alta (100%)',
-            'madura' => 'Media-Alta (80-90%)',
-            'vieja' => 'Baja-Media (40-60%)',
-            default => 'Desconocida',
+            'joven' => __('Baja (20-40% del máximo)'),
+            'desarrollo' => __('Media (60-80%)'),
+            'productiva' => __('Alta (100%)'),
+            'madura' => __('Media-Alta (80-90%)'),
+            'vieja' => __('Baja-Media (40-60%)'),
+            default => __('Desconocida'),
         };
     }
 

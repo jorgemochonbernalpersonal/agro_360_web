@@ -62,7 +62,7 @@ class AlertService
             $alerts[] = [
                 'type' => 'ndvi_low',
                 'severity' => $latestData->ndvi_mean < 0.2 ? 'critical' : 'warning',
-                'title' => 'NDVI Bajo',
+                'title' => __('NDVI Bajo'),
                 'message' => "El NDVI de {$plot->name} es {$this->formatValue($latestData->ndvi_mean, 3)}, por debajo del umbral ({$thresholds['ndvi']})",
                 'value' => $latestData->ndvi_mean,
                 'threshold' => $thresholds['ndvi'],
@@ -75,7 +75,7 @@ class AlertService
             $alerts[] = [
                 'type' => 'ndwi_low',
                 'severity' => $latestData->ndwi_mean < -0.25 ? 'critical' : 'warning',
-                'title' => 'Estrés Hídrico',
+                'title' => __('Estrés Hídrico'),
                 'message' => "El NDWI de {$plot->name} indica estrés hídrico ({$this->formatValue($latestData->ndwi_mean, 3)})",
                 'value' => $latestData->ndwi_mean,
                 'threshold' => $thresholds['ndwi'],
@@ -88,7 +88,7 @@ class AlertService
             $alerts[] = [
                 'type' => 'trend_declining',
                 'severity' => 'warning',
-                'title' => 'Tendencia Decreciente',
+                'title' => __('Tendencia Decreciente'),
                 'message' => "El NDVI de {$plot->name} está descendiendo significativamente ({$this->formatValue($latestData->ndvi_change, 3)})",
                 'value' => $latestData->ndvi_change,
                 'threshold' => -0.1,
@@ -101,7 +101,7 @@ class AlertService
             $alerts[] = [
                 'type' => 'temp_high',
                 'severity' => $latestData->temperature > 42 ? 'critical' : 'warning',
-                'title' => 'Temperatura Alta',
+                'title' => __('Temperatura Alta'),
                 'message' => "La temperatura en {$plot->name} es muy alta ({$this->formatValue($latestData->temperature, 1)}°C)",
                 'value' => $latestData->temperature,
                 'threshold' => $thresholds['temp'],

@@ -392,7 +392,7 @@ class GenerateOfficialReportJob implements ShouldQueue
         if ($report) {
             $report->update([
                 'processing_status' => 'failed',
-                'processing_error' => 'Error permanente después de ' . $this->tries . ' intentos: ' . $exception->getMessage()
+                'processing_error' => __('Error permanente después de :tries intentos: :error', ['tries' => $this->tries, 'error' => $exception->getMessage()])
             ]);
         }
 

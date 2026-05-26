@@ -35,26 +35,26 @@ class MovementsExport implements FromCollection, WithHeadings, WithMapping, With
     public function headings(): array
     {
         return [
-            'Fecha',
-            'Producto',
-            'Tipo de Movimiento',
-            'Cantidad',
-            'Cantidad Antes',
-            'Cantidad Después',
-            'Precio Unitario (€)',
-            'Costo Total (€)',
-            'Tratamiento',
-            'Notas',
+            __('Fecha'),
+            __('Producto'),
+            __('Tipo de Movimiento'),
+            __('Cantidad'),
+            __('Cantidad Antes'),
+            __('Cantidad Después'),
+            __('Precio Unitario (€)'),
+            __('Costo Total (€)'),
+            __('Tratamiento'),
+            __('Notas'),
         ];
     }
 
     public function map($movement): array
     {
         $typeLabels = [
-            'purchase' => 'Compra',
-            'consumption' => 'Consumo',
-            'adjustment' => 'Ajuste',
-            'loss' => 'Pérdida',
+            'purchase' => __('Compra'),
+            'consumption' => __('Consumo'),
+            'adjustment' => __('Ajuste'),
+            'loss' => __('Pérdida'),
         ];
 
         return [

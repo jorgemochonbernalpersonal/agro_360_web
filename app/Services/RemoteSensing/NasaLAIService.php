@@ -101,7 +101,7 @@ class NasaLAIService
             'lai'        => $lai,
             'fpar'       => $fpar,
             'lai_quality'=> $qcRaw,
-            'lai_source' => 'NASA MODIS MCD15A2H.061',
+            'lai_source' => __('NASA MODIS MCD15A2H.061'),
         ];
     }
 
@@ -113,54 +113,54 @@ class NasaLAIService
         if ($lai < 0.5) {
             return [
                 'category' => 'very_low',
-                'label' => 'Muy Bajo',
+                'label' => __('Muy Bajo'),
                 'color' => 'red',
-                'description' => 'Vegetación escasa o estrés severo',
+                'description' => __('Vegetación escasa o estrés severo'),
                 'icon' => '🔴',
-                'recommendation' => 'Investigar causa de bajo vigor',
+                'recommendation' => __('Investigar causa de bajo vigor'),
             ];
         }
         
         if ($lai < 1.5) {
             return [
                 'category' => 'low',
-                'label' => 'Bajo',
+                'label' => __('Bajo'),
                 'color' => 'orange',
-                'description' => 'Desarrollo vegetativo limitado',
+                'description' => __('Desarrollo vegetativo limitado'),
                 'icon' => '🟠',
-                'recommendation' => 'Mejorar manejo nutricional/hídrico',
+                'recommendation' => __('Mejorar manejo nutricional/hídrico'),
             ];
         }
         
         if ($lai < 3.0) {
             return [
                 'category' => 'optimal',
-                'label' => 'Óptimo',
+                'label' => __('Óptimo'),
                 'color' => 'green',
-                'description' => 'LAI ideal para viñedo',
+                'description' => __('LAI ideal para viñedo'),
                 'icon' => '🟢',
-                'recommendation' => 'Mantener manejo actual',
+                'recommendation' => __('Mantener manejo actual'),
             ];
         }
         
         if ($lai < 4.0) {
             return [
                 'category' => 'high',
-                'label' => 'Alto',
+                'label' => __('Alto'),
                 'color' => 'yellow',
-                'description' => 'Vigor excesivo',
+                'description' => __('Vigor excesivo'),
                 'icon' => '🟡',
-                'recommendation' => 'Considerar poda en verde o reducir N',
+                'recommendation' => __('Considerar poda en verde o reducir N'),
             ];
         }
         
         return [
             'category' => 'very_high',
-            'label' => 'Muy Alto',
+            'label' => __('Muy Alto'),
             'color' => 'blue',
-            'description' => 'Vigor excesivo - riesgo enfermedades',
+            'description' => __('Vigor excesivo - riesgo enfermedades'),
             'icon' => '🔵',
-            'recommendation' => 'Poda severa y ajuste fertilización',
+            'recommendation' => __('Poda severa y ajuste fertilización'),
         ];
     }
 
@@ -288,7 +288,7 @@ class NasaLAIService
             'lai' => round(max(0, $lai), 2),
             'fpar' => round(max(0, min(1, $fpar)), 3),
             'lai_quality' => 0,
-            'lai_source' => 'NASA MODIS MCD15A2H.061 (Estimado)',
+            'lai_source' => __('NASA MODIS MCD15A2H.061 (Estimado)'),
         ];
     }
 

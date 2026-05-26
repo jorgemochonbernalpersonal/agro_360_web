@@ -84,7 +84,7 @@ class CellarOperationController extends Controller
 
         return response()->json([
             'data'    => $this->format($operation),
-            'message' => 'Operación de bodega registrada correctamente.',
+            'message' => __('Operación de bodega registrada correctamente.'),
         ], 201);
     }
 
@@ -130,7 +130,7 @@ class CellarOperationController extends Controller
 
         return response()->json([
             'data'    => $this->format($operation),
-            'message' => 'Operación completada.',
+            'message' => __('Operación completada.'),
         ]);
     }
 
@@ -142,7 +142,7 @@ class CellarOperationController extends Controller
         $operation = CellarOperation::forUser($user->id)->findOrFail($id);
         $operation->delete();
 
-        return response()->json(['message' => 'Operación eliminada correctamente.']);
+        return response()->json(['message' => __('Operación eliminada correctamente.')]);
     }
 
     private function format(CellarOperation $op): array

@@ -72,7 +72,7 @@ class PlotEnvironmentController extends Controller
 
         return response()->json([
             'data'    => new \App\Http\Resources\Api\PlotEnvironmentResource($record),
-            'message' => 'Entorno de parcela registrado correctamente.',
+            'message' => __('Entorno de parcela registrado correctamente.'),
         ], 201);
     }
 }

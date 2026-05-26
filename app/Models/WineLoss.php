@@ -8,18 +8,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class WineLoss extends Model
 {
     const LOSS_TYPES = [
-        'evaporation' => 'Evaporación / Merma natural',
-        'filtration'  => 'Filtración',
-        'sampling'    => 'Muestreo / Analítica',
-        'spillage'    => 'Derrame accidental',
-        'other'       => 'Otro',
+        'evaporation' => __('Evaporación / Merma natural'),
+        'filtration'  => __('Filtración'),
+        'sampling'    => __('Muestreo / Analítica'),
+        'spillage'    => __('Derrame accidental'),
+        'other'       => __('Otro'),
     ];
 
     const LOSS_AUTHORIZATIONS = [
-        'authorized'    => 'Pérdida autorizada',
-        'processing'    => 'Pérdida por proceso',
-        'extraordinary' => 'Pérdida extraordinaria',
-        'quality'       => 'Rechazo por calidad',
+        'authorized'    => __('Pérdida autorizada'),
+        'processing'    => __('Pérdida por proceso'),
+        'extraordinary' => __('Pérdida extraordinaria'),
+        'quality'       => __('Rechazo por calidad'),
     ];
 
     protected $fillable = [

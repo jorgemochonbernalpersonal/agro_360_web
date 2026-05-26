@@ -43,12 +43,12 @@ class SubscriptionExpiringSoon extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Tu suscripción expira pronto - Agro365')
+            ->subject(__('Tu suscripción expira pronto - Agro365'))
             ->greeting('¡Hola!')
             ->line("Tu suscripción al plan **{$this->subscription->plan_type}** expirará en {$this->daysRemaining} días.")
-            ->line('Para seguir disfrutando de todas las funcionalidades de Agro365, renueva tu suscripción.')
-            ->action('Renovar suscripción', AppLink::url(url('/pricing'), 'agro365://home'))
-            ->line('Si tienes alguna pregunta, no dudes en contactarnos.');
+            ->line(__('Para seguir disfrutando de todas las funcionalidades de Agro365, renueva tu suscripción.'))
+            ->action(__('Renovar suscripción'), AppLink::url(url('/pricing'), 'agro365://home'))
+            ->line(__('Si tienes alguna pregunta, no dudes en contactarnos.'));
     }
 
     /**

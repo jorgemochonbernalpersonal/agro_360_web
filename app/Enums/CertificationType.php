@@ -13,11 +13,11 @@ enum CertificationType: string
     public function label(): string
     {
         return match($this) {
-            self::ECOLOGICO => 'Ecológico',
-            self::DO => 'Denominación de Origen (DO)',
-            self::DOCA => 'Denominación de Origen Calificada (DOCa)',
-            self::IGP => 'Indicación Geográfica Protegida (IGP)',
-            self::VINO_PAGO => 'Vino de Pago',
+            self::ECOLOGICO => __('Ecológico'),
+            self::DO => __('Denominación de Origen (DO)'),
+            self::DOCA => __('Denominación de Origen Calificada (DOCa)'),
+            self::IGP => __('Indicación Geográfica Protegida (IGP)'),
+            self::VINO_PAGO => __('Vino de Pago'),
         };
     }
 

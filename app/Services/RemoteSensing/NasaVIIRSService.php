@@ -107,7 +107,7 @@ class NasaVIIRSService
             'cloud_coverage'    => $this->extractCloudCoverage($qcRaw),
             'pixel_reliability' => $qcRaw,
             'satellite'         => 'VIIRS',
-            'image_source'      => 'NASA VIIRS VNP13A1.001',
+            'image_source'      => __('NASA VIIRS VNP13A1.001'),
         ];
     }
 
@@ -180,7 +180,7 @@ class NasaVIIRSService
             'cloud_coverage' => $cloud,
             'pixel_reliability' => 0,
             'satellite' => 'VIIRS',
-            'image_source' => 'NASA VIIRS VNP13A1.001 (Mock)',
+            'image_source' => __('NASA VIIRS VNP13A1.001 (Mock)'),
         ];
     }
 

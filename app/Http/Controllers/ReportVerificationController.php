@@ -38,7 +38,7 @@ class ReportVerificationController extends Controller
             return view('reports.verification-result', [
                 'found' => false,
                 'code' => $code,
-                'message' => 'Código de verificación inválido o informe no encontrado.',
+                'message' => __('Código de verificación inválido o informe no encontrado.'),
             ]);
         }
 

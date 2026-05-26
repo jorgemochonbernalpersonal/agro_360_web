@@ -94,7 +94,7 @@ class WineProcessStepController extends Controller
 
         return response()->json([
             'data'    => new WineProcessStepResource($step),
-            'message' => 'Paso de proceso registrado correctamente.',
+            'message' => __('Paso de proceso registrado correctamente.'),
         ], 201);
     }
 
@@ -167,7 +167,7 @@ class WineProcessStepController extends Controller
         $step->containers()->detach();
         $step->delete();
 
-        return response()->json(['message' => 'Paso de proceso eliminado correctamente.']);
+        return response()->json(['message' => __('Paso de proceso eliminado correctamente.')]);
     }
 
     // ─── POST /winery/process/{id}/complete ──────────────────────────────────
@@ -190,7 +190,7 @@ class WineProcessStepController extends Controller
 
         return response()->json([
             'data'    => new WineProcessStepResource($step),
-            'message' => 'Paso marcado como completado.',
+            'message' => __('Paso marcado como completado.'),
         ]);
     }
 }

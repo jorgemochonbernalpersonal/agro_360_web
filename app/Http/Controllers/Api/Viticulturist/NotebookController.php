@@ -147,7 +147,7 @@ class NotebookController extends Controller
         $activity = AgriculturalActivity::forViticulturist($user->id)->findOrFail((int) $id);
 
         if ($activity->is_locked) {
-            return response()->json(['message' => 'Esta actividad está bloqueada y no puede editarse.'], 422);
+            return response()->json(['message' => __('Esta actividad está bloqueada y no puede editarse.')], 422);
         }
 
         $validated = $request->validate(array_merge(
@@ -181,14 +181,14 @@ class NotebookController extends Controller
         $activity = AgriculturalActivity::forViticulturist($user->id)->findOrFail((int) $id);
 
         if ($activity->is_locked) {
-            return response()->json(['message' => 'Esta actividad está bloqueada y no puede eliminarse.'], 422);
+            return response()->json(['message' => __('Esta actividad está bloqueada y no puede eliminarse.')], 422);
         }
 
         $activity->delete();
 
         $this->bustDashboardCache($user->id);
 
-        return response()->json(['message' => 'Actividad eliminada correctamente.']);
+        return response()->json(['message' => __('Actividad eliminada correctamente.')]);
     }
 
     // Mapa de slug de ruta → activity_type interno
@@ -225,7 +225,7 @@ class NotebookController extends Controller
 
         $type = self::TYPE_SLUG_MAP[$notebookType] ?? null;
         if (! $type) {
-            return response()->json(['message' => 'Tipo de actividad no válido.'], 404);
+            return response()->json(['message' => __('Tipo de actividad no válido.')], 404);
         }
 
         $request->validate([

@@ -8,10 +8,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class WineTransfer extends Model
 {
     const TRANSFER_TYPES = [
-        'racking'  => 'Trasiego',
-        'blending' => 'Mezcla / Coupage',
-        'top_up'   => 'Relleno',
-        'other'    => 'Otro',
+        'racking'  => __('Trasiego'),
+        'blending' => __('Mezcla / Coupage'),
+        'top_up'   => __('Relleno'),
+        'other'    => __('Otro'),
     ];
 
     protected $fillable = [

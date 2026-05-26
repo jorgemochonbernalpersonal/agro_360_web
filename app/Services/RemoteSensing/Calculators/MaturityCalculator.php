@@ -263,45 +263,45 @@ class MaturityCalculator
         return match (true) {
             $maturityIndex >= 90 => [
                 'level' => 'overripe',
-                'label' => 'Sobremaduración',
+                'label' => __('Sobremaduración'),
                 'color' => 'red',
                 'icon' => '🍷',
-                'description' => 'Maduración excesiva - Riesgo de pérdida calidad',
+                'description' => __('Maduración excesiva - Riesgo de pérdida calidad'),
             ],
             $maturityIndex >= 80 => [
                 'level' => 'optimal',
-                'label' => 'Óptimo',
+                'label' => __('Óptimo'),
                 'color' => 'green',
                 'icon' => '🎯',
-                'description' => 'Momento ideal para vendimia',
+                'description' => __('Momento ideal para vendimia'),
             ],
             $maturityIndex >= 70 => [
                 'level' => 'approaching',
-                'label' => 'Próximo',
+                'label' => __('Próximo'),
                 'color' => 'emerald',
                 'icon' => '🌟',
-                'description' => 'Maduración avanzada - Preparar vendimia',
+                'description' => __('Maduración avanzada - Preparar vendimia'),
             ],
             $maturityIndex >= 60 => [
                 'level' => 'maturing',
-                'label' => 'Madurando',
+                'label' => __('Madurando'),
                 'color' => 'yellow',
                 'icon' => '⏳',
-                'description' => 'En proceso de maduración',
+                'description' => __('En proceso de maduración'),
             ],
             $maturityIndex >= 40 => [
                 'level' => 'veraison',
-                'label' => 'Envero',
+                'label' => __('Envero'),
                 'color' => 'orange',
                 'icon' => '🔄',
-                'description' => 'Inicio de maduración',
+                'description' => __('Inicio de maduración'),
             ],
             default => [
                 'level' => 'immature',
-                'label' => 'Inmaduro',
+                'label' => __('Inmaduro'),
                 'color' => 'gray',
                 'icon' => '🌱',
-                'description' => 'Fase vegetativa - Lejos de vendimia',
+                'description' => __('Fase vegetativa - Lejos de vendimia'),
             ],
         };
     }
@@ -317,7 +317,7 @@ class MaturityCalculator
             $recommendations[] = [
                 'type' => 'success',
                 'icon' => '🎯',
-                'title' => 'Momento óptimo de vendimia',
+                'title' => __('Momento óptimo de vendimia'),
                 'text' => sprintf(
                     'Madurez al %.0f%%. Azúcar estimado: %.1f °Brix. Proceder con vendimia.',
                     $maturityIndex,
@@ -330,7 +330,7 @@ class MaturityCalculator
             $recommendations[] = [
                 'type' => 'warning',
                 'icon' => '⚠️',
-                'title' => 'Sobremaduración detectada',
+                'title' => __('Sobremaduración detectada'),
                 'text' => sprintf(
                     '°Brix muy alto (%.1f). Riesgo de pérdida de acidez. Vendimiar urgente.',
                     $brixData['value']
@@ -342,7 +342,7 @@ class MaturityCalculator
             $recommendations[] = [
                 'type' => 'info',
                 'icon' => '📊',
-                'title' => 'Monitoreo intensivo',
+                'title' => __('Monitoreo intensivo'),
                 'text' => sprintf(
                     'Madurez al %.0f%%. Muestreo de bayas cada 3-5 días recomendado.',
                     $maturityIndex
@@ -354,7 +354,7 @@ class MaturityCalculator
             $recommendations[] = [
                 'type' => 'info',
                 'icon' => '⏱️',
-                'title' => 'Maduración en curso',
+                'title' => __('Maduración en curso'),
                 'text' => sprintf(
                     'Madurez al %.0f%%. Estimado %.0f días para vendimia.',
                     $maturityIndex,
@@ -411,11 +411,11 @@ class MaturityCalculator
                 default => 'average',
             },
             'label' => match (true) {
-                $qualityScore >= 85 => 'Excepcional',
-                $qualityScore >= 75 => 'Excelente',
-                $qualityScore >= 65 => 'Muy Bueno',
-                $qualityScore >= 50 => 'Bueno',
-                default => 'Estándar',
+                $qualityScore >= 85 => __('Excepcional'),
+                $qualityScore >= 75 => __('Excelente'),
+                $qualityScore >= 65 => __('Muy Bueno'),
+                $qualityScore >= 50 => __('Bueno'),
+                default => __('Estándar'),
             },
         ];
     }

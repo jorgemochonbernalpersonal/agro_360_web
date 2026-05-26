@@ -70,7 +70,7 @@ class WineryAlertController extends Controller
 
         return response()->json([
             'data'    => $this->format($alert),
-            'message' => 'Alerta creada correctamente.',
+            'message' => __('Alerta creada correctamente.'),
         ], 201);
     }
 
@@ -98,7 +98,7 @@ class WineryAlertController extends Controller
             ->unread()
             ->update(['is_read' => true, 'read_at' => now()]);
 
-        return response()->json(['message' => 'Todas las alertas marcadas como leídas.']);
+        return response()->json(['message' => __('Todas las alertas marcadas como leídas.')]);
     }
 
     public function destroy(Request $request, int $id): JsonResponse
@@ -109,7 +109,7 @@ class WineryAlertController extends Controller
         $alert = WineryAlert::forUser($user->id)->findOrFail($id);
         $alert->delete();
 
-        return response()->json(['message' => 'Alerta eliminada.']);
+        return response()->json(['message' => __('Alerta eliminada.')]);
     }
 
     private function format(WineryAlert $a): array

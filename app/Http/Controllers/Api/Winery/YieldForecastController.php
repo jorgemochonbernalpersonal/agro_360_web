@@ -78,7 +78,7 @@ class YieldForecastController extends Controller
 
         return response()->json([
             'data'    => $this->format($forecast),
-            'message' => 'Previsión de rendimiento creada correctamente.',
+            'message' => __('Previsión de rendimiento creada correctamente.'),
         ], 201);
     }
 
@@ -114,7 +114,7 @@ class YieldForecastController extends Controller
         $forecast = WineryYieldForecast::forWinery($user->id)->findOrFail($id);
         $forecast->delete();
 
-        return response()->json(['message' => 'Previsión eliminada correctamente.']);
+        return response()->json(['message' => __('Previsión eliminada correctamente.')]);
     }
 
     private function format(WineryYieldForecast $f): array

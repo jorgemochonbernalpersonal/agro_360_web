@@ -8,17 +8,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class SanitaryRegistration extends Model
 {
     const REGISTRATION_TYPES = [
-        'rgseaa' => 'RGSEAA (Alimentario)',
-        'resa'   => 'RESA (Actividad Alimentaria)',
-        'rpo'    => 'RPO (Operador)',
-        'other'  => 'Otro',
+        'rgseaa' => __('RGSEAA (Alimentario)'),
+        'resa'   => __('RESA (Actividad Alimentaria)'),
+        'rpo'    => __('RPO (Operador)'),
+        'other'  => __('Otro'),
     ];
 
     const STATUSES = [
-        'active'    => 'Activo',
-        'expired'   => 'Caducado',
-        'suspended' => 'Suspendido',
-        'cancelled' => 'Cancelado',
+        'active'    => __('Activo'),
+        'expired'   => __('Caducado'),
+        'suspended' => __('Suspendido'),
+        'cancelled' => __('Cancelado'),
     ];
 
     protected $fillable = [

@@ -65,7 +65,7 @@ class SupportTicketController extends Controller
 
         return response()->json([
             'data'    => new SupportTicketResource($record),
-            'message' => 'Ticket de soporte creado correctamente.',
+            'message' => __('Ticket de soporte creado correctamente.'),
         ], 201);
     }
 }

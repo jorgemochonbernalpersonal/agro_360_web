@@ -88,21 +88,21 @@ class EstimatedYield extends Model
      * Etiquetas de ronda de estimación
      */
     public const ROUNDS = [
-        1 => 'Pre-envero',
-        2 => 'Envero',
-        3 => 'Pre-vendimia',
-        4 => 'Revisión final',
+        1 => __('Pre-envero'),
+        2 => __('Envero'),
+        3 => __('Pre-vendimia'),
+        4 => __('Revisión final'),
     ];
 
     public const HEALTH_STATUSES = [
-        'excellent'         => 'Excelente',
-        'good'              => 'Bueno',
-        'botrytis_light'    => 'Botrytis leve',
-        'botrytis_moderate' => 'Botrytis moderada',
-        'oidium_light'      => 'Oidio leve',
-        'oidium_moderate'   => 'Oidio moderado',
-        'mixed'             => 'Afección mixta',
-        'poor'              => 'Deficiente',
+        'excellent'         => __('Excelente'),
+        'good'              => __('Bueno'),
+        'botrytis_light'    => __('Botrytis leve'),
+        'botrytis_moderate' => __('Botrytis moderada'),
+        'oidium_light'      => __('Oidio leve'),
+        'oidium_moderate'   => __('Oidio moderado'),
+        'mixed'             => __('Afección mixta'),
+        'poor'              => __('Deficiente'),
     ];
 
     /**

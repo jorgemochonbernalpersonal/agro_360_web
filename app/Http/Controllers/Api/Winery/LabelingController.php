@@ -100,7 +100,7 @@ class LabelingController extends Controller
 
         return response()->json([
             'data'    => $this->format($labeling),
-            'message' => 'Etiquetado registrado correctamente.',
+            'message' => __('Etiquetado registrado correctamente.'),
         ], 201);
     }
 
@@ -159,7 +159,7 @@ class LabelingController extends Controller
             $labeling->delete();
         });
 
-        return response()->json(['message' => 'Etiquetado eliminado correctamente.']);
+        return response()->json(['message' => __('Etiquetado eliminado correctamente.')]);
     }
 
     private function format(WineLabeling $l): array

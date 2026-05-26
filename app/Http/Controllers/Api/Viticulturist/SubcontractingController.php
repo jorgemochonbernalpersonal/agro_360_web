@@ -87,7 +87,7 @@ class SubcontractingController extends Controller
 
         return response()->json([
             'data'    => new \App\Http\Resources\Api\SubcontractingResource($record),
-            'message' => 'Subcontratación registrada correctamente.',
+            'message' => __('Subcontratación registrada correctamente.'),
         ], 201);
     }
 }

@@ -116,23 +116,23 @@ class OnboardingChecklist extends Component
     private function getStepTitle(string $step): string
     {
         return match ($step) {
-            OnboardingProgress::STEP_PRODUCER_FISCAL    => 'Configura tus datos fiscales',
-            OnboardingProgress::STEP_PRODUCER_PLOT      => 'Registra tu primera parcela',
-            OnboardingProgress::STEP_PRODUCER_CONTAINER => 'Añade tu primer contenedor',
-            OnboardingProgress::STEP_PRODUCER_ACTIVITY  => 'Registra una actividad de campo',
-            OnboardingProgress::STEP_PRODUCER_RECEPTION => 'Registra tu primera recepción',
-            default => 'Paso desconocido',
+            OnboardingProgress::STEP_PRODUCER_FISCAL    => __('Configura tus datos fiscales'),
+            OnboardingProgress::STEP_PRODUCER_PLOT      => __('Registra tu primera parcela'),
+            OnboardingProgress::STEP_PRODUCER_CONTAINER => __('Añade tu primer contenedor'),
+            OnboardingProgress::STEP_PRODUCER_ACTIVITY  => __('Registra una actividad de campo'),
+            OnboardingProgress::STEP_PRODUCER_RECEPTION => __('Registra tu primera recepción'),
+            default => __('Paso desconocido'),
         };
     }
 
     private function getStepDescription(string $step): string
     {
         return match ($step) {
-            OnboardingProgress::STEP_PRODUCER_FISCAL    => 'NIF, razón social y dirección para facturas',
-            OnboardingProgress::STEP_PRODUCER_PLOT      => 'Añade una parcela para empezar con el cuaderno de campo',
-            OnboardingProgress::STEP_PRODUCER_CONTAINER => 'Depósitos o barricas para la gestión de bodega',
-            OnboardingProgress::STEP_PRODUCER_ACTIVITY  => 'Tratamiento, riego, labor cultural... ¡tu cuaderno digital!',
-            OnboardingProgress::STEP_PRODUCER_RECEPTION => 'Registra la primera entrada de uva en bodega',
+            OnboardingProgress::STEP_PRODUCER_FISCAL    => __('NIF, razón social y dirección para facturas'),
+            OnboardingProgress::STEP_PRODUCER_PLOT      => __('Añade una parcela para empezar con el cuaderno de campo'),
+            OnboardingProgress::STEP_PRODUCER_CONTAINER => __('Depósitos o barricas para la gestión de bodega'),
+            OnboardingProgress::STEP_PRODUCER_ACTIVITY  => __('Tratamiento, riego, labor cultural... ¡tu cuaderno digital!'),
+            OnboardingProgress::STEP_PRODUCER_RECEPTION => __('Registra la primera entrada de uva en bodega'),
             default => '',
         };
     }

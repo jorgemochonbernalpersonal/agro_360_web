@@ -278,49 +278,49 @@ class NasaLSTService
         if ($cwsi < 0.2) {
             return [
                 'status' => 'no_stress',
-                'label' => 'Sin Estrés',
+                'label' => __('Sin Estrés'),
                 'color' => 'green',
                 'icon' => '✅',
-                'description' => 'Planta bien hidratada',
+                'description' => __('Planta bien hidratada'),
             ];
         }
         
         if ($cwsi < 0.4) {
             return [
                 'status' => 'mild_stress',
-                'label' => 'Estrés Leve',
+                'label' => __('Estrés Leve'),
                 'color' => 'yellow',
                 'icon' => '⚠️',
-                'description' => 'Leve estrés hídrico',
+                'description' => __('Leve estrés hídrico'),
             ];
         }
         
         if ($cwsi < 0.6) {
             return [
                 'status' => 'moderate_stress',
-                'label' => 'Estrés Moderado',
+                'label' => __('Estrés Moderado'),
                 'color' => 'orange',
                 'icon' => '⚠️',
-                'description' => 'Estrés moderado - Considerar riego',
+                'description' => __('Estrés moderado - Considerar riego'),
             ];
         }
         
         if ($cwsi < 0.8) {
             return [
                 'status' => 'high_stress',
-                'label' => 'Estrés Alto',
+                'label' => __('Estrés Alto'),
                 'color' => 'red',
                 'icon' => '🚨',
-                'description' => 'Estrés severo - Riego urgente',
+                'description' => __('Estrés severo - Riego urgente'),
             ];
         }
         
         return [
             'status' => 'critical_stress',
-            'label' => 'Estrés Crítico',
+            'label' => __('Estrés Crítico'),
             'color' => 'red',
             'icon' => '🆘',
-            'description' => 'Estrés crítico - Daño permanente posible',
+            'description' => __('Estrés crítico - Daño permanente posible'),
         ];
     }
 
@@ -387,11 +387,11 @@ class NasaLSTService
             }
 
             $phenologicalRisk = match (true) {
-                $month === 3 || $month === 4 => 'Riesgo en brotación (daño crítico)',
-                $month === 5                 => 'Riesgo en floración (pérdida cosecha)',
-                $month >= 10                 => 'Posible daño en maduración tardía',
-                $month <= 2                  => 'Viña en reposo — daño en yemas si < -15°C',
-                default                      => 'Riesgo general',
+                $month === 3 || $month === 4 => __('Riesgo en brotación (daño crítico)'),
+                $month === 5                 => __('Riesgo en floración (pérdida cosecha)'),
+                $month >= 10                 => __('Posible daño en maduración tardía'),
+                $month <= 2                  => __('Viña en reposo — daño en yemas si < -15°C'),
+                default                      => __('Riesgo general'),
             };
 
             return [
@@ -400,7 +400,7 @@ class NasaLSTService
                 'lst_night'         => $lstNight,
                 'risk_level'        => $riskLevel,
                 'phenological_risk' => $phenologicalRisk,
-                'recommendation'    => 'Activar métodos anti-helada (aspersión, calefactores)',
+                'recommendation'    => __('Activar métodos anti-helada (aspersión, calefactores)'),
             ];
         }
 

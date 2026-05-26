@@ -55,8 +55,8 @@ class WineryAbilityChangedNotification extends Notification implements ShouldQue
             )
             ->when(
                 $this->granted,
-                fn ($m) => $m->line('Ya puedes acceder a este módulo desde tu panel.'),
-                fn ($m) => $m->line('Si tienes dudas sobre este cambio, contacta con tu denominación de origen.')
+                fn ($m) => $m->line(__('Ya puedes acceder a este módulo desde tu panel.')),
+                fn ($m) => $m->line(__('Si tienes dudas sobre este cambio, contacta con tu denominación de origen.'))
             )
             ->action(__('Ver mi DO'), $url)
             ->salutation(__('Saludos,\nAgro365'));
@@ -73,7 +73,7 @@ class WineryAbilityChangedNotification extends Notification implements ShouldQue
             'icon'            => $this->granted ? '🔓' : '🔒',
             'message'         => ($this->granted ? 'Módulo activado' : 'Módulo desactivado') . ': ' . $this->ability->name,
             'action_url'      => route('winery.denomination.index'),
-            'action_text'     => 'Ver mi DO',
+            'action_text'     => __('Ver mi DO'),
         ];
     }
 }

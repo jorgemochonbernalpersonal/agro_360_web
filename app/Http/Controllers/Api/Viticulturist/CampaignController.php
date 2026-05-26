@@ -113,7 +113,7 @@ class CampaignController extends Controller
         $campaign = Campaign::forViticulturist($user->id)->findOrFail($id);
 
         if ($campaign->locked_at) {
-            return response()->json(['message' => 'La campaña ya está cerrada.'], 422);
+            return response()->json(['message' => __('La campaña ya está cerrada.')], 422);
         }
 
         $campaign->update([

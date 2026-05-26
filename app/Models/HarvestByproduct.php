@@ -21,19 +21,19 @@ class HarvestByproduct extends Model
     ];
 
     const BYPRODUCT_TYPES = [
-        'pomace' => 'Orujo / Hollejo',
-        'stem'   => 'Raspón / Escobajo',
-        'lees'   => 'Lías',
-        'other'  => 'Otro',
+        'pomace' => __('Orujo / Hollejo'),
+        'stem'   => __('Raspón / Escobajo'),
+        'lees'   => __('Lías'),
+        'other'  => __('Otro'),
     ];
 
     const DESTINATION_TYPES = [
-        'cooperative'        => 'Cooperativa vinícola',
-        'winery'            => 'Bodega',
-        'distillery'        => 'Destilería / Alcoholera',
-        'composting'         => 'Planta de compostaje',
-        'authorized_landfill' => 'Vertedero autorizado',
-        'other'             => 'Otro destino',
+        'cooperative'        => __('Cooperativa vinícola'),
+        'winery'            => __('Bodega'),
+        'distillery'        => __('Destilería / Alcoholera'),
+        'composting'         => __('Planta de compostaje'),
+        'authorized_landfill' => __('Vertedero autorizado'),
+        'other'             => __('Otro destino'),
     ];
 
     public function viticulturist(): BelongsTo

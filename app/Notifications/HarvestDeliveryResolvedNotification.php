@@ -51,9 +51,9 @@ class HarvestDeliveryResolvedNotification extends Notification implements Should
         }
 
         return (new MailMessage)
-            ->subject('Reclamación resuelta — ' . $variety . ' · ' . $delivery->vintage_year)
+            ->subject(__('Reclamación resuelta — ') . $variety . ' · ' . $delivery->vintage_year)
             ->greeting(__('Hola :name', ['name' => $notifiable->name ?: '']))
-            ->line('La bodega **' . $winery . '** ha respondido a tu reclamación sobre la diferencia en la entrega de uva.')
+            ->line(__('La bodega **') . $winery . '** ha respondido a tu reclamación sobre la diferencia en la entrega de uva.')
             ->line(new HtmlString(
                 '<div style="background-color:#f0fdf4;border:1px solid #bbf7d0;padding:16px;border-radius:8px;margin:16px 0;">
                     <p style="margin:0 0 8px 0;"><strong>Variedad:</strong> ' . e($variety) . '</p>
@@ -68,7 +68,7 @@ class HarvestDeliveryResolvedNotification extends Notification implements Should
                  </div>'
             ))
             ->action(__('Ver detalle de cosecha'), $showUrl)
-            ->line('Si tienes dudas adicionales, contacta directamente con la bodega.')
+            ->line(__('Si tienes dudas adicionales, contacta directamente con la bodega.'))
             ->salutation(__('Saludos,\nAgro365'));
     }
 
@@ -82,7 +82,7 @@ class HarvestDeliveryResolvedNotification extends Notification implements Should
             'type'        => 'delivery_resolved',
             'icon'        => 'shield-check',
             'color'       => 'blue',
-            'title'       => 'Reclamación resuelta',
+            'title'       => __('Reclamación resuelta'),
             'body'        => "La bodega {$winery} ha respondido a tu reclamación sobre la entrega de {$variety} ({$delivery->vintage_year}).",
             'link'        => route('viticulturist.harvests.show', [
                 'planting' => $delivery->plot_planting_id,

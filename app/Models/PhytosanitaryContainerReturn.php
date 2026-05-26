@@ -8,18 +8,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class PhytosanitaryContainerReturn extends Model
 {
     const CONTAINER_TYPES = [
-        'plastic'   => 'Plástico (HDPE/PET)',
-        'glass'     => 'Vidrio',
-        'metal'     => 'Metal / Chapa',
-        'cardboard' => 'Cartón / Papel',
-        'flexible'  => 'Flexible / Bolsa',
-        'other'     => 'Otro',
+        'plastic'   => __('Plástico (HDPE/PET)'),
+        'glass'     => __('Vidrio'),
+        'metal'     => __('Metal / Chapa'),
+        'cardboard' => __('Cartón / Papel'),
+        'flexible'  => __('Flexible / Bolsa'),
+        'other'     => __('Otro'),
     ];
 
     const COLLECTION_SYSTEMS = [
         'sigfito' => 'SIGFITO',
         'field'   => 'FIELD',
-        'other'   => 'Otro sistema',
+        'other'   => __('Otro sistema'),
     ];
 
     protected $fillable = [

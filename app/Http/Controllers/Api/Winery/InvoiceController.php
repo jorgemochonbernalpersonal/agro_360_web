@@ -144,6 +144,6 @@ class InvoiceController extends Controller
         $invoice = Invoice::where('user_id', $user->id)->findOrFail($id);
         $invoice->delete();
 
-        return response()->json(['message' => 'Factura eliminada correctamente.']);
+        return response()->json(['message' => __('Factura eliminada correctamente.')]);
     }
 }

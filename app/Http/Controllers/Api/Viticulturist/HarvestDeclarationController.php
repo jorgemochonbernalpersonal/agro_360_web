@@ -78,7 +78,7 @@ class HarvestDeclarationController extends Controller
 
         return response()->json([
             'data'    => new \App\Http\Resources\Api\HarvestDeclarationResource($record),
-            'message' => 'Declaración de cosecha registrada correctamente.',
+            'message' => __('Declaración de cosecha registrada correctamente.'),
         ], 201);
     }
 }

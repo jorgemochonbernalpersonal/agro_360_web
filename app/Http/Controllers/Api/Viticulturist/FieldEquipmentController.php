@@ -68,7 +68,7 @@ class FieldEquipmentController extends Controller
 
         return response()->json([
             'data'    => new \App\Http\Resources\Api\FieldEquipmentResource($record),
-            'message' => 'Equipo de campo registrado correctamente.',
+            'message' => __('Equipo de campo registrado correctamente.'),
         ], 201);
     }
 }

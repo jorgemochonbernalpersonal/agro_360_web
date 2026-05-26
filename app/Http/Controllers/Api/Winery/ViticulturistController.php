@@ -81,8 +81,8 @@ class ViticulturistController extends Controller
             'email' => ['nullable', 'email', 'max:255', 'unique:users,email'],
             'notes' => ['nullable', 'string', 'max:1000'],
         ], [
-            'name.required' => 'El nombre es obligatorio.',
-            'email.unique'  => 'Ya existe un usuario con este email.',
+            'name.required' => __('El nombre es obligatorio.'),
+            'email.unique'  => __('Ya existe un usuario con este email.'),
         ]);
 
         $vit = User::create([
@@ -148,7 +148,7 @@ class ViticulturistController extends Controller
             ->findOrFail($validated['viticulturist_id']);
 
         if (WineryViticulturist::where('winery_id', $winery->id)->where('viticulturist_id', $vit->id)->exists()) {
-            return response()->json(['message' => 'Este viticultor ya está vinculado a tu bodega.'], 422);
+            return response()->json(['message' => __('Este viticultor ya está vinculado a tu bodega.')], 422);
         }
 
         $selfRecord = WineryViticulturist::where('viticulturist_id', $vit->id)
@@ -230,8 +230,8 @@ class ViticulturistController extends Controller
             'email' => ['nullable', 'email', 'max:255', Rule::unique('users', 'email')->ignore($id)],
             'notes' => ['nullable', 'string', 'max:1000'],
         ], [
-            'name.required' => 'El nombre es obligatorio.',
-            'email.unique'  => 'Ya existe un usuario con este email.',
+            'name.required' => __('El nombre es obligatorio.'),
+            'email.unique'  => __('Ya existe un usuario con este email.'),
         ]);
 
         $rawEmail = $vit->email ?? '';
@@ -264,18 +264,18 @@ class ViticulturistController extends Controller
         $validated = $request->validate([
             'email' => ['required', 'email', 'max:255'],
         ], [
-            'email.required' => 'Introduce el email del viticultor.',
-            'email.email'    => 'El email no es válido.',
+            'email.required' => __('Introduce el email del viticultor.'),
+            'email.email'    => __('El email no es válido.'),
         ]);
 
         if ($vit->invitation_sent_at && $vit->invitation_sent_at->isAfter(now()->subHour())) {
             return response()->json([
-                'message' => 'Invitación enviada hace menos de 1 hora. Espera antes de reenviar.',
+                'message' => __('Invitación enviada hace menos de 1 hora. Espera antes de reenviar.'),
             ], 429);
         }
 
         if (User::where('email', $validated['email'])->where('id', '!=', $id)->exists()) {
-            return response()->json(['message' => 'Este email ya está registrado en el sistema.'], 422);
+            return response()->json(['message' => __('Este email ya está registrado en el sistema.')], 422);
         }
 
         $plainToken = Str::random(64);
@@ -322,7 +322,7 @@ class ViticulturistController extends Controller
         $vit->refresh();
 
         return response()->json([
-            'message' => 'Invitación revocada.',
+            'message' => __('Invitación revocada.'),
             'data'    => $this->format($vit, $rel),
         ]);
     }

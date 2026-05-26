@@ -54,7 +54,7 @@ class DigitalSignatureService
             'signed_by_name' => $user->name,
             'signed_by_email' => $user->email,
             'device_info' => $deviceInfo,
-            'timestamp_authority' => 'Agro365 Internal TSA',
+            'timestamp_authority' => __('Agro365 Internal TSA'),
             'timestamp_format' => 'ISO8601',
             'timezone' => config('app.timezone'),
             'signature_algorithm' => 'SHA-256',

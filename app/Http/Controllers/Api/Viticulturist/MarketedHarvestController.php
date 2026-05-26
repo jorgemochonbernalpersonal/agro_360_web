@@ -115,7 +115,7 @@ class MarketedHarvestController extends Controller
 
         return response()->json([
             'data'    => new MarketedHarvestResource($record),
-            'message' => 'Cosecha comercializada registrada correctamente.',
+            'message' => __('Cosecha comercializada registrada correctamente.'),
         ], 201);
     }
 }

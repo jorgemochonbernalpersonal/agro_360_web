@@ -29,7 +29,7 @@ class DataSourceHealthService
             'copernicus' => [
                 'available'     => Cache::has('copernicus_access_token'),
                 'mock'          => false,
-                'label'         => 'Sentinel-2',
+                'label'         => __('Sentinel-2'),
                 'last_fetch'    => $this->getLastFetchDate(),
                 'monthly_usage' => $copernicusUsage,
                 'monthly_limit' => $copernicusLimit,
@@ -39,12 +39,12 @@ class DataSourceHealthService
             'nasa_lai' => [
                 'available' => true,
                 'mock'      => config('services.nasa_earthdata.mock', false),
-                'label'     => 'NASA LAI',
+                'label'     => __('NASA LAI'),
             ],
             'open_meteo' => [
                 'available' => true,
                 'mock'      => config('services.open_meteo.mock', false),
-                'label'     => 'Open-Meteo',
+                'label'     => __('Open-Meteo'),
             ],
         ];
     }

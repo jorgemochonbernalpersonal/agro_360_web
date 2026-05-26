@@ -206,7 +206,7 @@ class GrapeReceptionController extends Controller
             }
         });
 
-        return response()->json(['message' => 'Recepción eliminada correctamente.']);
+        return response()->json(['message' => __('Recepción eliminada correctamente.')]);
     }
 
     // ─── GET /winery/viticulturists ────────────────────────────────────────────

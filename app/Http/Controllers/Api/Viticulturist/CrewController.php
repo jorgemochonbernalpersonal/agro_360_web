@@ -54,7 +54,7 @@ class CrewController extends Controller
 
         return response()->json([
             'data'    => $record,
-            'message' => 'Cuadrilla registrada correctamente.',
+            'message' => __('Cuadrilla registrada correctamente.'),
         ], 201);
     }
 }

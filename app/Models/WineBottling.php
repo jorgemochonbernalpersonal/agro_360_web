@@ -17,7 +17,7 @@ class WineBottling extends Model
         '1500' => '1500 ml (Magnum)',
         '3000' => '3000 ml (Doble Magnum)',
         '5000' => '5000 ml (Jeroboam)',
-        'otro' => 'Otro formato',
+        'otro' => __('Otro formato'),
     ];
 
     protected $fillable = [

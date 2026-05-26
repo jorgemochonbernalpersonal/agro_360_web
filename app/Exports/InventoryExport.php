@@ -31,18 +31,18 @@ class InventoryExport implements FromCollection, WithHeadings, WithMapping, With
     public function headings(): array
     {
         return [
-            'Producto',
-            'Ingrediente Activo',
-            'Lote',
-            'Cantidad',
-            'Unidad',
-            'Stock Mínimo',
-            'Precio Unitario (€)',
-            'Valor Total (€)',
-            'Almacén',
-            'Fecha Caducidad',
-            'Proveedor',
-            'Estado',
+            __('Producto'),
+            __('Ingrediente Activo'),
+            __('Lote'),
+            __('Cantidad'),
+            __('Unidad'),
+            __('Stock Mínimo'),
+            __('Precio Unitario (€)'),
+            __('Valor Total (€)'),
+            __('Almacén'),
+            __('Fecha Caducidad'),
+            __('Proveedor'),
+            __('Estado'),
         ];
     }
 

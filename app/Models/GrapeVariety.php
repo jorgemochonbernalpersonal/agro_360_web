@@ -10,9 +10,9 @@ class GrapeVariety extends Model
 {
     use HasTranslations;
     const CROP_TYPES = [
-        'wine'  => 'Uva (vino)',
-        'olive' => 'Aceituna (aceite)',
-        'other' => 'Otro cultivo',
+        'wine'  => __('Uva (vino)'),
+        'olive' => __('Aceituna (aceite)'),
+        'other' => __('Otro cultivo'),
     ];
 
     const CROP_TYPE_ICONS = [

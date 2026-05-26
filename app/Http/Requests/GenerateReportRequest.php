@@ -41,17 +41,17 @@ class GenerateReportRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'report_type.required' => 'El tipo de informe es obligatorio.',
-            'report_type.in' => 'El tipo de informe no es válido.',
-            'password.required' => 'La contraseña de firma digital es obligatoria.',
-            'password.min' => 'La contraseña debe tener al menos 6 caracteres.',
-            'period_start.required' => 'La fecha de inicio es obligatoria.',
-            'period_start.date' => 'La fecha de inicio no es válida.',
-            'period_end.required' => 'La fecha de fin es obligatoria.',
-            'period_end.date' => 'La fecha de fin no es válida.',
-            'period_end.after_or_equal' => 'La fecha de fin debe ser posterior o igual a la fecha de inicio.',
-            'campaign_id.required' => 'Debe seleccionar una campaña.',
-            'campaign_id.exists' => 'La campaña seleccionada no existe.',
+            'report_type.required' => __('El tipo de informe es obligatorio.'),
+            'report_type.in' => __('El tipo de informe no es válido.'),
+            'password.required' => __('La contraseña de firma digital es obligatoria.'),
+            'password.min' => __('La contraseña debe tener al menos 6 caracteres.'),
+            'period_start.required' => __('La fecha de inicio es obligatoria.'),
+            'period_start.date' => __('La fecha de inicio no es válida.'),
+            'period_end.required' => __('La fecha de fin es obligatoria.'),
+            'period_end.date' => __('La fecha de fin no es válida.'),
+            'period_end.after_or_equal' => __('La fecha de fin debe ser posterior o igual a la fecha de inicio.'),
+            'campaign_id.required' => __('Debe seleccionar una campaña.'),
+            'campaign_id.exists' => __('La campaña seleccionada no existe.'),
         ];
     }
 

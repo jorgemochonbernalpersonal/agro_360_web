@@ -139,7 +139,7 @@ class ProductLotController extends Controller
 
         return response()->json([
             'data'    => new ProductLotResource($lot),
-            'message' => 'Lote de producto creado correctamente.',
+            'message' => __('Lote de producto creado correctamente.'),
         ], 201);
     }
 
@@ -211,6 +211,6 @@ class ProductLotController extends Controller
         $lot = ProductLot::forUser($user->id)->findOrFail($id);
         $lot->update(['archived' => true]);
 
-        return response()->json(['message' => 'Lote archivado correctamente.']);
+        return response()->json(['message' => __('Lote archivado correctamente.')]);
     }
 }

@@ -50,7 +50,7 @@ class ContainerRoomController extends Controller
 
         return response()->json([
             'data'    => $room,
-            'message' => 'Sala creada correctamente.',
+            'message' => __('Sala creada correctamente.'),
         ], 201);
     }
 
@@ -84,6 +84,6 @@ class ContainerRoomController extends Controller
 
         $room->delete();
 
-        return response()->json(['message' => 'Sala eliminada correctamente.']);
+        return response()->json(['message' => __('Sala eliminada correctamente.')]);
     }
 }

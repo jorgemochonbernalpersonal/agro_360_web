@@ -108,18 +108,18 @@ class OnboardingChecklist extends Component
     private function getStepTitle(string $step): string
     {
         return match ($step) {
-            OnboardingProgress::STEP_SUPERVISOR_PROFILE          => 'Configura el perfil de la DO',
-            OnboardingProgress::STEP_SUPERVISOR_ADD_WINERY       => 'Vincula tu primera bodega',
-            OnboardingProgress::STEP_SUPERVISOR_ADD_VITICULTURIST => 'Añade tu primer viticultor',
-            default => 'Paso desconocido',
+            OnboardingProgress::STEP_SUPERVISOR_PROFILE          => __('Configura el perfil de la DO'),
+            OnboardingProgress::STEP_SUPERVISOR_ADD_WINERY       => __('Vincula tu primera bodega'),
+            OnboardingProgress::STEP_SUPERVISOR_ADD_VITICULTURIST => __('Añade tu primer viticultor'),
+            default => __('Paso desconocido'),
         };
     }
 
     private function getStepDescription(string $step): string
     {
         return match ($step) {
-            OnboardingProgress::STEP_SUPERVISOR_PROFILE          => 'Razón social, NIF y datos de la denominación para certificados y documentos oficiales',
-            OnboardingProgress::STEP_SUPERVISOR_ADD_WINERY       => 'Las bodegas adscritas podrán declarar bajo el amparo de tu DO',
+            OnboardingProgress::STEP_SUPERVISOR_PROFILE          => __('Razón social, NIF y datos de la denominación para certificados y documentos oficiales'),
+            OnboardingProgress::STEP_SUPERVISOR_ADD_WINERY       => __('Las bodegas adscritas podrán declarar bajo el amparo de tu DO'),
             OnboardingProgress::STEP_SUPERVISOR_ADD_VITICULTURIST => '¡Ya puedes supervisar el cuaderno de campo de tus viticultores!',
             default => '',
         };

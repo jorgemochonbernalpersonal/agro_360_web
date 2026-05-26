@@ -33,7 +33,7 @@ class GoogleAuthController extends Controller
                 'ip'    => request()->ip(),
             ]);
             return redirect()->route('login')
-                ->withErrors(['email' => 'No se pudo completar la autenticación con Google. Inténtalo de nuevo.']);
+                ->withErrors(['email' => __('No se pudo completar la autenticación con Google. Inténtalo de nuevo.')]);
         }
 
         // 1. Find by google_id (returning user)
@@ -80,7 +80,7 @@ class GoogleAuthController extends Controller
                 'email'   => $user->email,
             ]);
             return redirect()->route('login')
-                ->withErrors(['email' => 'Tu cuenta no está activada. Contacta con el administrador.']);
+                ->withErrors(['email' => __('Tu cuenta no está activada. Contacta con el administrador.')]);
         }
 
         Auth::login($user, remember: true);

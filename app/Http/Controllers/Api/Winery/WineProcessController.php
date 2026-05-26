@@ -101,7 +101,7 @@ class WineProcessController extends Controller
 
         return response()->json([
             'data'    => new TransferResource($transfer),
-            'message' => 'Trasvase registrado correctamente.',
+            'message' => __('Trasvase registrado correctamente.'),
         ], 201);
     }
 
@@ -140,7 +140,7 @@ class WineProcessController extends Controller
 
         return response()->json([
             'data'    => new LossResource($loss),
-            'message' => 'Merma registrada correctamente.',
+            'message' => __('Merma registrada correctamente.'),
         ], 201);
     }
 
@@ -236,7 +236,7 @@ class WineProcessController extends Controller
             $transfer->delete();
         });
 
-        return response()->json(['message' => 'Trasvase eliminado correctamente.']);
+        return response()->json(['message' => __('Trasvase eliminado correctamente.')]);
     }
 
     // ─── DELETE /winery/losses/{id} ───────────────────────────────────────────
@@ -255,6 +255,6 @@ class WineProcessController extends Controller
             $loss->delete();
         });
 
-        return response()->json(['message' => 'Merma eliminada correctamente.']);
+        return response()->json(['message' => __('Merma eliminada correctamente.')]);
     }
 }

@@ -649,10 +649,10 @@ class VerifactuService
 
         // Simulated response
         return (object) [
-            'EstadoEnvio'    => 'Correcto',
+            'EstadoEnvio'    => __('Correcto'),
             'RespuestaLinea' => [
                 (object) [
-                    'EstadoRegistro'           => 'Correcta',
+                    'EstadoRegistro'           => __('Correcta'),
                     'CodigoErrorRegistro'      => null,
                     'DescripcionErrorRegistro' => null,
                     'CSV'                      => 'VFT' . strtoupper(substr(hash('sha256', ($invoice->invoice_number ?? '') . now()), 0, 16)),

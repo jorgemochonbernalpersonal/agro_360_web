@@ -31,9 +31,9 @@ class DoDocument extends Model
     public const STATUS_ARCHIVED = 'archived';
 
     public const STATUS_LABELS = [
-        'draft'    => 'Borrador',
-        'active'   => 'Vigente',
-        'archived' => 'Archivado',
+        'draft'    => __('Borrador'),
+        'active'   => __('Vigente'),
+        'archived' => __('Archivado'),
     ];
 
     public function supervisor(): BelongsTo

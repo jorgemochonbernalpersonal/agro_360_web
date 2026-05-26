@@ -78,7 +78,7 @@ class WineSubproductController extends Controller
 
         return response()->json([
             'data'    => $this->format($subproduct),
-            'message' => 'Subproducto registrado correctamente.',
+            'message' => __('Subproducto registrado correctamente.'),
         ], 201);
     }
 
@@ -114,7 +114,7 @@ class WineSubproductController extends Controller
         $subproduct = WineSubproduct::forUser($user->id)->findOrFail($id);
         $subproduct->delete();
 
-        return response()->json(['message' => 'Subproducto eliminado correctamente.']);
+        return response()->json(['message' => __('Subproducto eliminado correctamente.')]);
     }
 
     private function format(WineSubproduct $s): array

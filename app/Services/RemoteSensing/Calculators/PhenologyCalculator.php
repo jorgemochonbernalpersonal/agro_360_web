@@ -87,40 +87,40 @@ class PhenologyCalculator
     {
         return match (true) {
             $accumulatedGDD < 100 => [
-                'name' => 'Brotación',
+                'name' => __('Brotación'),
                 'icon' => 'sprout',
                 'progress' => 10,
-                'description' => 'Bud break - Inicio del ciclo vegetativo'
+                'description' => __('Bud break - Inicio del ciclo vegetativo')
             ],
             $accumulatedGDD < 300 => [
-                'name' => 'Floración',
+                'name' => __('Floración'),
                 'icon' => 'flower',
                 'progress' => 25,
-                'description' => 'Flowering - Formación de flores'
+                'description' => __('Flowering - Formación de flores')
             ],
             $accumulatedGDD < 700 => [
-                'name' => 'Cuajado',
+                'name' => __('Cuajado'),
                 'icon' => 'grape',
                 'progress' => 40,
-                'description' => 'Fruit set - Formación inicial del fruto'
+                'description' => __('Fruit set - Formación inicial del fruto')
             ],
             $accumulatedGDD < 1200 => [
-                'name' => 'Envero',
+                'name' => __('Envero'),
                 'icon' => 'green',
                 'progress' => 60,
-                'description' => 'Veraison - Cambio de color de la uva'
+                'description' => __('Veraison - Cambio de color de la uva')
             ],
             $accumulatedGDD < 1600 => [
-                'name' => 'Maduración',
+                'name' => __('Maduración'),
                 'icon' => 'purple',
                 'progress' => 80,
-                'description' => 'Ripening - Acumulación de azúcares'
+                'description' => __('Ripening - Acumulación de azúcares')
             ],
             default => [
-                'name' => 'Vendimia',
+                'name' => __('Vendimia'),
                 'icon' => 'wine',
                 'progress' => 100,
-                'description' => 'Harvest - Listo para cosecha'
+                'description' => __('Harvest - Listo para cosecha')
             ],
         };
     }

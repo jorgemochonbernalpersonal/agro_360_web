@@ -72,7 +72,7 @@ class WineryDocumentController extends Controller
 
         return response()->json([
             'data'    => $this->format($document),
-            'message' => 'Documento creado correctamente.',
+            'message' => __('Documento creado correctamente.'),
         ], 201);
     }
 
@@ -107,7 +107,7 @@ class WineryDocumentController extends Controller
         $document = WineryDocument::forUser($user->id)->findOrFail($id);
         $document->delete();
 
-        return response()->json(['message' => 'Documento eliminado correctamente.']);
+        return response()->json(['message' => __('Documento eliminado correctamente.')]);
     }
 
     private function format(WineryDocument $d): array

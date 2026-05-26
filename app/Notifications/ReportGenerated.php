@@ -36,9 +36,9 @@ class ReportGenerated extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         $reportType = match($this->report->report_type) {
-            'phytosanitary_treatments' => 'Tratamientos Fitosanitarios',
-            'full_digital_notebook' => 'Cuaderno de Campo Completo',
-            default => 'Informe'
+            'phytosanitary_treatments' => __('Tratamientos Fitosanitarios'),
+            'full_digital_notebook' => __('Cuaderno de Campo Completo'),
+            default => __('Informe')
         };
 
         return (new MailMessage)
@@ -46,9 +46,9 @@ class ReportGenerated extends Notification implements ShouldQueue
             ->greeting('¡Tu informe está listo!')
             ->line("Tu informe de **{$reportType}** ha sido generado exitosamente.")
             ->line('**Código de verificación:** ' . $this->report->verification_code)
-            ->line('Este código permite verificar la autenticidad del documento.')
-            ->action('Descargar informe', AppLink::url(route('reports.download', $this->report), 'agro365://home'))
-            ->line('El informe incluye firma digital y puede ser verificado oficialmente.');
+            ->line(__('Este código permite verificar la autenticidad del documento.'))
+            ->action(__('Descargar informe'), AppLink::url(route('reports.download', $this->report), 'agro365://home'))
+            ->line(__('El informe incluye firma digital y puede ser verificado oficialmente.'));
     }
 
     /**

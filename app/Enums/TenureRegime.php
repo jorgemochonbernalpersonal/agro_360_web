@@ -16,11 +16,11 @@ enum TenureRegime: string
     public function label(): string
     {
         return match($this) {
-            self::OWNERSHIP => 'Propiedad',
-            self::LEASE => 'Arrendamiento',
-            self::SHARECROPPING => 'Aparcería',
-            self::GRANT => 'Cesión',
-            self::USUFRUCT => 'Usufructo',
+            self::OWNERSHIP => __('Propiedad'),
+            self::LEASE => __('Arrendamiento'),
+            self::SHARECROPPING => __('Aparcería'),
+            self::GRANT => __('Cesión'),
+            self::USUFRUCT => __('Usufructo'),
         };
     }
 

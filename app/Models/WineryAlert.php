@@ -9,20 +9,20 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 class WineryAlert extends Model
 {
     const ALERT_TYPES = [
-        'maintenance'   => 'Mantenimiento',
-        'expiry'        => 'Caducidad',
-        'stock'         => 'Stock',
-        'fermentation'  => 'Fermentación',
-        'dispute'       => 'Disputa',
-        'label'         => 'Etiquetado',
-        'certification' => 'Certificación',
-        'custom'        => 'Personalizada',
+        'maintenance'   => __('Mantenimiento'),
+        'expiry'        => __('Caducidad'),
+        'stock'         => __('Stock'),
+        'fermentation'  => __('Fermentación'),
+        'dispute'       => __('Disputa'),
+        'label'         => __('Etiquetado'),
+        'certification' => __('Certificación'),
+        'custom'        => __('Personalizada'),
     ];
 
     const SEVERITIES = [
-        'info'     => 'Informativa',
-        'warning'  => 'Aviso',
-        'critical' => 'Crítica',
+        'info'     => __('Informativa'),
+        'warning'  => __('Aviso'),
+        'critical' => __('Crítica'),
     ];
 
     protected $fillable = [

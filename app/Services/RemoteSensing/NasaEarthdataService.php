@@ -270,7 +270,7 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
             'ndvi_max'       => round($ndvi + 0.03, 3),
             'cloud_coverage' => 0,
             'image_date'     => $imageDate,
-            'image_source'   => 'NASA MODIS MOD13Q1 (ORNL DAAC)',
+            'image_source'   => __('NASA MODIS MOD13Q1 (ORNL DAAC)'),
         ];
     }
 
@@ -497,7 +497,7 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
                 'ndwi_max' => round($ndwi + 0.05, 3),
                 'cloud_coverage' => mt_rand(0, 30),
                 'image_date' => $date,
-                'image_source' => 'NASA MODIS (Mock)',
+                'image_source' => __('NASA MODIS (Mock)'),
                 'health_status' => $this->calculateHealthStatus($ndvi),
                 'trend' => $trend,
                 'temperature' => $temp,

@@ -46,7 +46,7 @@ class ReportGeneratedNotification extends Notification implements ShouldQueue
             'period' => $this->report->period_start->format('d/m/Y') . ' - ' . $this->report->period_end->format('d/m/Y'),
             'message' => '✅ Tu informe ha sido generado exitosamente',
             'action_url' => AppLink::url(route('viticulturist.official-reports.index'), 'agro365://home'),
-            'action_text' => 'Ver Informes',
+            'action_text' => __('Ver Informes'),
             'download_url' => route('viticulturist.official-reports.download', $this->report),
         ];
     }

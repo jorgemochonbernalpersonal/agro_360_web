@@ -30,7 +30,7 @@ class PushController extends Controller
             ]
         );
 
-        return response()->json(['message' => 'Token registrado correctamente.']);
+        return response()->json(['message' => __('Token registrado correctamente.')]);
     }
 
     // ─── DELETE /push/token ───────────────────────────────────────────────────
@@ -45,6 +45,6 @@ class PushController extends Controller
             ->where('user_id', $request->user()->id)
             ->delete();
 
-        return response()->json(['message' => 'Token eliminado correctamente.']);
+        return response()->json(['message' => __('Token eliminado correctamente.')]);
     }
 }

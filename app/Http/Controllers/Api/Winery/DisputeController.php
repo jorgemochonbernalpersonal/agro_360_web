@@ -83,7 +83,7 @@ class DisputeController extends Controller
 
         return response()->json([
             'data'    => $this->format($delivery),
-            'message' => 'Disputa resuelta correctamente.',
+            'message' => __('Disputa resuelta correctamente.'),
         ]);
     }
 

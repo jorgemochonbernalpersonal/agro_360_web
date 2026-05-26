@@ -22,7 +22,7 @@ class ApiBetaCheck
 
         if ($user->betaExpired() && !$user->hasBasicFreeAccess()) {
             return response()->json([
-                'message'      => 'Tu periodo de prueba ha finalizado. Renueva tu suscripción para continuar usando Agro365.',
+                'message'      => __('Tu periodo de prueba ha finalizado. Renueva tu suscripción para continuar usando Agro365.'),
                 'beta_expired' => true,
             ], 403);
         }

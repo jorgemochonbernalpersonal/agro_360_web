@@ -34,17 +34,17 @@ class RemoteSensingExport implements FromCollection, WithHeadings, WithStyles, W
     public function headings(): array
     {
         return [
-            'Fecha',
+            __('Fecha'),
             'NDVI',
-            'NDVI Mín',
-            'NDVI Máx',
+            __('NDVI Mín'),
+            __('NDVI Máx'),
             'NDWI',
-            'Estado',
-            'Tendencia',
-            'Temperatura (°C)',
-            'Precipitación (mm)',
-            'Humedad (%)',
-            'Humedad Suelo (%)',
+            __('Estado'),
+            __('Tendencia'),
+            __('Temperatura (°C)'),
+            __('Precipitación (mm)'),
+            __('Humedad (%)'),
+            __('Humedad Suelo (%)'),
         ];
     }
 

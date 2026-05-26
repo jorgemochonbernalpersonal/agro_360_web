@@ -83,7 +83,7 @@ class EnergyUsageController extends Controller
 
         return response()->json([
             'data'    => new \App\Http\Resources\Api\EnergyUsageResource($record),
-            'message' => 'Consumo energético registrado correctamente.',
+            'message' => __('Consumo energético registrado correctamente.'),
         ], 201);
     }
 }

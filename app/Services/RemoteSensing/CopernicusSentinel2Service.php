@@ -169,7 +169,7 @@ class CopernicusSentinel2Service
                 $coords = array_map(fn($p) => [(float) $p['lng'], (float) $p['lat']], $points);
 
                 return [
-                    'type'        => 'Polygon',
+                    'type'        => __('Polygon'),
                     'coordinates' => [$coords],
                 ];
             }
@@ -182,7 +182,7 @@ class CopernicusSentinel2Service
         $d   = 0.001;
 
         return [
-            'type'        => 'Polygon',
+            'type'        => __('Polygon'),
             'coordinates' => [[
                 [$lon - $d, $lat - $d],
                 [$lon + $d, $lat - $d],
@@ -456,8 +456,8 @@ function evaluatePixel(sample) {
             'gndvi'          => is_numeric($gndvi) ? round((float) $gndvi, 3) : null,
             'ndre'           => is_numeric($ndre) ? round((float) $ndre, 3) : null,
             'cloud_coverage' => $cloudPct,
-            'image_source'   => 'Copernicus Sentinel-2 L2A',
-            'satellite'      => 'SENTINEL-2',
+            'image_source'   => __('Copernicus Sentinel-2 L2A'),
+            'satellite'      => __('SENTINEL-2'),
             'data_source'    => 'copernicus',
             'health_status'  => $this->healthStatus($ndviFloat),
             'trend'          => $this->trend($plot, $ndviFloat, $imageDate, $plotSigpacId),

@@ -89,7 +89,7 @@ class PhenologyObservationController extends Controller
 
         return response()->json([
             'data'    => new PhenologyObservationResource($record),
-            'message' => 'Observación fenológica registrada correctamente.',
+            'message' => __('Observación fenológica registrada correctamente.'),
         ], 201);
     }
 }

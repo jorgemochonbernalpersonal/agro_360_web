@@ -132,6 +132,6 @@ class WineAnalysisController extends Controller
         $analysis = WineAnalysis::where('user_id', $user->id)->findOrFail($id);
         $analysis->delete();
 
-        return response()->json(['message' => 'Análisis eliminado correctamente.']);
+        return response()->json(['message' => __('Análisis eliminado correctamente.')]);
     }
 }

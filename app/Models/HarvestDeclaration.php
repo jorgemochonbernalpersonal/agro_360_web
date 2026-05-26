@@ -8,10 +8,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class HarvestDeclaration extends Model
 {
     const STATUSES = [
-        'draft'     => 'Borrador',
-        'submitted' => 'Presentada',
-        'accepted'  => 'Aceptada',
-        'rejected'  => 'Rechazada',
+        'draft'     => __('Borrador'),
+        'submitted' => __('Presentada'),
+        'accepted'  => __('Aceptada'),
+        'rejected'  => __('Rechazada'),
     ];
 
     const STATUS_COLORS = [

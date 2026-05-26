@@ -28,12 +28,12 @@ class ViticulturistExport implements FromCollection, WithHeadings, WithMapping, 
     public function headings(): array
     {
         return [
-            'Nombre',
-            'Email',
-            'Origen',
-            'Puede acceder',
-            'Nº Parcelas',
-            'Vinculado el',
+            __('Nombre'),
+            __('Email'),
+            __('Origen'),
+            __('Puede acceder'),
+            __('Nº Parcelas'),
+            __('Vinculado el'),
         ];
     }
 
@@ -42,10 +42,10 @@ class ViticulturistExport implements FromCollection, WithHeadings, WithMapping, 
         $v = $relation->viticulturist;
 
         $sourceMap = [
-            'own'           => 'Propio',
-            'supervisor'    => 'Del supervisor',
-            'viticulturist' => 'Por invitación',
-            'self'          => 'Autogestionado',
+            'own'           => __('Propio'),
+            'supervisor'    => __('Del supervisor'),
+            'viticulturist' => __('Por invitación'),
+            'self'          => __('Autogestionado'),
         ];
 
         return [

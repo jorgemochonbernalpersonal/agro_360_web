@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class WineContainerStockEntry extends Model
 {
     const SOURCES = [
-        'initial_stock' => 'Stock inicial',
-        'adjustment'    => 'Ajuste de inventario',
-        'correction'    => 'Corrección',
+        'initial_stock' => __('Stock inicial'),
+        'adjustment'    => __('Ajuste de inventario'),
+        'correction'    => __('Corrección'),
     ];
 
     protected $fillable = [

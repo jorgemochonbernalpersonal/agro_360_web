@@ -11,12 +11,12 @@ class PostHarvestTreatment extends Model
     use HasFactory;
 
     const APPLICATION_TYPES = [
-        'copper_treatment'  => 'Tratamiento con cobre',
-        'sulfur_treatment'  => 'Tratamiento con azufre',
-        'wound_sealing'     => 'Sellado de heridas de poda',
-        'foliar_application'=> 'Aplicación foliar',
-        'trunk_treatment'   => 'Tratamiento de troncos',
-        'other'             => 'Otro',
+        'copper_treatment'  => __('Tratamiento con cobre'),
+        'sulfur_treatment'  => __('Tratamiento con azufre'),
+        'wound_sealing'     => __('Sellado de heridas de poda'),
+        'foliar_application'=> __('Aplicación foliar'),
+        'trunk_treatment'   => __('Tratamiento de troncos'),
+        'other'             => __('Otro'),
     ];
 
     protected $fillable = [

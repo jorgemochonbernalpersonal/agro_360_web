@@ -33,27 +33,27 @@ class ProductSaleInvoiceExport implements FromCollection, WithHeadings, WithMapp
     public function headings(): array
     {
         return [
-            'Nº Factura',
-            'Albarán',
-            'Fecha',
-            'Cliente',
-            'Estado',
-            'Entrega',
-            'Cobro',
-            'Regalo',
-            'Rectificativa',
-            'Productos',
-            'Base imponible (€)',
-            'IVA (€)',
-            'Total (€)',
+            __('Nº Factura'),
+            __('Albarán'),
+            __('Fecha'),
+            __('Cliente'),
+            __('Estado'),
+            __('Entrega'),
+            __('Cobro'),
+            __('Regalo'),
+            __('Rectificativa'),
+            __('Productos'),
+            __('Base imponible (€)'),
+            __('IVA (€)'),
+            __('Total (€)'),
         ];
     }
 
     public function map($invoice): array
     {
-        $statusMap = ['draft' => 'Borrador', 'sent' => 'Emitida', 'cancelled' => 'Cancelada'];
-        $delivMap  = ['pending' => 'Pendiente', 'delivered' => 'Entregada', 'cancelled' => 'Cancelada'];
-        $payMap    = ['unpaid' => 'Pendiente', 'partial' => 'Parcial', 'paid' => 'Cobrada'];
+        $statusMap = ['draft' => __('Borrador'), 'sent' => __('Emitida'), 'cancelled' => __('Cancelada')];
+        $delivMap  = ['pending' => __('Pendiente'), 'delivered' => __('Entregada'), 'cancelled' => __('Cancelada')];
+        $payMap    = ['unpaid' => __('Pendiente'), 'partial' => __('Parcial'), 'paid' => __('Cobrada')];
 
         $products = $invoice->items
             ->filter(fn ($i) => $i->concept_type === 'wine')

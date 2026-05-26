@@ -15,15 +15,15 @@ class AgriculturalActivity extends Model
 
     // Tipos de actividad disponibles
     const ACTIVITY_TYPES = [
-        'phytosanitary' => 'Tratamiento fitosanitario',
-        'fertilization' => 'Fertilización',
-        'irrigation'    => 'Riego',
-        'cultural'      => 'Labor cultural',
-        'observation'   => 'Observación',
-        'harvest'       => 'Cosecha',
-        'pruning'       => 'Poda',
-        'phenology'     => 'Observación fenológica',
-        'post_harvest'  => 'Tratamiento post-vendimia',
+        'phytosanitary' => __('Tratamiento fitosanitario'),
+        'fertilization' => __('Fertilización'),
+        'irrigation'    => __('Riego'),
+        'cultural'      => __('Labor cultural'),
+        'observation'   => __('Observación'),
+        'harvest'       => __('Cosecha'),
+        'pruning'       => __('Poda'),
+        'phenology'     => __('Observación fenológica'),
+        'post_harvest'  => __('Tratamiento post-vendimia'),
     ];
 
     protected $fillable = [

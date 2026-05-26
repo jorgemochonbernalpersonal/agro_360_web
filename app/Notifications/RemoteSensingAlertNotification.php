@@ -55,12 +55,12 @@ class RemoteSensingAlertNotification extends Notification
     {
         return (new MailMessage)
                     ->subject('⚠️ Alerta NDVI: ' . $this->plot->name)
-                    ->greeting('Hola ' . $notifiable->name . ',')
+                    ->greeting(__('Hola ') . $notifiable->name . ',')
                     ->line("Hemos detectado un valor bajo de vigor (NDVI) en tu parcela **{$this->plot->name}**.")
                     ->line("Valor actual: **{$this->currentNdvi}**")
                     ->line("Tu umbral de alerta: **{$this->threshold}**")
-                    ->action('Ver detalle en Teledetección', AppLink::url(url('/viticulturist/remote-sensing?selectedPlotId='.$this->plot->id), 'agro365://plots/' . $this->plot->id))
-                    ->line('Te recomendamos revisar la parcela para identificar posibles problemas.');
+                    ->action(__('Ver detalle en Teledetección'), AppLink::url(url('/viticulturist/remote-sensing?selectedPlotId='.$this->plot->id), 'agro365://plots/' . $this->plot->id))
+                    ->line(__('Te recomendamos revisar la parcela para identificar posibles problemas.'));
     }
 
     /**
@@ -71,7 +71,7 @@ class RemoteSensingAlertNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'title' => 'Alerta de Vigor (NDVI)',
+            'title' => __('Alerta de Vigor (NDVI)'),
             'message' => "La parcela {$this->plot->name} tiene un NDVI de {$this->currentNdvi} (bajo el umbral {$this->threshold})",
             'plot_id' => $this->plot->id,
             'ndvi' => $this->currentNdvi,

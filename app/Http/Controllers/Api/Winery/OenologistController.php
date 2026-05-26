@@ -57,7 +57,7 @@ class OenologistController extends Controller
 
         return response()->json([
             'data'    => ['id' => $oenologist->id, 'full_name' => $oenologist->full_name, ...$oenologist->toArray()],
-            'message' => 'Enólogo creado correctamente.',
+            'message' => __('Enólogo creado correctamente.'),
         ], 201);
     }
 
@@ -91,6 +91,6 @@ class OenologistController extends Controller
         $oenologist = Oenologist::forUser($user->id)->findOrFail($id);
         $oenologist->update(['active' => false]);
 
-        return response()->json(['message' => 'Enólogo desactivado correctamente.']);
+        return response()->json(['message' => __('Enólogo desactivado correctamente.')]);
     }
 }

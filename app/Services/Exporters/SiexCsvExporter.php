@@ -201,14 +201,14 @@ class SiexCsvExporter
             
             // Mapear tipo de actividad
             $activityTypes = [
-                'phytosanitary' => 'Tratamiento Fitosanitario',
-                'fertilization' => 'Fertilización',
-                'irrigation' => 'Riego',
-                'pruning' => 'Poda',
-                'harvest' => 'Cosecha',
-                'planting' => 'Plantación',
-                'maintenance' => 'Mantenimiento',
-                'other' => 'Otra'
+                'phytosanitary' => __('Tratamiento Fitosanitario'),
+                'fertilization' => __('Fertilización'),
+                'irrigation' => __('Riego'),
+                'pruning' => __('Poda'),
+                'harvest' => __('Cosecha'),
+                'planting' => __('Plantación'),
+                'maintenance' => __('Mantenimiento'),
+                'other' => __('Otra')
             ];
             
             $csvData[] = [

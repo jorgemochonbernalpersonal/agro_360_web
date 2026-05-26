@@ -41,17 +41,17 @@ class StorePlotRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required' => 'El nombre de la parcela es obligatorio.',
-            'name.max' => 'El nombre no puede exceder 255 caracteres.',
-            'area.required' => 'La superficie es obligatoria.',
-            'area.numeric' => 'La superficie debe ser un número.',
-            'area.min' => 'La superficie debe ser mayor a 0.',
-            'tenure_regime.required' => 'El régimen de tenencia es obligatorio.',
-            'tenure_regime.in' => 'El régimen de tenencia no es válido.',
-            'viticulturist_id.required' => 'Debe seleccionar un viticultor.',
-            'viticulturist_id.exists' => 'El viticultor seleccionado no existe.',
-            'province_id.required' => 'La provincia es obligatoria.',
-            'municipality_id.required' => 'El municipio es obligatorio.',
+            'name.required' => __('El nombre de la parcela es obligatorio.'),
+            'name.max' => __('El nombre no puede exceder 255 caracteres.'),
+            'area.required' => __('La superficie es obligatoria.'),
+            'area.numeric' => __('La superficie debe ser un número.'),
+            'area.min' => __('La superficie debe ser mayor a 0.'),
+            'tenure_regime.required' => __('El régimen de tenencia es obligatorio.'),
+            'tenure_regime.in' => __('El régimen de tenencia no es válido.'),
+            'viticulturist_id.required' => __('Debe seleccionar un viticultor.'),
+            'viticulturist_id.exists' => __('El viticultor seleccionado no existe.'),
+            'province_id.required' => __('La provincia es obligatoria.'),
+            'municipality_id.required' => __('El municipio es obligatorio.'),
         ];
     }
 

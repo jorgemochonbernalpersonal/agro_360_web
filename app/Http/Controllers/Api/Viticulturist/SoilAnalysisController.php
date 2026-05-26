@@ -76,7 +76,7 @@ class SoilAnalysisController extends Controller
 
         return response()->json([
             'data'    => new \App\Http\Resources\Api\SoilAnalysisResource($record),
-            'message' => 'Análisis de suelo registrado correctamente.',
+            'message' => __('Análisis de suelo registrado correctamente.'),
         ], 201);
     }
 }

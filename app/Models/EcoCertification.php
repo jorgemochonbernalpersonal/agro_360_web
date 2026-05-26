@@ -8,19 +8,19 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class EcoCertification extends Model
 {
     const CERTIFICATION_TYPES = [
-        'organic'     => 'Producción Ecológica',
-        'biodynamic'  => 'Biodinámica',
-        'sustainable' => 'Viticultura Sostenible',
-        'vegan'       => 'Apto Vegano',
-        'fair_trade'  => 'Comercio Justo',
-        'other'       => 'Otro',
+        'organic'     => __('Producción Ecológica'),
+        'biodynamic'  => __('Biodinámica'),
+        'sustainable' => __('Viticultura Sostenible'),
+        'vegan'       => __('Apto Vegano'),
+        'fair_trade'  => __('Comercio Justo'),
+        'other'       => __('Otro'),
     ];
 
     const STATUSES = [
-        'active'    => 'Activo',
-        'expired'   => 'Caducado',
-        'pending'   => 'Pendiente',
-        'suspended' => 'Suspendido',
+        'active'    => __('Activo'),
+        'expired'   => __('Caducado'),
+        'pending'   => __('Pendiente'),
+        'suspended' => __('Suspendido'),
     ];
 
     protected $fillable = [

@@ -30,7 +30,7 @@ class RemoteSensingController extends Controller
         if (!$data) {
             return response()->json([
                 'success' => false,
-                'message' => 'No NDVI data available',
+                'message' => __('No NDVI data available'),
             ]);
         }
         

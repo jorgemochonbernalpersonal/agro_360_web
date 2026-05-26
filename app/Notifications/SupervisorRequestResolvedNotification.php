@@ -61,7 +61,7 @@ class SupervisorRequestResolvedNotification extends Notification implements Shou
             ->action(__('Ver detalle'), $url)
             ->when(
                 ! $approved,
-                fn ($m) => $m->line('Si tienes dudas sobre la resolución, contacta directamente con tu denominación de origen.')
+                fn ($m) => $m->line(__('Si tienes dudas sobre la resolución, contacta directamente con tu denominación de origen.'))
             )
             ->salutation(__('Saludos,\nAgro365'));
     }
@@ -82,7 +82,7 @@ class SupervisorRequestResolvedNotification extends Notification implements Shou
             'icon'            => $approved ? '✅' : '❌',
             'message'         => ($approved ? 'Aprobada' : 'Rechazada') . ': ' . $typeLabel,
             'action_url'      => route('winery.denomination.requests.index'),
-            'action_text'     => 'Ver detalle',
+            'action_text'     => __('Ver detalle'),
         ];
     }
 }

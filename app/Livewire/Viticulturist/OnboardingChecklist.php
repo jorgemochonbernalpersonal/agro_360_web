@@ -93,21 +93,21 @@ class OnboardingChecklist extends Component
     private function getStepTitle(string $step): string
     {
         return match ($step) {
-            OnboardingProgress::STEP_REVIEW_CAMPAIGN => 'Revisa tu campaña',
-            OnboardingProgress::STEP_CREATE_PLOT => 'Añade tus parcelas',
-            OnboardingProgress::STEP_ADD_PRODUCTS => 'Añade productos fitosanitarios',
-            OnboardingProgress::STEP_REGISTER_ACTIVITY => 'Registra tu primera actividad',
-            default => 'Paso desconocido',
+            OnboardingProgress::STEP_REVIEW_CAMPAIGN => __('Revisa tu campaña'),
+            OnboardingProgress::STEP_CREATE_PLOT => __('Añade tus parcelas'),
+            OnboardingProgress::STEP_ADD_PRODUCTS => __('Añade productos fitosanitarios'),
+            OnboardingProgress::STEP_REGISTER_ACTIVITY => __('Registra tu primera actividad'),
+            default => __('Paso desconocido'),
         };
     }
 
     private function getStepDescription(string $step): string
     {
         return match ($step) {
-            OnboardingProgress::STEP_REVIEW_CAMPAIGN => 'Verifica tu campaña activa',
-            OnboardingProgress::STEP_CREATE_PLOT => 'Datos maestros de tus parcelas',
-            OnboardingProgress::STEP_REGISTER_ACTIVITY => 'Registra un riego, tratamiento o labor',
-            OnboardingProgress::STEP_ADD_PRODUCTS => 'Catálogo de productos para tratamientos',
+            OnboardingProgress::STEP_REVIEW_CAMPAIGN => __('Verifica tu campaña activa'),
+            OnboardingProgress::STEP_CREATE_PLOT => __('Datos maestros de tus parcelas'),
+            OnboardingProgress::STEP_REGISTER_ACTIVITY => __('Registra un riego, tratamiento o labor'),
+            OnboardingProgress::STEP_ADD_PRODUCTS => __('Catálogo de productos para tratamientos'),
             default => '',
         };
     }

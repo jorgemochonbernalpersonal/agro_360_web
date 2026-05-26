@@ -29,21 +29,21 @@ class ContainerMaintenance extends Model
     ];
 
     const TYPES = [
-        'cleaning'         => 'Limpieza',
-        'sulfuring'        => 'Sulfitado',
-        'inspection'       => 'Inspección',
-        'repair'           => 'Reparación',
-        'tartrate_removal' => 'Desconfitado (tartratos)',
-        'other'            => 'Otro',
+        'cleaning'         => __('Limpieza'),
+        'sulfuring'        => __('Sulfitado'),
+        'inspection'       => __('Inspección'),
+        'repair'           => __('Reparación'),
+        'tartrate_removal' => __('Desconfitado (tartratos)'),
+        'other'            => __('Otro'),
     ];
 
     const STATUSES = [
-        'scheduled'  => 'Programado',
-        'in_progress'=> 'En curso',
-        'in_review'  => 'En revisión',
-        'approved'   => 'Aprobado',
-        'completed'  => 'Completado',
-        'cancelled'  => 'Cancelado',
+        'scheduled'  => __('Programado'),
+        'in_progress'=> __('En curso'),
+        'in_review'  => __('En revisión'),
+        'approved'   => __('Aprobado'),
+        'completed'  => __('Completado'),
+        'cancelled'  => __('Cancelado'),
     ];
 
     public function container(): BelongsTo

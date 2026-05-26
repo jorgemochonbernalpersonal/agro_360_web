@@ -46,9 +46,9 @@ class HarvestDeliveryDelinkedNotification extends Notification implements Should
         }
 
         return (new MailMessage)
-            ->subject('Entrega modificada por el viticultor — ' . $variety . ' · ' . $delivery->vintage_year)
+            ->subject(__('Entrega modificada por el viticultor — ') . $variety . ' · ' . $delivery->vintage_year)
             ->greeting(__('Hola :name', ['name' => $notifiable->name ?: '']))
-            ->line('El viticultor **' . ($viticulturist?->name ?? '—') . '** ha modificado los kg declarados en una entrega que ya estaba confirmada. La confirmación ha quedado **desvinculada** y la entrega vuelve a estado pendiente.')
+            ->line(__('El viticultor **') . ($viticulturist?->name ?? '—') . '** ha modificado los kg declarados en una entrega que ya estaba confirmada. La confirmación ha quedado **desvinculada** y la entrega vuelve a estado pendiente.')
             ->line(new HtmlString(
                 '<div style="background-color:#fffbeb;border:1px solid #fde68a;padding:16px;border-radius:8px;margin:16px 0;">
                     <p style="margin:0 0 8px 0;"><strong>Variedad:</strong> ' . e($variety) . '</p>
@@ -59,7 +59,7 @@ class HarvestDeliveryDelinkedNotification extends Notification implements Should
                  </div>'
             ))
             ->action(__('Ver recepciones'), $showUrl)
-            ->line('Tu recepción sigue registrada. La declaración del viticultor queda pendiente de re-vinculación.')
+            ->line(__('Tu recepción sigue registrada. La declaración del viticultor queda pendiente de re-vinculación.'))
             ->salutation(__('Saludos,\nAgro365'));
     }
 

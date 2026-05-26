@@ -35,16 +35,16 @@ class DoInspection extends Model
     public const RESULT_PENDING       = 'pending';
 
     public const STATUS_LABELS = [
-        'scheduled'   => 'Programada',
-        'in_progress' => 'En curso',
-        'completed'   => 'Completada',
-        'cancelled'   => 'Cancelada',
+        'scheduled'   => __('Programada'),
+        'in_progress' => __('En curso'),
+        'completed'   => __('Completada'),
+        'cancelled'   => __('Cancelada'),
     ];
 
     public const RESULT_LABELS = [
-        'compliant'     => 'Conforme',
-        'non_compliant' => 'No conforme',
-        'pending'       => 'Pendiente',
+        'compliant'     => __('Conforme'),
+        'non_compliant' => __('No conforme'),
+        'pending'       => __('Pendiente'),
     ];
 
     public const RESULT_COLORS = [

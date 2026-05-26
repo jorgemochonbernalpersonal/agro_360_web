@@ -89,7 +89,7 @@ class WineryCampaignController extends Controller
 
         return response()->json([
             'data'    => $this->format($campaign),
-            'message' => 'Campaña creada correctamente.',
+            'message' => __('Campaña creada correctamente.'),
         ], 201);
     }
 
@@ -132,7 +132,7 @@ class WineryCampaignController extends Controller
 
         $campaign->delete();
 
-        return response()->json(['message' => 'Campaña eliminada correctamente.']);
+        return response()->json(['message' => __('Campaña eliminada correctamente.')]);
     }
 
     private function format(Campaign $c): array

@@ -88,7 +88,7 @@ class PlotCostController extends Controller
 
         return response()->json([
             'data'    => new PlotCostResource($record),
-            'message' => 'Coste registrado correctamente.',
+            'message' => __('Coste registrado correctamente.'),
         ], 201);
     }
 }

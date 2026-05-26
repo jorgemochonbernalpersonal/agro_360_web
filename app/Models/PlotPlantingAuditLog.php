@@ -62,9 +62,9 @@ class PlotPlantingAuditLog extends Model
     public function getActionDescriptionAttribute(): string
     {
         $descriptions = [
-            'created' => 'Plantación creada',
-            'updated' => 'Plantación modificada',
-            'deleted' => 'Plantación eliminada',
+            'created' => __('Plantación creada'),
+            'updated' => __('Plantación modificada'),
+            'deleted' => __('Plantación eliminada'),
         ];
 
         return $descriptions[$this->action] ?? $this->action;

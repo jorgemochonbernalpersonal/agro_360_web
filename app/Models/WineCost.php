@@ -8,15 +8,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class WineCost extends Model
 {
     const CATEGORIES = [
-        'additives'            => 'Aditivos enológicos',
-        'bottling'             => 'Embotellado y packaging',
-        'labeling'             => 'Etiquetado',
-        'analysis'             => 'Análisis de laboratorio',
-        'oenologist'           => 'Honorarios enólogo',
-        'container_maintenance'=> 'Mantenimiento contenedores',
-        'transport'            => 'Transporte y logística',
-        'storage'              => 'Almacenamiento y crianza',
-        'other'                => 'Otros costes',
+        'additives'            => __('Aditivos enológicos'),
+        'bottling'             => __('Embotellado y packaging'),
+        'labeling'             => __('Etiquetado'),
+        'analysis'             => __('Análisis de laboratorio'),
+        'oenologist'           => __('Honorarios enólogo'),
+        'container_maintenance'=> __('Mantenimiento contenedores'),
+        'transport'            => __('Transporte y logística'),
+        'storage'              => __('Almacenamiento y crianza'),
+        'other'                => __('Otros costes'),
     ];
 
     const CATEGORY_COLORS = [

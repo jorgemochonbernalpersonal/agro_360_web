@@ -73,7 +73,7 @@ class EcoCertificationController extends Controller
 
         return response()->json([
             'data'    => $this->format($certification),
-            'message' => 'Certificación ecológica creada correctamente.',
+            'message' => __('Certificación ecológica creada correctamente.'),
         ], 201);
     }
 
@@ -108,7 +108,7 @@ class EcoCertificationController extends Controller
         $certification = EcoCertification::forUser($user->id)->findOrFail($id);
         $certification->delete();
 
-        return response()->json(['message' => 'Certificación eliminada correctamente.']);
+        return response()->json(['message' => __('Certificación eliminada correctamente.')]);
     }
 
     private function format(EcoCertification $c): array

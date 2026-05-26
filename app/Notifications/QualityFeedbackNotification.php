@@ -53,7 +53,7 @@ class QualityFeedbackNotification extends Notification implements ShouldQueue
         }
 
         return $mail
-            ->action('Ver mis entregas', route('viticulturist.harvests.index'))
+            ->action(__('Ver mis entregas'), route('viticulturist.harvests.index'))
             ->salutation('— Equipo Agro365');
     }
 

@@ -91,46 +91,46 @@ class ChlorophyllCalculator
             $ratio > 1.1 && $chlorophyll > 80 => [
                 'status' => 'excellent',
                 'color' => 'green',
-                'label' => 'Excelente',
+                'label' => __('Excelente'),
                 'chlorophyll_percent' => round($chlorophyll, 1),
-                'diagnosis' => 'Estado nutricional óptimo',
-                'recommendation' => 'Mantener programa de fertilización actual',
+                'diagnosis' => __('Estado nutricional óptimo'),
+                'recommendation' => __('Mantener programa de fertilización actual'),
                 'icon' => '✅',
             ],
             $ratio > 1.0 && $chlorophyll > 60 => [
                 'status' => 'good',
                 'color' => 'emerald',
-                'label' => 'Bueno',
+                'label' => __('Bueno'),
                 'chlorophyll_percent' => round($chlorophyll, 1),
-                'diagnosis' => 'Estado nutricional adecuado',
-                'recommendation' => 'Continuar monitoreo estacional',
+                'diagnosis' => __('Estado nutricional adecuado'),
+                'recommendation' => __('Continuar monitoreo estacional'),
                 'icon' => '🌱',
             ],
             $ratio > 0.9 && $chlorophyll > 40 => [
                 'status' => 'moderate',
                 'color' => 'yellow',
-                'label' => 'Moderado',
+                'label' => __('Moderado'),
                 'chlorophyll_percent' => round($chlorophyll, 1),
-                'diagnosis' => 'Posible deficiencia leve de nitrógeno',
-                'recommendation' => 'Considera aplicación foliar de nitrógeno (10-15 kg/ha)',
+                'diagnosis' => __('Posible deficiencia leve de nitrógeno'),
+                'recommendation' => __('Considera aplicación foliar de nitrógeno (10-15 kg/ha)'),
                 'icon' => '⚠️',
             ],
             $chlorophyll < 40 => [
                 'status' => 'deficient',
                 'color' => 'orange',
-                'label' => 'Deficiente',
+                'label' => __('Deficiente'),
                 'chlorophyll_percent' => round($chlorophyll, 1),
-                'diagnosis' => 'Deficiencia de nitrógeno confirmada',
-                'recommendation' => 'Aplicar fertilizante nitrogenado urgente (20-30 kg/ha de N)',
+                'diagnosis' => __('Deficiencia de nitrógeno confirmada'),
+                'recommendation' => __('Aplicar fertilizante nitrogenado urgente (20-30 kg/ha de N)'),
                 'icon' => '🚨',
             ],
             default => [
                 'status' => 'severe_deficiency',
                 'color' => 'red',
-                'label' => 'Deficiencia Severa',
+                'label' => __('Deficiencia Severa'),
                 'chlorophyll_percent' => round($chlorophyll, 1),
-                'diagnosis' => 'Deficiencia severa - múltiples nutrientes',
-                'recommendation' => 'Análisis foliar urgente + fertilización correctiva completa',
+                'diagnosis' => __('Deficiencia severa - múltiples nutrientes'),
+                'recommendation' => __('Análisis foliar urgente + fertilización correctiva completa'),
                 'icon' => '🆘',
             ],
         };
@@ -156,7 +156,7 @@ class ChlorophyllCalculator
             return [
                 'nitrogen_kg_ha' => 0,
                 'total_nitrogen_kg' => 0,
-                'recommendation' => 'No se requiere nitrógeno adicional',
+                'recommendation' => __('No se requiere nitrógeno adicional'),
                 'status' => 'sufficient',
             ];
         }
@@ -179,8 +179,8 @@ class ChlorophyllCalculator
                 default => 'high',
             },
             'application_method' => match (true) {
-                $nitrogenPerHa < 20 => 'Aplicación foliar (urea 2-3%)',
-                default => 'Aplicación al suelo (urea o nitrato amónico)',
+                $nitrogenPerHa < 20 => __('Aplicación foliar (urea 2-3%)'),
+                default => __('Aplicación al suelo (urea o nitrato amónico)'),
             },
         ];
     }
@@ -191,7 +191,7 @@ class ChlorophyllCalculator
     private function getNitrogenRecommendationText(float $kgPerHa): string
     {
         return match (true) {
-            $kgPerHa <= 0 => 'Sin necesidad de nitrógeno',
+            $kgPerHa <= 0 => __('Sin necesidad de nitrógeno'),
             $kgPerHa < 15 => sprintf('Aplicación foliar ligera: %.0f kg N/ha', $kgPerHa),
             $kgPerHa < 30 => sprintf('Aplicación moderada: %.0f kg N/ha en 2 veces', $kgPerHa),
             default => sprintf('Aplicación fuerte: %.0f kg N/ha fraccionada en 3 aplicaciones', $kgPerHa),
@@ -211,7 +211,7 @@ class ChlorophyllCalculator
             return [
                 'detected' => false,
                 'confidence' => 'unknown',
-                'message' => 'Datos históricos insuficientes',
+                'message' => __('Datos históricos insuficientes'),
             ];
         }
 
@@ -233,14 +233,14 @@ class ChlorophyllCalculator
             'drop_percent' => round($dropPercent, 1),
             'confidence' => count($historicalGNDVI) > 5 ? 'high' : 'medium',
             'probable_cause' => match (true) {
-                $dropPercent > 20 => 'Deficiencia severa de N o Fe (clorosis férrica)',
-                $dropPercent > 10 => 'Deficiencia de nitrógeno o estrés',
-                default => 'Variación estacional normal',
+                $dropPercent > 20 => __('Deficiencia severa de N o Fe (clorosis férrica)'),
+                $dropPercent > 10 => __('Deficiencia de nitrógeno o estrés'),
+                default => __('Variación estacional normal'),
             },
             'action' => match (true) {
-                $dropPercent > 20 => 'Análisis foliar urgente + corrección inmediata',
-                $dropPercent > 10 => 'Aplicación preventiva de quelatos de hierro',
-                default => 'Monitoreo continuo',
+                $dropPercent > 20 => __('Análisis foliar urgente + corrección inmediata'),
+                $dropPercent > 10 => __('Aplicación preventiva de quelatos de hierro'),
+                default => __('Monitoreo continuo'),
             },
         ];
     }

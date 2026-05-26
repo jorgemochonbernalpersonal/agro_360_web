@@ -87,7 +87,7 @@ class WinerySupplyController extends Controller
 
         return response()->json([
             'data'    => $this->format($supply),
-            'message' => 'Insumo creado correctamente.',
+            'message' => __('Insumo creado correctamente.'),
         ], 201);
     }
 
@@ -124,7 +124,7 @@ class WinerySupplyController extends Controller
         $supply = WinerySupply::forUser($user->id)->findOrFail($id);
         $supply->update(['active' => false]);
 
-        return response()->json(['message' => 'Insumo desactivado correctamente.']);
+        return response()->json(['message' => __('Insumo desactivado correctamente.')]);
     }
 
     private function format(WinerySupply $s): array

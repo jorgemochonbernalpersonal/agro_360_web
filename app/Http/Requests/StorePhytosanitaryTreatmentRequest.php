@@ -51,14 +51,14 @@ class StorePhytosanitaryTreatmentRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'product_id.required' => 'Debe seleccionar un producto fitosanitario.',
-            'product_id.exists' => 'El producto seleccionado no existe.',
-            'dose.required' => 'La dosis es obligatoria.',
-            'dose.numeric' => 'La dosis debe ser un número.',
-            'dose.min' => 'La dosis debe ser mayor a 0.',
-            'dose_unit.required' => 'La unidad de dosis es obligatoria.',
-            'area_treated.required' => 'La superficie tratada es obligatoria.',
-            'application_method.required' => 'El método de aplicación es obligatorio.',
+            'product_id.required' => __('Debe seleccionar un producto fitosanitario.'),
+            'product_id.exists' => __('El producto seleccionado no existe.'),
+            'dose.required' => __('La dosis es obligatoria.'),
+            'dose.numeric' => __('La dosis debe ser un número.'),
+            'dose.min' => __('La dosis debe ser mayor a 0.'),
+            'dose_unit.required' => __('La unidad de dosis es obligatoria.'),
+            'area_treated.required' => __('La superficie tratada es obligatoria.'),
+            'application_method.required' => __('El método de aplicación es obligatorio.'),
         ];
     }
 

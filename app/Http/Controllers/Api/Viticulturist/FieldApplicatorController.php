@@ -74,7 +74,7 @@ class FieldApplicatorController extends Controller
 
         return response()->json([
             'data'    => new \App\Http\Resources\Api\FieldApplicatorResource($record),
-            'message' => 'Aplicador ROPO registrado correctamente.',
+            'message' => __('Aplicador ROPO registrado correctamente.'),
         ], 201);
     }
 }

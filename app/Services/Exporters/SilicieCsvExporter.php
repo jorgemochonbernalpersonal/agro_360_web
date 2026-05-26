@@ -17,21 +17,21 @@ class SilicieCsvExporter
 {
     // ── Tipos de movimiento AEAT (Libro de movimientos) ───────────────────
     const MOVEMENT_TYPES = [
-        'A02' => 'Entrada interior',
-        'A04' => 'Entrada desde la UE',
-        'A06' => 'Entrada por importación',
-        'A08' => 'Salida interior',
-        'A09' => 'Salida a Canarias',
-        'A10' => 'Salida a la UE',
-        'A11' => 'Salida por exportación',
-        'A14' => 'Autoconsumo',
-        'A15' => 'Fabricado/Obtenido',
-        'A21' => 'Salida almacén auxiliar',
-        'A22' => 'Entrada almacén auxiliar',
-        'A28' => 'Destrucción',
-        'A29' => 'Pérdida art. 6.2 LIE',
-        'A30' => 'Diferencia en menos',
-        'A32' => 'Diferencia en menos en fabricación',
+        'A02' => __('Entrada interior'),
+        'A04' => __('Entrada desde la UE'),
+        'A06' => __('Entrada por importación'),
+        'A08' => __('Salida interior'),
+        'A09' => __('Salida a Canarias'),
+        'A10' => __('Salida a la UE'),
+        'A11' => __('Salida por exportación'),
+        'A14' => __('Autoconsumo'),
+        'A15' => __('Fabricado/Obtenido'),
+        'A21' => __('Salida almacén auxiliar'),
+        'A22' => __('Entrada almacén auxiliar'),
+        'A28' => __('Destrucción'),
+        'A29' => __('Pérdida art. 6.2 LIE'),
+        'A30' => __('Diferencia en menos'),
+        'A32' => __('Diferencia en menos en fabricación'),
     ];
 
     // ── Códigos NC para productos del sector vitivinícola ─────────────────
@@ -111,14 +111,14 @@ class SilicieCsvExporter
                 'TIPO_DOCUMENTO'        => self::DOCUMENT_TYPE_MAP['A02'],
                 'PERIODO_FISCAL'        => $this->fiscalPeriod($h->harvest_start_date),
                 'CODIGO_NC'             => self::NC_CODES['grapes'],
-                'DESCRIPCION_PRODUCTO'  => 'Uva fresca - vendimia propia',
+                'DESCRIPCION_PRODUCTO'  => __('Uva fresca - vendimia propia'),
                 'CANTIDAD'              => $this->formatQty((float) ($h->total_weight ?? 0)),
                 'UNIDAD_MEDIDA'         => self::UNIT_KG,
                 'ORIGEN_DESTINO_NIF'    => '',
                 'ORIGEN_DESTINO_NOMBRE' => $h->viti_name ?? '',
-                'NUM_DOCUMENTO'         => 'REC-' . $h->id,
-                'REFERENCIA_INTERNA'    => 'HARVEST-' . $h->id,
-                'OBSERVACIONES'         => 'Vendimia ' . $vintage,
+                'NUM_DOCUMENTO'         => __('REC-') . $h->id,
+                'REFERENCIA_INTERNA'    => __('HARVEST-') . $h->id,
+                'OBSERVACIONES'         => __('Vendimia ') . $vintage,
             ];
         }
 
@@ -141,10 +141,10 @@ class SilicieCsvExporter
         foreach ($external as $eg) {
             $ncCode      = self::NC_CODES[$eg->grape_type] ?? self::NC_CODES['bulk_wine'];
             $description = match ($eg->grape_type) {
-                'grapes'    => 'Uva comprada - ' . ($eg->variety_name ?? 'sin variedad'),
-                'must'      => 'Mosto comprado - ' . ($eg->protection_level ?? 'sin DO'),
-                'bulk_wine' => 'Vino a granel comprado - ' . ($eg->protection_level ?? 'sin DO'),
-                default     => 'Entrada exterior',
+                'grapes'    => __('Uva comprada - ') . ($eg->variety_name ?? 'sin variedad'),
+                'must'      => __('Mosto comprado - ') . ($eg->protection_level ?? 'sin DO'),
+                'bulk_wine' => __('Vino a granel comprado - ') . ($eg->protection_level ?? 'sin DO'),
+                default     => __('Entrada exterior'),
             };
 
             $rows[] = [
@@ -158,8 +158,8 @@ class SilicieCsvExporter
                 'UNIDAD_MEDIDA'         => self::UNIT_KG,
                 'ORIGEN_DESTINO_NIF'    => '',
                 'ORIGEN_DESTINO_NOMBRE' => $eg->supplier_name ?? '',
-                'NUM_DOCUMENTO'         => 'EXT-' . $eg->id,
-                'REFERENCIA_INTERNA'    => 'EXTGRAPE-' . $eg->id,
+                'NUM_DOCUMENTO'         => __('EXT-') . $eg->id,
+                'REFERENCIA_INTERNA'    => __('EXTGRAPE-') . $eg->id,
                 'OBSERVACIONES'         => ucfirst($eg->grape_type) . ' - ' . ($eg->protection_level ?? ''),
             ];
         }
@@ -190,10 +190,10 @@ class SilicieCsvExporter
                 'CANTIDAD'              => $this->formatQty($w->volume_liters / 100), // L→HL
                 'UNIDAD_MEDIDA'         => self::UNIT_HL,
                 'ORIGEN_DESTINO_NIF'    => '',
-                'ORIGEN_DESTINO_NOMBRE' => 'Producción propia',
-                'NUM_DOCUMENTO'         => 'WINE-' . $w->id,
+                'ORIGEN_DESTINO_NOMBRE' => __('Producción propia'),
+                'NUM_DOCUMENTO'         => __('WINE-') . $w->id,
                 'REFERENCIA_INTERNA'    => $w->trace_token ?? ('WINE-' . $w->id),
-                'OBSERVACIONES'         => 'Añada ' . $vintage,
+                'OBSERVACIONES'         => __('Añada ') . $vintage,
             ];
         }
 
@@ -216,14 +216,14 @@ class SilicieCsvExporter
                 'TIPO_DOCUMENTO'        => self::DOCUMENT_TYPE_MAP['A08'],
                 'PERIODO_FISCAL'        => $this->fiscalPeriod($inv->invoice_date),
                 'CODIGO_NC'             => self::NC_CODES['bulk_wine'],
-                'DESCRIPCION_PRODUCTO'  => 'Venta de vino / producto',
+                'DESCRIPCION_PRODUCTO'  => __('Venta de vino / producto'),
                 'CANTIDAD'              => '',   // Requiere items detallados
                 'UNIDAD_MEDIDA'         => self::UNIT_HL,
                 'ORIGEN_DESTINO_NIF'    => '',
                 'ORIGEN_DESTINO_NOMBRE' => $inv->client_name ?? '',
                 'NUM_DOCUMENTO'         => $inv->invoice_number ?? ('FAC-' . $inv->id),
-                'REFERENCIA_INTERNA'    => 'INV-' . $inv->id,
-                'OBSERVACIONES'         => 'Factura ' . ($inv->invoice_number ?? $inv->id),
+                'REFERENCIA_INTERNA'    => __('INV-') . $inv->id,
+                'OBSERVACIONES'         => __('Factura ') . ($inv->invoice_number ?? $inv->id),
             ];
         }
 
@@ -247,14 +247,14 @@ class SilicieCsvExporter
                 'TIPO_DOCUMENTO'        => self::DOCUMENT_TYPE_MAP[$type],
                 'PERIODO_FISCAL'        => $this->fiscalPeriod($l->loss_date),
                 'CODIGO_NC'             => $this->ncCodeForWineType($l->wine_type),
-                'DESCRIPCION_PRODUCTO'  => 'Pérdida - ' . $l->wine_name,
+                'DESCRIPCION_PRODUCTO'  => __('Pérdida - ') . $l->wine_name,
                 'CANTIDAD'              => $this->formatQty($l->quantity / 100),
                 'UNIDAD_MEDIDA'         => self::UNIT_HL,
                 'ORIGEN_DESTINO_NIF'    => '',
                 'ORIGEN_DESTINO_NOMBRE' => '',
                 'NUM_DOCUMENTO'         => $l->regulatory_reference ?? ('LOSS-' . $l->id),
-                'REFERENCIA_INTERNA'    => 'LOSS-' . $l->id,
-                'OBSERVACIONES'         => 'Tipo: ' . $l->loss_type,
+                'REFERENCIA_INTERNA'    => __('LOSS-') . $l->id,
+                'OBSERVACIONES'         => __('Tipo: ') . $l->loss_type,
             ];
         }
 
@@ -276,14 +276,14 @@ class SilicieCsvExporter
                 'TIPO_DOCUMENTO'        => self::DOCUMENT_TYPE_MAP[$type] ?? 'OTR',
                 'PERIODO_FISCAL'        => $this->fiscalPeriod($s->subproduct_date),
                 'CODIGO_NC'             => $ncCode,
-                'DESCRIPCION_PRODUCTO'  => 'Subproducto - ' . $s->type,
+                'DESCRIPCION_PRODUCTO'  => __('Subproducto - ') . $s->type,
                 'CANTIDAD'              => $this->formatQty($s->quantity / 100),
                 'UNIDAD_MEDIDA'         => self::UNIT_KG,
                 'ORIGEN_DESTINO_NIF'    => '',
                 'ORIGEN_DESTINO_NOMBRE' => $s->destination_name ?? $s->destination,
                 'NUM_DOCUMENTO'         => $s->lot_number ?? ('SUB-' . $s->id),
-                'REFERENCIA_INTERNA'    => 'SUB-' . $s->id,
-                'OBSERVACIONES'         => 'Destino: ' . $s->destination,
+                'REFERENCIA_INTERNA'    => __('SUB-') . $s->id,
+                'OBSERVACIONES'         => __('Destino: ') . $s->destination,
             ];
         }
 
@@ -308,14 +308,14 @@ class SilicieCsvExporter
     private function wineDescription(string $type): string
     {
         return match ($type) {
-            'red'        => 'Vino tinto tranquilo',
-            'white'      => 'Vino blanco tranquilo',
-            'rose'       => 'Vino rosado tranquilo',
-            'sparkling'  => 'Vino espumoso',
-            'fortified'  => 'Vino licoroso',
-            'sweet'      => 'Vino dulce',
-            'semi_sweet' => 'Vino semidulce',
-            default      => 'Vino (otro)',
+            'red'        => __('Vino tinto tranquilo'),
+            'white'      => __('Vino blanco tranquilo'),
+            'rose'       => __('Vino rosado tranquilo'),
+            'sparkling'  => __('Vino espumoso'),
+            'fortified'  => __('Vino licoroso'),
+            'sweet'      => __('Vino dulce'),
+            'semi_sweet' => __('Vino semidulce'),
+            default      => __('Vino (otro)'),
         };
     }
 

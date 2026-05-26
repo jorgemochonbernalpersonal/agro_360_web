@@ -116,7 +116,7 @@ class ExternalGrapePurchaseController extends Controller
 
         return response()->json([
             'data'    => $this->format($purchase),
-            'message' => 'Compra de uva/mosto externa registrada correctamente.',
+            'message' => __('Compra de uva/mosto externa registrada correctamente.'),
         ], 201);
     }
 
@@ -175,7 +175,7 @@ class ExternalGrapePurchaseController extends Controller
         $purchase = ExternalGrapePurchase::forUser($user->id)->findOrFail($id);
         $purchase->delete();
 
-        return response()->json(['message' => 'Compra externa eliminada correctamente.']);
+        return response()->json(['message' => __('Compra externa eliminada correctamente.')]);
     }
 
     private function format(ExternalGrapePurchase $p): array

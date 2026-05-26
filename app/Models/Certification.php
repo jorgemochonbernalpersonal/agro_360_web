@@ -21,13 +21,13 @@ class Certification extends Model
     ];
 
     const CERTIFICATION_TYPES = [
-        'ecologico'              => 'Agricultura Ecológica',
-        'produccion_integrada'   => 'Producción Integrada',
-        'globalgap'              => 'GlobalG.A.P.',
-        'rainforest'             => 'Rainforest Alliance',
-        'denominacion_origen'    => 'Denominación de Origen',
-        'indicacion_geografica'  => 'Indicación Geográfica Protegida',
-        'otro'                   => 'Otra certificación',
+        'ecologico'              => __('Agricultura Ecológica'),
+        'produccion_integrada'   => __('Producción Integrada'),
+        'globalgap'              => __('GlobalG.A.P.'),
+        'rainforest'             => __('Rainforest Alliance'),
+        'denominacion_origen'    => __('Denominación de Origen'),
+        'indicacion_geografica'  => __('Indicación Geográfica Protegida'),
+        'otro'                   => __('Otra certificación'),
     ];
 
     const TYPE_COLORS = [

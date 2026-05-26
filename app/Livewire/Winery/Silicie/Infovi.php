@@ -49,7 +49,7 @@ class Infovi extends Component
         return match ($cat) {
             'DO', 'DOCa', 'vino_de_pago' => 'DO',
             'IGP'                         => 'IGP',
-            default                       => 'VdM',
+            default                       => __('VdM'),
         };
     }
 

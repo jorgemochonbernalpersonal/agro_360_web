@@ -71,7 +71,7 @@ class MachineryController extends Controller
 
         return response()->json([
             'data'    => new MachineryResource($record),
-            'message' => 'Maquinaria registrada correctamente.',
+            'message' => __('Maquinaria registrada correctamente.'),
         ], 201);
     }
 }

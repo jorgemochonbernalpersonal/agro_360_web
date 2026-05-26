@@ -88,7 +88,7 @@ class SendRegulatoryDeadlineReminders extends Command
         if ($isLarge) {
             $nextMonth = $today->copy()->addMonth()->startOfMonth();
             return [[
-                'label' => 'Declaración mensual ' . $nextMonth->translatedFormat('F Y'),
+                'label' => __('Declaración mensual :month', ['month' => $nextMonth->translatedFormat('F Y')]),
                 'date'  => $nextMonth->copy()->setDay(19)->toDateString(),
                 'type'  => 'monthly',
             ]];
@@ -107,7 +107,7 @@ class SendRegulatoryDeadlineReminders extends Command
                 $date  = Carbon::parse($d);
                 $month = $date->month === 12 ? 'noviembre' : 'julio';
                 $deadlines[] = [
-                    'label' => 'Declaración ampliada ' . $month . ' ' . $date->year,
+                    'label' => __('Declaración ampliada :month :year', ['month' => $month, 'year' => $date->year]),
                     'date'  => $d,
                     'type'  => 'semi_annual',
                 ];

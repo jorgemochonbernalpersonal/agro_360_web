@@ -88,7 +88,7 @@ class TerritorialManagement extends Component
             'topographies'     => __('Topografía'),
             'property_types'   => __('Tipo de propiedad'),
             'training_systems' => __('Sistema de conducción'),
-            default            => 'Elemento',
+            default            => __('Elemento'),
         };
     }
 

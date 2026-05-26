@@ -82,7 +82,7 @@ class BottlingAuthorizationController extends Controller
 
         return response()->json([
             'data'    => $this->format($authorization),
-            'message' => 'Autorización de embotellado creada correctamente.',
+            'message' => __('Autorización de embotellado creada correctamente.'),
         ], 201);
     }
 
@@ -120,7 +120,7 @@ class BottlingAuthorizationController extends Controller
         $authorization = BottlingAuthorization::forUser($user->id)->findOrFail($id);
         $authorization->delete();
 
-        return response()->json(['message' => 'Autorización de embotellado eliminada correctamente.']);
+        return response()->json(['message' => __('Autorización de embotellado eliminada correctamente.')]);
     }
 
     private function format(BottlingAuthorization $a): array

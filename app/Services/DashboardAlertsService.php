@@ -69,10 +69,10 @@ class DashboardAlertsService
                     'id'          => 'infovi_deadline_' . $deadline['date'],
                     'type'        => $urgency,
                     'icon'        => $daysLeft <= 1 ? '⚠️' : '📋',
-                    'title'       => 'Declaración INFOVI' . ($daysLeft === 0 ? ' — vence hoy' : ' en ' . $daysLeft . ' ' . ($daysLeft === 1 ? 'día' : 'días')),
+                    'title'       => $daysLeft === 0 ? __('Declaración INFOVI — vence hoy') : __('Declaración INFOVI en :days :unit', ['days' => $daysLeft, 'unit' => $daysLeft === 1 ? __('día') : __('días')]),
                     'message'     => $deadline['label'],
                     'action_url'  => route('winery.silicie.infovi'),
-                    'action_text' => 'Ver INFOVI',
+                    'action_text' => __('Ver INFOVI'),
                 ]);
                 break; // only show the nearest deadline
             }
@@ -89,10 +89,10 @@ class DashboardAlertsService
                 'id'          => 'silicie_no_snapshot',
                 'type'        => 'info',
                 'icon'        => '📷',
-                'title'       => 'SILICIE sin instantánea',
-                'message'     => 'Registra una instantánea de existencias para mantener el libro al día',
+                'title'       => __('SILICIE sin instantánea'),
+                'message'     => __('Registra una instantánea de existencias para mantener el libro al día'),
                 'action_url'  => route('winery.silicie.dashboard'),
-                'action_text' => 'Ir a SILICIE',
+                'action_text' => __('Ir a SILICIE'),
             ]);
             return;
         }
@@ -103,10 +103,10 @@ class DashboardAlertsService
                 'id'          => 'silicie_stale_snapshot',
                 'type'        => 'warning',
                 'icon'        => '📷',
-                'title'       => 'Instantánea SILICIE desactualizada',
-                'message'     => 'La última instantánea tiene ' . $daysSince . ' días — recomendable actualizar mensualmente',
+                'title'       => __('Instantánea SILICIE desactualizada'),
+                'message'     => __('La última instantánea tiene :days días — recomendable actualizar mensualmente', ['days' => $daysSince]),
                 'action_url'  => route('winery.silicie.dashboard'),
-                'action_text' => 'Actualizar instantánea',
+                'action_text' => __('Actualizar instantánea'),
             ]);
         }
     }
@@ -126,10 +126,10 @@ class DashboardAlertsService
                 'id'          => 'notebook_access_pending',
                 'type'        => 'info',
                 'icon'        => '📓',
-                'title'       => 'Acceso al cuaderno de campo',
+                'title'       => __('Acceso al cuaderno de campo'),
                 'message'     => $label . ' de acceso sin responder',
                 'action_url'  => route('viticulturist.winery-access.index'),
-                'action_text' => 'Gestionar accesos',
+                'action_text' => __('Gestionar accesos'),
             ]);
         }
     }
@@ -152,7 +152,7 @@ class DashboardAlertsService
     {
         $next = $today->copy()->addMonth()->startOfMonth()->setDay(19);
         return [[
-            'label' => 'Declaración mensual ' . $next->translatedFormat('F Y'),
+            'label' => __('Declaración mensual :month', ['month' => $next->translatedFormat('F Y')]),
             'date'  => $next->toDateString(),
         ]];
     }
@@ -170,7 +170,7 @@ class DashboardAlertsService
                 $date  = Carbon::parse($d);
                 $month = $date->month === 12 ? 'diciembre' : 'agosto';
                 return [[
-                    'label' => 'Declaración ampliada ' . $month . ' ' . $date->year,
+                    'label' => __('Declaración ampliada :month :year', ['month' => $month, 'year' => $date->year]),
                     'date'  => $d,
                 ]];
             }
@@ -198,20 +198,20 @@ class DashboardAlertsService
                 'id' => 'low_containers',
                 'type' => 'warning',
                 'icon' => '📦',
-                'title' => 'Contenedores bajos',
+                'title' => __('Contenedores bajos'),
                 'message' => "Solo quedan {$availableContainers} contenedores disponibles",
                 'action_url' => route('viticulturist.containers.index'),
-                'action_text' => 'Ver contenedores',
+                'action_text' => __('Ver contenedores'),
             ]);
         } elseif ($availableContainers === 0) {
             $alerts->push([
                 'id' => 'no_containers',
                 'type' => 'danger',
                 'icon' => '🚨',
-                'title' => 'Sin contenedores',
-                'message' => 'No hay contenedores disponibles',
+                'title' => __('Sin contenedores'),
+                'message' => __('No hay contenedores disponibles'),
                 'action_url' => route('viticulturist.containers.index'),
-                'action_text' => 'Añadir contenedores',
+                'action_text' => __('Añadir contenedores'),
             ]);
         }
     }
@@ -231,10 +231,10 @@ class DashboardAlertsService
                 'id' => 'no_activities_month',
                 'type' => 'info',
                 'icon' => '📝',
-                'title' => 'Sin actividades',
-                'message' => 'No has registrado actividades este mes',
+                'title' => __('Sin actividades'),
+                'message' => __('No has registrado actividades este mes'),
                 'action_url' => route('viticulturist.digital-notebook'),
-                'action_text' => 'Registrar actividad',
+                'action_text' => __('Registrar actividad'),
             ]);
         }
     }
@@ -259,10 +259,10 @@ class DashboardAlertsService
                 'id' => 'low_ndvi_' . $data->plot_id,
                 'type' => 'warning',
                 'icon' => '🌱',
-                'title' => 'NDVI bajo',
-                'message' => "{$data->plot->name}: NDVI {$data->ndvi_mean} (estrés detectado)",
+                'title' => __('NDVI bajo'),
+                'message' => __(':plot: NDVI :ndvi (estrés detectado)', ['plot' => $data->plot->name, 'ndvi' => $data->ndvi_mean]),
                 'action_url' => route('remote-sensing.dashboard'),
-                'action_text' => 'Ver teledetección',
+                'action_text' => __('Ver teledetección'),
             ]);
         }
     }

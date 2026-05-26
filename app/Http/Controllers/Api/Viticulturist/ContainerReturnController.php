@@ -92,7 +92,7 @@ class ContainerReturnController extends Controller
 
         return response()->json([
             'data'    => new ContainerReturnResource($record),
-            'message' => 'Retorno de envase registrado correctamente.',
+            'message' => __('Retorno de envase registrado correctamente.'),
         ], 201);
     }
 }

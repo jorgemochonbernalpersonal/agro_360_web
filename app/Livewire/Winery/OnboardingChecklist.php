@@ -116,22 +116,22 @@ class OnboardingChecklist extends Component
     private function getStepTitle(string $step): string
     {
         return match ($step) {
-            OnboardingProgress::STEP_WINERY_FISCAL        => 'Configura tus datos fiscales',
-            OnboardingProgress::STEP_WINERY_CONTAINERS    => 'Añade depósitos o barricas',
-            OnboardingProgress::STEP_WINERY_VITICULTURIST => 'Vincula un viticultor',
-            OnboardingProgress::STEP_WINERY_HARVEST       => 'Registra tu primera recepción',
-            OnboardingProgress::STEP_WINERY_WINE          => 'Crea tu primer vino',
-            default => 'Paso desconocido',
+            OnboardingProgress::STEP_WINERY_FISCAL        => __('Configura tus datos fiscales'),
+            OnboardingProgress::STEP_WINERY_CONTAINERS    => __('Añade depósitos o barricas'),
+            OnboardingProgress::STEP_WINERY_VITICULTURIST => __('Vincula un viticultor'),
+            OnboardingProgress::STEP_WINERY_HARVEST       => __('Registra tu primera recepción'),
+            OnboardingProgress::STEP_WINERY_WINE          => __('Crea tu primer vino'),
+            default => __('Paso desconocido'),
         };
     }
 
     private function getStepDescription(string $step): string
     {
         return match ($step) {
-            OnboardingProgress::STEP_WINERY_FISCAL        => 'Razón social, NIF y dirección para facturas y declaraciones',
-            OnboardingProgress::STEP_WINERY_CONTAINERS    => 'El inventario de tu bodega parte del aforo de tus envases',
-            OnboardingProgress::STEP_WINERY_VITICULTURIST => 'Conecta con proveedores de uva para gestionar parcelas y cosechas',
-            OnboardingProgress::STEP_WINERY_HARVEST       => 'Registra la primera entrada de uva y empieza la trazabilidad',
+            OnboardingProgress::STEP_WINERY_FISCAL        => __('Razón social, NIF y dirección para facturas y declaraciones'),
+            OnboardingProgress::STEP_WINERY_CONTAINERS    => __('El inventario de tu bodega parte del aforo de tus envases'),
+            OnboardingProgress::STEP_WINERY_VITICULTURIST => __('Conecta con proveedores de uva para gestionar parcelas y cosechas'),
+            OnboardingProgress::STEP_WINERY_HARVEST       => __('Registra la primera entrada de uva y empieza la trazabilidad'),
             OnboardingProgress::STEP_WINERY_WINE          => '¡Ya puedes declarar en SILICIE e INFOVI!',
             default => '',
         };

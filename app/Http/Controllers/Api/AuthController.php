@@ -49,7 +49,7 @@ class AuthController extends Controller
 
         // No emitir token hasta que el email esté verificado
         return response()->json([
-            'message'          => 'Cuenta creada. Verifica tu email para continuar.',
+            'message'          => __('Cuenta creada. Verifica tu email para continuar.'),
             'email_unverified' => true,
             'user'             => new UserResource($user),
         ], 201);
@@ -73,7 +73,7 @@ class AuthController extends Controller
             SecurityLogger::logAccountLocked($request->email);
 
             return response()->json([
-                'message'     => 'Demasiados intentos. Inténtalo en ' . ceil($seconds / 60) . ' minutos.',
+                'message'     => __('Demasiados intentos. Inténtalo en :minutes minutos.', ['minutes' => ceil($seconds / 60)]),
                 'retry_after' => $seconds,
             ], 429);
         }
@@ -91,14 +91,14 @@ class AuthController extends Controller
 
         if (! $user->can_login) {
             SecurityLogger::logAccessDenied($user->id, 'login', 'can_login=false');
-            return response()->json(['message' => 'Cuenta desactivada. Contacta con soporte.'], 403);
+            return response()->json(['message' => __('Cuenta desactivada. Contacta con soporte.')], 403);
         }
 
         // Permitir login sin verificación si fue creado por otro usuario (bodega, supervisor)
         // Consistente con el flujo web (Login.php)
         if (! $user->hasVerifiedEmail() && ! $user->wasCreatedByAnotherUser()) {
             return response()->json([
-                'message'          => 'Verifica tu email para continuar.',
+                'message'          => __('Verifica tu email para continuar.'),
                 'email_unverified' => true,
             ], 403);
         }
@@ -119,7 +119,7 @@ class AuthController extends Controller
         // Beta expirada sin acceso básico gratuito → bloquear login
         if ($user->betaExpired() && !$user->hasBasicFreeAccess()) {
             return response()->json([
-                'message'      => 'Tu periodo de prueba ha finalizado. Renueva tu suscripción para continuar usando Agro365.',
+                'message'      => __('Tu periodo de prueba ha finalizado. Renueva tu suscripción para continuar usando Agro365.'),
                 'beta_expired' => true,
             ], 403);
         }
@@ -149,7 +149,7 @@ class AuthController extends Controller
 
         if ($user->betaExpired() && !$user->hasBasicFreeAccess()) {
             return response()->json([
-                'message'      => 'Tu periodo de prueba ha finalizado.',
+                'message'      => __('Tu periodo de prueba ha finalizado.'),
                 'beta_expired' => true,
             ], 403);
         }
@@ -178,11 +178,11 @@ class AuthController extends Controller
             ->first();
 
         if (! $user) {
-            return response()->json(['message' => 'El token de invitación no es válido o ha expirado.'], 422);
+            return response()->json(['message' => __('El token de invitación no es válido o ha expirado.')], 422);
         }
 
         if (User::where('email', $validated['email'])->where('id', '!=', $user->id)->exists()) {
-            return response()->json(['message' => 'Este email ya está registrado.'], 422);
+            return response()->json(['message' => __('Este email ya está registrado.')], 422);
         }
 
         // Solo auto-verificar si el email no cambió respecto al ghost
@@ -220,7 +220,7 @@ class AuthController extends Controller
     {
         $request->user()->currentAccessToken()->delete();
 
-        return response()->json(['message' => 'Sesión cerrada correctamente.']);
+        return response()->json(['message' => __('Sesión cerrada correctamente.')]);
     }
 
     // ─── POST /logout-all ─────────────────────────────────────────────────────
@@ -229,7 +229,7 @@ class AuthController extends Controller
     {
         $request->user()->tokens()->delete();
 
-        return response()->json(['message' => 'Todas las sesiones han sido cerradas.']);
+        return response()->json(['message' => __('Todas las sesiones han sido cerradas.')]);
     }
 
     // ─── PUT /me ──────────────────────────────────────────────────────────────
@@ -293,7 +293,7 @@ class AuthController extends Controller
 
         SecurityLogger::logSecurityEvent('password_changed', ['user_id' => $user->id]);
 
-        return response()->json(['message' => 'Contraseña actualizada correctamente.']);
+        return response()->json(['message' => __('Contraseña actualizada correctamente.')]);
     }
 
     // ─── POST /refresh ────────────────────────────────────────────────────────
@@ -309,7 +309,7 @@ class AuthController extends Controller
             $currentToken->delete();
 
             return response()->json([
-                'message'      => 'Tu periodo de prueba ha finalizado. Renueva tu suscripción para continuar usando Agro365.',
+                'message'      => __('Tu periodo de prueba ha finalizado. Renueva tu suscripción para continuar usando Agro365.'),
                 'beta_expired' => true,
             ], 403);
         }
@@ -329,12 +329,12 @@ class AuthController extends Controller
     public function resendVerification(Request $request): JsonResponse
     {
         if ($request->user()->hasVerifiedEmail()) {
-            return response()->json(['message' => 'El email ya está verificado.']);
+            return response()->json(['message' => __('El email ya está verificado.')]);
         }
 
         $request->user()->notify(new \App\Notifications\MobileVerifyEmailNotification());
 
-        return response()->json(['message' => 'Correo de verificación enviado.']);
+        return response()->json(['message' => __('Correo de verificación enviado.')]);
     }
 
     // ─── DELETE /account ─────────────────────────────────────────────────────
@@ -365,7 +365,7 @@ class AuthController extends Controller
         // tienen ON DELETE CASCADE en las migraciones.
         $user->delete();
 
-        return response()->json(['message' => 'Cuenta eliminada correctamente.'], 200);
+        return response()->json(['message' => __('Cuenta eliminada correctamente.')], 200);
     }
 
     // ─── POST /forgot-password ────────────────────────────────────────────────
@@ -383,7 +383,7 @@ class AuthController extends Controller
         }
 
         return response()->json([
-            'message' => 'Si el correo está registrado, recibirás un enlace de recuperación.',
+            'message' => __('Si el correo está registrado, recibirás un enlace de recuperación.'),
         ]);
     }
 
@@ -402,7 +402,7 @@ class AuthController extends Controller
         ]);
 
         if (! $response->successful()) {
-            return response()->json(['message' => 'Token de Google inválido.'], 422);
+            return response()->json(['message' => __('Token de Google inválido.')], 422);
         }
 
         $payload = $response->json();
@@ -410,24 +410,24 @@ class AuthController extends Controller
         // Verificar issuer válido de Google
         $validIssuers = ['accounts.google.com', 'https://accounts.google.com'];
         if (! in_array($payload['iss'] ?? '', $validIssuers, true)) {
-            return response()->json(['message' => 'Token de Google inválido.'], 422);
+            return response()->json(['message' => __('Token de Google inválido.')], 422);
         }
 
         // Verificar que el token no ha expirado (defensa en profundidad)
         if ((int) ($payload['exp'] ?? 0) < time()) {
-            return response()->json(['message' => 'Token de Google expirado.'], 422);
+            return response()->json(['message' => __('Token de Google expirado.')], 422);
         }
 
         // Verificar que el email está verificado por Google
         $emailVerified = $payload['email_verified'] ?? false;
         if ($emailVerified !== true && $emailVerified !== 'true') {
-            return response()->json(['message' => 'El email de Google no está verificado.'], 422);
+            return response()->json(['message' => __('El email de Google no está verificado.')], 422);
         }
 
         // Verificar que el token es para esta app
         $clientId = config('services.google.client_id');
         if ($clientId && ($payload['aud'] ?? '') !== $clientId) {
-            return response()->json(['message' => 'Token de Google inválido.'], 422);
+            return response()->json(['message' => __('Token de Google inválido.')], 422);
         }
 
         $googleId = $payload['sub'] ?? null;
@@ -435,7 +435,7 @@ class AuthController extends Controller
         $name     = $payload['name'] ?? null;
 
         if (! $googleId || ! $email) {
-            return response()->json(['message' => 'No se pudo obtener la información del perfil de Google.'], 422);
+            return response()->json(['message' => __('No se pudo obtener la información del perfil de Google.')], 422);
         }
 
         // Buscar usuario por google_id o email
@@ -445,7 +445,7 @@ class AuthController extends Controller
         if ($user) {
             // Cuenta desactivada manualmente
             if (! $user->can_login) {
-                return response()->json(['message' => 'Cuenta desactivada. Contacta con soporte.'], 403);
+                return response()->json(['message' => __('Cuenta desactivada. Contacta con soporte.')], 403);
             }
 
             // Vincular google_id si aún no lo tiene
@@ -473,7 +473,7 @@ class AuthController extends Controller
         // Beta expirada
         if ($user->betaExpired() && ! $user->hasBasicFreeAccess()) {
             return response()->json([
-                'message'      => 'Tu periodo de prueba ha finalizado. Renueva tu suscripción para continuar usando Agro365.',
+                'message'      => __('Tu periodo de prueba ha finalizado. Renueva tu suscripción para continuar usando Agro365.'),
                 'beta_expired' => true,
             ], 403);
         }
@@ -503,7 +503,7 @@ class AuthController extends Controller
         // Decodificar el JWT de Apple sin verificar la firma (Apple verifica en su servidor)
         $parts = explode('.', $request->identity_token);
         if (count($parts) !== 3) {
-            return response()->json(['message' => 'Token de Apple inválido.'], 422);
+            return response()->json(['message' => __('Token de Apple inválido.')], 422);
         }
 
         $payload = json_decode(base64_decode(str_pad(
@@ -513,30 +513,30 @@ class AuthController extends Controller
         )), true);
 
         if (! $payload) {
-            return response()->json(['message' => 'Token de Apple inválido.'], 422);
+            return response()->json(['message' => __('Token de Apple inválido.')], 422);
         }
 
         // Verificar issuer
         if (($payload['iss'] ?? '') !== 'https://appleid.apple.com') {
-            return response()->json(['message' => 'Token de Apple inválido.'], 422);
+            return response()->json(['message' => __('Token de Apple inválido.')], 422);
         }
 
         // Verificar expiración
         if ((int) ($payload['exp'] ?? 0) < time()) {
-            return response()->json(['message' => 'Token de Apple expirado.'], 422);
+            return response()->json(['message' => __('Token de Apple expirado.')], 422);
         }
 
         // Verificar audience (bundle ID de la app)
         $bundleId = config('services.apple.bundle_id');
         if ($bundleId && ($payload['aud'] ?? '') !== $bundleId) {
-            return response()->json(['message' => 'Token de Apple inválido.'], 422);
+            return response()->json(['message' => __('Token de Apple inválido.')], 422);
         }
 
         $appleId = $payload['sub'] ?? null;
         $email   = $payload['email'] ?? null;  // solo disponible en el primer login
 
         if (! $appleId) {
-            return response()->json(['message' => 'No se pudo obtener la información del perfil de Apple.'], 422);
+            return response()->json(['message' => __('No se pudo obtener la información del perfil de Apple.')], 422);
         }
 
         // Buscar usuario por apple_id o email
@@ -545,7 +545,7 @@ class AuthController extends Controller
 
         if ($user) {
             if (! $user->can_login) {
-                return response()->json(['message' => 'Cuenta desactivada. Contacta con soporte.'], 403);
+                return response()->json(['message' => __('Cuenta desactivada. Contacta con soporte.')], 403);
             }
 
             if (! $user->apple_id) {
@@ -555,7 +555,7 @@ class AuthController extends Controller
             if (! $email) {
                 // Apple solo envía el email la primera vez — si no hay cuenta previa, no podemos crear una
                 return response()->json([
-                    'message' => 'No se encontró una cuenta asociada. Inicia sesión con tu email o regístrate.',
+                    'message' => __('No se encontró una cuenta asociada. Inicia sesión con tu email o regístrate.'),
                 ], 422);
             }
 
@@ -577,7 +577,7 @@ class AuthController extends Controller
 
         if ($user->betaExpired() && ! $user->hasBasicFreeAccess()) {
             return response()->json([
-                'message'      => 'Tu periodo de prueba ha finalizado. Renueva tu suscripción para continuar usando Agro365.',
+                'message'      => __('Tu periodo de prueba ha finalizado. Renueva tu suscripción para continuar usando Agro365.'),
                 'beta_expired' => true,
             ], 403);
         }
@@ -628,7 +628,7 @@ class AuthController extends Controller
 
         if ($status !== Password::PASSWORD_RESET) {
             return response()->json([
-                'message' => 'El enlace de recuperación no es válido o ha expirado.',
+                'message' => __('El enlace de recuperación no es válido o ha expirado.'),
             ], 422);
         }
 
@@ -637,7 +637,7 @@ class AuthController extends Controller
         ]);
 
         return response()->json([
-            'message' => 'Contraseña actualizada correctamente. Por favor, inicia sesión de nuevo.',
+            'message' => __('Contraseña actualizada correctamente. Por favor, inicia sesión de nuevo.'),
         ]);
     }
 }

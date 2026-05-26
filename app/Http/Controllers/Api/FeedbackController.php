@@ -27,6 +27,6 @@ class FeedbackController extends Controller
             'role'        => $request->user()->role,
         ]);
 
-        return response()->json(['message' => 'Feedback recibido. ¡Gracias!'], 201);
+        return response()->json(['message' => __('Feedback recibido. ¡Gracias!')], 201);
     }
 }

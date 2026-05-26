@@ -31,9 +31,9 @@ class ExportReadyNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         $typeLabels = [
-            'activities' => 'Actividades',
-            'plots' => 'Parcelas',
-            'invoices' => 'Facturas',
+            'activities' => __('Actividades'),
+            'plots' => __('Parcelas'),
+            'invoices' => __('Facturas'),
         ];
 
         $label = $typeLabels[$this->exportType] ?? $this->exportType;
@@ -49,9 +49,9 @@ class ExportReadyNotification extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         $typeLabels = [
-            'activities' => 'Actividades',
-            'plots' => 'Parcelas',
-            'invoices' => 'Facturas',
+            'activities' => __('Actividades'),
+            'plots' => __('Parcelas'),
+            'invoices' => __('Facturas'),
         ];
 
         return [

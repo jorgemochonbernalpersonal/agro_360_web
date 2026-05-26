@@ -93,7 +93,7 @@ class NasaSMAPService
         return [
             'soil_moisture_surface'  => round($surface  * 100, 1),
             'soil_moisture_rootzone' => $rootzone !== null ? round($rootzone * 100, 1) : null,
-            'soil_moisture_source'   => 'Open-Meteo Soil Model',
+            'soil_moisture_source'   => __('Open-Meteo Soil Model'),
             'resolution'             => '1km',
         ];
     }
@@ -140,11 +140,11 @@ class NasaSMAPService
         if ($soilMoisture < 10) {
             return [
                 'status' => 'very_dry',
-                'label' => 'Muy Seco',
+                'label' => __('Muy Seco'),
                 'color' => 'red',
                 'icon' => '🔴',
-                'description' => 'Suelo extremadamente seco',
-                'recommendation' => 'Riego urgente necesario',
+                'description' => __('Suelo extremadamente seco'),
+                'recommendation' => __('Riego urgente necesario'),
                 'stress_level' => 'critical',
             ];
         }
@@ -152,11 +152,11 @@ class NasaSMAPService
         if ($soilMoisture < 20) {
             return [
                 'status' => 'dry',
-                'label' => 'Seco',
+                'label' => __('Seco'),
                 'color' => 'orange',
                 'icon' => '🟠',
-                'description' => 'Suelo seco',
-                'recommendation' => 'Considerar riego pronto',
+                'description' => __('Suelo seco'),
+                'recommendation' => __('Considerar riego pronto'),
                 'stress_level' => 'high',
             ];
         }
@@ -164,11 +164,11 @@ class NasaSMAPService
         if ($soilMoisture < 35) {
             return [
                 'status' => 'optimal',
-                'label' => 'Óptimo',
+                'label' => __('Óptimo'),
                 'color' => 'green',
                 'icon' => '🟢',
-                'description' => 'Humedad ideal',
-                'recommendation' => 'No requiere riego',
+                'description' => __('Humedad ideal'),
+                'recommendation' => __('No requiere riego'),
                 'stress_level' => 'none',
             ];
         }
@@ -176,22 +176,22 @@ class NasaSMAPService
         if ($soilMoisture < 45) {
             return [
                 'status' => 'wet',
-                'label' => 'Húmedo',
+                'label' => __('Húmedo'),
                 'color' => 'blue',
                 'icon' => '🔵',
-                'description' => 'Suelo muy húmedo',
-                'recommendation' => 'Suspender riego',
+                'description' => __('Suelo muy húmedo'),
+                'recommendation' => __('Suspender riego'),
                 'stress_level' => 'low',
             ];
         }
         
         return [
             'status' => 'saturated',
-            'label' => 'Saturado',
+            'label' => __('Saturado'),
             'color' => 'purple',
             'icon' => '🟣',
-            'description' => 'Suelo saturado',
-            'recommendation' => 'Riesgo encharcamiento - mejorar drenaje',
+            'description' => __('Suelo saturado'),
+            'recommendation' => __('Riesgo encharcamiento - mejorar drenaje'),
             'stress_level' => 'moderate',
         ];
     }
@@ -236,7 +236,7 @@ class NasaSMAPService
         return [
             'soil_moisture_surface' => round($smSurface, 1),
             'soil_moisture_rootzone' => round($smRootzone, 1),
-            'soil_moisture_source' => 'NASA SMAP Satellite (Mock)',
+            'soil_moisture_source' => __('NASA SMAP Satellite (Mock)'),
             'resolution' => '9km',
         ];
     }

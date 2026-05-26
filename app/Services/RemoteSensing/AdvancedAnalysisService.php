@@ -255,7 +255,7 @@ class AdvancedAnalysisService
         // LAI Summary
         $lai = $analysis['lai'];
         $summary[] = [
-            'category' => 'Vigor y Producción',
+            'category' => __('Vigor y Producción'),
             'icon' => $lai['classification']['icon'],
             'status' => $lai['classification']['label'],
             'text' => sprintf(
@@ -269,7 +269,7 @@ class AdvancedAnalysisService
         // Chlorophyll Summary
         $chloro = $analysis['chlorophyll'];
         $summary[] = [
-            'category' => 'Estado Nutricional',
+            'category' => __('Estado Nutricional'),
             'icon' => $chloro['diagnosis']['icon'],
             'status' => $chloro['diagnosis']['label'],
             'text' => sprintf(
@@ -282,7 +282,7 @@ class AdvancedAnalysisService
         // Maturity Summary
         $maturity = $analysis['maturity'];
         $summary[] = [
-            'category' => 'Maduración',
+            'category' => __('Maduración'),
             'icon' => $maturity['classification']['icon'],
             'status' => $maturity['classification']['label'],
             'text' => sprintf(
@@ -297,7 +297,7 @@ class AdvancedAnalysisService
         $anomalies = $analysis['anomalies'];
         if ($anomalies['has_anomalies']) {
             $summary[] = [
-                'category' => 'Alertas',
+                'category' => __('Alertas'),
                 'icon' => '🚨',
                 'status' => strtoupper($anomalies['risk_level']),
                 'text' => sprintf(
@@ -324,7 +324,7 @@ class AdvancedAnalysisService
                 if (in_array($anomaly['severity'], ['critical', 'high'])) {
                     $actions[] = [
                         'priority' => $anomaly['severity'] === 'critical' ? 1 : 2,
-                        'category' => 'Anomalía',
+                        'category' => __('Anomalía'),
                         'icon' => $anomaly['icon'],
                         'title' => $anomaly['title'],
                         'description' => $anomaly['description'],
@@ -338,9 +338,9 @@ class AdvancedAnalysisService
         if ($analysis['chlorophyll']['nitrogen_need']['nitrogen_kg_ha'] > 0) {
             $actions[] = [
                 'priority' => $analysis['chlorophyll']['nitrogen_need']['status'] === 'high' ? 2 : 3,
-                'category' => 'Fertilización',
+                'category' => __('Fertilización'),
                 'icon' => '🌱',
-                'title' => 'Necesidad de Nitrógeno',
+                'title' => __('Necesidad de Nitrógeno'),
                 'description' => $analysis['chlorophyll']['nitrogen_need']['recommendation'],
                 'action' => sprintf(
                     'Aplicar %.0f kg N/ha',
@@ -353,9 +353,9 @@ class AdvancedAnalysisService
         if ($analysis['maturity']['maturity_index'] >= 80) {
             $actions[] = [
                 'priority' => $analysis['maturity']['maturity_index'] >= 90 ? 1 : 2,
-                'category' => 'Vendimia',
+                'category' => __('Vendimia'),
                 'icon' => '🍇',
-                'title' => 'Momento de Vendimia',
+                'title' => __('Momento de Vendimia'),
                 'description' => $analysis['maturity']['classification']['description'],
                 'action' => $analysis['maturity']['estimated_days_to_harvest'] === 0
                     ? 'Vendimiar ahora'
@@ -367,11 +367,11 @@ class AdvancedAnalysisService
         foreach ($analysis['lai']['recommendations'] as $rec) {
             $actions[] = [
                 'priority' => $rec['type'] === 'warning' ? 2 : 3,
-                'category' => 'Manejo del Dosel',
+                'category' => __('Manejo del Dosel'),
                 'icon' => $rec['icon'],
                 'title' => $rec['title'],
                 'description' => $rec['text'],
-                'action' => 'Ver recomendaciones',
+                'action' => __('Ver recomendaciones'),
             ];
         }
 

@@ -51,7 +51,7 @@ class ContainerStockService
                 'sold_qty'        => 0,
                 'gifted_qty'      => 0,
                 'lost_qty'        => 0,
-                'notes'           => 'Registro inicial de cosecha',
+                'notes'           => __('Registro inicial de cosecha'),
             ]);
 
             if ($harvest->container_id) {
@@ -634,7 +634,7 @@ class ContainerStockService
                 'sold_qty'        => $newSold,
                 'gifted_qty'      => $lastStock->gifted_qty,
                 'lost_qty'        => $lastStock->lost_qty,
-                'notes'           => 'Venta revertida a reserva - Factura vuelta a borrador',
+                'notes'           => __('Venta revertida a reserva - Factura vuelta a borrador'),
             ]);
 
             // Vuelta física: sube used_capacity y current_quantity
@@ -980,7 +980,7 @@ class ContainerStockService
                 'sold_qty'        => 0,
                 'gifted_qty'      => 0,
                 'lost_qty'        => 0,
-                'notes'           => 'Stock inicial de cosecha (auto-creado)',
+                'notes'           => __('Stock inicial de cosecha (auto-creado)'),
             ]);
 
             Log::info('[ContainerStockService] Stock inicial auto-creado', [

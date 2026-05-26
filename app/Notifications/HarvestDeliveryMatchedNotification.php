@@ -51,9 +51,9 @@ class HarvestDeliveryMatchedNotification extends Notification implements ShouldQ
         }
 
         return (new MailMessage)
-            ->subject('Entrega confirmada — ' . $variety . ' · ' . $delivery->vintage_year)
+            ->subject(__('Entrega confirmada — ') . $variety . ' · ' . $delivery->vintage_year)
             ->greeting(__('Hola :name', ['name' => $notifiable->name ?: '']))
-            ->line('La bodega **' . $winery . '** ha confirmado la recepción de tu entrega de uva. Las cantidades coinciden.')
+            ->line(__('La bodega **') . $winery . '** ha confirmado la recepción de tu entrega de uva. Las cantidades coinciden.')
             ->line(new HtmlString(
                 '<div style="background-color:#f0fdf4;border:1px solid #bbf7d0;padding:16px;border-radius:8px;margin:16px 0;">
                     <p style="margin:0 0 8px 0;"><strong>Variedad:</strong> ' . e($variety) . '</p>
@@ -78,7 +78,7 @@ class HarvestDeliveryMatchedNotification extends Notification implements ShouldQ
             'type'        => 'delivery_matched',
             'icon'        => 'check-circle',
             'color'       => 'green',
-            'title'       => 'Entrega confirmada por la bodega',
+            'title'       => __('Entrega confirmada por la bodega'),
             'body'        => "La bodega {$winery} ha confirmado tu entrega de {$variety} ({$delivery->vintage_year}).",
             'link'        => route('viticulturist.harvests.show', [
                 'planting' => $delivery->plot_planting_id,

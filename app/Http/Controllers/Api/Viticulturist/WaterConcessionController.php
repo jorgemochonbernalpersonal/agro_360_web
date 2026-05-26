@@ -69,7 +69,7 @@ class WaterConcessionController extends Controller
 
         return response()->json([
             'data'    => new \App\Http\Resources\Api\WaterConcessionResource($record),
-            'message' => 'Concesión de agua registrada correctamente.',
+            'message' => __('Concesión de agua registrada correctamente.'),
         ], 201);
     }
 }

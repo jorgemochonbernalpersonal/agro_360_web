@@ -336,7 +336,7 @@ class InvoiceObserver
             'billing_postal_code'      => $address?->postal_code,
             'billing_city'             => $address?->municipality?->name,
             'billing_state'            => $address?->province?->name,
-            'billing_country'          => 'España',
+            'billing_country'          => __('España'),
         ]);
     }
 }

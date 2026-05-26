@@ -101,11 +101,11 @@ class AgriculturalActivityAuditLog extends Model
     public function getActionDescriptionAttribute(): string
     {
         $descriptions = [
-            'created' => 'Actividad creada',
-            'updated' => 'Actividad modificada',
-            'deleted' => 'Actividad eliminada',
-            'locked' => 'Actividad bloqueada',
-            'unlocked' => 'Actividad desbloqueada',
+            'created' => __('Actividad creada'),
+            'updated' => __('Actividad modificada'),
+            'deleted' => __('Actividad eliminada'),
+            'locked' => __('Actividad bloqueada'),
+            'unlocked' => __('Actividad desbloqueada'),
         ];
 
         return $descriptions[$this->action] ?? $this->action;

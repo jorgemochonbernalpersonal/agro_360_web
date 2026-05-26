@@ -142,38 +142,38 @@ class NdviCalculator
             $ndvi >= 0.7 => [
                 'status' => 'excellent',
                 'color' => '#22c55e',
-                'label' => 'Excelente',
-                'description' => 'Vegetación muy densa y vigorosa',
+                'label' => __('Excelente'),
+                'description' => __('Vegetación muy densa y vigorosa'),
             ],
             $ndvi >= 0.5 => [
                 'status' => 'good',
                 'color' => '#84cc16',
-                'label' => 'Bueno',
-                'description' => 'Vegetación saludable',
+                'label' => __('Bueno'),
+                'description' => __('Vegetación saludable'),
             ],
             $ndvi >= 0.3 => [
                 'status' => 'moderate',
                 'color' => '#eab308',
-                'label' => 'Moderado',
-                'description' => 'Vegetación moderada o en crecimiento',
+                'label' => __('Moderado'),
+                'description' => __('Vegetación moderada o en crecimiento'),
             ],
             $ndvi >= 0.15 => [
                 'status' => 'poor',
                 'color' => '#f97316',
-                'label' => 'Bajo',
-                'description' => 'Vegetación escasa o con estrés',
+                'label' => __('Bajo'),
+                'description' => __('Vegetación escasa o con estrés'),
             ],
             $ndvi >= 0 => [
                 'status' => 'critical',
                 'color' => '#ef4444',
-                'label' => 'Crítico',
-                'description' => 'Sin vegetación o vegetación muy dañada',
+                'label' => __('Crítico'),
+                'description' => __('Sin vegetación o vegetación muy dañada'),
             ],
             default => [
                 'status' => 'water_or_snow',
                 'color' => '#3b82f6',
-                'label' => 'Agua/Nieve',
-                'description' => 'Superficie de agua o nieve',
+                'label' => __('Agua/Nieve'),
+                'description' => __('Superficie de agua o nieve'),
             ],
         };
     }
@@ -186,16 +186,16 @@ class NdviCalculator
     public function getNdviColorPalette(): array
     {
         return [
-            ['min' => -1.0, 'max' => 0.0, 'color' => '#0000FF', 'label' => 'Agua'],
-            ['min' => 0.0, 'max' => 0.1, 'color' => '#A52A2A', 'label' => 'Suelo desnudo'],
-            ['min' => 0.1, 'max' => 0.2, 'color' => '#D2691E', 'label' => 'Vegetación muy escasa'],
-            ['min' => 0.2, 'max' => 0.3, 'color' => '#FFD700', 'label' => 'Vegetación escasa'],
-            ['min' => 0.3, 'max' => 0.4, 'color' => '#ADFF2F', 'label' => 'Vegetación moderada'],
-            ['min' => 0.4, 'max' => 0.5, 'color' => '#7CFC00', 'label' => 'Vegetación media'],
-            ['min' => 0.5, 'max' => 0.6, 'color' => '#32CD32', 'label' => 'Vegetación densa'],
-            ['min' => 0.6, 'max' => 0.7, 'color' => '#228B22', 'label' => 'Vegetación muy densa'],
-            ['min' => 0.7, 'max' => 0.8, 'color' => '#006400', 'label' => 'Vegetación exuberante'],
-            ['min' => 0.8, 'max' => 1.0, 'color' => '#004000', 'label' => 'Máximo vigor'],
+            ['min' => -1.0, 'max' => 0.0, 'color' => '#0000FF', 'label' => __('Agua')],
+            ['min' => 0.0, 'max' => 0.1, 'color' => '#A52A2A', 'label' => __('Suelo desnudo')],
+            ['min' => 0.1, 'max' => 0.2, 'color' => '#D2691E', 'label' => __('Vegetación muy escasa')],
+            ['min' => 0.2, 'max' => 0.3, 'color' => '#FFD700', 'label' => __('Vegetación escasa')],
+            ['min' => 0.3, 'max' => 0.4, 'color' => '#ADFF2F', 'label' => __('Vegetación moderada')],
+            ['min' => 0.4, 'max' => 0.5, 'color' => '#7CFC00', 'label' => __('Vegetación media')],
+            ['min' => 0.5, 'max' => 0.6, 'color' => '#32CD32', 'label' => __('Vegetación densa')],
+            ['min' => 0.6, 'max' => 0.7, 'color' => '#228B22', 'label' => __('Vegetación muy densa')],
+            ['min' => 0.7, 'max' => 0.8, 'color' => '#006400', 'label' => __('Vegetación exuberante')],
+            ['min' => 0.8, 'max' => 1.0, 'color' => '#004000', 'label' => __('Máximo vigor')],
         ];
     }
 

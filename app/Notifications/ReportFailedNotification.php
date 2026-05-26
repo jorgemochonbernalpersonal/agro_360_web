@@ -44,7 +44,7 @@ class ReportFailedNotification extends Notification implements ShouldQueue
             'error_message' => $this->errorMessage,
             'message' => '❌ Error al generar el informe',
             'action_url' => AppLink::url(route('viticulturist.official-reports.create'), 'agro365://home'),
-            'action_text' => 'Reintentar',
+            'action_text' => __('Reintentar'),
         ];
     }
 }

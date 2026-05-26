@@ -55,15 +55,15 @@ class ProductStockMovement extends Model
     public function getMovementDescription(): string
     {
         return match($this->movement_type) {
-            'purchase' => 'Compra/Entrada',
-            'consumption' => 'Consumo por tratamiento',
-            'adjustment_in' => 'Ajuste positivo',
-            'adjustment_out' => 'Ajuste negativo',
-            'transfer_in' => 'Transferencia entrada',
-            'transfer_out' => 'Transferencia salida',
-            'expired' => 'Caducado',
-            'damaged' => 'Dañado/Pérdida',
-            default => 'Movimiento desconocido',
+            'purchase' => __('Compra/Entrada'),
+            'consumption' => __('Consumo por tratamiento'),
+            'adjustment_in' => __('Ajuste positivo'),
+            'adjustment_out' => __('Ajuste negativo'),
+            'transfer_in' => __('Transferencia entrada'),
+            'transfer_out' => __('Transferencia salida'),
+            'expired' => __('Caducado'),
+            'damaged' => __('Dañado/Pérdida'),
+            default => __('Movimiento desconocido'),
         };
     }
 }

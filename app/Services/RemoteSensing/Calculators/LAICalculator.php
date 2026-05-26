@@ -60,37 +60,37 @@ class LAICalculator
         return match (true) {
             $lai < 0.5 => [
                 'status' => 'very_low',
-                'label' => 'Muy Bajo',
+                'label' => __('Muy Bajo'),
                 'color' => 'red',
-                'description' => 'Vegetación escasa - Posible problema',
+                'description' => __('Vegetación escasa - Posible problema'),
                 'icon' => '🥀',
             ],
             $lai < 1.5 => [
                 'status' => 'low',
-                'label' => 'Bajo',
+                'label' => __('Bajo'),
                 'color' => 'orange',
-                'description' => 'Vigor bajo - Revisar nutrición',
+                'description' => __('Vigor bajo - Revisar nutrición'),
                 'icon' => '🍂',
             ],
             $lai < 2.5 => [
                 'status' => 'moderate',
-                'label' => 'Moderado',
+                'label' => __('Moderado'),
                 'color' => 'yellow',
-                'description' => 'Vigor moderado - Normal para viñedo',
+                'description' => __('Vigor moderado - Normal para viñedo'),
                 'icon' => '🌾',
             ],
             $lai < 3.5 => [
                 'status' => 'good',
-                'label' => 'Bueno',
+                'label' => __('Bueno'),
                 'color' => 'green',
-                'description' => 'Vigor saludable - Óptimo',
+                'description' => __('Vigor saludable - Óptimo'),
                 'icon' => '🌱',
             ],
             default => [
                 'status' => 'very_high',
-                'label' => 'Muy Alto',
+                'label' => __('Muy Alto'),
                 'color' => 'emerald',
-                'description' => 'Vigor muy alto - Considerar poda',
+                'description' => __('Vigor muy alto - Considerar poda'),
                 'icon' => '🌿',
             ],
         };
@@ -208,7 +208,7 @@ class LAICalculator
                 $recommendations[] = [
                     'type' => 'warning',
                     'icon' => '✂️',
-                    'title' => 'Exceso de vigor',
+                    'title' => __('Exceso de vigor'),
                     'text' => sprintf(
                         'LAI muy alto (%.1f). Considera deshojado para mejorar aireación y exposición solar.',
                         $lai
@@ -218,7 +218,7 @@ class LAICalculator
                 $recommendations[] = [
                     'type' => 'warning',
                     'icon' => '🌱',
-                    'title' => 'Vigor bajo',
+                    'title' => __('Vigor bajo'),
                     'text' => sprintf(
                         'LAI bajo (%.1f). Verifica riego y nutrición para optimizar producción.',
                         $lai
@@ -233,7 +233,7 @@ class LAICalculator
                 $recommendations[] = [
                     'type' => 'info',
                     'icon' => '🌿',
-                    'title' => 'Desarrollo inicial',
+                    'title' => __('Desarrollo inicial'),
                     'text' => sprintf(
                         'LAI en crecimiento (%.1f). Asegurar disponibilidad de agua y nutrientes.',
                         $lai
@@ -247,7 +247,7 @@ class LAICalculator
             $recommendations[] = [
                 'type' => 'info',
                 'icon' => '🍇',
-                'title' => 'Maduración',
+                'title' => __('Maduración'),
                 'text' => sprintf(
                     'LAI actual: %.1f. Monitoriza para vendimia. Densidad óptima del dosel.',
                     $lai

@@ -12,10 +12,10 @@ class Supply extends Model
     use HasFactory;
 
     const SUPPLY_TYPES = [
-        'fertilizer'    => 'Fertilizante / Abono',
-        'seed'          => 'Semilla / Planta',
-        'postharvest'   => 'Post-cosecha',
-        'other'         => 'Otro',
+        'fertilizer'    => __('Fertilizante / Abono'),
+        'seed'          => __('Semilla / Planta'),
+        'postharvest'   => __('Post-cosecha'),
+        'other'         => __('Otro'),
     ];
 
     protected $fillable = [

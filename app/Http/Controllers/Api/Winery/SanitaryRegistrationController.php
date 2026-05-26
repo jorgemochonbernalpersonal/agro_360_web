@@ -73,7 +73,7 @@ class SanitaryRegistrationController extends Controller
 
         return response()->json([
             'data'    => $this->format($registration),
-            'message' => 'Registro sanitario creado correctamente.',
+            'message' => __('Registro sanitario creado correctamente.'),
         ], 201);
     }
 
@@ -108,7 +108,7 @@ class SanitaryRegistrationController extends Controller
         $registration = SanitaryRegistration::forUser($user->id)->findOrFail($id);
         $registration->delete();
 
-        return response()->json(['message' => 'Registro sanitario eliminado correctamente.']);
+        return response()->json(['message' => __('Registro sanitario eliminado correctamente.')]);
     }
 
     private function format(SanitaryRegistration $r): array

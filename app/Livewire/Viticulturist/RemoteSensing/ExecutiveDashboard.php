@@ -614,7 +614,7 @@ class ExecutiveDashboard extends Component
             'nutrition' => $this->getEmptyCard('nutrition'),
             'alerts' => ['total' => 0, 'critical' => 0, 'warnings' => 0, 'list' => [], 'color' => 'gray', 'icon' => '❓'],
             'last_update' => __('Nunca'),
-            'satellite' => 'N/A',
+            'satellite' => __('N/A'),
             'is_estimated' => false,
         ];
     }

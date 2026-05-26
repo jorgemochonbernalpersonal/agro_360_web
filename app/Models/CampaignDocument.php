@@ -11,13 +11,13 @@ class CampaignDocument extends Model
     use HasFactory;
 
     const DOCUMENT_TYPES = [
-        'invoice'       => 'Factura de insumos',
-        'certificate'   => 'Certificado (orgánico, DO, etc.)',
-        'lab_report'    => 'Informe de laboratorio',
-        'authorization' => 'Autorización',
-        'map'           => 'Mapa / croquis',
-        'analysis'      => 'Análisis (suelo, agua...)',
-        'other'         => 'Otro',
+        'invoice'       => __('Factura de insumos'),
+        'certificate'   => __('Certificado (orgánico, DO, etc.)'),
+        'lab_report'    => __('Informe de laboratorio'),
+        'authorization' => __('Autorización'),
+        'map'           => __('Mapa / croquis'),
+        'analysis'      => __('Análisis (suelo, agua...)'),
+        'other'         => __('Otro'),
     ];
 
     protected $fillable = [

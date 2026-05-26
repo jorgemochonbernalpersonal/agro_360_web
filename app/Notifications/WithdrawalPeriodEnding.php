@@ -48,15 +48,15 @@ class WithdrawalPeriodEnding extends Notification implements ShouldQueue
         $product = $this->treatment->product;
 
         return (new MailMessage)
-            ->subject('Recordatorio: Plazo de Seguridad Fitosanitario')
+            ->subject(__('Recordatorio: Plazo de Seguridad Fitosanitario'))
             ->greeting('📅 Recordatorio de Plazo de Seguridad')
             ->line("El plazo de seguridad para el tratamiento realizado en **{$activity->plot->name}** finalizará pronto.")
             ->line("**Producto:** {$product->name}")
             ->line("**Fecha de aplicación:** {$activity->activity_date->format('d/m/Y')}")
             ->line("**Fecha segura para cosecha:** {$this->safeDate->format('d/m/Y')}")
             ->line("**Días restantes:** {$this->daysRemaining}")
-            ->action('Ver actividad', AppLink::url(route('activities.show', $activity), 'agro365://home'))
-            ->line('No olvides respetar el plazo de seguridad antes de la cosecha.');
+            ->action(__('Ver actividad'), AppLink::url(route('activities.show', $activity), 'agro365://home'))
+            ->line(__('No olvides respetar el plazo de seguridad antes de la cosecha.'));
     }
 
     /**

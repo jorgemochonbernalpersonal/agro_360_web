@@ -61,7 +61,7 @@ class GrapePurchaseInvoiceIssuedNotification extends Notification implements Sho
             'type'       => 'invoice_issued',
             'icon'       => 'banknotes',
             'color'      => 'green',
-            'title'      => 'Nueva liquidación de vendimia',
+            'title'      => __('Nueva liquidación de vendimia'),
             'body'       => "La bodega {$winery} ha emitido la liquidación {$invoice->invoice_number} por " . number_format((float) $invoice->total_amount, 2) . " €.",
             'link'       => route('viticulturist.invoices.grape-purchase.index'),
             'invoice_id' => $invoice->id,

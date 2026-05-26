@@ -167,7 +167,7 @@ class ContainerMaintenanceController extends Controller
 
         return response()->json([
             'data'    => new ContainerMaintenanceResource($maintenance),
-            'message' => 'Mantenimiento registrado correctamente.',
+            'message' => __('Mantenimiento registrado correctamente.'),
         ], 201);
     }
 
@@ -217,7 +217,7 @@ class ContainerMaintenanceController extends Controller
             $maintenance->delete();
         });
 
-        return response()->json(['message' => 'Mantenimiento eliminado correctamente.']);
+        return response()->json(['message' => __('Mantenimiento eliminado correctamente.')]);
     }
 
     // ─── POST /winery/maintenances/{id}/complete ─────────────────────────────
@@ -249,7 +249,7 @@ class ContainerMaintenanceController extends Controller
 
         return response()->json([
             'data'    => new ContainerMaintenanceResource($maintenance),
-            'message' => 'Mantenimiento completado correctamente.',
+            'message' => __('Mantenimiento completado correctamente.'),
         ]);
     }
 

@@ -81,7 +81,7 @@ class ClientController extends Controller
 
         return response()->json([
             'data'    => new ClientResource($record),
-            'message' => 'Cliente registrado correctamente.',
+            'message' => __('Cliente registrado correctamente.'),
         ], 201);
     }
 }

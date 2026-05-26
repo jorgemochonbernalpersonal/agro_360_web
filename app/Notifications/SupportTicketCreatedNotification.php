@@ -72,7 +72,7 @@ class SupportTicketCreatedNotification extends Notification implements ShouldQue
         $priorityLabel = $priorityLabels[$this->ticket->priority] ?? $this->ticket->priority;
 
         return (new MailMessage)
-            ->subject('Nuevo Ticket de Soporte - ' . $this->ticket->title)
+            ->subject(__('Nuevo Ticket de Soporte - ') . $this->ticket->title)
             ->line(new HtmlString(
                 '<div style="text-align:center; margin-bottom: 16px;">
                     <img src="'.$logoUrl.'" alt="Agro365"
@@ -80,7 +80,7 @@ class SupportTicketCreatedNotification extends Notification implements ShouldQue
                  </div>'
             ))
             ->greeting(__('Hola :name', ['name' => $notifiable->name ?: '']))
-            ->line('Se ha creado un nuevo ticket de soporte en Agro365.')
+            ->line(__('Se ha creado un nuevo ticket de soporte en Agro365.'))
             ->line(new HtmlString(
                 '<div style="background-color: #f3f4f6; padding: 16px; border-radius: 8px; margin: 16px 0;">
                     <p style="margin: 0 0 8px 0;"><strong>Usuario:</strong> ' . e($this->ticket->user->name) . ' (' . e($this->ticket->user->email) . ')</p>
@@ -93,7 +93,7 @@ class SupportTicketCreatedNotification extends Notification implements ShouldQue
                 '</div>'
             ))
             ->action(__('Ver Ticket'), $ticketUrl)
-            ->line('Por favor, revisa el ticket y responde al usuario lo antes posible.')
+            ->line(__('Por favor, revisa el ticket y responde al usuario lo antes posible.'))
             ->salutation("Saludos,\nEl equipo de Agro365");
     }
 

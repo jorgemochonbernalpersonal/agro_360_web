@@ -14,9 +14,9 @@ enum PlantingRightType: string
     public function label(): string
     {
         return match($this) {
-            self::NEW_PLANTING => 'Nueva Plantación',
-            self::REPLANTING => 'Replantación',
-            self::CONVERSION => 'Conversión',
+            self::NEW_PLANTING => __('Nueva Plantación'),
+            self::REPLANTING => __('Replantación'),
+            self::CONVERSION => __('Conversión'),
         };
     }
 

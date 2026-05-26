@@ -87,7 +87,7 @@ class HarvestByproductController extends Controller
 
         return response()->json([
             'data'    => new HarvestByproductResource($record),
-            'message' => 'Subproducto registrado correctamente.',
+            'message' => __('Subproducto registrado correctamente.'),
         ], 201);
     }
 }

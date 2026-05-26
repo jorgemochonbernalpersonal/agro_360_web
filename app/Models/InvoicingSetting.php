@@ -221,12 +221,12 @@ class InvoicingSetting extends Model
     {
         return self::create([
             'user_id'                       => $userId,
-            'invoice_prefix'                => 'FAC-{YEAR}-',
+            'invoice_prefix'                => __('FAC-{YEAR}-'),
             'invoice_padding'               => 4,
             'invoice_counter'               => 1,
             'invoice_year_reset'            => true,
             'invoice_last_reset_year'       => (int) date('Y'),
-            'delivery_note_prefix'          => 'ALB-{YEAR}-',
+            'delivery_note_prefix'          => __('ALB-{YEAR}-'),
             'delivery_note_padding'         => 4,
             'delivery_note_counter'         => 1,
             'delivery_note_year_reset'      => true,

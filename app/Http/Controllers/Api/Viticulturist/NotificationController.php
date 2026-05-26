@@ -57,7 +57,7 @@ class NotificationController extends Controller
 
         $user->notifications()->where('id', $id)->update(['read_at' => now()]);
 
-        return response()->json(['message' => 'Notificación marcada como leída.']);
+        return response()->json(['message' => __('Notificación marcada como leída.')]);
     }
 
     // ─── POST /viticulturist/notifications/read-all ─────────────────────────
@@ -69,6 +69,6 @@ class NotificationController extends Controller
 
         $user->unreadNotifications()->update(['read_at' => now()]);
 
-        return response()->json(['message' => 'Todas las notificaciones marcadas como leídas.']);
+        return response()->json(['message' => __('Todas las notificaciones marcadas como leídas.')]);
     }
 }

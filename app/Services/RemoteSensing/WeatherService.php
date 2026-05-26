@@ -122,7 +122,7 @@ class WeatherService
                 'longitude' => $lon,
                 'current' => 'temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m,weather_code',
                 'daily' => 'temperature_2m_max,temperature_2m_min,precipitation_sum',
-                'timezone' => 'Europe/Madrid',
+                'timezone' => __('Europe/Madrid'),
             ]);
 
             if ($response->successful()) {
@@ -191,7 +191,7 @@ class WeatherService
                 'latitude' => $lat,
                 'longitude' => $lon,
                 'daily' => 'temperature_2m_max,temperature_2m_min,precipitation_sum,wind_speed_10m_max,weather_code',
-                'timezone' => 'Europe/Madrid',
+                'timezone' => __('Europe/Madrid'),
                 'forecast_days' => $days,
             ]);
 
@@ -252,7 +252,7 @@ class WeatherService
                 'latitude' => $lat,
                 'longitude' => $lon,
                 'hourly' => 'soil_moisture_0_to_1cm,soil_temperature_0cm',
-                'timezone' => 'Europe/Madrid',
+                'timezone' => __('Europe/Madrid'),
                 'forecast_days' => 1,
             ]);
 
@@ -317,7 +317,7 @@ class WeatherService
                 'latitude' => $lat,
                 'longitude' => $lon,
                 'daily' => 'shortwave_radiation_sum,et0_fao_evapotranspiration,sunshine_duration',
-                'timezone' => 'Europe/Madrid',
+                'timezone' => __('Europe/Madrid'),
                 'forecast_days' => 1,
             ]);
 
@@ -492,14 +492,14 @@ class WeatherService
     public static function getWeatherDescription(int $code): string
     {
         return match (true) {
-            $code === 0 => 'Despejado',
-            $code <= 3 => 'Parcialmente nublado',
-            $code <= 49 => 'Niebla',
-            $code <= 59 => 'Lluvia',
-            $code <= 69 => 'Aguanieve',
-            $code <= 79 => 'Nieve',
-            $code <= 99 => 'Tormenta',
-            default => 'Variable',
+            $code === 0 => __('Despejado'),
+            $code <= 3 => __('Parcialmente nublado'),
+            $code <= 49 => __('Niebla'),
+            $code <= 59 => __('Lluvia'),
+            $code <= 69 => __('Aguanieve'),
+            $code <= 79 => __('Nieve'),
+            $code <= 99 => __('Tormenta'),
+            default => __('Variable'),
         };
     }
 }

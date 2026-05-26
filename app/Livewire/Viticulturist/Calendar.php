@@ -454,7 +454,7 @@ class Calendar extends Component
             'pruning'       => __('Poda'),
             'harvest'       => __('Vendimia'),
             'post_harvest'  => __('Post-vendimia'),
-            default         => 'Actividad',
+            default         => __('Actividad'),
         };
     }
 
@@ -491,7 +491,7 @@ class Calendar extends Component
             'pac_declaration'     => __('Declaración PAC'),
             'pac_payment'         => __('Pago PAC'),
             'campaign_milestone'  => __('Hito campaña'),
-            default               => 'Evento',
+            default               => __('Evento'),
         };
     }
 

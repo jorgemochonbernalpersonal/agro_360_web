@@ -64,13 +64,13 @@ class PhenologyService
     {
         // Wimkler Index approximation (Region III)
         return match (true) {
-            $gdd < 100 => ['name' => 'Dormancia', 'icon' => '💤', 'progress' => 5],
-            $gdd < 300 => ['name' => 'Brotación', 'icon' => 'sprout', 'progress' => 15],
-            $gdd < 600 => ['name' => 'Floración', 'icon' => 'flower', 'progress' => 30],
-            $gdd < 1200 => ['name' => 'Cuajado', 'icon' => 'green', 'progress' => 50],
-            $gdd < 1500 => ['name' => 'Envero', 'icon' => 'purple', 'progress' => 75],
-            $gdd < 2000 => ['name' => 'Maduración', 'icon' => 'grape', 'progress' => 90],
-            default => ['name' => 'Vendimia', 'icon' => 'wine', 'progress' => 100],
+            $gdd < 100 => ['name' => __('Dormancia'), 'icon' => '💤', 'progress' => 5],
+            $gdd < 300 => ['name' => __('Brotación'), 'icon' => 'sprout', 'progress' => 15],
+            $gdd < 600 => ['name' => __('Floración'), 'icon' => 'flower', 'progress' => 30],
+            $gdd < 1200 => ['name' => __('Cuajado'), 'icon' => 'green', 'progress' => 50],
+            $gdd < 1500 => ['name' => __('Envero'), 'icon' => 'purple', 'progress' => 75],
+            $gdd < 2000 => ['name' => __('Maduración'), 'icon' => 'grape', 'progress' => 90],
+            default => ['name' => __('Vendimia'), 'icon' => 'wine', 'progress' => 100],
         };
     }
 
@@ -93,17 +93,17 @@ class PhenologyService
         if ($gddAccumulated > 150) {
             if ($temp > 10 && ($weather['precipitation'] > 10 || $rainForecast > 10)) {
                 $risks[] = [
-                    'name' => 'Mildiu',
+                    'name' => __('Mildiu'),
                     'level' => 'high',
                     'color' => '#ef4444',
-                    'message' => 'Condiciones favorables (3-10 cumplido)',
+                    'message' => __('Condiciones favorables (3-10 cumplido)'),
                 ];
             } elseif ($temp > 10 && $weather['humidity'] > 80) {
                  $risks[] = [
-                    'name' => 'Mildiu',
+                    'name' => __('Mildiu'),
                     'level' => 'medium',
                     'color' => '#eab308',
-                    'message' => 'Humedad alta, vigilar lluvias',
+                    'message' => __('Humedad alta, vigilar lluvias'),
                 ];
             }
         }
@@ -113,20 +113,20 @@ class PhenologyService
         if ($gddAccumulated > 200) {
             if ($temp >= 20 && $temp <= 27 && ($weather['humidity'] ?? 0) > 60 && ($weather['precipitation'] ?? 0) == 0) {
                 $risks[] = [
-                    'name' => 'Oidio',
+                    'name' => __('Oidio'),
                     'level' => 'high',
                     'color' => '#ef4444',
-                    'message' => 'Temp/Humedad óptimas para esporulación',
+                    'message' => __('Temp/Humedad óptimas para esporulación'),
                 ];
             }
         }
 
         if (empty($risks)) {
             $risks[] = [
-                'name' => 'General',
+                'name' => __('General'),
                 'level' => 'low',
                 'color' => '#22c55e',
-                'message' => 'Bajo riesgo de enfermedades fúngicas',
+                'message' => __('Bajo riesgo de enfermedades fúngicas'),
             ];
         }
         

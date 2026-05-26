@@ -74,7 +74,7 @@ class CommercialAuthorizationController extends Controller
 
         return response()->json([
             'data'    => new CommercialAuthorizationResource($record),
-            'message' => 'Autorización registrada correctamente.',
+            'message' => __('Autorización registrada correctamente.'),
         ], 201);
     }
 }

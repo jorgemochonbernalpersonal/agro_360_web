@@ -75,7 +75,7 @@ class FertilizationPlanController extends Controller
 
         return response()->json([
             'data'    => new \App\Http\Resources\Api\FertilizationPlanResource($record),
-            'message' => 'Plan de fertilización registrado correctamente.',
+            'message' => __('Plan de fertilización registrado correctamente.'),
         ], 201);
     }
 }

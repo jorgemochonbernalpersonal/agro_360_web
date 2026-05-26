@@ -81,7 +81,7 @@ class VerifactuController extends Controller
 
         return response()->json([
             'data'    => $this->format($record->fresh(['invoice'])),
-            'message' => 'Factura encolada para envío a VeriFactu.',
+            'message' => __('Factura encolada para envío a VeriFactu.'),
         ], 201);
     }
 

@@ -9,19 +9,19 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class WinerySupply extends Model
 {
     const SUPPLY_TYPES = [
-        'cleaning'   => 'Limpieza',
-        'sulfiting'  => 'Sulfitado / SO₂',
-        'fining'     => 'Clarificación / Colaje',
-        'filtration' => 'Filtración',
-        'yeast'      => 'Levaduras',
-        'nutrient'   => 'Nutrientes de fermentación',
-        'enzyme'     => 'Enzimas',
-        'tannin'     => 'Taninos enológicos',
-        'acid'       => 'Acidificantes / Desacidificantes',
-        'sugar'      => 'Azúcares (chapitalización)',
-        'analysis'   => 'Análisis de laboratorio',
-        'packaging'  => 'Material de packaging',
-        'other'      => 'Otro',
+        'cleaning'   => __('Limpieza'),
+        'sulfiting'  => __('Sulfitado / SO₂'),
+        'fining'     => __('Clarificación / Colaje'),
+        'filtration' => __('Filtración'),
+        'yeast'      => __('Levaduras'),
+        'nutrient'   => __('Nutrientes de fermentación'),
+        'enzyme'     => __('Enzimas'),
+        'tannin'     => __('Taninos enológicos'),
+        'acid'       => __('Acidificantes / Desacidificantes'),
+        'sugar'      => __('Azúcares (chapitalización)'),
+        'analysis'   => __('Análisis de laboratorio'),
+        'packaging'  => __('Material de packaging'),
+        'other'      => __('Otro'),
     ];
 
     protected $fillable = [

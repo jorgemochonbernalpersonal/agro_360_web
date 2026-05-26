@@ -79,14 +79,14 @@ class ResidueManagementController extends Controller
         }
 
         if (empty($validated['campaign_id'])) {
-            return response()->json(['error' => 'No hay una campaña activa. Activa una campaña antes de registrar.'], 422);
+            return response()->json(['error' => __('No hay una campaña activa. Activa una campaña antes de registrar.')], 422);
         }
 
         $record = \App\Models\ResidueManagement::create([...$validated, 'viticulturist_id' => $user->id, 'active' => true]);
 
         return response()->json([
             'data'    => new \App\Http\Resources\Api\ResidueManagementResource($record),
-            'message' => 'Gestión de residuos registrada correctamente.',
+            'message' => __('Gestión de residuos registrada correctamente.'),
         ], 201);
     }
 }

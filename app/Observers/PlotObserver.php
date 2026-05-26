@@ -53,7 +53,7 @@ class PlotObserver
             $results = $http->get('https://nominatim.openstreetmap.org/search', [
                 'city'    => $name,
                 'state'   => $province,
-                'country' => 'Spain',
+                'country' => __('Spain'),
                 'format'  => 'json',
                 'limit'   => 1,
             ])->json();

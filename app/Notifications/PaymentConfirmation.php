@@ -42,15 +42,15 @@ class PaymentConfirmation extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Confirmación de Pago - Agro365')
+            ->subject(__('Confirmación de Pago - Agro365'))
             ->greeting('¡Pago recibido!')
-            ->line('Hemos recibido tu pago correctamente.')
+            ->line(__('Hemos recibido tu pago correctamente.'))
             ->line('**Detalles del pago:**')
             ->line('- Monto: €' . number_format($this->payment->amount, 2))
             ->line('- Plan: ' . $this->payment->plan_type)
             ->line('- ID de transacción: ' . $this->payment->paypal_order_id)
-            ->action('Ver mis suscripciones', AppLink::url(url('/dashboard/subscriptions'), 'agro365://home'))
-            ->line('Gracias por confiar en Agro365.');
+            ->action(__('Ver mis suscripciones'), AppLink::url(url('/dashboard/subscriptions'), 'agro365://home'))
+            ->line(__('Gracias por confiar en Agro365.'));
     }
 
     /**

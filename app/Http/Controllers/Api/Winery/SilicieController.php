@@ -443,7 +443,7 @@ class SilicieController extends Controller
         }
 
         return response()->json([
-            'message'       => 'Instantánea de existencias registrada correctamente.',
+            'message'       => __('Instantánea de existencias registrada correctamente.'),
             'snapshot_date' => $today,
             'wines_saved'   => $saved,
         ]);

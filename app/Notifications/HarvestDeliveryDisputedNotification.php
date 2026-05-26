@@ -50,9 +50,9 @@ class HarvestDeliveryDisputedNotification extends Notification implements Should
         }
 
         return (new MailMessage)
-            ->subject('Reclamación de entrega — ' . $viticulturist?->name . ' · ' . $variety)
+            ->subject(__('Reclamación de entrega — ') . $viticulturist?->name . ' · ' . $variety)
             ->greeting(__('Hola :name', ['name' => $notifiable->name ?: '']))
-            ->line('El viticultor **' . ($viticulturist?->name ?? '—') . '** ha enviado una reclamación sobre una diferencia en la entrega de uva.')
+            ->line(__('El viticultor **') . ($viticulturist?->name ?? '—') . '** ha enviado una reclamación sobre una diferencia en la entrega de uva.')
             ->line(new HtmlString(
                 '<div style="background-color:#fefce8;border:1px solid #fde68a;padding:16px;border-radius:8px;margin:16px 0;">
                     <p style="margin:0 0 8px 0;"><strong>Variedad:</strong> ' . e($variety) . '</p>
@@ -67,7 +67,7 @@ class HarvestDeliveryDisputedNotification extends Notification implements Should
                  </div>'
             ))
             ->action(__('Ver recepción'), $showUrl)
-            ->line('Por favor, revisa los datos y contacta con el viticultor si es necesario.')
+            ->line(__('Por favor, revisa los datos y contacta con el viticultor si es necesario.'))
             ->salutation(__('Saludos,\nAgro365'));
     }
 

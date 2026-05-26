@@ -91,14 +91,14 @@ class ContainerHistory extends Model
     public function getOperationDescription(): string
     {
         return match ($this->operation_type) {
-            'fill' => 'Llenado',
-            'empty' => 'Vaciamiento',
-            'transfer' => 'Transferencia',
-            'sale' => 'Venta',
-            'adjustment' => 'Ajuste',
-            'maintenance' => 'Mantenimiento',
-            'bottling' => 'Embotellado',
-            default => 'Operación desconocida',
+            'fill' => __('Llenado'),
+            'empty' => __('Vaciamiento'),
+            'transfer' => __('Transferencia'),
+            'sale' => __('Venta'),
+            'adjustment' => __('Ajuste'),
+            'maintenance' => __('Mantenimiento'),
+            'bottling' => __('Embotellado'),
+            default => __('Operación desconocida'),
         };
     }
 }

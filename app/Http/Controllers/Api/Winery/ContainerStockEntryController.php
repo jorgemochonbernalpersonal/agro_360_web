@@ -69,7 +69,7 @@ class ContainerStockEntryController extends Controller
 
         return response()->json([
             'data'    => new StockEntryResource($entry),
-            'message' => 'Entrada de stock registrada correctamente.',
+            'message' => __('Entrada de stock registrada correctamente.'),
         ], 201);
     }
 
@@ -89,6 +89,6 @@ class ContainerStockEntryController extends Controller
             $entry->delete();
         });
 
-        return response()->json(['message' => 'Entrada de stock eliminada correctamente.']);
+        return response()->json(['message' => __('Entrada de stock eliminada correctamente.')]);
     }
 }

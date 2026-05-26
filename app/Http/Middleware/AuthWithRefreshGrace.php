@@ -31,7 +31,7 @@ class AuthWithRefreshGrace
         $bearer = $request->bearerToken();
 
         if (! $bearer) {
-            return response()->json(['message' => 'No autenticado.'], 401);
+            return response()->json(['message' => __('No autenticado.')], 401);
         }
 
         // PersonalAccessToken::findToken() verifies the SHA-256 hash without
@@ -39,7 +39,7 @@ class AuthWithRefreshGrace
         $token = PersonalAccessToken::findToken($bearer);
 
         if (! $token) {
-            return response()->json(['message' => 'No autenticado.'], 401);
+            return response()->json(['message' => __('No autenticado.')], 401);
         }
 
         // Allow tokens that are still valid OR within the grace window.
@@ -47,7 +47,7 @@ class AuthWithRefreshGrace
             $deadline = Carbon::parse($token->expires_at)->addDays(self::GRACE_DAYS);
             if (now()->isAfter($deadline)) {
                 return response()->json([
-                    'message' => 'La sesión ha expirado. Por favor, inicia sesión de nuevo.',
+                    'message' => __('La sesión ha expirado. Por favor, inicia sesión de nuevo.'),
                 ], 401);
             }
         }
@@ -57,7 +57,7 @@ class AuthWithRefreshGrace
         // Guard against orphaned tokens (token row exists but user was deleted).
         if (! $user) {
             $token->delete();
-            return response()->json(['message' => 'No autenticado.'], 401);
+            return response()->json(['message' => __('No autenticado.')], 401);
         }
 
         // withAccessToken() makes $request->user()->currentAccessToken() return

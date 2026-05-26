@@ -37,9 +37,9 @@ class UpdatePlotRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required' => 'El nombre de la parcela es obligatorio.',
-            'area.required' => 'La superficie es obligatoria.',
-            'area.numeric' => 'La superficie debe ser un número.',
+            'name.required' => __('El nombre de la parcela es obligatorio.'),
+            'area.required' => __('La superficie es obligatoria.'),
+            'area.numeric' => __('La superficie debe ser un número.'),
         ];
     }
 

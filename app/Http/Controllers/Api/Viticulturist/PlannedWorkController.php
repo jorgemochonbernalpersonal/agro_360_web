@@ -97,7 +97,7 @@ class PlannedWorkController extends Controller
 
         return response()->json([
             'data'    => new \App\Http\Resources\Api\PlannedWorkResource($record),
-            'message' => 'Trabajo planeado registrado correctamente.',
+            'message' => __('Trabajo planeado registrado correctamente.'),
         ], 201);
     }
 }

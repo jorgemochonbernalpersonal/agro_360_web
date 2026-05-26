@@ -135,6 +135,6 @@ class FermentationControlController extends Controller
 
         $control->delete();
 
-        return response()->json(['message' => 'Control eliminado correctamente.']);
+        return response()->json(['message' => __('Control eliminado correctamente.')]);
     }
 }

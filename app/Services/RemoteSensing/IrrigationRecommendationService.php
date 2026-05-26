@@ -103,31 +103,31 @@ class IrrigationRecommendationService
         return match (true) {
             $score >= 70 => [
                 'level' => 'urgent',
-                'text' => 'Riego urgente',
+                'text' => __('Riego urgente'),
                 'color' => 'red',
                 'icon' => '🚨',
             ],
             $score >= 50 => [
                 'level' => 'high',
-                'text' => 'Riego recomendado',
+                'text' => __('Riego recomendado'),
                 'color' => 'orange',
                 'icon' => '💧',
             ],
             $score >= 30 => [
                 'level' => 'moderate',
-                'text' => 'Riego moderado',
+                'text' => __('Riego moderado'),
                 'color' => 'yellow',
                 'icon' => '🌱',
             ],
             $score >= 15 => [
                 'level' => 'low',
-                'text' => 'Riego ligero',
+                'text' => __('Riego ligero'),
                 'color' => 'blue',
                 'icon' => '💦',
             ],
             default => [
                 'level' => 'none',
-                'text' => 'Sin necesidad de riego',
+                'text' => __('Sin necesidad de riego'),
                 'color' => 'green',
                 'icon' => '✅',
             ],
@@ -183,13 +183,13 @@ class IrrigationRecommendationService
     {
         return [
             'level' => 'unknown',
-            'level_text' => 'Sin datos',
+            'level_text' => __('Sin datos'),
             'level_color' => 'gray',
             'level_icon' => '❓',
             'urgency_score' => 0,
             'stress_factors' => [],
             'water_amount_mm' => 0,
-            'water_amount_text' => 'Sin datos disponibles',
+            'water_amount_text' => __('Sin datos disponibles'),
             'last_updated' => null,
             'ndvi' => null,
             'ndwi' => null,

@@ -28,7 +28,7 @@ class WineryAnnouncementNotification extends Notification implements ShouldQueue
             ->subject("[{$typeLabel}] {$this->announcement->title}")
             ->greeting("Aviso de {$winery->name}")
             ->line($this->announcement->body)
-            ->action('Ver en Agro365', route('viticulturist.announcements'))
+            ->action(__('Ver en Agro365'), route('viticulturist.announcements'))
             ->salutation('— Equipo Agro365');
     }
 
