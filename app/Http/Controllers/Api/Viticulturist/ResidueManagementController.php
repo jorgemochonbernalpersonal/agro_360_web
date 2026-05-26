@@ -74,6 +74,14 @@ class ResidueManagementController extends Controller
             \App\Models\Plot::where('viticulturist_id', $user->id)->findOrFail($validated['plot_id']);
         }
 
+        if (empty($validated['campaign_id'])) {
+            $validated['campaign_id'] = \App\Models\Campaign::getOrCreateActiveForYear($user->id)?->id;
+        }
+
+        if (empty($validated['campaign_id'])) {
+            return response()->json(['error' => 'No hay una campaña activa. Activa una campaña antes de registrar.'], 422);
+        }
+
         $record = \App\Models\ResidueManagement::create([...$validated, 'viticulturist_id' => $user->id, 'active' => true]);
 
         return response()->json([

@@ -63,6 +63,14 @@ class ResidueAnalysisController extends Controller
             'notes'             => 'nullable|string|max:2000',
         ]);
 
+        if (empty($validated['campaign_id'])) {
+            $validated['campaign_id'] = \App\Models\Campaign::getOrCreateActiveForYear($user->id)?->id;
+        }
+
+        if (empty($validated['campaign_id'])) {
+            return response()->json(['error' => 'No hay una campaña activa. Activa una campaña antes de registrar.'], 422);
+        }
+
         $record = \App\Models\ResidueAnalysis::create([...$validated, 'viticulturist_id' => $user->id, 'active' => true]);
 
         return response()->json([

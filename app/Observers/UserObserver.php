@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Models\Campaign;
 use App\Models\Organization;
 use App\Models\User;
 use Illuminate\Support\Str;
@@ -10,9 +11,15 @@ class UserObserver
 {
     /**
      * Auto-create an Organization when a winery or DO (supervisor) user is created.
+     * Auto-create the current-year Campaign when a viticulturist registers directly.
      */
     public function created(User $user): void
     {
+        // Campaign for viticulturists that register directly (can_login = true)
+        if ($user->role === User::ROLE_VITICULTURIST && $user->can_login) {
+            Campaign::getOrCreateActiveForYear($user->id);
+        }
+
         $type = $this->resolveOrgType($user);
 
         if ($type === null || $user->organization_id) {
@@ -41,13 +48,14 @@ class UserObserver
             $user->organization?->update(['name' => $user->name]);
         }
 
-        if ($user->hasViticulturistAccess()
+        if ($user->role === User::ROLE_VITICULTURIST
             && $user->wasChanged('can_login')
             && $user->can_login === true
             && $user->getOriginal('can_login') === false
             && $user->activated_at === null
         ) {
             $user->updateQuietly(['activated_at' => now()]);
+            Campaign::getOrCreateActiveForYear($user->id);
         }
     }
 
