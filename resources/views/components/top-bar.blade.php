@@ -42,7 +42,6 @@
                 <flux:menu>
                     @foreach(['es' => '🇪🇸 Español', 'en' => '🇬🇧 English', 'ca' => '🏴 Català', 'eu' => '🏴 Euskera', 'gl' => '🏴 Galego'] as $code => $label)
                         <flux:menu.item
-                            href="{{ request()->fullUrlWithQuery(['lang' => $code]) }}"
                             class="{{ app()->getLocale() === $code ? 'font-semibold' : '' }}"
                             @click="window.location.href = '{{ request()->fullUrlWithQuery(['lang' => $code]) }}'"
                         >
