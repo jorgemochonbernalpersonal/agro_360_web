@@ -2,7 +2,7 @@
     "% Agraces": "% Agrasses",
     "% Bloqueadas": "% Bloquejades",
     "% Botrytis": "% Botritis",
-    "% Fac.": "% Fac.",
+    "% Fac.": "% Fact.",
     "% Mildiu": "% Mildíu",
     "% Oídio": "% Oïdi",
     "% Racimos sanos": "% Rams sans",
@@ -205,7 +205,7 @@
     "Alertas y eventos": "Alertes i esdeveniments",
     "Algoritmo calibrado específicamente para vegetación.": "Algorisme calibrat específicament per a vegetació.",
     "Algunos productos requieren distancia mínima a masas de agua superficiales. Consulta la etiqueta del producto.": "Alguns productes requereixen distància mínima a masses d’aigua superficials. Consulta l’etiqueta del producte.",
-    "All rights reserved.": "All rights reserved.",
+    "All rights reserved.": "Tots els drets reservats.",
     "Almacenes": "Magatzems",
     "Almacén": "Magatzem",
     "Almacén activo": "Magatzem actiu",
@@ -1187,7 +1187,7 @@
     "Ej: TK-2026-001": "Ex: TK-2026-001",
     "Ej: Tempranillo Vendimia 2024": "Ex: Tempranillo Verema 2024",
     "Ej: Todas las parcelas de la explotación, variedades Tempranillo y Garnacha": "Ex: Totes les parcel·les de l’explotació, varietats Tempranillo i Garnatxa",
-    "Ej: Tonelería Radoux": "Ej: Tonelería Radoux",
+    "Ej: Tonelería Radoux": "Ej: Toneleria Radoux",
     "Ej: Tractor John Deere": "Ex: Tractor John Deere",
     "Ej: Tratamiento fitosanitario parcela norte": "Ex: Tractament fitosanitàri parcel·la nord",
     "Ej: Tratamiento preventivo mildiu parcela norte": "Ex: Tractament preventiu mildíu parcel·la nord",
@@ -3959,7 +3959,7 @@
     "en este periodo": "en aquest període",
     "en generarse.": "en generar-se.",
     "en los próximos 30 días. Revisa las renovaciones.": "en els propers 30 dies. Revisa les renovacions.",
-    "en los próximos 60 días. Revisa y renuévalas a tiempo.": "en los próximos 60 días. Revisa y renuévalas a tiempo.",
+    "en los próximos 60 días. Revisa y renuévalas a tiempo.": "en els pròxims 60 dies. Revisa i renova-les a temps.",
     "en los próximos 60 días. Revisa y renúevelas a tiempo.": "en els próxims 60 dies. Revisa i renova-les a temps.",
     "en los próximos 60 días. Revisa y renúévalas a tiempo.": "en els próxims 60 dies. Revisa i renova-les a temps.",
     "en riesgo": "en risc",
@@ -4265,5 +4265,6 @@
     "✓ Bundle 19€/mes · Acceso completo a viñedo y bodega": "✓ Bundle 19€/mes · Accés complet a vinya i celler",
     "✓ Desde 14€/mes · Incluye gestión de viticultores": "✓ Des de 14€/mes · Inclou gestió de viticultors",
     "✓ Plan básico gratis · Completo desde 9€/mes": "✓ Pla bàsic gratis · Complet des de 9€/mes",
-    "✓ Puede cosechar": "✓ Pot collir"
+    "✓ Puede cosechar": "✓ Pot collir",
+    "Disp.:": "Disp.:"
 }
