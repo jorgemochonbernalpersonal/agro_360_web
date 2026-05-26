@@ -24,7 +24,7 @@ class CheckActiveSubscription
         // Verificar si tiene acceso (suscripción activa o beta)
         if (!$user->hasActiveAccess()) {
             return redirect()->route('pricing')
-                ->with('error', 'Tu suscripción ha expirado. Por favor, renueva tu plan para continuar.');
+                ->with('error', __('Tu suscripción ha expirado. Por favor, renueva tu plan para continuar.'));
         }
 
         // Si tiene acceso beta, añadir header informativo
@@ -32,7 +32,7 @@ class CheckActiveSubscription
             $daysRemaining = $user->betaDaysRemaining();
             
             if ($daysRemaining <= 7 && $daysRemaining > 0) {
-                session()->flash('warning', "Tu período beta expira en {$daysRemaining} días. Considera suscribirte para seguir usando Agro365.");
+                session()->flash('warning', __('Tu período beta expira en :days días. Considera suscribirte para seguir usando Agro365.', ['days' => $daysRemaining]));
             }
         }
 

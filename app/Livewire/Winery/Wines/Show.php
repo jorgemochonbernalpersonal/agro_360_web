@@ -136,13 +136,13 @@ class Show extends Component
 
         $this->resetFcForm();
         $this->dispatch('close-modal', id: 'modal-fermentation');
-        $this->toastSuccess('Control de fermentación registrado.');
+        $this->toastSuccess(__('Control de fermentación registrado.'));
     }
 
     public function deleteFermentationControl(int $id): void
     {
         WineFermentationControl::where('wine_id', $this->wine->id)->findOrFail($id)->delete();
-        $this->toastSuccess('Control eliminado.');
+        $this->toastSuccess(__('Control eliminado.'));
     }
 
     // ─── Guardar trasvase ─────────────────────────────────────────────────────
@@ -183,7 +183,7 @@ class Show extends Component
 
         $this->resetTrForm();
         $this->dispatch('close-modal', id: 'modal-transfer');
-        $this->toastSuccess('Trasvase registrado.');
+        $this->toastSuccess(__('Trasvase registrado.'));
     }
 
     public function deleteTransfer(int $id): void
@@ -195,7 +195,7 @@ class Show extends Component
             $transfer->delete();
         });
 
-        $this->toastSuccess('Trasvase eliminado.');
+        $this->toastSuccess(__('Trasvase eliminado.'));
     }
 
     // ─── Guardar merma ────────────────────────────────────────────────────────
@@ -232,7 +232,7 @@ class Show extends Component
 
         $this->resetLoForm();
         $this->dispatch('close-modal', id: 'modal-loss');
-        $this->toastSuccess('Merma registrada.');
+        $this->toastSuccess(__('Merma registrada.'));
     }
 
     public function deleteLoss(int $id): void
@@ -244,7 +244,7 @@ class Show extends Component
             $loss->delete();
         });
 
-        $this->toastSuccess('Merma eliminada.');
+        $this->toastSuccess(__('Merma eliminada.'));
     }
 
     // ─── Guardar análisis ─────────────────────────────────────────────────────
@@ -295,13 +295,13 @@ class Show extends Component
 
         $this->resetAnForm();
         $this->dispatch('close-modal', id: 'modal-analysis');
-        $this->toastSuccess('Análisis registrado.');
+        $this->toastSuccess(__('Análisis registrado.'));
     }
 
     public function deleteAnalysis(int $id): void
     {
         WineAnalysis::where('wine_id', $this->wine->id)->findOrFail($id)->delete();
-        $this->toastSuccess('Análisis eliminado.');
+        $this->toastSuccess(__('Análisis eliminado.'));
     }
 
     // ─── Aditivos ─────────────────────────────────────────────────────────────
@@ -355,7 +355,7 @@ class Show extends Component
 
         $this->resetAdForm();
         $this->dispatch('close-modal', id: 'modal-additive');
-        $this->toastSuccess('Aditivo registrado correctamente.');
+        $this->toastSuccess(__('Aditivo registrado correctamente.'));
     }
 
     public function deleteAdditive(int $id): void
@@ -373,7 +373,7 @@ class Show extends Component
             $additive->delete();
         });
 
-        $this->toastSuccess('Aditivo eliminado.');
+        $this->toastSuccess(__('Aditivo eliminado.'));
     }
 
     // ─── Composición ─────────────────────────────────────────────────────────
@@ -397,14 +397,14 @@ class Show extends Component
         $this->co_harvest_id  = '';
         $this->co_quantity_kg = '';
         $this->dispatch('close-modal', id: 'modal-composition');
-        $this->toastSuccess('Recepción vinculada al lote.');
+        $this->toastSuccess(__('Recepción vinculada al lote.'));
     }
 
     public function unlinkHarvest(int $wineHarvestId): void
     {
         WineHarvest::where('wine_id', $this->wine->id)->findOrFail($wineHarvestId)->delete();
         $this->recalculateCompositionPercentages();
-        $this->toastSuccess('Recepción desvinculada.');
+        $this->toastSuccess(__('Recepción desvinculada.'));
     }
 
     private function recalculateCompositionPercentages(): void
@@ -532,20 +532,20 @@ class Show extends Component
 
         // ── Etapas de proceso ─────────────────────────────────────────────────
         $processLabels = [
-            'destemming_crushing' => 'Despalillado/Estrujado',
-            'pressing'            => 'Prensado',
-            'settling'            => 'Desfangado',
-            'fermentation'        => 'Fermentación',
-            'maceration'          => 'Maceración',
-            'malolactic'          => 'Maloláctica',
-            'aging'               => 'Crianza',
-            'racking'             => 'Trasiego',
-            'blending'            => 'Coupage',
-            'fining'              => 'Clarificación',
-            'filtration'          => 'Filtración',
-            'cold_stabilization'  => 'Est. en frío',
-            'bottling'            => 'Embotellado',
-            'other'               => 'Otro',
+            'destemming_crushing' => __('Despalillado/Estrujado'),
+            'pressing'            => __('Prensado'),
+            'settling'            => __('Desfangado'),
+            'fermentation'        => __('Fermentación'),
+            'maceration'          => __('Maceración'),
+            'malolactic'          => __('Maloláctica'),
+            'aging'               => __('Crianza'),
+            'racking'             => __('Trasiego'),
+            'blending'            => __('Coupage'),
+            'fining'              => __('Clarificación'),
+            'filtration'          => __('Filtración'),
+            'cold_stabilization'  => __('Est. en frío'),
+            'bottling'            => __('Embotellado'),
+            'other'               => __('Otro'),
         ];
 
         $prevNode = 'wine';

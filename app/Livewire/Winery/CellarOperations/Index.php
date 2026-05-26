@@ -31,7 +31,7 @@ class Index extends AbstractIndex
     {
         $operation = CellarOperation::where('user_id', $this->wineryId())->findOrFail($id);
         $operation->delete();
-        $this->toastSuccess('Operación eliminada.');
+        $this->toastSuccess(__('Operación eliminada.'));
     }
 
     protected function baseQuery(): Builder

@@ -76,7 +76,7 @@ class Create extends Component
         $totalQty = collect($this->sources)->sum('quantity');
 
         if ($dest->getAvailableCapacity() < $totalQty) {
-            $this->addError('to_container_id', 'El contenedor destino no tiene capacidad suficiente (' . number_format($dest->getAvailableCapacity(), 1) . ' L disponibles para ' . number_format($totalQty, 1) . ' L solicitados).');
+            $this->addError('to_container_id', __('El contenedor destino no tiene capacidad suficiente (:available L disponibles para :requested L solicitados).', ['available' => number_format($dest->getAvailableCapacity(), 1), 'requested' => number_format($totalQty, 1)]));
             return;
         }
 
@@ -100,7 +100,7 @@ class Create extends Component
             }
         });
 
-        $this->toastSuccess('Coupage registrado correctamente.');
+        $this->toastSuccess(__('Coupage registrado correctamente.'));
         $this->redirect(roleRoute('coupage.index'), navigate: true);
     }
 

@@ -70,11 +70,11 @@ class CreateCulturalWork extends AbstractActivityForm
                 ]);
             });
 
-            $this->toastSuccess('Labor cultural registrada correctamente.');
+            $this->toastSuccess(__('Labor cultural registrada correctamente.'));
             return $this->viticulturistRoleRedirect('digital-notebook.cultural.index');
         } catch (\Exception $e) {
             \Log::error('Error al registrar labor cultural', ['error' => $e->getMessage(), 'user_id' => Auth::id()]);
-            $this->toastError('Error al registrar la labor cultural. Por favor, intenta de nuevo.');
+            $this->toastError(__('Error al registrar la labor cultural. Por favor, intenta de nuevo.'));
         }
     }
 

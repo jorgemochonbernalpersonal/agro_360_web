@@ -45,7 +45,7 @@ class Index extends Component
         ]);
 
         if (!$this->selectedTicket) {
-            $this->toastError('No hay ticket seleccionado.');
+            $this->toastError(__('No hay ticket seleccionado.'));
             return;
         }
 
@@ -57,7 +57,7 @@ class Index extends Component
 
         $this->newComment = '';
         $this->selectedTicket = $this->selectedTicket->fresh(['comments.user']);
-        $this->toastSuccess('Comentario añadido.');
+        $this->toastSuccess(__('Comentario añadido.'));
     }
 
     public function render()
@@ -104,8 +104,8 @@ class Index extends Component
             'tickets' => $tickets,
             'stats' => $stats,
         ])->layout('layouts.app', [
-            'title' => 'Soporte Técnico - Agro365',
-            'description' => 'Centro de soporte y ayuda. Gestiona tus consultas, reporta incidencias y obtén asistencia técnica para tu cuenta.',
+            'title' => __('Soporte Técnico - Agro365'),
+            'description' => __('Centro de soporte y ayuda. Gestiona tus consultas, reporta incidencias y obtén asistencia técnica para tu cuenta.'),
         ]);
     }
 }

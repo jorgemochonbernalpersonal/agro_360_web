@@ -105,8 +105,8 @@ class EditFertilization extends AbstractActivityForm
     protected function messages(): array
     {
         return [
-            'manure_type.required' => 'El tipo de estiércol es obligatorio para fertilizantes orgánicos (BCAM 6).',
-            'burial_date.required' => 'La fecha de enterrado es obligatoria para fertilizantes orgánicos (BCAM 6).',
+            'manure_type.required' => __('El tipo de estiércol es obligatorio para fertilizantes orgánicos (BCAM 6).'),
+            'burial_date.required' => __('La fecha de enterrado es obligatoria para fertilizantes orgánicos (BCAM 6).'),
         ];
     }
 
@@ -137,11 +137,11 @@ class EditFertilization extends AbstractActivityForm
                 ]);
             });
 
-            $this->toastSuccess('Fertilización actualizada correctamente.');
+            $this->toastSuccess(__('Fertilización actualizada correctamente.'));
             return $this->viticulturistRoleRedirect('digital-notebook.fertilization.index');
         } catch (\Exception $e) {
             \Log::error('Error al actualizar fertilización', ['error' => $e->getMessage(), 'user_id' => Auth::id(), 'activity_id' => $this->activity->id]);
-            $this->toastError('Error al actualizar la fertilización. Por favor, intenta de nuevo.');
+            $this->toastError(__('Error al actualizar la fertilización. Por favor, intenta de nuevo.'));
         }
     }
 
@@ -150,6 +150,6 @@ class EditFertilization extends AbstractActivityForm
     public function render()
     {
         return view('livewire.viticulturist.digital-notebook.edit-fertilization', $this->renderData())
-            ->layout('layouts.app', ['title' => 'Editar Fertilización - Agro365']);
+            ->layout('layouts.app', ['title' => __('Editar Fertilización - Agro365')]);
     }
 }

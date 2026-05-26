@@ -79,108 +79,88 @@
     <main class="py-20">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="glass-card rounded-2xl p-8 lg:p-12">
-                <h1 class="text-4xl font-bold text-[var(--color-agro-green-dark)] mb-4">Términos y Condiciones</h1>
-                <p class="text-gray-500 mb-8">Última actualización: 09/03/2026</p>
+                <h1 class="text-4xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Términos y Condiciones') }}</h1>
+                <p class="text-gray-500 mb-8">{{ __('Última actualización: 09/03/2026') }}</p>
 
                 <div class="prose prose-lg max-w-none space-y-8">
                     <section>
-                        <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">1. Aceptación de los Términos</h2>
-                        <p class="text-gray-700 leading-relaxed">
-                            Al acceder y utilizar Agro365 ("el Servicio"), usted acepta estar sujeto a estos Términos y Condiciones. Si no está de acuerdo con alguno de estos términos, no debe utilizar el Servicio.
-                        </p>
-                        <p class="text-gray-700 leading-relaxed mt-2">
-                            Agro365 es una plataforma de gestión agrícola diseñada para viticultores, bodegas y Denominaciones de Origen.
-                        </p>
+                        <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('1. Aceptación de los Términos') }}</h2>
+                        <p class="text-gray-700 leading-relaxed">{{ __('Al acceder y utilizar Agro365 ("el Servicio"), usted acepta estar sujeto a estos Términos y Condiciones. Si no está de acuerdo con alguno de estos términos, no debe utilizar el Servicio.') }}</p>
+                        <p class="text-gray-700 leading-relaxed mt-2">{{ __('Agro365 es una plataforma de gestión agrícola diseñada para viticultores, bodegas y Denominaciones de Origen.') }}</p>
                     </section>
 
                     <section>
-                        <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">2. Descripción del Servicio</h2>
-                        <p class="text-gray-700 leading-relaxed">
-                            Agro365 ofrece herramientas de gestión agrícola digital incluyendo cuaderno de campo, gestión de parcelas SIGPAC, teledetección NDVI, facturación y trazabilidad vitivinícola. El servicio puede evolucionar con nuevas funcionalidades que serán comunicadas a los usuarios con antelación.
-                        </p>
+                        <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('2. Descripción del Servicio') }}</h2>
+                        <p class="text-gray-700 leading-relaxed">{{ __('Agro365 ofrece herramientas de gestión agrícola digital incluyendo cuaderno de campo, gestión de parcelas SIGPAC, teledetección NDVI, facturación y trazabilidad vitivinícola. El servicio puede evolucionar con nuevas funcionalidades que serán comunicadas a los usuarios con antelación.') }}</p>
                     </section>
 
                     <section>
-                        <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">3. Uso del Servicio</h2>
-                        <p class="text-gray-700 leading-relaxed mb-3">Usted se compromete a:</p>
+                        <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('3. Uso del Servicio') }}</h2>
+                        <p class="text-gray-700 leading-relaxed mb-3">{{ __('Usted se compromete a:') }}</p>
                         <ul class="list-disc list-inside text-gray-700 space-y-2 ml-4">
-                            <li>Proporcionar información precisa y veraz durante el registro</li>
-                            <li>Mantener la seguridad de su cuenta y contraseña</li>
-                            <li>No compartir su cuenta con terceros</li>
-                            <li>Utilizar el Servicio únicamente para fines legales y agrícolas</li>
-                            <li>No intentar acceder a áreas restringidas del sistema</li>
+                            <li>{{ __('Proporcionar información precisa y veraz durante el registro') }}</li>
+                            <li>{{ __('Mantener la seguridad de su cuenta y contraseña') }}</li>
+                            <li>{{ __('No compartir su cuenta con terceros') }}</li>
+                            <li>{{ __('Utilizar el Servicio únicamente para fines legales y agrícolas') }}</li>
+                            <li>{{ __('No intentar acceder a áreas restringidas del sistema') }}</li>
                         </ul>
                     </section>
 
                     <section>
-                        <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">4. Propiedad Intelectual</h2>
-                        <p class="text-gray-700 leading-relaxed">
-                            Todo el contenido del Servicio, incluyendo textos, gráficos, logos, iconos, imágenes, software y compilaciones de datos, es propiedad de Agro365 y está protegido por las leyes de propiedad intelectual.
-                        </p>
-                        <p class="text-gray-700 leading-relaxed mt-3">
-                            Los datos que usted introduce (parcelas, actividades, cosechas, etc.) son de su propiedad y permanecerán confidenciales. Puede exportarlos en cualquier momento en formato estándar.
-                        </p>
+                        <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('4. Propiedad Intelectual') }}</h2>
+                        <p class="text-gray-700 leading-relaxed">{{ __('Todo el contenido del Servicio, incluyendo textos, gráficos, logos, iconos, imágenes, software y compilaciones de datos, es propiedad de Agro365 y está protegido por las leyes de propiedad intelectual.') }}</p>
+                        <p class="text-gray-700 leading-relaxed mt-3">{{ __('Los datos que usted introduce (parcelas, actividades, cosechas, etc.) son de su propiedad y permanecerán confidenciales. Puede exportarlos en cualquier momento en formato estándar.') }}</p>
                     </section>
 
                     <section>
-                        <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">5. Protección de Datos</h2>
+                        <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('5. Protección de Datos') }}</h2>
                         <p class="text-gray-700 leading-relaxed">
                             Nos comprometemos a proteger sus datos personales de acuerdo con el RGPD y la LOPDGDD. Para más información, consulte nuestra <a href="{{ route('privacy') }}" class="text-[var(--color-agro-green-dark)] underline hover:text-[var(--color-agro-green)]">Política de Privacidad</a>.
                         </p>
                     </section>
 
                     <section>
-                        <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">6. Limitación de Responsabilidad</h2>
-                        <p class="text-gray-700 leading-relaxed mb-3">Agro365 se proporciona sin garantías de ningún tipo. No garantizamos que:</p>
+                        <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('6. Limitación de Responsabilidad') }}</h2>
+                        <p class="text-gray-700 leading-relaxed mb-3">{{ __('Agro365 se proporciona sin garantías de ningún tipo. No garantizamos que:') }}</p>
                         <ul class="list-disc list-inside text-gray-700 space-y-2 ml-4">
-                            <li>El servicio esté libre de errores o interrupciones</li>
-                            <li>Los datos calculados (como rendimientos estimados) sean 100% precisos</li>
-                            <li>El servicio cumpla con todos sus requisitos específicos</li>
+                            <li>{{ __('El servicio esté libre de errores o interrupciones') }}</li>
+                            <li>{{ __('Los datos calculados (como rendimientos estimados) sean 100% precisos') }}</li>
+                            <li>{{ __('El servicio cumpla con todos sus requisitos específicos') }}</li>
                         </ul>
-                        <p class="text-gray-700 leading-relaxed mt-4">
-                            Usted es responsable de mantener copias de seguridad de sus datos críticos.
-                        </p>
+                        <p class="text-gray-700 leading-relaxed mt-4">{{ __('Usted es responsable de mantener copias de seguridad de sus datos críticos.') }}</p>
                     </section>
 
                     <section>
-                        <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">7. Precios y Pagos</h2>
-                        <p class="text-gray-700 leading-relaxed mb-3">Los precios actuales son:</p>
+                        <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('7. Precios y Pagos') }}</h2>
+                        <p class="text-gray-700 leading-relaxed mb-3">{{ __('Los precios actuales son:') }}</p>
                         <ul class="list-disc list-inside text-gray-700 space-y-2 ml-4">
-                            <li><strong>Viticultor básico</strong> (invitado por bodega): gratis</li>
-                            <li><strong>Viticultor completo</strong> (invitado por bodega): 9€/mes o 85€/año</li>
-                            <li><strong>Viticultor independiente</strong>: 14€/mes o 130€/año</li>
-                            <li><strong>Bodega dentro de una DO asociada</strong>: gratis</li>
-                            <li><strong>Bodega independiente</strong>: 14€/mes o 130€/año</li>
-                            <li><strong>Denominación de Origen</strong>: desde 149€/mes según número de bodegas</li>
+                            <li><strong>{{ __('Viticultor básico') }}</strong> (invitado por bodega): gratis</li>
+                            <li><strong>{{ __('Viticultor completo') }}</strong> (invitado por bodega): 9€/mes o 85€/año</li>
+                            <li><strong>{{ __('Viticultor independiente') }}</strong>: 14€/mes o 130€/año</li>
+                            <li><strong>{{ __('Bodega dentro de una DO asociada') }}</strong>: gratis</li>
+                            <li><strong>{{ __('Bodega independiente') }}</strong>: 14€/mes o 130€/año</li>
+                            <li><strong>{{ __('Denominación de Origen') }}</strong>: desde 149€/mes según número de bodegas</li>
                         </ul>
-                        <p class="text-gray-700 leading-relaxed mt-4">
-                            Nos reservamos el derecho de modificar los precios con 30 días de aviso previo.
-                        </p>
+                        <p class="text-gray-700 leading-relaxed mt-4">{{ __('Nos reservamos el derecho de modificar los precios con 30 días de aviso previo.') }}</p>
                     </section>
 
                     <section>
-                        <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">8. Cancelación</h2>
-                        <p class="text-gray-700 leading-relaxed">
-                            Puede cancelar su suscripción en cualquier momento desde su panel de control o contactando con nosotros. No se realizan reembolsos por períodos parciales ya pagados.
-                        </p>
+                        <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('8. Cancelación') }}</h2>
+                        <p class="text-gray-700 leading-relaxed">{{ __('Puede cancelar su suscripción en cualquier momento desde su panel de control o contactando con nosotros. No se realizan reembolsos por períodos parciales ya pagados.') }}</p>
                     </section>
 
                     <section>
-                        <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">9. Legislación Aplicable y Jurisdicción</h2>
-                        <p class="text-gray-700 leading-relaxed">
-                            Estos términos se rigen por la legislación española vigente. Para la resolución de cualquier controversia, las partes se someterán a los Juzgados y Tribunales del domicilio del usuario.
-                        </p>
+                        <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('9. Legislación Aplicable y Jurisdicción') }}</h2>
+                        <p class="text-gray-700 leading-relaxed">{{ __('Estos términos se rigen por la legislación española vigente. Para la resolución de cualquier controversia, las partes se someterán a los Juzgados y Tribunales del domicilio del usuario.') }}</p>
                     </section>
 
                     <section>
-                        <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">10. Modificaciones</h2>
-                        <p class="text-gray-700 leading-relaxed">
-                            Nos reservamos el derecho de modificar estos términos en cualquier momento. Le notificaremos los cambios significativos por email al menos 15 días antes de que entren en vigor.
-                        </p>
+                        <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('10. Modificaciones') }}</h2>
+                        <p class="text-gray-700 leading-relaxed">{{ __('Nos reservamos el derecho de modificar estos términos en cualquier momento. Le notificaremos los cambios significativos por email al menos 15 días antes de que entren en vigor.') }}</p>
                     </section>
 
                     <section>
-                        <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">11. Contacto</h2>
+                        <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('11. Contacto') }}</h2>
                         <p class="text-gray-700 leading-relaxed">
                             Para cualquier duda sobre estos términos: 📧 <a href="mailto:info@agro365.es" class="text-[var(--color-agro-green-dark)] underline">info@agro365.es</a>
                         </p>

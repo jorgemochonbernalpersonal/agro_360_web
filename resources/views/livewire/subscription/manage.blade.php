@@ -16,7 +16,7 @@
             <div class="flex-1 min-w-0">
                 <p class="font-semibold text-amber-900">{{ __('Esta funcionalidad requiere el plan Completo') }}</p>
                 <p class="text-sm text-amber-800 mt-0.5">
-                    {!! __('Actualiza tu plan por <strong>:price€/mes</strong> para desbloquear funcionalidades avanzadas como PAC, facturación, almacén, maquinaria y más.', ['price' => $upgrade['price']]) !!}
+                    {!! __('Actualiza tu plan por <strong>{{ __(':price€/mes') }}</strong> para desbloquear funcionalidades avanzadas como PAC, facturación, almacén, maquinaria y más.', ['price' => $upgrade['price']]) !!}
                 </p>
             </div>
         </div>

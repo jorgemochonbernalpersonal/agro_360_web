@@ -12,15 +12,15 @@
         <!-- Header Unificado -->
         <x-page-header
             :icon="$configIcon"
-            title="Configuración del Sistema"
-            description="Personaliza y ajusta las preferencias del sistema"
+            title="{{ __('Configuración del Sistema') }}"
+            :description="__('Personaliza y ajusta las preferencias del sistema')"
             icon-color="from-[var(--color-agro-brown)] to-[var(--color-agro-brown-light)]"
             :badge-icon="$configBadgeIcon"
         />
 
         <!-- Info Card -->
         <x-info-card
-            title="Panel de Configuración"
+            title="{{ __('Panel de Configuración') }}"
             gradient="from-[var(--color-agro-brown)] via-amber-600 to-amber-700"
             :icon="$infoIcon"
         >
@@ -31,8 +31,8 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <x-feature-card
                 :icon="$generalIcon"
-                title="General"
-                description="Configuración general del sistema, idioma y preferencias básicas"
+                title="{{ __('General') }}"
+                :description="__('Configuración general del sistema, idioma y preferencias básicas')"
                 icon-gradient="from-gray-500 to-gray-700"
                 hover-border="hover:border-[var(--color-agro-brown)]/50"
                 hover-text="group-hover:text-gray-700"
@@ -40,8 +40,8 @@
 
             <x-feature-card
                 :icon="$usersIcon"
-                title="Usuarios"
-                description="Gestión de usuarios, roles y permisos del sistema"
+                title="{{ __('Usuarios') }}"
+                :description="__('Gestión de usuarios, roles y permisos del sistema')"
                 icon-gradient="from-[var(--color-agro-blue)] to-blue-700"
                 hover-border="hover:border-[var(--color-agro-blue)]/50"
                 hover-text="group-hover:text-[var(--color-agro-blue)]"
@@ -49,8 +49,8 @@
 
             <x-feature-card
                 :icon="$systemIcon"
-                title="Sistema"
-                description="Configuración avanzada del sistema, logs y mantenimiento"
+                title="{{ __('Sistema') }}"
+                :description="__('Configuración avanzada del sistema, logs y mantenimiento')"
                 icon-gradient="from-purple-500 to-purple-700"
                 hover-border="hover:border-purple-500/50"
                 hover-text="group-hover:text-purple-600"

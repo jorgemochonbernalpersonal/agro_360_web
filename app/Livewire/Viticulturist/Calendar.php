@@ -47,7 +47,7 @@ class Calendar extends Component
         $campaign = Campaign::getOrCreateActiveForYear($user->id);
 
         if (!$campaign) {
-            $this->toastError('No se pudo obtener la campaña activa. Por favor, crea una campaña primero.');
+            $this->toastError(__('No se pudo obtener la campaña activa. Por favor, crea una campaña primero.'));
             return $this->viticulturistRoleRedirect('campaign.index');
         }
 
@@ -176,7 +176,7 @@ class Calendar extends Component
                     $events->push([
                         'date'        => $expires->format('Y-m-d'),
                         'type'        => 'alert_ropo',
-                        'label'       => 'ROPO vence',
+                        'label'       => __('ROPO vence'),
                         'description' => $item->name ?? '',
                         'urgency'     => $expires->diffInDays($today, false) >= 0 ? 'danger' : ($expires->diffInDays($today) <= 30 ? 'warning' : 'normal'),
                     ]);
@@ -194,7 +194,7 @@ class Calendar extends Component
                     $events->push([
                         'date'        => $due->format('Y-m-d'),
                         'type'        => 'alert_itb',
-                        'label'       => 'Inspección ITB',
+                        'label'       => __('Inspección ITB'),
                         'description' => $item->name ?? '',
                         'urgency'     => $due->diffInDays($today, false) >= 0 ? 'danger' : ($due->diffInDays($today) <= 30 ? 'warning' : 'normal'),
                     ]);
@@ -212,7 +212,7 @@ class Calendar extends Component
                     $events->push([
                         'date'        => $expires->format('Y-m-d'),
                         'type'        => 'alert_authorization',
-                        'label'       => 'Autorización vence',
+                        'label'       => __('Autorización vence'),
                         'description' => $item->name ?? $item->authorization_code ?? '',
                         'urgency'     => $expires->diffInDays($today, false) >= 0 ? 'danger' : ($expires->diffInDays($today) <= 30 ? 'warning' : 'normal'),
                     ]);
@@ -229,7 +229,7 @@ class Calendar extends Component
                     $events->push([
                         'date'        => Carbon::parse($item->analysis_date)->format('Y-m-d'),
                         'type'        => 'residue_analysis',
-                        'label'       => 'Análisis residuos',
+                        'label'       => __('Análisis residuos'),
                         'description' => $item->plot->name ?? '',
                         'urgency'     => 'normal',
                     ]);
@@ -245,7 +245,7 @@ class Calendar extends Component
                     $events->push([
                         'date'        => Carbon::parse($item->date)->format('Y-m-d'),
                         'type'        => 'residue_management',
-                        'label'       => 'Gestión residuos',
+                        'label'       => __('Gestión residuos'),
                         'description' => $item->residue_type ?? '',
                         'urgency'     => 'normal',
                     ]);
@@ -261,7 +261,7 @@ class Calendar extends Component
                     $events->push([
                         'date'        => Carbon::parse($item->date)->format('Y-m-d'),
                         'type'        => 'energy',
-                        'label'       => 'Consumo energético',
+                        'label'       => __('Consumo energético'),
                         'description' => $item->energy_type ?? '',
                         'urgency'     => 'normal',
                     ]);
@@ -278,7 +278,7 @@ class Calendar extends Component
                     $events->push([
                         'date'        => Carbon::parse($item->submitted_at)->format('Y-m-d'),
                         'type'        => 'pac_declaration',
-                        'label'       => 'Declaración PAC',
+                        'label'       => __('Declaración PAC'),
                         'description' => $item->campaign_year ?? '',
                         'urgency'     => 'normal',
                     ]);
@@ -295,7 +295,7 @@ class Calendar extends Component
                     $events->push([
                         'date'        => Carbon::parse($item->payment_date)->format('Y-m-d'),
                         'type'        => 'pac_payment',
-                        'label'       => 'Pago PAC',
+                        'label'       => __('Pago PAC'),
                         'description' => $item->concept ?? '',
                         'urgency'     => 'normal',
                     ]);
@@ -308,8 +308,8 @@ class Calendar extends Component
                 $campaign = Campaign::find($this->selectedCampaign);
                 if ($campaign) {
                     foreach ([
-                        'mid_validation_date'   => 'Validación intermedia',
-                        'final_validation_date' => 'Validación final',
+                        'mid_validation_date'   => __('Validación intermedia'),
+                        'final_validation_date' => __('Validación final'),
                     ] as $field => $label) {
                         if ($campaign->$field) {
                             $date = Carbon::parse($campaign->$field);
@@ -446,14 +446,14 @@ class Calendar extends Component
     public function getActivityTypeLabel($type)
     {
         return match($type) {
-            'phytosanitary' => 'Tratamiento',
-            'fertilization' => 'Fertilización',
-            'irrigation'    => 'Riego',
-            'cultural'      => 'Labor',
-            'observation'   => 'Observación',
-            'pruning'       => 'Poda',
-            'harvest'       => 'Vendimia',
-            'post_harvest'  => 'Post-vendimia',
+            'phytosanitary' => __('Tratamiento'),
+            'fertilization' => __('Fertilización'),
+            'irrigation'    => __('Riego'),
+            'cultural'      => __('Labor'),
+            'observation'   => __('Observación'),
+            'pruning'       => __('Poda'),
+            'harvest'       => __('Vendimia'),
+            'post_harvest'  => __('Post-vendimia'),
             default         => 'Actividad',
         };
     }
@@ -482,22 +482,22 @@ class Calendar extends Component
     public function getEventLabel($type)
     {
         return match($type) {
-            'alert_ropo'          => 'ROPO vence',
-            'alert_itb'           => 'Inspección ITB',
-            'alert_authorization' => 'Autorización vence',
-            'residue_analysis'    => 'Análisis residuos',
-            'residue_management'  => 'Gestión residuos',
-            'energy'              => 'Consumo energético',
-            'pac_declaration'     => 'Declaración PAC',
-            'pac_payment'         => 'Pago PAC',
-            'campaign_milestone'  => 'Hito campaña',
+            'alert_ropo'          => __('ROPO vence'),
+            'alert_itb'           => __('Inspección ITB'),
+            'alert_authorization' => __('Autorización vence'),
+            'residue_analysis'    => __('Análisis residuos'),
+            'residue_management'  => __('Gestión residuos'),
+            'energy'              => __('Consumo energético'),
+            'pac_declaration'     => __('Declaración PAC'),
+            'pac_payment'         => __('Pago PAC'),
+            'campaign_milestone'  => __('Hito campaña'),
             default               => 'Evento',
         };
     }
 
     #[Layout('layouts.app', [
-        'title'       => 'Calendario de Actividades - Agro365',
-        'description' => 'Visualiza todas tus actividades agrícolas en un calendario interactivo. Planifica tratamientos, riegos y labores culturales por fecha.',
+        'title'       => __('Calendario de Actividades - Agro365'),
+        'description' => __('Visualiza todas tus actividades agrícolas en un calendario interactivo. Planifica tratamientos, riegos y labores culturales por fecha.'),
     ])]
     public function render()
     {

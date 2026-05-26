@@ -4,7 +4,7 @@
         <div class="mb-4 flex items-center gap-3 px-4 py-3 bg-amber-50 border border-amber-300 rounded-xl text-amber-800 text-sm">
             <flux:icon icon="beaker" class="size-5 shrink-0 text-amber-600" />
             <div>
-                <span class="font-semibold">Modo demo activo</span>
+                <span class="font-semibold">{{ __('Modo demo activo') }}</span>
                 — Los datos mostrados son simulados, no proceden de la API de NASA.
                 Configura <code class="bg-amber-100 px-1 rounded text-xs">NASA_EARTHDATA_MOCK=false</code> en <code class="bg-amber-100 px-1 rounded text-xs">.env</code> para usar datos reales.
             </div>
@@ -12,7 +12,7 @@
     @endif
 
     {{-- Header --}}
-    <x-agro.page-header title="Análisis Avanzado" description="Datos satelitales y meteorológicos detallados">
+    <x-agro.page-header title="{{ __('Análisis Avanzado') }}" :description="__('Datos satelitales y meteorológicos detallados')">
         <x-slot:actions>
             <a href="{{ route('remote-sensing.dashboard') }}"
                class="px-3 py-2 text-sm text-zinc-600 hover:text-zinc-900 border border-zinc-300 rounded-lg hover:bg-zinc-50 transition-colors inline-flex items-center gap-2">
@@ -28,7 +28,7 @@
                         </option>
                     @endforeach
                 @else
-                    <option value="">Sin recintos con geometrías</option>
+                    <option value="">{{ __('Sin recintos con geometrías') }}</option>
                 @endif
             </flux:select>
 
@@ -117,7 +117,7 @@
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
             </svg>
-            <span class="ml-3 text-zinc-600 text-lg">Cargando datos...</span>
+            <span class="ml-3 text-zinc-600 text-lg">{{ __('Cargando datos...') }}</span>
         </div>
 
     @elseif($selectedPlot)
@@ -202,15 +202,15 @@
         {{-- Footer NASA sources --}}
         <p class="mt-4 text-xs text-zinc-400 text-center">
             VIIRS NDVI · Bandas Espectrales · LAI MODIS · LST · SMAP Suelo · ET NASA · Open-Meteo
-            &nbsp;·&nbsp; <strong>100% Gratuito</strong>
+            &nbsp;·&nbsp; <strong>{{ __('100% Gratuito') }}</strong>
         </p>
 
     @else
         <x-agro.card>
             <x-agro.empty-state
                 icon="signal"
-                title="Selecciona un recinto"
-                description="Elige un recinto SIGPAC para ver sus datos de análisis avanzado" />
+                title="{{ __('Selecciona un recinto') }}"
+                :description="__('Elige un recinto SIGPAC para ver sus datos de análisis avanzado')" />
         </x-agro.card>
     @endif
     </div>{{-- cierre wire:key dashboard-body --}}

@@ -68,10 +68,10 @@ class Index extends Component
         };
 
         $tabs = [
-            'autorizaciones'  => ['label' => 'Autorizaciones de plantación'],
-            'certificaciones' => ['label' => 'Certificaciones ecológicas'],
-            'pliego'          => ['label' => 'Pliego de condiciones'],
-            'reglamento'      => ['label' => 'Reglamento interno'],
+            'autorizaciones'  => ['label' => __('Autorizaciones de plantación')],
+            'certificaciones' => ['label' => __('Certificaciones ecológicas')],
+            'pliego'          => ['label' => __('Pliego de condiciones')],
+            'reglamento'      => ['label' => __('Reglamento interno')],
         ];
 
         return view('livewire.supervisor.regulation.index', array_merge($data, [

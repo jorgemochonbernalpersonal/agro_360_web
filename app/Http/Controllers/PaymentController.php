@@ -21,7 +21,7 @@ class PaymentController extends Controller
         $pendingData = session('pending_subscription');
 
         if (!$pendingData) {
-            session()->flash('error', 'No se encontró información de pago pendiente.');
+            session()->flash('error', __('No se encontró información de pago pendiente.'));
             return redirect()->route('subscription.manage');
         }
 
@@ -34,7 +34,7 @@ class PaymentController extends Controller
             );
 
             if (!$orderId) {
-                throw new \Exception('No se encontró el ID de la orden de pago.');
+                throw new \Exception(__('No se encontró el ID de la orden de pago.'));
             }
 
             // Procesar el pago completo (captura PayPal, actualiza pago, crea suscripción)
@@ -46,13 +46,13 @@ class PaymentController extends Controller
 
             // Limpiar sesión y mostrar mensaje de éxito
             session()->forget('pending_subscription');
-            session()->flash('message', '¡Pago completado! Tu suscripción está activa.');
+            session()->flash('message', __('¡Pago completado! Tu suscripción está activa.'));
 
             return redirect()->route('subscription.manage');
 
         } catch (\Exception $e) {
             $this->paymentService->handlePaymentError($e, $user, $orderId ?? null);
-            session()->flash('error', 'Error al procesar el pago: ' . $e->getMessage());
+            session()->flash('error', __('Error al procesar el pago: :error', ['error' => $e->getMessage()]));
             return redirect()->route('subscription.manage');
         }
     }
@@ -60,7 +60,7 @@ class PaymentController extends Controller
     public function cancel()
     {
         session()->forget('pending_subscription');
-        session()->flash('message', 'Pago cancelado.');
+        session()->flash('message', __('Pago cancelado.'));
         return redirect()->route('subscription.manage');
     }
 }

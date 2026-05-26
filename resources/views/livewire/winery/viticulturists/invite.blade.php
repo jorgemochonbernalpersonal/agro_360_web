@@ -1,7 +1,7 @@
 <div class="space-y-6 animate-fade-in">
     <x-agro.page-header
-        title="Invitar Viticultor Existente"
-        description="Busca un viticultor registrado en el sistema y vincúlalo a tu bodega"
+        title="{{ __('Invitar Viticultor Existente') }}"
+        :description="__('Busca un viticultor registrado en el sistema y vincúlalo a tu bodega')"
     >
         <x-slot:actions>
             <flux:button href="{{ roleRoute('viticulturists.index') }}" variant="ghost" icon="arrow-left">
@@ -16,16 +16,16 @@
                 <div class="p-1.5 rounded-lg bg-agro-50">
                     <flux:icon icon="magnifying-glass" class="size-4 text-agro-600" />
                 </div>
-                <span class="font-semibold text-zinc-900 text-sm">Buscar Viticultor</span>
+                <span class="font-semibold text-zinc-900 text-sm">{{ __('Buscar Viticultor') }}</span>
             </div>
         </x-slot:header>
 
         <div class="space-y-5">
             <flux:field>
-                <flux:label>Nombre, email o DNI</flux:label>
+                <flux:label>{{ __('Nombre, email o DNI') }}</flux:label>
                 <flux:input
                     wire:model.live.debounce.400ms="search"
-                    placeholder="Escribe al menos 3 caracteres..."
+                    placeholder="{{ __('Escribe al menos 3 caracteres...') }}"
                     icon="magnifying-glass"
                     autofocus
                 />
@@ -36,14 +36,14 @@
             @if(mb_strlen(trim($search)) < 3)
                 <div class="flex flex-col items-center justify-center py-10 text-zinc-400 gap-2">
                     <flux:icon icon="magnifying-glass" class="size-10" />
-                    <p class="text-sm">Introduce al menos 3 caracteres para buscar</p>
+                    <p class="text-sm">{{ __('Introduce al menos 3 caracteres para buscar') }}</p>
                 </div>
 
             {{-- Sin resultados --}}
             @elseif(empty($results))
                 <div class="flex flex-col items-center justify-center py-10 text-zinc-400 gap-2">
                     <flux:icon icon="user-minus" class="size-10" />
-                    <p class="text-sm font-medium">No se encontraron viticultores</p>
+                    <p class="text-sm font-medium">{{ __('No se encontraron viticultores') }}</p>
                     <p class="text-xs text-center max-w-xs">
                         Si el viticultor aún no tiene cuenta, puedes
                         <a href="{{ roleRoute('viticulturists.create') }}" class="text-agro-600 hover:underline font-medium">crearlo como ghost</a>.
@@ -74,7 +74,7 @@
 
                             <div class="flex items-center gap-2">
                                 @if($confirmingId === $result['id'])
-                                    <span class="text-xs text-zinc-500">¿Confirmar?</span>
+                                    <span class="text-xs text-zinc-500">{{ __('¿Confirmar?') }}</span>
                                     <flux:button
                                         wire:click="link({{ $result['id'] }})"
                                         variant="primary"
@@ -88,9 +88,7 @@
                                         variant="ghost"
                                         size="sm"
                                         icon="x-mark"
-                                    >
-                                        Cancelar
-                                    </flux:button>
+                                    >{{ __('Cancelar') }}</flux:button>
                                 @else
                                     <flux:button
                                         wire:click="confirm({{ $result['id'] }})"

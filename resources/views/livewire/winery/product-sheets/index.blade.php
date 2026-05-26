@@ -2,8 +2,8 @@
 
     {{-- Header --}}
     <x-agro.page-header
-        title="Fichas Técnicas"
-        description="Resumen de calidad analítica y sensorial de cada vino"
+        title="{{ __('Fichas Técnicas') }}"
+        :description="__('Resumen de calidad analítica y sensorial de cada vino')"
     >
         <x-slot:actions>
             <flux:button href="{{ roleRoute('tasting-notes.create') }}" variant="ghost" icon="plus" size="sm">
@@ -18,25 +18,25 @@
     {{-- KPIs --}}
     <x-agro.stats-section key="product-sheets">
         <x-agro.stat-card
-            label="Total vinos"
+            :label="__('Total vinos')"
             :value="$stats['total']"
             icon="beaker"
             color="zinc"
         />
         <x-agro.stat-card
-            label="En elaboración"
+            :label="__('En elaboración')"
             :value="$stats['active']"
             icon="play-circle"
             color="agro"
         />
         <x-agro.stat-card
-            label="Embotellados"
+            :label="__('Embotellados')"
             :value="$stats['bottled']"
             icon="archive-box-arrow-down"
             color="zinc"
         />
         <x-agro.stat-card
-            label="Con analítica"
+            :label="__('Con analítica')"
             :value="$stats['with_analysis']"
             icon="chart-bar"
             color="amber"
@@ -45,26 +45,24 @@
 
     {{-- Toolbar --}}
     <div class="flex items-center gap-3">
-        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar vino..." />
+        <x-agro.search-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar vino...')" />
 
         <flux:select wire:model.live="typeFilter" class="w-40">
-            <flux:select.option value="">Todos los tipos</flux:select.option>
+            <flux:select.option value="">{{ __('Todos los tipos') }}</flux:select.option>
             @foreach($wineTypes as $key => $label)
                 <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
             @endforeach
         </flux:select>
 
         <flux:select wire:model.live="statusFilter" class="w-44">
-            <flux:select.option value="">Todos los estados</flux:select.option>
+            <flux:select.option value="">{{ __('Todos los estados') }}</flux:select.option>
             @foreach($statuses as $key => $label)
                 <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
             @endforeach
         </flux:select>
 
         @if($search || $typeFilter || $statusFilter)
-            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">
-                Limpiar
-            </flux:button>
+            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">{{ __('Limpiar') }}</flux:button>
         @endif
     </div>
 
@@ -144,7 +142,7 @@
                                         @endforeach
                                     </div>
                                 @else
-                                    <p class="text-sm text-zinc-400 italic">Sin análisis registrado.</p>
+                                    <p class="text-sm text-zinc-400 italic">{{ __('Sin análisis registrado.') }}</p>
                                 @endif
                             </div>
 
@@ -165,7 +163,7 @@
                                             </div>
                                         @endif
                                         @if($tasting->visual_color)
-                                            <p class="text-sm text-zinc-600"><span class="text-zinc-400">Color:</span> {{ $tasting->visual_color }}</p>
+                                            <p class="text-sm text-zinc-600"><span class="text-zinc-400">{{ __('Color:') }}</span> {{ $tasting->visual_color }}</p>
                                         @endif
                                         @if($tasting->aroma_descriptors)
                                             <p class="text-sm text-zinc-600 line-clamp-2">{{ $tasting->aroma_descriptors }}</p>
@@ -175,17 +173,17 @@
                                         @endif
                                     </div>
                                 @else
-                                    <p class="text-sm text-zinc-400 italic">Sin cata registrada.</p>
+                                    <p class="text-sm text-zinc-400 italic">{{ __('Sin cata registrada.') }}</p>
                                 @endif
                             </div>
 
                             {{-- Acciones --}}
                             <div class="flex md:flex-col gap-2 md:items-end shrink-0">
                                 <a href="{{ roleRoute('wines.edit', $wine) }}">
-                                    <flux:button variant="ghost" size="sm" icon="pencil">Editar</flux:button>
+                                    <flux:button variant="ghost" size="sm" icon="pencil">{{ __('Editar') }}</flux:button>
                                 </a>
                                 <a href="{{ roleRoute('tasting-notes.create') }}?wine_id={{ $wine->id }}">
-                                    <flux:button variant="ghost" size="sm" icon="plus">Añadir cata</flux:button>
+                                    <flux:button variant="ghost" size="sm" icon="plus">{{ __('Añadir cata') }}</flux:button>
                                 </a>
                             </div>
 
@@ -203,11 +201,11 @@
             >
                 @if($search || $typeFilter || $statusFilter)
                     <x-slot:action>
-                        <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
+                        <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">{{ __('Limpiar filtros') }}</flux:button>
                     </x-slot:action>
                 @else
                     <x-slot:action>
-                        <flux:button href="{{ roleRoute('wines.create') }}" variant="primary" icon="plus">Nuevo vino</flux:button>
+                        <flux:button href="{{ roleRoute('wines.create') }}" variant="primary" icon="plus">{{ __('Nuevo vino') }}</flux:button>
                     </x-slot:action>
                 @endif
             </x-agro.empty-state>

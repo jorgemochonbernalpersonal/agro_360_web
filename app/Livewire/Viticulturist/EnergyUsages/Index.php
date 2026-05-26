@@ -44,13 +44,13 @@ class Index extends AbstractIndex
     public function archive(int $id): void
     {
         $this->findOwned(EnergyUsage::class, $id)->update(['active' => false]);
-        $this->toastSuccess('Registro archivado.');
+        $this->toastSuccess(__('Registro archivado.'));
     }
 
     public function unarchive(int $id): void
     {
         $this->findOwned(EnergyUsage::class, $id)->update(['active' => true]);
-        $this->toastSuccess('Registro restaurado.');
+        $this->toastSuccess(__('Registro restaurado.'));
     }
 
     protected function baseQuery(): Builder

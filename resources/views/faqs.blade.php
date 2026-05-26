@@ -64,7 +64,7 @@
                             decoding="async"
                             class="h-10 w-auto"
                         >
-                        <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">Agro365</span>
+                        <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Agro365') }}</span>
                     </a>
                 </div>
                 <div class="flex items-center gap-4">
@@ -89,12 +89,8 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Header -->
             <div class="text-center mb-16">
-                <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">
-                    Preguntas Frecuentes
-                </h1>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Encuentra respuestas a las preguntas más comunes sobre Agro365, tu software de gestión agrícola profesional
-                </p>
+                <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">{{ __('Preguntas Frecuentes') }}</h1>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">{{ __('Encuentra respuestas a las preguntas más comunes sobre Agro365, tu software de gestión agrícola profesional') }}</p>
             </div>
 
             <!-- Expand/Collapse All Button -->
@@ -117,12 +113,8 @@
 
             <!-- CTA Section -->
             <div class="text-center mt-16 pt-12 border-t border-gray-200">
-                <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">
-                    ¿Aún tienes dudas?
-                </h2>
-                <p class="text-gray-600 mb-8 text-lg">
-                    Estamos aquí para ayudarte. Viticultor básico gratis, completo desde 9€/mes.
-                </p>
+                <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('¿Aún tienes dudas?') }}</h2>
+                <p class="text-gray-600 mb-8 text-lg">{{ __('Estamos aquí para ayudarte. Viticultor básico gratis, completo desde 9€/mes.') }}</p>
                 <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-lg">
                     Comenzar Gratis — Uso básico gratuito
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

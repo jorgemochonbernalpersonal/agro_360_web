@@ -49,32 +49,32 @@ class Index extends AbstractIndex
     public function startWork(int $id): void
     {
         $this->findOwned(PlannedWork::class, $id)->markInProgress();
-        $this->toastSuccess('Trabajo marcado como en progreso.');
+        $this->toastSuccess(__('Trabajo marcado como en progreso.'));
     }
 
     public function completeWork(int $id): void
     {
         $this->findOwned(PlannedWork::class, $id)->markCompleted();
-        $this->toastSuccess('Trabajo marcado como completado.');
+        $this->toastSuccess(__('Trabajo marcado como completado.'));
     }
 
     public function cancelWork(int $id): void
     {
         $this->findOwned(PlannedWork::class, $id)->markCancelled();
-        $this->toastSuccess('Trabajo cancelado.');
+        $this->toastSuccess(__('Trabajo cancelado.'));
     }
 
     public function reopen(int $id): void
     {
         $work = $this->findOwned(PlannedWork::class, $id);
         $work->update(['status' => 'pendiente', 'completed_at' => null]);
-        $this->toastSuccess('Trabajo reabierto.');
+        $this->toastSuccess(__('Trabajo reabierto.'));
     }
 
     public function delete(int $id): void
     {
         $this->findOwned(PlannedWork::class, $id)->delete();
-        $this->toastSuccess('Trabajo eliminado.');
+        $this->toastSuccess(__('Trabajo eliminado.'));
     }
 
     // ── Query ────────────────────────────────────────────────────────────────

@@ -12,7 +12,7 @@ class OfficialReportController extends Controller
     public function download(OfficialReport $report)
     {
         if ($report->user_id !== auth()->id()) {
-            abort(403, 'No tienes permiso para descargar este informe.');
+            abort(403, __('No tienes permiso para descargar este informe.'));
         }
 
         $service = new OfficialReportService();
@@ -23,11 +23,11 @@ class OfficialReportController extends Controller
     public function preview(OfficialReport $report)
     {
         if ($report->user_id !== auth()->id()) {
-            abort(403, 'No tienes permiso para ver este informe.');
+            abort(403, __('No tienes permiso para ver este informe.'));
         }
 
         if (! $report->pdfExists()) {
-            abort(404, 'El archivo PDF no existe.');
+            abort(404, __('El archivo PDF no existe.'));
         }
 
         $pdfPath = str_starts_with($report->pdf_path, storage_path())

@@ -307,14 +307,14 @@ class Create extends Component
     protected function messages(): array
     {
         return [
-            'viticulturist_id.required'   => 'Selecciona un viticultor.',
-            'vintage_year.required'       => 'La añada es obligatoria.',
-            'plot_id.required'            => 'Selecciona una parcela.',
-            'plot_planting_id.required'   => 'Selecciona una plantación.',
-            'harvest_start_date.required' => 'La fecha de recepción es obligatoria.',
-            'total_weight.required'       => 'El peso recibido es obligatorio.',
-            'total_weight.min'            => 'El peso debe ser mayor que 0.',
-            'container_id.required'       => 'Selecciona un depósito de destino.',
+            'viticulturist_id.required'   => __('Selecciona un viticultor.'),
+            'vintage_year.required'       => __('La añada es obligatoria.'),
+            'plot_id.required'            => __('Selecciona una parcela.'),
+            'plot_planting_id.required'   => __('Selecciona una plantación.'),
+            'harvest_start_date.required' => __('La fecha de recepción es obligatoria.'),
+            'total_weight.required'       => __('El peso recibido es obligatorio.'),
+            'total_weight.min'            => __('El peso debe ser mayor que 0.'),
+            'container_id.required'       => __('Selecciona un depósito de destino.'),
         ];
     }
 
@@ -354,8 +354,7 @@ class Create extends Component
         // Pre-check rápido (la validación real con lock se hace dentro del transaction)
         if (! $container->hasAvailableCapacity($weight)) {
             $this->addError('container_id',
-                "El contenedor «{$container->name}» no tiene capacidad suficiente. " .
-                "Disponible: " . number_format($container->getAvailableCapacity(), 0) . " kg."
+                __('El contenedor «:name» no tiene capacidad suficiente. Disponible: :available kg.', ['name' => $container->name, 'available' => number_format($container->getAvailableCapacity(), 0)])
             );
             return null;
         }
@@ -370,7 +369,7 @@ class Create extends Component
             ->where('campaign_id', $campaign->id)
             ->first();
         if ($existingBatch && $existingBatch->status === 'closed') {
-            $this->toastError('El lote de esta plantación está cerrado. Réabrelo desde el Cuadro de Mando antes de añadir más recepciones.');
+            $this->toastError(__('El lote de esta plantación está cerrado. Réabrelo desde el Cuadro de Mando antes de añadir más recepciones.'));
             return null;
         }
 
@@ -451,7 +450,7 @@ class Create extends Component
                 }
             });
 
-            $this->toastSuccess('Recepción registrada correctamente.');
+            $this->toastSuccess(__('Recepción registrada correctamente.'));
             return $this->roleRedirect('grape-reception.index');
 
         } catch (\Exception $e) {
@@ -460,7 +459,7 @@ class Create extends Component
                 'winery'   => Auth::id(),
                 'planting' => $this->plot_planting_id,
             ]);
-            $this->toastError('Error al guardar la recepción. Inténtalo de nuevo.');
+            $this->toastError(__('Error al guardar la recepción. Inténtalo de nuevo.'));
         }
     }
 

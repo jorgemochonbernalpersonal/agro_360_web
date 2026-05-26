@@ -438,27 +438,27 @@
                 </flux:field>
                 <flux:field>
                     <flux:label>{{ __('% Uvas sanas') }}</flux:label>
-                    <flux:input wire:model="sanitary_state_grapes" type="number" step="0.01" min="0" max="100" placeholder="0–100" />
+                    <flux:input wire:model="sanitary_state_grapes" type="number" step="0.01" min="0" max="100" :placeholder="__('0–100')" />
                     <flux:error name="sanitary_state_grapes" />
                 </flux:field>
                 <flux:field>
                     <flux:label>{{ __('% Agraces') }}</flux:label>
-                    <flux:input wire:model="sanitary_state_agraces" type="number" step="0.01" min="0" max="100" placeholder="0–100" />
+                    <flux:input wire:model="sanitary_state_agraces" type="number" step="0.01" min="0" max="100" :placeholder="__('0–100')" />
                     <flux:error name="sanitary_state_agraces" />
                 </flux:field>
                 <flux:field>
                     <flux:label>{{ __('% Botrytis') }}</flux:label>
-                    <flux:input wire:model="sanitary_state_botrytis" type="number" step="0.01" min="0" max="100" placeholder="0–100" />
+                    <flux:input wire:model="sanitary_state_botrytis" type="number" step="0.01" min="0" max="100" :placeholder="__('0–100')" />
                     <flux:error name="sanitary_state_botrytis" />
                 </flux:field>
                 <flux:field>
                     <flux:label>{{ __('% Oídio') }}</flux:label>
-                    <flux:input wire:model="sanitary_state_oidium" type="number" step="0.01" min="0" max="100" placeholder="0–100" />
+                    <flux:input wire:model="sanitary_state_oidium" type="number" step="0.01" min="0" max="100" :placeholder="__('0–100')" />
                     <flux:error name="sanitary_state_oidium" />
                 </flux:field>
                 <flux:field>
                     <flux:label>{{ __('% Mildiu') }}</flux:label>
-                    <flux:input wire:model="sanitary_state_mildew" type="number" step="0.01" min="0" max="100" placeholder="0–100" />
+                    <flux:input wire:model="sanitary_state_mildew" type="number" step="0.01" min="0" max="100" :placeholder="__('0–100')" />
                     <flux:error name="sanitary_state_mildew" />
                 </flux:field>
             </div>

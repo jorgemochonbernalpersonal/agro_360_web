@@ -28,7 +28,7 @@ class Dashboard extends Component
         $invoice = $this->findInvoice($id);
 
         if (!$invoice) {
-            $this->toastError('Factura no encontrada.');
+            $this->toastError(__('Factura no encontrada.'));
             return;
         }
 
@@ -36,9 +36,9 @@ class Dashboard extends Component
         $result  = $service->send($invoice);
 
         if ($result['success']) {
-            $this->toastSuccess('Factura verificada y enviada correctamente. CSV: ' . $result['csv']);
+            $this->toastSuccess(__('Factura verificada y enviada correctamente. CSV: :csv', ['csv' => $result['csv']]));
         } else {
-            $this->toastError('Error al verificar: ' . implode(' / ', $result['errors']));
+            $this->toastError(__('Error al verificar: :errors', ['errors' => implode(' / ', $result['errors'])]));
         }
     }
 
@@ -55,9 +55,9 @@ class Dashboard extends Component
         }
 
         if ($err === 0) {
-            $this->toastSuccess("Se han verificado {$ok} facturas correctamente.");
+            $this->toastSuccess(__('Se han verificado :ok facturas correctamente.', ['ok' => $ok]));
         } else {
-            $this->toastError("Verificadas: {$ok}. Con errores: {$err}. Revisa la pestaña Errores.");
+            $this->toastError(__('Verificadas: :ok. Con errores: :err. Revisa la pestaña Errores.', ['ok' => $ok, 'err' => $err]));
         }
     }
 
@@ -66,7 +66,7 @@ class Dashboard extends Component
         $invoice = $this->findInvoice($id);
 
         if (!$invoice) {
-            $this->toastError('Factura no encontrada.');
+            $this->toastError(__('Factura no encontrada.'));
             return;
         }
 
@@ -74,9 +74,9 @@ class Dashboard extends Component
         $result  = $service->retry($invoice);
 
         if ($result['success']) {
-            $this->toastSuccess('Factura reintentada correctamente. CSV: ' . $result['csv']);
+            $this->toastSuccess(__('Factura reintentada correctamente. CSV: :csv', ['csv' => $result['csv']]));
         } else {
-            $this->toastError('Error: ' . implode(' / ', $result['errors']));
+            $this->toastError(__('Error: :errors', ['errors' => implode(' / ', $result['errors'])]));
         }
     }
 
@@ -85,7 +85,7 @@ class Dashboard extends Component
         $invoice = $this->findInvoice($id);
 
         if (!$invoice) {
-            $this->toastError('Factura no encontrada.');
+            $this->toastError(__('Factura no encontrada.'));
             return;
         }
 
@@ -93,9 +93,9 @@ class Dashboard extends Component
         $result  = $service->cancel($invoice);
 
         if ($result['success']) {
-            $this->toastSuccess('Anulación registrada. La factura vuelve a estado pendiente.');
+            $this->toastSuccess(__('Anulación registrada. La factura vuelve a estado pendiente.'));
         } else {
-            $this->toastError('Error al anular: ' . implode(' / ', $result['errors']));
+            $this->toastError(__('Error al anular: :errors', ['errors' => implode(' / ', $result['errors'])]));
         }
     }
 
@@ -158,12 +158,12 @@ class Dashboard extends Component
         $invoice = $this->findInvoice($id);
 
         if (!$invoice) {
-            $this->toastError('Factura no encontrada.');
+            $this->toastError(__('Factura no encontrada.'));
             return;
         }
 
         $invoice->update(['sif_excluded' => true]);
-        $this->toastSuccess('Factura excluida de Verifactu.');
+        $this->toastSuccess(__('Factura excluida de Verifactu.'));
     }
 
     public function excludeAll(): void

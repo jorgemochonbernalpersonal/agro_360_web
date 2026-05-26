@@ -1,7 +1,7 @@
 <div class="space-y-6 animate-fade-in">
 <x-agro.page-header
-    title="Insumos de Bodega"
-    description="Catálogo de productos usados en mantenimiento y elaboración."
+    title="{{ __('Insumos de Bodega') }}"
+    :description="__('Catálogo de productos usados en mantenimiento y elaboración.')"
     icon="beaker"
 >
     <x-slot:actions>
@@ -12,8 +12,8 @@
 </x-agro.page-header>
 
 <x-agro.filter-bar>
-    <x-agro.filter-input wire:model.live="search" placeholder="Buscar por nombre..." />
-    <x-agro.filter-select wire:model.live="typeFilter" placeholder="Todos los tipos">
+    <x-agro.filter-input wire:model.live="search" :placeholder="__('Buscar por nombre...')" />
+    <x-agro.filter-select wire:model.live="typeFilter" :placeholder="__('Todos los tipos')">
         @foreach($types as $key => $label)
             <option value="{{ $key }}">{{ $label }}</option>
         @endforeach
@@ -49,7 +49,7 @@
                     <div class="flex-1 space-y-4">
                         <div class="grid grid-cols-2 gap-2">
                             <div class="bg-agro-50 rounded-xl p-3">
-                                <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Stock</p>
+                                <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">{{ __('Stock') }}</p>
                                 <p class="text-2xl font-bold {{ $supply->current_stock !== null && $supply->isLowStock() ? 'text-red-600' : 'text-agro-700' }} leading-none">
                                     @if($supply->current_stock !== null)
                                         {{ number_format($supply->current_stock, 3) }}
@@ -62,14 +62,14 @@
                                 </p>
                             </div>
                             <div class="bg-agro-50 rounded-xl p-3">
-                                <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Unidad</p>
+                                <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">{{ __('Unidad') }}</p>
                                 <p class="text-2xl font-bold text-agro-700 leading-none">{{ $supply->unitOfMeasurement?->symbol ?? '—' }}</p>
                             </div>
                         </div>
 
                         <div class="space-y-2 text-sm">
                             <div class="flex items-center justify-between">
-                                <span class="text-zinc-400">Caducidad</span>
+                                <span class="text-zinc-400">{{ __('Caducidad') }}</span>
                                 <span class="text-zinc-700 font-medium">{{ $supply->expiry_date?->format('d/m/Y') ?? '—' }}</span>
                             </div>
                         </div>
@@ -77,8 +77,8 @@
 
                     <x-slot:footer>
                         <div class="flex items-center justify-end gap-0.5">
-                            <x-agro.action-button icon="pencil" variant="default" href="{{ roleRoute('winery-supplies.edit', $supply) }}" wire:navigate title="Editar" />
-                            <x-agro.action-button variant="delete" wire:click="delete({{ $supply->id }})" wire:loading.attr="disabled" wire:confirm="¿Eliminar este insumo?" title="Eliminar" />
+                            <x-agro.action-button icon="pencil" variant="default" href="{{ roleRoute('winery-supplies.edit', $supply) }}" wire:navigate title="{{ __('Editar') }}" />
+                            <x-agro.action-button variant="delete" wire:click="delete({{ $supply->id }})" wire:loading.attr="disabled" wire:confirm="{{ __('¿Eliminar este insumo?') }}" title="{{ __('Eliminar') }}" />
                         </div>
                     </x-slot:footer>
                 </x-agro.card>
@@ -86,8 +86,8 @@
         </div>
         <x-agro-pagination :paginator="$supplies" />
     @else
-        <x-agro.empty-state icon="beaker" title="Sin insumos"
-            description="Añade productos de limpieza, aditivos y otros insumos de bodega." />
+        <x-agro.empty-state icon="beaker" title="{{ __('Sin insumos') }}"
+            :description="__('Añade productos de limpieza, aditivos y otros insumos de bodega.')" />
     @endif
 </div>
 </div>

@@ -108,15 +108,15 @@
         <table>
             <thead>
                 <tr>
-                    <th>Viticultor</th>
-                    <th class="right">Total kg</th>
-                    <th class="right">Recepciones</th>
-                    <th class="right">Alc. pot. %</th>
-                    <th class="right">Baumé °Bé</th>
-                    <th class="right">Brix °Bx</th>
-                    <th class="right">Acidez g/L</th>
+                    <th>{{ __('Viticultor') }}</th>
+                    <th class="right">{{ __('Total kg') }}</th>
+                    <th class="right">{{ __('Recepciones') }}</th>
+                    <th class="right">{{ __('Alc. pot. %') }}</th>
+                    <th class="right">{{ __('Baumé °Bé') }}</th>
+                    <th class="right">{{ __('Brix °Bx') }}</th>
+                    <th class="right">{{ __('Acidez g/L') }}</th>
                     <th class="right">pH</th>
-                    <th>Estado sanitario</th>
+                    <th>{{ __('Estado sanitario') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -163,13 +163,13 @@
         <table>
             <thead>
                 <tr>
-                    <th>Variedad</th>
-                    <th class="right">Total kg</th>
-                    <th class="right">Entradas</th>
-                    <th class="right">Alc. pot. %</th>
-                    <th class="right">Baumé °Bé</th>
-                    <th class="right">Brix °Bx</th>
-                    <th class="right">Acidez g/L</th>
+                    <th>{{ __('Variedad') }}</th>
+                    <th class="right">{{ __('Total kg') }}</th>
+                    <th class="right">{{ __('Entradas') }}</th>
+                    <th class="right">{{ __('Alc. pot. %') }}</th>
+                    <th class="right">{{ __('Baumé °Bé') }}</th>
+                    <th class="right">{{ __('Brix °Bx') }}</th>
+                    <th class="right">{{ __('Acidez g/L') }}</th>
                     <th class="right">pH</th>
                 </tr>
             </thead>

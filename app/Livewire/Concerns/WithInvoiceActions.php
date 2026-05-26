@@ -30,12 +30,12 @@ trait WithInvoiceActions
         if (!$invoice) return;
 
         if ($invoice->status === 'cancelled') {
-            $this->toastError('No se puede marcar como pagada una factura cancelada.');
+            $this->toastError(__('No se puede marcar como pagada una factura cancelada.'));
             return;
         }
 
         if ($invoice->payment_status === 'paid') {
-            $this->toastError('Esta factura ya está marcada como pagada.');
+            $this->toastError(__('Esta factura ya está marcada como pagada.'));
             return;
         }
 
@@ -61,7 +61,7 @@ trait WithInvoiceActions
         $email = $this->getEmailRecipient($invoice);
 
         if (!$email) {
-            $this->toastError('No hay email registrado para el destinatario.');
+            $this->toastError(__('No hay email registrado para el destinatario.'));
             return;
         }
 
@@ -79,7 +79,7 @@ trait WithInvoiceActions
                 'invoice_id' => $id,
                 'user_id'    => Auth::id(),
             ]);
-            $this->toastError('Error al enviar el email. Inténtalo de nuevo.');
+            $this->toastError(__('Error al enviar el email. Inténtalo de nuevo.'));
         }
     }
 

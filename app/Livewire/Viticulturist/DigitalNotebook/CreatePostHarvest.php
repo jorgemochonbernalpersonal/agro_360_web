@@ -91,11 +91,11 @@ class CreatePostHarvest extends AbstractActivityForm
                 ]);
             });
 
-            $this->toastSuccess('Tratamiento post-vendimia registrado correctamente.');
+            $this->toastSuccess(__('Tratamiento post-vendimia registrado correctamente.'));
             return $this->viticulturistRoleRedirect('digital-notebook.post-harvest.index');
         } catch (\Exception $e) {
             \Log::error('Error al registrar tratamiento post-vendimia', ['error' => $e->getMessage(), 'user_id' => Auth::id()]);
-            $this->toastError('Error al registrar el tratamiento. Por favor, intenta de nuevo.');
+            $this->toastError(__('Error al registrar el tratamiento. Por favor, intenta de nuevo.'));
         }
     }
 
@@ -106,6 +106,6 @@ class CreatePostHarvest extends AbstractActivityForm
         return view('livewire.viticulturist.digital-notebook.create-post-harvest', $this->renderData([
             'products'         => $this->products,
             'applicationTypes' => PostHarvestTreatment::APPLICATION_TYPES,
-        ]))->layout('layouts.app', ['title' => 'Registrar Tratamiento Post-Vendimia - Agro365']);
+        ]))->layout('layouts.app', ['title' => __('Registrar Tratamiento Post-Vendimia - Agro365')]);
     }
 }

@@ -136,7 +136,7 @@ class Edit extends Component
     public function save()
     {
         if ($this->isLocked) {
-            $this->toastError('Esta liquidación no se puede editar.');
+            $this->toastError(__('Esta liquidación no se puede editar.'));
             return;
         }
 
@@ -233,7 +233,7 @@ class Edit extends Component
                 }
             });
 
-            $this->toastSuccess('Liquidación actualizada correctamente.');
+            $this->toastSuccess(__('Liquidación actualizada correctamente.'));
             return $this->roleRedirect('invoices.grape-purchase.index');
 
         } catch (\Exception $e) {
@@ -241,7 +241,7 @@ class Edit extends Component
                 'invoice_id' => $this->invoice->id,
                 'user_id'    => $wineryId,
             ]);
-            $this->toastError($e instanceof \RuntimeException ? $e->getMessage() : 'Error al guardar los cambios.');
+            $this->toastError($e instanceof \RuntimeException ? $e->getMessage()  : __('Error al guardar los cambios.'));
         }
     }
 

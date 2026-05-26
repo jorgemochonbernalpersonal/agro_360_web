@@ -51,8 +51,8 @@ class Index extends Component
             'wines'     => $wines,
             'traceData' => $traceData,
         ])->layout('layouts.app', [
-            'title'       => 'Trazabilidad Cepa a Botella',
-            'description' => 'Flujo completo desde la parcela hasta el producto final',
+            'title'       => __('Trazabilidad Cepa a Botella'),
+            'description' => __('Flujo completo desde la parcela hasta el producto final'),
         ]);
     }
 

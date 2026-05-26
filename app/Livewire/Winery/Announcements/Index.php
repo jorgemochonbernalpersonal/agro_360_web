@@ -86,13 +86,13 @@ class Index extends Component
     {
         $announcement = WineryAnnouncement::where('winery_id', Auth::id())->findOrFail($id);
         $announcement->update(['expires_at' => now()]);
-        $this->toastSuccess('Aviso expirado.');
+        $this->toastSuccess(__('Aviso expirado.'));
     }
 
     public function delete(int $id): void
     {
         WineryAnnouncement::where('winery_id', Auth::id())->findOrFail($id)->delete();
-        $this->toastSuccess('Aviso eliminado.');
+        $this->toastSuccess(__('Aviso eliminado.'));
     }
 
     public function render()

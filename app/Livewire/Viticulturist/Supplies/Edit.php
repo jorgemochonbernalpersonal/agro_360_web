@@ -76,7 +76,7 @@ class Edit extends Component
             'notes'               => $this->notes ?: null,
         ]);
 
-        $this->toastSuccess('Insumo actualizado correctamente.');
+        $this->toastSuccess(__('Insumo actualizado correctamente.'));
 
         return $this->viticulturistRoleRedirect('warehouse.index', ['tab' => 'insumos']);
     }
@@ -91,6 +91,6 @@ class Edit extends Component
                 ->where('active', true)
                 ->orderBy('name')
                 ->get(),
-        ])->layout('layouts.app', ['title' => 'Editar Insumo - Agro365']);
+        ])->layout('layouts.app', ['title' => __('Editar Insumo - Agro365')]);
     }
 }

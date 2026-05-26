@@ -21,7 +21,7 @@
             <div class="flex justify-between items-center h-16">
                 <a href="{{ url('/') }}" class="flex items-center gap-3">
                     <img src="{{ asset('images/logo.png') }}" alt="Agro365" class="h-10 w-auto">
-                    <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">Agro365</span>
+                    <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Agro365') }}</span>
                 </a>
                 <div class="flex items-center gap-4">
                     <a href="{{ url('/') }}" class="text-gray-600 hover:text-[var(--color-agro-green)]">Inicio</a>
@@ -37,84 +37,82 @@
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <nav class="mb-8 text-sm text-gray-600">
                 <a href="{{ url('/') }}" class="hover:text-[var(--color-agro-green)]">Inicio</a> / 
-                <span class="text-gray-900">Maquinaria Agrícola</span>
+                <span class="text-gray-900">{{ __('Maquinaria Agrícola') }}</span>
             </nav>
 
             <div class="mb-12">
                 <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 border border-gray-300 mb-6">
                     <span class="text-lg">🚜</span>
-                    <span class="text-sm font-semibold text-gray-800">Equipos y Maquinaria</span>
+                    <span class="text-sm font-semibold text-gray-800">{{ __('Equipos y Maquinaria') }}</span>
                 </div>
-                <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">
-                    Registro de Maquinaria Agrícola
-                </h1>
+                <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">{{ __('Registro de Maquinaria Agrícola') }}</h1>
                 <p class="text-xl text-gray-600 leading-relaxed">
-                    <strong>Control total de tu maquinaria</strong>: tractores, atomizadores, cosechadoras. Registra horas de uso, mantenimiento preventivo y calcula costes por hectárea.
+                    <strong>{{ __('Control total de tu maquinaria') }}</strong>: tractores, atomizadores, cosechadoras. Registra horas de uso, mantenimiento preventivo y calcula costes por hectárea.
                 </p>
             </div>
 
             <article class="prose prose-lg max-w-none">
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">¿Por Qué Registrar la Maquinaria?</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('¿Por Qué Registrar la Maquinaria?') }}</h2>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        La maquinaria es una <strong>inversión significativa</strong>. Sin un control adecuado:
+                        La maquinaria es una <strong>{{ __('inversión significativa') }}</strong>. Sin un control adecuado:
                     </p>
                     <ul class="list-disc list-inside space-y-2 text-gray-700 mb-6 ml-4">
-                        <li>No sabes el coste real de cada operación</li>
-                        <li>Pierdes mantenimientos preventivos</li>
+                        <li>{{ __('No sabes el coste real de cada operación') }}</li>
+                        <li>{{ __('Pierdes mantenimientos preventivos') }}</li>
                         <li>No puedes justificar uso en <a href="{{ url('/registro-fitosanitarios') }}" class="text-[var(--color-agro-green)] hover:underline">tratamientos fitosanitarios</a></li>
-                        <li>Dificultad en inspecciones PAC</li>
+                        <li>{{ __('Dificultad en inspecciones PAC') }}</li>
                     </ul>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Tipos de Maquinaria</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Tipos de Maquinaria') }}</h2>
                     <div class="grid md:grid-cols-3 gap-4 mb-6">
                         <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 text-center">
                             <div class="text-4xl mb-2">🚜</div>
-                            <h3 class="font-bold text-[var(--color-agro-green-dark)]">Tractores</h3>
-                            <p class="text-sm text-gray-600">Potencia, matrícula, fecha ITV</p>
+                            <h3 class="font-bold text-[var(--color-agro-green-dark)]">{{ __('Tractores') }}</h3>
+                            <p class="text-sm text-gray-600">{{ __('Potencia, matrícula, fecha ITV') }}</p>
                         </div>
                         <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 text-center">
                             <div class="text-4xl mb-2">💨</div>
-                            <h3 class="font-bold text-[var(--color-agro-green-dark)]">Atomizadores</h3>
-                            <p class="text-sm text-gray-600">Capacidad, boquillas, calibración</p>
+                            <h3 class="font-bold text-[var(--color-agro-green-dark)]">{{ __('Atomizadores') }}</h3>
+                            <p class="text-sm text-gray-600">{{ __('Capacidad, boquillas, calibración') }}</p>
                         </div>
                         <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 text-center">
                             <div class="text-4xl mb-2">🍇</div>
-                            <h3 class="font-bold text-[var(--color-agro-green-dark)]">Vendimiadoras</h3>
-                            <p class="text-sm text-gray-600">Modelo, horas motor, revisiones</p>
+                            <h3 class="font-bold text-[var(--color-agro-green-dark)]">{{ __('Vendimiadoras') }}</h3>
+                            <p class="text-sm text-gray-600">{{ __('Modelo, horas motor, revisiones') }}</p>
                         </div>
                     </div>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Funcionalidades</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Funcionalidades') }}</h2>
                     <div class="grid md:grid-cols-2 gap-6 mb-6">
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">📝 Ficha de Equipo</h3>
-                            <p class="text-gray-700">Datos técnicos, fotos, documentación (ITV, seguro, ROMA).</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('📝 Ficha de Equipo') }}</h3>
+                            <p class="text-gray-700">{{ __('Datos técnicos, fotos, documentación (ITV, seguro, ROMA).') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">⏱️ Control de Horas</h3>
-                            <p class="text-gray-700">Registra horas de uso por actividad y parcela.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('⏱️ Control de Horas') }}</h3>
+                            <p class="text-gray-700">{{ __('Registra horas de uso por actividad y parcela.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">🔧 Mantenimiento</h3>
-                            <p class="text-gray-700">Alertas de mantenimiento preventivo (aceite, filtros, etc).</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('🔧 Mantenimiento') }}</h3>
+                            <p class="text-gray-700">{{ __('Alertas de mantenimiento preventivo (aceite, filtros, etc).') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">💰 Costes</h3>
-                            <p class="text-gray-700">Calcula coste por hora y por hectárea trabajada.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('💰 Costes') }}</h3>
+                            <p class="text-gray-700">{{ __('Calcula coste por hora y por hectárea trabajada.') }}</p>
                         </div>
                     </div>
                 </section>
 
                 <section class="mb-12">
                     <div class="bg-gradient-to-r from-[var(--color-agro-green-bg)] to-[var(--color-agro-green-light)]/30 p-8 rounded-xl border border-[var(--color-agro-green)]/20">
-                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">🚜 Control Total de tu Maquinaria</h3>
+                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('🚜 Control Total de tu Maquinaria') }}</h3>
                         <p class="text-gray-700 mb-6">
-                            Registra equipos, controla horas y optimiza costes. <strong>3 meses gratis</strong>.
+                            Registra equipos, controla horas y optimiza costes. <strong>{{ __('3 meses gratis') }}</strong>.
                         </p>
                         <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:shadow-lg transition-all font-semibold">
                             Comenzar Gratis
@@ -123,27 +121,27 @@
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Preguntas Frecuentes</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Preguntas Frecuentes') }}</h2>
                     <div class="space-y-6">
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Qué datos debo registrar de cada máquina?</h3>
-                            <p class="text-gray-700">Matrícula, potencia, marca, modelo, fecha de compra, ITV, seguro y ROMA si aplica. También puedes subir fotos y documentos.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Qué datos debo registrar de cada máquina?') }}</h3>
+                            <p class="text-gray-700">{{ __('Matrícula, potencia, marca, modelo, fecha de compra, ITV, seguro y ROMA si aplica. También puedes subir fotos y documentos.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Cómo configuro las alertas de mantenimiento?</h3>
-                            <p class="text-gray-700">Indica las horas de intervalo para cada tipo de mantenimiento (cambio aceite, filtros, etc). El sistema te avisará cuando se cumplan.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Cómo configuro las alertas de mantenimiento?') }}</h3>
+                            <p class="text-gray-700">{{ __('Indica las horas de intervalo para cada tipo de mantenimiento (cambio aceite, filtros, etc). El sistema te avisará cuando se cumplan.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Puedo registrar maquinaria alquilada?</h3>
-                            <p class="text-gray-700">Sí, puedes indicar si la maquinaria es propia, alquilada o de un servicio externo. Esto afecta al cálculo de costes.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Puedo registrar maquinaria alquilada?') }}</h3>
+                            <p class="text-gray-700">{{ __('Sí, puedes indicar si la maquinaria es propia, alquilada o de un servicio externo. Esto afecta al cálculo de costes.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Es necesario para inspecciones PAC?</h3>
-                            <p class="text-gray-700">Sí, las inspecciones pueden requerir documentación de la maquinaria usada en tratamientos fitosanitarios como atomizadores.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Es necesario para inspecciones PAC?') }}</h3>
+                            <p class="text-gray-700">{{ __('Sí, las inspecciones pueden requerir documentación de la maquinaria usada en tratamientos fitosanitarios como atomizadores.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Se calcula el coste por hectárea automáticamente?</h3>
-                            <p class="text-gray-700">Sí, dividiendo el coste horario entre las hectáreas trabajadas según el consumo y horas registradas.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Se calcula el coste por hectárea automáticamente?') }}</h3>
+                            <p class="text-gray-700">{{ __('Sí, dividiendo el coste horario entre las hectáreas trabajadas según el consumo y horas registradas.') }}</p>
                         </div>
                     </div>
                 </section>

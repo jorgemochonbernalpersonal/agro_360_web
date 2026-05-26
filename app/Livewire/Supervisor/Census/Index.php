@@ -71,7 +71,7 @@ class Index extends Component
             ['assigned_by' => Auth::id()]
         );
 
-        $this->dispatch('toast', message: "{$winery->name} adscrita a la denominación.", type: 'success');
+        $this->dispatch('toast', message: __(':name adscrita a la denominación.', ['name' => $winery->name]), type: 'success');
     }
 
     public function unassignWinery(int $wineryId): void
@@ -81,7 +81,7 @@ class Index extends Component
             ->firstOrFail()
             ->delete();
 
-        $this->dispatch('toast', message: 'Bodega desadscrita de la denominación.', type: 'warning');
+        $this->dispatch('toast', message: __('Bodega desadscrita de la denominación.'), type: 'warning');
     }
 
     #[Layout('layouts.app')]

@@ -16,25 +16,25 @@ class Index extends Component
     public function markRead(string $id): void
     {
         Auth::user()->notifications()->where('id', $id)->update(['read_at' => now()]);
-        $this->toastSuccess('Notificación marcada como leída.');
+        $this->toastSuccess(__('Notificación marcada como leída.'));
     }
 
     public function markAllRead(): void
     {
         Auth::user()->unreadNotifications()->update(['read_at' => now()]);
-        $this->toastSuccess('Todas las notificaciones marcadas como leídas.');
+        $this->toastSuccess(__('Todas las notificaciones marcadas como leídas.'));
     }
 
     public function delete(string $id): void
     {
         Auth::user()->notifications()->where('id', $id)->delete();
-        $this->toastSuccess('Notificación eliminada.');
+        $this->toastSuccess(__('Notificación eliminada.'));
     }
 
     public function clearAll(): void
     {
         Auth::user()->notifications()->delete();
-        $this->toastSuccess('Historial de notificaciones eliminado.');
+        $this->toastSuccess(__('Historial de notificaciones eliminado.'));
     }
 
     public function updatedFilter(): void

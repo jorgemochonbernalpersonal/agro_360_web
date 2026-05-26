@@ -40,11 +40,11 @@ class Index extends AbstractIndex
     {
         $record = $this->findOwned(HarvestDeclaration::class, $id);
         if (! $record->isDraft()) {
-            $this->toastError('Solo se pueden eliminar declaraciones en borrador.');
+            $this->toastError(__('Solo se pueden eliminar declaraciones en borrador.'));
             return;
         }
         $record->delete();
-        $this->toastSuccess('Declaración eliminada.');
+        $this->toastSuccess(__('Declaración eliminada.'));
     }
 
     public function markSubmitted(int $id): void
@@ -54,13 +54,13 @@ class Index extends AbstractIndex
             'status'          => 'submitted',
             'submission_date' => now()->toDateString(),
         ]);
-        $this->toastSuccess('Declaración marcada como presentada.');
+        $this->toastSuccess(__('Declaración marcada como presentada.'));
     }
 
     public function markAccepted(int $id): void
     {
         $this->findOwned(HarvestDeclaration::class, $id)->update(['status' => 'accepted']);
-        $this->toastSuccess('Declaración marcada como aceptada.');
+        $this->toastSuccess(__('Declaración marcada como aceptada.'));
     }
 
     protected function baseQuery(): Builder

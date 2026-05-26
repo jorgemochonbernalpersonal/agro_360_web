@@ -53,7 +53,7 @@
                 <div class="flex items-center gap-3">
                     <a href="{{ url('/') }}" class="flex items-center gap-3">
                         <img src="{{ asset('images/logo.png') }}" alt="Agro365" width="120" height="40" loading="eager" fetchpriority="high" decoding="async" class="h-10 w-auto">
-                        <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">Agro365</span>
+                        <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Agro365') }}</span>
                     </a>
                 </div>
                 <div class="flex items-center gap-4">
@@ -83,23 +83,19 @@
                 <nav class="mb-8 text-sm text-zinc-500" itemscope itemtype="https://schema.org/BreadcrumbList">
                     <ol class="flex items-center space-x-2">
                         <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                            <a href="{{ url('/') }}" class="hover:text-[var(--color-agro-green)]" itemprop="item"><span itemprop="name">Inicio</span></a>
+                            <a href="{{ url('/') }}" class="hover:text-[var(--color-agro-green)]" itemprop="item"><span itemprop="name">{{ __('Inicio') }}</span></a>
                             <meta itemprop="position" content="1" />
                         </li>
                         <span class="mx-2">/</span>
                         <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                            <span class="text-zinc-900 font-medium" itemprop="name">Software para Bodegas</span>
+                            <span class="text-zinc-900 font-medium" itemprop="name">{{ __('Software para Bodegas') }}</span>
                             <meta itemprop="position" content="2" />
                         </li>
                     </ol>
                 </nav>
 
-                <h1 class="text-4xl lg:text-5xl font-bold text-[var(--color-agro-green-dark)] mb-6">
-                    Software para Bodegas Profesionales
-                </h1>
-                <p class="text-xl text-zinc-600 leading-relaxed">
-                    Control total desde la recepción de uva hasta el embotellado. Trazabilidad integral, gestión de depósitos, control de calidad y cumplimiento normativo para Denominaciones de Origen.
-                </p>
+                <h1 class="text-4xl lg:text-5xl font-bold text-[var(--color-agro-green-dark)] mb-6">{{ __('Software para Bodegas Profesionales') }}</h1>
+                <p class="text-xl text-zinc-600 leading-relaxed">{{ __('Control total desde la recepción de uva hasta el embotellado. Trazabilidad integral, gestión de depósitos, control de calidad y cumplimiento normativo para Denominaciones de Origen.') }}</p>
             </div>
         </section>
 
@@ -110,19 +106,15 @@
 
                     <!-- La transformación digital -->
                     <div class="mb-12">
-                        <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">La Transformación Digital de tu Bodega</h2>
-                        <p class="text-zinc-700 leading-relaxed mb-4">
-                            En una bodega, la información es tan valiosa como el vino. Agro365 te permite digitalizar todos los procesos críticos de tu bodega, garantizando una trazabilidad perfecta que aporta valor y seguridad a tu marca.
-                        </p>
-                        <p class="text-zinc-700 leading-relaxed">
-                            Nuestra plataforma conecta el campo con la bodega, integrando los datos de vendimia directamente en tu sistema de gestión de producción.
-                        </p>
+                        <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('La Transformación Digital de tu Bodega') }}</h2>
+                        <p class="text-zinc-700 leading-relaxed mb-4">{{ __('En una bodega, la información es tan valiosa como el vino. Agro365 te permite digitalizar todos los procesos críticos de tu bodega, garantizando una trazabilidad perfecta que aporta valor y seguridad a tu marca.') }}</p>
+                        <p class="text-zinc-700 leading-relaxed">{{ __('Nuestra plataforma conecta el campo con la bodega, integrando los datos de vendimia directamente en tu sistema de gestión de producción.') }}</p>
                     </div>
 
                     <!-- Vendimia y campo -->
                     <div class="mb-12 not-prose">
-                        <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-2">Desde el campo hasta la cuba</h2>
-                        <p class="text-zinc-600 mb-6 leading-relaxed">Todo empieza en el viñedo. Agro365 conecta el cuaderno de campo de tus viticultores con el sistema de recepción de tu bodega — sin llamadas, sin papel, sin duplicidades.</p>
+                        <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-2">{{ __('Desde el campo hasta la cuba') }}</h2>
+                        <p class="text-zinc-600 mb-6 leading-relaxed">{{ __('Todo empieza en el viñedo. Agro365 conecta el cuaderno de campo de tus viticultores con el sistema de recepción de tu bodega — sin llamadas, sin papel, sin duplicidades.') }}</p>
                         <div class="grid md:grid-cols-2 gap-6">
                             @php $features1 = [
                                 ['📥', 'Recepción y Pesaje', 'Registra entradas de uva por socio o parcela: grados baumé, estado sanitario, remolque, hora de entrada. Ticket de pesaje imprimible desde el momento uno.'],
@@ -141,8 +133,8 @@
 
                     <!-- Bodega y elaboración -->
                     <div class="mb-12 not-prose">
-                        <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-2">Gestión completa de bodega</h2>
-                        <p class="text-zinc-600 mb-6 leading-relaxed">Depósitos, trasiegos, aditivos, mantenimiento de envases y control de residuos. Todo en un solo panel, con trazabilidad lote a lote.</p>
+                        <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-2">{{ __('Gestión completa de bodega') }}</h2>
+                        <p class="text-zinc-600 mb-6 leading-relaxed">{{ __('Depósitos, trasiegos, aditivos, mantenimiento de envases y control de residuos. Todo en un solo panel, con trazabilidad lote a lote.') }}</p>
                         <div class="grid md:grid-cols-2 gap-6">
                             @php $features2 = [
                                 ['🏭', 'Depósitos y Envases', 'Control visual de todo tu parque de depósitos: inventario en tiempo real, volumen actual, movimientos entre envases y estado de cada cuba.'],
@@ -163,8 +155,8 @@
 
                     <!-- Administración y normativa -->
                     <div class="mb-12 not-prose">
-                        <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-2">Administración, facturación y cumplimiento</h2>
-                        <p class="text-zinc-600 mb-6 leading-relaxed">La parte que nadie quiere hacer pero que hay que hacer bien. Agro365 la automatiza.</p>
+                        <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-2">{{ __('Administración, facturación y cumplimiento') }}</h2>
+                        <p class="text-zinc-600 mb-6 leading-relaxed">{{ __('La parte que nadie quiere hacer pero que hay que hacer bien. Agro365 la automatiza.') }}</p>
                         <div class="grid md:grid-cols-2 gap-6">
                             @php $features3 = [
                                 ['📄', 'Libros de Bodega e Informes Oficiales', 'Genera los libros de registro obligatorios y las declaraciones AICA e INFOVI automáticamente, con todos los datos ya introducidos en la plataforma.'],
@@ -183,26 +175,24 @@
 
                     <!-- Conecta con tus viticultores -->
                     <div class="mb-12 not-prose">
-                        <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Conecta con tus Viticultores Proveedores</h2>
-                        <p class="text-zinc-700 leading-relaxed mb-6">
-                            El diferenciador clave de Agro365 es el ecosistema. Invita a tus viticultores proveedores con un enlace simple: ellos acceden a su cuaderno de campo gratis, y tú ves sus datos en tiempo real en tu panel de bodega. Sin fricciones, sin negociaciones.
-                        </p>
+                        <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Conecta con tus Viticultores Proveedores') }}</h2>
+                        <p class="text-zinc-700 leading-relaxed mb-6">{{ __('El diferenciador clave de Agro365 es el ecosistema. Invita a tus viticultores proveedores con un enlace simple: ellos acceden a su cuaderno de campo gratis, y tú ves sus datos en tiempo real en tu panel de bodega. Sin fricciones, sin negociaciones.') }}</p>
                         <div class="bg-[var(--color-agro-green-bg)] rounded-2xl p-8 border border-[var(--color-agro-green-light)]/30">
                             <div class="grid md:grid-cols-3 gap-6 text-center">
                                 <div>
                                     <div class="text-3xl mb-2">📨</div>
-                                    <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-1">Invita con un enlace</h3>
-                                    <p class="text-zinc-600 text-sm">El viticultor se registra en menos de 5 minutos. Sin instalaciones, sin contratos por su parte.</p>
+                                    <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-1">{{ __('Invita con un enlace') }}</h3>
+                                    <p class="text-zinc-600 text-sm">{{ __('El viticultor se registra en menos de 5 minutos. Sin instalaciones, sin contratos por su parte.') }}</p>
                                 </div>
                                 <div>
                                     <div class="text-3xl mb-2">🌿</div>
-                                    <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-1">Ellos acceden gratis</h3>
-                                    <p class="text-zinc-600 text-sm">Cuaderno de campo básico sin coste. Si quieren funciones avanzadas, pagan 9€/mes por su cuenta — no es tu problema.</p>
+                                    <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-1">{{ __('Ellos acceden gratis') }}</h3>
+                                    <p class="text-zinc-600 text-sm">{{ __('Cuaderno de campo básico sin coste. Si quieren funciones avanzadas, pagan 9€/mes por su cuenta — no es tu problema.') }}</p>
                                 </div>
                                 <div>
                                     <div class="text-3xl mb-2">📊</div>
-                                    <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-1">Tú ves todo en tiempo real</h3>
-                                    <p class="text-zinc-600 text-sm">Parcelas, tratamientos, rendimientos estimados y datos de campaña de todos tus proveedores, sin pedirles nada por teléfono.</p>
+                                    <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-1">{{ __('Tú ves todo en tiempo real') }}</h3>
+                                    <p class="text-zinc-600 text-sm">{{ __('Parcelas, tratamientos, rendimientos estimados y datos de campaña de todos tus proveedores, sin pedirles nada por teléfono.') }}</p>
                                 </div>
                             </div>
                         </div>
@@ -210,8 +200,8 @@
 
                     <!-- Próximamente -->
                     <div class="mb-12 not-prose">
-                        <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-2">En desarrollo</h2>
-                        <p class="text-zinc-600 mb-6 leading-relaxed">Estas funcionalidades están en hoja de ruta confirmada para 2025–2026.</p>
+                        <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-2">{{ __('En desarrollo') }}</h2>
+                        <p class="text-zinc-600 mb-6 leading-relaxed">{{ __('Estas funcionalidades están en hoja de ruta confirmada para 2025–2026.') }}</p>
                         <div class="grid md:grid-cols-3 gap-4">
                             @php $roadmap = [
                                 ['🔬', 'Análisis de laboratorio', 'Registro de analíticas enológicas — acidez, pH, azúcares residuales — vinculadas a cada depósito o lote.'],
@@ -225,7 +215,7 @@
                             <div class="bg-zinc-50 p-5 rounded-xl border border-zinc-200 border-dashed">
                                 <div class="flex items-center gap-2 mb-2">
                                     <span class="text-xl">{{ $icon }}</span>
-                                    <span class="inline-block px-2 py-0.5 text-xs font-bold rounded-full bg-blue-100 text-blue-700">Próximamente</span>
+                                    <span class="inline-block px-2 py-0.5 text-xs font-bold rounded-full bg-blue-100 text-blue-700">{{ __('Próximamente') }}</span>
                                 </div>
                                 <h3 class="font-bold text-zinc-800 mb-1 text-sm">{{ $title }}</h3>
                                 <p class="text-zinc-500 text-xs leading-relaxed">{{ $desc }}</p>
@@ -236,16 +226,14 @@
 
                     <!-- Seguridad normativa -->
                     <div class="mb-12">
-                        <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Seguridad y Rigor Normativo</h2>
-                        <p class="text-zinc-700 leading-relaxed mb-4">
-                            AICA, INFOVI, libros de bodega — Agro365 los genera automáticamente. Lo que antes llevaba días, ahora son minutos.
-                        </p>
+                        <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Seguridad y Rigor Normativo') }}</h2>
+                        <p class="text-zinc-700 leading-relaxed mb-4">{{ __('AICA, INFOVI, libros de bodega — Agro365 los genera automáticamente. Lo que antes llevaba días, ahora son minutos.') }}</p>
                         <div class="bg-zinc-50 rounded-xl p-6 border border-zinc-200 not-prose">
                             <div class="flex items-center gap-4">
                                 <div class="text-4xl">⚡</div>
                                 <div>
-                                    <p class="font-bold text-zinc-800 text-lg">Optimización de Procesos</p>
-                                    <p class="text-zinc-500 text-sm">Los usuarios de Agro365 reportan una significativa reducción en el tiempo dedicado a la gestión administrativa de la trazabilidad.</p>
+                                    <p class="font-bold text-zinc-800 text-lg">{{ __('Optimización de Procesos') }}</p>
+                                    <p class="text-zinc-500 text-sm">{{ __('Los usuarios de Agro365 reportan una significativa reducción en el tiempo dedicado a la gestión administrativa de la trazabilidad.') }}</p>
                                 </div>
                             </div>
                         </div>
@@ -258,17 +246,17 @@
         <!-- Precios -->
         <section class="py-12 bg-zinc-50">
             <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-2">Precios para Bodegas</h2>
-                <p class="text-zinc-600 mb-8">Dos situaciones, dos precios. Sin letra pequeña.</p>
+                <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-2">{{ __('Precios para Bodegas') }}</h2>
+                <p class="text-zinc-600 mb-8">{{ __('Dos situaciones, dos precios. Sin letra pequeña.') }}</p>
                 <div class="grid md:grid-cols-2 gap-6">
 
                     <!-- Bodega en DO -->
                     <div class="bg-white rounded-2xl p-8 border-2 border-amber-200 shadow-sm">
                         <div class="text-3xl mb-3">🏛️</div>
-                        <h3 class="text-xl font-bold text-zinc-800 mb-1">Bodega dentro de una DO</h3>
-                        <p class="text-zinc-500 text-sm mb-4">Si tu Denominación de Origen tiene contrato con Agro365, tu acceso está cubierto.</p>
+                        <h3 class="text-xl font-bold text-zinc-800 mb-1">{{ __('Bodega dentro de una DO') }}</h3>
+                        <p class="text-zinc-500 text-sm mb-4">{{ __('Si tu Denominación de Origen tiene contrato con Agro365, tu acceso está cubierto.') }}</p>
                         <div class="text-4xl font-bold text-amber-700 mb-1">Gratis</div>
-                        <p class="text-zinc-500 text-sm mb-6">Cubierta por el paquete de tu Denominación de Origen.</p>
+                        <p class="text-zinc-500 text-sm mb-6">{{ __('Cubierta por el paquete de tu Denominación de Origen.') }}</p>
                         <ul class="space-y-2 text-sm text-zinc-600">
                             @foreach(['Acceso completo a todas las funcionalidades', 'Soporte incluido en el paquete DO', 'Sin cuota individual'] as $item)
                             <li class="flex items-center gap-2">
@@ -290,13 +278,13 @@
                             </div>
                         </div>
                         <div class="text-3xl mb-3 pt-4">🍷</div>
-                        <h3 class="text-xl font-bold text-zinc-800 mb-1">Bodega independiente</h3>
-                        <p class="text-zinc-500 text-sm mb-4">Sin DO o con DO que aún no está en Agro365.</p>
+                        <h3 class="text-xl font-bold text-zinc-800 mb-1">{{ __('Bodega independiente') }}</h3>
+                        <p class="text-zinc-500 text-sm mb-4">{{ __('Sin DO o con DO que aún no está en Agro365.') }}</p>
                         <div class="flex items-end gap-1 mb-1">
                             <span class="text-4xl font-bold text-red-700">14€</span>
                             <span class="text-zinc-500 mb-1">/mes</span>
                         </div>
-                        <p class="text-zinc-500 text-sm mb-6">o <strong>130€/año</strong> · Onboarding personalizado incluido.</p>
+                        <p class="text-zinc-500 text-sm mb-6">o <strong>{{ __('130€/año') }}</strong> · Onboarding personalizado incluido.</p>
                         <ul class="space-y-2 text-sm text-zinc-600">
                             @foreach([
                                 'Gestión completa de vendimia y producción',
@@ -317,7 +305,7 @@
                         <a href="{{ route('register') }}" class="mt-6 block text-center px-6 py-3 rounded-xl bg-gradient-to-r from-red-600 to-red-500 text-white hover:from-red-700 hover:to-red-600 transition-all font-bold shadow-lg">
                             Empezar Gratis — Bodega
                         </a>
-                        <p class="text-center text-xs text-zinc-400 mt-2">Sin tarjeta requerida · Cancela cuando quieras</p>
+                        <p class="text-center text-xs text-zinc-400 mt-2">{{ __('Sin tarjeta requerida · Cancela cuando quieras') }}</p>
                     </div>
 
                 </div>
@@ -332,13 +320,9 @@
         <!-- CTA final -->
         <section class="py-16 bg-gradient-to-br from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)]">
             <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <h2 class="text-3xl lg:text-4xl font-bold text-white mb-4">
-                    Lleva tu bodega al siguiente nivel
-                </h2>
-                <p class="text-green-100 text-lg mb-2">
-                    Desde 14€/mes · 3 meses gratis · Sin tarjeta
-                </p>
-                <p class="text-green-200/70 text-sm mb-8">Prueba gratuita de 3 meses para las primeras 50 bodegas. Onboarding personalizado incluido.</p>
+                <h2 class="text-3xl lg:text-4xl font-bold text-white mb-4">{{ __('Lleva tu bodega al siguiente nivel') }}</h2>
+                <p class="text-green-100 text-lg mb-2">{{ __('Desde 14€/mes · 3 meses gratis · Sin tarjeta') }}</p>
+                <p class="text-green-200/70 text-sm mb-8">{{ __('Prueba gratuita de 3 meses para las primeras 50 bodegas. Onboarding personalizado incluido.') }}</p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
                     <a href="{{ route('register') }}" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-white text-[var(--color-agro-green-dark)] hover:bg-green-50 transition-all font-bold text-lg shadow-lg">
                         Empezar Gratis — 3 meses sin coste

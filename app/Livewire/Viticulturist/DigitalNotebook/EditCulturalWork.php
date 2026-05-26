@@ -92,11 +92,11 @@ class EditCulturalWork extends AbstractActivityForm
                 ]);
             });
 
-            $this->toastSuccess('Labor cultural actualizada correctamente.');
+            $this->toastSuccess(__('Labor cultural actualizada correctamente.'));
             return $this->viticulturistRoleRedirect('digital-notebook.cultural.index');
         } catch (\Exception $e) {
             \Log::error('Error al actualizar labor cultural', ['error' => $e->getMessage(), 'user_id' => Auth::id(), 'activity_id' => $this->activity->id]);
-            $this->toastError('Error al actualizar la labor cultural. Por favor, intenta de nuevo.');
+            $this->toastError(__('Error al actualizar la labor cultural. Por favor, intenta de nuevo.'));
         }
     }
 
@@ -105,6 +105,6 @@ class EditCulturalWork extends AbstractActivityForm
     public function render()
     {
         return view('livewire.viticulturist.digital-notebook.edit-cultural-work', $this->renderData())
-            ->layout('layouts.app', ['title' => 'Editar Labor Cultural - Agro365']);
+            ->layout('layouts.app', ['title' => __('Editar Labor Cultural - Agro365')]);
     }
 }

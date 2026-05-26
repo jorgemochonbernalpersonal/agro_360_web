@@ -168,11 +168,11 @@ class CreatePhytosanitaryTreatment extends AbstractActivityForm
                 ]);
             });
 
-            $this->toastSuccess('Tratamiento fitosanitario registrado correctamente.');
+            $this->toastSuccess(__('Tratamiento fitosanitario registrado correctamente.'));
             return $this->viticulturistRoleRedirect('digital-notebook.treatment.index');
         } catch (\Exception $e) {
             \Log::error('Error al registrar tratamiento fitosanitario', ['error' => $e->getMessage(), 'user_id' => Auth::id()]);
-            $this->toastError('Error al registrar el tratamiento fitosanitario. Por favor, intenta de nuevo.');
+            $this->toastError(__('Error al registrar el tratamiento fitosanitario. Por favor, intenta de nuevo.'));
         }
     }
 

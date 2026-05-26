@@ -61,7 +61,7 @@
         </div>
 
         <h1>{{ __('¡Email verificado!') }}</h1>
-        <p>{{ __('Tu cuenta de') }} <span class="highlight">Agro365</span> {{ __('está activada.') }}</p>
+        <p>{{ __('Tu cuenta de') }} <span class="highlight">{{ __('Agro365') }}</span> {{ __('está activada.') }}</p>
         <p>{{ __('Ya puedes iniciar sesión desde la app.') }}</p>
 
         <hr class="divider">

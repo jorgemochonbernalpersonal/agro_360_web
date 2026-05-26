@@ -9,17 +9,15 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
                         </svg>
                     </div>
-                    <span class="text-xl font-bold">Agro365</span>
+                    <span class="text-xl font-bold">{{ __('Agro365') }}</span>
                 </div>
-                <p class="text-white/70 mb-4 text-sm">
-                    La plataforma que conecta viticultores, bodegas y Denominaciones de Origen en España.
-                    Cuaderno de campo digital obligatorio 2027.
-                </p>
+                <p class="text-white/70 mb-4 text-sm">{{ __('La plataforma que conecta viticultores, bodegas y Denominaciones de Origen en España.
+                    Cuaderno de campo digital obligatorio 2027.') }}</p>
                 <div class="flex items-center gap-2 text-white/60 text-sm mb-2">
                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
                     </svg>
-                    <span>España</span>
+                    <span>{{ __('España') }}</span>
                 </div>
                 <a href="tel:+34684217167" class="flex items-center gap-2 text-white/80 hover:text-white text-sm transition-colors mb-2">
                     <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -52,7 +50,7 @@
             
             <!-- Producto -->
             <div>
-                <h4 class="font-semibold text-lg mb-4">Producto</h4>
+                <h4 class="font-semibold text-lg mb-4">{{ __('Producto') }}</h4>
                 <ul class="space-y-2 text-white/70 text-sm">
                     <li><a href="{{ content_route('content.software-viticultura') }}" class="hover:text-white transition-colors">Software Viticultura</a></li>
                     <li><a href="{{ content_route('content.cuaderno-digital') }}" class="hover:text-white transition-colors">Cuaderno Digital</a></li>
@@ -66,7 +64,7 @@
 
             <!-- Sectores -->
             <div>
-                <h4 class="font-semibold text-lg mb-4">Sectores</h4>
+                <h4 class="font-semibold text-lg mb-4">{{ __('Sectores') }}</h4>
                 <ul class="space-y-2 text-white/70 text-sm">
                     <li><a href="{{ content_route('content.viticultores') }}" class="hover:text-white transition-colors">Viticultores</a></li>
                     <li><a href="{{ content_route('content.software-bodegas') }}" class="hover:text-white transition-colors">Bodegas</a></li>
@@ -79,7 +77,7 @@
             
             <!-- Regiones -->
             <div>
-                <h4 class="font-semibold text-lg mb-4">Regiones</h4>
+                <h4 class="font-semibold text-lg mb-4">{{ __('Regiones') }}</h4>
                 <ul class="space-y-2 text-white/70 text-sm">
                     <li><a href="{{ content_route('content.viticultores-rioja') }}" class="hover:text-white transition-colors">DOCa Rioja</a></li>
                     <li><a href="{{ content_route('content.viticultores-ribera') }}" class="hover:text-white transition-colors">Ribera del Duero</a></li>
@@ -95,15 +93,13 @@
             
             <!-- Recursos & Legal -->
             <div>
-                <h4 class="font-semibold text-lg mb-4">Contacto</h4>
-                <p class="text-white/70 text-sm mb-4">
-                    ¿Dudas? Escríbenos:
-                </p>
+                <h4 class="font-semibold text-lg mb-4">{{ __('Contacto') }}</h4>
+                <p class="text-white/70 text-sm mb-4">{{ __('¿Dudas? Escríbenos:') }}</p>
                 <a href="mailto:{{ config('app.legal_contact_email', 'info@agro365.es') }}" class="text-white font-medium hover:underline transition-colors">
                     {{ config('app.legal_contact_email', 'info@agro365.es') }}
                 </a>
                 
-                <h4 class="font-semibold text-lg mb-4 mt-6">Recursos</h4>
+                <h4 class="font-semibold text-lg mb-4 mt-6">{{ __('Recursos') }}</h4>
                 <ul class="space-y-2 text-white/70 text-sm mb-6">
                     <li><a href="{{ url('/precios') }}" class="hover:text-white transition-colors">Precios</a></li>
                     <li><a href="{{ route('faqs') }}" class="hover:text-white transition-colors">Preguntas Frecuentes</a></li>
@@ -113,7 +109,7 @@
                     <li><a href="{{ content_route('content.informes-oficiales') }}" class="hover:text-white transition-colors">Informes Oficiales</a></li>
                 </ul>
                 
-                <h4 class="font-semibold text-lg mb-4">Legal</h4>
+                <h4 class="font-semibold text-lg mb-4">{{ __('Legal') }}</h4>
                 <ul class="space-y-2 text-white/70 text-sm">
                     <li><a href="{{ route('aviso-legal') }}" class="hover:text-white transition-colors">Aviso Legal</a></li>
                     <li><a href="{{ route('privacy') }}" class="hover:text-white transition-colors">Privacidad</a></li>
@@ -132,15 +128,13 @@
                         <span class="text-white/50"> · Titular: {{ config('app.legal_owner_name') }}</span>
                     @endif
                 </p>
-                <p class="text-white/50">
-                    Software para viticultores, bodegas y Denominaciones de Origen
-                </p>
+                <p class="text-white/50">{{ __('Software para viticultores, bodegas y Denominaciones de Origen') }}</p>
             </div>
             
             <!-- SEO Keywords Footer -->
             <div class="mt-6 pt-6 border-t border-white/10">
                 <p class="text-white/40 text-xs text-center leading-relaxed">
-                    <strong class="text-white/50">Agro365</strong> — Software de gestión agrícola para viticultores, bodegas y Denominaciones de Origen en España · Cuaderno de campo digital obligatorio 2027 · Gestión de parcelas SIGPAC · Teledetección NDVI para viñedos · Facturación Verifactu integrada · Informes oficiales con firma electrónica SHA-256 · Dashboard de cumplimiento PAC · Trazabilidad vitivinícola completa del viñedo a la botella · Gestión de vendimia y contenedores · Libros de bodega, AICA e INFOVI · Denominaciones de Origen · Digitalización agrícola España
+                    <strong class="text-white/50">{{ __('Agro365') }}</strong> — Software de gestión agrícola para viticultores, bodegas y Denominaciones de Origen en España · Cuaderno de campo digital obligatorio 2027 · Gestión de parcelas SIGPAC · Teledetección NDVI para viñedos · Facturación Verifactu integrada · Informes oficiales con firma electrónica SHA-256 · Dashboard de cumplimiento PAC · Trazabilidad vitivinícola completa del viñedo a la botella · Gestión de vendimia y contenedores · Libros de bodega, AICA e INFOVI · Denominaciones de Origen · Digitalización agrícola España
                 </p>
             </div>
         </div>

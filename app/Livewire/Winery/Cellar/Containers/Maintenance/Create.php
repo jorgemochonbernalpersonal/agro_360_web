@@ -141,7 +141,7 @@ class Create extends Component
             ]);
         }
 
-        $this->toastSuccess('Mantenimiento registrado correctamente.');
+        $this->toastSuccess(__('Mantenimiento registrado correctamente.'));
         $this->roleRedirect('containers.maintenance.index', $this->container);
     }
 

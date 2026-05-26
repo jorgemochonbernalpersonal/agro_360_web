@@ -55,7 +55,7 @@ class AdvancedAnalysisCard extends Component
 
             $this->dispatch('notify', [
                 'type' => 'success',
-                'message' => 'Análisis actualizado correctamente',
+                'message' => __('Análisis actualizado correctamente'),
             ]);
 
         } catch (\Exception $e) {
@@ -63,7 +63,7 @@ class AdvancedAnalysisCard extends Component
             
             $this->dispatch('notify', [
                 'type' => 'error',
-                'message' => 'Error al actualizar el análisis',
+                'message' => __('Error al actualizar el análisis'),
             ]);
         } finally {
             $this->loading = false;

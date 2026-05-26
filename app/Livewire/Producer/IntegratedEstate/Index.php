@@ -55,8 +55,8 @@ class Index extends Component
             'plots'     => $this->plots,
             'data'      => $data,
         ])->layout('layouts.app', [
-            'title'       => 'Panel de Finca Integral',
-            'description' => 'Vista unificada de parcelas, plantaciones, fenología y actividades',
+            'title'       => __('Panel de Finca Integral'),
+            'description' => __('Vista unificada de parcelas, plantaciones, fenología y actividades'),
         ]);
     }
 

@@ -35,9 +35,9 @@ class GrapePurchaseInvoiceIssuedNotification extends Notification implements Sho
         $winery  = $invoice->user?->name ?? '—';
 
         return (new MailMessage)
-            ->subject('Nueva liquidación de vendimia — ' . $invoice->invoice_number)
-            ->greeting('Hola ' . ($notifiable->name ?: ''))
-            ->line('La bodega **' . $winery . '** ha emitido una liquidación de vendimia a tu nombre.')
+            ->subject(__('Nueva liquidación de vendimia — :number', ['number' => $invoice->invoice_number]))
+            ->greeting(__('Hola :name', ['name' => $notifiable->name ?: '']))
+            ->line(__('La bodega **:winery** ha emitido una liquidación de vendimia a tu nombre.', ['winery' => $winery]))
             ->line(new HtmlString(
                 '<div style="background-color:#f0fdf4;border:1px solid #bbf7d0;padding:16px;border-radius:8px;margin:16px 0;">
                     <p style="margin:0 0 8px 0;"><strong>Nº Liquidación:</strong> ' . e($invoice->invoice_number) . '</p>
@@ -48,8 +48,8 @@ class GrapePurchaseInvoiceIssuedNotification extends Notification implements Sho
                     <p style="margin:0;font-size:18px;font-weight:bold;color:#166534;">A cobrar: ' . number_format((float) $invoice->total_amount, 2) . ' €</p>
                  </div>'
             ))
-            ->action('Ver mis liquidaciones', AppLink::url(route('viticulturist.invoices.grape-purchase.index'), 'agro365://invoices'))
-            ->salutation("Saludos,\nAgro365");
+            ->action(__('Ver mis liquidaciones'), AppLink::url(route('viticulturist.invoices.grape-purchase.index'), 'agro365://invoices'))
+            ->salutation(__('Saludos,\nAgro365'));
     }
 
     public function toArray(object $notifiable): array

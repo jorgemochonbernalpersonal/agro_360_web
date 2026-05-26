@@ -26,7 +26,7 @@ class Index extends Component
     {
         $job = DB::table('failed_jobs')->where('id', $id)->first();
         if (!$job) {
-            $this->toastError('Job no encontrado.');
+            $this->toastError(__('Job no encontrado.'));
             return;
         }
 
@@ -48,9 +48,9 @@ class Index extends Component
                 'queue'    => $job->queue,
             ]);
 
-            $this->toastSuccess('Job reencolado correctamente.');
+            $this->toastSuccess(__('Job reencolado correctamente.'));
         } catch (\Throwable $e) {
-            $this->toastError('Error al reintentar el job.');
+            $this->toastError(__('Error al reintentar el job.'));
         }
     }
 
@@ -58,9 +58,9 @@ class Index extends Component
     {
         $deleted = DB::table('failed_jobs')->where('id', $id)->delete();
         if ($deleted) {
-            $this->toastSuccess('Job eliminado.');
+            $this->toastSuccess(__('Job eliminado.'));
         } else {
-            $this->toastError('Job no encontrado.');
+            $this->toastError(__('Job no encontrado.'));
         }
     }
 
@@ -69,7 +69,7 @@ class Index extends Component
         $jobs = DB::table('failed_jobs')->get();
 
         if ($jobs->isEmpty()) {
-            $this->toastError('No hay jobs fallidos que reintentar.');
+            $this->toastError(__('No hay jobs fallidos que reintentar.'));
             return;
         }
 
@@ -98,7 +98,7 @@ class Index extends Component
         $count = DB::table('failed_jobs')->count();
 
         if ($count === 0) {
-            $this->toastError('No hay jobs fallidos.');
+            $this->toastError(__('No hay jobs fallidos.'));
             return;
         }
 
@@ -130,8 +130,8 @@ class Index extends Component
 
         return view('livewire.admin.failed-jobs.index', compact('jobs', 'totalCount'))
             ->layout('layouts.app', [
-                'title'       => 'Jobs Fallidos - Admin - Agro365',
-                'description' => 'Monitor y gestión de jobs fallidos de la cola de trabajos',
+                'title'       => __('Jobs Fallidos - Admin - Agro365'),
+                'description' => __('Monitor y gestión de jobs fallidos de la cola de trabajos'),
             ]);
     }
 }

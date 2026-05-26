@@ -1,5 +1,5 @@
 <div class="space-y-6 animate-fade-in">
-    <x-agro.page-header title="Productos" description="Gestiona tu catálogo de productos y stock para facturar a clientes" />
+    <x-agro.page-header title="{{ __('Productos') }}" :description="__('Gestiona tu catálogo de productos y stock para facturar a clientes')" />
 
     {{-- Tabs --}}
     <x-agro.tabs :tabs="[
@@ -9,21 +9,19 @@
 
     {{-- Toolbar: search + tipo + nuevo producto --}}
     <div class="flex items-center gap-3">
-        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar por nombre..." />
+        <x-agro.search-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar por nombre...')" />
 
         <flux:select wire:model.live="typeFilter" size="sm" class="w-44">
-            <flux:select.option value="">Todos los tipos</flux:select.option>
-            <flux:select.option value="tinto">Tinto</flux:select.option>
-            <flux:select.option value="blanco">Blanco</flux:select.option>
-            <flux:select.option value="rosado">Rosado</flux:select.option>
-            <flux:select.option value="espumoso">Espumoso</flux:select.option>
-            <flux:select.option value="otro">Otro</flux:select.option>
+            <flux:select.option value="">{{ __('Todos los tipos') }}</flux:select.option>
+            <flux:select.option value="tinto">{{ __('Tinto') }}</flux:select.option>
+            <flux:select.option value="blanco">{{ __('Blanco') }}</flux:select.option>
+            <flux:select.option value="rosado">{{ __('Rosado') }}</flux:select.option>
+            <flux:select.option value="espumoso">{{ __('Espumoso') }}</flux:select.option>
+            <flux:select.option value="otro">{{ __('Otro') }}</flux:select.option>
         </flux:select>
 
         @if ($search || $typeFilter)
-            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">
-                Limpiar
-            </flux:button>
+            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">{{ __('Limpiar') }}</flux:button>
         @endif
 
         {{-- Separador --}}
@@ -99,7 +97,7 @@
                             @if ($total > 0)
                                 <div>
                                     <div class="flex justify-between text-xs text-zinc-500 mb-1.5">
-                                        <span>Stock</span>
+                                        <span>{{ __('Stock') }}</span>
                                         <span class="{{ $avail <= 0 ? 'text-red-600 font-semibold' : 'text-zinc-500' }}">
                                             {{ $pctAvail }}% disp.
                                         </span>
@@ -126,23 +124,23 @@
                             {{-- Grid de cantidades --}}
                             <div class="grid grid-cols-4 gap-2 text-center">
                                 <div class="bg-zinc-50 rounded-xl p-2">
-                                    <p class="text-[10px] text-zinc-400 uppercase tracking-wide mb-0.5">Total</p>
+                                    <p class="text-[10px] text-zinc-400 uppercase tracking-wide mb-0.5">{{ __('Total') }}</p>
                                     <p class="text-sm font-bold text-zinc-700">{{ number_format($total, 0) }}</p>
                                 </div>
                                 <div class="bg-green-50 rounded-xl p-2">
-                                    <p class="text-[10px] text-green-500 uppercase tracking-wide mb-0.5">Disp.</p>
+                                    <p class="text-[10px] text-green-500 uppercase tracking-wide mb-0.5">{{ __('Disp.') }}</p>
                                     <p class="text-sm font-bold {{ $avail <= 0 ? 'text-red-600' : 'text-green-700' }}">
                                         {{ number_format($avail, 0) }}
                                     </p>
                                 </div>
                                 <div class="bg-orange-50 rounded-xl p-2">
-                                    <p class="text-[10px] text-orange-400 uppercase tracking-wide mb-0.5">Res.</p>
+                                    <p class="text-[10px] text-orange-400 uppercase tracking-wide mb-0.5">{{ __('Res.') }}</p>
                                     <p class="text-sm font-bold text-orange-600">
                                         {{ number_format((float) $lot->reserved_quantity, 0) ?: '—' }}
                                     </p>
                                 </div>
                                 <div class="bg-blue-50 rounded-xl p-2">
-                                    <p class="text-[10px] text-blue-400 uppercase tracking-wide mb-0.5">Vend.</p>
+                                    <p class="text-[10px] text-blue-400 uppercase tracking-wide mb-0.5">{{ __('Vend.') }}</p>
                                     <p class="text-sm font-bold text-blue-600">
                                         {{ number_format((float) $lot->sold_quantity, 0) ?: '—' }}
                                     </p>
@@ -152,18 +150,18 @@
                             {{-- Unidad, precio y SKU --}}
                             <div class="space-y-2 text-sm">
                                 <div class="flex items-center justify-between">
-                                    <span class="text-zinc-400">Unidad</span>
+                                    <span class="text-zinc-400">{{ __('Unidad') }}</span>
                                     <span class="text-zinc-700 font-medium">{{ ucfirst($lot->unit) }}</span>
                                 </div>
                                 @if ($lot->price_per_unit > 0)
                                     <div class="flex items-center justify-between">
-                                        <span class="text-zinc-400">Precio/ud</span>
+                                        <span class="text-zinc-400">{{ __('Precio/ud') }}</span>
                                         <span class="text-zinc-700 font-medium">{{ number_format($lot->price_per_unit, 2) }} €</span>
                                     </div>
                                 @endif
                                 @if ($lot->sku)
                                     <div class="flex items-center justify-between">
-                                        <span class="text-zinc-400">SKU</span>
+                                        <span class="text-zinc-400">{{ __('SKU') }}</span>
                                         <span class="text-zinc-500 font-mono text-xs">{{ $lot->sku }}</span>
                                     </div>
                                 @endif
@@ -193,9 +191,9 @@
                             <div class="flex items-center justify-between">
                                 {{-- Grupo izquierdo: editar + duplicar + ventas --}}
                                 <div class="flex items-center gap-0.5">
-                                    <x-agro.action-button variant="edit" href="{{ roleRoute('product-lots.edit', $lot) }}" wire:navigate title="Editar" />
-                                    <x-agro.action-button icon="shopping-cart" variant="default" href="{{ roleRoute('product-lots.sales', $lot) }}" wire:navigate title="Ver ventas" />
-                                    <x-agro.action-button icon="document-duplicate" variant="default" wire:click="duplicate({{ $lot->id }})" wire:loading.attr="disabled" wire:confirm="¿Duplicar «{{ $lot->name }}»? Se creará una copia con stock en cero." title="Duplicar" />
+                                    <x-agro.action-button variant="edit" href="{{ roleRoute('product-lots.edit', $lot) }}" wire:navigate title="{{ __('Editar') }}" />
+                                    <x-agro.action-button icon="shopping-cart" variant="default" href="{{ roleRoute('product-lots.sales', $lot) }}" wire:navigate title="{{ __('Ver ventas') }}" />
+                                    <x-agro.action-button icon="document-duplicate" variant="default" wire:click="duplicate({{ $lot->id }})" wire:loading.attr="disabled" wire:confirm="{{ __('¿Duplicar «:name»? Se creará una copia con stock en cero.', ['name' => $lot->name]) }}" title="{{ __('Duplicar') }}" />
                                 </div>
 
                                 <div class="w-px h-5 bg-zinc-200 mx-1"></div>
@@ -203,9 +201,9 @@
                                 {{-- Grupo derecho: activar / desactivar --}}
                                 <div class="flex items-center gap-0.5">
                                     @if ($isActive)
-                                        <x-agro.action-button variant="deactivate" wire:click="toggleActive({{ $lot->id }})" wire:loading.attr="disabled" title="Desactivar" />
+                                        <x-agro.action-button variant="deactivate" wire:click="toggleActive({{ $lot->id }})" wire:loading.attr="disabled" title="{{ __('Desactivar') }}" />
                                     @else
-                                        <x-agro.action-button variant="activate" wire:click="toggleActive({{ $lot->id }})" wire:loading.attr="disabled" title="Activar" />
+                                        <x-agro.action-button variant="activate" wire:click="toggleActive({{ $lot->id }})" wire:loading.attr="disabled" title="{{ __('Activar') }}" />
                                     @endif
                                 </div>
                             </div>
@@ -218,8 +216,8 @@
         @elseif ($currentTab === 'active')
             <x-agro.empty-state
                 icon="beaker"
-                title="No hay productos activos"
-                description="Crea el primer producto para gestionar tu stock"
+                title="{{ __('No hay productos activos') }}"
+                :description="__('Crea el primer producto para gestionar tu stock')"
             >
                 <x-slot:action>
                     <flux:button href="{{ roleRoute('product-lots.create') }}" wire:navigate variant="primary" icon="plus">
@@ -230,8 +228,8 @@
         @else
             <x-agro.empty-state
                 icon="archive-box"
-                title="No hay productos inactivos"
-                description="Los productos desactivados aparecerán aquí"
+                title="{{ __('No hay productos inactivos') }}"
+                :description="__('Los productos desactivados aparecerán aquí')"
             />
         @endif
     </div>

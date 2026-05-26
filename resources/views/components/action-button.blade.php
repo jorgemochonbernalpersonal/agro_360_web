@@ -30,17 +30,17 @@
     ];
     
     $titles = [
-        'view' => 'Ver detalles',
-        'edit' => 'Editar',
-        'delete' => 'Eliminar',
-        'activate' => 'Activar',
-        'deactivate' => 'Desactivar',
-        'info' => 'Más información',
-        'archive' => 'Archivar',
-        'map' => 'Ver mapa',
-        'generate' => 'Generar mapa',
-        'history' => 'Ver historial',
-        'planting' => 'Gestión de plantaciones',
+        'view' => __('Ver detalles'),
+        'edit' => __('Editar'),
+        'delete' => __('Eliminar'),
+        'activate' => __('Activar'),
+        'deactivate' => __('Desactivar'),
+        'info' => __('Más información'),
+        'archive' => __('Archivar'),
+        'map' => __('Ver mapa'),
+        'generate' => __('Generar mapa'),
+        'history' => __('Ver historial'),
+        'planting' => __('Gestión de plantaciones'),
     ];
     
     $classes = 'p-2 rounded-lg transition-all duration-200 group/btn relative ' . $variants[$variant];

@@ -52,7 +52,7 @@ class Create extends Component
     protected function messages(): array
     {
         return [
-            'end_number.gte' => 'El número final debe ser mayor o igual al número inicial.',
+            'end_number.gte' => __('El número final debe ser mayor o igual al número inicial.'),
         ];
     }
 
@@ -80,7 +80,7 @@ class Create extends Component
             'notes'          => $data['notes'] ?: null,
         ]);
 
-        $this->toastSuccess('Lote de etiquetas creado correctamente.');
+        $this->toastSuccess(__('Lote de etiquetas creado correctamente.'));
         $this->roleRedirect('label-batches.index');
     }
 

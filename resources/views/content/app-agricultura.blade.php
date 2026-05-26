@@ -52,7 +52,7 @@
                 <div class="flex items-center gap-3">
                     <a href="{{ url('/') }}" class="flex items-center gap-3">
                         <img src="{{ asset('images/logo.png') }}" alt="Agro365" width="120" height="40" loading="eager" fetchpriority="high" decoding="async" class="h-10 w-auto">
-                        <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">Agro365</span>
+                        <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Agro365') }}</span>
                     </a>
                 </div>
                 <div class="flex items-center gap-4">
@@ -81,13 +81,13 @@
                 <ol class="flex items-center space-x-2">
                     <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
                         <a href="{{ url('/') }}" class="hover:text-[var(--color-agro-green)]" itemprop="item">
-                            <span itemprop="name">Inicio</span>
+                            <span itemprop="name">{{ __('Inicio') }}</span>
                         </a>
                         <meta itemprop="position" content="1" />
                     </li>
                     <span class="mx-2">/</span>
                     <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                        <span class="text-gray-900" itemprop="name">App Agricultura</span>
+                        <span class="text-gray-900" itemprop="name">{{ __('App Agricultura') }}</span>
                         <meta itemprop="position" content="2" />
                     </li>
                 </ol>
@@ -95,118 +95,116 @@
 
             <!-- Header -->
             <div class="mb-12">
-                <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">
-                    App de Agricultura Digital
-                </h1>
+                <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">{{ __('App de Agricultura Digital') }}</h1>
                 <p class="text-xl text-gray-600 leading-relaxed">
-                    <strong>App de gestión agrícola</strong> para gestionar tu explotación desde cualquier lugar. Cuaderno de campo digital obligatorio, gestión de parcelas SIGPAC, control de actividades y cumplimiento normativo. Todo desde tu smartphone o tablet.
+                    <strong>{{ __('App de gestión agrícola') }}</strong> para gestionar tu explotación desde cualquier lugar. Cuaderno de campo digital obligatorio, gestión de parcelas SIGPAC, control de actividades y cumplimiento normativo. Todo desde tu smartphone o tablet.
                 </p>
             </div>
 
             <!-- Content -->
             <article class="prose prose-lg max-w-none">
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">¿Qué es una App de Agricultura?</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('¿Qué es una App de Agricultura?') }}</h2>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        Una <strong>app de agricultura</strong> es una aplicación móvil o web que permite a los agricultores y viticultores gestionar sus explotaciones agrícolas de forma digital. Estas aplicaciones reemplazan los métodos tradicionales en papel y permiten registrar actividades directamente desde el campo.
+                        Una <strong>{{ __('app de agricultura') }}</strong> es una aplicación móvil o web que permite a los agricultores y viticultores gestionar sus explotaciones agrícolas de forma digital. Estas aplicaciones reemplazan los métodos tradicionales en papel y permiten registrar actividades directamente desde el campo.
                     </p>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        Las <strong>apps agrícolas modernas</strong> integran funcionalidades como cuaderno de campo digital, gestión de parcelas SIGPAC, control de tratamientos, seguimiento de cosechas y generación de informes oficiales, todo desde un dispositivo móvil.
+                        Las <strong>{{ __('apps agrícolas modernas') }}</strong> integran funcionalidades como cuaderno de campo digital, gestión de parcelas SIGPAC, control de tratamientos, seguimiento de cosechas y generación de informes oficiales, todo desde un dispositivo móvil.
                     </p>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Ventajas de Usar una App de Agricultura</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Ventajas de Usar una App de Agricultura') }}</h2>
                     <div class="grid md:grid-cols-2 gap-6 mb-6">
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">📱 Acceso desde Cualquier Lugar</h3>
-                            <p class="text-gray-700">Registra actividades directamente desde el campo con tu smartphone o tablet, sin necesidad de estar en la oficina.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('📱 Acceso desde Cualquier Lugar') }}</h3>
+                            <p class="text-gray-700">{{ __('Registra actividades directamente desde el campo con tu smartphone o tablet, sin necesidad de estar en la oficina.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">⚡ Registro en Tiempo Real</h3>
-                            <p class="text-gray-700">Registra tratamientos, riegos y actividades inmediatamente después de realizarlos, sin esperar a llegar a casa.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('⚡ Registro en Tiempo Real') }}</h3>
+                            <p class="text-gray-700">{{ __('Registra tratamientos, riegos y actividades inmediatamente después de realizarlos, sin esperar a llegar a casa.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">📋 Cuaderno Digital Obligatorio</h3>
-                            <p class="text-gray-700">Cumple con la normativa 2027 del cuaderno de campo digital obligatorio desde el primer día.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('📋 Cuaderno Digital Obligatorio') }}</h3>
+                            <p class="text-gray-700">{{ __('Cumple con la normativa 2027 del cuaderno de campo digital obligatorio desde el primer día.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">🗺️ Visualización de Parcelas</h3>
-                            <p class="text-gray-700">Visualiza tus parcelas en mapa interactivo, gestiona códigos SIGPAC y controla todas tus explotaciones.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('🗺️ Visualización de Parcelas') }}</h3>
+                            <p class="text-gray-700">{{ __('Visualiza tus parcelas en mapa interactivo, gestiona códigos SIGPAC y controla todas tus explotaciones.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">📊 Informes Instantáneos</h3>
-                            <p class="text-gray-700">Genera informes oficiales con firma electrónica directamente desde la app, listos para inspecciones.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('📊 Informes Instantáneos') }}</h3>
+                            <p class="text-gray-700">{{ __('Genera informes oficiales con firma electrónica directamente desde la app, listos para inspecciones.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">☁️ Sincronización en la Nube</h3>
-                            <p class="text-gray-700">Todos tus datos se sincronizan automáticamente en la nube, accesibles desde cualquier dispositivo.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('☁️ Sincronización en la Nube') }}</h3>
+                            <p class="text-gray-700">{{ __('Todos tus datos se sincronizan automáticamente en la nube, accesibles desde cualquier dispositivo.') }}</p>
                         </div>
                     </div>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Agro365: App de Agricultura Completa</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Agro365: App de Agricultura Completa') }}</h2>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        <strong>Agro365</strong> es una <strong>app de agricultura digital</strong> completa que funciona tanto en web como en dispositivos móviles. Nuestra aplicación está diseñada para agricultores y viticultores profesionales que necesitan gestionar sus explotaciones de forma eficiente y cumplir con todas las normativas vigentes.
+                        <strong>{{ __('Agro365') }}</strong> es una <strong>{{ __('app de agricultura digital') }}</strong> completa que funciona tanto en web como en dispositivos móviles. Nuestra aplicación está diseñada para agricultores y viticultores profesionales que necesitan gestionar sus explotaciones de forma eficiente y cumplir con todas las normativas vigentes.
                     </p>
                     <div class="bg-gradient-to-r from-[var(--color-agro-green-bg)] to-[var(--color-agro-green-light)]/30 p-8 rounded-xl border border-[var(--color-agro-green)]/20 mb-6">
-                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">Funcionalidades de la App Agro365</h3>
+                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Funcionalidades de la App Agro365') }}</h3>
                         <ul class="space-y-3 text-gray-800">
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Cuaderno de campo digital:</strong> Registra tratamientos, riegos, fertilizaciones y labores desde el móvil</span>
+                                <span><strong>{{ __('Cuaderno de campo digital:') }}</strong> Registra tratamientos, riegos, fertilizaciones y labores desde el móvil</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Gestión SIGPAC:</strong> Visualiza y gestiona parcelas con códigos SIGPAC en mapa interactivo</span>
+                                <span><strong>{{ __('Gestión SIGPAC:') }}</strong> Visualiza y gestiona parcelas con códigos SIGPAC en mapa interactivo</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Control de cosechas:</strong> Registra vendimias, rendimientos y calidad directamente desde el campo</span>
+                                <span><strong>{{ __('Control de cosechas:') }}</strong> Registra vendimias, rendimientos y calidad directamente desde el campo</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Dashboard de cumplimiento:</strong> Visualiza el estado de cumplimiento PAC en tiempo real</span>
+                                <span><strong>{{ __('Dashboard de cumplimiento:') }}</strong> Visualiza el estado de cumplimiento PAC en tiempo real</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Informes oficiales:</strong> Genera informes con firma electrónica desde la app</span>
+                                <span><strong>{{ __('Informes oficiales:') }}</strong> Genera informes con firma electrónica desde la app</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Optimizada para móvil:</strong> Registra actividades desde el campo con cualquier smartphone o tablet</span>
+                                <span><strong>{{ __('Optimizada para móvil:') }}</strong> Registra actividades desde el campo con cualquier smartphone o tablet</span>
                             </li>
                         </ul>
                     </div>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Preguntas Frecuentes sobre Apps de Agricultura</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Preguntas Frecuentes sobre Apps de Agricultura') }}</h2>
                     <div class="space-y-6">
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Necesito instalar una app en mi móvil?</h3>
-                            <p class="text-gray-700">No necesariamente. Agro365 funciona como aplicación web responsive, lo que significa que puedes acceder desde cualquier navegador en tu smartphone, tablet o computadora. No necesitas descargar nada.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Necesito instalar una app en mi móvil?') }}</h3>
+                            <p class="text-gray-700">{{ __('No necesariamente. Agro365 funciona como aplicación web responsive, lo que significa que puedes acceder desde cualquier navegador en tu smartphone, tablet o computadora. No necesitas descargar nada.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Funciona sin conexión a internet?</h3>
-                            <p class="text-gray-700">Agro365 es una aplicación web y requiere conexión a internet para funcionar. Puedes usarla desde el campo con la cobertura de datos de tu móvil.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Funciona sin conexión a internet?') }}</h3>
+                            <p class="text-gray-700">{{ __('Agro365 es una aplicación web y requiere conexión a internet para funcionar. Puedes usarla desde el campo con la cobertura de datos de tu móvil.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Es segura mi información?</h3>
-                            <p class="text-gray-700">Sí, todos los datos están cifrados y almacenados de forma segura en la nube. Cumplimos con el RGPD y todas las normativas de protección de datos.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Es segura mi información?') }}</h3>
+                            <p class="text-gray-700">{{ __('Sí, todos los datos están cifrados y almacenados de forma segura en la nube. Cumplimos con el RGPD y todas las normativas de protección de datos.') }}</p>
                         </div>
                     </div>
                 </section>
@@ -214,12 +212,8 @@
 
             <!-- CTA Section -->
             <div class="mt-16 pt-12 border-t border-gray-200 text-center">
-                <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">
-                    App de Agricultura Digital Completa
-                </h2>
-                <p class="text-gray-600 mb-8 text-lg">
-                    Gestiona tu explotación desde cualquier lugar con Agro365. Cuaderno digital, SIGPAC y cumplimiento normativo. Prueba gratis 3 meses.
-                </p>
+                <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('App de Agricultura Digital Completa') }}</h2>
+                <p class="text-gray-600 mb-8 text-lg">{{ __('Gestiona tu explotación desde cualquier lugar con Agro365. Cuaderno digital, SIGPAC y cumplimiento normativo. Prueba gratis 3 meses.') }}</p>
                 <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-lg">
                     Comenzar Gratis
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

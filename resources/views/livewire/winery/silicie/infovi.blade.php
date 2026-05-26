@@ -1,8 +1,8 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="INFOVI — Declaración de Mercados Vitivinícolas"
-        description="Cuadros de existencias, producción y ventas para la declaración obligatoria AICA (Real Decreto 739/2015). Datos en hectolitros (HL)."
+        title="{{ __('INFOVI — Declaración de Mercados Vitivinícolas') }}"
+        :description="__('Cuadros de existencias, producción y ventas para la declaración obligatoria AICA (Real Decreto 739/2015). Datos en hectolitros (HL).')"
         icon="chart-bar"
     >
         <x-slot:actions>
@@ -11,9 +11,7 @@
                 variant="ghost"
                 icon="arrow-left"
                 size="sm"
-            >
-                Volver a SILICIE
-            </flux:button>
+            >{{ __('Volver a SILICIE') }}</flux:button>
         </x-slot:actions>
     </x-agro.page-header>
 
@@ -21,7 +19,7 @@
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div class="relative">
             <x-agro.stat-card
-                label="Número REOVI"
+                :label="__('Número REOVI')"
                 :value="$org?->reovi_number ?: '—'"
                 icon="identification"
                 color="blue"
@@ -29,14 +27,14 @@
             />
             <span class="absolute top-3 right-3">
                 <x-agro.help-tip
-                    title="¿Qué es el REOVI?"
+                    title="{{ __('¿Qué es el REOVI?') }}"
                     text="Número de Registro de Operadores Vitivinícolas Industriales. Lo asigna el MAPA/AICA al registrarte como operador. Es obligatorio para enviar la declaración INFOVI en mapa.gob.es/infovi."
                 />
             </span>
         </div>
         <div class="relative">
             <x-agro.stat-card
-                label="NIDPB (instalación)"
+                :label="__('NIDPB (instalación)')"
                 :value="$org?->nidpb ?: '—'"
                 icon="building-office"
                 color="blue"
@@ -44,14 +42,14 @@
             />
             <span class="absolute top-3 right-3">
                 <x-agro.help-tip
-                    title="¿Qué es el NIDPB?"
+                    title="{{ __('¿Qué es el NIDPB?') }}"
                     text="Número de Identificación de la Destilería/Planta/Bodega. Identifica la instalación física donde se elabora o almacena el vino. Obligatorio en la declaración SILICIE."
                 />
             </span>
         </div>
         <div class="relative">
             <x-agro.stat-card
-                label="Tipo de productor"
+                :label="__('Tipo de productor')"
                 :value="$threshold['is_large'] ? 'Gran productor' : 'Pequeño productor'"
                 icon="scale"
                 :color="$threshold['is_large'] ? 'amber' : 'agro'"
@@ -59,7 +57,7 @@
             />
             <span class="absolute top-3 right-3">
                 <x-agro.help-tip
-                    title="Gran vs. pequeño productor"
+                    title="{{ __('Gran vs. pequeño productor') }}"
                     text="Se calcula como media de las últimas 4 campañas. Más de 1.000 HL de media = gran productor (declaración mensual, antes del día 19). Hasta 1.000 HL = pequeño productor (declaración semestral: enero y agosto)."
                 />
             </span>
@@ -104,20 +102,20 @@
             al
             <strong>{{ \Carbon\Carbon::parse($campaignEnd)->translatedFormat('d M Y') }}</strong>.
             La declaración {{ $threshold['is_large'] ? 'mensual' : 'semestral' }} debe realizarse en
-            <strong>mapa.gob.es/infovi</strong>
+            <strong>{{ __('mapa.gob.es/infovi') }}</strong>
             antes del día 19 del mes siguiente{{ $threshold['is_large'] ? '' : ' (agosto y diciembre)' }}.
             <x-agro.help-tip
-                title="Plazos de declaración INFOVI"
+                title="{{ __('Plazos de declaración INFOVI') }}"
                 text="{{ $threshold['is_large'] ? 'Gran productor (>1.000 HL): declaración mensual. Antes del día 19 del mes siguiente al declarado. Obligatorio todos los meses aunque no haya movimientos.' : 'Pequeño productor (≤1.000 HL): declaración semestral. Plazo 1.º: antes del 31 de agosto (período agosto–julio del año anterior). Plazo 2.º: antes del 31 de enero (período agosto–diciembre).' }}"
             />
-            Los datos se muestran en <strong>hectolitros (HL)</strong>.
+            Los datos se muestran en <strong>{{ __('hectolitros (HL)') }}</strong>.
         </flux:callout.text>
     </flux:callout>
 
     {{-- Selector de campaña + toggle desglose DO/IGP ──────────────────── --}}
     <x-agro.filter-bar>
         <div class="flex items-center gap-2">
-            <label class="text-sm font-medium text-zinc-600">Campaña</label>
+            <label class="text-sm font-medium text-zinc-600">{{ __('Campaña') }}</label>
             <select
                 wire:model.live="filterCampaign"
                 class="text-sm border border-zinc-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-300"
@@ -132,7 +130,7 @@
             href="{{ roleRoute('silicie.infovi.pdf', ['campaign' => $campaign]) }}"
             target="_blank"
             class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-zinc-200 bg-white text-zinc-600 text-sm font-medium hover:bg-zinc-50 transition-colors shadow-sm"
-            title="Exportar cuadros INFOVI en PDF"
+            title="{{ __('Exportar cuadros INFOVI en PDF') }}"
         >
             <flux:icon icon="document-arrow-down" class="size-4 text-red-500" />
             PDF
@@ -156,29 +154,29 @@
                 <div class="p-1.5 rounded-lg bg-agro-100">
                     <flux:icon icon="archive-box-arrow-down" class="size-4 text-agro-600" />
                 </div>
-                <span class="font-semibold text-zinc-800">Cuadro 1 — Entradas de materia prima</span>
+                <span class="font-semibold text-zinc-800">{{ __('Cuadro 1 — Entradas de materia prima') }}</span>
                 <span class="ml-1 text-xs text-zinc-400">Campaña {{ $campaign }}/{{ $campaign + 1 }}</span>
             </div>
         </x-slot:header>
 
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4">
             <div class="rounded-xl border border-zinc-200 bg-zinc-50 p-4 text-center">
-                <p class="text-xs text-zinc-400 mb-1">Uva propia vendimiada</p>
+                <p class="text-xs text-zinc-400 mb-1">{{ __('Uva propia vendimiada') }}</p>
                 <p class="text-2xl font-bold text-zinc-800">{{ number_format($entradas['kg_propia'], 0, ',', '.') }}</p>
                 <p class="text-xs text-zinc-500 mt-0.5">kg</p>
             </div>
             <div class="rounded-xl border border-zinc-200 bg-zinc-50 p-4 text-center">
-                <p class="text-xs text-zinc-400 mb-1">Uva comprada</p>
+                <p class="text-xs text-zinc-400 mb-1">{{ __('Uva comprada') }}</p>
                 <p class="text-2xl font-bold text-zinc-800">{{ number_format($entradas['kg_comprada'], 0, ',', '.') }}</p>
                 <p class="text-xs text-zinc-500 mt-0.5">kg</p>
             </div>
             <div class="rounded-xl border border-zinc-200 bg-zinc-50 p-4 text-center">
-                <p class="text-xs text-zinc-400 mb-1">Mosto comprado</p>
+                <p class="text-xs text-zinc-400 mb-1">{{ __('Mosto comprado') }}</p>
                 <p class="text-2xl font-bold text-zinc-800">{{ number_format($entradas['hl_mosto'], 3, ',', '.') }}</p>
                 <p class="text-xs text-zinc-500 mt-0.5">HL</p>
             </div>
             <div class="rounded-xl border border-zinc-200 bg-zinc-50 p-4 text-center">
-                <p class="text-xs text-zinc-400 mb-1">Vino a granel comprado</p>
+                <p class="text-xs text-zinc-400 mb-1">{{ __('Vino a granel comprado') }}</p>
                 <p class="text-2xl font-bold text-zinc-800">{{ number_format($entradas['hl_vino_granel'], 3, ',', '.') }}</p>
                 <p class="text-xs text-zinc-500 mt-0.5">HL</p>
             </div>
@@ -195,7 +193,7 @@
                     <flux:icon icon="beaker" class="size-4 text-violet-600" />
                 </div>
                 <span class="font-semibold text-zinc-800">Cuadro 2 — Producción obtenida añada {{ $campaign }}</span>
-                <span class="text-xs text-zinc-400 ml-1">(vino — excluye mosto)</span>
+                <span class="text-xs text-zinc-400 ml-1">{{ __('(vino — excluye mosto)') }}</span>
                 <span class="ml-auto text-sm font-semibold text-violet-600">
                     Total: {{ number_format($produccion['total_hl'], 3, ',', '.') }} HL
                 </span>
@@ -249,15 +247,15 @@
                     <flux:icon icon="scale" class="size-4 text-teal-600" />
                 </div>
                 <div>
-                    <span class="font-semibold text-zinc-800">Balance de campaña — Conciliación INFOVI</span>
-                    <span class="ml-2 text-xs text-zinc-400">Apertura + Producción + Compras − Ventas − Pérdidas = Cierre</span>
+                    <span class="font-semibold text-zinc-800">{{ __('Balance de campaña — Conciliación INFOVI') }}</span>
+                    <span class="ml-2 text-xs text-zinc-400">{{ __('Apertura + Producción + Compras − Ventas − Pérdidas = Cierre') }}</span>
                 </div>
                 @if($balanceSheet['closing_snapshot'])
                     <span class="ml-auto text-xs text-teal-600">
                         Cierre real: {{ \Carbon\Carbon::parse($balanceSheet['closing_snapshot'])->translatedFormat('d M Y') }}
                     </span>
                 @else
-                    <span class="ml-auto text-xs text-amber-500">Sin instantánea de cierre</span>
+                    <span class="ml-auto text-xs text-amber-500">{{ __('Sin instantánea de cierre') }}</span>
                 @endif
             </div>
         </x-slot:header>
@@ -357,7 +355,7 @@
                 @php $t = $balanceSheet['totals']; @endphp
                 <x-agro.table-row class="bg-zinc-50 font-semibold border-t-2 border-zinc-200">
                     <x-agro.table-cell>
-                        <span class="text-zinc-700 font-bold text-xs uppercase tracking-wide">Total</span>
+                        <span class="text-zinc-700 font-bold text-xs uppercase tracking-wide">{{ __('Total') }}</span>
                     </x-agro.table-cell>
                     <x-agro.table-cell><span class="text-zinc-700 text-xs font-bold">{{ number_format($t['apertura'], 3, ',', '.') }}</span></x-agro.table-cell>
                     <x-agro.table-cell>
@@ -391,7 +389,7 @@
 
             <div class="px-4 pb-3 pt-2">
                 <p class="text-xs text-zinc-400">
-                    <strong>Δ (delta)</strong>: diferencia entre el cierre calculado y el cierre real registrado en la instantánea.
+                    <strong>{{ __('Δ (delta)') }}</strong>: diferencia entre el cierre calculado y el cierre real registrado en la instantánea.
                     Verde (&lt;0,1 HL) = correcto · Ámbar (0,1–1 HL) = revisar · Rojo (&gt;1 HL) = discrepancia significativa.
                 </p>
             </div>
@@ -408,14 +406,14 @@
                     <flux:icon icon="squares-2x2" class="size-4 text-blue-600" />
                 </div>
                 <div>
-                    <span class="font-semibold text-zinc-800">Cuadro 3 — Existencias</span>
-                    <span class="text-xs text-zinc-400 ml-1">(vino — excluye mosto)</span>
+                    <span class="font-semibold text-zinc-800">{{ __('Cuadro 3 — Existencias') }}</span>
+                    <span class="text-xs text-zinc-400 ml-1">{{ __('(vino — excluye mosto)') }}</span>
                     @if($existencias['snapshot_date'])
                         <span class="ml-2 text-xs text-blue-500">
                             (instantánea del {{ \Carbon\Carbon::parse($existencias['snapshot_date'])->translatedFormat('d M Y') }})
                         </span>
                     @else
-                        <span class="ml-2 text-xs text-amber-500">(stock en tiempo real — sin instantánea de campaña)</span>
+                        <span class="ml-2 text-xs text-amber-500">{{ __('(stock en tiempo real — sin instantánea de campaña)') }}</span>
                     @endif
                 </div>
                 <span class="ml-auto text-sm font-semibold text-blue-600">
@@ -481,8 +479,8 @@
                 <div class="p-1.5 rounded-lg bg-amber-100">
                     <flux:icon icon="arrow-up-tray" class="size-4 text-amber-600" />
                 </div>
-                <span class="font-semibold text-zinc-800">Cuadro 4 — Salidas / Ventas</span>
-                <span class="text-xs text-zinc-400 ml-1">(vino — excluye mosto)</span>
+                <span class="font-semibold text-zinc-800">{{ __('Cuadro 4 — Salidas / Ventas') }}</span>
+                <span class="text-xs text-zinc-400 ml-1">{{ __('(vino — excluye mosto)') }}</span>
                 <span class="ml-auto flex items-center gap-3 text-sm">
                     <span class="font-semibold text-amber-600">{{ number_format($ventas['total_hl'], 3, ',', '.') }} HL</span>
                     <span class="text-zinc-400">·</span>
@@ -494,7 +492,7 @@
         @if($ventas['total_invoices'] === 0)
             <x-agro.empty-state
                 icon="arrow-up-tray"
-                title="Sin ventas facturadas"
+                title="{{ __('Sin ventas facturadas') }}"
                 description="No hay facturas enviadas o cobradas en la campaña {{ $campaign }}/{{ $campaign + 1 }}."
             />
         @else
@@ -505,7 +503,7 @@
                             {{ $ventas['unknown_hl_items'] }} línea(s) de factura no tienen un lote de vino asociado
                             (liquidaciones de uva u otros conceptos) y no se incluyen en el cálculo de HL.
                             Para declarar estas ventas en INFOVI, asigna los productos a lotes de vino desde
-                            <strong>Lotes de producto</strong>.
+                            <strong>{{ __('Lotes de producto') }}</strong>.
                         </flux:callout.text>
                     </flux:callout>
                 </div>
@@ -549,15 +547,15 @@
                         <flux:icon icon="beaker" class="size-4 text-orange-600" />
                     </div>
                     <div>
-                        <span class="font-semibold text-zinc-800">Mosto — Declaración separada INFOVI</span>
-                        <span class="ml-2 text-xs text-zinc-400">El mosto se declara como sección independiente en AICA</span>
+                        <span class="font-semibold text-zinc-800">{{ __('Mosto — Declaración separada INFOVI') }}</span>
+                        <span class="ml-2 text-xs text-zinc-400">{{ __('El mosto se declara como sección independiente en AICA') }}</span>
                     </div>
                 </div>
             </x-slot:header>
 
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 p-4">
                 <div class="rounded-xl border border-zinc-200 bg-zinc-50 p-4 text-center">
-                    <p class="text-xs text-zinc-400 mb-1">Apertura campaña</p>
+                    <p class="text-xs text-zinc-400 mb-1">{{ __('Apertura campaña') }}</p>
                     <p class="text-xl font-bold text-zinc-700">{{ number_format($mosto['apertura'], 3, ',', '.') }}</p>
                     <p class="text-xs text-zinc-400 mt-0.5">HL</p>
                     @if($mosto['opening_snapshot'])
@@ -565,27 +563,27 @@
                     @endif
                 </div>
                 <div class="rounded-xl border border-violet-100 bg-violet-50 p-4 text-center">
-                    <p class="text-xs text-violet-500 mb-1">+ Producido</p>
+                    <p class="text-xs text-violet-500 mb-1">{{ __('+ Producido') }}</p>
                     <p class="text-xl font-bold text-violet-700">{{ number_format($mosto['producido'], 3, ',', '.') }}</p>
                     <p class="text-xs text-violet-400 mt-0.5">HL</p>
                 </div>
                 <div class="rounded-xl border border-blue-100 bg-blue-50 p-4 text-center">
-                    <p class="text-xs text-blue-500 mb-1">+ Comprado</p>
+                    <p class="text-xs text-blue-500 mb-1">{{ __('+ Comprado') }}</p>
                     <p class="text-xl font-bold text-blue-700">{{ number_format($mosto['comprado'], 3, ',', '.') }}</p>
                     <p class="text-xs text-blue-400 mt-0.5">HL</p>
                 </div>
                 <div class="rounded-xl border border-amber-100 bg-amber-50 p-4 text-center">
-                    <p class="text-xs text-amber-500 mb-1">− Vendido</p>
+                    <p class="text-xs text-amber-500 mb-1">{{ __('− Vendido') }}</p>
                     <p class="text-xl font-bold text-amber-700">{{ number_format($mosto['vendido'], 3, ',', '.') }}</p>
                     <p class="text-xs text-amber-400 mt-0.5">HL</p>
                 </div>
                 <div class="rounded-xl border border-red-100 bg-red-50 p-4 text-center">
-                    <p class="text-xs text-red-500 mb-1">− Perdido</p>
+                    <p class="text-xs text-red-500 mb-1">{{ __('− Perdido') }}</p>
                     <p class="text-xl font-bold text-red-700">{{ number_format($mosto['perdido'], 3, ',', '.') }}</p>
                     <p class="text-xs text-red-400 mt-0.5">HL</p>
                 </div>
                 <div class="rounded-xl border border-teal-200 bg-teal-50 p-4 text-center">
-                    <p class="text-xs text-teal-500 mb-1">= Cierre calculado</p>
+                    <p class="text-xs text-teal-500 mb-1">{{ __('= Cierre calculado') }}</p>
                     <p class="text-xl font-bold text-teal-700">{{ number_format($mosto['cierre_calc'], 3, ',', '.') }}</p>
                     <p class="text-xs text-teal-400 mt-0.5">HL</p>
                 </div>

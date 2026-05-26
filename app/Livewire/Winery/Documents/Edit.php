@@ -61,7 +61,7 @@ class Edit extends Component
             'notes'             => $this->notes ?: null,
         ]);
 
-        $this->toastSuccess('Documento actualizado correctamente.');
+        $this->toastSuccess(__('Documento actualizado correctamente.'));
         $this->redirect(roleRoute('documents.index'), navigate: true);
     }
 

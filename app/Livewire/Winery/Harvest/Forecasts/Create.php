@@ -193,11 +193,11 @@ class Create extends Component
     protected function messages(): array
     {
         return [
-            'viticulturist_id.required' => 'Selecciona un viticultor.',
-            'plot_planting_id.required' => 'Selecciona una plantación.',
-            'campaign_id.required'      => 'Selecciona una campaña.',
-            'estimated_kg.required'     => 'Introduce los kg estimados.',
-            'estimated_kg.min'          => 'Los kg estimados deben ser mayor que 0.',
+            'viticulturist_id.required' => __('Selecciona un viticultor.'),
+            'plot_planting_id.required' => __('Selecciona una plantación.'),
+            'campaign_id.required'      => __('Selecciona una campaña.'),
+            'estimated_kg.required'     => __('Introduce los kg estimados.'),
+            'estimated_kg.min'          => __('Los kg estimados deben ser mayor que 0.'),
         ];
     }
 
@@ -228,7 +228,7 @@ class Create extends Component
             ->exists();
 
         if ($exists) {
-            $this->addError('plot_planting_id', 'Ya existe una previsión para esta plantación y campaña. Edita la existente.');
+            $this->addError('plot_planting_id', __('Ya existe una previsión para esta plantación y campaña. Edita la existente.'));
             return null;
         }
 
@@ -244,7 +244,7 @@ class Create extends Component
             'notes'            => $this->notes ?: null,
         ]);
 
-        $this->toastSuccess('Previsión de vendimia creada correctamente.');
+        $this->toastSuccess(__('Previsión de vendimia creada correctamente.'));
         return $this->roleRedirect('harvest-forecasts.index');
     }
 

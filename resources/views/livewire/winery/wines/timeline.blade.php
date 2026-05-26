@@ -1,7 +1,7 @@
 <div class="space-y-6 animate-fade-in">
     <x-agro.page-header
-        title="Línea de tiempo de vinos"
-        description="Estado actual de todos los vinos en proceso, crianza y embotellados."
+        title="{{ __('Línea de tiempo de vinos') }}"
+        :description="__('Estado actual de todos los vinos en proceso, crianza y embotellados.')"
     >
         <flux:button icon="list-bullet" href="{{ roleRoute('wines.index') }}" wire:navigate variant="ghost" size="sm">
             Ver lista
@@ -14,14 +14,14 @@
     {{-- Filtros --}}
     <x-agro.filter-bar>
         <flux:select wire:model.live="vintageFilter" size="sm" class="min-w-32">
-            <option value="">Todas las añadas</option>
+            <option value="">{{ __('Todas las añadas') }}</option>
             @foreach($vintages as $v)
                 <option value="{{ $v }}">{{ $v }}</option>
             @endforeach
         </flux:select>
 
         <flux:select wire:model.live="typeFilter" size="sm" class="min-w-40">
-            <option value="">Todos los tipos</option>
+            <option value="">{{ __('Todos los tipos') }}</option>
             @foreach($types as $key => $label)
                 <option value="{{ $key }}">{{ $label }}</option>
             @endforeach
@@ -31,8 +31,8 @@
     @if($grouped->isEmpty())
         <x-agro.empty-state
             icon="beaker"
-            title="No hay vinos activos"
-            description="No hay vinos en proceso, crianza o embotellado con los filtros seleccionados."
+            title="{{ __('No hay vinos activos') }}"
+            :description="__('No hay vinos en proceso, crianza o embotellado con los filtros seleccionados.')"
         />
     @else
         {{-- Columnas kanban por estado --}}
@@ -104,13 +104,13 @@
                                     <p class="font-bold text-zinc-900 dark:text-zinc-100 text-base leading-tight">
                                         {{ $wine->days_in_phase }}
                                     </p>
-                                    <p class="text-zinc-400">días en fase</p>
+                                    <p class="text-zinc-400">{{ __('días en fase') }}</p>
                                 </div>
                                 <div class="bg-zinc-50 dark:bg-zinc-800 rounded-lg px-2 py-1.5 text-center">
                                     <p class="font-bold text-zinc-900 dark:text-zinc-100 text-base leading-tight">
                                         {{ $wine->days_total }}
                                     </p>
-                                    <p class="text-zinc-400">días total</p>
+                                    <p class="text-zinc-400">{{ __('días total') }}</p>
                                 </div>
                             </div>
 
@@ -147,7 +147,7 @@
                         </a>
                     @empty
                         <div class="rounded-xl border-2 border-dashed border-zinc-200 dark:border-zinc-700 p-6 text-center">
-                            <p class="text-sm text-zinc-400">Sin vinos en esta fase</p>
+                            <p class="text-sm text-zinc-400">{{ __('Sin vinos en esta fase') }}</p>
                         </div>
                     @endforelse
                 </div>

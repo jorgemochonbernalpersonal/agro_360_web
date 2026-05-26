@@ -17,7 +17,7 @@ class Process extends Component
         $pendingData = session('pending_subscription');
 
         if (!$pendingData) {
-            session()->flash('error', 'No se encontró información de pago pendiente.');
+            session()->flash('error', __('No se encontró información de pago pendiente.'));
             return redirect()->route('subscription.manage');
         }
 
@@ -43,7 +43,7 @@ class Process extends Component
             }
 
             if (!$orderId) {
-                throw new \Exception('No se encontró el ID de la orden de pago.');
+                throw new \Exception(__('No se encontró el ID de la orden de pago.'));
             }
 
             // Capturar el pago
@@ -88,13 +88,13 @@ class Process extends Component
                     $payment->update(['subscription_id' => $subscription->id]);
 
                     session()->forget('pending_subscription');
-                    session()->flash('message', '¡Pago completado! Tu suscripción está activa.');
+                    session()->flash('message', __('¡Pago completado! Tu suscripción está activa.'));
                     
                     return redirect()->route('subscription.manage');
                 }
             }
 
-            session()->flash('error', 'El pago no se completó correctamente.');
+            session()->flash('error', __('El pago no se completó correctamente.'));
             return redirect()->route('subscription.manage');
         } catch (\Exception $e) {
             Log::error('Error processing PayPal payment', [
@@ -103,7 +103,7 @@ class Process extends Component
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
-            session()->flash('error', 'Error al procesar el pago: ' . $e->getMessage());
+            session()->flash('error', __('Error al procesar el pago: :message', ['message' => $e->getMessage()]));
             return redirect()->route('subscription.manage');
         }
     }
@@ -111,7 +111,7 @@ class Process extends Component
     public function cancel()
     {
         session()->forget('pending_subscription');
-        session()->flash('message', 'Pago cancelado.');
+        session()->flash('message', __('Pago cancelado.'));
         return redirect()->route('subscription.manage');
     }
 

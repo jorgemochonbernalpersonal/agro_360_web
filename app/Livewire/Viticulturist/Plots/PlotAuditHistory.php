@@ -29,12 +29,12 @@ class PlotAuditHistory extends Component
     public function mount(Plot $plot = null)
     {
         if (!$plot) {
-            abort(404, 'Parcela no encontrada.');
+            abort(404, __('Parcela no encontrada.'));
         }
         
         // Verificar autorización
         if (!Auth::user()->can('view', $plot)) {
-            abort(403, 'No tienes permiso para ver el historial de esta parcela.');
+            abort(403, __('No tienes permiso para ver el historial de esta parcela.'));
         }
 
         $this->plot = $plot;
@@ -122,13 +122,13 @@ class PlotAuditHistory extends Component
     protected function getFieldLabel($field)
     {
         $labels = [
-            'name' => 'Nombre',
-            'surface_area' => 'Superficie (ha)',
-            'location' => 'Ubicación',
-            'cadastral_reference' => 'Referencia catastral',
-            'province_id' => 'Provincia',
-            'municipality_id' => 'Municipio',
-            'autonomous_community_id' => 'Comunidad Autónoma',
+            'name' => __('Nombre'),
+            'surface_area' => __('Superficie (ha)'),
+            'location' => __('Ubicación'),
+            'cadastral_reference' => __('Referencia catastral'),
+            'province_id' => __('Provincia'),
+            'municipality_id' => __('Municipio'),
+            'autonomous_community_id' => __('Comunidad Autónoma'),
         ];
 
         return $labels[$field] ?? ucfirst(str_replace('_', ' ', $field));

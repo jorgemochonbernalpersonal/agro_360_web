@@ -204,8 +204,8 @@ class FinancialStats extends Component
             'previousYearIncome' => $previousYearIncome,
             'growthPercentage' => $growthPercentage,
         ])->layout('layouts.app', [
-            'title' => 'Estadísticas Financieras - Agro365',
-            'description' => 'Análisis completo de tu negocio vitivinícola. Ingresos, cobros pendientes, evolución mensual y análisis de rentabilidad por variedad.',
+            'title' => __('Estadísticas Financieras - Agro365'),
+            'description' => __('Análisis completo de tu negocio vitivinícola. Ingresos, cobros pendientes, evolución mensual y análisis de rentabilidad por variedad.'),
         ]);
     }
 }

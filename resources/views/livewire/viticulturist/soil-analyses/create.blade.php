@@ -45,7 +45,7 @@
 
                 <flux:field>
                     <flux:label>{{ __('Profundidad de muestra') }}</flux:label>
-                    <flux:input wire:model="sample_depth_cm" type="number" min="0" max="300" placeholder="cm" />
+                    <flux:input wire:model="sample_depth_cm" type="number" min="0" max="300" :placeholder="__('cm')" />
                     <flux:error name="sample_depth_cm" />
                 </flux:field>
 
@@ -64,28 +64,28 @@
 
                 <flux:field>
                     <flux:label>{{ __('Materia orgánica') }}</flux:label>
-                    <flux:input wire:model="organic_matter" type="number" step="0.01" min="0" placeholder="Ej: 2.50" />
+                    <flux:input wire:model="organic_matter" type="number" step="0.01" min="0" :placeholder="__('Ej: 2.50')" />
                     <flux:description>%</flux:description>
                     <flux:error name="organic_matter" />
                 </flux:field>
 
                 <flux:field>
                     <flux:label>{{ __('Nitrógeno total') }}</flux:label>
-                    <flux:input wire:model="nitrogen_total" type="number" step="0.01" min="0" placeholder="Ej: 1.20" />
+                    <flux:input wire:model="nitrogen_total" type="number" step="0.01" min="0" :placeholder="__('Ej: 1.20')" />
                     <flux:description>mg/kg</flux:description>
                     <flux:error name="nitrogen_total" />
                 </flux:field>
 
                 <flux:field>
                     <flux:label>{{ __('Fósforo') }}</flux:label>
-                    <flux:input wire:model="phosphorus" type="number" step="0.01" min="0" placeholder="Ej: 15.00" />
+                    <flux:input wire:model="phosphorus" type="number" step="0.01" min="0" :placeholder="__('Ej: 15.00')" />
                     <flux:description>mg/kg Olsen</flux:description>
                     <flux:error name="phosphorus" />
                 </flux:field>
 
                 <flux:field>
                     <flux:label>{{ __('Potasio') }}</flux:label>
-                    <flux:input wire:model="potassium" type="number" step="0.01" min="0" placeholder="Ej: 200.00" />
+                    <flux:input wire:model="potassium" type="number" step="0.01" min="0" :placeholder="__('Ej: 200.00')" />
                     <flux:description>mg/kg</flux:description>
                     <flux:error name="potassium" />
                 </flux:field>
@@ -99,14 +99,14 @@
 
                 <flux:field>
                     <flux:label>{{ __('Calcio') }}</flux:label>
-                    <flux:input wire:model="calcium" type="number" step="0.01" min="0" placeholder="Ej: 3000.00" />
+                    <flux:input wire:model="calcium" type="number" step="0.01" min="0" :placeholder="__('Ej: 3000.00')" />
                     <flux:description>mg/kg</flux:description>
                     <flux:error name="calcium" />
                 </flux:field>
 
                 <flux:field>
                     <flux:label>{{ __('Magnesio') }}</flux:label>
-                    <flux:input wire:model="magnesium" type="number" step="0.01" min="0" placeholder="Ej: 250.00" />
+                    <flux:input wire:model="magnesium" type="number" step="0.01" min="0" :placeholder="__('Ej: 250.00')" />
                     <flux:description>mg/kg</flux:description>
                     <flux:error name="magnesium" />
                 </flux:field>
@@ -124,14 +124,14 @@
 
                 <flux:field>
                     <flux:label>{{ __('Conductividad eléctrica') }}</flux:label>
-                    <flux:input wire:model="electrical_conductivity" type="number" step="0.01" min="0" placeholder="Ej: 0.85" />
+                    <flux:input wire:model="electrical_conductivity" type="number" step="0.01" min="0" :placeholder="__('Ej: 0.85')" />
                     <flux:description>dS/m</flux:description>
                     <flux:error name="electrical_conductivity" />
                 </flux:field>
 
                 <flux:field>
                     <flux:label>{{ __('Caliza activa') }}</flux:label>
-                    <flux:input wire:model="limestone" type="number" step="0.01" min="0" max="100" placeholder="Ej: 12.50" />
+                    <flux:input wire:model="limestone" type="number" step="0.01" min="0" max="100" :placeholder="__('Ej: 12.50')" />
                     <flux:description>{{ __('% caliza activa') }}</flux:description>
                     <flux:error name="limestone" />
                 </flux:field>

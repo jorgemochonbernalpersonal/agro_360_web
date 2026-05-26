@@ -66,7 +66,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <flux:field>
                             <flux:label>{{ __('Tipo de zona') }}</flux:label>
-                            <flux:input wire:model="protection_zone_type" type="text" placeholder="N2000, LIC, ZEPA, ZEC..." />
+                            <flux:input wire:model="protection_zone_type" type="text" :placeholder="__('N2000, LIC, ZEPA, ZEC...')" />
                             <flux:error name="protection_zone_type" />
                         </flux:field>
                         <flux:field>

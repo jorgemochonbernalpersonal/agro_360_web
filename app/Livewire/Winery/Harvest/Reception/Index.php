@@ -52,7 +52,7 @@ class Index extends AbstractIndex
             $harvest->batch?->recalculateTotal();
         }
 
-        $this->toastSuccess('Recepción anulada correctamente.');
+        $this->toastSuccess(__('Recepción anulada correctamente.'));
     }
 
     protected function baseQuery(): Builder

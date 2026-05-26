@@ -2,8 +2,8 @@
 
     {{-- Header --}}
     <x-agro.page-header
-        title="Certificaciones Ecológicas"
-        description="Gestión de certificaciones de producción ecológica, biodinámica y sostenible"
+        title="{{ __('Certificaciones Ecológicas') }}"
+        :description="__('Gestión de certificaciones de producción ecológica, biodinámica y sostenible')"
         icon="sparkles"
     >
         <x-slot:actions>
@@ -16,25 +16,25 @@
     {{-- KPIs --}}
     <x-agro.stats-section key="eco-certifications">
         <x-agro.stat-card
-            label="Total certificaciones"
+            :label="__('Total certificaciones')"
             :value="$stats['total']"
             icon="sparkles"
             color="zinc"
         />
         <x-agro.stat-card
-            label="Activas"
+            :label="__('Activas')"
             :value="$stats['active']"
             icon="check-circle"
             color="agro"
         />
         <x-agro.stat-card
-            label="Próximas a vencer"
+            :label="__('Próximas a vencer')"
             :value="$stats['expiring']"
             icon="clock"
             color="amber"
         />
         <x-agro.stat-card
-            label="Pendientes"
+            :label="__('Pendientes')"
             :value="$stats['pending']"
             icon="queue-list"
             color="zinc"
@@ -43,26 +43,24 @@
 
     {{-- Toolbar --}}
     <div class="flex items-center gap-3">
-        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar por nombre, organismo..." />
+        <x-agro.search-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar por nombre, organismo...')" />
 
         <flux:select wire:model.live="typeFilter" class="w-44">
-            <flux:select.option value="">Todos los tipos</flux:select.option>
+            <flux:select.option value="">{{ __('Todos los tipos') }}</flux:select.option>
             @foreach($types as $key => $label)
                 <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
             @endforeach
         </flux:select>
 
         <flux:select wire:model.live="statusFilter" class="w-40">
-            <flux:select.option value="">Todos los estados</flux:select.option>
+            <flux:select.option value="">{{ __('Todos los estados') }}</flux:select.option>
             @foreach($statuses as $key => $label)
                 <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
             @endforeach
         </flux:select>
 
         @if($search || $typeFilter || $statusFilter)
-            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">
-                Limpiar
-            </flux:button>
+            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">{{ __('Limpiar') }}</flux:button>
         @endif
     </div>
 
@@ -123,21 +121,21 @@
                                     <flux:icon icon="clock" class="size-3.5 {{ $cert->isExpiringSoon() ? 'text-amber-500' : 'text-zinc-400' }}" />
                                     <span>Válido hasta: {{ $cert->valid_until->format('d/m/Y') }}</span>
                                     @if($cert->isExpiringSoon())
-                                        <flux:badge color="amber" size="sm">Próximo</flux:badge>
+                                        <flux:badge color="amber" size="sm">{{ __('Próximo') }}</flux:badge>
                                     @endif
                                 </div>
                             @else
                                 <div class="flex items-center gap-2 text-xs text-zinc-400">
                                     <flux:icon icon="clock" class="size-3.5" />
-                                    <span>Sin fecha de vencimiento</span>
+                                    <span>{{ __('Sin fecha de vencimiento') }}</span>
                                 </div>
                             @endif
                         </div>
 
                         <x-slot:footer>
                             <div class="flex items-center justify-end gap-0.5">
-                                <x-agro.action-button variant="edit" href="{{ roleRoute('eco-certifications.edit', $cert) }}" wire:navigate title="Editar certificación" />
-                                <x-agro.action-button variant="delete" wire:click="delete({{ $cert->id }})" wire:confirm="¿Eliminar esta certificación?" wire:loading.attr="disabled" title="Eliminar certificación" />
+                                <x-agro.action-button variant="edit" href="{{ roleRoute('eco-certifications.edit', $cert) }}" wire:navigate title="{{ __('Editar certificación') }}" />
+                                <x-agro.action-button variant="delete" wire:click="delete({{ $cert->id }})" wire:confirm="{{ __('¿Eliminar esta certificación?') }}" wire:loading.attr="disabled" title="{{ __('Eliminar certificación') }}" />
                             </div>
                         </x-slot:footer>
                     </x-agro.card>
@@ -153,7 +151,7 @@
             >
                 @if($search || $typeFilter || $statusFilter)
                     <x-slot:action>
-                        <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
+                        <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">{{ __('Limpiar filtros') }}</flux:button>
                     </x-slot:action>
                 @else
                     <x-slot:action>

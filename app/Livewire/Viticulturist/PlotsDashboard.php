@@ -43,7 +43,7 @@ class PlotsDashboard extends Component
                 $alerts[] = [
                     'type' => 'warning',
                     'plot' => $plot->name,
-                    'message' => 'Falta definir superficie admisible PAC',
+                    'message' => __('Falta definir superficie admisible PAC'),
                 ];
             }
             

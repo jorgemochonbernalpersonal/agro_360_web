@@ -100,7 +100,7 @@ class Index extends AbstractIndex
         if (!$invoice) return;
 
         if ($invoice->status !== 'draft') {
-            $this->toastError('Solo se puede emitir una factura en borrador.');
+            $this->toastError(__('Solo se puede emitir una factura en borrador.'));
             return;
         }
 
@@ -121,12 +121,12 @@ class Index extends AbstractIndex
     {
         $this->validate(
             ['emitirDate' => 'required|date'],
-            ['emitirDate.required' => 'La fecha de factura es obligatoria.']
+            ['emitirDate.required' => __('La fecha de factura es obligatoria.')]
         );
 
         $invoice = $this->findInvoice($this->emitirId);
         if (!$invoice || $invoice->status !== 'draft') {
-            $this->toastError('La factura ya no está en borrador.');
+            $this->toastError(__('La factura ya no está en borrador.'));
             $this->closeEmitirModal();
             return;
         }
@@ -153,7 +153,7 @@ class Index extends AbstractIndex
                 'invoice_id' => $this->emitirId,
                 'user_id'    => Auth::id(),
             ]);
-            $this->toastError('Error al emitir la factura.');
+            $this->toastError(__('Error al emitir la factura.'));
         }
     }
 
@@ -165,12 +165,12 @@ class Index extends AbstractIndex
         if (!$invoice) return;
 
         if ($invoice->status === 'cancelled') {
-            $this->toastError('No se puede marcar como entregada una factura cancelada.');
+            $this->toastError(__('No se puede marcar como entregada una factura cancelada.'));
             return;
         }
 
         if ($invoice->delivery_status === 'delivered') {
-            $this->toastError('Esta factura ya está entregada.');
+            $this->toastError(__('Esta factura ya está entregada.'));
             return;
         }
 
@@ -180,14 +180,14 @@ class Index extends AbstractIndex
                 $invoice->update(['delivery_status' => 'delivered']);
             });
 
-            $this->toastSuccess('Factura marcada como entregada. Stock movido a vendido.');
+            $this->toastSuccess(__('Factura marcada como entregada. Stock movido a vendido.'));
 
         } catch (\Exception $e) {
             Log::error('Error al marcar factura como entregada: ' . $e->getMessage(), [
                 'invoice_id' => $invoiceId,
                 'user_id'    => Auth::id(),
             ]);
-            $this->toastError($e instanceof \RuntimeException ? $e->getMessage() : 'Error al procesar la entrega.');
+            $this->toastError($e instanceof \RuntimeException ? $e->getMessage()  : __('Error al procesar la entrega.'));
         }
     }
 
@@ -199,17 +199,17 @@ class Index extends AbstractIndex
         if (!$invoice) return;
 
         if ($invoice->status === 'cancelled') {
-            $this->toastError('Esta factura ya está cancelada.');
+            $this->toastError(__('Esta factura ya está cancelada.'));
             return;
         }
 
         if ($invoice->payment_status === 'paid') {
-            $this->toastError('No se puede cancelar una factura ya cobrada.');
+            $this->toastError(__('No se puede cancelar una factura ya cobrada.'));
             return;
         }
 
         if ($invoice->delivery_status === 'delivered') {
-            $this->toastError('No se puede cancelar directamente un albarán entregado. Crea una factura rectificativa.');
+            $this->toastError(__('No se puede cancelar directamente un albarán entregado. Crea una factura rectificativa.'));
             return;
         }
 
@@ -222,14 +222,14 @@ class Index extends AbstractIndex
                 ]);
             });
 
-            $this->toastSuccess('Factura cancelada y stock restaurado.');
+            $this->toastSuccess(__('Factura cancelada y stock restaurado.'));
 
         } catch (\Exception $e) {
             Log::error('Error al cancelar factura de productos: ' . $e->getMessage(), [
                 'invoice_id' => $invoiceId,
                 'user_id'    => Auth::id(),
             ]);
-            $this->toastError($e instanceof \RuntimeException ? $e->getMessage() : 'Error al cancelar la factura.');
+            $this->toastError($e instanceof \RuntimeException ? $e->getMessage()  : __('Error al cancelar la factura.'));
         }
     }
 
@@ -246,17 +246,17 @@ class Index extends AbstractIndex
         if (!$invoice) return;
 
         if ($invoice->status !== 'sent') {
-            $this->toastError('Solo se puede rectificar una factura emitida.');
+            $this->toastError(__('Solo se puede rectificar una factura emitida.'));
             return;
         }
 
         if ($invoice->corrective) {
-            $this->toastError('Una rectificativa no puede rectificarse a sí misma.');
+            $this->toastError(__('Una rectificativa no puede rectificarse a sí misma.'));
             return;
         }
 
         if (Invoice::where('corrected_invoice_id', $id)->exists()) {
-            $this->toastError('Esta factura ya tiene una rectificativa asociada.');
+            $this->toastError(__('Esta factura ya tiene una rectificativa asociada.'));
             return;
         }
 
@@ -282,25 +282,25 @@ class Index extends AbstractIndex
                 'correctiveDate'   => 'required|date',
                 'correctiveReason' => 'nullable|string|max:500',
             ],
-            ['correctiveDate.required' => 'La fecha de la rectificativa es obligatoria.']
+            ['correctiveDate.required' => __('La fecha de la rectificativa es obligatoria.')]
         );
 
         $original = $this->findInvoice($this->correctiveId, ['items.wineLot']);
         if (!$original || $original->status !== 'sent') {
-            $this->toastError('La factura original ya no es válida para rectificar.');
+            $this->toastError(__('La factura original ya no es válida para rectificar.'));
             $this->closeCorrectiveModal();
             return;
         }
 
         // Guard: only the owner can create a corrective
         if ((int) $original->user_id !== Auth::id()) {
-            $this->toastError('No tienes permiso para rectificar esta factura.');
+            $this->toastError(__('No tienes permiso para rectificar esta factura.'));
             $this->closeCorrectiveModal();
             return;
         }
 
         if (Invoice::where('corrected_invoice_id', $original->id)->exists()) {
-            $this->toastError('Esta factura ya tiene una rectificativa asociada.');
+            $this->toastError(__('Esta factura ya tiene una rectificativa asociada.'));
             $this->closeCorrectiveModal();
             return;
         }
@@ -383,7 +383,7 @@ class Index extends AbstractIndex
                 'original_invoice_id' => $this->correctiveId,
                 'user_id'             => Auth::id(),
             ]);
-            $this->toastError($e instanceof \RuntimeException ? $e->getMessage() : 'Error al generar la rectificativa.');
+            $this->toastError($e instanceof \RuntimeException ? $e->getMessage()  : __('Error al generar la rectificativa.'));
         }
     }
 
@@ -465,11 +465,11 @@ class Index extends AbstractIndex
                 }
             });
 
-            $this->toastSuccess('Albarán duplicado correctamente.');
+            $this->toastSuccess(__('Albarán duplicado correctamente.'));
 
         } catch (\Exception $e) {
             Log::error('Error al duplicar factura: ' . $e->getMessage(), ['invoice_id' => $invoiceId]);
-            $this->toastError($e instanceof \RuntimeException ? $e->getMessage() : 'Error al duplicar el albarán.');
+            $this->toastError($e instanceof \RuntimeException ? $e->getMessage()  : __('Error al duplicar el albarán.'));
         }
     }
 
@@ -548,12 +548,12 @@ class Index extends AbstractIndex
                 'quickPaymentType'     => 'nullable|in:cash,transfer,check,other',
             ],
             [
-                'quickClientId.required'        => 'Selecciona un cliente.',
-                'quickClientAddressId.required' => 'Selecciona una dirección.',
-                'quickLotId.required'           => 'Selecciona un lote de producto.',
-                'quickConceptName.required'     => 'El concepto es obligatorio.',
-                'quickQty.required'             => 'La cantidad es obligatoria.',
-                'quickPrice.required'           => 'El precio es obligatorio.',
+                'quickClientId.required'        => __('Selecciona un cliente.'),
+                'quickClientAddressId.required' => __('Selecciona una dirección.'),
+                'quickLotId.required'           => __('Selecciona un lote de producto.'),
+                'quickConceptName.required'     => __('El concepto es obligatorio.'),
+                'quickQty.required'             => __('La cantidad es obligatoria.'),
+                'quickPrice.required'           => __('El precio es obligatorio.'),
             ]
         );
 
@@ -623,11 +623,11 @@ class Index extends AbstractIndex
             });
 
             $this->closeQuickModal();
-            $this->toastSuccess('Albarán rápido creado correctamente.');
+            $this->toastSuccess(__('Albarán rápido creado correctamente.'));
 
         } catch (\Exception $e) {
             Log::error('Error al crear albarán rápido: ' . $e->getMessage(), ['user_id' => Auth::id()]);
-            $this->toastError($e instanceof \RuntimeException ? $e->getMessage() : 'Error al crear el albarán.');
+            $this->toastError($e instanceof \RuntimeException ? $e->getMessage()  : __('Error al crear el albarán.'));
         }
     }
 
@@ -654,7 +654,7 @@ class Index extends AbstractIndex
                 'exportDateTo'   => 'required|date|after_or_equal:exportDateFrom',
             ],
             [
-                'exportDateTo.after_or_equal' => 'La fecha final no puede ser anterior a la inicial.',
+                'exportDateTo.after_or_equal' => __('La fecha final no puede ser anterior a la inicial.'),
             ]
         );
 

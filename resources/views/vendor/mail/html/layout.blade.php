@@ -39,11 +39,9 @@ width: 100% !important;
 <table class="inner-body" align="center" width="570" cellpadding="0" cellspacing="0" role="presentation">
 <!-- Body content -->
 <tr>
-<td class="content-cell">
-{!! Illuminate\Mail\Markdown::parse($slot) !!}
+<td class="content-cell">{{ __('{!! Illuminate\Mail\Markdown::parse($slot) !!}
 
-{!! $subcopy ?? '' !!}
-</td>
+{!! $subcopy ?? \'\' !!}') }}</td>
 </tr>
 </table>
 </td>

@@ -52,7 +52,7 @@
                 <div class="flex items-center gap-3">
                     <a href="{{ url('/') }}" class="flex items-center gap-3">
                         <img src="{{ asset('images/logo.png') }}" alt="Agro365" width="120" height="40" loading="eager" fetchpriority="high" decoding="async" class="h-10 w-auto">
-                        <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">Agro365</span>
+                        <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Agro365') }}</span>
                     </a>
                 </div>
                 <div class="flex items-center gap-4">
@@ -80,95 +80,91 @@
             <nav class="mb-8 text-sm text-gray-600">
                 <a href="{{ url('/') }}" class="hover:text-[var(--color-agro-green)]">Inicio</a>
                 <span class="mx-2">/</span>
-                <span class="text-gray-900">Comparativa Software Agrícola</span>
+                <span class="text-gray-900">{{ __('Comparativa Software Agrícola') }}</span>
             </nav>
 
             <!-- Header -->
             <div class="mb-12">
-                <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">
-                    Comparativa de Software Agrícola para Viñedos 2027
-                </h1>
+                <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">{{ __('Comparativa de Software Agrícola para Viñedos 2027') }}</h1>
                 <p class="text-xl text-gray-600 leading-relaxed">
-                    Compara <strong>Agro365</strong> con otras soluciones de software agrícola. Descubre por qué Agro365 es la mejor opción para viticultores profesionales que buscan cumplir con la normativa 2027.
+                    Compara <strong>{{ __('Agro365') }}</strong> con otras soluciones de software agrícola. Descubre por qué Agro365 es la mejor opción para viticultores profesionales que buscan cumplir con la normativa 2027.
                 </p>
             </div>
 
             <!-- Content -->
             <article class="prose prose-lg max-w-none">
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">¿Qué Buscar en un Software Agrícola para Viñedos?</h2>
-                    <p class="text-gray-700 leading-relaxed mb-4">
-                        Antes de comparar, es importante saber qué características son esenciales en un software agrícola para viñedos en 2027:
-                    </p>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('¿Qué Buscar en un Software Agrícola para Viñedos?') }}</h2>
+                    <p class="text-gray-700 leading-relaxed mb-4">{{ __('Antes de comparar, es importante saber qué características son esenciales en un software agrícola para viñedos en 2027:') }}</p>
                     <ul class="list-disc list-inside space-y-2 text-gray-700 mb-6 ml-4">
-                        <li><strong>Cuaderno de campo digital obligatorio:</strong> Debe cumplir con todos los requisitos normativos 2027</li>
-                        <li><strong>Integración SIGPAC completa:</strong> Asociación automática de actividades a códigos SIGPAC</li>
-                        <li><strong>Informes oficiales con firma electrónica:</strong> Generación de informes certificados SHA-256</li>
-                        <li><strong>Dashboard de cumplimiento PAC:</strong> Validación automática y detección de errores</li>
-                        <li><strong>Gestión de cosechas:</strong> Control de vendimia, contenedores y rendimientos</li>
-                        <li><strong>Facturación integrada:</strong> Desde la cosecha hasta la factura en un solo sistema</li>
-                        <li><strong>Uso móvil:</strong> Registro de actividades desde el viñedo</li>
-                        <li><strong>Precio asequible:</strong> Accesible para pequeños y medianos viticultores</li>
+                        <li><strong>{{ __('Cuaderno de campo digital obligatorio:') }}</strong> Debe cumplir con todos los requisitos normativos 2027</li>
+                        <li><strong>{{ __('Integración SIGPAC completa:') }}</strong> Asociación automática de actividades a códigos SIGPAC</li>
+                        <li><strong>{{ __('Informes oficiales con firma electrónica:') }}</strong> Generación de informes certificados SHA-256</li>
+                        <li><strong>{{ __('Dashboard de cumplimiento PAC:') }}</strong> Validación automática y detección de errores</li>
+                        <li><strong>{{ __('Gestión de cosechas:') }}</strong> Control de vendimia, contenedores y rendimientos</li>
+                        <li><strong>{{ __('Facturación integrada:') }}</strong> Desde la cosecha hasta la factura en un solo sistema</li>
+                        <li><strong>{{ __('Uso móvil:') }}</strong> Registro de actividades desde el viñedo</li>
+                        <li><strong>{{ __('Precio asequible:') }}</strong> Accesible para pequeños y medianos viticultores</li>
                     </ul>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Comparativa: Agro365 vs Otras Soluciones</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Comparativa: Agro365 vs Otras Soluciones') }}</h2>
                     
                     <div class="overflow-x-auto mb-8">
                         <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-sm">
                             <thead class="bg-[var(--color-agro-green-bg)]">
                                 <tr>
-                                    <th class="px-6 py-4 text-left text-sm font-bold text-[var(--color-agro-green-dark)]">Característica</th>
-                                    <th class="px-6 py-4 text-center text-sm font-bold text-[var(--color-agro-green-dark)]">Agro365</th>
-                                    <th class="px-6 py-4 text-center text-sm font-bold text-gray-700">Otras Soluciones</th>
+                                    <th class="px-6 py-4 text-left text-sm font-bold text-[var(--color-agro-green-dark)]">{{ __('Característica') }}</th>
+                                    <th class="px-6 py-4 text-center text-sm font-bold text-[var(--color-agro-green-dark)]">{{ __('Agro365') }}</th>
+                                    <th class="px-6 py-4 text-center text-sm font-bold text-gray-700">{{ __('Otras Soluciones') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200">
                                 <tr>
-                                    <td class="px-6 py-4 text-sm text-gray-700 font-medium">Cuaderno Digital Obligatorio 2027</td>
-                                    <td class="px-6 py-4 text-center"><span class="text-[var(--color-agro-green)] font-bold">✓ Completo</span></td>
-                                    <td class="px-6 py-4 text-center text-gray-500">Parcial o incompleto</td>
+                                    <td class="px-6 py-4 text-sm text-gray-700 font-medium">{{ __('Cuaderno Digital Obligatorio 2027') }}</td>
+                                    <td class="px-6 py-4 text-center"><span class="text-[var(--color-agro-green)] font-bold">{{ __('✓ Completo') }}</span></td>
+                                    <td class="px-6 py-4 text-center text-gray-500">{{ __('Parcial o incompleto') }}</td>
                                 </tr>
                                 <tr class="bg-gray-50">
-                                    <td class="px-6 py-4 text-sm text-gray-700 font-medium">Integración SIGPAC</td>
-                                    <td class="px-6 py-4 text-center"><span class="text-[var(--color-agro-green)] font-bold">✓ Completa</span></td>
-                                    <td class="px-6 py-4 text-center text-gray-500">Limitada o manual</td>
+                                    <td class="px-6 py-4 text-sm text-gray-700 font-medium">{{ __('Integración SIGPAC') }}</td>
+                                    <td class="px-6 py-4 text-center"><span class="text-[var(--color-agro-green)] font-bold">{{ __('✓ Completa') }}</span></td>
+                                    <td class="px-6 py-4 text-center text-gray-500">{{ __('Limitada o manual') }}</td>
                                 </tr>
                                 <tr>
-                                    <td class="px-6 py-4 text-sm text-gray-700 font-medium">Informes Oficiales con Firma SHA-256</td>
-                                    <td class="px-6 py-4 text-center"><span class="text-[var(--color-agro-green)] font-bold">✓ 7 Tipos</span></td>
-                                    <td class="px-6 py-4 text-center text-gray-500">Limitados o sin firma</td>
+                                    <td class="px-6 py-4 text-sm text-gray-700 font-medium">{{ __('Informes Oficiales con Firma SHA-256') }}</td>
+                                    <td class="px-6 py-4 text-center"><span class="text-[var(--color-agro-green)] font-bold">{{ __('✓ 7 Tipos') }}</span></td>
+                                    <td class="px-6 py-4 text-center text-gray-500">{{ __('Limitados o sin firma') }}</td>
                                 </tr>
                                 <tr class="bg-gray-50">
-                                    <td class="px-6 py-4 text-sm text-gray-700 font-medium">Dashboard Cumplimiento PAC</td>
-                                    <td class="px-6 py-4 text-center"><span class="text-[var(--color-agro-green)] font-bold">✓ Automático</span></td>
-                                    <td class="px-6 py-4 text-center text-gray-500">Manual o inexistente</td>
+                                    <td class="px-6 py-4 text-sm text-gray-700 font-medium">{{ __('Dashboard Cumplimiento PAC') }}</td>
+                                    <td class="px-6 py-4 text-center"><span class="text-[var(--color-agro-green)] font-bold">{{ __('✓ Automático') }}</span></td>
+                                    <td class="px-6 py-4 text-center text-gray-500">{{ __('Manual o inexistente') }}</td>
                                 </tr>
                                 <tr>
-                                    <td class="px-6 py-4 text-sm text-gray-700 font-medium">Gestión de Cosechas</td>
-                                    <td class="px-6 py-4 text-center"><span class="text-[var(--color-agro-green)] font-bold">✓ Completa</span></td>
-                                    <td class="px-6 py-4 text-center text-gray-500">Básica o inexistente</td>
+                                    <td class="px-6 py-4 text-sm text-gray-700 font-medium">{{ __('Gestión de Cosechas') }}</td>
+                                    <td class="px-6 py-4 text-center"><span class="text-[var(--color-agro-green)] font-bold">{{ __('✓ Completa') }}</span></td>
+                                    <td class="px-6 py-4 text-center text-gray-500">{{ __('Básica o inexistente') }}</td>
                                 </tr>
                                 <tr class="bg-gray-50">
-                                    <td class="px-6 py-4 text-sm text-gray-700 font-medium">Facturación Integrada</td>
-                                    <td class="px-6 py-4 text-center"><span class="text-[var(--color-agro-green)] font-bold">✓ Sí</span></td>
-                                    <td class="px-6 py-4 text-center text-gray-500">No o externa</td>
+                                    <td class="px-6 py-4 text-sm text-gray-700 font-medium">{{ __('Facturación Integrada') }}</td>
+                                    <td class="px-6 py-4 text-center"><span class="text-[var(--color-agro-green)] font-bold">{{ __('✓ Sí') }}</span></td>
+                                    <td class="px-6 py-4 text-center text-gray-500">{{ __('No o externa') }}</td>
                                 </tr>
                                 <tr>
-                                    <td class="px-6 py-4 text-sm text-gray-700 font-medium">Uso Móvil Optimizado</td>
-                                    <td class="px-6 py-4 text-center"><span class="text-[var(--color-agro-green)] font-bold">✓ 100%</span></td>
-                                    <td class="px-6 py-4 text-center text-gray-500">Limitado</td>
+                                    <td class="px-6 py-4 text-sm text-gray-700 font-medium">{{ __('Uso Móvil Optimizado') }}</td>
+                                    <td class="px-6 py-4 text-center"><span class="text-[var(--color-agro-green)] font-bold">{{ __('✓ 100%') }}</span></td>
+                                    <td class="px-6 py-4 text-center text-gray-500">{{ __('Limitado') }}</td>
                                 </tr>
                                 <tr class="bg-gray-50">
-                                    <td class="px-6 py-4 text-sm text-gray-700 font-medium">Precio Mensual</td>
-                                    <td class="px-6 py-4 text-center"><span class="text-[var(--color-agro-green)] font-bold">Gratis · 9€ · 14€</span></td>
-                                    <td class="px-6 py-4 text-center text-gray-500">€20-50/mes o más</td>
+                                    <td class="px-6 py-4 text-sm text-gray-700 font-medium">{{ __('Precio Mensual') }}</td>
+                                    <td class="px-6 py-4 text-center"><span class="text-[var(--color-agro-green)] font-bold">{{ __('Gratis · 9€ · 14€') }}</span></td>
+                                    <td class="px-6 py-4 text-center text-gray-500">{{ __('€20-50/mes o más') }}</td>
                                 </tr>
                                 <tr>
-                                    <td class="px-6 py-4 text-sm text-gray-700 font-medium">Prueba Gratis</td>
-                                    <td class="px-6 py-4 text-center"><span class="text-[var(--color-agro-green)] font-bold">3 meses</span></td>
-                                    <td class="px-6 py-4 text-center text-gray-500">7-30 días</td>
+                                    <td class="px-6 py-4 text-sm text-gray-700 font-medium">{{ __('Prueba Gratis') }}</td>
+                                    <td class="px-6 py-4 text-center"><span class="text-[var(--color-agro-green)] font-bold">{{ __('3 meses') }}</span></td>
+                                    <td class="px-6 py-4 text-center text-gray-500">{{ __('7-30 días') }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -176,65 +172,63 @@
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Ventajas de Agro365</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Ventajas de Agro365') }}</h2>
                     <div class="grid md:grid-cols-2 gap-6 mb-6">
                         <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-[var(--color-agro-green)]">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">✅ Cumplimiento 100% Normativa 2027</h3>
-                            <p class="text-gray-700">Agro365 está diseñado específicamente para cumplir con todos los requisitos de la normativa 2027 desde el primer día.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('✅ Cumplimiento 100% Normativa 2027') }}</h3>
+                            <p class="text-gray-700">{{ __('Agro365 está diseñado específicamente para cumplir con todos los requisitos de la normativa 2027 desde el primer día.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-[var(--color-agro-green)]">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">💰 Precio Justo por Perfil</h3>
-                            <p class="text-gray-700">Básico gratis (invitado por bodega), completo desde 9€/mes o 14€/mes independiente. La opción más asequible del mercado.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('💰 Precio Justo por Perfil') }}</h3>
+                            <p class="text-gray-700">{{ __('Básico gratis (invitado por bodega), completo desde 9€/mes o 14€/mes independiente. La opción más asequible del mercado.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-[var(--color-agro-green)]">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">🎁 3 Meses Gratis</h3>
-                            <p class="text-gray-700">Prueba completa durante 3 meses sin compromiso. Sin tarjeta requerida.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('🎁 3 Meses Gratis') }}</h3>
+                            <p class="text-gray-700">{{ __('Prueba completa durante 3 meses sin compromiso. Sin tarjeta requerida.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-[var(--color-agro-green)]">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">📱 100% Móvil</h3>
-                            <p class="text-gray-700">Diseñado para móviles desde el principio. Registra actividades directamente desde el viñedo.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('📱 100% Móvil') }}</h3>
+                            <p class="text-gray-700">{{ __('Diseñado para móviles desde el principio. Registra actividades directamente desde el viñedo.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-[var(--color-agro-green)]">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">🔧 Todo en Uno</h3>
-                            <p class="text-gray-700">Cuaderno digital, SIGPAC, informes, cosechas y facturación en una sola plataforma.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('🔧 Todo en Uno') }}</h3>
+                            <p class="text-gray-700">{{ __('Cuaderno digital, SIGPAC, informes, cosechas y facturación en una sola plataforma.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-[var(--color-agro-green)]">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">⚡ Configuración Rápida</h3>
-                            <p class="text-gray-700">Configuración en menos de 30 minutos. Sin conocimientos técnicos avanzados necesarios.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('⚡ Configuración Rápida') }}</h3>
+                            <p class="text-gray-700">{{ __('Configuración en menos de 30 minutos. Sin conocimientos técnicos avanzados necesarios.') }}</p>
                         </div>
                     </div>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">¿Por Qué Elegir Agro365?</h2>
-                    <p class="text-gray-700 leading-relaxed mb-4">
-                        Agro365 es la mejor opción para viticultores profesionales porque:
-                    </p>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('¿Por Qué Elegir Agro365?') }}</h2>
+                    <p class="text-gray-700 leading-relaxed mb-4">{{ __('Agro365 es la mejor opción para viticultores profesionales porque:') }}</p>
                     <div class="bg-gradient-to-r from-[var(--color-agro-green-bg)] to-[var(--color-agro-green-light)]/30 p-8 rounded-xl border border-[var(--color-agro-green)]/20 mb-6">
                         <ul class="space-y-4 text-gray-800">
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Cumplimiento garantizado:</strong> Diseñado específicamente para cumplir con la normativa 2027</span>
+                                <span><strong>{{ __('Cumplimiento garantizado:') }}</strong> Diseñado específicamente para cumplir con la normativa 2027</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Precio justo:</strong> La solución más completa al mejor precio del mercado</span>
+                                <span><strong>{{ __('Precio justo:') }}</strong> La solución más completa al mejor precio del mercado</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Fácil de usar:</strong> Interfaz intuitiva diseñada para viticultores, no para informáticos</span>
+                                <span><strong>{{ __('Fácil de usar:') }}</strong> Interfaz intuitiva diseñada para viticultores, no para informáticos</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Soporte en español:</strong> Atención al cliente en español, de viticultores para viticultores</span>
+                                <span><strong>{{ __('Soporte en español:') }}</strong> Atención al cliente en español, de viticultores para viticultores</span>
                             </li>
                         </ul>
                     </div>
@@ -243,12 +237,8 @@
 
             <!-- CTA Section -->
             <div class="mt-16 pt-12 border-t border-gray-200 text-center">
-                <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">
-                    Prueba Agro365 Gratis Durante 6 Meses
-                </h2>
-                <p class="text-gray-600 mb-8 text-lg">
-                    Compara tú mismo. Prueba Agro365 durante 3 meses completamente gratis y descubre por qué es la mejor opción para tu viñedo.
-                </p>
+                <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Prueba Agro365 Gratis Durante 6 Meses') }}</h2>
+                <p class="text-gray-600 mb-8 text-lg">{{ __('Compara tú mismo. Prueba Agro365 durante 3 meses completamente gratis y descubre por qué es la mejor opción para tu viñedo.') }}</p>
                 <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-lg">
                     Comenzar Gratis
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -96,9 +96,9 @@
     <div class="section-title">Cuadro 1 — Entradas de materia prima</div>
     <table>
         <tr>
-            <th>Concepto</th>
-            <th class="r">Kg recibidos</th>
-            <th class="r">Equivalente HL (÷130)</th>
+            <th>{{ __('Concepto') }}</th>
+            <th class="r">{{ __('Kg recibidos') }}</th>
+            <th class="r">{{ __('Equivalente HL (÷130)') }}</th>
         </tr>
         <tr>
             <td>Uva propia / recibida campaña {{ $campaign }}</td>
@@ -106,7 +106,7 @@
             <td class="r">{{ number_format($entradas['uva_propia_hl'], 2, ',', '.') }}</td>
         </tr>
         <tr>
-            <td class="tot">Total entradas</td>
+            <td class="tot">{{ __('Total entradas') }}</td>
             <td class="r tot">{{ number_format($entradas['uva_propia_kg'], 0, ',', '.') }} kg</td>
             <td class="r tot">{{ number_format($entradas['uva_propia_hl'], 2, ',', '.') }} HL</td>
         </tr>
@@ -119,9 +119,9 @@
     @if(count($produccion) > 0)
         <table>
             <tr>
-                <th>Tipo de vino</th>
-                <th class="r">Nº vinos</th>
-                <th class="r">Hectolitros (HL)</th>
+                <th>{{ __('Tipo de vino') }}</th>
+                <th class="r">{{ __('Nº vinos') }}</th>
+                <th class="r">{{ __('Hectolitros (HL)') }}</th>
             </tr>
             @php $totalProd = 0; @endphp
             @foreach($produccion as $row)
@@ -133,13 +133,13 @@
                 </tr>
             @endforeach
             <tr>
-                <td class="tot">Total producción</td>
+                <td class="tot">{{ __('Total producción') }}</td>
                 <td class="r tot">—</td>
                 <td class="r tot">{{ number_format($totalProd, 2, ',', '.') }} HL</td>
             </tr>
         </table>
     @else
-        <p style="font-size:7.5pt; color:#6b7280; padding:4pt 0;">Sin datos de producción para esta campaña.</p>
+        <p style="font-size:7.5pt; color:#6b7280; padding:4pt 0;">{{ __('Sin datos de producción para esta campaña.') }}</p>
     @endif
 </div>
 
@@ -149,9 +149,9 @@
     @if(count($existencias) > 0)
         <table>
             <tr>
-                <th>Tipo de vino</th>
-                <th class="r">Nº referencias</th>
-                <th class="r">Hectolitros (HL)</th>
+                <th>{{ __('Tipo de vino') }}</th>
+                <th class="r">{{ __('Nº referencias') }}</th>
+                <th class="r">{{ __('Hectolitros (HL)') }}</th>
             </tr>
             @php $totalExist = 0; @endphp
             @foreach($existencias as $row)
@@ -163,13 +163,13 @@
                 </tr>
             @endforeach
             <tr>
-                <td class="tot">Total existencias</td>
+                <td class="tot">{{ __('Total existencias') }}</td>
                 <td class="r tot">—</td>
                 <td class="r tot">{{ number_format($totalExist, 2, ',', '.') }} HL</td>
             </tr>
         </table>
     @else
-        <p style="font-size:7.5pt; color:#6b7280; padding:4pt 0;">Sin instantánea de existencias. Registra una instantánea en SILICIE.</p>
+        <p style="font-size:7.5pt; color:#6b7280; padding:4pt 0;">{{ __('Sin instantánea de existencias. Registra una instantánea en SILICIE.') }}</p>
     @endif
 </div>
 
@@ -179,9 +179,9 @@
     @if(count($ventas) > 0)
         <table>
             <tr>
-                <th>Tipo de vino</th>
-                <th class="r">Botellas</th>
-                <th class="r">Hectolitros (HL)</th>
+                <th>{{ __('Tipo de vino') }}</th>
+                <th class="r">{{ __('Botellas') }}</th>
+                <th class="r">{{ __('Hectolitros (HL)') }}</th>
             </tr>
             @php $totalVent = 0; @endphp
             @foreach($ventas as $row)
@@ -193,13 +193,13 @@
                 </tr>
             @endforeach
             <tr>
-                <td class="tot">Total ventas</td>
+                <td class="tot">{{ __('Total ventas') }}</td>
                 <td class="r tot">—</td>
                 <td class="r tot">{{ number_format($totalVent, 2, ',', '.') }} HL</td>
             </tr>
         </table>
     @else
-        <p style="font-size:7.5pt; color:#6b7280; padding:4pt 0;">Sin ventas registradas en este período.</p>
+        <p style="font-size:7.5pt; color:#6b7280; padding:4pt 0;">{{ __('Sin ventas registradas en este período.') }}</p>
     @endif
 </div>
 
@@ -209,15 +209,15 @@
     <div class="section-title">Cuadro 5 — Mosto</div>
     <table>
         <tr>
-            <th>Concepto</th>
-            <th class="r">Hectolitros (HL)</th>
+            <th>{{ __('Concepto') }}</th>
+            <th class="r">{{ __('Hectolitros (HL)') }}</th>
         </tr>
         <tr>
-            <td>Existencias de mosto</td>
+            <td>{{ __('Existencias de mosto') }}</td>
             <td class="r">{{ number_format($mosto['existencias'], 2, ',', '.') }}</td>
         </tr>
         <tr>
-            <td>Mosto producido</td>
+            <td>{{ __('Mosto producido') }}</td>
             <td class="r">{{ number_format($mosto['producido'], 2, ',', '.') }}</td>
         </tr>
     </table>
@@ -226,8 +226,8 @@
 
 {{-- Notice --}}
 <div class="notice">
-    <strong>Aviso:</strong> Este documento es un resumen de los datos registrados en Agro365 para facilitar la cumplimentación
-    de la declaración oficial INFOVI en <strong>mapa.gob.es/infovi</strong>. No sustituye a la declaración oficial.
+    <strong>{{ __('Aviso:') }}</strong> Este documento es un resumen de los datos registrados en Agro365 para facilitar la cumplimentación
+    de la declaración oficial INFOVI en <strong>{{ __('mapa.gob.es/infovi') }}</strong>. No sustituye a la declaración oficial.
     Real Decreto 739/2015, de 31 de julio (MAPA/AICA). Datos en hectolitros (HL).
 </div>
 

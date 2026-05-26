@@ -25,10 +25,10 @@ class ForcePasswordReset extends Component
     protected function messages(): array
     {
         return [
-            'current_password.required' => 'El campo contraseña temporal es obligatorio.',
-            'new_password.required' => 'El campo nueva contraseña es obligatorio.',
-            'new_password.confirmed' => 'Las contraseñas no coinciden. Por favor, verifica que ambas contraseñas sean iguales.',
-            'new_password.min' => 'La contraseña debe tener al menos 8 caracteres.',
+            'current_password.required' => __('El campo contraseña temporal es obligatorio.'),
+            'new_password.required' => __('El campo nueva contraseña es obligatorio.'),
+            'new_password.confirmed' => __('Las contraseñas no coinciden. Por favor, verifica que ambas contraseñas sean iguales.'),
+            'new_password.min' => __('La contraseña debe tener al menos 8 caracteres.'),
         ];
     }
 
@@ -40,7 +40,7 @@ class ForcePasswordReset extends Component
 
         // Verificar que la contraseña actual es correcta
         if (!Hash::check($this->current_password, $user->password)) {
-            $this->addError('current_password', 'La contraseña temporal es incorrecta.');
+            $this->addError('current_password', __('La contraseña temporal es incorrecta.'));
             return;
         }
 
@@ -56,7 +56,7 @@ class ForcePasswordReset extends Component
         auth()->login($user);
         request()->session()->regenerate();
 
-        $this->toastSuccess('¡Contraseña actualizada exitosamente! Bienvenido al sistema.');
+        $this->toastSuccess(__('¡Contraseña actualizada exitosamente! Bienvenido al sistema.'));
 
         // Redirigir al dashboard correspondiente
         return $this->redirect(route($this->getDashboardRoute()), navigate: true);

@@ -56,7 +56,7 @@ class Create extends Component
         if ($this->to_container_id) {
             $dest = Container::where('user_id', Auth::id())->find($this->to_container_id);
             if ($dest && $dest->getAvailableCapacity() < (float) $this->quantity) {
-                $this->addError('quantity', 'El contenedor destino no tiene capacidad suficiente (' . number_format($dest->getAvailableCapacity(), 1) . ' L disponibles).');
+                $this->addError('quantity', __('El contenedor destino no tiene capacidad suficiente (:available L disponibles).', ['available' => number_format($dest->getAvailableCapacity(), 1)]));
                 return;
             }
         }
@@ -76,7 +76,7 @@ class Create extends Component
 
         app(WineContainerStockService::class)->recordTransfer($transfer);
 
-        $this->toastSuccess('Trasvase registrado correctamente.');
+        $this->toastSuccess(__('Trasvase registrado correctamente.'));
         $this->redirect(roleRoute('wine-transfers.index'), navigate: true);
     }
 

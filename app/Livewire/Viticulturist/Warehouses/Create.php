@@ -44,7 +44,7 @@ class Create extends Component
             'active'      => true,
         ]);
 
-        $this->toastSuccess('Almacén creado correctamente.');
+        $this->toastSuccess(__('Almacén creado correctamente.'));
 
         return $this->viticulturistRoleRedirect('warehouse.index', ['tab' => 'almacenes']);
     }
@@ -52,6 +52,6 @@ class Create extends Component
     public function render()
     {
         return view('livewire.viticulturist.warehouses.create')
-            ->layout('layouts.app', ['title' => 'Nuevo Almacén - Agro365']);
+            ->layout('layouts.app', ['title' => __('Nuevo Almacén - Agro365')]);
     }
 }

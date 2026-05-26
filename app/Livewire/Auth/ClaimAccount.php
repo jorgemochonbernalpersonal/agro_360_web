@@ -91,13 +91,13 @@ class ClaimAccount extends Component
     protected function messages(): array
     {
         return [
-            'name.required'      => 'El nombre es obligatorio.',
-            'email.required'     => 'El email es obligatorio.',
-            'email.email'        => 'El email no es válido.',
-            'email.unique'       => 'Este email ya está registrado.',
-            'password.required'  => 'La contraseña es obligatoria.',
-            'password.min'       => 'La contraseña debe tener al menos 8 caracteres.',
-            'password.confirmed' => 'Las contraseñas no coinciden.',
+            'name.required'      => __('El nombre es obligatorio.'),
+            'email.required'     => __('El email es obligatorio.'),
+            'email.email'        => __('El email no es válido.'),
+            'email.unique'       => __('Este email ya está registrado.'),
+            'password.required'  => __('La contraseña es obligatoria.'),
+            'password.min'       => __('La contraseña debe tener al menos 8 caracteres.'),
+            'password.confirmed' => __('Las contraseñas no coinciden.'),
         ];
     }
 

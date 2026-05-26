@@ -47,7 +47,7 @@ class WineryAbilityChangedNotification extends Notification implements ShouldQue
 
         return (new MailMessage)
             ->subject($subject)
-            ->greeting('Hola ' . ($notifiable->name ?: ''))
+            ->greeting(__('Hola :name', ['name' => $notifiable->name ?: '']))
             ->line(
                 $this->granted
                     ? 'Tu Denominación de Origen **' . $this->supervisorName . '** ha **activado** el módulo **' . $this->ability->name . '** en tu cuenta.'
@@ -58,8 +58,8 @@ class WineryAbilityChangedNotification extends Notification implements ShouldQue
                 fn ($m) => $m->line('Ya puedes acceder a este módulo desde tu panel.'),
                 fn ($m) => $m->line('Si tienes dudas sobre este cambio, contacta con tu denominación de origen.')
             )
-            ->action('Ver mi DO', $url)
-            ->salutation("Saludos,\nAgro365");
+            ->action(__('Ver mi DO'), $url)
+            ->salutation(__('Saludos,\nAgro365'));
     }
 
     public function toArray(object $notifiable): array

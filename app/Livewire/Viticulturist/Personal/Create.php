@@ -23,7 +23,7 @@ class Create extends Component
     public function mount()
     {
         if (!Auth::user()->can('create', Crew::class)) {
-            abort(403, 'No tienes permiso para crear cuadrillas.');
+            abort(403, __('No tienes permiso para crear cuadrillas.'));
         }
 
         $user = Auth::user();
@@ -78,7 +78,7 @@ class Create extends Component
                 ]);
             });
 
-            $this->toastSuccess('Cuadrilla creada correctamente.');
+            $this->toastSuccess(__('Cuadrilla creada correctamente.'));
             return $this->viticulturistRoleRedirect('personal.index');
         } catch (\Exception $e) {
             Log::error('Error al crear cuadrilla', [
@@ -88,7 +88,7 @@ class Create extends Component
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            $this->toastError('Error al crear la cuadrilla. Por favor, intenta de nuevo.');
+            $this->toastError(__('Error al crear la cuadrilla. Por favor, intenta de nuevo.'));
             return;
         }
     }

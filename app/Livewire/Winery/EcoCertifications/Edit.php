@@ -65,7 +65,7 @@ class Edit extends Component
             'notes'              => $this->notes ?: null,
         ]);
 
-        $this->toastSuccess('Certificación actualizada correctamente.');
+        $this->toastSuccess(__('Certificación actualizada correctamente.'));
         $this->redirect(roleRoute('eco-certifications.index'), navigate: true);
     }
 

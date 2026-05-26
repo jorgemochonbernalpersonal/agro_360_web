@@ -41,7 +41,7 @@ class Show extends Component
         } else {
             // Asegurar que el cliente pertenece al usuario actual
             if ($this->client->user_id !== $user->id) {
-                abort(403, 'No tienes permiso para ver este cliente.');
+                abort(403, __('No tienes permiso para ver este cliente.'));
             }
             // Cargar relaciones si no están cargadas
             if (!$this->client->relationLoaded('addresses')) {
@@ -61,7 +61,7 @@ class Show extends Component
         return view('livewire.clients.show')
             ->layout('layouts.app', [
                 'title' => $clientName . ' - Cliente - Agro365',
-                'description' => 'Detalles del cliente ' . $clientName . '. Información de contacto, direcciones, facturas y estadísticas de facturación.',
+                'description' => __('Detalles del cliente ') . $clientName . '. Información de contacto, direcciones, facturas y estadísticas de facturación.',
             ]);
     }
 }

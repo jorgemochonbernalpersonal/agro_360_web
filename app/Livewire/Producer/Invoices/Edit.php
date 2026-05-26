@@ -244,7 +244,7 @@ class Edit extends Component
                     $this->client_address_id = (string) $primary->id;
                 } else {
                     $this->client_address_id = '';
-                    $this->addError('client_id', 'Este cliente no tiene ninguna dirección configurada. Por favor, añade una dirección al cliente primero.');
+                    $this->addError('client_id', __('Este cliente no tiene ninguna dirección configurada. Por favor, añade una dirección al cliente primero.'));
                 }
 
                 $this->availableAddresses = $client->addresses;
@@ -269,13 +269,13 @@ class Edit extends Component
             ->find($this->selectedHarvestId);
 
         if (!$harvest) {
-            $this->toastError('Cosecha no encontrada.');
+            $this->toastError(__('Cosecha no encontrada.'));
             return;
         }
 
         foreach ($this->items as $item) {
             if (isset($item['harvest_id']) && (int) $item['harvest_id'] === $harvest->id) {
-                $this->toastError('Esta cosecha ya está en la factura actual.');
+                $this->toastError(__('Esta cosecha ya está en la factura actual.'));
                 return;
             }
         }
@@ -286,7 +286,7 @@ class Edit extends Component
             : (float) $harvest->total_weight;
 
         if ($availableQty <= 0) {
-            $this->toastError('Esta cosecha no tiene stock disponible para facturar.');
+            $this->toastError(__('Esta cosecha no tiene stock disponible para facturar.'));
             return;
         }
 
@@ -305,9 +305,9 @@ class Edit extends Component
             'wine_lot_id'         => null,
             'concept_type'        => 'harvest',
             'name'                => $itemName,
-            'description'         => 'Cosecha del ' . $harvest->harvest_start_date->format('d/m/Y') .
+            'description'         => __('Cosecha del ') . $harvest->harvest_start_date->format('d/m/Y') .
                                      ($harvest->plotPlanting->grapeVariety ? ' - Variedad: ' . $harvest->plotPlanting->grapeVariety->name : ''),
-            'sku'                 => 'HARV-' . $harvest->id,
+            'sku'                 => __('HARV-') . $harvest->id,
             'quantity'            => $availableQty,
             'unit'                => 'kg',
             'available_qty'       => $availableQty,
@@ -317,7 +317,7 @@ class Edit extends Component
         ];
 
         $this->selectedHarvestId = '';
-        $this->toastSuccess('Cosecha añadida a la factura.');
+        $this->toastSuccess(__('Cosecha añadida a la factura.'));
     }
 
     // ── Add wine lot item ─────────────────────────────────────────────────────
@@ -331,13 +331,13 @@ class Edit extends Component
         $lot = ProductLot::where('user_id', Auth::id())->find($this->selectedLotId);
 
         if (!$lot) {
-            $this->toastError('Lote no encontrado.');
+            $this->toastError(__('Lote no encontrado.'));
             return;
         }
 
         foreach ($this->items as $item) {
             if (isset($item['wine_lot_id']) && (int) $item['wine_lot_id'] === $lot->id) {
-                $this->toastError('Este lote ya está en la factura.');
+                $this->toastError(__('Este lote ya está en la factura.'));
                 return;
             }
         }
@@ -359,7 +359,7 @@ class Edit extends Component
         ];
 
         $this->selectedLotId = '';
-        $this->toastSuccess('Producto añadido.');
+        $this->toastSuccess(__('Producto añadido.'));
     }
 
     // ── Add manual item ───────────────────────────────────────────────────────
@@ -438,7 +438,7 @@ class Edit extends Component
     public function saveStatuses(): void
     {
         if ($this->invoice->status === 'cancelled') {
-            $this->toastError('No se puede modificar una factura cancelada.');
+            $this->toastError(__('No se puede modificar una factura cancelada.'));
             return;
         }
 
@@ -466,7 +466,7 @@ class Edit extends Component
     {
         $this->validate(
             ['payment_date' => 'required|date'],
-            ['payment_date.required' => 'La fecha de cobro es obligatoria.']
+            ['payment_date.required' => __('La fecha de cobro es obligatoria.')]
         );
 
         $this->showPaymentDateModal = false;
@@ -564,7 +564,7 @@ class Edit extends Component
                 'invoice_id' => $this->invoice->id,
                 'user_id'    => Auth::id(),
             ]);
-            $this->toastError($e instanceof \RuntimeException ? $e->getMessage() : 'Error al actualizar el estado de entrega.');
+            $this->toastError($e instanceof \RuntimeException ? $e->getMessage()  : __('Error al actualizar el estado de entrega.'));
             $this->closeDeliveryModal();
         }
     }
@@ -578,7 +578,7 @@ class Edit extends Component
             'payment_date'    => $this->payment_status === 'paid' ? ($this->payment_date ?: null) : null,
         ]);
         $this->invoice->refresh();
-        $this->toastSuccess('Estados actualizados correctamente.');
+        $this->toastSuccess(__('Estados actualizados correctamente.'));
     }
 
     private function persistPaymentStatus(): void
@@ -596,7 +596,7 @@ class Edit extends Component
     public function openInvoiceModal(): void
     {
         if ($this->invoice->status !== 'draft') {
-            $this->toastError('Solo se puede facturar un albarán en estado borrador.');
+            $this->toastError(__('Solo se puede facturar un albarán en estado borrador.'));
             return;
         }
 
@@ -614,7 +614,7 @@ class Edit extends Component
     {
         $this->validate(
             ['invoice_date_modal' => 'required|date'],
-            ['invoice_date_modal.required' => 'Debes indicar la fecha de la factura.']
+            ['invoice_date_modal.required' => __('Debes indicar la fecha de la factura.')]
         );
 
         try {
@@ -630,7 +630,7 @@ class Edit extends Component
                 ]);
             });
 
-            $this->toastSuccess('Factura emitida correctamente.');
+            $this->toastSuccess(__('Factura emitida correctamente.'));
             $this->closeInvoiceModal();
             $this->redirect(route('producer.invoices.mixed.index'), navigate: true);
 
@@ -639,7 +639,7 @@ class Edit extends Component
                 'invoice_id' => $this->invoice->id,
                 'user_id'    => Auth::id(),
             ]);
-            $this->toastError($e instanceof \RuntimeException ? $e->getMessage() : 'Error al facturar. Inténtalo de nuevo.');
+            $this->toastError($e instanceof \RuntimeException ? $e->getMessage()  : __('Error al facturar. Inténtalo de nuevo.'));
         }
     }
 
@@ -712,7 +712,7 @@ class Edit extends Component
     public function update()
     {
         if ($this->isLocked) {
-            $this->toastError('Esta factura no se puede modificar. Usa "Guardar estados" para cambiar el estado de pago.');
+            $this->toastError(__('Esta factura no se puede modificar. Usa "Guardar estados" para cambiar el estado de pago.'));
             return;
         }
 
@@ -858,7 +858,7 @@ class Edit extends Component
                 );
             });
 
-            $this->toastSuccess('Factura actualizada correctamente.');
+            $this->toastSuccess(__('Factura actualizada correctamente.'));
             return $this->redirect(route('producer.invoices.mixed.index'), navigate: true);
 
         } catch (\Exception $e) {
@@ -867,7 +867,7 @@ class Edit extends Component
                 'user_id'    => Auth::id(),
                 'exception'  => $e,
             ]);
-            $this->toastError($e instanceof \RuntimeException ? $e->getMessage() : 'Error al actualizar la factura. Inténtalo de nuevo.');
+            $this->toastError($e instanceof \RuntimeException ? $e->getMessage()  : __('Error al actualizar la factura. Inténtalo de nuevo.'));
         }
     }
 
@@ -884,6 +884,6 @@ class Edit extends Component
             'campaigns'  => $campaigns,
             'isLocked'   => $this->isLocked,
             'isInvoiced' => $this->isInvoiced,
-        ])->layout('layouts.app', ['title' => 'Editar albarán - Agro365']);
+        ])->layout('layouts.app', ['title' => __('Editar albarán - Agro365')]);
     }
 }

@@ -1,7 +1,7 @@
 <div class="space-y-6 animate-fade-in">
     <x-agro.page-header
-        title="Notas de Cata"
-        description="Evaluaciones sensoriales de los vinos en elaboración y crianza"
+        title="{{ __('Notas de Cata') }}"
+        :description="__('Evaluaciones sensoriales de los vinos en elaboración y crianza')"
     >
         <x-slot:actions>
             <flux:button href="{{ roleRoute('tasting-notes.create') }}" variant="primary" icon="plus">
@@ -13,16 +13,16 @@
     <x-agro.filter-bar>
         <x-agro.filter-input
             wire:model.live.debounce.300ms="search"
-            placeholder="Buscar por vino o catador..."
+            placeholder="{{ __('Buscar por vino o catador...') }}"
         />
         <flux:select wire:model.live="wineFilter" size="sm" class="w-52">
-            <flux:select.option value="">Todos los vinos</flux:select.option>
+            <flux:select.option value="">{{ __('Todos los vinos') }}</flux:select.option>
             @foreach($wines as $wine)
                 <flux:select.option value="{{ $wine->id }}">{{ $wine->name }}{{ $wine->vintage ? ' ' . $wine->vintage : '' }}</flux:select.option>
             @endforeach
         </flux:select>
         @if($search || $wineFilter)
-            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">Limpiar</flux:button>
+            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">{{ __('Limpiar') }}</flux:button>
         @endif
     </x-agro.filter-bar>
 
@@ -34,13 +34,13 @@
             <table class="w-full text-sm">
                 <thead class="bg-zinc-50 border-b border-zinc-200">
                     <tr>
-                        <th class="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wide">Fecha</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wide">Vino</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wide">Catador</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wide">Visual</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wide">Olfativo</th>
-                        <th class="px-4 py-3 text-center text-xs font-semibold text-zinc-500 uppercase tracking-wide">Puntuación</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wide">Conclusión</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wide">{{ __('Fecha') }}</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wide">{{ __('Vino') }}</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wide">{{ __('Catador') }}</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wide">{{ __('Visual') }}</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wide">{{ __('Olfativo') }}</th>
+                        <th class="px-4 py-3 text-center text-xs font-semibold text-zinc-500 uppercase tracking-wide">{{ __('Puntuación') }}</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wide">{{ __('Conclusión') }}</th>
                         <th class="px-4 py-3"></th>
                     </tr>
                 </thead>
@@ -83,8 +83,8 @@
                             </td>
                             <td class="px-4 py-3">
                                 <div class="flex items-center justify-end gap-1">
-                                    <x-agro.action-button icon="pencil" variant="default" href="{{ roleRoute('tasting-notes.edit', $note) }}" title="Editar" />
-                                    <x-agro.action-button variant="delete" wire:click="delete({{ $note->id }})" wire:confirm="¿Eliminar esta nota de cata?" wire:loading.attr="disabled" title="Eliminar" />
+                                    <x-agro.action-button icon="pencil" variant="default" href="{{ roleRoute('tasting-notes.edit', $note) }}" title="{{ __('Editar') }}" />
+                                    <x-agro.action-button variant="delete" wire:click="delete({{ $note->id }})" wire:confirm="{{ __('¿Eliminar esta nota de cata?') }}" wire:loading.attr="disabled" title="{{ __('Eliminar') }}" />
                                 </div>
                             </td>
                         </tr>
@@ -97,12 +97,12 @@
     @else
         <x-agro.empty-state
             icon="beaker"
-            title="No hay notas de cata"
+            title="{{ __('No hay notas de cata') }}"
             description="{{ $search || $wineFilter ? 'Ninguna cata coincide con los filtros.' : 'Registra la primera evaluación sensorial de tus vinos.' }}"
         >
             @if($search || $wineFilter)
                 <x-slot:action>
-                    <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
+                    <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">{{ __('Limpiar filtros') }}</flux:button>
                 </x-slot:action>
             @else
                 <x-slot:action>

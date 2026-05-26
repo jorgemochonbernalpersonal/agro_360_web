@@ -44,14 +44,14 @@ class Index extends AbstractIndex
     {
         $forecast = WineryYieldForecast::where('winery_id', Auth::id())->findOrFail($id);
         $forecast->update(['status' => 'confirmed']);
-        $this->toastSuccess('Previsión confirmada.');
+        $this->toastSuccess(__('Previsión confirmada.'));
     }
 
     public function delete(int $id): void
     {
         $forecast = WineryYieldForecast::where('winery_id', Auth::id())->findOrFail($id);
         $forecast->delete();
-        $this->toastSuccess('Previsión eliminada.');
+        $this->toastSuccess(__('Previsión eliminada.'));
     }
 
     protected function baseQuery(): Builder

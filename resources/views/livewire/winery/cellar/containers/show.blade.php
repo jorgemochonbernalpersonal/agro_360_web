@@ -6,12 +6,10 @@
     >
         <x-slot:actions>
             @if($container->wine_volume_liters > 0)
-                <flux:button wire:click="openAdjustModal" variant="ghost" icon="adjustments-horizontal">
-                    Ajustar stock
-                </flux:button>
+                <flux:button wire:click="openAdjustModal" variant="ghost" icon="adjustments-horizontal">{{ __('Ajustar stock') }}</flux:button>
                 <flux:button
                     wire:click="emptyWine"
-                    wire:confirm="¿Vaciar todo el vino elaborado de este contenedor? Se registrará en el historial."
+                    wire:confirm="{{ __('¿Vaciar todo el vino elaborado de este contenedor? Se registrará en el historial.') }}"
                     variant="ghost"
                     icon="trash"
                     class="text-red-500 hover:text-red-700"
@@ -43,25 +41,25 @@
     {{-- ── KPIs superiores ─────────────────────────────────────────────── --}}
     <div class="grid grid-cols-2 gap-4">
         <x-agro.stat-card
-            label="Capacidad total"
+            :label="__('Capacidad total')"
             :value="number_format($container->capacity, 0) . ' kg'"
             icon="cube"
             color="zinc"
         />
         <x-agro.stat-card
-            label="Uva / cosecha (kg)"
+            :label="__('Uva / cosecha (kg)')"
             :value="number_format($container->used_capacity, 0)"
             icon="scale"
             color="amber"
         />
         <x-agro.stat-card
-            label="Vino elaborado (L)"
+            :label="__('Vino elaborado (L)')"
             :value="number_format($container->wine_volume_liters, 1)"
             icon="beaker"
             color="violet"
         />
         <x-agro.stat-card
-            label="Capacidad libre"
+            :label="__('Capacidad libre')"
             :value="number_format(max(0, $container->capacity - $container->used_capacity - $container->wine_volume_liters), 0) . ' kg'"
             icon="arrow-trending-down"
             color="agro"
@@ -74,53 +72,53 @@
         <div class="space-y-6">
 
             {{-- Info del contenedor --}}
-            <x-agro.card title="Información">
+            <x-agro.card title="{{ __('Información') }}">
                 <dl class="space-y-3 text-sm">
                     @if($container->containerRoom)
                     <div class="flex justify-between">
-                        <dt class="text-zinc-400">Sala / Ubicación</dt>
+                        <dt class="text-zinc-400">{{ __('Sala / Ubicación') }}</dt>
                         <dd class="text-zinc-700 font-medium">{{ $container->containerRoom->name }}</dd>
                     </div>
                     @endif
                     @if($container->containerMaterial)
                     <div class="flex justify-between">
-                        <dt class="text-zinc-400">Material</dt>
+                        <dt class="text-zinc-400">{{ __('Material') }}</dt>
                         <dd class="text-zinc-700">{{ $container->containerMaterial->name }}</dd>
                     </div>
                     @endif
                     @if($container->oak_type)
                     <div class="flex justify-between">
-                        <dt class="text-zinc-400">Tipo roble</dt>
+                        <dt class="text-zinc-400">{{ __('Tipo roble') }}</dt>
                         <dd class="text-zinc-700">{{ $container->oak_type }}</dd>
                     </div>
                     @endif
                     @if($container->purchase_date)
                     <div class="flex justify-between">
-                        <dt class="text-zinc-400">Fecha compra</dt>
+                        <dt class="text-zinc-400">{{ __('Fecha compra') }}</dt>
                         <dd class="text-zinc-700">{{ $container->purchase_date->format('d/m/Y') }}</dd>
                     </div>
                     @endif
                     @if($container->next_maintenance_date)
                     <div class="flex justify-between">
-                        <dt class="text-zinc-400">Próx. mantenimiento</dt>
+                        <dt class="text-zinc-400">{{ __('Próx. mantenimiento') }}</dt>
                         <dd class="text-zinc-700 {{ $container->next_maintenance_date->isPast() ? 'text-red-600 font-semibold' : '' }}">
                             {{ $container->next_maintenance_date->format('d/m/Y') }}
                         </dd>
                     </div>
                     @endif
                     <div class="flex justify-between">
-                        <dt class="text-zinc-400">Mantenimientos</dt>
+                        <dt class="text-zinc-400">{{ __('Mantenimientos') }}</dt>
                         <dd class="text-zinc-700">{{ $maintenanceCount }}</dd>
                     </div>
                     <div class="flex justify-between">
-                        <dt class="text-zinc-400">Aditivos aplicados</dt>
+                        <dt class="text-zinc-400">{{ __('Aditivos aplicados') }}</dt>
                         <dd class="text-zinc-700">{{ $additiveCount }}</dd>
                     </div>
                 </dl>
             </x-agro.card>
 
             {{-- Barras de ocupación --}}
-            <x-agro.card title="Ocupación">
+            <x-agro.card title="{{ __('Ocupación') }}">
                 <div class="space-y-4">
                     <div>
                         <div class="flex justify-between text-xs text-zinc-500 mb-1">
@@ -147,11 +145,11 @@
 
             {{-- Estado actual --}}
             @if($container->currentState)
-            <x-agro.card title="Estado actual">
+            <x-agro.card title="{{ __('Estado actual') }}">
                 <dl class="space-y-3 text-sm">
                     @if($container->currentState->harvest)
                     <div>
-                        <dt class="text-zinc-400 text-xs mb-1">Cosecha activa</dt>
+                        <dt class="text-zinc-400 text-xs mb-1">{{ __('Cosecha activa') }}</dt>
                         <dd class="font-medium text-zinc-800">
                             {{ $container->currentState->harvest->batch?->grapeVariety?->name ?? '—' }}
                         </dd>
@@ -160,14 +158,14 @@
                     @endif
                     @if($container->currentState->wine)
                     <div>
-                        <dt class="text-zinc-400 text-xs mb-1">Vino</dt>
+                        <dt class="text-zinc-400 text-xs mb-1">{{ __('Vino') }}</dt>
                         <dd class="font-medium text-zinc-800">{{ $container->currentState->wine->name }}</dd>
                         <dd class="text-xs text-zinc-400">{{ $container->currentState->wine->vintage_year ?? '' }}</dd>
                     </div>
                     @endif
                     @if($container->currentState->last_movement_at)
                     <div class="flex justify-between">
-                        <dt class="text-zinc-400">Último movimiento</dt>
+                        <dt class="text-zinc-400">{{ __('Último movimiento') }}</dt>
                         <dd class="text-zinc-600 text-xs">{{ $container->currentState->last_movement_at->diffForHumans() }}</dd>
                     </div>
                     @endif
@@ -182,7 +180,7 @@
 
             {{-- Últimos trasvases --}}
             @if($recentTransfers->count())
-            <x-agro.card title="Trasvases recientes">
+            <x-agro.card title="{{ __('Trasvases recientes') }}">
                 <div class="space-y-2">
                     @foreach($recentTransfers as $t)
                     @php
@@ -219,7 +217,7 @@
             @endif
 
             {{-- Historial de movimientos --}}
-            <x-agro.card title="Historial de movimientos">
+            <x-agro.card title="{{ __('Historial de movimientos') }}">
                 @if($history->count())
                 <div class="space-y-1">
                     @foreach($history as $entry)
@@ -277,7 +275,7 @@
                     @endforeach
                 </div>
                 @else
-                <p class="text-sm text-zinc-400 text-center py-6">Sin movimientos registrados</p>
+                <p class="text-sm text-zinc-400 text-center py-6">{{ __('Sin movimientos registrados') }}</p>
                 @endif
             </x-agro.card>
 
@@ -290,7 +288,7 @@
 
         {{-- Últimos análisis --}}
         @if($recentAnalyses->count())
-        <x-agro.card title="Análisis recientes">
+        <x-agro.card title="{{ __('Análisis recientes') }}">
             <div class="space-y-2">
                 @foreach($recentAnalyses as $a)
                 <div class="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-zinc-50 text-sm">
@@ -316,7 +314,7 @@
 
         {{-- Últimos controles de fermentación --}}
         @if($recentFermentations->count())
-        <x-agro.card title="Controles de fermentación recientes">
+        <x-agro.card title="{{ __('Controles de fermentación recientes') }}">
             <div class="space-y-2">
                 @foreach($recentFermentations as $f)
                 <div class="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-zinc-50 text-sm">
@@ -352,24 +350,22 @@
 <div class="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" wire:click.self="$set('showAdjustModal', false)">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-5">
         <div class="flex items-center justify-between">
-            <h3 class="text-lg font-bold text-zinc-800">Ajuste manual de stock</h3>
+            <h3 class="text-lg font-bold text-zinc-800">{{ __('Ajuste manual de stock') }}</h3>
             <button wire:click="$set('showAdjustModal', false)" class="text-zinc-400 hover:text-zinc-700">
                 <flux:icon icon="x-mark" class="size-5" />
             </button>
         </div>
-        <p class="text-sm text-zinc-500">
-            Ajusta directamente los litros de vino elaborado. Se registra como ajuste en el historial de movimientos.
-        </p>
+        <p class="text-sm text-zinc-500">{{ __('Ajusta directamente los litros de vino elaborado. Se registra como ajuste en el historial de movimientos.') }}</p>
         <div class="space-y-4">
             <div>
-                <flux:label required>Litros (nuevo valor)</flux:label>
+                <flux:label required>{{ __('Litros (nuevo valor)') }}</flux:label>
                 <flux:input type="number" step="0.1" min="0" wire:model="adjustLiters" class="mt-1" placeholder="0.0" />
                 @error('adjustLiters') <flux:error>{{ $message }}</flux:error> @enderror
             </div>
             <div>
-                <flux:label>Vino asociado</flux:label>
+                <flux:label>{{ __('Vino asociado') }}</flux:label>
                 <flux:select wire:model="adjustWineId" class="mt-1">
-                    <flux:select.option value="">Sin vino específico</flux:select.option>
+                    <flux:select.option value="">{{ __('Sin vino específico') }}</flux:select.option>
                     @foreach($wines as $w)
                         <flux:select.option value="{{ $w->id }}">{{ $w->name }}</flux:select.option>
                     @endforeach
@@ -378,8 +374,8 @@
             </div>
         </div>
         <div class="flex justify-end gap-3 pt-2">
-            <flux:button wire:click="$set('showAdjustModal', false)" variant="ghost">Cancelar</flux:button>
-            <flux:button wire:click="saveAdjust" variant="primary" wire:loading.attr="disabled">Guardar ajuste</flux:button>
+            <flux:button wire:click="$set('showAdjustModal', false)" variant="ghost">{{ __('Cancelar') }}</flux:button>
+            <flux:button wire:click="saveAdjust" variant="primary" wire:loading.attr="disabled">{{ __('Guardar ajuste') }}</flux:button>
         </div>
     </div>
 </div>

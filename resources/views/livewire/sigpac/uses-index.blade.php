@@ -1,20 +1,18 @@
 ﻿<div class="space-y-6 animate-fade-in">
     <!-- Header -->
     <x-agro.page-header
-        title="Usos SIGPAC"
-        description="Gestiona los tipos de usos del suelo SIGPAC"
+        title="{{ __('Usos SIGPAC') }}"
+        :description="__('Gestiona los tipos de usos del suelo SIGPAC')"
     />
 
     <!-- Búsqueda y filtros -->
     <x-agro.filter-bar>
         <x-agro.filter-input
             wire:model.live.debounce.300ms="search"
-            placeholder="Buscar por código o descripción..."
+            placeholder="{{ __('Buscar por código o descripción...') }}"
         />
         <div>
-            <label class="block text-xs font-semibold text-zinc-500 mb-1">
-                Filtrar por códigos de uso (múltiple)
-            </label>
+            <label class="block text-xs font-semibold text-zinc-500 mb-1">{{ __('Filtrar por códigos de uso (múltiple)') }}</label>
             <flux:select wire:model.live="selectedUses" multiple size="5" id="filter_sigpac_uses">
                 @foreach ($allUses as $useOption)
                     <option value="{{ $useOption->id }}">
@@ -22,16 +20,14 @@
                     </option>
                 @endforeach
             </flux:select>
-            <p class="mt-1 text-[11px] text-zinc-500">
-                Mantén pulsado Ctrl (o Cmd en Mac) para seleccionar varios códigos.
-            </p>
+            <p class="mt-1 text-[11px] text-zinc-500">{{ __('Mantén pulsado Ctrl (o Cmd en Mac) para seleccionar varios códigos.') }}</p>
         </div>
     </x-agro.filter-bar>
 
     <!-- Tabla de usos -->
     <x-agro.data-table
         :headers="['Código', 'Descripción', 'Parcelas', 'Acciones']"
-        empty-message="No se encontraron usos"
+        empty-:message="__('No se encontraron usos')"
         empty-description="{{ $search ? 'Intenta con otro término de búsqueda' : 'No hay usos SIGPAC registrados' }}"
     >
         @if($uses->count() > 0)

@@ -12,15 +12,15 @@
         <!-- Header Unificado -->
         <x-page-header
             :icon="$sigpacIcon"
-            title="Gestión de SIGPACs"
-            description="Sistema de Información Geográfica de Parcelas Agrícolas"
+            title="{{ __('Gestión de SIGPACs') }}"
+            :description="__('Sistema de Información Geográfica de Parcelas Agrícolas')"
             icon-color="from-[var(--color-agro-blue)] to-blue-700"
             :badge-icon="$sigpacBadgeIcon"
         />
 
         <!-- Info Card -->
         <x-info-card
-            title="Información de SIGPACs"
+            title="{{ __('Información de SIGPACs') }}"
             gradient="from-[var(--color-agro-blue)] via-blue-600 to-blue-700"
             :icon="$infoCardIcon"
         >
@@ -31,15 +31,15 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <x-feature-card
                 :icon="$usosIcon"
-                title="Usos SIGPAC"
-                description="Gestiona y cataloga los diferentes tipos de usos del suelo disponibles en el sistema SIGPAC"
+                title="{{ __('Usos SIGPAC') }}"
+                :description="__('Gestiona y cataloga los diferentes tipos de usos del suelo disponibles en el sistema SIGPAC')"
                 icon-gradient="from-[var(--color-agro-green-light)] to-[var(--color-agro-green)]"
             />
 
             <x-feature-card
                 :icon="$codigosIcon"
-                title="Códigos SIGPAC"
-                description="Administra los códigos de identificación SIGPAC y sus clasificaciones correspondientes"
+                title="{{ __('Códigos SIGPAC') }}"
+                :description="__('Administra los códigos de identificación SIGPAC y sus clasificaciones correspondientes')"
                 icon-gradient="from-[var(--color-agro-blue)] to-blue-700"
                 hover-border="hover:border-[var(--color-agro-blue)]/50"
                 hover-text="group-hover:text-[var(--color-agro-blue)]"
@@ -47,8 +47,8 @@
 
             <x-feature-card
                 :icon="$coordenadasIcon"
-                title="Coordenadas Multiparte"
-                description="Visualiza y gestiona coordenadas geográficas multiparte de tus parcelas"
+                title="{{ __('Coordenadas Multiparte') }}"
+                :description="__('Visualiza y gestiona coordenadas geográficas multiparte de tus parcelas')"
                 icon-gradient="from-green-500 to-green-700"
                 hover-border="hover:border-green-500/50"
                 hover-text="group-hover:text-green-600"

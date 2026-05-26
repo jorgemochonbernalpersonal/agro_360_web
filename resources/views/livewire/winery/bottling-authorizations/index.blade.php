@@ -2,8 +2,8 @@
 
     {{-- Header --}}
     <x-agro.page-header
-        title="Autorizaciones de Embotellado"
-        description="Gestión de autorizaciones oficiales para el embotellado de vinos"
+        title="{{ __('Autorizaciones de Embotellado') }}"
+        :description="__('Gestión de autorizaciones oficiales para el embotellado de vinos')"
         icon="identification"
     >
         <x-slot:actions>
@@ -16,25 +16,25 @@
     {{-- KPIs --}}
     <x-agro.stats-section key="bottling-authorizations">
         <x-agro.stat-card
-            label="Total autorizaciones"
+            :label="__('Total autorizaciones')"
             :value="$stats['total']"
             icon="identification"
             color="zinc"
         />
         <x-agro.stat-card
-            label="Activas"
+            :label="__('Activas')"
             :value="$stats['active']"
             icon="check-circle"
             color="agro"
         />
         <x-agro.stat-card
-            label="Próximas a vencer"
+            :label="__('Próximas a vencer')"
             :value="$stats['expiring']"
             icon="clock"
             color="amber"
         />
         <x-agro.stat-card
-            label="Caducadas"
+            :label="__('Caducadas')"
             :value="$stats['expired']"
             icon="x-circle"
             color="zinc"
@@ -43,26 +43,24 @@
 
     {{-- Toolbar --}}
     <div class="flex items-center gap-3">
-        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar por número, organismo..." />
+        <x-agro.search-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar por número, organismo...')" />
 
         <flux:select wire:model.live="typeFilter" class="w-44">
-            <flux:select.option value="">Todos los tipos</flux:select.option>
+            <flux:select.option value="">{{ __('Todos los tipos') }}</flux:select.option>
             @foreach($types as $key => $label)
                 <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
             @endforeach
         </flux:select>
 
         <flux:select wire:model.live="statusFilter" class="w-40">
-            <flux:select.option value="">Todos los estados</flux:select.option>
+            <flux:select.option value="">{{ __('Todos los estados') }}</flux:select.option>
             @foreach($statuses as $key => $label)
                 <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
             @endforeach
         </flux:select>
 
         @if($search || $typeFilter || $statusFilter)
-            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">
-                Limpiar
-            </flux:button>
+            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">{{ __('Limpiar') }}</flux:button>
         @endif
     </div>
 
@@ -120,7 +118,7 @@
                             {{-- Volumen autorizado --}}
                             @if($auth->authorized_volume_liters !== null)
                                 <div class="bg-zinc-50 rounded-xl p-3">
-                                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">Volumen autorizado</p>
+                                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">{{ __('Volumen autorizado') }}</p>
                                     <p class="text-xl font-bold text-zinc-700 leading-none">
                                         {{ number_format($auth->authorized_volume_liters, 2) }}<span class="text-sm font-normal text-zinc-400 ml-1">L</span>
                                     </p>
@@ -133,7 +131,7 @@
                                     <flux:icon icon="clock" class="size-3.5 {{ $auth->isExpiringSoon() ? 'text-amber-500' : 'text-zinc-400' }}" />
                                     <span>Válido hasta: {{ $auth->valid_until->format('d/m/Y') }}</span>
                                     @if($auth->isExpiringSoon())
-                                        <flux:badge color="amber" size="sm">Próximo</flux:badge>
+                                        <flux:badge color="amber" size="sm">{{ __('Próximo') }}</flux:badge>
                                     @endif
                                 </div>
                             @endif
@@ -141,8 +139,8 @@
 
                         <x-slot:footer>
                             <div class="flex items-center justify-end gap-0.5">
-                                <x-agro.action-button variant="edit" href="{{ roleRoute('bottling-authorizations.edit', $auth) }}" wire:navigate title="Editar autorización" />
-                                <x-agro.action-button variant="delete" wire:click="delete({{ $auth->id }})" wire:confirm="¿Eliminar esta autorización de embotellado?" wire:loading.attr="disabled" title="Eliminar autorización" />
+                                <x-agro.action-button variant="edit" href="{{ roleRoute('bottling-authorizations.edit', $auth) }}" wire:navigate title="{{ __('Editar autorización') }}" />
+                                <x-agro.action-button variant="delete" wire:click="delete({{ $auth->id }})" wire:confirm="{{ __('¿Eliminar esta autorización de embotellado?') }}" wire:loading.attr="disabled" title="{{ __('Eliminar autorización') }}" />
                             </div>
                         </x-slot:footer>
                     </x-agro.card>
@@ -158,7 +156,7 @@
             >
                 @if($search || $typeFilter || $statusFilter)
                     <x-slot:action>
-                        <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
+                        <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">{{ __('Limpiar filtros') }}</flux:button>
                     </x-slot:action>
                 @else
                     <x-slot:action>

@@ -52,12 +52,12 @@ class Index extends Component
     public function signMidValidation()
     {
         if (!$this->confirmMid) {
-            $this->addError('confirmMid', 'Debes confirmar la validación intermedia.');
+            $this->addError('confirmMid', __('Debes confirmar la validación intermedia.'));
             return;
         }
 
         if ($this->campaign->mid_validation_signed) {
-            $this->toastError('La validación intermedia ya está firmada.');
+            $this->toastError(__('La validación intermedia ya está firmada.'));
             return;
         }
 
@@ -69,23 +69,23 @@ class Index extends Component
 
         $this->campaign->refresh();
         $this->confirmMid = false;
-        $this->toastSuccess('Validación intermedia firmada correctamente.');
+        $this->toastSuccess(__('Validación intermedia firmada correctamente.'));
     }
 
     public function signFinalValidation()
     {
         if (!$this->confirmFinal) {
-            $this->addError('confirmFinal', 'Debes confirmar el cierre de campaña.');
+            $this->addError('confirmFinal', __('Debes confirmar el cierre de campaña.'));
             return;
         }
 
         if ($this->campaign->final_validation_signed) {
-            $this->toastError('El cierre de campaña ya está firmado.');
+            $this->toastError(__('El cierre de campaña ya está firmado.'));
             return;
         }
 
         if (!$this->campaign->mid_validation_signed) {
-            $this->toastError('Debes firmar la validación intermedia antes del cierre.');
+            $this->toastError(__('Debes firmar la validación intermedia antes del cierre.'));
             return;
         }
 
@@ -98,7 +98,7 @@ class Index extends Component
 
         $this->campaign->refresh();
         $this->confirmFinal = false;
-        $this->toastSuccess('Campaña cerrada y bloqueada correctamente.');
+        $this->toastSuccess(__('Campaña cerrada y bloqueada correctamente.'));
     }
 
     public function render()

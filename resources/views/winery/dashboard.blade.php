@@ -45,8 +45,8 @@
         {{-- Header --}}
         <x-page-header
             :icon="$dashboardIcon"
-            title="Dashboard Bodega"
-            description="Resumen de tu bodega"
+            title="{{ __('Dashboard Bodega') }}"
+            :description="__('Resumen de tu bodega')"
             icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
         />
 
@@ -56,9 +56,9 @@
             <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-5">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-500">Viticultores</p>
+                        <p class="text-sm font-medium text-gray-500">{{ __('Viticultores') }}</p>
                         <p class="text-3xl font-bold text-[var(--color-agro-green-dark)]">{{ $totalViticulturists }}</p>
-                        <p class="text-xs text-gray-400">vinculados</p>
+                        <p class="text-xs text-gray-400">{{ __('vinculados') }}</p>
                     </div>
                     <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center">
                         <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -71,7 +71,7 @@
             <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-5">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-500">Recepciones</p>
+                        <p class="text-sm font-medium text-gray-500">{{ __('Recepciones') }}</p>
                         <p class="text-3xl font-bold text-purple-600">{{ $totalReceptions }}</p>
                         <p class="text-xs text-gray-400">campaña {{ date('Y') }}</p>
                     </div>
@@ -86,7 +86,7 @@
             <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-5">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-500">Uva recibida</p>
+                        <p class="text-sm font-medium text-gray-500">{{ __('Uva recibida') }}</p>
                         <p class="text-3xl font-bold text-amber-600">{{ number_format($totalKg / 1000, 1) }}</p>
                         <p class="text-xs text-gray-400">toneladas {{ date('Y') }}</p>
                     </div>
@@ -102,9 +102,9 @@
                class="bg-gradient-to-br from-green-50 to-emerald-100 rounded-xl shadow-lg border-2 border-green-200 p-5 hover:shadow-xl hover:border-green-300 transition-all">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-green-700">🍷 Lotes de vino</p>
+                        <p class="text-sm font-medium text-green-700">{{ __('🍷 Lotes de vino') }}</p>
                         <p class="text-lg font-bold text-green-800">{{ $totalLots }} lotes</p>
-                        <p class="text-xs text-green-600">en bodega</p>
+                        <p class="text-xs text-green-600">{{ __('en bodega') }}</p>
                     </div>
                     <div class="w-10 h-10 rounded-lg bg-green-200 flex items-center justify-center">
                         <svg class="w-5 h-5 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -122,7 +122,7 @@
             {{-- Viticultores recientes --}}
             <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-bold text-gray-900">👨‍🌾 Viticultores Vinculados</h3>
+                    <h3 class="text-lg font-bold text-gray-900">{{ __('👨‍🌾 Viticultores Vinculados') }}</h3>
                     <a href="{{ route('winery.viticulturists.index') }}" wire:navigate
                        class="text-sm font-medium text-[var(--color-agro-green-dark)] hover:underline">
                         Ver todos →
@@ -145,14 +145,14 @@
                         @endforeach
                     </div>
                 @else
-                    <p class="text-gray-500 text-center py-6">No hay viticultores vinculados</p>
+                    <p class="text-gray-500 text-center py-6">{{ __('No hay viticultores vinculados') }}</p>
                 @endif
             </div>
 
             {{-- Recepciones recientes --}}
             <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-bold text-gray-900">📦 Recepciones Recientes</h3>
+                    <h3 class="text-lg font-bold text-gray-900">{{ __('📦 Recepciones Recientes') }}</h3>
                     <a href="{{ route('winery.grape-reception.index') }}" wire:navigate
                        class="text-sm font-medium text-[var(--color-agro-green-dark)] hover:underline">
                         Ver todas →
@@ -180,7 +180,7 @@
                         @endforeach
                     </div>
                 @else
-                    <p class="text-gray-500 text-center py-6">No hay recepciones este año</p>
+                    <p class="text-gray-500 text-center py-6">{{ __('No hay recepciones este año') }}</p>
                 @endif
             </div>
 
@@ -192,8 +192,8 @@
                class="bg-white rounded-xl shadow border border-gray-200 p-4 hover:shadow-lg hover:border-purple-300 transition-all flex items-center gap-3">
                 <div class="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center text-xl">📦</div>
                 <div>
-                    <p class="font-semibold text-gray-900">Recepción Uva</p>
-                    <p class="text-xs text-gray-500">Registrar vendimia</p>
+                    <p class="font-semibold text-gray-900">{{ __('Recepción Uva') }}</p>
+                    <p class="text-xs text-gray-500">{{ __('Registrar vendimia') }}</p>
                 </div>
             </a>
 
@@ -201,8 +201,8 @@
                class="bg-white rounded-xl shadow border border-gray-200 p-4 hover:shadow-lg hover:border-green-300 transition-all flex items-center gap-3">
                 <div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center text-xl">🍷</div>
                 <div>
-                    <p class="font-semibold text-gray-900">Lotes de Vino</p>
-                    <p class="text-xs text-gray-500">Control de lotes</p>
+                    <p class="font-semibold text-gray-900">{{ __('Lotes de Vino') }}</p>
+                    <p class="text-xs text-gray-500">{{ __('Control de lotes') }}</p>
                 </div>
             </a>
 
@@ -210,8 +210,8 @@
                class="bg-white rounded-xl shadow border border-gray-200 p-4 hover:shadow-lg hover:border-amber-300 transition-all flex items-center gap-3">
                 <div class="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center text-xl">🏪</div>
                 <div>
-                    <p class="font-semibold text-gray-900">Clientes</p>
-                    <p class="text-xs text-gray-500">Cartera de clientes</p>
+                    <p class="font-semibold text-gray-900">{{ __('Clientes') }}</p>
+                    <p class="text-xs text-gray-500">{{ __('Cartera de clientes') }}</p>
                 </div>
             </a>
 
@@ -219,8 +219,8 @@
                class="bg-white rounded-xl shadow border border-gray-200 p-4 hover:shadow-lg hover:border-indigo-300 transition-all flex items-center gap-3">
                 <div class="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center text-xl">📊</div>
                 <div>
-                    <p class="font-semibold text-gray-900">Facturación</p>
-                    <p class="text-xs text-gray-500">Liquidaciones y ventas</p>
+                    <p class="font-semibold text-gray-900">{{ __('Facturación') }}</p>
+                    <p class="text-xs text-gray-500">{{ __('Liquidaciones y ventas') }}</p>
                 </div>
             </a>
         </div>

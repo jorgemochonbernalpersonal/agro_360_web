@@ -44,9 +44,9 @@ class HarvestDeliveryCreatedNotification extends Notification implements ShouldQ
         }
 
         return (new MailMessage)
-            ->subject('Nueva entrega declarada — ' . $variety . ' · ' . $delivery->vintage_year)
-            ->greeting('Hola ' . ($notifiable->name ?: ''))
-            ->line('El viticultor **' . ($viticulturist?->name ?? '—') . '** ha registrado una nueva entrega de uva.')
+            ->subject(__('Nueva entrega declarada — :variety · :year', ['variety' => $variety, 'year' => $delivery->vintage_year]))
+            ->greeting(__('Hola :name', ['name' => $notifiable->name ?: '']))
+            ->line(__('El viticultor **:name** ha registrado una nueva entrega de uva.', ['name' => $viticulturist?->name ?? '—']))
             ->line(new HtmlString(
                 '<div style="background-color:#eff6ff;border:1px solid #bfdbfe;padding:16px;border-radius:8px;margin:16px 0;">
                     <p style="margin:0 0 8px 0;"><strong>Viticultor:</strong> ' . e($viticulturist?->name ?? '—') . '</p>
@@ -58,9 +58,9 @@ class HarvestDeliveryCreatedNotification extends Notification implements ShouldQ
                     ' . ($delivery->ticket_number ? '<p style="margin:0 0 8px 0;"><strong>Albarán:</strong> ' . e($delivery->ticket_number) . '</p>' : '') . '
                  </div>'
             ))
-            ->action('Ir a recepciones de bodega', $showUrl)
-            ->line('Registra la recepción en tu panel para confirmar o gestionar la diferencia de peso.')
-            ->salutation("Saludos,\nAgro365");
+            ->action(__('Ir a recepciones de bodega'), $showUrl)
+            ->line(__('Registra la recepción en tu panel para confirmar o gestionar la diferencia de peso.'))
+            ->salutation(__('Saludos,\nAgro365'));
     }
 
     public function toArray(object $notifiable): array

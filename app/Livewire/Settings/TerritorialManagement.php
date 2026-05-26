@@ -82,12 +82,12 @@ class TerritorialManagement extends Component
     private function catalogLabel(string $type): string
     {
         return match($type) {
-            'valleys'          => 'Valle',
-            'soil_types'       => 'Tipo de suelo',
-            'irrigation_types' => 'Tipo de riego',
-            'topographies'     => 'Topografía',
-            'property_types'   => 'Tipo de propiedad',
-            'training_systems' => 'Sistema de conducción',
+            'valleys'          => __('Valle'),
+            'soil_types'       => __('Tipo de suelo'),
+            'irrigation_types' => __('Tipo de riego'),
+            'topographies'     => __('Topografía'),
+            'property_types'   => __('Tipo de propiedad'),
+            'training_systems' => __('Sistema de conducción'),
             default            => 'Elemento',
         };
     }
@@ -110,8 +110,8 @@ class TerritorialManagement extends Component
             'selectedMunicipalityId' => 'required|exists:municipalities,id',
             'newSiteName'            => 'required|string|min:2|max:255',
         ], [
-            'selectedMunicipalityId.required' => 'Selecciona un municipio primero.',
-            'newSiteName.required'            => 'El nombre del paraje es obligatorio.',
+            'selectedMunicipalityId.required' => __('Selecciona un municipio primero.'),
+            'newSiteName.required'            => __('El nombre del paraje es obligatorio.'),
         ]);
 
         $exists = Site::where('municipality_id', $this->selectedMunicipalityId)
@@ -119,7 +119,7 @@ class TerritorialManagement extends Component
             ->exists();
 
         if ($exists) {
-            $this->addError('newSiteName', 'Este paraje ya existe en el municipio seleccionado.');
+            $this->addError('newSiteName', __('Este paraje ya existe en el municipio seleccionado.'));
             return;
         }
 
@@ -131,13 +131,13 @@ class TerritorialManagement extends Component
         ]);
 
         $this->newSiteName = '';
-        $this->toastSuccess('Paraje añadido correctamente.');
+        $this->toastSuccess(__('Paraje añadido correctamente.'));
     }
 
     public function deleteSite(int $id): void
     {
         Site::where('id', $id)->where('user_id', Auth::id())->firstOrFail()->delete();
-        $this->toastSuccess('Paraje eliminado.');
+        $this->toastSuccess(__('Paraje eliminado.'));
     }
 
     public function toggleSiteVisibility(int $id): void
@@ -163,14 +163,14 @@ class TerritorialManagement extends Component
             ->exists();
 
         if ($exists) {
-            $this->addError('editingSiteName', 'Ya existe un paraje con ese nombre en este municipio.');
+            $this->addError('editingSiteName', __('Ya existe un paraje con ese nombre en este municipio.'));
             return;
         }
 
         $site->update(['name' => trim($this->editingSiteName)]);
         $this->editingSiteId = 0;
         $this->editingSiteName = '';
-        $this->toastSuccess('Paraje actualizado.');
+        $this->toastSuccess(__('Paraje actualizado.'));
     }
 
     public function cancelEditSite(): void
@@ -200,14 +200,14 @@ class TerritorialManagement extends Component
         $this->newName        = '';
         $this->newDescription = '';
         $this->newCode        = '';
-        $this->toastSuccess($this->catalogLabel($type) . ' añadido correctamente.');
+        $this->toastSuccess(__(':item añadido correctamente.', ['item' => $this->catalogLabel($type)]));
     }
 
     public function deleteCatalogItem(string $type, int $id): void
     {
         $model = $this->catalogModel($type);
         $model::where('id', $id)->where('user_id', Auth::id())->firstOrFail()->delete();
-        $this->toastSuccess($this->catalogLabel($type) . ' eliminado correctamente.');
+        $this->toastSuccess(__(':item eliminado correctamente.', ['item' => $this->catalogLabel($type)]));
     }
 
     /** Activa/desactiva la visibilidad de un item GLOBAL en los selects del usuario */
@@ -239,7 +239,7 @@ class TerritorialManagement extends Component
         $this->editingId          = 0;
         $this->editingName        = '';
         $this->editingDescription = '';
-        $this->toastSuccess($this->catalogLabel($type) . ' actualizado correctamente.');
+        $this->toastSuccess(__(':item actualizado correctamente.', ['item' => $this->catalogLabel($type)]));
     }
 
     public function cancelEdit(): void
@@ -265,14 +265,14 @@ class TerritorialManagement extends Component
                 ->where('catalog_type', $catalogType)
                 ->where('item_id', $itemId)
                 ->delete();
-            $this->toastSuccess('Elemento activado en tus selects.');
+            $this->toastSuccess(__('Elemento activado en tus selects.'));
         } else {
             DB::table('user_catalog_hidden')->insert([
                 'user_id'      => Auth::id(),
                 'catalog_type' => $catalogType,
                 'item_id'      => $itemId,
             ]);
-            $this->toastSuccess('Elemento ocultado de tus selects.');
+            $this->toastSuccess(__('Elemento ocultado de tus selects.'));
         }
     }
 

@@ -93,14 +93,14 @@ class Create extends Component
     protected function messages()
     {
         return [
-            'name.required' => 'El nombre del contenedor es obligatorio.',
-            'capacity.required' => 'La capacidad es obligatoria.',
-            'capacity.min' => 'La capacidad debe ser mayor a 0.',
-            'type_id.required' => 'Debes seleccionar un tipo de contenedor.',
-            'material_id.required' => 'Debes seleccionar un material.',
-            'unit_of_measurement_id.required' => 'Debes seleccionar una unidad de medida.',
-            'photos.*.image' => 'Solo se permiten imágenes.',
-            'photos.*.max' => 'Las imágenes no pueden superar 2MB.',
+            'name.required' => __('El nombre del contenedor es obligatorio.'),
+            'capacity.required' => __('La capacidad es obligatoria.'),
+            'capacity.min' => __('La capacidad debe ser mayor a 0.'),
+            'type_id.required' => __('Debes seleccionar un tipo de contenedor.'),
+            'material_id.required' => __('Debes seleccionar un material.'),
+            'unit_of_measurement_id.required' => __('Debes seleccionar una unidad de medida.'),
+            'photos.*.image' => __('Solo se permiten imágenes.'),
+            'photos.*.max' => __('Las imágenes no pueden superar 2MB.'),
         ];
     }
 
@@ -141,7 +141,7 @@ class Create extends Component
                 'archived' => false,
             ]);
 
-            $this->toastSuccess('Contenedor creado correctamente.');
+            $this->toastSuccess(__('Contenedor creado correctamente.'));
             return $this->viticulturistRoleRedirect('containers.index');
             
         } catch (\Exception $e) {
@@ -150,7 +150,7 @@ class Create extends Component
                 'user_id' => Auth::id(),
             ]);
             
-            $this->toastError('Error al crear el contenedor. Por favor, intenta de nuevo.');
+            $this->toastError(__('Error al crear el contenedor. Por favor, intenta de nuevo.'));
         }
     }
 
@@ -171,13 +171,13 @@ class Create extends Component
             $this->room_name = '';
             $this->room_description = '';
             
-            $this->toastSuccess('Sala/Bodega creada correctamente.');
+            $this->toastSuccess(__('Sala/Bodega creada correctamente.'));
             
             // Cerrar modal con JavaScript
             $this->dispatch('close-modal');
             
         } catch (\Exception $e) {
-            $this->toastError('Error al crear la sala. Por favor, intenta de nuevo.');
+            $this->toastError(__('Error al crear la sala. Por favor, intenta de nuevo.'));
         }
     }
 

@@ -43,14 +43,14 @@ class Index extends Component
     public function delete(int $id): void
     {
         Subcontracting::where('viticulturist_id', Auth::id())->findOrFail($id)->delete();
-        $this->toastSuccess('Subcontratación eliminada.');
+        $this->toastSuccess(__('Subcontratación eliminada.'));
     }
 
     public function toggleInvoiced(int $id): void
     {
         $record = Subcontracting::where('viticulturist_id', Auth::id())->findOrFail($id);
         $record->update(['invoiced' => !$record->invoiced]);
-        $this->toastSuccess($record->invoiced ? 'Marcado como facturado.' : 'Marcado como pendiente de factura.');
+        $this->toastSuccess($record->invoiced ? __('Marcado como facturado.') : __('Marcado como pendiente de factura.'));
     }
 
     public function render()

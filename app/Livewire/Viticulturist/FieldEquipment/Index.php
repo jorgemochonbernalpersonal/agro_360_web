@@ -11,7 +11,7 @@ class Index extends AbstractIndex
     public function deactivate(int $id): void
     {
         $this->findOwned(FieldEquipment::class, $id)->update(['active' => false]);
-        $this->toastSuccess('Equipo dado de baja.');
+        $this->toastSuccess(__('Equipo dado de baja.'));
     }
 
     protected function baseQuery(): Builder

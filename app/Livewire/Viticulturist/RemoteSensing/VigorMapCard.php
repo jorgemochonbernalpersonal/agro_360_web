@@ -95,7 +95,7 @@ class VigorMapCard extends Component
 
             $this->dispatch('notify', [
                 'type' => 'info',
-                'message' => 'Solicitud de mapa de vigor enviada. Puede tardar 5-10 minutos en procesarse.',
+                'message' => __('Solicitud de mapa de vigor enviada. Puede tardar 5-10 minutos en procesarse.'),
             ]);
 
         } catch (\Exception $e) {
@@ -103,7 +103,7 @@ class VigorMapCard extends Component
             
             $this->dispatch('notify', [
                 'type' => 'error',
-                'message' => 'Error al solicitar mapa de vigor',
+                'message' => __('Error al solicitar mapa de vigor'),
             ]);
         } finally {
             $this->loading = false;
@@ -132,40 +132,40 @@ class VigorMapCard extends Component
 
         $zones = [
             'excellent' => [
-                'label'       => 'Excelente',
-                'description' => 'NDVI > 0.65 — vigor muy alto',
+                'label'       => __('Excelente'),
+                'description' => __('NDVI > 0.65 — vigor muy alto'),
                 'icon'        => '🌿',
                 'color'       => 'green',
                 'range'       => ['min' => 0.65, 'max' => 1.0],
                 'pct'         => $areaStats['zone_excellent_pct'] ?? 0,
             ],
             'good' => [
-                'label'       => 'Bueno',
-                'description' => 'NDVI 0.50–0.65 — vigor normal',
+                'label'       => __('Bueno'),
+                'description' => __('NDVI 0.50–0.65 — vigor normal'),
                 'icon'        => '🍃',
                 'color'       => 'lime',
                 'range'       => ['min' => 0.50, 'max' => 0.65],
                 'pct'         => $areaStats['zone_good_pct'] ?? 0,
             ],
             'moderate' => [
-                'label'       => 'Moderado',
-                'description' => 'NDVI 0.35–0.50 — estrés leve',
+                'label'       => __('Moderado'),
+                'description' => __('NDVI 0.35–0.50 — estrés leve'),
                 'icon'        => '🌾',
                 'color'       => 'yellow',
                 'range'       => ['min' => 0.35, 'max' => 0.50],
                 'pct'         => $areaStats['zone_moderate_pct'] ?? 0,
             ],
             'low' => [
-                'label'       => 'Bajo',
-                'description' => 'NDVI 0.20–0.35 — estrés significativo',
+                'label'       => __('Bajo'),
+                'description' => __('NDVI 0.20–0.35 — estrés significativo'),
                 'icon'        => '🍂',
                 'color'       => 'orange',
                 'range'       => ['min' => 0.20, 'max' => 0.35],
                 'pct'         => $areaStats['zone_low_pct'] ?? 0,
             ],
             'critical' => [
-                'label'       => 'Crítico',
-                'description' => 'NDVI < 0.20 — suelo desnudo o estrés severo',
+                'label'       => __('Crítico'),
+                'description' => __('NDVI < 0.20 — suelo desnudo o estrés severo'),
                 'icon'        => '🚨',
                 'color'       => 'red',
                 'range'       => ['min' => -1.0, 'max' => 0.20],

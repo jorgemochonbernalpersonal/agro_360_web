@@ -1,38 +1,36 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="Solicitudes y actas"
-        description="Gestiona solicitudes enviadas a bodegas adscritas."
+        title="{{ __('Solicitudes y actas') }}"
+        :description="__('Gestiona solicitudes enviadas a bodegas adscritas.')"
         icon="document-text"
     />
 
     {{-- Stats --}}
     <x-agro.stats-section key="supervisor-requests">
-        <x-agro.stat-card label="Pendientes" :value="$pendingCount" icon="clock" color="yellow" />
-        <x-agro.stat-card label="En revisión" :value="$inReviewCount" icon="magnifying-glass" color="blue" />
+        <x-agro.stat-card :label="__('Pendientes')" :value="$pendingCount" icon="clock" color="yellow" />
+        <x-agro.stat-card :label="__('En revisión')" :value="$inReviewCount" icon="magnifying-glass" color="blue" />
     </x-agro.stats-section>
 
     {{-- Filtros + Nueva --}}
     <div class="flex flex-wrap items-center gap-2">
         <flux:select wire:model.live="statusFilter" class="w-40 text-sm">
-            <option value="">Todos los estados</option>
+            <option value="">{{ __('Todos los estados') }}</option>
             @foreach($statusLabels as $val => $label)
                 <option value="{{ $val }}">{{ $label }}</option>
             @endforeach
         </flux:select>
 
         <flux:select wire:model.live="typeFilter" class="w-52 text-sm">
-            <option value="">Todos los tipos</option>
+            <option value="">{{ __('Todos los tipos') }}</option>
             @foreach($typeLabels as $val => $label)
                 <option value="{{ $val }}">{{ $label }}</option>
             @endforeach
         </flux:select>
 
-        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar bodega…" />
+        <x-agro.search-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar bodega…')" />
 
-        <flux:button wire:click="openCreateModal" variant="primary" size="sm" icon="plus" class="ml-auto">
-            Nueva solicitud
-        </flux:button>
+        <flux:button wire:click="openCreateModal" variant="primary" size="sm" icon="plus" class="ml-auto">{{ __('Nueva solicitud') }}</flux:button>
     </div>
 
     {{-- Bulk action bar --}}
@@ -40,11 +38,11 @@
         <div class="flex items-center gap-3 px-4 py-2.5 bg-blue-50 border border-blue-200 rounded-xl text-sm">
             <span class="font-medium text-blue-700">{{ count($selected) }} seleccionadas</span>
             <flux:button wire:click="bulkArchive"
-                wire:confirm="¿Archivar las {{ count($selected) }} solicitudes seleccionadas? Solo se archivarán las que estén aprobadas o rechazadas."
+                wire:confirm="{{ __('¿Archivar las :count solicitudes seleccionadas? Solo se archivarán las que estén aprobadas o rechazadas.', ['count' => count($selected)]) }}"
                 variant="primary" size="sm">
                 Archivar seleccionadas
             </flux:button>
-            <button wire:click="$set('selected', [])" class="text-xs text-blue-500 hover:text-blue-700">Limpiar</button>
+            <button wire:click="$set('selected', [])" class="text-xs text-blue-500 hover:text-blue-700">{{ __('Limpiar') }}</button>
         </div>
     @endif
 
@@ -83,7 +81,7 @@
                             {{-- Type badge --}}
                             <div>
                                 @if(in_array($req->type, \App\Models\SupervisorRequest::WINERY_INITIATED))
-                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-blue-50 text-blue-600 border border-blue-200">Bodega</span>
+                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-blue-50 text-blue-600 border border-blue-200">{{ __('Bodega') }}</span>
                                 @else
                                     <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-violet-50 text-violet-600 border border-violet-200">DO</span>
                                 @endif
@@ -93,11 +91,11 @@
                             {{-- Details --}}
                             <div class="space-y-2 text-sm">
                                 <div class="flex items-center justify-between">
-                                    <span class="text-zinc-400">Fecha</span>
+                                    <span class="text-zinc-400">{{ __('Fecha') }}</span>
                                     <span class="text-zinc-700 font-medium">{{ $req->created_at->format('d/m/Y') }}</span>
                                 </div>
                                 <div class="flex items-center justify-between">
-                                    <span class="text-zinc-400">Vence</span>
+                                    <span class="text-zinc-400">{{ __('Vence') }}</span>
                                     @if($req->due_date)
                                         @if($req->isOverdue())
                                             <span class="inline-flex items-center gap-1 text-xs font-medium text-red-600">
@@ -127,12 +125,12 @@
                             <div class="flex items-center justify-end gap-1 flex-wrap">
                                 @if($req->canBeSentBySupervisor())
                                     <flux:button wire:click="send({{ $req->id }})"
-                                        wire:confirm="¿Enviar esta solicitud a {{ $req->winery->name }}?"
+                                        wire:confirm="{{ __('¿Enviar esta solicitud a :name?', ['name' => $req->winery->name]) }}"
                                         variant="primary" size="sm">
                                         Enviar
                                     </flux:button>
                                     <flux:button wire:click="deleteDraft({{ $req->id }})"
-                                        wire:confirm="¿Eliminar este borrador? Esta acción no se puede deshacer."
+                                        wire:confirm="{{ __('¿Eliminar este borrador? Esta acción no se puede deshacer.') }}"
                                         variant="ghost" size="sm" icon="trash">
                                     </flux:button>
                                 @endif
@@ -146,7 +144,7 @@
                                         Aprobar
                                     </flux:button>
                                     <flux:button wire:click="reject({{ $req->id }})"
-                                        wire:confirm="¿Rechazar esta solicitud?"
+                                        wire:confirm="{{ __('¿Rechazar esta solicitud?') }}"
                                         variant="danger" size="sm">
                                         Rechazar
                                     </flux:button>
@@ -170,20 +168,20 @@
             </div>
             <x-agro-pagination :paginator="$requests" />
         @else
-            <x-agro.empty-state icon="document-text" title="Sin solicitudes" description="No hay solicitudes con estos filtros." />
+            <x-agro.empty-state icon="document-text" title="{{ __('Sin solicitudes') }}" :description="__('No hay solicitudes con estos filtros.')" />
         @endif
     </div>
 
     {{-- Modal nueva solicitud --}}
     <flux:modal wire:model="showCreateModal" name="create-request" class="w-full max-w-lg">
         <div class="p-6 space-y-4">
-            <h3 class="text-base font-semibold text-zinc-900">Nueva solicitud</h3>
+            <h3 class="text-base font-semibold text-zinc-900">{{ __('Nueva solicitud') }}</h3>
 
             <div class="space-y-3">
                 <div>
-                    <label class="block text-sm font-medium text-zinc-700 mb-1">Bodega</label>
+                    <label class="block text-sm font-medium text-zinc-700 mb-1">{{ __('Bodega') }}</label>
                     <flux:select wire:model="formWineryId">
-                        <option value="">Seleccionar bodega…</option>
+                        <option value="">{{ __('Seleccionar bodega…') }}</option>
                         @foreach($wineries as $w)
                             <option value="{{ $w->id }}">{{ $w->name }}</option>
                         @endforeach
@@ -192,9 +190,9 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-zinc-700 mb-1">Tipo</label>
+                    <label class="block text-sm font-medium text-zinc-700 mb-1">{{ __('Tipo') }}</label>
                     <flux:select wire:model="formType">
-                        <option value="">Seleccionar tipo…</option>
+                        <option value="">{{ __('Seleccionar tipo…') }}</option>
                         @foreach($typeLabels as $val => $label)
                             <option value="{{ $val }}">{{ $label }}</option>
                         @endforeach
@@ -203,25 +201,25 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-zinc-700 mb-1">Título (opcional)</label>
-                    <flux:input wire:model="formTitle" placeholder="Ej: Calificación lote R-2026-001" />
+                    <label class="block text-sm font-medium text-zinc-700 mb-1">{{ __('Título (opcional)') }}</label>
+                    <flux:input wire:model="formTitle" :placeholder="__('Ej: Calificación lote R-2026-001')" />
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-zinc-700 mb-1">Fecha límite de respuesta (opcional)</label>
+                    <label class="block text-sm font-medium text-zinc-700 mb-1">{{ __('Fecha límite de respuesta (opcional)') }}</label>
                     <flux:input type="date" wire:model="formDueDate" :min="now()->addDay()->format('Y-m-d')" />
                     @error('formDueDate') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-zinc-700 mb-1">Notas (opcional)</label>
-                    <flux:textarea wire:model="formNotes" rows="3" placeholder="Descripción o instrucciones…" />
+                    <label class="block text-sm font-medium text-zinc-700 mb-1">{{ __('Notas (opcional)') }}</label>
+                    <flux:textarea wire:model="formNotes" rows="3" :placeholder="__('Descripción o instrucciones…')" />
                 </div>
             </div>
 
             <div class="flex justify-end gap-2 pt-2">
-                <flux:button wire:click="closeCreateModal" variant="ghost">Cancelar</flux:button>
-                <flux:button wire:click="create" variant="primary">Crear borrador</flux:button>
+                <flux:button wire:click="closeCreateModal" variant="ghost">{{ __('Cancelar') }}</flux:button>
+                <flux:button wire:click="create" variant="primary">{{ __('Crear borrador') }}</flux:button>
             </div>
         </div>
     </flux:modal>

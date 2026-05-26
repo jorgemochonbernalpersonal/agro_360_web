@@ -32,7 +32,7 @@ class Index extends Component
         $subscription = Subscription::with('user')->findOrFail($id);
 
         if ($subscription->status === Subscription::STATUS_CANCELLED) {
-            $this->toastError('La suscripción ya está cancelada.');
+            $this->toastError(__('La suscripción ya está cancelada.'));
             return;
         }
 
@@ -46,7 +46,7 @@ class Index extends Component
         ]);
 
         $subscription->cancel();
-        $this->toastSuccess('Suscripción cancelada correctamente.');
+        $this->toastSuccess(__('Suscripción cancelada correctamente.'));
     }
 
     public function exportCsv(): mixed

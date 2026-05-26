@@ -52,7 +52,7 @@ class HarvestDeliveryResolvedNotification extends Notification implements Should
 
         return (new MailMessage)
             ->subject('Reclamación resuelta — ' . $variety . ' · ' . $delivery->vintage_year)
-            ->greeting('Hola ' . ($notifiable->name ?: ''))
+            ->greeting(__('Hola :name', ['name' => $notifiable->name ?: '']))
             ->line('La bodega **' . $winery . '** ha respondido a tu reclamación sobre la diferencia en la entrega de uva.')
             ->line(new HtmlString(
                 '<div style="background-color:#f0fdf4;border:1px solid #bbf7d0;padding:16px;border-radius:8px;margin:16px 0;">
@@ -67,9 +67,9 @@ class HarvestDeliveryResolvedNotification extends Notification implements Should
                     <p style="margin:0;white-space:pre-wrap;">' . nl2br(e($delivery->dispute_resolution_note)) . '</p>
                  </div>'
             ))
-            ->action('Ver detalle de cosecha', $showUrl)
+            ->action(__('Ver detalle de cosecha'), $showUrl)
             ->line('Si tienes dudas adicionales, contacta directamente con la bodega.')
-            ->salutation("Saludos,\nAgro365");
+            ->salutation(__('Saludos,\nAgro365'));
     }
 
     public function toArray(object $notifiable): array

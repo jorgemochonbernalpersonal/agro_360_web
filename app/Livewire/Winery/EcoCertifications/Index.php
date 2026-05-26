@@ -31,7 +31,7 @@ class Index extends AbstractIndex
     {
         $certification = EcoCertification::where('user_id', $this->wineryId())->findOrFail($id);
         $certification->delete();
-        $this->toastSuccess('Certificación eliminada.');
+        $this->toastSuccess(__('Certificación eliminada.'));
     }
 
     protected function baseQuery(): Builder

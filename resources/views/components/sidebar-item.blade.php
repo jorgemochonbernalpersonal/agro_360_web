@@ -27,9 +27,9 @@
                 {{ $item['badge'] }}
             </span>
         @elseif(isset($item['new']) && $item['new'])
-            <span class="px-1.5 py-0.5 text-[9px] font-bold bg-emerald-500/25 text-emerald-300 rounded-full sidebar-indicator whitespace-nowrap">Nuevo</span>
+            <span class="px-1.5 py-0.5 text-[9px] font-bold bg-emerald-500/25 text-emerald-300 rounded-full sidebar-indicator whitespace-nowrap">{{ __('Nuevo') }}</span>
         @elseif(isset($item['wip']) && $item['wip'])
-            <span class="px-1.5 py-0.5 text-[9px] font-bold bg-amber-400/20 text-amber-300 rounded-full sidebar-indicator whitespace-nowrap">Pronto</span>
+            <span class="px-1.5 py-0.5 text-[9px] font-bold bg-amber-400/20 text-amber-300 rounded-full sidebar-indicator whitespace-nowrap">{{ __('Pronto') }}</span>
         @elseif($item['active'])
             <div class="w-1.5 h-1.5 rounded-full bg-white/60 sidebar-indicator flex-shrink-0"></div>
         @endif

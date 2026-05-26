@@ -1,34 +1,32 @@
 <div class="space-y-6 animate-fade-in">
     <x-agro.page-header
-        title="Acceso al Cuaderno de Campo"
-        description="Gestiona las solicitudes de acceso al cuaderno de campo de los viticultores de la DO"
+        title="{{ __('Acceso al Cuaderno de Campo') }}"
+        :description="__('Gestiona las solicitudes de acceso al cuaderno de campo de los viticultores de la DO')"
     >
         <x-slot:actions>
-            <flux:button wire:click="openRequestModal" variant="primary" icon="plus">
-                Solicitar acceso
-            </flux:button>
+            <flux:button wire:click="openRequestModal" variant="primary" icon="plus">{{ __('Solicitar acceso') }}</flux:button>
         </x-slot:actions>
     </x-agro.page-header>
 
     {{-- Estadísticas --}}
     <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <x-agro.stat-card label="Total solicitudes" :value="$stats['total']"    icon="document-text"   color="blue"   />
-        <x-agro.stat-card label="Pendientes"         :value="$stats['pending']"  icon="clock"           color="yellow" />
-        <x-agro.stat-card label="Aprobadas"          :value="$stats['approved']" icon="check-circle"    color="agro"   />
-        <x-agro.stat-card label="Rechazadas"         :value="$stats['rejected']" icon="x-circle"        color="red"    />
+        <x-agro.stat-card :label="__('Total solicitudes')" :value="$stats['total']"    icon="document-text"   color="blue"   />
+        <x-agro.stat-card :label="__('Pendientes')"         :value="$stats['pending']"  icon="clock"           color="yellow" />
+        <x-agro.stat-card :label="__('Aprobadas')"          :value="$stats['approved']" icon="check-circle"    color="agro"   />
+        <x-agro.stat-card :label="__('Rechazadas')"         :value="$stats['rejected']" icon="x-circle"        color="red"    />
     </div>
 
     {{-- Filtros --}}
     <x-agro.filter-bar>
         <x-agro.filter-input
             wire:model.live="search"
-            placeholder="Buscar por viticultor o email..."
+            placeholder="{{ __('Buscar por viticultor o email...') }}"
         />
         <x-agro.filter-select wire:model.live="filterStatus">
-            <option value="all">Todos los estados</option>
-            <option value="pending">Pendientes</option>
-            <option value="approved">Aprobadas</option>
-            <option value="rejected">Rechazadas</option>
+            <option value="all">{{ __('Todos los estados') }}</option>
+            <option value="pending">{{ __('Pendientes') }}</option>
+            <option value="approved">{{ __('Aprobadas') }}</option>
+            <option value="rejected">{{ __('Rechazadas') }}</option>
         </x-agro.filter-select>
     </x-agro.filter-bar>
 
@@ -74,7 +72,7 @@
                         {{-- Dates --}}
                         <div class="grid grid-cols-2 gap-2">
                             <div class="bg-zinc-50 rounded-lg p-2 text-center">
-                                <p class="text-[9px] text-zinc-400 uppercase tracking-wide mb-0.5">Solicitado</p>
+                                <p class="text-[9px] text-zinc-400 uppercase tracking-wide mb-0.5">{{ __('Solicitado') }}</p>
                                 <p class="text-sm font-bold text-zinc-700">
                                     @if($req->requested_at)
                                         {{ $req->requested_at->format('d/m/Y') }}
@@ -87,7 +85,7 @@
                                 @endif
                             </div>
                             <div class="bg-zinc-50 rounded-lg p-2 text-center">
-                                <p class="text-[9px] text-zinc-400 uppercase tracking-wide mb-0.5">Respondido</p>
+                                <p class="text-[9px] text-zinc-400 uppercase tracking-wide mb-0.5">{{ __('Respondido') }}</p>
                                 <p class="text-sm font-bold text-zinc-700">
                                     @if($req->responded_at)
                                         {{ $req->responded_at->format('d/m/Y') }}
@@ -111,7 +109,7 @@
                                     icon="trash"
                                     class="text-red-400 hover:text-red-600"
                                     wire:click="revokeAccess({{ $req->id }})"
-                                    wire:confirm="¿Revocar la solicitud de acceso al cuaderno de {{ $req->viticulturist?->name }}?"
+                                    wire:confirm="{{ __('¿Revocar la solicitud de acceso al cuaderno de :name?', ['name' => $req->viticulturist?->name]) }}"
                                     tooltip="Revocar acceso"
                                 />
                             </div>
@@ -125,8 +123,8 @@
     @else
         <x-agro.empty-state
             icon="book-open"
-            title="No hay solicitudes de acceso"
-            description="Solicita acceso al cuaderno de campo de tus viticultores."
+            title="{{ __('No hay solicitudes de acceso') }}"
+            :description="__('Solicita acceso al cuaderno de campo de tus viticultores.')"
         />
     @endif
 
@@ -138,8 +136,8 @@
                     <flux:icon icon="book-open" class="size-5 text-indigo-600" />
                 </div>
                 <div>
-                    <h3 class="text-base font-semibold text-zinc-900">Solicitar acceso al cuaderno</h3>
-                    <p class="text-xs text-zinc-500">El viticultor deberá aprobar tu solicitud</p>
+                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Solicitar acceso al cuaderno') }}</h3>
+                    <p class="text-xs text-zinc-500">{{ __('El viticultor deberá aprobar tu solicitud') }}</p>
                 </div>
             </div>
 
@@ -163,7 +161,7 @@
             @else
                 <div class="text-center py-8 text-zinc-400">
                     <flux:icon icon="check-circle" class="size-10 mx-auto mb-2 text-green-300" />
-                    <p class="text-sm">Todos los viticultores ya tienen solicitud activa</p>
+                    <p class="text-sm">{{ __('Todos los viticultores ya tienen solicitud activa') }}</p>
                 </div>
             @endif
 
@@ -172,14 +170,12 @@
             @enderror
 
             <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-zinc-100">
-                <flux:button variant="ghost" wire:click="closeRequestModal">Cancelar</flux:button>
+                <flux:button variant="ghost" wire:click="closeRequestModal">{{ __('Cancelar') }}</flux:button>
                 <flux:button
                     variant="primary"
                     wire:click="requestAccess"
                     :disabled="!$targetViticulturistId"
-                >
-                    Enviar solicitud
-                </flux:button>
+                >{{ __('Enviar solicitud') }}</flux:button>
             </div>
         </div>
     </flux:modal>

@@ -2,8 +2,8 @@
 
     @if(!$embedded)
     <x-agro.page-header
-        title="Calificaciones DO"
-        description="Calificaciones registradas por tu Denominación de Origen para los vinos de esta bodega."
+        title="{{ __('Calificaciones DO') }}"
+        :description="__('Calificaciones registradas por tu Denominación de Origen para los vinos de esta bodega.')"
         icon="star"
     />
     @endif
@@ -11,14 +11,14 @@
     {{-- Filtros --}}
     <div class="flex flex-wrap gap-3">
         <flux:select wire:model.live="vintageFilter">
-            <flux:select.option value="">Todas las añadas</flux:select.option>
+            <flux:select.option value="">{{ __('Todas las añadas') }}</flux:select.option>
             @foreach($availableVintages as $v)
                 <flux:select.option value="{{ $v }}">{{ $v }}</flux:select.option>
             @endforeach
         </flux:select>
 
         <flux:select wire:model.live="resultFilter">
-            <flux:select.option value="">Todos los resultados</flux:select.option>
+            <flux:select.option value="">{{ __('Todos los resultados') }}</flux:select.option>
             @foreach($resultLabels as $key => $label)
                 <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
             @endforeach
@@ -71,8 +71,8 @@
         @empty
             <x-agro.empty-state
                 icon="star"
-                title="Sin calificaciones"
-                description="Tu denominación de origen aún no ha registrado calificaciones para los vinos de esta bodega."
+                title="{{ __('Sin calificaciones') }}"
+                :description="__('Tu denominación de origen aún no ha registrado calificaciones para los vinos de esta bodega.')"
             />
         @endforelse
     </x-agro.card>

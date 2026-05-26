@@ -51,7 +51,7 @@ class Movements extends Component
             'movements' => $query->paginate(20),
             'stock' => $stock,
         ])->layout('layouts.app', [
-            'title' => 'Historial de Movimientos - Agro365',
+            'title' => __('Historial de Movimientos - Agro365'),
         ]);
     }
 }

@@ -107,7 +107,7 @@ class OfficialLaiCard extends Component
 
         $this->dispatch('notify', [
             'type' => 'success',
-            'message' => 'Datos de LAI actualizados',
+            'message' => __('Datos de LAI actualizados'),
         ]);
     }
 

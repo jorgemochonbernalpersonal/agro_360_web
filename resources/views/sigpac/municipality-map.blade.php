@@ -10,7 +10,7 @@
         <x-page-header
             :icon="$icon"
             title="Mapas de {{ $municipality->name }}"
-            description="Visualización de todos los recintos SIGPAC del municipio"
+            :description="__('Visualización de todos los recintos SIGPAC del municipio')"
             icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
         >
             <x-slot:actionButton>
@@ -53,7 +53,7 @@
 
         <!-- Leyenda de Colores -->
         <div class="glass-card rounded-xl p-6">
-            <h3 class="text-lg font-bold text-gray-900 mb-4">📍 Recintos del Municipio</h3>
+            <h3 class="text-lg font-bold text-gray-900 mb-4">{{ __('📍 Recintos del Municipio') }}</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 max-h-96 overflow-y-auto">
                 @foreach($plotGeometries as $index => $geometry)
                     <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
@@ -115,7 +115,7 @@
                 console.error('❌ window.parseWKT no está definido');
                 const errorMsg = document.createElement('div');
                 errorMsg.className = 'bg-red-50 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded';
-                errorMsg.innerHTML = '<p class="font-bold">Error: El parser WKT no está cargado.</p><p>Por favor, recarga la página.</p>';
+                errorMsg.innerHTML = '<p class="font-bold">{{ __('Error: El parser WKT no está cargado.') }}</p><p>{{ __('Por favor, recarga la página.') }}</p>';
                 document.getElementById('map').parentElement.insertBefore(errorMsg, document.getElementById('map'));
                 return;
             }
@@ -124,7 +124,7 @@
                 console.error('❌ window.isValidWKT no está definido');
                 const errorMsg = document.createElement('div');
                 errorMsg.className = 'bg-red-50 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded';
-                errorMsg.innerHTML = '<p class="font-bold">Error: El validador WKT no está cargado.</p><p>Por favor, recarga la página.</p>';
+                errorMsg.innerHTML = '<p class="font-bold">{{ __('Error: El validador WKT no está cargado.') }}</p><p>{{ __('Por favor, recarga la página.') }}</p>';
                 document.getElementById('map').parentElement.insertBefore(errorMsg, document.getElementById('map'));
                 return;
             }
@@ -138,7 +138,7 @@
                 console.error('❌ Error cargando Leaflet:', error);
                 const errorMsg = document.createElement('div');
                 errorMsg.className = 'bg-red-50 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded';
-                errorMsg.innerHTML = '<p class="font-bold">Error cargando el mapa.</p><p>Por favor, recarga la página.</p>';
+                errorMsg.innerHTML = '<p class="font-bold">{{ __('Error cargando el mapa.') }}</p><p>{{ __('Por favor, recarga la página.') }}</p>';
                 document.getElementById('map').parentElement.insertBefore(errorMsg, document.getElementById('map'));
                 return;
             }
@@ -321,16 +321,16 @@
                                 <div style="font-family:monospace; font-size:11px; color:#555; margin-top:2px">${geometry.sigpac_formatted || geometry.sigpac_code || ''}</div>
                             </div>
                             <table style="width:100%; font-size:12px; border-collapse:collapse">
-                                ${geometry.polygon ? `<tr><td style="color:#888;padding:2px 0">Polígono</td><td style="font-weight:600;text-align:right">${geometry.polygon}</td></tr>` : ''}
-                                ${geometry.enclosure ? `<tr><td style="color:#888;padding:2px 0">Recinto</td><td style="font-weight:600;text-align:right">${geometry.enclosure}</td></tr>` : ''}
-                                ${areaHa ? `<tr><td style="color:#888;padding:2px 0">Área aprox.</td><td style="font-weight:600;text-align:right">${areaHa} ha</td></tr>` : ''}
+                                ${geometry.polygon ? `<tr><td style="color:#888;padding:2px 0">{{ __('Polígono') }}</td><td style="font-weight:600;text-align:right">{{ __('${geometry.polygon}') }}</td></tr>` : ''}
+                                ${geometry.enclosure ? `<tr><td style="color:#888;padding:2px 0">{{ __('Recinto') }}</td><td style="font-weight:600;text-align:right">{{ __('${geometry.enclosure}') }}</td></tr>` : ''}
+                                ${areaHa ? `<tr><td style="color:#888;padding:2px 0">{{ __('Área aprox.') }}</td><td style="font-weight:600;text-align:right">{{ __('${areaHa} ha') }}</td></tr>` : ''}
                             </table>
                         </div>
                     `, { maxWidth: 260 });
 
                     // Tooltip hover
                     polygon.bindTooltip(
-                        `<strong>${geometry.plot_name || 'Sin nombre'}</strong>${geometry.polygon ? ' · Pol. ' + geometry.polygon : ''}`,
+                        `<strong>{{ __('${geometry.plot_name || \'Sin nombre\'}') }}</strong>${geometry.polygon ? ' · Pol. ' + geometry.polygon : ''}`,
                         { sticky: true, direction: 'top' }
                     );
 

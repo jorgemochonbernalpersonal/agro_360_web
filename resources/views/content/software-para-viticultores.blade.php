@@ -52,7 +52,7 @@
                 <div class="flex items-center gap-3">
                     <a href="{{ url('/') }}" class="flex items-center gap-3">
                         <img src="{{ asset('images/logo.png') }}" alt="Agro365" width="120" height="40" loading="eager" fetchpriority="high" decoding="async" class="h-10 w-auto">
-                        <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">Agro365</span>
+                        <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Agro365') }}</span>
                     </a>
                 </div>
                 <div class="flex items-center gap-4">
@@ -81,13 +81,13 @@
                 <ol class="flex items-center space-x-2">
                     <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
                         <a href="{{ url('/') }}" class="hover:text-[var(--color-agro-green)]" itemprop="item">
-                            <span itemprop="name">Inicio</span>
+                            <span itemprop="name">{{ __('Inicio') }}</span>
                         </a>
                         <meta itemprop="position" content="1" />
                     </li>
                     <span class="mx-2">/</span>
                     <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                        <span class="text-gray-900" itemprop="name">Software para Viticultores</span>
+                        <span class="text-gray-900" itemprop="name">{{ __('Software para Viticultores') }}</span>
                         <meta itemprop="position" content="2" />
                     </li>
                 </ol>
@@ -95,118 +95,116 @@
 
             <!-- Header -->
             <div class="mb-12">
-                <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">
-                    Software para Viticultores Profesionales
-                </h1>
+                <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">{{ __('Software para Viticultores Profesionales') }}</h1>
                 <p class="text-xl text-gray-600 leading-relaxed">
-                    <strong>Software profesional de gestión agrícola diseñado específicamente para viticultores</strong> en España. Gestión completa de viñedos, cuaderno digital obligatorio, SIGPAC, control de vendimia y cumplimiento normativo PAC. Todo en una plataforma integrada.
+                    <strong>{{ __('Software profesional de gestión agrícola diseñado específicamente para viticultores') }}</strong> en España. Gestión completa de viñedos, cuaderno digital obligatorio, SIGPAC, control de vendimia y cumplimiento normativo PAC. Todo en una plataforma integrada.
                 </p>
             </div>
 
             <!-- Content -->
             <article class="prose prose-lg max-w-none">
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">¿Por Qué los Viticultores Necesitan un Software Especializado?</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('¿Por Qué los Viticultores Necesitan un Software Especializado?') }}</h2>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        Los <strong>viticultores profesionales</strong> enfrentan desafíos únicos que requieren herramientas especializadas: gestión de múltiples parcelas, variedades de uva, control de tratamientos fitosanitarios, seguimiento de vendimia, cumplimiento normativo PAC y trazabilidad completa desde la parcela hasta la bodega.
+                        Los <strong>{{ __('viticultores profesionales') }}</strong> enfrentan desafíos únicos que requieren herramientas especializadas: gestión de múltiples parcelas, variedades de uva, control de tratamientos fitosanitarios, seguimiento de vendimia, cumplimiento normativo PAC y trazabilidad completa desde la parcela hasta la bodega.
                     </p>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        Un <strong>software para viticultores</strong> debe integrar todas estas funcionalidades en una sola plataforma, permitiendo gestionar tu explotación de forma eficiente y cumplir con todas las normativas vigentes.
+                        Un <strong>{{ __('software para viticultores') }}</strong> debe integrar todas estas funcionalidades en una sola plataforma, permitiendo gestionar tu explotación de forma eficiente y cumplir con todas las normativas vigentes.
                     </p>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Funcionalidades Esenciales del Software para Viticultores</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Funcionalidades Esenciales del Software para Viticultores') }}</h2>
                     <div class="grid md:grid-cols-2 gap-6 mb-6">
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">🍇 Gestión de Variedades</h3>
-                            <p class="text-gray-700">Control completo de variedades de uva, sistemas de conducción, densidad de plantación y características de cada parcela.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('🍇 Gestión de Variedades') }}</h3>
+                            <p class="text-gray-700">{{ __('Control completo de variedades de uva, sistemas de conducción, densidad de plantación y características de cada parcela.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">📋 Cuaderno Digital</h3>
-                            <p class="text-gray-700">Cuaderno de campo digital obligatorio desde 2027. Registra tratamientos, riegos, fertilizaciones y labores culturales.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('📋 Cuaderno Digital') }}</h3>
+                            <p class="text-gray-700">{{ __('Cuaderno de campo digital obligatorio desde 2027. Registra tratamientos, riegos, fertilizaciones y labores culturales.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">🗺️ Integración SIGPAC</h3>
-                            <p class="text-gray-700">Gestión de parcelas con códigos SIGPAC, visualización en mapa interactivo y cumplimiento normativo PAC.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('🗺️ Integración SIGPAC') }}</h3>
+                            <p class="text-gray-700">{{ __('Gestión de parcelas con códigos SIGPAC, visualización en mapa interactivo y cumplimiento normativo PAC.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">🍷 Control de Vendimia</h3>
-                            <p class="text-gray-700">Registro de cosechas, rendimientos por parcela, control de calidad y trazabilidad completa de la uva.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('🍷 Control de Vendimia') }}</h3>
+                            <p class="text-gray-700">{{ __('Registro de cosechas, rendimientos por parcela, control de calidad y trazabilidad completa de la uva.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">📊 Informes Oficiales</h3>
-                            <p class="text-gray-700">Genera informes oficiales con firma electrónica SHA-256 para inspecciones y cumplimiento normativo.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('📊 Informes Oficiales') }}</h3>
+                            <p class="text-gray-700">{{ __('Genera informes oficiales con firma electrónica SHA-256 para inspecciones y cumplimiento normativo.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">💰 Facturación</h3>
-                            <p class="text-gray-700">Facturación integrada de cosechas, control de precios, gestión de clientes y cuadrillas.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('💰 Facturación') }}</h3>
+                            <p class="text-gray-700">{{ __('Facturación integrada de cosechas, control de precios, gestión de clientes y cuadrillas.') }}</p>
                         </div>
                     </div>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Agro365: Software Completo para Viticultores</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Agro365: Software Completo para Viticultores') }}</h2>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        <strong>Agro365</strong> es el software de gestión agrícola diseñado específicamente para <strong>viticultores profesionales</strong> en España. Nuestra plataforma integra todas las herramientas necesarias para gestionar tu explotación vitícola de forma profesional.
+                        <strong>{{ __('Agro365') }}</strong> es el software de gestión agrícola diseñado específicamente para <strong>{{ __('viticultores profesionales') }}</strong> en España. Nuestra plataforma integra todas las herramientas necesarias para gestionar tu explotación vitícola de forma profesional.
                     </p>
                     <div class="bg-gradient-to-r from-[var(--color-agro-green-bg)] to-[var(--color-agro-green-light)]/30 p-8 rounded-xl border border-[var(--color-agro-green)]/20 mb-6">
-                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">Ventajas de Agro365 para Viticultores</h3>
+                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Ventajas de Agro365 para Viticultores') }}</h3>
                         <ul class="space-y-3 text-gray-800">
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Cuaderno digital obligatorio:</strong> Cumple con la normativa 2027 desde el primer día</span>
+                                <span><strong>{{ __('Cuaderno digital obligatorio:') }}</strong> Cumple con la normativa 2027 desde el primer día</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Integración SIGPAC completa:</strong> Gestiona todas tus parcelas con códigos SIGPAC oficiales</span>
+                                <span><strong>{{ __('Integración SIGPAC completa:') }}</strong> Gestiona todas tus parcelas con códigos SIGPAC oficiales</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Control de vendimia:</strong> Registra cosechas, rendimientos y calidad de uva por parcela</span>
+                                <span><strong>{{ __('Control de vendimia:') }}</strong> Registra cosechas, rendimientos y calidad de uva por parcela</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Dashboard de cumplimiento PAC:</strong> Detecta errores automáticamente y prepárate para inspecciones</span>
+                                <span><strong>{{ __('Dashboard de cumplimiento PAC:') }}</strong> Detecta errores automáticamente y prepárate para inspecciones</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Facturación integrada:</strong> Gestiona facturas de cosechas, precios y clientes en la misma plataforma</span>
+                                <span><strong>{{ __('Facturación integrada:') }}</strong> Gestiona facturas de cosechas, precios y clientes en la misma plataforma</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Acceso móvil:</strong> Registra actividades desde el campo con tu smartphone o tablet</span>
+                                <span><strong>{{ __('Acceso móvil:') }}</strong> Registra actividades desde el campo con tu smartphone o tablet</span>
                             </li>
                         </ul>
                     </div>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Preguntas Frecuentes sobre Software para Viticultores</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Preguntas Frecuentes sobre Software para Viticultores') }}</h2>
                     <div class="space-y-6">
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Qué diferencia a un software para viticultores de un software agrícola genérico?</h3>
-                            <p class="text-gray-700">Un software para viticultores está especializado en las necesidades específicas de la viticultura: gestión de variedades de uva, control de vendimia, sistemas de conducción, densidad de plantación y normativas específicas del sector vitícola.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Qué diferencia a un software para viticultores de un software agrícola genérico?') }}</h3>
+                            <p class="text-gray-700">{{ __('Un software para viticultores está especializado en las necesidades específicas de la viticultura: gestión de variedades de uva, control de vendimia, sistemas de conducción, densidad de plantación y normativas específicas del sector vitícola.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Necesito conocimientos técnicos para usar el software?</h3>
-                            <p class="text-gray-700">No, Agro365 está diseñado para ser intuitivo y fácil de usar. Puedes empezar a gestionar tu viñedo desde el primer día sin necesidad de conocimientos técnicos avanzados.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Necesito conocimientos técnicos para usar el software?') }}</h3>
+                            <p class="text-gray-700">{{ __('No, Agro365 está diseñado para ser intuitivo y fácil de usar. Puedes empezar a gestionar tu viñedo desde el primer día sin necesidad de conocimientos técnicos avanzados.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Funciona en móvil y tablet?</h3>
-                            <p class="text-gray-700">Sí, Agro365 es completamente responsive y funciona perfectamente en smartphones y tablets. Puedes registrar actividades directamente desde el campo.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Funciona en móvil y tablet?') }}</h3>
+                            <p class="text-gray-700">{{ __('Sí, Agro365 es completamente responsive y funciona perfectamente en smartphones y tablets. Puedes registrar actividades directamente desde el campo.') }}</p>
                         </div>
                     </div>
                 </section>
@@ -214,12 +212,8 @@
 
             <!-- CTA Section -->
             <div class="mt-16 pt-12 border-t border-gray-200 text-center">
-                <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">
-                    Software Profesional para Viticultores
-                </h2>
-                <p class="text-gray-600 mb-8 text-lg">
-                    Gestiona tu viñedo de forma profesional con Agro365. Cuaderno digital, SIGPAC, control de vendimia y cumplimiento normativo. Prueba gratis 3 meses.
-                </p>
+                <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Software Profesional para Viticultores') }}</h2>
+                <p class="text-gray-600 mb-8 text-lg">{{ __('Gestiona tu viñedo de forma profesional con Agro365. Cuaderno digital, SIGPAC, control de vendimia y cumplimiento normativo. Prueba gratis 3 meses.') }}</p>
                 <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-lg">
                     Comenzar Gratis
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -122,16 +122,16 @@
 </div>
 
 {{-- Tabla parcelas --}}
-<h2>Detalle de Parcelas</h2>
+<h2>{{ __('Detalle de Parcelas') }}</h2>
 <table>
     <thead>
         <tr>
-            <th>Parcela</th>
-            <th>Municipio</th>
-            <th style="text-align:right;">Sup. declarada</th>
-            <th style="text-align:right;">Sup. admisible</th>
-            <th style="text-align:right;">Coef.</th>
-            <th>Eco-regímenes</th>
+            <th>{{ __('Parcela') }}</th>
+            <th>{{ __('Municipio') }}</th>
+            <th style="text-align:right;">{{ __('Sup. declarada') }}</th>
+            <th style="text-align:right;">{{ __('Sup. admisible') }}</th>
+            <th style="text-align:right;">{{ __('Coef.') }}</th>
+            <th>{{ __('Eco-regímenes') }}</th>
         </tr>
     </thead>
     <tbody>
@@ -159,7 +159,7 @@
     </tbody>
     <tfoot>
         <tr>
-            <td colspan="2"><strong>TOTAL</strong></td>
+            <td colspan="2"><strong>{{ __('TOTAL') }}</strong></td>
             <td style="text-align:right; font-family:monospace;">{{ number_format($declaration->total_declared_area, 3) }} ha</td>
             <td style="text-align:right; font-family:monospace; color:#15803d;">{{ number_format($declaration->total_eligible_area, 3) }} ha</td>
             <td></td>
@@ -169,7 +169,7 @@
 </table>
 
 @if($declaration->notes)
-    <h2 style="margin-top:14pt;">Notas</h2>
+    <h2 style="margin-top:14pt;">{{ __('Notas') }}</h2>
     <p style="font-size:8.5pt; color:#374151;">{{ $declaration->notes }}</p>
 @endif
 

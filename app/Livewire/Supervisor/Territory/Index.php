@@ -82,9 +82,9 @@ class Index extends Component
         $organicPlots = (int)   $byProvince->sum('organic_count');
 
         $tabs = [
-            'provinces'     => ['label' => 'Por provincia',   'count' => $byProvince->count()],
-            'varieties'     => ['label' => 'Por variedad',    'count' => $byVariety->count()],
-            'municipalities'=> ['label' => 'Por municipio',   'count' => $byMunicipality->count()],
+            'provinces'     => ['label' => __('Por provincia'),   'count' => $byProvince->count()],
+            'varieties'     => ['label' => __('Por variedad'),    'count' => $byVariety->count()],
+            'municipalities'=> ['label' => __('Por municipio'),   'count' => $byMunicipality->count()],
         ];
 
         return view('livewire.supervisor.territory.index', [

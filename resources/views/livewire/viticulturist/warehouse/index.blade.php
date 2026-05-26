@@ -121,7 +121,7 @@
                                 :subtitle="$stock->product->active_ingredient ?? null"
                             >
                                 @if($statusType === 'default')
-                                    <x-agro.status-badge :status="true" label="OK" />
+                                    <x-agro.status-badge :status="true" :label="__('OK')" />
                                 @else
                                     <x-agro.status-badge :status="$statusActive" :label="$statusLabel" type="{{ $statusType }}" />
                                 @endif
@@ -328,7 +328,7 @@
                                 :subtitle="$supply->commercial_name ?? null"
                             >
                                 @if($statusType === 'default')
-                                    <x-agro.status-badge :status="true" label="OK" />
+                                    <x-agro.status-badge :status="true" :label="__('OK')" />
                                 @else
                                     <x-agro.status-badge :status="$statusActive" :label="$statusLabel" type="{{ $statusType }}" />
                                 @endif
@@ -576,7 +576,7 @@
                 </flux:field>
                 <flux:field>
                     <flux:label>{{ __('Nº Factura') }}</flux:label>
-                    <flux:input wire:model="p_invoice_number" type="text" placeholder="FAC-2026-001" />
+                    <flux:input wire:model="p_invoice_number" type="text" :placeholder="__('FAC-2026-001')" />
                     <flux:error name="p_invoice_number" />
                 </flux:field>
 

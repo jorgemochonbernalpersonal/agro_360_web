@@ -47,19 +47,19 @@ class Index extends AbstractIndex
     public function archive(int $id): void
     {
         $this->findOwned(PhytosanitaryContainerReturn::class, $id)->update(['active' => false]);
-        $this->toastSuccess('Registro archivado.');
+        $this->toastSuccess(__('Registro archivado.'));
     }
 
     public function unarchive(int $id): void
     {
         $this->findOwned(PhytosanitaryContainerReturn::class, $id)->update(['active' => true]);
-        $this->toastSuccess('Registro restaurado.');
+        $this->toastSuccess(__('Registro restaurado.'));
     }
 
     public function delete(int $id): void
     {
         $this->findOwned(PhytosanitaryContainerReturn::class, $id)->delete();
-        $this->toastSuccess('Registro eliminado.');
+        $this->toastSuccess(__('Registro eliminado.'));
     }
 
     protected function baseQuery(): Builder

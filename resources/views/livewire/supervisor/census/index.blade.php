@@ -1,20 +1,20 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="Censo"
-        description="Bodegas y viticultores adscritos a la denominación de origen."
+        title="{{ __('Censo') }}"
+        :description="__('Bodegas y viticultores adscritos a la denominación de origen.')"
     />
 
     {{-- Stats --}}
     <div class="grid grid-cols-2 gap-4">
         <x-agro.stat-card
-            label="Bodegas adscritas"
+            :label="__('Bodegas adscritas')"
             :value="$wineryCount"
             icon="building-office-2"
             color="blue"
         />
         <x-agro.stat-card
-            label="Viticultores DO"
+            :label="__('Viticultores DO')"
             :value="$viticulturistCount"
             icon="users"
             color="agro"
@@ -23,17 +23,13 @@
 
     {{-- Search + Assign button --}}
     <div class="flex items-center gap-2">
-        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar..." />
+        <x-agro.search-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar...')" />
         @if($search)
-            <button wire:click="clearSearch" class="text-xs text-zinc-400 hover:text-zinc-600 transition px-2 py-1.5">
-                Limpiar
-            </button>
+            <button wire:click="clearSearch" class="text-xs text-zinc-400 hover:text-zinc-600 transition px-2 py-1.5">{{ __('Limpiar') }}</button>
         @endif
 
         @if($currentTab === 'wineries')
-            <flux:button wire:click="openAssignModal" variant="primary" size="sm" icon="plus" class="ml-auto">
-                Adscribir bodega
-            </flux:button>
+            <flux:button wire:click="openAssignModal" variant="primary" size="sm" icon="plus" class="ml-auto">{{ __('Adscribir bodega') }}</flux:button>
         @endif
     </div>
 
@@ -82,14 +78,14 @@
                                 <div class="flex-1 space-y-4">
                                     <div class="grid grid-cols-1 gap-2">
                                         <div class="bg-blue-50 rounded-xl p-3">
-                                            <p class="text-[10px] font-semibold text-blue-400 uppercase tracking-widest mb-0.5">Viticultores DO</p>
+                                            <p class="text-[10px] font-semibold text-blue-400 uppercase tracking-widest mb-0.5">{{ __('Viticultores DO') }}</p>
                                             <p class="text-2xl font-bold text-blue-700 leading-none">{{ $vitCount }}</p>
                                         </div>
                                     </div>
 
                                     <div class="space-y-2 text-sm">
                                         <div class="flex items-center justify-between">
-                                            <span class="text-zinc-400">Email</span>
+                                            <span class="text-zinc-400">{{ __('Email') }}</span>
                                             <span class="text-zinc-700 font-medium truncate ml-2 max-w-[60%] text-right">{{ $winery->email }}</span>
                                         </div>
                                     </div>
@@ -97,8 +93,8 @@
 
                                 <x-slot:footer>
                                     <div class="flex items-center justify-end gap-0.5">
-                                        <x-agro.action-button variant="view" href="{{ route('supervisor.oversight.wineries.show', $winery) }}" wire:navigate title="Ver" />
-                                        <x-agro.action-button icon="x-mark" variant="danger" wire:click="unassignWinery({{ $winery->id }})" wire:confirm="¿Desadscribir {{ $winery->name }} de la denominación? Los viticultores asignados por la DO a esta bodega también se desvincularán." title="Desadscribir" />
+                                        <x-agro.action-button variant="view" href="{{ route('supervisor.oversight.wineries.show', $winery) }}" wire:navigate title="{{ __('Ver') }}" />
+                                        <x-agro.action-button icon="x-mark" variant="danger" wire:click="unassignWinery({{ $winery->id }})" wire:confirm="{{ __('¿Desadscribir :name de la denominación? Los viticultores asignados por la DO a esta bodega también se desvincularán.', ['name' => $winery->name]) }}" title="{{ __('Desadscribir') }}" />
                                     </div>
                                 </x-slot:footer>
                             </x-agro.card>
@@ -107,7 +103,7 @@
 
                     <x-agro-pagination :paginator="$items" />
                 @else
-                    <x-agro.empty-state icon="building-office-2" title="No hay bodegas" description="No hay bodegas adscritas a esta denominación." />
+                    <x-agro.empty-state icon="building-office-2" title="{{ __('No hay bodegas') }}" :description="__('No hay bodegas adscritas a esta denominación.')" />
                 @endif
 
             @else
@@ -135,14 +131,14 @@
                                 <div class="flex-1 space-y-4">
                                     <div class="grid grid-cols-1 gap-2">
                                         <div class="bg-agro-50 rounded-xl p-3">
-                                            <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Parcelas</p>
+                                            <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">{{ __('Parcelas') }}</p>
                                             <p class="text-2xl font-bold text-agro-700 leading-none">{{ $viticulturist->plots_count }}</p>
                                         </div>
                                     </div>
 
                                     <div class="space-y-2 text-sm">
                                         <div class="flex items-center justify-between">
-                                            <span class="text-zinc-400">Email</span>
+                                            <span class="text-zinc-400">{{ __('Email') }}</span>
                                             <span class="text-zinc-700 font-medium truncate ml-2 max-w-[60%] text-right">{{ $viticulturist->email }}</span>
                                         </div>
                                     </div>
@@ -153,7 +149,7 @@
 
                     <x-agro-pagination :paginator="$items" />
                 @else
-                    <x-agro.empty-state icon="users" title="No hay viticultores" description="No hay viticultores adscritos a esta denominación." />
+                    <x-agro.empty-state icon="users" title="{{ __('No hay viticultores') }}" :description="__('No hay viticultores adscritos a esta denominación.')" />
                 @endif
             @endif
         </div>
@@ -163,11 +159,11 @@
     <flux:modal wire:model="showAssignModal" name="assign-winery" class="w-full max-w-lg">
         <div class="p-6 space-y-4">
             <div>
-                <h3 class="text-base font-semibold text-zinc-900">Adscribir bodega</h3>
-                <p class="text-sm text-zinc-500 mt-0.5">Busca y adscribe una bodega a tu denominación de origen.</p>
+                <h3 class="text-base font-semibold text-zinc-900">{{ __('Adscribir bodega') }}</h3>
+                <p class="text-sm text-zinc-500 mt-0.5">{{ __('Busca y adscribe una bodega a tu denominación de origen.') }}</p>
             </div>
 
-            <flux:input wire:model.live="assignSearch" placeholder="Buscar por nombre o email…" icon="magnifying-glass" />
+            <flux:input wire:model.live="assignSearch" :placeholder="__('Buscar por nombre o email…')" icon="magnifying-glass" />
 
             @if($availableWineries->isEmpty())
                 <p class="text-sm text-zinc-400 text-center py-6">
@@ -202,7 +198,7 @@
             @endif
 
             <div class="flex justify-end pt-2">
-                <flux:button wire:click="closeAssignModal" variant="ghost">Cerrar</flux:button>
+                <flux:button wire:click="closeAssignModal" variant="ghost">{{ __('Cerrar') }}</flux:button>
             </div>
         </div>
     </flux:modal>

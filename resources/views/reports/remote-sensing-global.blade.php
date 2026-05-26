@@ -130,7 +130,7 @@
 <body>
     <!-- Header -->
     <div class="header">
-        <h1>🛰️ Informe Global de Teledetección</h1>
+        <h1>{{ __('🛰️ Informe Global de Teledetección') }}</h1>
         <p>{{ $user->name }} - Últimos {{ $days }} días - Generado el {{ $generatedAt->format('d/m/Y H:i') }}</p>
     </div>
 
@@ -178,11 +178,11 @@
         <table class="plots-table">
             <thead>
                 <tr>
-                    <th>Parcela</th>
-                    <th>NDVI</th>
-                    <th>Estado</th>
-                    <th>Tendencia</th>
-                    <th>Última Imagen</th>
+                    <th>{{ __('Parcela') }}</th>
+                    <th>{{ __('NDVI') }}</th>
+                    <th>{{ __('Estado') }}</th>
+                    <th>{{ __('Tendencia') }}</th>
+                    <th>{{ __('Última Imagen') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -210,7 +210,7 @@
     @if($alerts->count() > 0)
     <div class="section" style="border-color: #fecaca; background: #fef2f2;">
         <div class="section-title" style="color: #dc2626; border-color: #ef4444;">⚠️ Parcelas con Alerta</div>
-        <p style="margin-bottom: 10px;">Las siguientes parcelas requieren atención:</p>
+        <p style="margin-bottom: 10px;">{{ __('Las siguientes parcelas requieren atención:') }}</p>
         <ul style="margin-left: 20px;">
             @foreach($alerts as $alert)
             <li style="margin-bottom: 5px;">

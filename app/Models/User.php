@@ -9,12 +9,13 @@ use App\Models\Traits\HasSubscriptions;
 use App\Models\SupportTicket;
 use App\Models\UserProfile;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable implements MustVerifyEmail, HasLocalePreference
 {
     use HasApiTokens, HasFactory, Notifiable;
     use HasSubscriptions, HasBetaAccess, HasHierarchy, HasInvoicing;
@@ -83,6 +84,11 @@ class User extends Authenticatable implements MustVerifyEmail
             'notification_preferences' => 'array',
             'last_login_at' => 'datetime',
         ];
+    }
+
+    public function preferredLocale(): string
+    {
+        return $this->locale ?? 'es';
     }
 
     /**

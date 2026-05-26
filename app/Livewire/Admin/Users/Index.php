@@ -104,12 +104,12 @@ class Index extends Component
             'createRole'     => 'required|in:admin,supervisor,winery,viticulturist,producer',
             'createPassword' => 'required|string|min:8',
         ], [
-            'createName.required'     => 'El nombre es obligatorio.',
-            'createEmail.required'    => 'El email es obligatorio.',
-            'createEmail.unique'      => 'Ya existe un usuario con este email.',
-            'createRole.required'     => 'El rol es obligatorio.',
-            'createPassword.required' => 'La contraseña es obligatoria.',
-            'createPassword.min'      => 'La contraseña debe tener al menos 8 caracteres.',
+            'createName.required'     => __('El nombre es obligatorio.'),
+            'createEmail.required'    => __('El email es obligatorio.'),
+            'createEmail.unique'      => __('Ya existe un usuario con este email.'),
+            'createRole.required'     => __('El rol es obligatorio.'),
+            'createPassword.required' => __('La contraseña es obligatoria.'),
+            'createPassword.min'      => __('La contraseña debe tener al menos 8 caracteres.'),
         ]);
 
         $user = User::create([
@@ -146,12 +146,12 @@ class Index extends Component
         $user = User::findOrFail($userId);
 
         if ($user->isAdmin()) {
-            $this->toastError('No puedes eliminar a un administrador.');
+            $this->toastError(__('No puedes eliminar a un administrador.'));
             return;
         }
 
         if ($user->id === Auth::id()) {
-            $this->toastError('No puedes eliminarte a ti mismo.');
+            $this->toastError(__('No puedes eliminarte a ti mismo.'));
             return;
         }
 
@@ -236,19 +236,19 @@ class Index extends Component
     public function impersonate($userId)
     {
         if (!Auth::user()->isAdmin()) {
-            $this->toastError('No tienes permiso para impersonar usuarios.');
+            $this->toastError(__('No tienes permiso para impersonar usuarios.'));
             return;
         }
 
         $targetUser = User::findOrFail($userId);
 
         if ($targetUser->isAdmin()) {
-            $this->toastError('No puedes impersonar a otro administrador por razones de seguridad.');
+            $this->toastError(__('No puedes impersonar a otro administrador por razones de seguridad.'));
             return;
         }
 
         if (!$targetUser->can_login) {
-            $this->toastError('No puedes impersonar usuarios inactivos. Activa el usuario primero.');
+            $this->toastError(__('No puedes impersonar usuarios inactivos. Activa el usuario primero.'));
             return;
         }
 
@@ -280,7 +280,7 @@ class Index extends Component
         $user = User::findOrFail($userId);
 
         if ($user->isAdmin() && $user->id !== Auth::id()) {
-            $this->toastError('No puedes desactivar a otro administrador.');
+            $this->toastError(__('No puedes desactivar a otro administrador.'));
             return;
         }
 

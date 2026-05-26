@@ -18,7 +18,7 @@
             </div>
             <div>
                 <h1 class="font-bold text-zinc-900 text-lg leading-tight">{{ $wine->name }}</h1>
-                <p class="text-sm text-zinc-500">Ficha de trazabilidad</p>
+                <p class="text-sm text-zinc-500">{{ __('Ficha de trazabilidad') }}</p>
             </div>
         </div>
     </div>
@@ -27,11 +27,11 @@
 
         {{-- Datos básicos --}}
         <div class="bg-white rounded-2xl border border-zinc-200 shadow-sm p-5">
-            <h2 class="font-semibold text-zinc-800 mb-3 text-sm uppercase tracking-wide">Información del vino</h2>
+            <h2 class="font-semibold text-zinc-800 mb-3 text-sm uppercase tracking-wide">{{ __('Información del vino') }}</h2>
             <dl class="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
                 @if($wine->vintage)
                     <div>
-                        <dt class="text-zinc-400">Añada</dt>
+                        <dt class="text-zinc-400">{{ __('Añada') }}</dt>
                         <dd class="font-medium text-zinc-800">{{ $wine->vintage }}</dd>
                     </div>
                 @endif
@@ -41,31 +41,31 @@
                     $statusLabels = ['in_progress'=>'En elaboración','aged'=>'En crianza','bottled'=>'Embotellado','sold'=>'Vendido','cancelled'=>'Cancelado'];
                 @endphp
                 <div>
-                    <dt class="text-zinc-400">Tipo</dt>
+                    <dt class="text-zinc-400">{{ __('Tipo') }}</dt>
                     <dd class="font-medium text-zinc-800">{{ $typeLabels[$wine->wine_type] ?? $wine->wine_type }}</dd>
                 </div>
                 @if($wine->aging_type)
                     <div>
-                        <dt class="text-zinc-400">Crianza</dt>
+                        <dt class="text-zinc-400">{{ __('Crianza') }}</dt>
                         <dd class="font-medium text-zinc-800">{{ $agingLabels[$wine->aging_type] ?? $wine->aging_type }}</dd>
                     </div>
                 @endif
                 @if($wine->category)
                     <div>
-                        <dt class="text-zinc-400">Categoría</dt>
+                        <dt class="text-zinc-400">{{ __('Categoría') }}</dt>
                         <dd class="font-medium text-zinc-800">{{ $wine->category }}</dd>
                     </div>
                 @endif
                 @if($wine->volume_liters)
                     <div>
-                        <dt class="text-zinc-400">Volumen</dt>
+                        <dt class="text-zinc-400">{{ __('Volumen') }}</dt>
                         <dd class="font-medium text-zinc-800">{{ number_format($wine->volume_liters, 0) }} L</dd>
                     </div>
                 @endif
                 @if($wine->is_organic)
                     <div>
-                        <dt class="text-zinc-400">Certificación</dt>
-                        <dd class="font-medium text-green-700">🌱 Ecológico</dd>
+                        <dt class="text-zinc-400">{{ __('Certificación') }}</dt>
+                        <dd class="font-medium text-green-700">{{ __('🌱 Ecológico') }}</dd>
                     </div>
                 @endif
             </dl>
@@ -74,7 +74,7 @@
         {{-- Composición varietal --}}
         @if($composition->isNotEmpty())
             <div class="bg-white rounded-2xl border border-zinc-200 shadow-sm p-5">
-                <h2 class="font-semibold text-zinc-800 mb-3 text-sm uppercase tracking-wide">Composición varietal</h2>
+                <h2 class="font-semibold text-zinc-800 mb-3 text-sm uppercase tracking-wide">{{ __('Composición varietal') }}</h2>
                 @php $colors = ['bg-violet-500','bg-blue-500','bg-emerald-500','bg-amber-500','bg-rose-500','bg-sky-500']; @endphp
                 <div class="flex rounded-full overflow-hidden h-2.5 mb-4 gap-px">
                     @foreach($composition as $i => $entry)
@@ -101,12 +101,12 @@
         {{-- Último análisis --}}
         @if($lastAnalysis)
             <div class="bg-white rounded-2xl border border-zinc-200 shadow-sm p-5">
-                <h2 class="font-semibold text-zinc-800 mb-1 text-sm uppercase tracking-wide">Análisis enológico</h2>
+                <h2 class="font-semibold text-zinc-800 mb-1 text-sm uppercase tracking-wide">{{ __('Análisis enológico') }}</h2>
                 <p class="text-xs text-zinc-400 mb-3">{{ $lastAnalysis->analysis_date?->format('d/m/Y') }}</p>
                 <dl class="grid grid-cols-3 gap-3 text-sm">
                     @if($lastAnalysis->alcohol)
                         <div class="bg-zinc-50 rounded-xl p-2 text-center">
-                            <dt class="text-[10px] text-zinc-400 uppercase tracking-wide">Alcohol</dt>
+                            <dt class="text-[10px] text-zinc-400 uppercase tracking-wide">{{ __('Alcohol') }}</dt>
                             <dd class="font-bold text-zinc-800">{{ $lastAnalysis->alcohol }}°</dd>
                         </div>
                     @endif
@@ -118,25 +118,25 @@
                     @endif
                     @if($lastAnalysis->total_acidity)
                         <div class="bg-zinc-50 rounded-xl p-2 text-center">
-                            <dt class="text-[10px] text-zinc-400 uppercase tracking-wide">Acidez total</dt>
+                            <dt class="text-[10px] text-zinc-400 uppercase tracking-wide">{{ __('Acidez total') }}</dt>
                             <dd class="font-bold text-zinc-800">{{ $lastAnalysis->total_acidity }} g/L</dd>
                         </div>
                     @endif
                     @if($lastAnalysis->residual_sugar)
                         <div class="bg-zinc-50 rounded-xl p-2 text-center">
-                            <dt class="text-[10px] text-zinc-400 uppercase tracking-wide">Azúcar res.</dt>
+                            <dt class="text-[10px] text-zinc-400 uppercase tracking-wide">{{ __('Azúcar res.') }}</dt>
                             <dd class="font-bold text-zinc-800">{{ $lastAnalysis->residual_sugar }} g/L</dd>
                         </div>
                     @endif
                     @if($lastAnalysis->so2_free)
                         <div class="bg-zinc-50 rounded-xl p-2 text-center">
-                            <dt class="text-[10px] text-zinc-400 uppercase tracking-wide">SO₂ libre</dt>
+                            <dt class="text-[10px] text-zinc-400 uppercase tracking-wide">{{ __('SO₂ libre') }}</dt>
                             <dd class="font-bold text-zinc-800">{{ $lastAnalysis->so2_free }} mg/L</dd>
                         </div>
                     @endif
                     @if($lastAnalysis->so2_total)
                         <div class="bg-zinc-50 rounded-xl p-2 text-center">
-                            <dt class="text-[10px] text-zinc-400 uppercase tracking-wide">SO₂ total</dt>
+                            <dt class="text-[10px] text-zinc-400 uppercase tracking-wide">{{ __('SO₂ total') }}</dt>
                             <dd class="font-bold text-zinc-800">{{ $lastAnalysis->so2_total }} mg/L</dd>
                         </div>
                     @endif

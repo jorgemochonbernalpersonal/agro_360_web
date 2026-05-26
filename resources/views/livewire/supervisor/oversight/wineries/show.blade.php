@@ -23,7 +23,7 @@
                 </span>
                 <flux:button
                     wire:click="toggleAccess"
-                    wire:confirm="¿Desactivar el acceso a esta bodega? No podrá iniciar sesión hasta que lo reactives."
+                    wire:confirm="{{ __('¿Desactivar el acceso a esta bodega? No podrá iniciar sesión hasta que lo reactives.') }}"
                     variant="danger"
                     size="sm"
                     icon="lock-closed"
@@ -37,7 +37,7 @@
                 </span>
                 <flux:button
                     wire:click="toggleAccess"
-                    wire:confirm="¿Restaurar el acceso a esta bodega?"
+                    wire:confirm="{{ __('¿Restaurar el acceso a esta bodega?') }}"
                     variant="primary"
                     size="sm"
                     icon="lock-open"
@@ -51,7 +51,7 @@
     {{-- Stats de la vendimia actual --}}
     <div class="grid grid-cols-2 gap-4">
         <x-agro.stat-card
-            label="Viticultores DO"
+            :label="__('Viticultores DO')"
             :value="$viticulturistRelations->count()"
             icon="users"
             color="blue"
@@ -69,7 +69,7 @@
             color="yellow"
         />
         <x-agro.stat-card
-            label="Contenedores"
+            :label="__('Contenedores')"
             :value="$containerCount"
             icon="beaker"
             color="purple"
@@ -82,19 +82,17 @@
             <div class="flex items-center justify-between w-full">
                 <div class="flex items-center gap-2">
                     <flux:icon icon="users" class="size-4 text-blue-500" />
-                    <span>Viticultores asignados por esta DO</span>
+                    <span>{{ __('Viticultores asignados por esta DO') }}</span>
                 </div>
-                <flux:button wire:click="openAssignModal" variant="ghost" size="sm" icon="user-plus">
-                    Asignar viticultor
-                </flux:button>
+                <flux:button wire:click="openAssignModal" variant="ghost" size="sm" icon="user-plus">{{ __('Asignar viticultor') }}</flux:button>
             </div>
         </x-slot:header>
 
         @if($viticulturistRelations->isEmpty())
             <x-agro.empty-state
                 icon="users"
-                title="Sin viticultores asignados"
-                description="Esta bodega no tiene viticultores aportados por tu denominación."
+                title="{{ __('Sin viticultores asignados') }}"
+                :description="__('Esta bodega no tiene viticultores aportados por tu denominación.')"
             />
         @else
             <x-agro.data-table
@@ -136,13 +134,13 @@
                                     {{ \Carbon\Carbon::parse($last)->translatedFormat('d M Y') }}
                                 </span>
                             @else
-                                <span class="text-zinc-300">Sin actividad</span>
+                                <span class="text-zinc-300">{{ __('Sin actividad') }}</span>
                             @endif
                         </x-agro.table-cell>
                         <x-agro.table-cell align="right">
                             <flux:button
                                 wire:click="unassignViticulturist({{ $vit->id }})"
-                                wire:confirm="¿Retirar a {{ $vit->name }} de esta bodega?"
+                                wire:confirm="{{ __('¿Retirar a :name de esta bodega?', ['name' => $vit->name]) }}"
                                 variant="ghost"
                                 size="sm"
                                 icon="user-minus"
@@ -160,11 +158,11 @@
     <flux:modal wire:model="showAssignModal" name="assign-viticulturist" class="w-full max-w-lg">
         <div class="p-6 space-y-4">
             <div>
-                <h3 class="text-base font-semibold text-zinc-900">Asignar viticultor</h3>
-                <p class="text-sm text-zinc-500 mt-0.5">Viticultores de tu pool disponibles para asignar a esta bodega.</p>
+                <h3 class="text-base font-semibold text-zinc-900">{{ __('Asignar viticultor') }}</h3>
+                <p class="text-sm text-zinc-500 mt-0.5">{{ __('Viticultores de tu pool disponibles para asignar a esta bodega.') }}</p>
             </div>
 
-            <flux:input wire:model.live="poolSearch" placeholder="Buscar por nombre o email…" icon="magnifying-glass" />
+            <flux:input wire:model.live="poolSearch" :placeholder="__('Buscar por nombre o email…')" icon="magnifying-glass" />
 
             @if($poolViticulturists->isEmpty())
                 <p class="text-sm text-zinc-400 text-center py-6">
@@ -199,7 +197,7 @@
             @endif
 
             <div class="flex justify-end pt-2">
-                <flux:button wire:click="closeAssignModal" variant="ghost">Cerrar</flux:button>
+                <flux:button wire:click="closeAssignModal" variant="ghost">{{ __('Cerrar') }}</flux:button>
             </div>
         </div>
     </flux:modal>
@@ -214,7 +212,7 @@
                     <div class="flex items-center justify-between w-full">
                         <div class="flex items-center gap-2">
                             <flux:icon icon="inbox-arrow-down" class="size-4 text-agro-500" />
-                            <span>Últimas recepciones</span>
+                            <span>{{ __('Últimas recepciones') }}</span>
                         </div>
                         @if($vintageStats?->avg_baume > 0)
                             <span class="text-xs text-zinc-400">
@@ -227,8 +225,8 @@
                 @if($recentReceptions->isEmpty())
                     <x-agro.empty-state
                         icon="inbox"
-                        title="Sin recepciones registradas"
-                        description="Esta bodega no tiene recepciones de vendimia en el sistema."
+                        title="{{ __('Sin recepciones registradas') }}"
+                        :description="__('Esta bodega no tiene recepciones de vendimia en el sistema.')"
                     />
                 @else
                     <div class="divide-y divide-zinc-100">
@@ -254,9 +252,9 @@
                                         </span>
                                     @endif
                                     @if($reception->status === 'cancelled')
-                                        <x-agro.status-badge status="cancelled" label="Cancelada" color="red" />
+                                        <x-agro.status-badge status="cancelled" :label="__('Cancelada')" color="red" />
                                     @elseif($reception->status === 'disputed')
-                                        <x-agro.status-badge status="disputed" label="En disputa" color="yellow" />
+                                        <x-agro.status-badge status="disputed" :label="__('En disputa')" color="yellow" />
                                     @endif
                                 </div>
                             </div>
@@ -277,7 +275,7 @@
                 </x-slot:header>
 
                 @if($varietyBreakdown->isEmpty())
-                    <p class="text-sm text-zinc-400 px-4 py-6 text-center">Sin datos de variedad</p>
+                    <p class="text-sm text-zinc-400 px-4 py-6 text-center">{{ __('Sin datos de variedad') }}</p>
                 @else
                     @php $totalKg = $varietyBreakdown->sum('total_kg'); @endphp
                     <div class="divide-y divide-zinc-100">
@@ -309,10 +307,10 @@
             <div class="flex items-center justify-between w-full">
                 <div class="flex items-center gap-2">
                     <flux:icon icon="puzzle-piece" class="size-4 text-violet-500" />
-                    <span>Módulos activos</span>
+                    <span>{{ __('Módulos activos') }}</span>
                 </div>
                 @if($grantedAbilityIds->isEmpty())
-                    <span class="text-xs text-zinc-400 italic">Sin restricciones — acceso total</span>
+                    <span class="text-xs text-zinc-400 italic">{{ __('Sin restricciones — acceso total') }}</span>
                 @else
                     <span class="text-xs text-zinc-500">{{ $grantedAbilityIds->count() }} de {{ $allAbilities->count() }} módulos habilitados</span>
                 @endif
@@ -322,8 +320,8 @@
         @if($allAbilities->isEmpty())
             <x-agro.empty-state
                 icon="puzzle-piece"
-                title="Sin módulos configurados"
-                description="Ejecuta el AbilitySeeder para cargar los módulos disponibles."
+                title="{{ __('Sin módulos configurados') }}"
+                :description="__('Ejecuta el AbilitySeeder para cargar los módulos disponibles.')"
             />
         @else
             @php $byModule = $allAbilities->groupBy('module'); @endphp
@@ -377,7 +375,7 @@
             <div class="flex items-center justify-between w-full">
                 <div class="flex items-center gap-2">
                     <flux:icon icon="book-open" class="size-4 text-indigo-500" />
-                    <span>Cuaderno DO</span>
+                    <span>{{ __('Cuaderno DO') }}</span>
                     @if($wineryNotes->count() > 0)
                         <span class="px-1.5 py-0.5 text-[10px] font-bold bg-zinc-100 text-zinc-500 rounded-full">{{ $wineryNotes->count() }}</span>
                     @endif
@@ -395,7 +393,7 @@
             <div class="mb-4 p-4 bg-zinc-50 border border-zinc-200 rounded-xl space-y-3">
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
-                        <flux:label>Tipo</flux:label>
+                        <flux:label>{{ __('Tipo') }}</flux:label>
                         <flux:select wire:model="noteType">
                             @foreach($noteTypeLabels as $val => $label)
                                 <flux:select.option value="{{ $val }}">{{ $label }}</flux:select.option>
@@ -404,24 +402,20 @@
                         @error('noteType') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-zinc-600 mb-1">Fecha</label>
+                        <label class="block text-xs font-medium text-zinc-600 mb-1">{{ __('Fecha') }}</label>
                         <input type="date" wire:model="noteDate" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" />
                         @error('noteDate') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-zinc-600 mb-1">Contenido</label>
-                    <textarea wire:model="noteContent" rows="3" placeholder="Observaciones, acuerdos, incidencias…"
+                    <label class="block text-xs font-medium text-zinc-600 mb-1">{{ __('Contenido') }}</label>
+                    <textarea wire:model="noteContent" rows="3" placeholder="{{ __('Observaciones, acuerdos, incidencias…') }}"
                         class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300 resize-none"></textarea>
                     @error('noteContent') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
                 <div class="flex gap-2">
-                    <button wire:click="saveNote" class="px-4 py-1.5 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
-                        Guardar
-                    </button>
-                    <button wire:click="closeNoteForm" class="px-4 py-1.5 text-sm font-medium text-zinc-600 border border-zinc-200 rounded-lg hover:bg-zinc-100 transition">
-                        Cancelar
-                    </button>
+                    <button wire:click="saveNote" class="px-4 py-1.5 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">{{ __('Guardar') }}</button>
+                    <button wire:click="closeNoteForm" class="px-4 py-1.5 text-sm font-medium text-zinc-600 border border-zinc-200 rounded-lg hover:bg-zinc-100 transition">{{ __('Cancelar') }}</button>
                 </div>
             </div>
         @endif
@@ -439,7 +433,7 @@
                     <div class="p-3 bg-indigo-50 border border-indigo-200 rounded-xl space-y-3">
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <div>
-                                <flux:label>Tipo</flux:label>
+                                <flux:label>{{ __('Tipo') }}</flux:label>
                                 <flux:select wire:model="editNoteType">
                                     @foreach($noteTypeLabels as $val => $label)
                                         <flux:select.option value="{{ $val }}">{{ $label }}</flux:select.option>
@@ -448,7 +442,7 @@
                                 @error('editNoteType') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-zinc-600 mb-1">Fecha</label>
+                                <label class="block text-xs font-medium text-zinc-600 mb-1">{{ __('Fecha') }}</label>
                                 <input type="date" wire:model="editNoteDate" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" />
                                 @error('editNoteDate') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                             </div>
@@ -459,8 +453,8 @@
                             @error('editNoteContent') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                         </div>
                         <div class="flex gap-2">
-                            <button wire:click="updateNote" class="px-3 py-1.5 text-xs font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">Guardar</button>
-                            <button wire:click="closeEditNote" class="px-3 py-1.5 text-xs font-medium text-zinc-600 border border-zinc-200 rounded-lg hover:bg-zinc-100 transition">Cancelar</button>
+                            <button wire:click="updateNote" class="px-3 py-1.5 text-xs font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">{{ __('Guardar') }}</button>
+                            <button wire:click="closeEditNote" class="px-3 py-1.5 text-xs font-medium text-zinc-600 border border-zinc-200 rounded-lg hover:bg-zinc-100 transition">{{ __('Cancelar') }}</button>
                         </div>
                     </div>
                 </div>
@@ -482,7 +476,7 @@
                         <button wire:click="openEditNote({{ $note->id }})" class="p-1 text-zinc-400 hover:text-indigo-500 transition-colors">
                             <flux:icon icon="pencil" class="size-4" />
                         </button>
-                        <button wire:click="deleteNote({{ $note->id }})" wire:confirm="¿Eliminar esta nota?"
+                        <button wire:click="deleteNote({{ $note->id }})" wire:confirm="{{ __('¿Eliminar esta nota?') }}"
                             class="p-1 text-zinc-400 hover:text-red-500 transition-colors">
                             <flux:icon icon="trash" class="size-4" />
                         </button>
@@ -492,7 +486,7 @@
         @empty
             <div class="py-8 text-center">
                 <flux:icon icon="book-open" class="size-10 mx-auto text-zinc-300 mb-2" />
-                <p class="text-sm text-zinc-400">Sin notas. Añade observaciones, visitas o llamadas.</p>
+                <p class="text-sm text-zinc-400">{{ __('Sin notas. Añade observaciones, visitas o llamadas.') }}</p>
             </div>
         @endforelse
     </x-agro.card>

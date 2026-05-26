@@ -31,7 +31,7 @@ class Index extends AbstractIndex
     {
         $registration = SanitaryRegistration::where('user_id', $this->wineryId())->findOrFail($id);
         $registration->delete();
-        $this->toastSuccess('Registro sanitario eliminado.');
+        $this->toastSuccess(__('Registro sanitario eliminado.'));
     }
 
     protected function baseQuery(): Builder

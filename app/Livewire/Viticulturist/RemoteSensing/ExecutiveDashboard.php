@@ -194,7 +194,7 @@ class ExecutiveDashboard extends Component
             ['ndvi_threshold' => $this->ndviThreshold, 'email_enabled' => $this->alertEmailEnabled]
         );
 
-        $this->dispatch('notify', message: 'Configuración de alertas guardada.');
+        $this->dispatch('notify', message: __('Configuración de alertas guardada.'));
     }
 
     public function loadSummary()
@@ -289,7 +289,7 @@ class ExecutiveDashboard extends Component
 
             $this->dispatch('notify', [
                 'type'    => 'success',
-                'message' => 'Actualización Sentinel-2 en proceso. Los datos estarán disponibles en unos momentos.',
+                'message' => __('Actualización Sentinel-2 en proceso. Los datos estarán disponibles en unos momentos.'),
             ]);
 
         } catch (\Exception $e) {
@@ -526,16 +526,16 @@ class ExecutiveDashboard extends Component
 
         // CWSI alto
         if (isset($data->cwsi) && $data->cwsi > 0.6) {
-            $alerts[] = ['type' => 'critical', 'message' => 'Estrés hídrico alto'];
+            $alerts[] = ['type' => 'critical', 'message' => __('Estrés hídrico alto')];
             $critical++;
         } elseif (isset($data->cwsi) && $data->cwsi > 0.4) {
-            $alerts[] = ['type' => 'warning', 'message' => 'Estrés hídrico moderado'];
+            $alerts[] = ['type' => 'warning', 'message' => __('Estrés hídrico moderado')];
             $warnings++;
         }
 
         // GNDVI bajo
         if (isset($data->gndvi) && $data->gndvi < 0.4) {
-            $alerts[] = ['type' => 'warning', 'message' => 'Nivel bajo de nitrógeno'];
+            $alerts[] = ['type' => 'warning', 'message' => __('Nivel bajo de nitrógeno')];
             $warnings++;
         }
 
@@ -547,7 +547,7 @@ class ExecutiveDashboard extends Component
 
         // LST extremo
         if (isset($data->lst_day) && $data->lst_day > 40) {
-            $alerts[] = ['type' => 'critical', 'message' => 'Temperatura superficial muy alta'];
+            $alerts[] = ['type' => 'critical', 'message' => __('Temperatura superficial muy alta')];
             $critical++;
         }
 
@@ -566,7 +566,7 @@ class ExecutiveDashboard extends Component
     {
         $base = [
             'status' => 'no_data',
-            'label' => 'Sin Datos',
+            'label' => __('Sin Datos'),
             'color' => 'gray',
             'icon' => '❓',
             'detail_route' => route('remote-sensing.advanced'),
@@ -613,7 +613,7 @@ class ExecutiveDashboard extends Component
             'harvest' => $this->getEmptyCard('harvest'),
             'nutrition' => $this->getEmptyCard('nutrition'),
             'alerts' => ['total' => 0, 'critical' => 0, 'warnings' => 0, 'list' => [], 'color' => 'gray', 'icon' => '❓'],
-            'last_update' => 'Nunca',
+            'last_update' => __('Nunca'),
             'satellite' => 'N/A',
             'is_estimated' => false,
         ];

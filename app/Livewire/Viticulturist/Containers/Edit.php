@@ -97,11 +97,7 @@ class Edit extends Component
     {
         // Validar que no se reduzca capacidad si está ocupado
         if ($this->capacity < $this->container->used_capacity) {
-            $this->addError('capacity', sprintf(
-                'No puedes reducir la capacidad a %.2f L porque hay %.2f L ocupados.',
-                $this->capacity,
-                $this->container->used_capacity
-            ));
+            $this->addError('capacity', __('No puedes reducir la capacidad a :capacity L porque hay :used L ocupados.', ['capacity' => number_format($this->capacity, 2), 'used' => number_format($this->container->used_capacity, 2)]));
             return;
         }
 
@@ -137,7 +133,7 @@ class Edit extends Component
                 'thumbnail_img' => $photoPaths[0] ?? null,
             ]);
 
-            $this->toastSuccess('Contenedor actualizado correctamente.');
+            $this->toastSuccess(__('Contenedor actualizado correctamente.'));
             return $this->viticulturistRoleRedirect('containers.show', $this->container->id);
             
         } catch (\Exception $e) {
@@ -146,7 +142,7 @@ class Edit extends Component
                 'container_id' => $this->container->id,
             ]);
             
-            $this->toastError('Error al actualizar el contenedor. Por favor, intenta de nuevo.');
+            $this->toastError(__('Error al actualizar el contenedor. Por favor, intenta de nuevo.'));
         }
     }
 

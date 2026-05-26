@@ -15,7 +15,7 @@ class Show extends Component
     {
         // Validar autorización
         if (!Auth::user()->can('view', $machinery)) {
-            abort(403, 'No tienes permiso para ver esta maquinaria.');
+            abort(403, __('No tienes permiso para ver esta maquinaria.'));
         }
 
         $this->machinery = $machinery->loadCount('activities');
@@ -34,7 +34,7 @@ class Show extends Component
             'recentActivities' => $recentActivities,
         ])->layout('layouts.app', [
             'title' => $this->machinery->name . ' - Maquinaria - Agro365',
-            'description' => 'Detalles de la maquinaria ' . $this->machinery->name . '. Especificaciones técnicas, registro ROMA y historial de uso en actividades.',
+            'description' => __('Detalles de la maquinaria ') . $this->machinery->name . '. Especificaciones técnicas, registro ROMA y historial de uso en actividades.',
         ]);
     }
 }

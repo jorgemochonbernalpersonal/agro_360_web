@@ -123,18 +123,18 @@ class Create extends Component
         $lot = ProductLot::where('user_id', Auth::id())->find($this->selectedLotId);
 
         if (!$lot) {
-            $this->toastError('Lote no encontrado.');
+            $this->toastError(__('Lote no encontrado.'));
             return;
         }
 
         if ((float) $lot->available_quantity <= 0) {
-            $this->toastError('Este lote no tiene stock disponible para facturar.');
+            $this->toastError(__('Este lote no tiene stock disponible para facturar.'));
             return;
         }
 
         foreach ($this->items as $item) {
             if (isset($item['wine_lot_id']) && (int) $item['wine_lot_id'] === $lot->id) {
-                $this->toastError('Este lote ya está en la factura.');
+                $this->toastError(__('Este lote ya está en la factura.'));
                 return;
             }
         }
@@ -153,7 +153,7 @@ class Create extends Component
         ];
 
         $this->selectedLotId = '';
-        $this->toastSuccess('Producto añadido al albarán.');
+        $this->toastSuccess(__('Producto añadido al albarán.'));
     }
 
     // ── Añadir concepto manual ────────────────────────────────────────────────
@@ -362,7 +362,7 @@ class Create extends Component
                 'user_id'   => Auth::id(),
                 'exception' => $e,
             ]);
-            $this->toastError($e instanceof \RuntimeException ? $e->getMessage() : 'Error al crear la factura. Inténtalo de nuevo.');
+            $this->toastError($e instanceof \RuntimeException ? $e->getMessage()  : __('Error al crear la factura. Inténtalo de nuevo.'));
         }
     }
 

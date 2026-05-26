@@ -150,7 +150,7 @@
 <body>
     <!-- Header -->
     <div class="header">
-        <h1>🛰️ Informe de Teledetección NDVI</h1>
+        <h1>{{ __('🛰️ Informe de Teledetección NDVI') }}</h1>
         <p>{{ $plot->name }} - Generado el {{ $generatedAt->format('d/m/Y H:i') }}</p>
     </div>
 
@@ -213,9 +213,9 @@
         <table class="history-table">
             <thead>
                 <tr>
-                    <th>Enfermedad</th>
-                    <th>Nivel</th>
-                    <th>Obs.</th>
+                    <th>{{ __('Enfermedad') }}</th>
+                    <th>{{ __('Nivel') }}</th>
+                    <th>{{ __('Obs.') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -286,10 +286,10 @@
         <table class="history-table">
             <thead>
                 <tr>
-                    <th>Fecha</th>
-                    <th>NDVI</th>
-                    <th>Estado</th>
-                    <th>Nubosidad</th>
+                    <th>{{ __('Fecha') }}</th>
+                    <th>{{ __('NDVI') }}</th>
+                    <th>{{ __('Estado') }}</th>
+                    <th>{{ __('Nubosidad') }}</th>
                 </tr>
             </thead>
             <tbody>

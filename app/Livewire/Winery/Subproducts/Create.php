@@ -63,10 +63,10 @@ class Create extends Component
     protected function messages(): array
     {
         return [
-            'type.required'        => 'Debes seleccionar el tipo de subproducto.',
-            'quantity.required'    => 'Indica la cantidad generada.',
-            'quantity.min'         => 'La cantidad debe ser mayor que cero.',
-            'destination.required' => 'Debes indicar el destino.',
+            'type.required'        => __('Debes seleccionar el tipo de subproducto.'),
+            'quantity.required'    => __('Indica la cantidad generada.'),
+            'quantity.min'         => __('La cantidad debe ser mayor que cero.'),
+            'destination.required' => __('Debes indicar el destino.'),
         ];
     }
 
@@ -93,7 +93,7 @@ class Create extends Component
             'created_by'             => Auth::id(),
         ]);
 
-        $this->toastSuccess('Subproducto registrado correctamente.');
+        $this->toastSuccess(__('Subproducto registrado correctamente.'));
         $this->roleRedirect('subproducts.index');
     }
 

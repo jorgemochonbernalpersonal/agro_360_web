@@ -77,7 +77,7 @@ class Edit extends Component
             'notes'                    => $this->notes ?: null,
         ]);
 
-        $this->toastSuccess('Autorización de embotellado actualizada correctamente.');
+        $this->toastSuccess(__('Autorización de embotellado actualizada correctamente.'));
         $this->redirect(roleRoute('bottling-authorizations.index'), navigate: true);
     }
 

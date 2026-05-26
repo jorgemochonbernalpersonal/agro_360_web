@@ -37,23 +37,23 @@ class VerifyEmailNotification extends VerifyEmail
             ];
 
         $message = (new MailMessage)
-            ->subject('Verifica tu email — Agro365')
-            ->greeting("Hola {$notifiable->name},")
+            ->subject(__('Verifica tu email — Agro365'))
+            ->greeting(__('Hola :name,', ['name' => $notifiable->name]))
             ->line("Gracias por registrarte en Agro365 como **{$roleLabel}**, {$description}")
-            ->line('Para completar tu registro, verifica tu dirección de correo electrónico haciendo clic en el siguiente botón:')
-            ->action('Verificar mi email', $verificationUrl)
-            ->line('Este enlace de verificación expirará en 24 horas.')
-            ->line('**¿Qué puedes hacer en Agro365?**');
+            ->line(__('Para completar tu registro, verifica tu dirección de correo electrónico haciendo clic en el siguiente botón:'))
+            ->action(__('Verificar mi email'), $verificationUrl)
+            ->line(__('Este enlace de verificación expirará en 24 horas.'))
+            ->line(__('**¿Qué puedes hacer en Agro365?**'));
 
         foreach ($features as $feature) {
             $message->line($feature);
         }
 
         return $message
-            ->line('---')
-            ->line('**Para volver a entrar en Agro365:** ve a agro365.es, haz clic en "Iniciar sesión" y usa este email con la contraseña que elegiste al registrarte. Si no la recuerdas, usa la opción "¿Olvidaste tu contraseña?".')
-            ->line('Si no has solicitado esta cuenta, puedes ignorar este mensaje sin problemas.')
-            ->line('Si tienes alguna pregunta, puedes contactarnos en info@agro365.es')
-            ->salutation('Saludos, El equipo de Agro365');
+            ->line(__('---'))
+            ->line(__('**Para volver a entrar en Agro365:** ve a agro365.es, haz clic en "Iniciar sesión" y usa este email con la contraseña que elegiste al registrarte. Si no la recuerdas, usa la opción "¿Olvidaste tu contraseña?".'))
+            ->line(__('Si no has solicitado esta cuenta, puedes ignorar este mensaje sin problemas.'))
+            ->line(__('Si tienes alguna pregunta, puedes contactarnos en info@agro365.es'))
+            ->salutation(__('Saludos, El equipo de Agro365'));
     }
 }

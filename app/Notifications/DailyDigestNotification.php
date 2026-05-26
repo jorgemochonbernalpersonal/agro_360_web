@@ -26,9 +26,9 @@ class DailyDigestNotification extends Notification implements ShouldQueue
         $count = $this->unreadNotifications->count();
 
         $mail = (new MailMessage)
-            ->subject("Resumen diario Agro365 — {$count} notificaciones")
-            ->greeting("Buenos días, {$notifiable->name}")
-            ->line("Tienes **{$count} notificaciones** pendientes de revisar:");
+            ->subject(__('Resumen diario Agro365 — :count notificaciones', ['count' => $count]))
+            ->greeting(__('Buenos días, :name', ['name' => $notifiable->name]))
+            ->line(__('Tienes **:count notificaciones** pendientes de revisar:', ['count' => $count]));
 
         foreach ($this->unreadNotifications->take(10) as $notification) {
             $data = $notification->data;
@@ -39,11 +39,11 @@ class DailyDigestNotification extends Notification implements ShouldQueue
 
         if ($count > 10) {
             $remaining = $count - 10;
-            $mail->line("...y {$remaining} más.");
+            $mail->line(__('...y :remaining más.', ['remaining' => $remaining]));
         }
 
-        $mail->action('Ver todas en Agro365', url('/dashboard'))
-             ->line('Puedes cambiar a notificaciones instantáneas en Configuración > Notificaciones.');
+        $mail->action(__('Ver todas en Agro365'), url('/dashboard'))
+             ->line(__('Puedes cambiar a notificaciones instantáneas en Configuración > Notificaciones.'));
 
         return $mail;
     }

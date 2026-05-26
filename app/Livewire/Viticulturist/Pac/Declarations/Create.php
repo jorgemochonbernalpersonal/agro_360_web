@@ -91,11 +91,11 @@ class Create extends Component
     protected function messages(): array
     {
         return [
-            'year.required'                  => 'El año es obligatorio.',
-            'year.unique'                    => 'Ya existe una declaración para el año :input.',
-            'items.*.declared_area.required' => 'La superficie declarada es obligatoria.',
-            'items.*.declared_area.min'      => 'La superficie declarada debe ser mayor que 0.',
-            'items.*.eligible_area.required' => 'La superficie admisible es obligatoria.',
+            'year.required'                  => __('El año es obligatorio.'),
+            'year.unique'                    => __('Ya existe una declaración para el año :input.'),
+            'items.*.declared_area.required' => __('La superficie declarada es obligatoria.'),
+            'items.*.declared_area.min'      => __('La superficie declarada debe ser mayor que 0.'),
+            'items.*.eligible_area.required' => __('La superficie admisible es obligatoria.'),
         ];
     }
 
@@ -104,14 +104,14 @@ class Create extends Component
         $selectedIds = array_keys(array_filter($this->items, fn($i) => $i['selected'] ?? false));
 
         if (empty($selectedIds)) {
-            $this->addError('items', 'Selecciona al menos una parcela para la declaración.');
+            $this->addError('items', __('Selecciona al menos una parcela para la declaración.'));
             return;
         }
 
         $this->validate();
 
         if (!$this->validatePacDeclaredAreas($selectedIds, $this->items)) {
-            $this->toastError('Revisa las superficies declaradas antes de continuar.');
+            $this->toastError(__('Revisa las superficies declaradas antes de continuar.'));
             return;
         }
 

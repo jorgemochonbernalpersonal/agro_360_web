@@ -125,7 +125,7 @@
                             </div>
                             <div>
                                 <span class="text-xs text-zinc-500">{{ __('Rendimiento Estimado') }}</span>
-                                <div class="text-2xl font-bold text-zinc-900">{{ number_format($analysis['lai']['yield_estimation']['yield_per_ha']) }} <span class="text-sm">kg/ha</span></div>
+                                <div class="text-2xl font-bold text-zinc-900">{{ number_format($analysis['lai']['yield_estimation']['yield_per_ha']) }} <span class="text-sm">{{ __('kg/ha') }}</span></div>
                                 <span class="text-xs text-zinc-600">{{ number_format($analysis['lai']['yield_estimation']['total_yield_tons'], 2) }} {{ __('toneladas totales') }}</span>
                             </div>
                         </div>
@@ -158,7 +158,7 @@
                                 <span class="text-xs text-{{ $analysis['chlorophyll']['diagnosis']['color'] }}-600">{{ $analysis['chlorophyll']['diagnosis']['label'] }}</span>
                             </div>
                             <div>
-                                <span class="text-xs text-zinc-500">GNDVI</span>
+                                <span class="text-xs text-zinc-500">{{ __('GNDVI') }}</span>
                                 <div class="text-2xl font-bold text-zinc-900">{{ number_format($analysis['chlorophyll']['gndvi'], 3) }}</div>
                             </div>
                         </div>

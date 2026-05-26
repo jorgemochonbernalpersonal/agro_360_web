@@ -60,7 +60,7 @@ class Index extends Component
         if (!$invoice) return;
 
         if ($invoice->status !== 'draft') {
-            $this->toastError('Solo se puede emitir una factura en estado borrador.');
+            $this->toastError(__('Solo se puede emitir una factura en estado borrador.'));
             return;
         }
 
@@ -81,14 +81,14 @@ class Index extends Component
     {
         $this->validate(
             ['emitirDate' => 'required|date'],
-            ['emitirDate.required' => 'La fecha de factura es obligatoria.']
+            ['emitirDate.required' => __('La fecha de factura es obligatoria.')]
         );
 
         $invoice = $this->findInvoice($this->emitirInvoiceId);
         if (!$invoice) return;
 
         if ($invoice->status !== 'draft') {
-            $this->toastError('Esta factura ya no está en borrador.');
+            $this->toastError(__('Esta factura ya no está en borrador.'));
             $this->closeEmitirModal();
             return;
         }
@@ -107,11 +107,11 @@ class Index extends Component
             });
 
             $this->closeEmitirModal();
-            $this->toastSuccess('Factura emitida correctamente.');
+            $this->toastSuccess(__('Factura emitida correctamente.'));
 
         } catch (\Exception $e) {
             Log::error('Error al emitir factura: ' . $e->getMessage(), ['invoice_id' => $this->emitirInvoiceId]);
-            $this->toastError($e instanceof \RuntimeException ? $e->getMessage() : 'Error al emitir la factura.');
+            $this->toastError($e instanceof \RuntimeException ? $e->getMessage()  : __('Error al emitir la factura.'));
         }
     }
 
@@ -123,17 +123,17 @@ class Index extends Component
         if (!$invoice) return;
 
         if ($invoice->status !== 'sent') {
-            $this->toastError('Solo se puede rectificar una factura emitida.');
+            $this->toastError(__('Solo se puede rectificar una factura emitida.'));
             return;
         }
 
         if ($invoice->corrective) {
-            $this->toastError('Una rectificativa no puede rectificarse a sí misma.');
+            $this->toastError(__('Una rectificativa no puede rectificarse a sí misma.'));
             return;
         }
 
         if (Invoice::where('corrected_invoice_id', $id)->exists()) {
-            $this->toastError('Esta factura ya tiene una rectificativa asociada.');
+            $this->toastError(__('Esta factura ya tiene una rectificativa asociada.'));
             return;
         }
 
@@ -159,18 +159,18 @@ class Index extends Component
                 'correctiveDate'   => 'required|date',
                 'correctiveReason' => 'nullable|string|max:500',
             ],
-            ['correctiveDate.required' => 'La fecha de la rectificativa es obligatoria.']
+            ['correctiveDate.required' => __('La fecha de la rectificativa es obligatoria.')]
         );
 
         $original = $this->findInvoice($this->correctiveId, ['items.harvest']);
         if (!$original || $original->status !== 'sent') {
-            $this->toastError('La factura original ya no es válida para rectificar.');
+            $this->toastError(__('La factura original ya no es válida para rectificar.'));
             $this->closeCorrectiveModal();
             return;
         }
 
         if (Invoice::where('corrected_invoice_id', $original->id)->exists()) {
-            $this->toastError('Esta factura ya tiene una rectificativa asociada.');
+            $this->toastError(__('Esta factura ya tiene una rectificativa asociada.'));
             $this->closeCorrectiveModal();
             return;
         }
@@ -270,7 +270,7 @@ class Index extends Component
                 'original_invoice_id' => $this->correctiveId,
                 'user_id'             => Auth::id(),
             ]);
-            $this->toastError($e instanceof \RuntimeException ? $e->getMessage() : 'Error al generar la rectificativa.');
+            $this->toastError($e instanceof \RuntimeException ? $e->getMessage()  : __('Error al generar la rectificativa.'));
         }
     }
 
@@ -282,7 +282,7 @@ class Index extends Component
         if (!$invoice) return;
 
         if ($invoice->status !== 'draft') {
-            $this->toastError('Solo se pueden eliminar facturas en estado borrador.');
+            $this->toastError(__('Solo se pueden eliminar facturas en estado borrador.'));
             return;
         }
 
@@ -293,10 +293,10 @@ class Index extends Component
                 $invoice->updateQuietly(['delivery_status' => 'cancelled']);
                 $invoice->delete();
             });
-            $this->toastSuccess('Factura eliminada correctamente.');
+            $this->toastSuccess(__('Factura eliminada correctamente.'));
         } catch (\Exception $e) {
             Log::error('Error al eliminar factura: ' . $e->getMessage(), ['invoice_id' => $id]);
-            $this->toastError('Error al eliminar la factura.');
+            $this->toastError(__('Error al eliminar la factura.'));
         }
     }
 
@@ -308,7 +308,7 @@ class Index extends Component
         if (!$invoice) return;
 
         if ($invoice->status !== 'draft') {
-            $this->toastError('Las facturas emitidas no se pueden cancelar directamente. Crea una factura rectificativa.');
+            $this->toastError(__('Las facturas emitidas no se pueden cancelar directamente. Crea una factura rectificativa.'));
             return;
         }
 
@@ -318,19 +318,19 @@ class Index extends Component
             // would hit the delivery_status branch first (elseif) and skip stock release.
             $invoice->update(['status' => 'cancelled']);
             $invoice->updateQuietly(['delivery_status' => 'cancelled']); // silent, no observer
-            $this->toastSuccess('Factura cancelada y stock liberado.');
+            $this->toastSuccess(__('Factura cancelada y stock liberado.'));
 
         } catch (\Exception $e) {
             Log::error('Error al cancelar factura: ' . $e->getMessage(), ['invoice_id' => $id]);
-            $this->toastError($e instanceof \RuntimeException ? $e->getMessage() : 'Error al cancelar la factura.');
+            $this->toastError($e instanceof \RuntimeException ? $e->getMessage()  : __('Error al cancelar la factura.'));
         }
     }
 
     // ── Render ────────────────────────────────────────────────────────────────
 
     #[Layout('layouts.app', [
-        'title'       => 'Facturas / Pedidos - Agro365',
-        'description' => 'Gestiona tus facturas y pedidos.',
+        'title'       => __('Facturas / Pedidos - Agro365'),
+        'description' => __('Gestiona tus facturas y pedidos.'),
     ])]
     public function render()
     {

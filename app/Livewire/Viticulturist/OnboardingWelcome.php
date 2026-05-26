@@ -33,7 +33,7 @@ class OnboardingWelcome extends Component
         OnboardingProgress::skipAll(auth()->id());
         $this->showModal = false;
         
-        $this->toastInfo('Onboarding saltado. Puedes reactivarlo desde Configuración.');
+        $this->toastInfo(__('Onboarding saltado. Puedes reactivarlo desde Configuración.'));
     }
 
     public function render()

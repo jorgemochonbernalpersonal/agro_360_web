@@ -69,8 +69,8 @@
             </svg>
         </div>
 
-        <h1>Continúa en Agro365</h1>
-        <p>Abre la aplicación para ver este contenido, o continúa desde la web.</p>
+        <h1>{{ __('Continúa en Agro365') }}</h1>
+        <p>{{ __('Abre la aplicación para ver este contenido, o continúa desde la web.') }}</p>
 
         <a href="{{ $deepUrl }}" class="btn-app">Abrir en la app</a>
 

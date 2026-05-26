@@ -2,8 +2,8 @@
 
     {{-- Header --}}
     <x-agro.page-header
-        title="Análisis de Laboratorio"
-        description="Registro y seguimiento de análisis fisicoquímicos de vinos"
+        title="{{ __('Análisis de Laboratorio') }}"
+        :description="__('Registro y seguimiento de análisis fisicoquímicos de vinos')"
         icon="beaker"
     >
         <x-slot:actions>
@@ -17,25 +17,25 @@
     <x-agro.stats-section key="wine-analysis">
         <div class="grid grid-cols-2 gap-4">
             <x-agro.stat-card
-                label="Total análisis"
+                :label="__('Total análisis')"
                 :value="$stats['total']"
                 icon="beaker"
                 color="zinc"
             />
             <x-agro.stat-card
-                label="Este año"
+                :label="__('Este año')"
                 :value="$stats['this_year']"
                 icon="calendar-days"
                 color="agro"
             />
             <x-agro.stat-card
-                label="Conformes"
+                :label="__('Conformes')"
                 :value="$stats['passed']"
                 icon="check-circle"
                 color="agro"
             />
             <x-agro.stat-card
-                label="No conformes"
+                :label="__('No conformes')"
                 :value="$stats['failed']"
                 icon="x-circle"
                 color="amber"
@@ -49,7 +49,7 @@
 
     {{-- Toolbar --}}
     <div class="flex items-center gap-3">
-        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar por laboratorio o referencia..." />
+        <x-agro.search-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar por laboratorio o referencia...')" />
 
         <x-agro.filter-button modal="analysis-filters" :count="$filterCount" />
     </div>
@@ -69,9 +69,7 @@
                 @php $containerLabel = $containers->firstWhere('id', $containerFilter)?->name ?? $containerFilter; @endphp
                 <x-agro.filter-chip icon="cube" :label="$containerLabel" wireRemove="$set('containerFilter', '')" />
             @endif
-            <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">
-                Limpiar todo
-            </button>
+            <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">{{ __('Limpiar todo') }}</button>
         </div>
     @endif
 
@@ -136,9 +134,9 @@
                             <div class="grid grid-cols-2 gap-2">
                                 @if($analysis->alcoholic_strength !== null)
                                     <div class="bg-zinc-50 rounded-xl p-3">
-                                        <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">Graduación</p>
+                                        <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">{{ __('Graduación') }}</p>
                                         <p class="text-xl font-bold text-zinc-700 leading-none">
-                                            {{ number_format($analysis->alcoholic_strength, 2) }}<span class="text-xs font-normal text-zinc-400 ml-0.5">%vol</span>
+                                            {{ number_format($analysis->alcoholic_strength, 2) }}<span class="text-xs font-normal text-zinc-400 ml-0.5">{{ __('%vol') }}</span>
                                         </p>
                                     </div>
                                 @endif
@@ -165,8 +163,8 @@
 
                         <x-slot:footer>
                             <div class="flex items-center justify-end gap-0.5">
-                                <x-agro.action-button variant="edit" href="{{ roleRoute('wine-analysis.edit', $analysis) }}" wire:navigate title="Editar análisis" />
-                                <x-agro.action-button variant="delete" wire:click="delete({{ $analysis->id }})" wire:confirm="¿Eliminar este análisis de laboratorio?" wire:loading.attr="disabled" title="Eliminar análisis" />
+                                <x-agro.action-button variant="edit" href="{{ roleRoute('wine-analysis.edit', $analysis) }}" wire:navigate title="{{ __('Editar análisis') }}" />
+                                <x-agro.action-button variant="delete" wire:click="delete({{ $analysis->id }})" wire:confirm="{{ __('¿Eliminar este análisis de laboratorio?') }}" wire:loading.attr="disabled" title="{{ __('Eliminar análisis') }}" />
                             </div>
                         </x-slot:footer>
                     </x-agro.card>
@@ -182,9 +180,7 @@
             >
                 @if($search || $typeFilter || $resultFilter || $containerFilter)
                     <x-slot:action>
-                        <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">
-                            Limpiar filtros
-                        </flux:button>
+                        <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">{{ __('Limpiar filtros') }}</flux:button>
                     </x-slot:action>
                 @else
                     <x-slot:action>
@@ -205,7 +201,7 @@
                     <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
                         <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
                     </div>
-                    <h3 class="text-base font-semibold text-zinc-900">Filtros</h3>
+                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Filtros') }}</h3>
                 </div>
                 <flux:button x-on:click="$dispatch('close-modal', 'analysis-filters')" variant="ghost" size="sm" icon="x-mark" />
             </div>
@@ -213,27 +209,27 @@
 
         <div class="px-6 py-5 space-y-5">
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Tipo de análisis</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Tipo de análisis') }}</label>
                 <flux:select wire:model.live="typeFilter">
-                    <option value="">Todos los tipos</option>
+                    <option value="">{{ __('Todos los tipos') }}</option>
                     @foreach($types as $key => $label)
                         <option value="{{ $key }}">{{ $label }}</option>
                     @endforeach
                 </flux:select>
             </div>
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Resultado</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Resultado') }}</label>
                 <flux:select wire:model.live="resultFilter">
-                    <option value="">Todos los resultados</option>
+                    <option value="">{{ __('Todos los resultados') }}</option>
                     @foreach($results as $key => $label)
                         <option value="{{ $key }}">{{ $label }}</option>
                     @endforeach
                 </flux:select>
             </div>
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Depósito</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Depósito') }}</label>
                 <flux:select wire:model.live="containerFilter">
-                    <option value="">Todos los depósitos</option>
+                    <option value="">{{ __('Todos los depósitos') }}</option>
                     @foreach($containers as $c)
                         <option value="{{ $c->id }}">{{ $c->name }}</option>
                     @endforeach
@@ -243,15 +239,11 @@
 
         <div class="px-6 py-4 border-t border-zinc-200 flex items-center justify-between">
             @if($filterCount > 0)
-                <button wire:click="clearFilters" class="text-sm text-zinc-400 hover:text-zinc-600 transition-colors">
-                    Limpiar filtros
-                </button>
+                <button wire:click="clearFilters" class="text-sm text-zinc-400 hover:text-zinc-600 transition-colors">{{ __('Limpiar filtros') }}</button>
             @else
                 <span></span>
             @endif
-            <flux:button x-on:click="$dispatch('close-modal', 'analysis-filters')" variant="primary">
-                Aplicar
-            </flux:button>
+            <flux:button x-on:click="$dispatch('close-modal', 'analysis-filters')" variant="primary">{{ __('Aplicar') }}</flux:button>
         </div>
     </x-agro.modal>
 

@@ -1,8 +1,8 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="Análisis de Calidad — Vendimia"
-        description="Comparativa de parámetros enológicos por viticultor y variedad."
+        title="{{ __('Análisis de Calidad — Vendimia') }}"
+        :description="__('Comparativa de parámetros enológicos por viticultor y variedad.')"
     />
 
     {{-- Nav vendimia --}}
@@ -35,7 +35,7 @@
             <a href="{{ roleRoute('harvest-quality.export-pdf', array_filter(['campaign' => $campaignFilter, 'viticulturist' => $viticulturistFilter])) }}"
                target="_blank"
                class="inline-flex items-center gap-2 px-3 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors"
-               title="Exportar PDF de calidad">
+               title="{{ __('Exportar PDF de calidad') }}">
                 <flux:icon icon="document-arrow-down" class="size-4 text-zinc-500" />
                 PDF
             </a>
@@ -46,18 +46,18 @@
             class="bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Campaña / Añada</label>
+                    <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Campaña / Añada') }}</label>
                     <flux:select wire:model.live="campaignFilter">
-                        <option value="">Todas las añadas</option>
+                        <option value="">{{ __('Todas las añadas') }}</option>
                         @foreach($campaigns as $c)
                             <option value="{{ $c->id }}">{{ $c->year }}</option>
                         @endforeach
                     </flux:select>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Viticultor</label>
+                    <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Viticultor') }}</label>
                     <flux:select wire:model.live="viticulturistFilter">
-                        <option value="">Todos</option>
+                        <option value="">{{ __('Todos') }}</option>
                         @foreach($linkedViticulturists as $v)
                             <option value="{{ $v->id }}">{{ $v->name }}</option>
                         @endforeach
@@ -67,9 +67,7 @@
             @if($filterCount > 0)
                 <div class="mt-3 pt-3 border-t border-zinc-100">
                     <button wire:click="$set('campaignFilter', ''); $set('viticulturistFilter', '')"
-                        class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">
-                        Limpiar filtros
-                    </button>
+                        class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">{{ __('Limpiar filtros') }}</button>
                 </div>
             @endif
         </div>
@@ -87,9 +85,7 @@
                 <x-agro.filter-chip icon="user" :label="$viticLabel" wireRemove="$set('viticulturistFilter', '')" />
             @endif
             <button wire:click="$set('campaignFilter', ''); $set('viticulturistFilter', '')"
-                class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">
-                Limpiar todo
-            </button>
+                class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">{{ __('Limpiar todo') }}</button>
         </div>
     @endif
 
@@ -101,8 +97,8 @@
         @if($globalStats['total_entries'] === 0)
             <x-agro.empty-state
                 icon="beaker"
-                title="Sin datos de calidad"
-                description="Registra recepciones con parámetros de calidad (Baumé, Brix, alcohol…) para ver el análisis."
+                title="{{ __('Sin datos de calidad') }}"
+                :description="__('Registra recepciones con parámetros de calidad (Baumé, Brix, alcohol…) para ver el análisis.')"
             >
                 <x-slot:action>
                     <flux:button variant="primary" icon="plus" href="{{ roleRoute('grape-reception.create') }}" wire:navigate>
@@ -115,27 +111,27 @@
             {{-- Resumen global --}}
             <div class="grid grid-cols-2 gap-4">
                 <x-agro.stat-card
-                    label="Total recibido"
+                    :label="__('Total recibido')"
                     :value="number_format($globalStats['total_kg'], 0) . ' kg'"
                     color="agro"
                 />
                 @if($globalStats['avg_alcohol'] !== null)
                 <x-agro.stat-card
-                    label="Media alcohol pot."
+                    :label="__('Media alcohol pot.')"
                     :value="$globalStats['avg_alcohol'] . ' %'"
                     color="blue"
                 />
                 @endif
                 @if($globalStats['avg_baume'] !== null)
                 <x-agro.stat-card
-                    label="Media Baumé"
+                    :label="__('Media Baumé')"
                     :value="$globalStats['avg_baume'] . ' °Bé'"
                     color="purple"
                 />
                 @endif
                 @if($globalStats['avg_acidity'] !== null)
                 <x-agro.stat-card
-                    label="Media acidez"
+                    :label="__('Media acidez')"
                     :value="$globalStats['avg_acidity'] . ' g/L'"
                     color="amber"
                 />
@@ -145,7 +141,7 @@
             {{-- Por viticultor --}}
             @if($byViticulturist->isNotEmpty())
                 <div>
-                    <h2 class="text-sm font-semibold text-zinc-500 uppercase tracking-wide mb-3">Por viticultor</h2>
+                    <h2 class="text-sm font-semibold text-zinc-500 uppercase tracking-wide mb-3">{{ __('Por viticultor') }}</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         @foreach($byViticulturist as $idx => $item)
                             @php $delay = min($idx * 50, 300); @endphp
@@ -165,23 +161,23 @@
                                     <div class="grid grid-cols-2 gap-3">
                                         @if($item['avg_alcohol'] !== null)
                                         <div class="bg-blue-50 rounded-xl p-3">
-                                            <p class="text-[10px] font-semibold text-blue-400 uppercase tracking-widest mb-1">Alc. pot.</p>
+                                            <p class="text-[10px] font-semibold text-blue-400 uppercase tracking-widest mb-1">{{ __('Alc. pot.') }}</p>
                                             <p class="text-xl font-bold text-blue-700">{{ $item['avg_alcohol'] }} <span class="text-xs text-blue-400">%</span></p>
                                         </div>
                                         @else
                                         <div class="bg-zinc-50 rounded-xl p-3">
-                                            <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">Alc. pot.</p>
+                                            <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">{{ __('Alc. pot.') }}</p>
                                             <p class="text-base font-medium text-zinc-300 italic">—</p>
                                         </div>
                                         @endif
                                         @if($item['avg_baume'] !== null)
                                         <div class="bg-violet-50 rounded-xl p-3">
-                                            <p class="text-[10px] font-semibold text-violet-400 uppercase tracking-widest mb-1">Baumé</p>
-                                            <p class="text-xl font-bold text-violet-700">{{ $item['avg_baume'] }} <span class="text-xs text-violet-400">°Bé</span></p>
+                                            <p class="text-[10px] font-semibold text-violet-400 uppercase tracking-widest mb-1">{{ __('Baumé') }}</p>
+                                            <p class="text-xl font-bold text-violet-700">{{ $item['avg_baume'] }} <span class="text-xs text-violet-400">{{ __('°Bé') }}</span></p>
                                         </div>
                                         @else
                                         <div class="bg-zinc-50 rounded-xl p-3">
-                                            <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">Baumé</p>
+                                            <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">{{ __('Baumé') }}</p>
                                             <p class="text-base font-medium text-zinc-300 italic">—</p>
                                         </div>
                                         @endif
@@ -189,19 +185,19 @@
                                     <div class="space-y-1.5 text-sm">
                                         @if($item['avg_brix'] !== null)
                                         <div class="flex justify-between">
-                                            <span class="text-zinc-400">Brix medio</span>
+                                            <span class="text-zinc-400">{{ __('Brix medio') }}</span>
                                             <span class="font-medium text-zinc-700">{{ $item['avg_brix'] }} °Bx</span>
                                         </div>
                                         @endif
                                         @if($item['avg_acidity'] !== null)
                                         <div class="flex justify-between">
-                                            <span class="text-zinc-400">Acidez media</span>
+                                            <span class="text-zinc-400">{{ __('Acidez media') }}</span>
                                             <span class="font-medium text-amber-700">{{ $item['avg_acidity'] }} g/L</span>
                                         </div>
                                         @endif
                                         @if($item['avg_ph'] !== null)
                                         <div class="flex justify-between">
-                                            <span class="text-zinc-400">pH medio</span>
+                                            <span class="text-zinc-400">{{ __('pH medio') }}</span>
                                             <span class="font-medium text-zinc-700">{{ $item['avg_ph'] }}</span>
                                         </div>
                                         @endif
@@ -226,20 +222,20 @@
             {{-- Por variedad (tabla) --}}
             @if($byVariety->isNotEmpty())
                 <div>
-                    <h2 class="text-sm font-semibold text-zinc-500 uppercase tracking-wide mb-3">Por variedad</h2>
+                    <h2 class="text-sm font-semibold text-zinc-500 uppercase tracking-wide mb-3">{{ __('Por variedad') }}</h2>
                     <x-agro.card>
                         <div class="overflow-x-auto">
                             <table class="w-full text-sm">
                                 <thead>
                                     <tr class="border-b border-zinc-100">
-                                        <th class="text-left py-2 px-3 font-semibold text-zinc-500 text-xs uppercase tracking-wide">Variedad</th>
-                                        <th class="text-right py-2 px-3 font-semibold text-zinc-500 text-xs uppercase tracking-wide">Total kg</th>
-                                        <th class="text-right py-2 px-3 font-semibold text-zinc-500 text-xs uppercase tracking-wide">Alc. %</th>
-                                        <th class="text-right py-2 px-3 font-semibold text-zinc-500 text-xs uppercase tracking-wide">Baumé °Bé</th>
-                                        <th class="text-right py-2 px-3 font-semibold text-zinc-500 text-xs uppercase tracking-wide">Brix °Bx</th>
-                                        <th class="text-right py-2 px-3 font-semibold text-zinc-500 text-xs uppercase tracking-wide">Acidez g/L</th>
+                                        <th class="text-left py-2 px-3 font-semibold text-zinc-500 text-xs uppercase tracking-wide">{{ __('Variedad') }}</th>
+                                        <th class="text-right py-2 px-3 font-semibold text-zinc-500 text-xs uppercase tracking-wide">{{ __('Total kg') }}</th>
+                                        <th class="text-right py-2 px-3 font-semibold text-zinc-500 text-xs uppercase tracking-wide">{{ __('Alc. %') }}</th>
+                                        <th class="text-right py-2 px-3 font-semibold text-zinc-500 text-xs uppercase tracking-wide">{{ __('Baumé °Bé') }}</th>
+                                        <th class="text-right py-2 px-3 font-semibold text-zinc-500 text-xs uppercase tracking-wide">{{ __('Brix °Bx') }}</th>
+                                        <th class="text-right py-2 px-3 font-semibold text-zinc-500 text-xs uppercase tracking-wide">{{ __('Acidez g/L') }}</th>
                                         <th class="text-right py-2 px-3 font-semibold text-zinc-500 text-xs uppercase tracking-wide">pH</th>
-                                        <th class="text-right py-2 px-3 font-semibold text-zinc-500 text-xs uppercase tracking-wide">Entradas</th>
+                                        <th class="text-right py-2 px-3 font-semibold text-zinc-500 text-xs uppercase tracking-wide">{{ __('Entradas') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -294,20 +290,20 @@
                         <table class="w-full text-sm">
                             <thead>
                                 <tr class="border-b border-zinc-100">
-                                    <th class="text-left py-2 px-3 font-semibold text-zinc-500 text-xs uppercase tracking-wide">Viticultor</th>
+                                    <th class="text-left py-2 px-3 font-semibold text-zinc-500 text-xs uppercase tracking-wide">{{ __('Viticultor') }}</th>
                                     @foreach($compYears as $cy)
                                         <th colspan="3" class="text-center py-2 px-3 font-semibold text-zinc-500 text-xs uppercase tracking-wide border-l border-zinc-100">
                                             {{ $cy }}
                                         </th>
                                     @endforeach
-                                    <th class="text-right py-2 px-3 font-semibold text-zinc-500 text-xs uppercase tracking-wide">Tendencia alc.</th>
+                                    <th class="text-right py-2 px-3 font-semibold text-zinc-500 text-xs uppercase tracking-wide">{{ __('Tendencia alc.') }}</th>
                                 </tr>
                                 <tr class="border-b border-zinc-100 bg-zinc-50">
                                     <th class="py-1 px-3"></th>
                                     @foreach($compYears as $cy)
-                                        <th class="text-right py-1 px-2 text-[10px] font-medium text-zinc-400 border-l border-zinc-100">Alc.%</th>
-                                        <th class="text-right py-1 px-2 text-[10px] font-medium text-zinc-400">°Bé</th>
-                                        <th class="text-right py-1 px-2 text-[10px] font-medium text-zinc-400">kg</th>
+                                        <th class="text-right py-1 px-2 text-[10px] font-medium text-zinc-400 border-l border-zinc-100">{{ __('Alc.%') }}</th>
+                                        <th class="text-right py-1 px-2 text-[10px] font-medium text-zinc-400">{{ __('°Bé') }}</th>
+                                        <th class="text-right py-1 px-2 text-[10px] font-medium text-zinc-400">{{ __('kg') }}</th>
                                     @endforeach
                                     <th></th>
                                 </tr>
@@ -355,7 +351,7 @@
                             </tbody>
                         </table>
                     </div>
-                    <p class="text-xs text-zinc-400 mt-3">Solo se incluyen recepciones con alcohol potencial registrado. La comparativa es independiente del filtro de añada activo.</p>
+                    <p class="text-xs text-zinc-400 mt-3">{{ __('Solo se incluyen recepciones con alcohol potencial registrado. La comparativa es independiente del filtro de añada activo.') }}</p>
                 </x-agro.card>
             </div>
         </div>

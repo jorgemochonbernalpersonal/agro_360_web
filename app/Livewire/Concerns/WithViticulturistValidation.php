@@ -43,7 +43,7 @@ trait WithViticulturistValidation
             ! $user?->isSupervisor() &&
             ! $user?->isAdmin()
         ) {
-            abort(403, 'No tienes permiso para crear actividades agrícolas.');
+            abort(403, __('No tienes permiso para crear actividades agrícolas.'));
         }
     }
 
@@ -57,7 +57,7 @@ trait WithViticulturistValidation
         $plot = Plot::findOrFail($plotId);
 
         if (! Auth::user()->can('update', $plot)) {
-            abort(403, 'No tienes permiso para crear actividades en esta parcela.');
+            abort(403, __('No tienes permiso para crear actividades en esta parcela.'));
         }
 
         return $plot;
@@ -86,7 +86,7 @@ trait WithViticulturistValidation
             if ($plotArea > 0 && $declaredArea > $plotArea) {
                 $this->addError(
                     "items.{$plotId}.declared_area",
-                    "La superficie declarada ({$declaredArea} ha) supera la superficie total de la parcela \"{$plot->name}\" ({$plotArea} ha)."
+                    __('La superficie declarada (:declared ha) supera la superficie total de la parcela ":name" (:total ha).', ['declared' => $declaredArea, 'name' => $plot->name, 'total' => $plotArea])
                 );
                 $hasErrors = true;
             }
@@ -94,7 +94,7 @@ trait WithViticulturistValidation
             if ($eligibleArea > $declaredArea) {
                 $this->addError(
                     "items.{$plotId}.eligible_area",
-                    "La superficie admisible ({$eligibleArea} ha) no puede superar la superficie declarada ({$declaredArea} ha) en la parcela \"{$plot->name}\"."
+                    __('La superficie admisible (:eligible ha) no puede superar la superficie declarada (:declared ha) en la parcela ":name".', ['eligible' => $eligibleArea, 'declared' => $declaredArea, 'name' => $plot->name])
                 );
                 $hasErrors = true;
             }

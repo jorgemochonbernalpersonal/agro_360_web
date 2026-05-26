@@ -33,7 +33,7 @@
             <div class="flex justify-between items-center h-16">
                 <a href="{{ url('/') }}" class="flex items-center gap-3">
                     <img src="{{ asset('images/logo.png') }}" alt="Agro365" width="120" height="40" loading="eager" class="h-10 w-auto">
-                    <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">Agro365</span>
+                    <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Agro365') }}</span>
                 </a>
                 <div class="flex items-center gap-4">
                     <a href="{{ url('/') }}" class="text-gray-600 hover:text-[var(--color-agro-green)]">Inicio</a>
@@ -51,101 +51,95 @@
                 <ol class="flex items-center space-x-2">
                     <li><a href="{{ url('/') }}" class="hover:text-[var(--color-agro-green)]">Inicio</a></li>
                     <span class="mx-2">/</span>
-                    <li class="text-gray-900">Subvenciones PAC 2024</li>
+                    <li class="text-gray-900">{{ __('Subvenciones PAC 2024') }}</li>
                 </ol>
             </nav>
 
             <div class="mb-12">
                 <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 border border-blue-300 mb-6">
                     <span class="text-lg">💶</span>
-                    <span class="text-sm font-semibold text-blue-800">Ayudas PAC 2024</span>
+                    <span class="text-sm font-semibold text-blue-800">{{ __('Ayudas PAC 2024') }}</span>
                 </div>
-                <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">
-                    Subvenciones PAC 2024: Guía Completa de Ayudas Agrícolas
-                </h1>
+                <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">{{ __('Subvenciones PAC 2024: Guía Completa de Ayudas Agrícolas') }}</h1>
                 <p class="text-xl text-gray-600 leading-relaxed">
-                    Todo lo que necesitas saber sobre las <strong>ayudas de la PAC</strong> en 2024. Requisitos de condicionalidad, eco-esquemas, pago básico y cómo cumplir con la normativa para recibir tus subvenciones.
+                    Todo lo que necesitas saber sobre las <strong>{{ __('ayudas de la PAC') }}</strong> en 2024. Requisitos de condicionalidad, eco-esquemas, pago básico y cómo cumplir con la normativa para recibir tus subvenciones.
                 </p>
             </div>
 
             <article class="prose prose-lg max-w-none">
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">¿Qué es la PAC?</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('¿Qué es la PAC?') }}</h2>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        La <strong>PAC (Política Agraria Común)</strong> es el sistema de subvenciones agrícolas de la Unión Europea. Es la principal fuente de ingresos para muchos agricultores y viticultores en España.
+                        La <strong>{{ __('PAC (Política Agraria Común)') }}</strong> es el sistema de subvenciones agrícolas de la Unión Europea. Es la principal fuente de ingresos para muchos agricultores y viticultores en España.
                     </p>
-                    <p class="text-gray-700 leading-relaxed mb-4">
-                        En 2024, la PAC incluye varios tipos de ayudas:
-                    </p>
+                    <p class="text-gray-700 leading-relaxed mb-4">{{ __('En 2024, la PAC incluye varios tipos de ayudas:') }}</p>
                     <ul class="list-disc list-inside space-y-2 text-gray-700 mb-6 ml-4">
-                        <li><strong>Pago Básico:</strong> Ayuda directa por hectárea cultivada</li>
-                        <li><strong>Pago Verde (Eco-esquemas):</strong> Ayuda por prácticas beneficiosas para el medio ambiente</li>
-                        <li><strong>Ayudas Asociadas:</strong> Ayudas específicas por tipo de cultivo</li>
-                        <li><strong>Pago Joven Agricultor:</strong> Complemento para menores de 40 años</li>
+                        <li><strong>{{ __('Pago Básico:') }}</strong> Ayuda directa por hectárea cultivada</li>
+                        <li><strong>{{ __('Pago Verde (Eco-esquemas):') }}</strong> Ayuda por prácticas beneficiosas para el medio ambiente</li>
+                        <li><strong>{{ __('Ayudas Asociadas:') }}</strong> Ayudas específicas por tipo de cultivo</li>
+                        <li><strong>{{ __('Pago Joven Agricultor:') }}</strong> Complemento para menores de 40 años</li>
                     </ul>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Requisitos de Condicionalidad</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Requisitos de Condicionalidad') }}</h2>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        Para recibir las ayudas PAC, debes cumplir con los <strong>requisitos de condicionalidad</strong>:
+                        Para recibir las ayudas PAC, debes cumplir con los <strong>{{ __('requisitos de condicionalidad') }}</strong>:
                     </p>
                     <div class="grid md:grid-cols-2 gap-4 mb-6">
                         <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-2">📋 Cuaderno de Campo</h3>
+                            <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-2">{{ __('📋 Cuaderno de Campo') }}</h3>
                             <p class="text-gray-700 text-sm">
                                 <a href="{{ content_route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">Cuaderno de campo digital</a> obligatorio desde 2027 con todas las actividades registradas.
                             </p>
                         </div>
                         <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-2">🗺️ SIGPAC Correcto</h3>
+                            <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-2">{{ __('🗺️ SIGPAC Correcto') }}</h3>
                             <p class="text-gray-700 text-sm">
                                 Parcelas con códigos <a href="{{ content_route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a> correctamente declarados.
                             </p>
                         </div>
                         <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-2">🧪 Fitosanitarios</h3>
+                            <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-2">{{ __('🧪 Fitosanitarios') }}</h3>
                             <p class="text-gray-700 text-sm">
                                 <a href="{{ url('/registro-fitosanitarios') }}" class="text-[var(--color-agro-green)] hover:underline">Registro de tratamientos</a> con productos autorizados y dosis correctas.
                             </p>
                         </div>
                         <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-2">🌿 Buenas Prácticas</h3>
-                            <p class="text-gray-700 text-sm">Cumplimiento de normas medioambientales y sanitarias establecidas.</p>
+                            <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-2">{{ __('🌿 Buenas Prácticas') }}</h3>
+                            <p class="text-gray-700 text-sm">{{ __('Cumplimiento de normas medioambientales y sanitarias establecidas.') }}</p>
                         </div>
                     </div>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Cuantías de las Ayudas PAC 2024</h2>
-                    <p class="text-gray-700 leading-relaxed mb-4">
-                        Las cuantías varían según la región y el tipo de cultivo:
-                    </p>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Cuantías de las Ayudas PAC 2024') }}</h2>
+                    <p class="text-gray-700 leading-relaxed mb-4">{{ __('Las cuantías varían según la región y el tipo de cultivo:') }}</p>
                     <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-6">
                         <table class="w-full text-sm">
                             <thead>
                                 <tr class="border-b">
-                                    <th class="text-left py-2 text-[var(--color-agro-green-dark)]">Tipo de Ayuda</th>
-                                    <th class="text-right py-2 text-[var(--color-agro-green-dark)]">Cuantía Aproximada</th>
+                                    <th class="text-left py-2 text-[var(--color-agro-green-dark)]">{{ __('Tipo de Ayuda') }}</th>
+                                    <th class="text-right py-2 text-[var(--color-agro-green-dark)]">{{ __('Cuantía Aproximada') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="text-gray-700">
-                                <tr class="border-b"><td class="py-2">Pago Básico (viñedo)</td><td class="text-right">~150-300€/ha</td></tr>
-                                <tr class="border-b"><td class="py-2">Eco-esquema básico</td><td class="text-right">~50-100€/ha</td></tr>
-                                <tr class="border-b"><td class="py-2">Eco-esquema avanzado</td><td class="text-right">~100-200€/ha</td></tr>
-                                <tr><td class="py-2">Pago joven agricultor</td><td class="text-right">+25% sobre básico</td></tr>
+                                <tr class="border-b"><td class="py-2">{{ __('Pago Básico (viñedo)') }}</td><td class="text-right">{{ __('~150-300€/ha') }}</td></tr>
+                                <tr class="border-b"><td class="py-2">{{ __('Eco-esquema básico') }}</td><td class="text-right">{{ __('~50-100€/ha') }}</td></tr>
+                                <tr class="border-b"><td class="py-2">{{ __('Eco-esquema avanzado') }}</td><td class="text-right">{{ __('~100-200€/ha') }}</td></tr>
+                                <tr><td class="py-2">{{ __('Pago joven agricultor') }}</td><td class="text-right">{{ __('+25% sobre básico') }}</td></tr>
                             </tbody>
                         </table>
                     </div>
                     <div class="bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-r-lg mb-6">
                         <p class="text-gray-700">
-                            <strong>💡 Nota:</strong> Las cuantías exactas dependen de la región (Comunidad Autónoma) y el histórico de derechos de pago.
+                            <strong>{{ __('💡 Nota:') }}</strong> Las cuantías exactas dependen de la región (Comunidad Autónoma) y el histórico de derechos de pago.
                         </p>
                     </div>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Plazos Importantes PAC 2024</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Plazos Importantes PAC 2024') }}</h2>
                     <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-6">
                         <div class="space-y-4">
                             <div class="flex items-center gap-4">
@@ -169,21 +163,21 @@
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Cómo Cumplir con la PAC usando Agro365</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Cómo Cumplir con la PAC usando Agro365') }}</h2>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        <a href="{{ content_route('content.software-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">Agro365</a> incluye un <strong>Dashboard de Cumplimiento PAC</strong> que valida automáticamente:
+                        <a href="{{ content_route('content.software-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">Agro365</a> incluye un <strong>{{ __('Dashboard de Cumplimiento PAC') }}</strong> que valida automáticamente:
                     </p>
                     <ul class="list-disc list-inside space-y-2 text-gray-700 mb-6 ml-4">
-                        <li>✅ Códigos SIGPAC correctamente declarados</li>
-                        <li>✅ Cuaderno de campo completo y sin errores</li>
-                        <li>✅ Tratamientos fitosanitarios con productos autorizados</li>
-                        <li>✅ Actividades registradas con fechas correctas</li>
-                        <li>✅ Informes oficiales listos para inspección</li>
+                        <li>{{ __('✅ Códigos SIGPAC correctamente declarados') }}</li>
+                        <li>{{ __('✅ Cuaderno de campo completo y sin errores') }}</li>
+                        <li>{{ __('✅ Tratamientos fitosanitarios con productos autorizados') }}</li>
+                        <li>{{ __('✅ Actividades registradas con fechas correctas') }}</li>
+                        <li>{{ __('✅ Informes oficiales listos para inspección') }}</li>
                     </ul>
                     <div class="bg-gradient-to-r from-[var(--color-agro-green-bg)] to-[var(--color-agro-green-light)]/30 p-8 rounded-xl border border-[var(--color-agro-green)]/20">
-                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">📊 Dashboard PAC en Tiempo Real</h3>
+                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('📊 Dashboard PAC en Tiempo Real') }}</h3>
                         <p class="text-gray-700 mb-6">
-                            Sabe en todo momento si cumples con los requisitos PAC. Detecta errores antes de las inspecciones. <strong>3 meses gratis</strong>.
+                            Sabe en todo momento si cumples con los requisitos PAC. Detecta errores antes de las inspecciones. <strong>{{ __('3 meses gratis') }}</strong>.
                         </p>
                         <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:shadow-lg transition-all font-semibold">
                             Comenzar Gratis
@@ -192,27 +186,27 @@
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Preguntas Frecuentes sobre PAC</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Preguntas Frecuentes sobre PAC') }}</h2>
                     <div class="space-y-6">
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Qué pasa si no cumplo los requisitos?</h3>
-                            <p class="text-gray-700">Puedes perder parcial o totalmente las ayudas PAC. Las penalizaciones van del 1% al 100% según la gravedad.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Qué pasa si no cumplo los requisitos?') }}</h3>
+                            <p class="text-gray-700">{{ __('Puedes perder parcial o totalmente las ayudas PAC. Las penalizaciones van del 1% al 100% según la gravedad.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Es obligatorio el cuaderno digital?</h3>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Es obligatorio el cuaderno digital?') }}</h3>
                             <p class="text-gray-700">Sí, desde 2027 será obligatorio. <a href="{{ content_route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">Más información aquí</a>.</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Cómo me preparo para una inspección?</h3>
-                            <p class="text-gray-700">Mantén el cuaderno de campo actualizado, SIGPAC correcto y tratamientos registrados. Agro365 valida todo automáticamente.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Cómo me preparo para una inspección?') }}</h3>
+                            <p class="text-gray-700">{{ __('Mantén el cuaderno de campo actualizado, SIGPAC correcto y tratamientos registrados. Agro365 valida todo automáticamente.') }}</p>
                         </div>
                     </div>
                 </section>
             </article>
 
             <div class="mt-16 pt-12 border-t border-gray-200 text-center">
-                <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Cumple con la PAC sin Complicaciones</h2>
-                <p class="text-gray-600 mb-8 text-lg">Dashboard de cumplimiento en tiempo real. No pierdas tus ayudas por errores evitables.</p>
+                <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Cumple con la PAC sin Complicaciones') }}</h2>
+                <p class="text-gray-600 mb-8 text-lg">{{ __('Dashboard de cumplimiento en tiempo real. No pierdas tus ayudas por errores evitables.') }}</p>
                 <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white shadow-lg font-semibold text-lg">
                     Comenzar Gratis
                 </a>

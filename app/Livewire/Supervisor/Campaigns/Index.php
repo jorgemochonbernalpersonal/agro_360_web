@@ -120,8 +120,8 @@ class Index extends Component
             ->pluck('total_kg', 'viticulturist_id');
 
         $tabs = [
-            'resumen'      => ['label' => 'Resumen por año',  'count' => $allYears->count()],
-            'viticultores' => ['label' => 'Viticultores',     'count' => $viticulturistIds->count()],
+            'resumen'      => ['label' => __('Resumen por año'),  'count' => $allYears->count()],
+            'viticultores' => ['label' => __('Viticultores'),     'count' => $viticulturistIds->count()],
         ];
 
         return view('livewire.supervisor.campaigns.index', [

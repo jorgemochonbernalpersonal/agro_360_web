@@ -2,8 +2,8 @@
 
     {{-- Header --}}
     <x-agro.page-header
-        title="Controles de Fermentación"
-        description="Seguimiento periódico de parámetros de fermentación por vino y depósito"
+        title="{{ __('Controles de Fermentación') }}"
+        :description="__('Seguimiento periódico de parámetros de fermentación por vino y depósito')"
         icon="beaker"
     >
         <x-slot:actions>
@@ -17,25 +17,25 @@
     <x-agro.stats-section key="fermentation-controls-stats">
         <div class="grid grid-cols-2 gap-4">
             <x-agro.stat-card
-                label="Total controles"
+                :label="__('Total controles')"
                 :value="$stats['total']"
                 icon="beaker"
                 color="zinc"
             />
             <x-agro.stat-card
-                label="Este año"
+                :label="__('Este año')"
                 :value="$stats['this_year']"
                 icon="calendar-days"
                 color="agro"
             />
             <x-agro.stat-card
-                label="En fermentación"
+                :label="__('En fermentación')"
                 :value="$stats['fermenting']"
                 icon="fire"
                 color="amber"
             />
             <x-agro.stat-card
-                label="Completados"
+                :label="__('Completados')"
                 :value="$stats['done']"
                 icon="check-circle"
                 color="zinc"
@@ -49,7 +49,7 @@
 
     {{-- Toolbar --}}
     <div class="flex items-center gap-3">
-        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar por vino..." />
+        <x-agro.search-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar por vino...')" />
 
         <x-agro.filter-button modal="fermentation-filters" :count="$filterCount" />
     </div>
@@ -69,9 +69,7 @@
                 @php $statusLabel = $statusFilter === 'fermenting' ? 'En fermentación' : 'Completada'; @endphp
                 <x-agro.filter-chip icon="tag" :label="$statusLabel" wireRemove="$set('statusFilter', '')" />
             @endif
-            <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">
-                Limpiar todo
-            </button>
+            <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">{{ __('Limpiar todo') }}</button>
         </div>
     @endif
 
@@ -113,9 +111,9 @@
                                     </p>
                                 </div>
                                 @if($isFermenting)
-                                    <flux:badge color="amber" size="sm" class="shrink-0">Fermentando</flux:badge>
+                                    <flux:badge color="amber" size="sm" class="shrink-0">{{ __('Fermentando') }}</flux:badge>
                                 @else
-                                    <flux:badge color="green" size="sm" class="shrink-0">Completada</flux:badge>
+                                    <flux:badge color="green" size="sm" class="shrink-0">{{ __('Completada') }}</flux:badge>
                                 @endif
                             </div>
                         </x-slot:header>
@@ -131,7 +129,7 @@
                             <div class="grid grid-cols-2 gap-2">
                                 @if($control->temperature !== null)
                                     <div class="bg-orange-50 rounded-xl p-3">
-                                        <p class="text-[10px] font-semibold text-orange-400 uppercase tracking-widest mb-0.5">Temperatura</p>
+                                        <p class="text-[10px] font-semibold text-orange-400 uppercase tracking-widest mb-0.5">{{ __('Temperatura') }}</p>
                                         <p class="text-xl font-bold text-orange-700 leading-none">
                                             {{ number_format($control->temperature, 1) }}<span class="text-sm font-normal"> °C</span>
                                         </p>
@@ -139,7 +137,7 @@
                                 @endif
                                 @if($control->density !== null)
                                     <div class="bg-zinc-50 rounded-xl p-3">
-                                        <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">Densidad</p>
+                                        <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">{{ __('Densidad') }}</p>
                                         <p class="text-xl font-bold text-zinc-700 leading-none">
                                             {{ number_format($control->density, 4) }}
                                         </p>
@@ -147,9 +145,9 @@
                                 @endif
                                 @if($control->brix_degree !== null)
                                     <div class="bg-zinc-50 rounded-xl p-3">
-                                        <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">Brix</p>
+                                        <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">{{ __('Brix') }}</p>
                                         <p class="text-xl font-bold text-zinc-700 leading-none">
-                                            {{ number_format($control->brix_degree, 1) }}<span class="text-sm font-normal"> °Bx</span>
+                                            {{ number_format($control->brix_degree, 1) }}<span class="text-sm font-normal">{{ __('°Bx') }}</span>
                                         </p>
                                     </div>
                                 @endif
@@ -165,7 +163,7 @@
 
                             @if($control->volatile_acidity !== null)
                                 <div class="flex items-center gap-2 text-xs text-zinc-500">
-                                    <span class="font-semibold text-zinc-600">Ac. Volátil:</span>
+                                    <span class="font-semibold text-zinc-600">{{ __('Ac. Volátil:') }}</span>
                                     {{ number_format($control->volatile_acidity, 2) }} g/L
                                 </div>
                             @endif
@@ -173,8 +171,8 @@
 
                         <x-slot:footer>
                             <div class="flex items-center justify-end gap-0.5">
-                                <x-agro.action-button variant="edit" href="{{ roleRoute('fermentation-controls.edit', $control) }}" wire:navigate title="Editar control" />
-                                <x-agro.action-button variant="delete" wire:click="delete({{ $control->id }})" wire:confirm="¿Eliminar este control de fermentación?" wire:loading.attr="disabled" title="Eliminar control" />
+                                <x-agro.action-button variant="edit" href="{{ roleRoute('fermentation-controls.edit', $control) }}" wire:navigate title="{{ __('Editar control') }}" />
+                                <x-agro.action-button variant="delete" wire:click="delete({{ $control->id }})" wire:confirm="{{ __('¿Eliminar este control de fermentación?') }}" wire:loading.attr="disabled" title="{{ __('Eliminar control') }}" />
                             </div>
                         </x-slot:footer>
                     </x-agro.card>
@@ -190,9 +188,7 @@
             >
                 @if($search || $wineFilter || $statusFilter || $containerFilter)
                     <x-slot:action>
-                        <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">
-                            Limpiar filtros
-                        </flux:button>
+                        <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">{{ __('Limpiar filtros') }}</flux:button>
                     </x-slot:action>
                 @else
                     <x-slot:action>
@@ -213,7 +209,7 @@
                     <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
                         <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
                     </div>
-                    <h3 class="text-base font-semibold text-zinc-900">Filtros</h3>
+                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Filtros') }}</h3>
                 </div>
                 <flux:button x-on:click="$dispatch('close-modal', 'fermentation-filters')" variant="ghost" size="sm" icon="x-mark" />
             </div>
@@ -221,44 +217,40 @@
 
         <div class="px-6 py-5 space-y-5">
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Vino</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Vino') }}</label>
                 <flux:select wire:model.live="wineFilter">
-                    <option value="">Todos los vinos</option>
+                    <option value="">{{ __('Todos los vinos') }}</option>
                     @foreach($wines as $wine)
                         <option value="{{ $wine->id }}">{{ $wine->name }}{{ $wine->vintage ? ' (' . $wine->vintage . ')' : '' }}</option>
                     @endforeach
                 </flux:select>
             </div>
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Depósito</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Depósito') }}</label>
                 <flux:select wire:model.live="containerFilter">
-                    <option value="">Todos los depósitos</option>
+                    <option value="">{{ __('Todos los depósitos') }}</option>
                     @foreach($containers as $c)
                         <option value="{{ $c->id }}">{{ $c->name }}</option>
                     @endforeach
                 </flux:select>
             </div>
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Estado</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Estado') }}</label>
                 <flux:select wire:model.live="statusFilter">
-                    <option value="">Todos los estados</option>
-                    <option value="fermenting">En fermentación</option>
-                    <option value="done">Fermentación completada</option>
+                    <option value="">{{ __('Todos los estados') }}</option>
+                    <option value="fermenting">{{ __('En fermentación') }}</option>
+                    <option value="done">{{ __('Fermentación completada') }}</option>
                 </flux:select>
             </div>
         </div>
 
         <div class="px-6 py-4 border-t border-zinc-200 flex items-center justify-between">
             @if($filterCount > 0)
-                <button wire:click="clearFilters" class="text-sm text-zinc-400 hover:text-zinc-600 transition-colors">
-                    Limpiar filtros
-                </button>
+                <button wire:click="clearFilters" class="text-sm text-zinc-400 hover:text-zinc-600 transition-colors">{{ __('Limpiar filtros') }}</button>
             @else
                 <span></span>
             @endif
-            <flux:button x-on:click="$dispatch('close-modal', 'fermentation-filters')" variant="primary">
-                Aplicar
-            </flux:button>
+            <flux:button x-on:click="$dispatch('close-modal', 'fermentation-filters')" variant="primary">{{ __('Aplicar') }}</flux:button>
         </div>
     </x-agro.modal>
 

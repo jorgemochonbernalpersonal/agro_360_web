@@ -53,7 +53,7 @@ class Edit extends Component
             'active'      => $this->active,
         ]);
 
-        $this->toastSuccess('Almacén actualizado correctamente.');
+        $this->toastSuccess(__('Almacén actualizado correctamente.'));
 
         return $this->viticulturistRoleRedirect('warehouse.index', ['tab' => 'almacenes']);
     }
@@ -61,6 +61,6 @@ class Edit extends Component
     public function render()
     {
         return view('livewire.viticulturist.warehouses.edit')
-            ->layout('layouts.app', ['title' => 'Editar Almacén - Agro365']);
+            ->layout('layouts.app', ['title' => __('Editar Almacén - Agro365')]);
     }
 }

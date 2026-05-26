@@ -2,7 +2,7 @@
 
     <x-agro.page-header
         title="Cuadro de Mando — Vendimia {{ $vintageYear }}"
-        description="Comparativa en tiempo real: aforo viticultor · previsión bodega · recibido real."
+        :description="__('Comparativa en tiempo real: aforo viticultor · previsión bodega · recibido real.')"
     />
 
     {{-- Nav vendimia --}}
@@ -11,12 +11,12 @@
     {{-- Stat-bar --}}
     <div class="grid grid-cols-2 gap-4">
         <x-agro.stat-card
-            label="Total recibido"
+            :label="__('Total recibido')"
             :value="number_format($stats['total_received_kg'], 0) . ' kg'"
             color="agro"
         />
         <x-agro.stat-card
-            label="Viticultores"
+            :label="__('Viticultores')"
             :value="$stats['viticulturists']"
             :description="$stats['total_plantings'] . ' plantaciones'"
             color="zinc"
@@ -27,7 +27,7 @@
                 {{ $stats['exceeded_count'] }}
             </p>
             @if($stats['exceeded_count'] > 0)
-                <button wire:click="$set('alertFilter', 'exceeded')" class="text-xs text-red-500 hover:underline mt-0.5">Ver afectados</button>
+                <button wire:click="$set('alertFilter', 'exceeded')" class="text-xs text-red-500 hover:underline mt-0.5">{{ __('Ver afectados') }}</button>
             @endif
         </div>
         <div class="rounded-2xl p-4 shadow-sm border {{ $stats['at_risk_count'] > 0 ? 'bg-amber-50 border-amber-200' : 'bg-white border-zinc-200' }}">
@@ -36,7 +36,7 @@
                 {{ $stats['at_risk_count'] }}
             </p>
             @if($stats['at_risk_count'] > 0)
-                <button wire:click="$set('alertFilter', 'at_risk')" class="text-xs text-amber-500 hover:underline mt-0.5">Ver en riesgo</button>
+                <button wire:click="$set('alertFilter', 'at_risk')" class="text-xs text-amber-500 hover:underline mt-0.5">{{ __('Ver en riesgo') }}</button>
             @endif
         </div>
     </div>
@@ -49,7 +49,7 @@
     <div class="flex items-center gap-3">
 
         {{-- Search --}}
-        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar viticultor, variedad, parcela..." />
+        <x-agro.search-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar viticultor, variedad, parcela...')" />
 
         {{-- Filtros --}}
         <x-agro.filter-button modal="summary-filters" :count="$filterCount" />
@@ -78,9 +78,7 @@
             @endif
             <button
                 wire:click="$set('search', ''); $set('campaignFilter', ''); $set('viticulturistFilter', ''); $set('varietyFilter', ''); $set('alertFilter', '')"
-                class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">
-                Limpiar todo
-            </button>
+                class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">{{ __('Limpiar todo') }}</button>
         </div>
     @endif
 
@@ -92,8 +90,8 @@
         @if($rows->isEmpty())
             <x-agro.empty-state
                 icon="chart-bar"
-                title="Sin datos para esta campaña"
-                description="Sigue estos pasos para comenzar la vendimia."
+                title="{{ __('Sin datos para esta campaña') }}"
+                :description="__('Sigue estos pasos para comenzar la vendimia.')"
             >
                 <x-slot:action>
                     <div class="mt-4 flex flex-col gap-2 text-left max-w-xs mx-auto">
@@ -101,16 +99,16 @@
                             class="flex items-center gap-3 p-3 bg-agro-50 border border-agro-200 rounded-xl hover:bg-agro-100 transition-colors">
                             <div class="w-7 h-7 rounded-lg bg-agro-600 text-white font-bold text-xs flex items-center justify-center shrink-0">1</div>
                             <div>
-                                <p class="text-sm font-semibold text-zinc-900">Crear previsión de uva</p>
-                                <p class="text-xs text-zinc-500">Define el aforo esperado por plantación</p>
+                                <p class="text-sm font-semibold text-zinc-900">{{ __('Crear previsión de uva') }}</p>
+                                <p class="text-xs text-zinc-500">{{ __('Define el aforo esperado por plantación') }}</p>
                             </div>
                         </a>
                         <a href="{{ roleRoute('grape-reception.create') }}" wire:navigate
                             class="flex items-center gap-3 p-3 bg-white border border-zinc-200 rounded-xl hover:bg-zinc-50 transition-colors">
                             <div class="w-7 h-7 rounded-lg bg-zinc-200 text-zinc-500 font-bold text-xs flex items-center justify-center shrink-0">2</div>
                             <div>
-                                <p class="text-sm font-semibold text-zinc-900">Registrar recepciones</p>
-                                <p class="text-xs text-zinc-500">Anota cada entrada de uva durante la vendimia</p>
+                                <p class="text-sm font-semibold text-zinc-900">{{ __('Registrar recepciones') }}</p>
+                                <p class="text-xs text-zinc-500">{{ __('Anota cada entrada de uva durante la vendimia') }}</p>
                             </div>
                         </a>
                     </div>
@@ -158,21 +156,21 @@
                             {{-- Mini stats: Recibido + Previsión --}}
                             <div class="grid grid-cols-2 gap-3">
                                 <div class="bg-agro-50 rounded-xl p-3">
-                                    <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-1">Recibido</p>
+                                    <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-1">{{ __('Recibido') }}</p>
                                     <p class="text-xl font-bold text-agro-700 leading-none">
                                         {{ number_format($row['received_kg'], 0) }}
                                         <span class="text-xs font-medium text-agro-400 ml-0.5">kg</span>
                                     </p>
                                 </div>
                                 <div class="bg-zinc-50 rounded-xl p-3">
-                                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">Previsión</p>
+                                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">{{ __('Previsión') }}</p>
                                     @if($row['forecast_kg'] !== null)
                                         <p class="text-xl font-bold text-zinc-700 leading-none">
                                             {{ number_format($row['forecast_kg'], 0) }}
                                             <span class="text-xs font-medium text-zinc-400 ml-0.5">kg</span>
                                         </p>
                                         @if($row['forecast_status'] === 'draft')
-                                            <p class="text-[10px] text-amber-500 mt-0.5">Borrador</p>
+                                            <p class="text-[10px] text-amber-500 mt-0.5">{{ __('Borrador') }}</p>
                                         @endif
                                     @else
                                         <p class="text-base font-medium text-zinc-300 italic leading-none">—</p>
@@ -184,7 +182,7 @@
                             @if($row['pct_op_limit'] !== null)
                                 <div>
                                     <div class="flex justify-between text-xs text-zinc-500 mb-1">
-                                        <span>Ejecución</span>
+                                        <span>{{ __('Ejecución') }}</span>
                                         <span class="{{ $row['exceeded'] ? 'text-red-600 font-semibold' : ($row['at_risk'] ? 'text-amber-600 font-semibold' : 'text-zinc-700') }}">
                                             {{ $row['pct_op_limit'] }}%
                                             @if($row['exceeded']) ⚠ @endif
@@ -199,13 +197,13 @@
                                 <div class="space-y-1.5 text-sm border-t border-zinc-100 pt-3">
                                     @if($row['pac_limit'] !== null)
                                         <div class="flex items-center justify-between">
-                                            <span class="text-zinc-400">PAC límite</span>
+                                            <span class="text-zinc-400">{{ __('PAC límite') }}</span>
                                             <span class="text-blue-700 font-medium">{{ number_format($row['pac_limit'], 0) }} kg</span>
                                         </div>
                                     @endif
                                     @if($row['vitic_estimate'] !== null)
                                         <div class="flex items-center justify-between">
-                                            <span class="text-zinc-400">Aforo viticultor</span>
+                                            <span class="text-zinc-400">{{ __('Aforo viticultor') }}</span>
                                             <span class="text-violet-700 font-medium">{{ number_format($row['vitic_estimate'], 0) }} kg</span>
                                         </div>
                                     @endif
@@ -221,19 +219,19 @@
                                 <span class="text-xs text-zinc-400">
                                     Lote:
                                     @if($row['batch_status'] === 'closed')
-                                        <span class="font-semibold text-zinc-500">Cerrado</span>
+                                        <span class="font-semibold text-zinc-500">{{ __('Cerrado') }}</span>
                                     @elseif($row['batch_status'] === 'invoiced')
-                                        <span class="font-semibold text-agro-600">Facturado</span>
+                                        <span class="font-semibold text-agro-600">{{ __('Facturado') }}</span>
                                     @else
-                                        <span class="font-semibold text-green-600">Abierto</span>
+                                        <span class="font-semibold text-green-600">{{ __('Abierto') }}</span>
                                     @endif
                                 </span>
                                 @if($row['batch_status'] === 'open')
                                     <button
                                         wire:click="closeBatch({{ $row['batch_id'] }})"
-                                        wire:confirm="¿Cerrar este lote? No se podrán añadir más recepciones hasta reabrirlo."
+                                        wire:confirm="{{ __('¿Cerrar este lote? No se podrán añadir más recepciones hasta reabrirlo.') }}"
                                         class="text-xs text-zinc-400 hover:text-zinc-700 transition-colors flex items-center gap-1"
-                                        title="Cerrar lote"
+                                        title="{{ __('Cerrar lote') }}"
                                     >
                                         <flux:icon icon="lock-closed" class="size-3.5" />
                                         Cerrar lote
@@ -242,7 +240,7 @@
                                     <button
                                         wire:click="reopenBatch({{ $row['batch_id'] }})"
                                         class="text-xs text-agro-500 hover:text-agro-700 transition-colors flex items-center gap-1"
-                                        title="Reabrir lote"
+                                        title="{{ __('Reabrir lote') }}"
                                     >
                                         <flux:icon icon="lock-open" class="size-3.5" />
                                         Reabrir
@@ -278,12 +276,12 @@
                         <table class="w-full text-sm">
                             <thead>
                                 <tr class="border-b border-zinc-100">
-                                    <th class="text-left py-2 px-3 font-semibold text-zinc-500 text-xs uppercase tracking-wide">Viticultor</th>
-                                    <th class="text-left py-2 px-3 font-semibold text-zinc-500 text-xs uppercase tracking-wide">Variedad</th>
+                                    <th class="text-left py-2 px-3 font-semibold text-zinc-500 text-xs uppercase tracking-wide">{{ __('Viticultor') }}</th>
+                                    <th class="text-left py-2 px-3 font-semibold text-zinc-500 text-xs uppercase tracking-wide">{{ __('Variedad') }}</th>
                                     @foreach($historicalYears as $year)
                                         <th class="text-right py-2 px-3 font-semibold text-zinc-500 text-xs uppercase tracking-wide">{{ $year }}</th>
                                     @endforeach
-                                    <th class="text-right py-2 px-3 font-semibold text-zinc-500 text-xs uppercase tracking-wide">Tendencia</th>
+                                    <th class="text-right py-2 px-3 font-semibold text-zinc-500 text-xs uppercase tracking-wide">{{ __('Tendencia') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -336,7 +334,7 @@
                     <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
                         <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
                     </div>
-                    <h3 class="text-base font-semibold text-zinc-900">Filtros</h3>
+                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Filtros') }}</h3>
                 </div>
                 <flux:button x-on:click="$dispatch('close-modal', 'summary-filters')" variant="ghost" size="sm" icon="x-mark" />
             </div>
@@ -344,38 +342,38 @@
 
         <div class="px-6 py-5 space-y-5">
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Campaña</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Campaña') }}</label>
                 <flux:select wire:model.live="campaignFilter">
-                    <option value="">Todas las campañas</option>
+                    <option value="">{{ __('Todas las campañas') }}</option>
                     @foreach($campaigns as $c)
                         <option value="{{ $c->id }}">{{ $c->year }}</option>
                     @endforeach
                 </flux:select>
             </div>
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Viticultor</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Viticultor') }}</label>
                 <flux:select wire:model.live="viticulturistFilter">
-                    <option value="">Todos</option>
+                    <option value="">{{ __('Todos') }}</option>
                     @foreach($linkedViticulturists as $v)
                         <option value="{{ $v->id }}">{{ $v->name }}</option>
                     @endforeach
                 </flux:select>
             </div>
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Variedad</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Variedad') }}</label>
                 <flux:select wire:model.live="varietyFilter">
-                    <option value="">Todas</option>
+                    <option value="">{{ __('Todas') }}</option>
                     @foreach($varieties as $variety)
                         <option value="{{ $variety }}">{{ $variety }}</option>
                     @endforeach
                 </flux:select>
             </div>
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Alertas</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Alertas') }}</label>
                 <flux:select wire:model.live="alertFilter">
-                    <option value="">Todas</option>
-                    <option value="exceeded">Superados</option>
-                    <option value="at_risk">En riesgo (≥80%)</option>
+                    <option value="">{{ __('Todas') }}</option>
+                    <option value="exceeded">{{ __('Superados') }}</option>
+                    <option value="at_risk">{{ __('En riesgo (≥80%)') }}</option>
                 </flux:select>
             </div>
         </div>
@@ -384,15 +382,11 @@
             @if($filterCount > 0)
                 <button
                     wire:click="$set('search', ''); $set('campaignFilter', ''); $set('viticulturistFilter', ''); $set('varietyFilter', ''); $set('alertFilter', '')"
-                    class="text-sm text-zinc-400 hover:text-zinc-600 transition-colors">
-                    Limpiar filtros
-                </button>
+                    class="text-sm text-zinc-400 hover:text-zinc-600 transition-colors">{{ __('Limpiar filtros') }}</button>
             @else
                 <span></span>
             @endif
-            <flux:button x-on:click="$dispatch('close-modal', 'summary-filters')" variant="primary">
-                Aplicar
-            </flux:button>
+            <flux:button x-on:click="$dispatch('close-modal', 'summary-filters')" variant="primary">{{ __('Aplicar') }}</flux:button>
         </div>
     </x-agro.modal>
 

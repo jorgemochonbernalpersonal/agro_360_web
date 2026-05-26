@@ -1,4 +1,5 @@
-@props(['message' => 'No hay registros', 'description' => null, 'icon' => null])
+@props(['message' => null, 'description' => null, 'icon' => null])
+@php $message ??= __('No hay registros'); @endphp
 
 <div class="p-16 text-center">
     @if($icon)

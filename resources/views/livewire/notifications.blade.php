@@ -3,7 +3,7 @@
     <button
         @click="open = !open"
         class="relative p-2 rounded-lg text-zinc-600 hover:bg-agro-50 transition-all duration-200"
-        aria-label="Notificaciones"
+        aria-:label="__('Notificaciones')"
     >
         <flux:icon icon="bell" class="size-6" />
 
@@ -30,7 +30,7 @@
         {{-- Header --}}
         <div class="px-4 py-3 border-b border-zinc-200 flex items-center justify-between bg-zinc-50">
             <div class="flex items-center gap-2">
-                <h3 class="text-sm font-semibold text-zinc-900">Notificaciones</h3>
+                <h3 class="text-sm font-semibold text-zinc-900">{{ __('Notificaciones') }}</h3>
                 @if($unreadCount > 0)
                     <span class="px-2 py-0.5 bg-red-500 text-white text-xs font-bold rounded-full">
                         {{ $unreadCount }}
@@ -42,9 +42,7 @@
                 <button
                     wire:click="markAllAsRead"
                     class="text-xs text-agro-600 hover:text-agro-700 font-medium"
-                >
-                    Marcar todo como leído
-                </button>
+                >{{ __('Marcar todo como leído') }}</button>
             @endif
         </div>
 
@@ -53,7 +51,7 @@
             {{-- Dashboard Alerts Section --}}
             @if(count($dashboardAlerts) > 0)
                 <div class="px-3 py-2 bg-amber-50 border-b border-amber-200">
-                    <span class="text-xs font-semibold text-amber-700">Alertas del sistema</span>
+                    <span class="text-xs font-semibold text-amber-700">{{ __('Alertas del sistema') }}</span>
                 </div>
                 @foreach($dashboardAlerts as $alert)
                     @php
@@ -83,7 +81,7 @@
             {{-- Database Notifications --}}
             @if(count($notifications) > 0 && count($dashboardAlerts) > 0)
                 <div class="px-3 py-2 bg-zinc-50 border-b border-zinc-200">
-                    <span class="text-xs font-semibold text-zinc-500">Notificaciones</span>
+                    <span class="text-xs font-semibold text-zinc-500">{{ __('Notificaciones') }}</span>
                 </div>
             @endif
             @forelse($notifications as $notification)
@@ -174,7 +172,7 @@
                                 <button
                                     wire:click="markAsRead('{{ $notification->id }}')"
                                     class="p-1 text-zinc-400 hover:text-agro-600 transition-colors"
-                                    title="Marcar como leída"
+                                    title="{{ __('Marcar como leída') }}"
                                 >
                                     <flux:icon icon="check" class="size-4" />
                                 </button>
@@ -183,7 +181,7 @@
                             <button
                                 wire:click="deleteNotification('{{ $notification->id }}')"
                                 class="p-1 text-zinc-400 hover:text-red-600 transition-colors"
-                                title="Eliminar"
+                                title="{{ __('Eliminar') }}"
                             >
                                 <flux:icon icon="x-mark" class="size-4" />
                             </button>
@@ -193,7 +191,7 @@
             @empty
                 <div class="px-4 py-8 text-center">
                     <flux:icon icon="bell" class="size-12 mx-auto text-zinc-300 mb-2" />
-                    <p class="text-sm text-zinc-500">No tienes notificaciones</p>
+                    <p class="text-sm text-zinc-500">{{ __('No tienes notificaciones') }}</p>
                 </div>
             @endforelse
         </div>

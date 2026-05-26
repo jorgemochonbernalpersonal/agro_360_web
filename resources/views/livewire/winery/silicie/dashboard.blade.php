@@ -1,13 +1,13 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="SILICIE — Libro de Registro"
+        title="{{ __('SILICIE — Libro de Registro') }}"
         description="Registro oficial de entradas, elaboración, existencias y salidas. Campaña {{ $vintage }}."
         icon="document-chart-bar"
     >
         <x-slot:actions>
             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200"
-                  title="Conforme a Orden HAC/1505/2024 — SILICIE 2.0 (TIPO_DOCUMENTO + PERIODO_FISCAL)">
+                  title="{{ __('Conforme a Orden HAC/1505/2024 — SILICIE 2.0 (TIPO_DOCUMENTO + PERIODO_FISCAL)') }}">
                 <flux:icon icon="check-circle" class="size-3.5" />
                 SILICIE 2.0 · HAC/1505/2024
             </span>
@@ -16,7 +16,7 @@
 
     {{-- Filtro y acciones ───────────────────────────────────────────────── --}}
     <x-agro.filter-bar>
-        <x-agro.filter-select wire:model.live="filterVintage" label="Añada">
+        <x-agro.filter-select wire:model.live="filterVintage" :label="__('Añada')">
             @foreach($vintages as $v)
                 <option value="{{ $v }}">{{ $v }}</option>
             @endforeach
@@ -26,7 +26,7 @@
 
         <flux:button
             wire:click="takeSnapshot"
-            wire:confirm="¿Registrar instantánea de existencias para hoy?"
+            wire:confirm="{{ __('¿Registrar instantánea de existencias para hoy?') }}"
             variant="ghost"
             icon="camera"
             size="sm"
@@ -39,9 +39,7 @@
             variant="primary"
             icon="arrow-down-tray"
             size="sm"
-        >
-            Exportar CSV SILICIE
-        </flux:button>
+        >{{ __('Exportar CSV SILICIE') }}</flux:button>
     </x-agro.filter-bar>
 
     {{-- Guía post-exportación ───────────────────────────────────────────── --}}
@@ -53,12 +51,12 @@
                         <flux:icon icon="check-circle" class="size-5 text-blue-600" />
                     </div>
                     <div>
-                        <p class="text-sm font-semibold text-blue-900 mb-1">CSV descargado — ¿Qué hago ahora?</p>
+                        <p class="text-sm font-semibold text-blue-900 mb-1">{{ __('CSV descargado — ¿Qué hago ahora?') }}</p>
                         <ol class="text-xs text-blue-800 space-y-1 list-decimal list-inside leading-relaxed">
-                            <li>Accede al portal oficial de SILICIE</li>
-                            <li>Ve a <strong>Importar movimientos</strong> → selecciona el fichero CSV descargado</li>
-                            <li>Verifica que todos los movimientos se han importado correctamente</li>
-                            <li>Confirma la presentación desde el portal</li>
+                            <li>{{ __('Accede al portal oficial de SILICIE') }}</li>
+                            <li>Ve a <strong>{{ __('Importar movimientos') }}</strong> → selecciona el fichero CSV descargado</li>
+                            <li>{{ __('Verifica que todos los movimientos se han importado correctamente') }}</li>
+                            <li>{{ __('Confirma la presentación desde el portal') }}</li>
                         </ol>
                         <a
                             href="https://silicie.es"
@@ -74,7 +72,7 @@
                 <button
                     wire:click="dismissExportGuide"
                     class="text-blue-400 hover:text-blue-600 transition-colors shrink-0"
-                    title="Cerrar"
+                    title="{{ __('Cerrar') }}"
                 >
                     <flux:icon icon="x-mark" class="size-4" />
                 </button>
@@ -91,7 +89,7 @@
             color="agro"
         />
         <x-agro.stat-card
-            label="Litros en bodega (hoy)"
+            :label="__('Litros en bodega (hoy)')"
             :value="number_format($stats['wineryLiters'], 0, ',', '.') . ' L'"
             icon="beaker"
             color="blue"
@@ -154,7 +152,7 @@
 
             {{-- A02: Uva propia --}}
             <div class="px-4 pt-4 pb-2">
-                <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide">A02 — Recepciones de vendimia propia</p>
+                <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide">{{ __('A02 — Recepciones de vendimia propia') }}</p>
             </div>
             @if($recepciones->isEmpty())
                 <p class="px-4 pb-4 text-sm text-zinc-400">Sin recepciones de uva propia para la añada {{ $vintage }}.</p>
@@ -196,7 +194,7 @@
 
             {{-- A02/A04/A06: Compras externas --}}
             <div class="px-4 pt-6 pb-2 border-t border-zinc-100 mt-2">
-                <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide">A02/A04/A06 — Uva, mosto y vino a granel comprado</p>
+                <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide">{{ __('A02/A04/A06 — Uva, mosto y vino a granel comprado') }}</p>
             </div>
             @if($externas->isEmpty())
                 <p class="px-4 pb-4 text-sm text-zinc-400">Sin entradas externas para la añada {{ $vintage }}.</p>
@@ -242,13 +240,13 @@
 
             {{-- Proceso enológico --}}
             <div class="px-4 pt-4 pb-2">
-                <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide mb-3">Operaciones enológicas</p>
+                <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide mb-3">{{ __('Operaciones enológicas') }}</p>
             </div>
 
             @if($steps->isEmpty())
                 <x-agro.empty-state
                     icon="beaker"
-                    title="Sin operaciones registradas"
+                    title="{{ __('Sin operaciones registradas') }}"
                     description="No hay pasos de elaboración para la añada {{ $vintage }}."
                 />
             @else
@@ -288,7 +286,7 @@
             {{-- Pérdidas durante elaboración --}}
             @if($losses->isNotEmpty())
                 <div class="px-4 pt-6 pb-2 border-t border-zinc-100 mt-2">
-                    <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide mb-3">Pérdidas registradas</p>
+                    <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide mb-3">{{ __('Pérdidas registradas') }}</p>
                 </div>
                 <x-agro.data-table
                     :headers="['Fecha', 'Vino', 'Tipo pérdida', 'Autorización', 'Cantidad', 'Notas']"
@@ -346,8 +344,8 @@
             @if($byWine->isEmpty())
                 <x-agro.empty-state
                     icon="squares-2x2"
-                    title="Sin existencias registradas"
-                    description="No hay contenedores con vino activo en este momento."
+                    title="{{ __('Sin existencias registradas') }}"
+                    :description="__('No hay contenedores con vino activo en este momento.')"
                 />
             @else
                 <x-agro.data-table
@@ -398,23 +396,23 @@
             {{-- Resumen salidas --}}
             <div class="px-4 py-3 grid grid-cols-3 gap-4 border-b border-zinc-100 bg-zinc-50/50">
                 <div>
-                    <p class="text-xs text-zinc-400">Ventas facturadas</p>
+                    <p class="text-xs text-zinc-400">{{ __('Ventas facturadas') }}</p>
                     <p class="text-lg font-semibold text-zinc-800">{{ $totals['ventas_count'] }} facturas</p>
                     <p class="text-xs text-zinc-500">{{ number_format($totals['ventas_amount'], 2, ',', '.') }} €</p>
                 </div>
                 <div>
-                    <p class="text-xs text-zinc-400">Pérdidas registradas</p>
+                    <p class="text-xs text-zinc-400">{{ __('Pérdidas registradas') }}</p>
                     <p class="text-lg font-semibold text-zinc-800">{{ number_format($totals['perdidas_qty'], 2, ',', '.') }} L</p>
                 </div>
                 <div>
-                    <p class="text-xs text-zinc-400">Subproductos gestionados</p>
+                    <p class="text-xs text-zinc-400">{{ __('Subproductos gestionados') }}</p>
                     <p class="text-lg font-semibold text-zinc-800">{{ number_format($totals['subproductos_qty'], 2, ',', '.') }}</p>
                 </div>
             </div>
 
             {{-- Ventas --}}
             <div class="px-4 pt-4 pb-2">
-                <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide">Ventas y expediciones</p>
+                <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide">{{ __('Ventas y expediciones') }}</p>
             </div>
             @if($ventas->isEmpty())
                 <p class="px-4 pb-4 text-sm text-zinc-400">Sin ventas en {{ $vintage }}.</p>
@@ -444,7 +442,7 @@
             {{-- Subproductos --}}
             @if($subproductos->isNotEmpty())
                 <div class="px-4 pt-6 pb-2 border-t border-zinc-100 mt-2">
-                    <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide">Subproductos (orujo · lías · vinaza)</p>
+                    <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide">{{ __('Subproductos (orujo · lías · vinaza)') }}</p>
                 </div>
                 <x-agro.data-table :headers="['Fecha', 'Vino', 'Tipo', 'Destino', 'Cantidad', 'Lote']">
                     @foreach($subproductos as $s)
@@ -476,7 +474,7 @@
             {{-- Pérdidas en Salidas --}}
             @if($perdidas->isNotEmpty())
                 <div class="px-4 pt-6 pb-2 border-t border-zinc-100 mt-2">
-                    <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide">Pérdidas y mermas</p>
+                    <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide">{{ __('Pérdidas y mermas') }}</p>
                 </div>
                 <x-agro.data-table :headers="['Fecha', 'Vino', 'Tipo', 'Autorización', 'Litros', 'Notas']">
                     @foreach($perdidas as $p)
@@ -514,7 +512,7 @@
 
             <div class="px-4 py-3 flex flex-wrap items-center gap-4 border-b border-zinc-100 bg-zinc-50/50">
                 <div class="flex items-center gap-2">
-                    <label class="text-sm text-zinc-500">Ejercicio fiscal</label>
+                    <label class="text-sm text-zinc-500">{{ __('Ejercicio fiscal') }}</label>
                     <select
                         wire:model.live="filterFiscalYear"
                         class="text-sm border border-zinc-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-300"
@@ -568,9 +566,9 @@
                             </x-agro.table-cell>
                             <x-agro.table-cell>
                                 @if($row['is_must'])
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-amber-50 text-amber-700 border border-amber-200">Mosto</span>
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-amber-50 text-amber-700 border border-amber-200">{{ __('Mosto') }}</span>
                                 @else
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-violet-50 text-violet-700 border border-violet-200">Vino</span>
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-violet-50 text-violet-700 border border-violet-200">{{ __('Vino') }}</span>
                                 @endif
                             </x-agro.table-cell>
                             <x-agro.table-cell>
@@ -598,7 +596,7 @@
                 <div class="p-4 border-t border-zinc-100 mt-2">
                     <flux:callout variant="info" icon="information-circle">
                         <flux:callout.text class="text-xs">
-                            <strong>SILICIE 2.0 (Orden HAC/1505/2024)</strong> —
+                            <strong>{{ __('SILICIE 2.0 (Orden HAC/1505/2024)') }}</strong> —
                             Los campos
                             <code>TIPO_DOCUMENTO</code>
                             <x-agro.help-tip title="TIPO_DOCUMENTO" text="Tipo de documento que ampara el movimiento: FAC (factura), ALB (albarán de entrega), OTR (otro documento). Obligatorio desde enero 2025. En movimientos internos o de elaboración se usa OTR." />

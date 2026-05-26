@@ -2,9 +2,7 @@
     <!-- Header -->
     <div class="bg-gradient-to-r from-green-600 to-emerald-600 px-4 py-3">
         <div class="flex items-center justify-between">
-            <h3 class="text-white font-bold flex items-center gap-2">
-                🛰️ Teledetección
-            </h3>
+            <h3 class="text-white font-bold flex items-center gap-2">{{ __('🛰️ Teledetección') }}</h3>
             <a href="{{ route('remote-sensing.dashboard') }}" 
                class="text-white/80 hover:text-white text-sm flex items-center gap-1 transition">
                 Ver todo
@@ -75,7 +73,7 @@
             <!-- Alerts List -->
             @if(count($alerts) > 0)
                 <div class="border-t pt-3">
-                    <p class="text-xs font-semibold text-red-600 mb-2">⚠️ Parcelas con alerta:</p>
+                    <p class="text-xs font-semibold text-red-600 mb-2">{{ __('⚠️ Parcelas con alerta:') }}</p>
                     <div class="space-y-2 max-h-32 overflow-y-auto">
                         @foreach($alerts as $alert)
                             <a href="{{ route('plots.show', $alert['id']) }}" 

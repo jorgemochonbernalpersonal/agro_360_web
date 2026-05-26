@@ -17,7 +17,7 @@ class Show extends Component
     {
         // Validar autorización
         if (!Auth::user()->can('view', $campaign)) {
-            abort(403, 'No tienes permiso para ver esta campaña.');
+            abort(403, __('No tienes permiso para ver esta campaña.'));
         }
 
         $this->campaign = $campaign->loadCount([
@@ -46,14 +46,14 @@ class Show extends Component
     public function activate()
     {
         if (!Auth::user()->can('activate', $this->campaign)) {
-            $this->toastError('No tienes permiso para activar esta campaña.');
+            $this->toastError(__('No tienes permiso para activar esta campaña.'));
             return;
         }
 
         try {
             $this->campaign->activate();
             $this->campaign->refresh();
-            $this->toastSuccess('Campaña activada correctamente.');
+            $this->toastSuccess(__('Campaña activada correctamente.'));
         } catch (\Exception $e) {
             \Log::error('Error al activar campaña', [
                 'error' => $e->getMessage(),
@@ -61,7 +61,7 @@ class Show extends Component
                 'user_id' => Auth::id(),
             ]);
 
-            $this->toastError('Error al activar la campaña. Por favor, intenta de nuevo.');
+            $this->toastError(__('Error al activar la campaña. Por favor, intenta de nuevo.'));
         }
     }
 
@@ -78,7 +78,7 @@ class Show extends Component
             'recentActivities' => $recentActivities,
         ])->layout('layouts.app', [
             'title' => $this->campaign->name . ' (' . $this->campaign->year . ') - Campaña - Agro365',
-            'description' => 'Detalles de la campaña ' . $this->campaign->name . ' del año ' . $this->campaign->year . '. Actividades, estadísticas y rendimientos.',
+            'description' => __('Detalles de la campaña ') . $this->campaign->name . ' del año ' . $this->campaign->year . '. Actividades, estadísticas y rendimientos.',
         ]);
     }
 }

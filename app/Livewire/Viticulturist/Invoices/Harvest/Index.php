@@ -91,8 +91,8 @@ class Index extends Component
             'availableClients' => $availableClients,
             'advancedStats' => $advancedStats,
         ])->layout('layouts.app', [
-            'title' => 'Facturación de Cosechas - Agro365',
-            'description' => 'Factura tus cosechas directamente desde la vendimia. Gestión completa de facturación de uva con análisis de rendimientos y precios.',
+            'title' => __('Facturación de Cosechas - Agro365'),
+            'description' => __('Factura tus cosechas directamente desde la vendimia. Gestión completa de facturación de uva con análisis de rendimientos y precios.'),
         ]);
     }
 

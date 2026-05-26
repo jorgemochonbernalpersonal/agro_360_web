@@ -177,10 +177,10 @@
     <table>
         <thead>
             <tr>
-                <th>Concepto</th>
-                <th class="right">Kg entregados</th>
-                <th class="right">Precio / kg</th>
-                <th class="right">Importe total</th>
+                <th>{{ __('Concepto') }}</th>
+                <th class="right">{{ __('Kg entregados') }}</th>
+                <th class="right">{{ __('Precio / kg') }}</th>
+                <th class="right">{{ __('Importe total') }}</th>
             </tr>
         </thead>
         <tbody>
@@ -192,7 +192,7 @@
             </tr>
             @if($delivery->harvest && abs((float)$delivery->delivered_kg - (float)$delivery->harvest->total_weight) > 0)
                 <tr>
-                    <td style="color:#6b7280; font-size:7.5pt;">Kg confirmados por bodega</td>
+                    <td style="color:#6b7280; font-size:7.5pt;">{{ __('Kg confirmados por bodega') }}</td>
                     <td class="right" style="color:#1d4ed8; font-size:7.5pt;">{{ number_format($delivery->harvest->total_weight, 0) }} kg</td>
                     <td class="right">—</td>
                     <td class="right">—</td>
@@ -200,7 +200,7 @@
             @endif
             @if($delivery->total_price)
                 <tr class="total">
-                    <td colspan="3">TOTAL</td>
+                    <td colspan="3">{{ __('TOTAL') }}</td>
                     <td class="right">{{ number_format($delivery->total_price, 3) }} €</td>
                 </tr>
             @endif

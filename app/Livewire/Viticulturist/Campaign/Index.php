@@ -28,7 +28,7 @@ class Index extends Component
     public function mount()
     {
         if (!Auth::user()->can('viewAny', Campaign::class)) {
-            abort(403, 'No tienes permiso para ver campañas.');
+            abort(403, __('No tienes permiso para ver campañas.'));
         }
     }
 
@@ -60,7 +60,7 @@ class Index extends Component
         $campaign = Campaign::forViticulturist(Auth::id())->findOrFail($campaignId);
 
         if (!Auth::user()->can('update', $campaign)) {
-            $this->toastError('No tienes permiso para modificar esta campaña.');
+            $this->toastError(__('No tienes permiso para modificar esta campaña.'));
             return;
         }
 
@@ -69,7 +69,7 @@ class Index extends Component
             $this->toastSuccess("Campaña {$campaign->year} desactivada.");
         } else {
             $campaign->activate();
-            session()->flash('campaign_activated', "Campaña {$campaign->year} activada. Ya puedes registrar actividades.");
+            session()->flash('campaign_activated', __('Campaña :year activada. Ya puedes registrar actividades.', ['year' => $campaign->year]));
             return $this->viticulturistRoleRedirect('digital-notebook');
         }
     }
@@ -79,37 +79,37 @@ class Index extends Component
         $campaign = Campaign::forViticulturist(Auth::id())->withCount('activities')->findOrFail($campaignId);
 
         if (!Auth::user()->can('delete', $campaign)) {
-            $this->toastError('No tienes permiso para eliminar esta campaña.');
+            $this->toastError(__('No tienes permiso para eliminar esta campaña.'));
             return;
         }
 
         if ($campaign->activities_count > 0) {
-            $this->toastError('No se puede eliminar una campaña que tiene actividades registradas.');
+            $this->toastError(__('No se puede eliminar una campaña que tiene actividades registradas.'));
             return;
         }
 
         $hasEstimatedYields = EstimatedYield::where('campaign_id', $campaign->id)->exists();
         if ($hasEstimatedYields) {
-            $this->toastError('No se puede eliminar una campaña que tiene rendimientos estimados registrados.');
+            $this->toastError(__('No se puede eliminar una campaña que tiene rendimientos estimados registrados.'));
             return;
         }
 
         try {
             $campaign->delete();
-            $this->toastSuccess('Campaña eliminada correctamente.');
+            $this->toastSuccess(__('Campaña eliminada correctamente.'));
         } catch (\Exception $e) {
             \Log::error('Error al eliminar campaña', [
                 'error'       => $e->getMessage(),
                 'campaign_id' => $campaignId,
                 'user_id'     => Auth::id(),
             ]);
-            $this->toastError('Error al eliminar la campaña. Por favor, intenta de nuevo.');
+            $this->toastError(__('Error al eliminar la campaña. Por favor, intenta de nuevo.'));
         }
     }
 
     #[Layout('layouts.app', [
-        'title'       => 'Campañas Agrícolas - Agro365',
-        'description' => 'Gestiona tus campañas agrícolas por año. Organiza y controla todas las actividades de cada temporada vitivinícola.',
+        'title'       => __('Campañas Agrícolas - Agro365'),
+        'description' => __('Gestiona tus campañas agrícolas por año. Organiza y controla todas las actividades de cada temporada vitivinícola.'),
     ])]
     public function render()
     {

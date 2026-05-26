@@ -18,7 +18,7 @@
                 </flux:button>
             @endif
             <a href="{{ roleRoute('viticulturist.pac.declarations.pdf', $declaration) }}" target="_blank">
-                <flux:button variant="ghost" icon="document-arrow-down">PDF</flux:button>
+                <flux:button variant="ghost" icon="document-arrow-down">{{ __('PDF') }}</flux:button>
             </a>
         </x-slot:actions>
     </x-agro.page-header>

@@ -1,34 +1,34 @@
 <div class="space-y-6 animate-fade-in">
 
-    <x-agro.page-header title="Mis Viticultores" description="Viticultores vinculados a tu bodega" />
+    <x-agro.page-header title="{{ __('Mis Viticultores') }}" :description="__('Viticultores vinculados a tu bodega')" />
 
     {{-- Stats --}}
     <x-agro.stats-section key="winery-vit">
         <x-agro.stat-card
-            label="Activos"
+            :label="__('Activos')"
             :value="$stats['active']"
-            description="Con acceso al portal"
+            :description="__('Con acceso al portal')"
             icon="check-circle"
             color="green"
         />
         <x-agro.stat-card
-            label="Pendientes"
+            :label="__('Pendientes')"
             :value="$stats['pending']"
-            description="Sin activar o invitar"
+            :description="__('Sin activar o invitar')"
             icon="clock"
             color="amber"
         />
         <x-agro.stat-card
-            label="Propios"
+            :label="__('Propios')"
             :value="$stats['own']"
-            description="Creados por tu bodega"
+            :description="__('Creados por tu bodega')"
             icon="user-plus"
             color="blue"
         />
         <x-agro.stat-card
-            label="Con cuaderno"
+            :label="__('Con cuaderno')"
             :value="$stats['with_notebook']"
-            description="Acceso al cuaderno de campo"
+            :description="__('Acceso al cuaderno de campo')"
             icon="book-open"
             color="orange"
         />
@@ -38,37 +38,33 @@
     <div class="flex items-center gap-3">
 
         {{-- Search --}}
-        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar por nombre o email..." />
+        <x-agro.search-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar por nombre o email...')" />
 
         {{-- Filtro estado --}}
         <flux:select wire:model.live="statusFilter">
-            <flux:select.option value="">Todos los estados</flux:select.option>
-            <flux:select.option value="active">Activos</flux:select.option>
-            <flux:select.option value="pending">Pendientes</flux:select.option>
+            <flux:select.option value="">{{ __('Todos los estados') }}</flux:select.option>
+            <flux:select.option value="active">{{ __('Activos') }}</flux:select.option>
+            <flux:select.option value="pending">{{ __('Pendientes') }}</flux:select.option>
         </flux:select>
 
         {{-- Filtro origen --}}
         <flux:select wire:model.live="sourceFilter">
-            <flux:select.option value="">Todos los orígenes</flux:select.option>
-            <flux:select.option value="own">Propios</flux:select.option>
-            <flux:select.option value="supervisor">Asignados por D.O.</flux:select.option>
-            <flux:select.option value="viticulturist">Viticultor</flux:select.option>
-            <flux:select.option value="self">Autoregistro</flux:select.option>
+            <flux:select.option value="">{{ __('Todos los orígenes') }}</flux:select.option>
+            <flux:select.option value="own">{{ __('Propios') }}</flux:select.option>
+            <flux:select.option value="supervisor">{{ __('Asignados por D.O.') }}</flux:select.option>
+            <flux:select.option value="viticulturist">{{ __('Viticultor') }}</flux:select.option>
+            <flux:select.option value="self">{{ __('Autoregistro') }}</flux:select.option>
         </flux:select>
 
         {{-- Separador --}}
         <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
         {{-- Exportar Excel --}}
-        <flux:button wire:click="export" variant="ghost" icon="arrow-down-tray">
-            Exportar
-        </flux:button>
+        <flux:button wire:click="export" variant="ghost" icon="arrow-down-tray">{{ __('Exportar') }}</flux:button>
 
         {{-- Asignar de D.O. (solo si hay supervisor vinculado) --}}
         @if($hasSupervisors)
-            <flux:button wire:click="openDOModal" variant="ghost" icon="building-library">
-                Asignar de D.O.
-            </flux:button>
+            <flux:button wire:click="openDOModal" variant="ghost" icon="building-library">{{ __('Asignar de D.O.') }}</flux:button>
         @endif
 
         {{-- Invitar existente --}}
@@ -134,7 +130,7 @@
                                     @if ($v->email && !str_starts_with($v->email, 'viticultores.'))
                                         <p class="text-xs text-zinc-500 truncate">{{ $v->email }}</p>
                                     @else
-                                        <p class="text-xs text-zinc-400 italic truncate">Sin email registrado</p>
+                                        <p class="text-xs text-zinc-400 italic truncate">{{ __('Sin email registrado') }}</p>
                                     @endif
                                 </div>
                                 <x-agro.status-badge :active="$v->can_login"
@@ -145,7 +141,7 @@
 
                         <div class="flex-1 space-y-3 text-sm">
                             <div class="flex items-center justify-between">
-                                <span class="text-zinc-500">Parcelas</span>
+                                <span class="text-zinc-500">{{ __('Parcelas') }}</span>
                                 <a href="{{ roleRoute('plots.index') }}"
                                     class="flex items-center gap-1 font-semibold text-agro-700 hover:underline">
                                     <flux:icon icon="map" class="size-4" />
@@ -153,30 +149,30 @@
                                 </a>
                             </div>
                             <div class="flex items-center justify-between">
-                                <span class="text-zinc-500">Origen</span>
+                                <span class="text-zinc-500">{{ __('Origen') }}</span>
                                 <flux:badge :color="$src['color']" size="sm">{{ $src['label'] }}</flux:badge>
                             </div>
                             @if ($v->can_login)
                                 <div class="flex items-center justify-between">
-                                    <span class="text-zinc-500">Email</span>
+                                    <span class="text-zinc-500">{{ __('Email') }}</span>
                                     @if($v->email_verified_at)
-                                        <flux:badge color="green" icon="check-circle" size="sm">Verificado</flux:badge>
+                                        <flux:badge color="green" icon="check-circle" size="sm">{{ __('Verificado') }}</flux:badge>
                                     @else
-                                        <flux:badge color="amber" icon="exclamation-triangle" size="sm">Sin verificar</flux:badge>
+                                        <flux:badge color="amber" icon="exclamation-triangle" size="sm">{{ __('Sin verificar') }}</flux:badge>
                                     @endif
                                 </div>
                                 <div class="flex items-center justify-between">
-                                    <span class="text-zinc-500">Cuaderno</span>
+                                    <span class="text-zinc-500">{{ __('Cuaderno') }}</span>
                                     @if($relation->notebook_access)
-                                        <flux:badge color="green" icon="book-open" size="sm">Acceso</flux:badge>
+                                        <flux:badge color="green" icon="book-open" size="sm">{{ __('Acceso') }}</flux:badge>
                                     @else
-                                        <flux:badge icon="lock-closed" size="sm">Sin acceso</flux:badge>
+                                        <flux:badge icon="lock-closed" size="sm">{{ __('Sin acceso') }}</flux:badge>
                                     @endif
                                 </div>
                             @endif
                             @if ($inviteStatus)
                                 <div class="flex items-center justify-between">
-                                    <span class="text-zinc-500">Invitación</span>
+                                    <span class="text-zinc-500">{{ __('Invitación') }}</span>
                                     <flux:badge
                                         :color="$inviteStatus['color']"
                                         :icon="$inviteStatus['icon']"
@@ -193,7 +189,7 @@
 
                                 {{-- Grupo izquierdo: navegar --}}
                                 <div class="flex items-center gap-0.5">
-                                    <x-agro.action-button variant="view" href="{{ roleRoute('viticulturists.show', $v->id) }}" title="Ver viticultor" />
+                                    <x-agro.action-button variant="view" href="{{ roleRoute('viticulturists.show', $v->id) }}" title="{{ __('Ver viticultor') }}" />
                                 </div>
 
                                 {{-- Separador vertical --}}
@@ -202,13 +198,13 @@
                                 {{-- Grupo derecho: gestionar --}}
                                 <div class="flex items-center gap-0.5">
                                     @if ($relation->source === 'own')
-                                        <x-agro.action-button variant="edit" href="{{ roleRoute('viticulturists.edit', $v->id) }}" title="Editar" />
+                                        <x-agro.action-button variant="edit" href="{{ roleRoute('viticulturists.edit', $v->id) }}" title="{{ __('Editar') }}" />
                                         @if (!$v->can_login)
                                             <x-agro.action-button icon="paper-airplane" variant="primary" href="{{ roleRoute('viticulturists.show', $v->id) }}" title="{{ $v->invitation_token ? 'Ver invitación' : 'Invitar al portal' }}" />
                                         @endif
-                                        <x-agro.action-button icon="link-slash" variant="danger" wire:click="unlinkViticulturist({{ $v->id }})" wire:confirm="¿Desvincular a {{ $v->name }} de tu bodega? Se revocará el acceso al cuaderno." title="Desvincular" />
+                                        <x-agro.action-button icon="link-slash" variant="danger" wire:click="unlinkViticulturist({{ $v->id }})" wire:confirm="{{ __('¿Desvincular a :name de tu bodega? Se revocará el acceso al cuaderno.', ['name' => $v->name]) }}" title="{{ __('Desvincular') }}" />
                                     @elseif ($relation->source === 'supervisor')
-                                        <x-agro.action-button icon="x-mark" variant="danger" wire:click="unassignFromDO({{ $v->id }})" wire:confirm="¿Desasignar a {{ $v->name }} de tu bodega?" title="Desasignar de D.O." />
+                                        <x-agro.action-button icon="x-mark" variant="danger" wire:click="unassignFromDO({{ $v->id }})" wire:confirm="{{ __('¿Desasignar a :name de tu bodega?', ['name' => $v->name]) }}" title="{{ __('Desasignar de D.O.') }}" />
                                     @endif
                                 </div>
 
@@ -222,8 +218,8 @@
         @else
             <x-agro.empty-state
                 icon="users"
-                message="No hay viticultores vinculados"
-                description="Añade viticultores para gestionar sus parcelas y vendimias"
+                :message="__('No hay viticultores vinculados')"
+                :description="__('Añade viticultores para gestionar sus parcelas y vendimias')"
             >
                 <x-slot:action>
                     <flux:button href="{{ roleRoute('viticulturists.create') }}" variant="primary" icon="plus">
@@ -242,8 +238,8 @@
                     <flux:icon icon="building-library" class="size-5 text-purple-600" />
                 </div>
                 <div>
-                    <h3 class="text-base font-semibold text-zinc-900">Asignar viticultor de D.O.</h3>
-                    <p class="text-xs text-zinc-500">Elige un viticultor del pool de tu denominación de origen</p>
+                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Asignar viticultor de D.O.') }}</h3>
+                    <p class="text-xs text-zinc-500">{{ __('Elige un viticultor del pool de tu denominación de origen') }}</p>
                 </div>
             </div>
 
@@ -253,7 +249,7 @@
                 <input
                     wire:model.live.debounce.300ms="doSearch"
                     type="text"
-                    placeholder="Buscar por nombre o email..."
+                    placeholder="{{ __('Buscar por nombre o email...') }}"
                     class="w-full pl-9 pr-3 py-2 text-sm border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-300"
                 />
             </div>
@@ -293,7 +289,7 @@
             </div>
 
             <div class="mt-5 pt-4 border-t border-zinc-100 flex justify-end">
-                <flux:button variant="ghost" wire:click="closeDOModal">Cerrar</flux:button>
+                <flux:button variant="ghost" wire:click="closeDOModal">{{ __('Cerrar') }}</flux:button>
             </div>
         </div>
     </flux:modal>

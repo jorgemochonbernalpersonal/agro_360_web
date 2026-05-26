@@ -98,8 +98,8 @@
                 <thead class="bg-zinc-50">
                     <tr>
                         <th class="px-4 py-2 text-left text-zinc-600">{{ __('Fecha') }}</th>
-                        <th class="px-4 py-2 text-center text-zinc-600">NDVI</th>
-                        <th class="px-4 py-2 text-center text-zinc-600">NDWI</th>
+                        <th class="px-4 py-2 text-center text-zinc-600">{{ __('NDVI') }}</th>
+                        <th class="px-4 py-2 text-center text-zinc-600">{{ __('NDWI') }}</th>
                         <th class="px-4 py-2 text-center text-zinc-600">{{ __('Estado') }}</th>
                         <th class="px-4 py-2 text-center text-zinc-600">{{ __('Tendencia') }}</th>
                     </tr>

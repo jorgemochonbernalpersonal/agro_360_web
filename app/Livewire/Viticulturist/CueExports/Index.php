@@ -14,12 +14,12 @@ class Index extends AbstractIndex
         $export = $this->findOwned(CueExport::class, $id);
 
         if ($export->status !== 'draft') {
-            $this->toastError('Solo se pueden marcar como generadas las exportaciones en borrador.');
+            $this->toastError(__('Solo se pueden marcar como generadas las exportaciones en borrador.'));
             return;
         }
 
         $export->update(['status' => 'generated', 'generated_at' => now()]);
-        $this->toastSuccess('Exportación marcada como generada.');
+        $this->toastSuccess(__('Exportación marcada como generada.'));
     }
 
     public function markAsSent(int $id): void
@@ -27,12 +27,12 @@ class Index extends AbstractIndex
         $export = $this->findOwned(CueExport::class, $id);
 
         if ($export->status !== 'generated') {
-            $this->toastError('Solo se pueden marcar como enviadas las exportaciones generadas.');
+            $this->toastError(__('Solo se pueden marcar como enviadas las exportaciones generadas.'));
             return;
         }
 
         $export->update(['status' => 'sent', 'sent_at' => now()]);
-        $this->toastSuccess('Exportación marcada como enviada al MAPA.');
+        $this->toastSuccess(__('Exportación marcada como enviada al MAPA.'));
     }
 
     public function delete(int $id): void
@@ -40,12 +40,12 @@ class Index extends AbstractIndex
         $export = $this->findOwned(CueExport::class, $id);
 
         if ($export->status !== 'draft') {
-            $this->toastError('Solo se pueden eliminar exportaciones en estado Borrador.');
+            $this->toastError(__('Solo se pueden eliminar exportaciones en estado Borrador.'));
             return;
         }
 
         $export->delete();
-        $this->toastSuccess('Exportación eliminada.');
+        $this->toastSuccess(__('Exportación eliminada.'));
     }
 
     protected function baseQuery(): Builder

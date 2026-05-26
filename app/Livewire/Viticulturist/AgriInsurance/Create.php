@@ -72,7 +72,7 @@ class Create extends Component
             'notes'             => $this->notes ?: null,
         ]);
 
-        $this->toastSuccess('Seguro agrario registrado correctamente.');
+        $this->toastSuccess(__('Seguro agrario registrado correctamente.'));
 
         return $this->viticulturistRoleRedirect('agri-insurance.index');
     }

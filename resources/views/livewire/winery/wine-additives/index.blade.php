@@ -2,8 +2,8 @@
 
     {{-- Header --}}
     <x-agro.page-header
-        title="Aditivos Enológicos"
-        description="Registro de aditivos y tratamientos aplicados a los vinos"
+        title="{{ __('Aditivos Enológicos') }}"
+        :description="__('Registro de aditivos y tratamientos aplicados a los vinos')"
         icon="beaker"
     >
         <x-slot:actions>
@@ -15,24 +15,24 @@
 
     {{-- KPIs --}}
     <x-agro.stats-section key="wine-additives" :columns="3">
-        <x-agro.stat-card label="Total aditivos" :value="$stats['total']"     icon="beaker"         color="zinc" />
-        <x-agro.stat-card label="Este año"        :value="$stats['this_year']" icon="calendar-days"  color="agro" />
-        <x-agro.stat-card label="Vinos tratados"  :value="$stats['wines']"     icon="arrows-right-left" color="amber" />
+        <x-agro.stat-card :label="__('Total aditivos')" :value="$stats['total']"     icon="beaker"         color="zinc" />
+        <x-agro.stat-card :label="__('Este año')"        :value="$stats['this_year']" icon="calendar-days"  color="agro" />
+        <x-agro.stat-card :label="__('Vinos tratados')"  :value="$stats['wines']"     icon="arrows-right-left" color="amber" />
     </x-agro.stats-section>
 
     {{-- Toolbar --}}
     <div class="flex items-center gap-3">
-        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar por aditivo o vino..." />
+        <x-agro.search-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar por aditivo o vino...')" />
 
         <flux:select wire:model.live="wineFilter" class="w-48">
-            <flux:select.option value="">Todos los vinos</flux:select.option>
+            <flux:select.option value="">{{ __('Todos los vinos') }}</flux:select.option>
             @foreach($wines as $wine)
                 <flux:select.option value="{{ $wine->id }}">{{ $wine->name }}</flux:select.option>
             @endforeach
         </flux:select>
 
         @if($search || $wineFilter)
-            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">Limpiar</flux:button>
+            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">{{ __('Limpiar') }}</flux:button>
         @endif
     </div>
 
@@ -64,14 +64,14 @@
 
                         <div class="flex-1 space-y-2 text-sm">
                             <div class="flex justify-between">
-                                <span class="text-zinc-500">Fecha</span>
+                                <span class="text-zinc-500">{{ __('Fecha') }}</span>
                                 <span class="font-medium text-zinc-800">
                                     {{ $additive->application_date?->format('d/m/Y') ?? '—' }}
                                 </span>
                             </div>
                             @if($additive->quantity !== null)
                             <div class="flex justify-between">
-                                <span class="text-zinc-500">Cantidad</span>
+                                <span class="text-zinc-500">{{ __('Cantidad') }}</span>
                                 <span class="font-medium text-zinc-800">
                                     {{ number_format($additive->quantity, 3) }}
                                     {{ $additive->unitOfMeasurement?->symbol ?? '' }}
@@ -80,13 +80,13 @@
                             @endif
                             @if($additive->supply)
                             <div class="flex justify-between">
-                                <span class="text-zinc-500">Insumo</span>
+                                <span class="text-zinc-500">{{ __('Insumo') }}</span>
                                 <span class="font-medium text-zinc-800 truncate max-w-[55%] text-right">{{ $additive->supply->name }}</span>
                             </div>
                             @endif
                             @if($additive->oenologist)
                             <div class="flex justify-between">
-                                <span class="text-zinc-500">Enólogo</span>
+                                <span class="text-zinc-500">{{ __('Enólogo') }}</span>
                                 <span class="font-medium text-zinc-800 truncate max-w-[55%] text-right">{{ $additive->oenologist->full_name }}</span>
                             </div>
                             @endif
@@ -99,7 +99,7 @@
                             <div class="flex gap-2 justify-end">
                                 <flux:button
                                     wire:click="delete({{ $additive->id }})"
-                                    wire:confirm="¿Eliminar este aditivo?"
+                                    wire:confirm="{{ __('¿Eliminar este aditivo?') }}"
                                     variant="ghost" size="sm" icon="trash"
                                     class="text-red-500 hover:text-red-700"
                                 />
@@ -113,7 +113,7 @@
         @else
             <x-agro.empty-state
                 icon="beaker"
-                title="Sin aditivos registrados"
+                title="{{ __('Sin aditivos registrados') }}"
                 description="{{ $search || $wineFilter ? 'No hay aditivos que coincidan con los filtros.' : 'Los aditivos se registran desde el detalle de cada vino.' }}"
             />
         @endif

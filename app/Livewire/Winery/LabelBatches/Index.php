@@ -33,12 +33,12 @@ class Index extends AbstractIndex
         $batch = LabelBatch::where('user_id', $this->wineryId())->findOrFail($id);
 
         if (! $batch->canDelete()) {
-            $this->toastError('No se puede eliminar un lote con etiquetas usadas o mermas registradas.');
+            $this->toastError(__('No se puede eliminar un lote con etiquetas usadas o mermas registradas.'));
             return;
         }
 
         $batch->delete();
-        $this->toastSuccess('Lote de etiquetas eliminado.');
+        $this->toastSuccess(__('Lote de etiquetas eliminado.'));
     }
 
     protected function baseQuery(): Builder

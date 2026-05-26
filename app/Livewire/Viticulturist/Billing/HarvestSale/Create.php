@@ -230,7 +230,7 @@ class Create extends Component
                 'user_id'   => Auth::id(),
                 'exception' => $e,
             ]);
-            $this->toastError($e instanceof \RuntimeException ? $e->getMessage() : 'Error al crear la factura. Inténtalo de nuevo.');
+            $this->toastError($e instanceof \RuntimeException ? $e->getMessage()  : __('Error al crear la factura. Inténtalo de nuevo.'));
         }
     }
 

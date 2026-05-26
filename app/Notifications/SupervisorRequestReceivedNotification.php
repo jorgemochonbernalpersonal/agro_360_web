@@ -43,15 +43,15 @@ class SupervisorRequestReceivedNotification extends Notification implements Shou
         }
 
         return (new MailMessage)
-            ->subject('Nueva solicitud de ' . $winery->name . ' — ' . $typeLabel)
-            ->greeting('Hola ' . ($notifiable->name ?: ''))
-            ->line('La bodega **' . $winery->name . '** ha enviado una solicitud a tu denominación de origen.')
+            ->subject(__('Nueva solicitud de :winery — :type', ['winery' => $winery->name, 'type' => $typeLabel]))
+            ->greeting(__('Hola :name', ['name' => $notifiable->name ?: '']))
+            ->line(__('La bodega **:winery** ha enviado una solicitud a tu denominación de origen.', ['winery' => $winery->name]))
             ->line('**Tipo:** ' . $typeLabel)
             ->when($req->title, fn ($m) => $m->line('**Asunto:** ' . $req->title))
             ->when($req->notes, fn ($m) => $m->line('**Descripción:** ' . $req->notes))
-            ->action('Ver solicitudes', $url)
-            ->line('Revisa la solicitud y responde desde tu panel de control.')
-            ->salutation("Saludos,\nAgro365");
+            ->action(__('Ver solicitudes'), $url)
+            ->line(__('Revisa la solicitud y responde desde tu panel de control.'))
+            ->salutation(__('Saludos,\nAgro365'));
     }
 
     public function toArray(object $notifiable): array

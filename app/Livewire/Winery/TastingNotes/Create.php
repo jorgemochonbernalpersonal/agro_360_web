@@ -118,7 +118,7 @@ class Create extends Component
             'created_by'         => Auth::id(),
         ]);
 
-        $this->toastSuccess('Nota de cata registrada correctamente.');
+        $this->toastSuccess(__('Nota de cata registrada correctamente.'));
         $this->roleRedirect('tasting-notes.index');
     }
 

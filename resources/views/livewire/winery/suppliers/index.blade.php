@@ -1,7 +1,7 @@
 <div class="space-y-6 animate-fade-in">
 <x-agro.page-header
-    title="Proveedores"
-    description="Gestiona los proveedores de tu bodega."
+    title="{{ __('Proveedores') }}"
+    :description="__('Gestiona los proveedores de tu bodega.')"
     icon="truck"
 >
     <x-slot:actions>
@@ -12,8 +12,8 @@
 </x-agro.page-header>
 
 <x-agro.filter-bar>
-    <x-agro.filter-input wire:model.live="search" placeholder="Buscar por nombre o contacto..." />
-    <x-agro.filter-select wire:model.live="categoryFilter" placeholder="Todas las categorías">
+    <x-agro.filter-input wire:model.live="search" :placeholder="__('Buscar por nombre o contacto...')" />
+    <x-agro.filter-select wire:model.live="categoryFilter" :placeholder="__('Todas las categorías')">
         @foreach($categories as $key => $label)
             <option value="{{ $key }}">{{ $label }}</option>
         @endforeach
@@ -49,11 +49,11 @@
                     <div class="flex-1 space-y-4">
                         <div class="space-y-2 text-sm">
                             <div class="flex items-center justify-between">
-                                <span class="text-zinc-400">Contacto</span>
+                                <span class="text-zinc-400">{{ __('Contacto') }}</span>
                                 <span class="text-zinc-700 font-medium">{{ $supplier->contact_person ?? '—' }}</span>
                             </div>
                             <div class="flex items-center justify-between">
-                                <span class="text-zinc-400">Email</span>
+                                <span class="text-zinc-400">{{ __('Email') }}</span>
                                 <span class="text-zinc-700 font-medium truncate ml-2">
                                     @if($supplier->email)
                                         <a href="mailto:{{ $supplier->email }}" class="text-amber-600 hover:underline">{{ $supplier->email }}</a>
@@ -63,7 +63,7 @@
                                 </span>
                             </div>
                             <div class="flex items-center justify-between">
-                                <span class="text-zinc-400">Teléfono</span>
+                                <span class="text-zinc-400">{{ __('Teléfono') }}</span>
                                 <span class="text-zinc-700 font-medium">{{ $supplier->phone ?? '—' }}</span>
                             </div>
                         </div>
@@ -71,8 +71,8 @@
 
                     <x-slot:footer>
                         <div class="flex items-center justify-end gap-0.5">
-                            <x-agro.action-button icon="pencil" variant="default" href="{{ roleRoute('suppliers.edit', $supplier) }}" wire:navigate title="Editar" />
-                            <x-agro.action-button variant="delete" wire:click="delete({{ $supplier->id }})" wire:loading.attr="disabled" wire:confirm="¿Eliminar este proveedor?" title="Eliminar" />
+                            <x-agro.action-button icon="pencil" variant="default" href="{{ roleRoute('suppliers.edit', $supplier) }}" wire:navigate title="{{ __('Editar') }}" />
+                            <x-agro.action-button variant="delete" wire:click="delete({{ $supplier->id }})" wire:loading.attr="disabled" wire:confirm="{{ __('¿Eliminar este proveedor?') }}" title="{{ __('Eliminar') }}" />
                         </div>
                     </x-slot:footer>
                 </x-agro.card>
@@ -80,8 +80,8 @@
         </div>
         <x-agro-pagination :paginator="$suppliers" />
     @else
-        <x-agro.empty-state icon="truck" title="Sin proveedores registrados"
-            description="Añade los proveedores de tu bodega para tenerlos siempre a mano." />
+        <x-agro.empty-state icon="truck" title="{{ __('Sin proveedores registrados') }}"
+            :description="__('Añade los proveedores de tu bodega para tenerlos siempre a mano.')" />
     @endif
 </div>
 </div>

@@ -21,7 +21,7 @@
             <div class="flex justify-between items-center h-16">
                 <a href="{{ url('/') }}" class="flex items-center gap-3">
                     <img src="{{ asset('images/logo.png') }}" alt="Agro365" class="h-10 w-auto">
-                    <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">Agro365</span>
+                    <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Agro365') }}</span>
                 </a>
                 @guest
                     <a href="{{ route('register') }}" class="px-4 py-2 rounded-lg bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white">Comenzar Gratis</a>
@@ -35,24 +35,22 @@
             <div class="mb-12">
                 <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-100 border border-red-300 mb-6">
                     <span class="text-lg">🔗</span>
-                    <span class="text-sm font-semibold text-red-800">Trazabilidad Completa</span>
+                    <span class="text-sm font-semibold text-red-800">{{ __('Trazabilidad Completa') }}</span>
                 </div>
-                <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">
-                    Trazabilidad del Vino: Del Viñedo a la Bodega
-                </h1>
+                <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">{{ __('Trazabilidad del Vino: Del Viñedo a la Bodega') }}</h1>
                 <p class="text-xl text-gray-600 leading-relaxed">
-                    <strong>Trazabilidad total</strong> de tu uva: desde el recinto <a href="{{ content_route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a> donde se cultiva hasta la factura que entregas a la bodega. Cumple con la normativa de seguridad alimentaria y certificaciones DO.
+                    <strong>{{ __('Trazabilidad total') }}</strong> de tu uva: desde el recinto <a href="{{ content_route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a> donde se cultiva hasta la factura que entregas a la bodega. Cumple con la normativa de seguridad alimentaria y certificaciones DO.
                 </p>
             </div>
 
             <article class="prose prose-lg max-w-none">
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Cadena de Trazabilidad</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Cadena de Trazabilidad') }}</h2>
                     <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-6">
                         <div class="flex flex-col md:flex-row items-center justify-between gap-4">
                             <div class="text-center">
                                 <div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-2">
-                                    <span class="text-2xl">🗺️</span>
+                                    <span class="text-2xl">{{ __('🗺️') }}</span>
                                 </div>
                                 <div class="text-sm font-bold text-gray-800">Parcela SIGPAC</div>
                                 <div class="text-xs text-gray-600">Recinto identificado</div>
@@ -86,49 +84,49 @@
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">¿Por Qué es Importante la Trazabilidad?</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('¿Por Qué es Importante la Trazabilidad?') }}</h2>
                     <ul class="list-disc list-inside space-y-3 text-gray-700 mb-6 ml-4">
-                        <li><strong>Denominación de Origen:</strong> Las DO exigen demostrar el origen exacto de cada kilo de uva</li>
-                        <li><strong>Seguridad Alimentaria:</strong> Obligación legal de poder rastrear origen en caso de incidencia</li>
-                        <li><strong>Certificaciones:</strong> Ecológico, Biodinámica y otras certificaciones requieren trazabilidad</li>
+                        <li><strong>{{ __('Denominación de Origen:') }}</strong> Las DO exigen demostrar el origen exacto de cada kilo de uva</li>
+                        <li><strong>{{ __('Seguridad Alimentaria:') }}</strong> Obligación legal de poder rastrear origen en caso de incidencia</li>
+                        <li><strong>{{ __('Certificaciones:') }}</strong> Ecológico, Biodinámica y otras certificaciones requieren trazabilidad</li>
                         <li><strong><a href="{{ url('/subvenciones-pac-2024') }}" class="text-[var(--color-agro-green)] hover:underline">PAC</a>:</strong> Auditorías pueden requerir demostrar producción por parcela</li>
-                        <li><strong>Calidad:</strong> Identifica qué parcelas producen la mejor uva</li>
+                        <li><strong>{{ __('Calidad:') }}</strong> Identifica qué parcelas producen la mejor uva</li>
                     </ul>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Datos Trazables en Agro365</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Datos Trazables en Agro365') }}</h2>
                     <div class="grid md:grid-cols-2 gap-4 mb-6">
                         <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-2">📍 Origen</h3>
+                            <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-2">{{ __('📍 Origen') }}</h3>
                             <ul class="text-gray-700 text-sm space-y-1">
-                                <li>• Código SIGPAC completo</li>
-                                <li>• Municipio y provincia</li>
-                                <li>• Coordenadas GPS</li>
+                                <li>{{ __('• Código SIGPAC completo') }}</li>
+                                <li>{{ __('• Municipio y provincia') }}</li>
+                                <li>{{ __('• Coordenadas GPS') }}</li>
                             </ul>
                         </div>
                         <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-2">🍇 Producto</h3>
+                            <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-2">{{ __('🍇 Producto') }}</h3>
                             <ul class="text-gray-700 text-sm space-y-1">
-                                <li>• Variedad de uva</li>
-                                <li>• Año de plantación</li>
-                                <li>• Certificaciones (DO, Eco)</li>
+                                <li>{{ __('• Variedad de uva') }}</li>
+                                <li>{{ __('• Año de plantación') }}</li>
+                                <li>{{ __('• Certificaciones (DO, Eco)') }}</li>
                             </ul>
                         </div>
                         <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-2">📋 Historial</h3>
+                            <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-2">{{ __('📋 Historial') }}</h3>
                             <ul class="text-gray-700 text-sm space-y-1">
                                 <li>• <a href="{{ url('/registro-fitosanitarios') }}" class="text-[var(--color-agro-green)] hover:underline">Tratamientos</a> aplicados</li>
-                                <li>• Fechas de cada actividad</li>
-                                <li>• Operarios responsables</li>
+                                <li>{{ __('• Fechas de cada actividad') }}</li>
+                                <li>{{ __('• Operarios responsables') }}</li>
                             </ul>
                         </div>
                         <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-2">📦 Entrega</h3>
+                            <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-2">{{ __('📦 Entrega') }}</h3>
                             <ul class="text-gray-700 text-sm space-y-1">
-                                <li>• Peso y grado</li>
-                                <li>• Fecha y hora de entrega</li>
-                                <li>• Cliente/Bodega destino</li>
+                                <li>{{ __('• Peso y grado') }}</li>
+                                <li>{{ __('• Fecha y hora de entrega') }}</li>
+                                <li>{{ __('• Cliente/Bodega destino') }}</li>
                             </ul>
                         </div>
                     </div>
@@ -136,9 +134,9 @@
 
                 <section class="mb-12">
                     <div class="bg-gradient-to-r from-[var(--color-agro-green-bg)] to-[var(--color-agro-green-light)]/30 p-8 rounded-xl border border-[var(--color-agro-green)]/20">
-                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">🔗 Trazabilidad Automática</h3>
+                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('🔗 Trazabilidad Automática') }}</h3>
                         <p class="text-gray-700 mb-6">
-                            Cada contenedor vinculado a su parcela de origen. Cumple normativa sin esfuerzo. <strong>3 meses gratis</strong>.
+                            Cada contenedor vinculado a su parcela de origen. Cumple normativa sin esfuerzo. <strong>{{ __('3 meses gratis') }}</strong>.
                         </p>
                         <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:shadow-lg transition-all font-semibold">
                             Comenzar Gratis
@@ -147,27 +145,27 @@
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Preguntas Frecuentes</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Preguntas Frecuentes') }}</h2>
                     <div class="space-y-6">
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Por qué es obligatoria la trazabilidad?</h3>
-                            <p class="text-gray-700">La normativa de seguridad alimentaria exige poder rastrear el origen de productos en caso de incidencia sanitaria.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Por qué es obligatoria la trazabilidad?') }}</h3>
+                            <p class="text-gray-700">{{ __('La normativa de seguridad alimentaria exige poder rastrear el origen de productos en caso de incidencia sanitaria.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Cómo vinculo un contenedor a una parcela?</h3>
-                            <p class="text-gray-700">Al registrar el contenedor durante la vendimia, seleccionas la parcela de origen y el sistema guarda la relación.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Cómo vinculo un contenedor a una parcela?') }}</h3>
+                            <p class="text-gray-700">{{ __('Al registrar el contenedor durante la vendimia, seleccionas la parcela de origen y el sistema guarda la relación.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Puedo mezclar uva de varias parcelas?</h3>
-                            <p class="text-gray-700">Sí, un contenedor puede tener uva de múltiples parcelas y el sistema mantiene la trazabilidad de cada origen.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Puedo mezclar uva de varias parcelas?') }}</h3>
+                            <p class="text-gray-700">{{ __('Sí, un contenedor puede tener uva de múltiples parcelas y el sistema mantiene la trazabilidad de cada origen.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Qué información aparece en el informe de trazabilidad?</h3>
-                            <p class="text-gray-700">Código SIGPAC, variedad, tratamientos aplicados, fecha de vendimia, peso, grado y cliente destino.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Qué información aparece en el informe de trazabilidad?') }}</h3>
+                            <p class="text-gray-700">{{ __('Código SIGPAC, variedad, tratamientos aplicados, fecha de vendimia, peso, grado y cliente destino.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Es válido para certificación de DO?</h3>
-                            <p class="text-gray-700">Sí, el sistema de trazabilidad cumple los requisitos de las principales Denominaciones de Origen.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Es válido para certificación de DO?') }}</h3>
+                            <p class="text-gray-700">{{ __('Sí, el sistema de trazabilidad cumple los requisitos de las principales Denominaciones de Origen.') }}</p>
                         </div>
                     </div>
                 </section>

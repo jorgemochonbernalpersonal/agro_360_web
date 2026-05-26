@@ -55,11 +55,11 @@
             <div class="winery-name">{{ $wineryName }}</div>
             <div style="font-size:7.5pt;color:#6b7280;margin-top:2pt;">
                 @if($isCancelled)
-                    <span class="badge badge-zinc">ANULADA</span>
+                    <span class="badge badge-zinc">{{ __('ANULADA') }}</span>
                 @elseif($harvest->disqualified)
-                    <span class="badge badge-red">DESCARTADA</span>
+                    <span class="badge badge-red">{{ __('DESCARTADA') }}</span>
                 @else
-                    <span class="badge badge-green">ACTIVA</span>
+                    <span class="badge badge-green">{{ __('ACTIVA') }}</span>
                 @endif
             </div>
         </div>

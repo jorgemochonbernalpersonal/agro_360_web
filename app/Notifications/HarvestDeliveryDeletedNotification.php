@@ -38,7 +38,7 @@ class HarvestDeliveryDeletedNotification extends Notification implements ShouldQ
     {
         return (new MailMessage)
             ->subject('Declaración de entrega eliminada — ' . $this->variety . ' · ' . $this->vintageYear)
-            ->greeting('Hola ' . ($notifiable->name ?: ''))
+            ->greeting(__('Hola :name', ['name' => $notifiable->name ?: '']))
             ->line('El viticultor **' . $this->viticulturistName . '** ha eliminado su declaración de entrega de uva. Tu recepción sigue registrada, pero ya no está vinculada a ninguna declaración.')
             ->line(new HtmlString(
                 '<div style="background-color:#fef2f2;border:1px solid #fecaca;padding:16px;border-radius:8px;margin:16px 0;">
@@ -50,7 +50,7 @@ class HarvestDeliveryDeletedNotification extends Notification implements ShouldQ
             ))
             ->action('Ver recepciones', AppLink::url($this->wineryReceptionUrl, 'agro365://home'))
             ->line('Tu recepción permanece activa. Puedes contactar con el viticultor si necesitas aclaración.')
-            ->salutation("Saludos,\nAgro365");
+            ->salutation(__('Saludos,\nAgro365'));
     }
 
     public function toArray(object $notifiable): array

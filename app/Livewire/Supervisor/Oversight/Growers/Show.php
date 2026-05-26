@@ -46,7 +46,7 @@ class Show extends Component
             ->firstOrFail();
 
         if (!$this->viticulturist->can_login) {
-            $this->toastError('El viticultor aún no ha activado su cuenta.');
+            $this->toastError(__('El viticultor aún no ha activado su cuenta.'));
             return;
         }
 
@@ -56,7 +56,7 @@ class Show extends Component
             ->exists();
 
         if ($existing) {
-            $this->toastError('Ya existe una solicitud activa o aprobada para este viticultor.');
+            $this->toastError(__('Ya existe una solicitud activa o aprobada para este viticultor.'));
             return;
         }
 
@@ -69,7 +69,7 @@ class Show extends Component
 
         Cache::forget("nav_badge_notebook_access_{$this->viticulturist->id}");
 
-        $this->toastSuccess('Solicitud de acceso al cuaderno enviada al viticultor.');
+        $this->toastSuccess(__('Solicitud de acceso al cuaderno enviada al viticultor.'));
     }
 
     public function revokeNotebookAccess(): void
@@ -80,7 +80,7 @@ class Show extends Component
 
         $relation->revokeNotebookAccess();
 
-        $this->toastSuccess('Acceso al cuaderno revocado.');
+        $this->toastSuccess(__('Acceso al cuaderno revocado.'));
     }
 
     // ── Winery assignment ─────────────────────────────────────────────────────
@@ -101,7 +101,7 @@ class Show extends Component
         $this->validate([
             'assignWineryId' => ['required', 'integer'],
         ], [
-            'assignWineryId.required' => 'Selecciona una bodega.',
+            'assignWineryId.required' => __('Selecciona una bodega.'),
         ]);
 
         $doId = Auth::id();
@@ -115,7 +115,7 @@ class Show extends Component
             ->exists();
 
         if ($already) {
-            $this->toastError('El viticultor ya está asignado a esa bodega.');
+            $this->toastError(__('El viticultor ya está asignado a esa bodega.'));
             return;
         }
 
@@ -128,7 +128,7 @@ class Show extends Component
         ]);
 
         $this->showAssignWineryModal = false;
-        $this->toastSuccess('Viticultor asignado a la bodega.');
+        $this->toastSuccess(__('Viticultor asignado a la bodega.'));
     }
 
     public function unassignWinery(int $wineryId): void
@@ -142,7 +142,7 @@ class Show extends Component
             ->firstOrFail()
             ->delete();
 
-        $this->toastSuccess('Asignación a bodega eliminada.');
+        $this->toastSuccess(__('Asignación a bodega eliminada.'));
     }
 
     // ── Remove from pool ──────────────────────────────────────────────────────

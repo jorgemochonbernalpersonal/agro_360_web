@@ -10,10 +10,8 @@
             </svg>
         </div>
         <div class="flex-1">
-            <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-1 group-hover:text-[var(--color-agro-green)] transition-colors">
-                ¿Cómo funcionan los informes oficiales con firma electrónica?
-            </h3>
-            <p class="text-sm text-gray-500">7 tipos certificados con SHA-256</p>
+            <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-1 group-hover:text-[var(--color-agro-green)] transition-colors">{{ __('¿Cómo funcionan los informes oficiales con firma electrónica?') }}</h3>
+            <p class="text-sm text-gray-500">{{ __('7 tipos certificados con SHA-256') }}</p>
         </div>
         <svg class="w-7 h-7 text-[var(--color-agro-green)] flex-shrink-0 transition-transform mt-1" :class="{ 'rotate-180': openIndexes.includes(1) }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/>
@@ -21,44 +19,42 @@
     </button>
     <div x-show="openIndexes.includes(1)" x-collapse class="px-8 pb-8 pt-2">
         <p class="text-gray-700 leading-relaxed mb-4">
-            Agro365 genera <strong>7 tipos de informes oficiales certificados</strong>: Tratamientos Fitosanitarios, Riegos, Fertilizaciones, Labores Culturales, Cosechas, PAC y Certificaciones Completas.
+            Agro365 genera <strong>{{ __('7 tipos de informes oficiales certificados') }}</strong>: Tratamientos Fitosanitarios, Riegos, Fertilizaciones, Labores Culturales, Cosechas, PAC y Certificaciones Completas.
         </p>
-        <p class="text-gray-700 leading-relaxed mb-3"><strong>Cada informe incluye:</strong></p>
+        <p class="text-gray-700 leading-relaxed mb-3"><strong>{{ __('Cada informe incluye:') }}</strong></p>
         <ul class="space-y-2 text-gray-700 mb-4">
             <li class="flex items-start gap-2">
                 <svg class="w-5 h-5 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                 </svg>
-                <span><strong>Firma electrónica SHA-256</strong> única e inmutable</span>
+                <span><strong>{{ __('Firma electrónica SHA-256') }}</strong> única e inmutable</span>
             </li>
             <li class="flex items-start gap-2">
                 <svg class="w-5 h-5 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                 </svg>
-                <span><strong>Código QR de verificación pública</strong> en cada página</span>
+                <span><strong>{{ __('Código QR de verificación pública') }}</strong> en cada página</span>
             </li>
             <li class="flex items-start gap-2">
                 <svg class="w-5 h-5 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                 </svg>
-                <span><strong>Verificación instantánea</strong> en agro365.es/verify-report/CODIGO</span>
+                <span><strong>{{ __('Verificación instantánea') }}</strong> en agro365.es/verify-report/CODIGO</span>
             </li>
             <li class="flex items-start gap-2">
                 <svg class="w-5 h-5 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                 </svg>
-                <span><strong>Contador de verificaciones</strong> para auditoría completa</span>
+                <span><strong>{{ __('Contador de verificaciones') }}</strong> para auditoría completa</span>
             </li>
             <li class="flex items-start gap-2">
                 <svg class="w-5 h-5 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                 </svg>
-                <span><strong>Invalidación en 30 días</strong> si detectas errores</span>
+                <span><strong>{{ __('Invalidación en 30 días') }}</strong> si detectas errores</span>
             </li>
         </ul>
-        <p class="text-gray-700 leading-relaxed">
-            Los inspectores escanean el QR y validan instantáneamente la autenticidad. También puedes compartir el link público con cooperativas, bodegas o certificadoras.
-        </p>
+        <p class="text-gray-700 leading-relaxed">{{ __('Los inspectores escanean el QR y validan instantáneamente la autenticidad. También puedes compartir el link público con cooperativas, bodegas o certificadoras.') }}</p>
     </div>
 </div>
 
@@ -71,10 +67,8 @@
             </svg>
         </div>
         <div class="flex-1">
-            <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-1 group-hover:text-[var(--color-agro-green)] transition-colors">
-                ¿Qué es SIGPAC y cómo me ayuda Agro365?
-            </h3>
-            <p class="text-sm text-gray-500">Integración completa con códigos oficiales</p>
+            <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-1 group-hover:text-[var(--color-agro-green)] transition-colors">{{ __('¿Qué es SIGPAC y cómo me ayuda Agro365?') }}</h3>
+            <p class="text-sm text-gray-500">{{ __('Integración completa con códigos oficiales') }}</p>
         </div>
         <svg class="w-7 h-7 text-[var(--color-agro-green)] flex-shrink-0 transition-transform mt-1" :class="{ 'rotate-180': openIndexes.includes(2) }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/>
@@ -84,35 +78,35 @@
         <p class="text-gray-700 leading-relaxed mb-3">
             <strong><a href="{{ content_route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a></strong> (Sistema de Información Geográfica de Parcelas Agrícolas) es el sistema oficial del Ministerio que identifica cada parcela con un código único: <code class="bg-gray-100 px-2 py-1 rounded text-sm">PROVINCIA-MUNICIPIO-AGREGADO-ZONA-PARCELA-RECINTO</code>
         </p>
-        <p class="text-gray-700 leading-relaxed mb-3"><strong>Agro365 integra SIGPAC completamente:</strong></p>
+        <p class="text-gray-700 leading-relaxed mb-3"><strong>{{ __('Agro365 integra SIGPAC completamente:') }}</strong></p>
         <ul class="space-y-2 text-gray-700 mb-4">
             <li class="flex items-start gap-2">
                 <svg class="w-5 h-5 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                 </svg>
-                <span>Códigos <strong>multiparcela</strong> (varias subparcelas en una gestión)</span>
+                <span>Códigos <strong>{{ __('multiparcela') }}</strong> (varias subparcelas en una gestión)</span>
             </li>
             <li class="flex items-start gap-2">
                 <svg class="w-5 h-5 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                 </svg>
-                <span><strong>Geometrías GeoJSON</strong> visualizadas en mapa interactivo</span>
+                <span><strong>{{ __('Geometrías GeoJSON') }}</strong> visualizadas en mapa interactivo</span>
             </li>
             <li class="flex items-start gap-2">
                 <svg class="w-5 h-5 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                 </svg>
-                <span>Variedades, <strong>hectáreas exactas</strong> y sistema de conducción por recinto</span>
+                <span>Variedades, <strong>{{ __('hectáreas exactas') }}</strong> y sistema de conducción por recinto</span>
             </li>
             <li class="flex items-start gap-2">
                 <svg class="w-5 h-5 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                 </svg>
-                <span><strong>Asociación automática</strong> de actividades al código SIGPAC correcto</span>
+                <span><strong>{{ __('Asociación automática') }}</strong> de actividades al código SIGPAC correcto</span>
             </li>
         </ul>
         <p class="text-gray-700 leading-relaxed">
-            Cuando registras un tratamiento o riego, Agro365 lo asocia automáticamente al SIGPAC. En inspecciones PAC, presentas informes oficiales con códigos verificables. <strong>Sin errores, sin multas.</strong>
+            Cuando registras un tratamiento o riego, Agro365 lo asocia automáticamente al SIGPAC. En inspecciones PAC, presentas informes oficiales con códigos verificables. <strong>{{ __('Sin errores, sin multas.') }}</strong>
         </p>
     </div>
 </div>
@@ -126,37 +120,35 @@
             </svg>
         </div>
         <div class="flex-1">
-            <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-1 group-hover:text-[var(--color-agro-green)] transition-colors">
-                ¿Puedo gestionar cuadrillas y maquinaria?
-            </h3>
-            <p class="text-sm text-gray-500">Control total de recursos y costos</p>
+            <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-1 group-hover:text-[var(--color-agro-green)] transition-colors">{{ __('¿Puedo gestionar cuadrillas y maquinaria?') }}</h3>
+            <p class="text-sm text-gray-500">{{ __('Control total de recursos y costos') }}</p>
         </div>
         <svg class="w-7 h-7 text-[var(--color-agro-green)] flex-shrink-0 transition-transform mt-1" :class="{ 'rotate-180': openIndexes.includes(3) }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/>
         </svg>
     </button>
     <div x-show="openIndexes.includes(3)" x-collapse class="px-8 pb-8 pt-2">
-        <p class="text-gray-700 leading-relaxed mb-4">¡Absolutamente! Agro365 incluye gestión completa de recursos humanos y materiales:</p>
+        <p class="text-gray-700 leading-relaxed mb-4">{{ __('¡Absolutamente! Agro365 incluye gestión completa de recursos humanos y materiales:') }}</p>
         <div class="mb-4">
-            <h4 class="font-semibold text-[var(--color-agro-green-dark)] mb-2">👥 GESTIÓN DE CUADRILLAS:</h4>
+            <h4 class="font-semibold text-[var(--color-agro-green-dark)] mb-2">{{ __('👥 GESTIÓN DE CUADRILLAS:') }}</h4>
             <ul class="space-y-2 text-gray-700 ml-4">
-                <li class="flex items-start gap-2"><span class="text-[var(--color-agro-green)] font-bold">•</span><span>Registra cuadrillas completas con miembros y roles</span></li>
-                <li class="flex items-start gap-2"><span class="text-[var(--color-agro-green)] font-bold">•</span><span>Asigna personal específico a cada actividad</span></li>
-                <li class="flex items-start gap-2"><span class="text-[var(--color-agro-green)] font-bold">•</span><span>Calcula costos laborales reales por parcela</span></li>
-                <li class="flex items-start gap-2"><span class="text-[var(--color-agro-green)] font-bold">•</span><span>Trazabilidad completa de mano de obra</span></li>
+                <li class="flex items-start gap-2"><span class="text-[var(--color-agro-green)] font-bold">•</span><span>{{ __('Registra cuadrillas completas con miembros y roles') }}</span></li>
+                <li class="flex items-start gap-2"><span class="text-[var(--color-agro-green)] font-bold">•</span><span>{{ __('Asigna personal específico a cada actividad') }}</span></li>
+                <li class="flex items-start gap-2"><span class="text-[var(--color-agro-green)] font-bold">•</span><span>{{ __('Calcula costos laborales reales por parcela') }}</span></li>
+                <li class="flex items-start gap-2"><span class="text-[var(--color-agro-green)] font-bold">•</span><span>{{ __('Trazabilidad completa de mano de obra') }}</span></li>
             </ul>
         </div>
         <div class="mb-3">
-            <h4 class="font-semibold text-[var(--color-agro-green-dark)] mb-2">🚜 CONTROL DE MAQUINARIA:</h4>
+            <h4 class="font-semibold text-[var(--color-agro-green-dark)] mb-2">{{ __('🚜 CONTROL DE MAQUINARIA:') }}</h4>
             <ul class="space-y-2 text-gray-700 ml-4">
-                <li class="flex items-start gap-2"><span class="text-[var(--color-agro-green)] font-bold">•</span><span>Registra tractores, pulverizadores, equipos especializados</span></li>
-                <li class="flex items-start gap-2"><span class="text-[var(--color-agro-green)] font-bold">•</span><span>Asocia maquinaria específica a cada actividad</span></li>
-                <li class="flex items-start gap-2"><span class="text-[var(--color-agro-green)] font-bold">•</span><span>Historial completo de uso por parcela</span></li>
-                <li class="flex items-start gap-2"><span class="text-[var(--color-agro-green)] font-bold">•</span><span>Análisis de costos de maquinaria desglosados</span></li>
+                <li class="flex items-start gap-2"><span class="text-[var(--color-agro-green)] font-bold">•</span><span>{{ __('Registra tractores, pulverizadores, equipos especializados') }}</span></li>
+                <li class="flex items-start gap-2"><span class="text-[var(--color-agro-green)] font-bold">•</span><span>{{ __('Asocia maquinaria específica a cada actividad') }}</span></li>
+                <li class="flex items-start gap-2"><span class="text-[var(--color-agro-green)] font-bold">•</span><span>{{ __('Historial completo de uso por parcela') }}</span></li>
+                <li class="flex items-start gap-2"><span class="text-[var(--color-agro-green)] font-bold">•</span><span>{{ __('Análisis de costos de maquinaria desglosados') }}</span></li>
             </ul>
         </div>
         <p class="text-gray-700 leading-relaxed bg-gray-50 p-3 rounded-lg">
-            <strong>💡 Beneficio:</strong> Sabes EXACTAMENTE cuánto cuesta mantener cada parcela (mano de obra + maquinaria + insumos) para optimizar tu rentabilidad.
+            <strong>{{ __('💡 Beneficio:') }}</strong> Sabes EXACTAMENTE cuánto cuesta mantener cada parcela (mano de obra + maquinaria + insumos) para optimizar tu rentabilidad.
         </p>
     </div>
 </div>
@@ -170,45 +162,43 @@
             </svg>
         </div>
         <div class="flex-1">
-            <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-1 group-hover:text-[var(--color-agro-green)] transition-colors">
-                ¿Puedo comparar rendimientos estimados vs reales?
-            </h3>
-            <p class="text-sm text-gray-500">Sistema completo de análisis de cosechas</p>
+            <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-1 group-hover:text-[var(--color-agro-green)] transition-colors">{{ __('¿Puedo comparar rendimientos estimados vs reales?') }}</h3>
+            <p class="text-sm text-gray-500">{{ __('Sistema completo de análisis de cosechas') }}</p>
         </div>
         <svg class="w-7 h-7 text-[var(--color-agro-green)] flex-shrink-0 transition-transform mt-1" :class="{ 'rotate-180': openIndexes.includes(4) }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/>
         </svg>
     </button>
     <div x-show="openIndexes.includes(4)" x-collapse class="px-8 pb-8 pt-2">
-        <p class="text-gray-700 leading-relaxed mb-3">Sí. Agro365 tiene un <strong>sistema completo de estimación y análisis de cosechas</strong>:</p>
+        <p class="text-gray-700 leading-relaxed mb-3">Sí. Agro365 tiene un <strong>{{ __('sistema completo de estimación y análisis de cosechas') }}</strong>:</p>
         <div class="space-y-3 mb-4">
             <div class="bg-blue-50 p-3 rounded-lg">
-                <h4 class="font-semibold text-blue-900 mb-1">📊 ANTES DE VENDIMIA:</h4>
+                <h4 class="font-semibold text-blue-900 mb-1">{{ __('📊 ANTES DE VENDIMIA:') }}</h4>
                 <ul class="text-sm text-blue-800 ml-4 space-y-1">
-                    <li>• Registra estimaciones de rendimiento por parcela</li>
-                    <li>• Kg/ha esperados por variedad</li>
-                    <li>• Previsión total de cosecha para planificar</li>
+                    <li>{{ __('• Registra estimaciones de rendimiento por parcela') }}</li>
+                    <li>{{ __('• Kg/ha esperados por variedad') }}</li>
+                    <li>{{ __('• Previsión total de cosecha para planificar') }}</li>
                 </ul>
             </div>
             <div class="bg-purple-50 p-3 rounded-lg">
-                <h4 class="font-semibold text-purple-900 mb-1">🍇 DURANTE VENDIMIA:</h4>
+                <h4 class="font-semibold text-purple-900 mb-1">{{ __('🍇 DURANTE VENDIMIA:') }}</h4>
                 <ul class="text-sm text-purple-800 ml-4 space-y-1">
-                    <li>• Registra contenedores individuales (IDs únicos)</li>
-                    <li>• Kg reales por contenedor</li>
-                    <li>• Estados: En campo / En bodega / Vinificado / Facturado</li>
+                    <li>{{ __('• Registra contenedores individuales (IDs únicos)') }}</li>
+                    <li>{{ __('• Kg reales por contenedor') }}</li>
+                    <li>{{ __('• Estados: En campo / En bodega / Vinificado / Facturado') }}</li>
                 </ul>
             </div>
             <div class="bg-green-50 p-3 rounded-lg">
-                <h4 class="font-semibold text-green-900 mb-1">📈 DESPUÉS (ANÁLISIS):</h4>
+                <h4 class="font-semibold text-green-900 mb-1">{{ __('📈 DESPUÉS (ANÁLISIS):') }}</h4>
                 <ul class="text-sm text-green-800 ml-4 space-y-1">
-                    <li>• Compara estimado vs real por parcela</li>
-                    <li>• Identifica parcelas sobre/infra productivas</li>
-                    <li>• Optimiza próxima campaña con datos reales</li>
+                    <li>{{ __('• Compara estimado vs real por parcela') }}</li>
+                    <li>{{ __('• Identifica parcelas sobre/infra productivas') }}</li>
+                    <li>{{ __('• Optimiza próxima campaña con datos reales') }}</li>
                 </ul>
             </div>
         </div>
         <p class="text-gray-700 leading-relaxed bg-amber-50 border-l-4 border-amber-500 p-3 rounded">
-            <strong>Ejemplo:</strong> Estimaste 8,000 kg/ha en Parcela A pero cosechaste solo 6,500 kg/ha. Agro365 te alerta para revisar riego, poda o fertilización en la próxima temporada.
+            <strong>{{ __('Ejemplo:') }}</strong> Estimaste 8,000 kg/ha en Parcela A pero cosechaste solo 6,500 kg/ha. Agro365 te alerta para revisar riego, poda o fertilización en la próxima temporada.
         </p>
     </div>
 </div>
@@ -222,47 +212,43 @@
             </svg>
         </div>
         <div class="flex-1">
-            <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-1 group-hover:text-[var(--color-agro-green)] transition-colors">
-                ¿Cuánto cuesta Agro365 realmente?
-            </h3>
-            <p class="text-sm text-gray-500">Básico gratis · Completo desde 9€/mes</p>
+            <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-1 group-hover:text-[var(--color-agro-green)] transition-colors">{{ __('¿Cuánto cuesta Agro365 realmente?') }}</h3>
+            <p class="text-sm text-gray-500">{{ __('Básico gratis · Completo desde 9€/mes') }}</p>
         </div>
         <svg class="w-7 h-7 text-[var(--color-agro-green)] flex-shrink-0 transition-transform mt-1" :class="{ 'rotate-180': openIndexes.includes(5) }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/>
         </svg>
     </button>
     <div x-show="openIndexes.includes(5)" x-collapse class="px-8 pb-8 pt-2">
-        <p class="text-gray-700 leading-relaxed mb-3">
-            Depende de tu perfil:
-        </p>
+        <p class="text-gray-700 leading-relaxed mb-3">{{ __('Depende de tu perfil:') }}</p>
         <ul class="space-y-2 text-gray-700">
             <li class="flex items-start gap-2">
                 <svg class="w-5 h-5 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                <span><strong>Viticultor básico</strong> (invitado por una bodega): <strong>gratis</strong> — cuaderno de campo básico sin coste.</span>
+                <span><strong>{{ __('Viticultor básico') }}</strong> (invitado por una bodega): <strong>{{ __('gratis') }}</strong> — cuaderno de campo básico sin coste.</span>
             </li>
             <li class="flex items-start gap-2">
                 <svg class="w-5 h-5 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                <span><strong>Viticultor completo</strong> (invitado): <strong>9€/mes</strong> o 85€/año — SIGPAC, teledetección, PAC, facturación.</span>
+                <span><strong>{{ __('Viticultor completo') }}</strong> (invitado): <strong>{{ __('9€/mes') }}</strong> o 85€/año — SIGPAC, teledetección, PAC, facturación.</span>
             </li>
             <li class="flex items-start gap-2">
                 <svg class="w-5 h-5 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                <span><strong>Viticultor independiente</strong> (sin bodega asociada): <strong>14€/mes</strong> o 130€/año — acceso completo.</span>
+                <span><strong>{{ __('Viticultor independiente') }}</strong> (sin bodega asociada): <strong>{{ __('14€/mes') }}</strong> o 130€/año — acceso completo.</span>
             </li>
             <li class="flex items-start gap-2">
                 <svg class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                <span><strong>Bodega dentro de una DO</strong>: <strong>gratis</strong> — cubierta por el plan de la Denominación.</span>
+                <span><strong>{{ __('Bodega dentro de una DO') }}</strong>: <strong>{{ __('gratis') }}</strong> — cubierta por el plan de la Denominación.</span>
             </li>
             <li class="flex items-start gap-2">
                 <svg class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                <span><strong>Bodega independiente</strong>: <strong>14€/mes</strong> o 130€/año.</span>
+                <span><strong>{{ __('Bodega independiente') }}</strong>: <strong>{{ __('14€/mes') }}</strong> o 130€/año.</span>
             </li>
             <li class="flex items-start gap-2">
                 <svg class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                <span><strong>Denominación de Origen</strong>: desde <strong>149€/mes</strong> (hasta 25 bodegas), escala según tamaño.</span>
+                <span><strong>{{ __('Denominación de Origen') }}</strong>: desde <strong>{{ __('149€/mes') }}</strong> (hasta 25 bodegas), escala según tamaño.</span>
             </li>
         </ul>
         <p class="text-gray-700 leading-relaxed mt-3">
-            <strong>Sin tarjeta requerida</strong> para empezar. 3 meses de prueba gratuita para bodegas y DO.
+            <strong>{{ __('Sin tarjeta requerida') }}</strong> para empezar. 3 meses de prueba gratuita para bodegas y DO.
         </p>
     </div>
 </div>
@@ -276,10 +262,8 @@
             </svg>
         </div>
         <div class="flex-1">
-            <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-1 group-hover:text-[var(--color-agro-green)] transition-colors">
-                ¿Puedo usar Agro365 desde el móvil en el viñedo?
-            </h3>
-            <p class="text-sm text-gray-500">100% responsive y optimizado</p>
+            <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-1 group-hover:text-[var(--color-agro-green)] transition-colors">{{ __('¿Puedo usar Agro365 desde el móvil en el viñedo?') }}</h3>
+            <p class="text-sm text-gray-500">{{ __('100% responsive y optimizado') }}</p>
         </div>
         <svg class="w-7 h-7 text-[var(--color-agro-green)] flex-shrink-0 transition-transform mt-1" :class="{ 'rotate-180': openIndexes.includes(6) }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/>
@@ -287,7 +271,7 @@
     </button>
     <div x-show="openIndexes.includes(6)" x-collapse class="px-8 pb-8 pt-2">
         <p class="text-gray-700 leading-relaxed">
-            ¡Por supuesto! Agro365 es una <strong><a href="{{ content_route('content.app-agricultura') }}" class="text-[var(--color-agro-green)] hover:underline">app de agricultura</a></strong> <strong>100% optimizada para móviles y tablets</strong>. Funciona como una aplicación web responsive, por lo que puedes acceder desde cualquier navegador sin necesidad de instalar apps. Registra tratamientos, riegos y actividades directamente desde el viñedo con la cobertura de datos de tu móvil. Diseñado específicamente para funcionar en condiciones reales de campo.
+            ¡Por supuesto! Agro365 es una <strong><a href="{{ content_route('content.app-agricultura') }}" class="text-[var(--color-agro-green)] hover:underline">app de agricultura</a></strong> <strong>{{ __('100% optimizada para móviles y tablets') }}</strong>. Funciona como una aplicación web responsive, por lo que puedes acceder desde cualquier navegador sin necesidad de instalar apps. Registra tratamientos, riegos y actividades directamente desde el viñedo con la cobertura de datos de tu móvil. Diseñado específicamente para funcionar en condiciones reales de campo.
         </p>
     </div>
 </div>
@@ -301,10 +285,8 @@
             </svg>
         </div>
         <div class="flex-1">
-            <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-1 group-hover:text-[var(--color-agro-green)] transition-colors">
-                ¿Mis datos están seguros en Agro365?
-            </h3>
-            <p class="text-sm text-gray-500">RGPD compliant + cifrado bancario</p>
+            <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-1 group-hover:text-[var(--color-agro-green)] transition-colors">{{ __('¿Mis datos están seguros en Agro365?') }}</h3>
+            <p class="text-sm text-gray-500">{{ __('RGPD compliant + cifrado bancario') }}</p>
         </div>
         <svg class="w-7 h-7 text-[var(--color-agro-green)] flex-shrink-0 transition-transform mt-1" :class="{ 'rotate-180': openIndexes.includes(7) }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/>
@@ -312,7 +294,7 @@
     </button>
     <div x-show="openIndexes.includes(7)" x-collapse class="px-8 pb-8 pt-2">
         <p class="text-gray-700 leading-relaxed">
-            Absolutamente. Tus datos están protegidos con <strong>cifrado HTTPS de nivel bancario</strong> y almacenados en servidores seguros europeos. Cumplimos estrictamente con el <strong>RGPD</strong> (Reglamento General de Protección de Datos). Realizamos backups automáticos diarios para que nunca pierdas información. Solo tú tienes acceso a tus datos agrícolas, y nunca los compartimos con terceros. Puedes exportar o eliminar tu información en cualquier momento. Tu privacidad es nuestra prioridad.
+            Absolutamente. Tus datos están protegidos con <strong>{{ __('cifrado HTTPS de nivel bancario') }}</strong> y almacenados en servidores seguros europeos. Cumplimos estrictamente con el <strong>{{ __('RGPD') }}</strong> (Reglamento General de Protección de Datos). Realizamos backups automáticos diarios para que nunca pierdas información. Solo tú tienes acceso a tus datos agrícolas, y nunca los compartimos con terceros. Puedes exportar o eliminar tu información en cualquier momento. Tu privacidad es nuestra prioridad.
         </p>
     </div>
 </div>
@@ -326,10 +308,8 @@
             </svg>
         </div>
         <div class="flex-1">
-            <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-1 group-hover:text-[var(--color-agro-green)] transition-colors">
-                ¿Es obligatorio el cuaderno de campo digital?
-            </h3>
-            <p class="text-sm text-gray-500">Normativa 2023/2027 - Cumplimiento garantizado</p>
+            <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-1 group-hover:text-[var(--color-agro-green)] transition-colors">{{ __('¿Es obligatorio el cuaderno de campo digital?') }}</h3>
+            <p class="text-sm text-gray-500">{{ __('Normativa 2023/2027 - Cumplimiento garantizado') }}</p>
         </div>
         <svg class="w-7 h-7 text-[var(--color-agro-green)] flex-shrink-0 transition-transform mt-1" :class="{ 'rotate-180': openIndexes.includes(8) }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/>
@@ -344,29 +324,29 @@
                 <svg class="w-5 h-5 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                 </svg>
-                <span><strong>Desde 2023:</strong> Obligatorio para explotaciones profesionales</span>
+                <span><strong>{{ __('Desde 2023:') }}</strong> Obligatorio para explotaciones profesionales</span>
             </li>
             <li class="flex items-start gap-2">
                 <svg class="w-5 h-5 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                 </svg>
-                <span><strong>Desde 2027:</strong> DEBE estar digitalizado (normativa europea)</span>
+                <span><strong>{{ __('Desde 2027:') }}</strong> DEBE estar digitalizado (normativa europea)</span>
             </li>
             <li class="flex items-start gap-2">
                 <svg class="w-5 h-5 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                 </svg>
-                <span><strong>Obligatorio registrar:</strong> Tratamientos fitosanitarios, riegos, fertilizaciones, labores culturales</span>
+                <span><strong>{{ __('Obligatorio registrar:') }}</strong> Tratamientos fitosanitarios, riegos, fertilizaciones, labores culturales</span>
             </li>
             <li class="flex items-start gap-2">
                 <svg class="w-5 h-5 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                 </svg>
-                <span><strong>Inspecciones PAC:</strong> Pueden solicitarte el cuaderno en cualquier momento</span>
+                <span><strong>{{ __('Inspecciones PAC:') }}</strong> Pueden solicitarte el cuaderno en cualquier momento</span>
             </li>
         </ul>
         <p class="text-gray-700 leading-relaxed bg-green-50 border-l-4 border-green-500 p-3 rounded">
-            <strong>✅ Agro365 cumple 100%</strong> con todos los requisitos legales y te prepara para la normativa 2027. Evita multas y sanciones PAC con un cuaderno siempre actualizado y conforme.
+            <strong>{{ __('✅ Agro365 cumple 100%') }}</strong> con todos los requisitos legales y te prepara para la normativa 2027. Evita multas y sanciones PAC con un cuaderno siempre actualizado y conforme.
         </p>
     </div>
 </div>

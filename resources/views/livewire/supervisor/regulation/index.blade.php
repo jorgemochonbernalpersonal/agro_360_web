@@ -1,8 +1,8 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="Normativa DO"
-        description="Autorizaciones de plantación, certificaciones ecológicas y documentos regulatorios."
+        title="{{ __('Normativa DO') }}"
+        :description="__('Autorizaciones de plantación, certificaciones ecológicas y documentos regulatorios.')"
     />
 
     {{-- Tabs --}}
@@ -25,31 +25,31 @@
 
         {{-- Stats --}}
         <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
-            <x-agro.stat-card label="Total autorizaciones" :value="$stats['total']" icon="check-circle" color="indigo" />
-            <x-agro.stat-card label="Nueva plantación"    :value="$stats['nueva']"         icon="sparkles"   color="emerald" />
-            <x-agro.stat-card label="Replantación"        :value="$stats['replantacion']"   icon="arrow-path" color="blue" />
-            <x-agro.stat-card label="Conversión"          :value="$stats['conversion']"     icon="arrows-right-left" color="amber" />
-            <x-agro.stat-card label="Transferencia"       :value="$stats['transferencia']"  icon="arrow-right-circle" color="violet" />
+            <x-agro.stat-card :label="__('Total autorizaciones')" :value="$stats['total']" icon="check-circle" color="indigo" />
+            <x-agro.stat-card :label="__('Nueva plantación')"    :value="$stats['nueva']"         icon="sparkles"   color="emerald" />
+            <x-agro.stat-card :label="__('Replantación')"        :value="$stats['replantacion']"   icon="arrow-path" color="blue" />
+            <x-agro.stat-card :label="__('Conversión')"          :value="$stats['conversion']"     icon="arrows-right-left" color="amber" />
+            <x-agro.stat-card :label="__('Transferencia')"       :value="$stats['transferencia']"  icon="arrow-right-circle" color="violet" />
         </div>
 
         {{-- Filters --}}
         <div class="flex flex-wrap items-center gap-3">
             <flux:select wire:model.live="filterVit">
-                <flux:select.option value="">Todos los viticultores</flux:select.option>
+                <flux:select.option value="">{{ __('Todos los viticultores') }}</flux:select.option>
                 @foreach($viticulturists as $v)
                     <flux:select.option value="{{ $v->id }}">{{ $v->name }}</flux:select.option>
                 @endforeach
             </flux:select>
 
             <flux:select wire:model.live="filterRightType">
-                <flux:select.option value="">Todos los tipos de derecho</flux:select.option>
-                <flux:select.option value="nueva">Nueva plantación</flux:select.option>
-                <flux:select.option value="replantacion">Replantación</flux:select.option>
-                <flux:select.option value="conversion">Conversión</flux:select.option>
-                <flux:select.option value="transferencia">Transferencia</flux:select.option>
+                <flux:select.option value="">{{ __('Todos los tipos de derecho') }}</flux:select.option>
+                <flux:select.option value="nueva">{{ __('Nueva plantación') }}</flux:select.option>
+                <flux:select.option value="replantacion">{{ __('Replantación') }}</flux:select.option>
+                <flux:select.option value="conversion">{{ __('Conversión') }}</flux:select.option>
+                <flux:select.option value="transferencia">{{ __('Transferencia') }}</flux:select.option>
             </flux:select>
 
-            <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar autorización o parcela..." />
+            <x-agro.search-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar autorización o parcela...')" />
         </div>
 
         {{-- Skeleton durante carga --}}
@@ -110,21 +110,21 @@
 
                             <div class="flex-1 space-y-4">
                                 <div class="bg-agro-50 rounded-xl p-3">
-                                    <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Nº autorización</p>
+                                    <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">{{ __('Nº autorización') }}</p>
                                     <p class="text-sm font-bold text-agro-700 leading-none font-mono">{{ $planting->planting_authorization }}</p>
                                 </div>
 
                                 <div class="space-y-2 text-sm">
                                     <div class="flex items-center justify-between">
-                                        <span class="text-zinc-400">Variedad</span>
+                                        <span class="text-zinc-400">{{ __('Variedad') }}</span>
                                         <span class="text-zinc-700 font-medium">{{ $planting->grapeVariety?->name ?? '—' }}</span>
                                     </div>
                                     <div class="flex items-center justify-between">
-                                        <span class="text-zinc-400">Fecha autorización</span>
+                                        <span class="text-zinc-400">{{ __('Fecha autorización') }}</span>
                                         <span class="text-zinc-700 font-medium">{{ $planting->authorization_date ? $planting->authorization_date->format('d/m/Y') : '—' }}</span>
                                     </div>
                                     <div class="flex items-center justify-between">
-                                        <span class="text-zinc-400">Arranque</span>
+                                        <span class="text-zinc-400">{{ __('Arranque') }}</span>
                                         <span class="text-zinc-700 font-medium">{{ $planting->uprooting_date ? $planting->uprooting_date->format('d/m/Y') : '—' }}</span>
                                     </div>
                                 </div>
@@ -134,7 +134,7 @@
                 </div>
                 <x-agro-pagination :paginator="$items" />
             @else
-                <x-agro.empty-state icon="document-check" title="Sin autorizaciones" description="No hay plantaciones con autorización registrada." />
+                <x-agro.empty-state icon="document-check" title="{{ __('Sin autorizaciones') }}" :description="__('No hay plantaciones con autorización registrada.')" />
             @endif
         </div>
 
@@ -143,29 +143,29 @@
 
         {{-- Stats --}}
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <x-agro.stat-card label="Total certificaciones" :value="$stats['total']"   icon="check-badge"        color="indigo" />
-            <x-agro.stat-card label="Vigentes"              :value="$stats['active']"  icon="check-circle"       color="emerald" />
-            <x-agro.stat-card label="Por vencer (60 días)"  :value="$stats['expiring']" icon="clock"             color="amber" />
-            <x-agro.stat-card label="Caducadas"             :value="$stats['expired']" icon="exclamation-circle" color="red" />
+            <x-agro.stat-card :label="__('Total certificaciones')" :value="$stats['total']"   icon="check-badge"        color="indigo" />
+            <x-agro.stat-card :label="__('Vigentes')"              :value="$stats['active']"  icon="check-circle"       color="emerald" />
+            <x-agro.stat-card :label="__('Por vencer (60 días)')"  :value="$stats['expiring']" icon="clock"             color="amber" />
+            <x-agro.stat-card :label="__('Caducadas')"             :value="$stats['expired']" icon="exclamation-circle" color="red" />
         </div>
 
         {{-- Filters --}}
         <div class="flex flex-wrap items-center gap-3">
             <flux:select wire:model.live="filterVit">
-                <flux:select.option value="">Todos los viticultores</flux:select.option>
+                <flux:select.option value="">{{ __('Todos los viticultores') }}</flux:select.option>
                 @foreach($viticulturists as $v)
                     <flux:select.option value="{{ $v->id }}">{{ $v->name }}</flux:select.option>
                 @endforeach
             </flux:select>
 
             <flux:select wire:model.live="filterStatus">
-                <flux:select.option value="">Todos los estados</flux:select.option>
-                <flux:select.option value="active">Vigentes</flux:select.option>
-                <flux:select.option value="expiring">Por vencer</flux:select.option>
-                <flux:select.option value="expired">Caducadas</flux:select.option>
+                <flux:select.option value="">{{ __('Todos los estados') }}</flux:select.option>
+                <flux:select.option value="active">{{ __('Vigentes') }}</flux:select.option>
+                <flux:select.option value="expiring">{{ __('Por vencer') }}</flux:select.option>
+                <flux:select.option value="expired">{{ __('Caducadas') }}</flux:select.option>
             </flux:select>
 
-            <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar nº certificado u organismo..." />
+            <x-agro.search-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar nº certificado u organismo...')" />
         </div>
 
         {{-- Skeleton durante carga --}}
@@ -203,24 +203,24 @@
                                     @if($cert->active)
                                         <flux:badge color="{{ $statusColor }}" size="sm">{{ $statusLabel }}</flux:badge>
                                     @else
-                                        <flux:badge color="zinc" size="sm">Inactiva</flux:badge>
+                                        <flux:badge color="zinc" size="sm">{{ __('Inactiva') }}</flux:badge>
                                     @endif
                                 </x-agro.card-item-header>
                             </x-slot:header>
 
                             <div class="flex-1 space-y-4">
                                 <div class="bg-agro-50 rounded-xl p-3">
-                                    <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Nº certificado</p>
+                                    <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">{{ __('Nº certificado') }}</p>
                                     <p class="text-sm font-bold text-agro-700 leading-none font-mono">{{ $cert->certificate_number ?? '—' }}</p>
                                 </div>
 
                                 <div class="space-y-2 text-sm">
                                     <div class="flex items-center justify-between">
-                                        <span class="text-zinc-400">Emisión</span>
+                                        <span class="text-zinc-400">{{ __('Emisión') }}</span>
                                         <span class="text-zinc-700 font-medium">{{ $cert->issue_date ? $cert->issue_date->format('d/m/Y') : '—' }}</span>
                                     </div>
                                     <div class="flex items-center justify-between">
-                                        <span class="text-zinc-400">Caducidad</span>
+                                        <span class="text-zinc-400">{{ __('Caducidad') }}</span>
                                         <span class="{{ $isExpired ? 'text-red-600 font-semibold' : ($isExpiring ? 'text-amber-600 font-semibold' : 'text-zinc-700 font-medium') }}">
                                             {{ $cert->expiry_date ? $cert->expiry_date->format('d/m/Y') : '—' }}
                                         </span>
@@ -232,7 +232,7 @@
                 </div>
                 <x-agro-pagination :paginator="$items" />
             @else
-                <x-agro.empty-state icon="check-badge" title="Sin certificaciones" description="No hay certificaciones ecológicas registradas." />
+                <x-agro.empty-state icon="check-badge" title="{{ __('Sin certificaciones') }}" :description="__('No hay certificaciones ecológicas registradas.')" />
             @endif
         </div>
 
@@ -247,9 +247,9 @@
         {{-- Stats + link to management --}}
         <div class="flex flex-wrap items-center justify-between gap-4">
             <div class="grid grid-cols-3 gap-3 flex-1">
-                <x-agro.stat-card label="Borradores" :value="$stats['draft']"    icon="pencil"       color="zinc" />
-                <x-agro.stat-card label="Vigentes"   :value="$stats['active']"   icon="check-circle" color="emerald" />
-                <x-agro.stat-card label="Archivados" :value="$stats['archived']" icon="archive-box"  color="amber" />
+                <x-agro.stat-card :label="__('Borradores')" :value="$stats['draft']"    icon="pencil"       color="zinc" />
+                <x-agro.stat-card :label="__('Vigentes')"   :value="$stats['active']"   icon="check-circle" color="emerald" />
+                <x-agro.stat-card :label="__('Archivados')" :value="$stats['archived']" icon="archive-box"  color="amber" />
             </div>
             <a href="{{ route('supervisor.documents.index') }}"
                 class="inline-flex items-center gap-1.5 text-sm font-medium text-indigo-600 hover:text-indigo-800 transition shrink-0">
@@ -261,10 +261,10 @@
         {{-- Filter --}}
         <div class="flex items-center gap-3">
             <flux:select wire:model.live="filterStatus">
-                <flux:select.option value="">Todos los estados</flux:select.option>
-                <flux:select.option value="draft">Borradores</flux:select.option>
-                <flux:select.option value="active">Vigentes</flux:select.option>
-                <flux:select.option value="archived">Archivados</flux:select.option>
+                <flux:select.option value="">{{ __('Todos los estados') }}</flux:select.option>
+                <flux:select.option value="draft">{{ __('Borradores') }}</flux:select.option>
+                <flux:select.option value="active">{{ __('Vigentes') }}</flux:select.option>
+                <flux:select.option value="archived">{{ __('Archivados') }}</flux:select.option>
             </flux:select>
         </div>
 
@@ -272,7 +272,7 @@
         @if($items->isEmpty())
             <x-agro.empty-state
                 :icon="$typeIcon"
-                :title="'Sin documentos de ' . $typeLabel"
+                :title="__('Sin documentos de :type', ['type' => $typeLabel])"
                 :description="'Accede a Gestionar documentos para crear el primero.'"
             />
         @else

@@ -51,7 +51,7 @@ class HarvestDeliveryDisputedNotification extends Notification implements Should
 
         return (new MailMessage)
             ->subject('Reclamación de entrega — ' . $viticulturist?->name . ' · ' . $variety)
-            ->greeting('Hola ' . ($notifiable->name ?: ''))
+            ->greeting(__('Hola :name', ['name' => $notifiable->name ?: '']))
             ->line('El viticultor **' . ($viticulturist?->name ?? '—') . '** ha enviado una reclamación sobre una diferencia en la entrega de uva.')
             ->line(new HtmlString(
                 '<div style="background-color:#fefce8;border:1px solid #fde68a;padding:16px;border-radius:8px;margin:16px 0;">
@@ -66,9 +66,9 @@ class HarvestDeliveryDisputedNotification extends Notification implements Should
                     <p style="margin:0;white-space:pre-wrap;">' . nl2br(e($delivery->dispute_note)) . '</p>
                  </div>'
             ))
-            ->action('Ver recepción', $showUrl)
+            ->action(__('Ver recepción'), $showUrl)
             ->line('Por favor, revisa los datos y contacta con el viticultor si es necesario.')
-            ->salutation("Saludos,\nAgro365");
+            ->salutation(__('Saludos,\nAgro365'));
     }
 
     public function toArray(object $notifiable): array

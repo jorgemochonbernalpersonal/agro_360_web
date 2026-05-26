@@ -32,8 +32,8 @@ class Show extends Component
         $clientName = $this->invoice->client->full_name ?? 'Cliente';
         return view('livewire.viticulturist.invoices.show')
             ->layout('layouts.app', [
-                'title' => 'Factura ' . $invoiceNumber . ' - ' . $clientName . ' - Agro365',
-                'description' => 'Detalles de la factura ' . $invoiceNumber . ' para ' . $clientName . '. Items, importes, estado de pago y observaciones.',
+                'title' => __('Factura ') . $invoiceNumber . ' - ' . $clientName . ' - Agro365',
+                'description' => __('Detalles de la factura ') . $invoiceNumber . ' para ' . $clientName . '. Items, importes, estado de pago y observaciones.',
             ]);
     }
 }

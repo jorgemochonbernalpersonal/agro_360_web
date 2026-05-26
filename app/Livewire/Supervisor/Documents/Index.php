@@ -47,7 +47,7 @@ class Index extends Component
         $doc = DoDocument::forSupervisor(Auth::id())->findOrFail($id);
 
         if ($doc->status !== DoDocument::STATUS_DRAFT) {
-            $this->toastError('Solo se pueden editar documentos en borrador.');
+            $this->toastError(__('Solo se pueden editar documentos en borrador.'));
             return;
         }
 
@@ -75,9 +75,9 @@ class Index extends Component
             'formDate'    => ['nullable', 'date'],
             'formContent' => ['nullable', 'string'],
         ], [
-            'formType.required'  => 'Selecciona el tipo de documento.',
-            'formTitle.required' => 'El título es obligatorio.',
-            'formDate.date'      => 'La fecha de entrada en vigor no es válida.',
+            'formType.required'  => __('Selecciona el tipo de documento.'),
+            'formTitle.required' => __('El título es obligatorio.'),
+            'formDate.date'      => __('La fecha de entrada en vigor no es válida.'),
         ]);
 
         $data = [
@@ -93,14 +93,14 @@ class Index extends Component
         if ($this->editingId) {
             $doc = DoDocument::forSupervisor(Auth::id())->findOrFail($this->editingId);
             if ($doc->status !== DoDocument::STATUS_DRAFT) {
-                $this->toastError('Solo se pueden editar documentos en borrador.');
+                $this->toastError(__('Solo se pueden editar documentos en borrador.'));
                 return;
             }
             $doc->update($data);
-            $this->toastSuccess('Documento actualizado.');
+            $this->toastSuccess(__('Documento actualizado.'));
         } else {
             DoDocument::create($data);
-            $this->toastSuccess('Documento creado como borrador.');
+            $this->toastSuccess(__('Documento creado como borrador.'));
         }
 
         $this->showModal  = false;
@@ -114,7 +114,7 @@ class Index extends Component
         $doc = DoDocument::forSupervisor(Auth::id())->findOrFail($id);
 
         if ($doc->status !== DoDocument::STATUS_DRAFT) {
-            $this->toastError('Solo se pueden publicar documentos en borrador.');
+            $this->toastError(__('Solo se pueden publicar documentos en borrador.'));
             return;
         }
 
@@ -125,7 +125,7 @@ class Index extends Component
             ->update(['status' => DoDocument::STATUS_ARCHIVED]);
 
         $doc->update(['status' => DoDocument::STATUS_ACTIVE]);
-        $this->toastSuccess('Documento publicado y visible para los viticultores.');
+        $this->toastSuccess(__('Documento publicado y visible para los viticultores.'));
         $this->activeTab = 'active';
     }
 
@@ -136,12 +136,12 @@ class Index extends Component
         $doc = DoDocument::forSupervisor(Auth::id())->findOrFail($id);
 
         if ($doc->status !== DoDocument::STATUS_ACTIVE) {
-            $this->toastError('Solo se pueden archivar documentos vigentes.');
+            $this->toastError(__('Solo se pueden archivar documentos vigentes.'));
             return;
         }
 
         $doc->update(['status' => DoDocument::STATUS_ARCHIVED]);
-        $this->toastSuccess('Documento archivado.');
+        $this->toastSuccess(__('Documento archivado.'));
         $this->activeTab = 'archived';
     }
 
@@ -152,12 +152,12 @@ class Index extends Component
         $doc = DoDocument::forSupervisor(Auth::id())->findOrFail($id);
 
         if ($doc->status !== DoDocument::STATUS_DRAFT) {
-            $this->toastError('Solo se pueden eliminar documentos en borrador.');
+            $this->toastError(__('Solo se pueden eliminar documentos en borrador.'));
             return;
         }
 
         $doc->delete();
-        $this->toastSuccess('Documento eliminado.');
+        $this->toastSuccess(__('Documento eliminado.'));
     }
 
     // ── Render ────────────────────────────────────────────────────────────────

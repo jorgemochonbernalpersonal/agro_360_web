@@ -47,7 +47,7 @@ abstract class AbstractActivityIndex extends Component
     public function mount(): void
     {
         if (!Auth::user()->can('viewAny', AgriculturalActivity::class)) {
-            abort(403, 'No tienes permiso para ver actividades agrícolas.');
+            abort(403, __('No tienes permiso para ver actividades agrícolas.'));
         }
 
         // Pre-select the active campaign
@@ -86,25 +86,25 @@ abstract class AbstractActivityIndex extends Component
         $activity = AgriculturalActivity::forViticulturist(Auth::id())->findOrFail($activityId);
 
         if (!Auth::user()->can('delete', $activity)) {
-            $this->toastError('No tienes permiso para eliminar esta actividad.');
+            $this->toastError(__('No tienes permiso para eliminar esta actividad.'));
             return;
         }
 
         if ($activity->isLocked()) {
-            $this->toastError('No se puede eliminar una actividad bloqueada. Las actividades se bloquean automáticamente para cumplimiento PAC.');
+            $this->toastError(__('No se puede eliminar una actividad bloqueada. Las actividades se bloquean automáticamente para cumplimiento PAC.'));
             return;
         }
 
         try {
             $activity->delete();
-            $this->toastSuccess('Actividad eliminada correctamente.');
+            $this->toastSuccess(__('Actividad eliminada correctamente.'));
         } catch (\Exception $e) {
             \Log::error('Error al eliminar actividad', [
                 'error'       => $e->getMessage(),
                 'activity_id' => $activityId,
                 'user_id'     => Auth::id(),
             ]);
-            $this->toastError('Error al eliminar la actividad. Por favor, intenta de nuevo.');
+            $this->toastError(__('Error al eliminar la actividad. Por favor, intenta de nuevo.'));
         }
     }
 

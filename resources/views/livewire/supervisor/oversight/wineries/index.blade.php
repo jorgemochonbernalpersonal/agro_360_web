@@ -1,33 +1,31 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="Supervisión — Bodegas"
-        description="Actividad de vendimia y viticultores por bodega adscrita."
+        title="{{ __('Supervisión — Bodegas') }}"
+        :description="__('Actividad de vendimia y viticultores por bodega adscrita.')"
     >
         <x-slot:actions>
-            <flux:button wire:click="openLinkModal" variant="primary" icon="plus">
-                Adscribir bodega
-            </flux:button>
+            <flux:button wire:click="openLinkModal" variant="primary" icon="plus">{{ __('Adscribir bodega') }}</flux:button>
         </x-slot:actions>
     </x-agro.page-header>
 
     {{-- Stats --}}
     <x-agro.stats-section key="oversight-wineries" columns="3">
         <x-agro.stat-card
-            label="Bodegas supervisadas"
+            :label="__('Bodegas supervisadas')"
             :value="$totalWineries"
             icon="building-office-2"
             color="blue"
         />
         <x-agro.stat-card
-            label="Total uva recibida (kg)"
+            :label="__('Total uva recibida (kg)')"
             :value="number_format($harvestStats->sum('total_kg'), 0, ',', '.')"
             icon="scale"
             color="agro"
             :description="'Vendimia ' . $vintage"
         />
         <x-agro.stat-card
-            label="Recepciones de uva"
+            :label="__('Recepciones de uva')"
             :value="$harvestStats->sum('reception_count')"
             icon="inbox"
             color="yellow"
@@ -37,7 +35,7 @@
 
     {{-- Filters --}}
     <div class="flex flex-wrap items-center gap-3">
-        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar bodega..." />
+        <x-agro.search-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar bodega...')" />
 
         @if($availableVintages->isNotEmpty())
             <select
@@ -51,9 +49,7 @@
         @endif
 
         @if($search || $vintageFilter)
-            <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 transition px-2 py-1.5">
-                Limpiar filtros
-            </button>
+            <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 transition px-2 py-1.5">{{ __('Limpiar filtros') }}</button>
         @endif
     </div>
 
@@ -96,19 +92,19 @@
                         {{-- Metric boxes --}}
                         <div class="grid grid-cols-3 gap-2">
                             <div class="bg-emerald-50 rounded-lg p-2 text-center">
-                                <p class="text-[9px] text-emerald-400 uppercase tracking-wide mb-0.5">Viticultores</p>
+                                <p class="text-[9px] text-emerald-400 uppercase tracking-wide mb-0.5">{{ __('Viticultores') }}</p>
                                 <p class="text-sm font-bold text-emerald-700">
                                     {{ $vitCountByWinery[$winery->id] ?? 0 }}
                                 </p>
                             </div>
                             <div class="bg-amber-50 rounded-lg p-2 text-center">
-                                <p class="text-[9px] text-amber-400 uppercase tracking-wide mb-0.5">Recepciones</p>
+                                <p class="text-[9px] text-amber-400 uppercase tracking-wide mb-0.5">{{ __('Recepciones') }}</p>
                                 <p class="text-sm font-bold text-amber-700">
                                     {{ $stats?->reception_count ?? 0 }}
                                 </p>
                             </div>
                             <div class="bg-blue-50 rounded-lg p-2 text-center">
-                                <p class="text-[9px] text-blue-400 uppercase tracking-wide mb-0.5">Uva (kg)</p>
+                                <p class="text-[9px] text-blue-400 uppercase tracking-wide mb-0.5">{{ __('Uva (kg)') }}</p>
                                 <p class="text-sm font-bold text-blue-700">
                                     @if($stats?->total_kg)
                                         {{ number_format($stats->total_kg, 0, ',', '.') }}
@@ -122,15 +118,15 @@
 
                     <x-slot:footer>
                         <div class="flex items-center justify-between">
-                            <x-agro.action-button icon="eye" variant="success" href="{{ route('supervisor.oversight.wineries.show', $winery) }}" wire:navigate title="Ver detalle" />
+                            <x-agro.action-button icon="eye" variant="success" href="{{ route('supervisor.oversight.wineries.show', $winery) }}" wire:navigate title="{{ __('Ver detalle') }}" />
                             <flux:button
                                 wire:click="unlinkWinery({{ $winery->id }})"
-                                wire:confirm="¿Desvincular {{ addslashes($winery->name) }} de la denominación? Se eliminarán también las asignaciones de viticultores DO a esta bodega."
+                                wire:confirm="{{ __('¿Desvincular :name de la denominación? Se eliminarán también las asignaciones de viticultores DO a esta bodega.', ['name' => $winery->name]) }}"
                                 variant="ghost"
                                 size="sm"
                                 icon="x-mark"
                                 class="text-zinc-400 hover:text-red-500"
-                                title="Desvincular"
+                                title="{{ __('Desvincular') }}"
                             />
                         </div>
                     </x-slot:footer>
@@ -142,8 +138,8 @@
     @else
         <x-agro.empty-state
             icon="building-office-2"
-            title="No hay bodegas adscritas"
-            description="No hay bodegas adscritas a esta denominación."
+            title="{{ __('No hay bodegas adscritas') }}"
+            :description="__('No hay bodegas adscritas a esta denominación.')"
         />
     @endif
 
@@ -151,21 +147,21 @@
     <flux:modal wire:model="showLinkModal" class="max-w-lg">
         <div class="space-y-5">
             <div>
-                <flux:heading size="lg">Adscribir bodega a la denominación</flux:heading>
+                <flux:heading size="lg">{{ __('Adscribir bodega a la denominación') }}</flux:heading>
                 <flux:text class="mt-1 text-zinc-500">
                     Busca la bodega por nombre o email y confírmala para incluirla bajo la supervisión de esta DO.
                 </flux:text>
             </div>
 
             <div>
-                <flux:label>Buscar bodega</flux:label>
+                <flux:label>{{ __('Buscar bodega') }}</flux:label>
                 <flux:input
                     wire:model.live.debounce.300ms="linkSearch"
-                    placeholder="Nombre o email de la bodega..."
+                    placeholder="{{ __('Nombre o email de la bodega...') }}"
                     icon="magnifying-glass"
                     autofocus
                 />
-                <p class="mt-1 text-xs text-zinc-400">Introduce al menos 2 caracteres para buscar.</p>
+                <p class="mt-1 text-xs text-zinc-400">{{ __('Introduce al menos 2 caracteres para buscar.') }}</p>
             </div>
 
             @if($linkCandidates->isNotEmpty())
@@ -187,9 +183,7 @@
                     @endforeach
                 </div>
             @elseif(strlen($linkSearch) >= 2)
-                <p class="text-sm text-zinc-400 text-center py-3">
-                    No se encontraron bodegas con ese nombre o email.
-                </p>
+                <p class="text-sm text-zinc-400 text-center py-3">{{ __('No se encontraron bodegas con ese nombre o email.') }}</p>
             @endif
 
             @error('linkWineryId')
@@ -197,14 +191,12 @@
             @enderror
 
             <div class="flex justify-end gap-3 pt-1">
-                <flux:button wire:click="closeLinkModal" variant="ghost">Cancelar</flux:button>
+                <flux:button wire:click="closeLinkModal" variant="ghost">{{ __('Cancelar') }}</flux:button>
                 <flux:button
                     wire:click="linkWinery"
                     variant="primary"
                     :disabled="!$linkWineryId"
-                >
-                    Adscribir bodega
-                </flux:button>
+                >{{ __('Adscribir bodega') }}</flux:button>
             </div>
         </div>
     </flux:modal>

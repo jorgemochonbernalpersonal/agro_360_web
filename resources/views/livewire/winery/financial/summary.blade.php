@@ -1,8 +1,8 @@
 <div class="space-y-6 animate-fade-in">
 
 <x-agro.page-header
-    title="Resumen Económico"
-    description="Vista consolidada de ingresos, gastos y márgenes de tu bodega."
+    title="{{ __('Resumen Económico') }}"
+    :description="__('Vista consolidada de ingresos, gastos y márgenes de tu bodega.')"
     icon="chart-bar-square"
 >
     <x-slot:actions>
@@ -23,7 +23,7 @@
     <x-agro.card class="border-l-4 border-l-green-500">
         <div class="flex items-start justify-between">
             <div>
-                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">Ingresos cobrados</p>
+                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">{{ __('Ingresos cobrados') }}</p>
                 <p class="text-2xl font-bold text-green-600 leading-none mt-1">
                     {{ number_format($totalRevenue, 0, ',', '.') }} €
                 </p>
@@ -46,11 +46,11 @@
     <x-agro.card class="border-l-4 border-l-red-400">
         <div class="flex items-start justify-between">
             <div>
-                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">Gastos de uva</p>
+                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">{{ __('Gastos de uva') }}</p>
                 <p class="text-2xl font-bold text-red-500 leading-none mt-1">
                     {{ number_format($totalGrapeCost, 0, ',', '.') }} €
                 </p>
-                <p class="text-xs text-zinc-400 mt-1">Liquidaciones de vendimia</p>
+                <p class="text-xs text-zinc-400 mt-1">{{ __('Liquidaciones de vendimia') }}</p>
             </div>
             <div class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center shrink-0">
                 <flux:icon icon="arrow-trending-down" class="size-5 text-red-500" />
@@ -69,11 +69,11 @@
     <x-agro.card class="border-l-4 border-l-orange-400">
         <div class="flex items-start justify-between">
             <div>
-                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">Mantenimiento</p>
+                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">{{ __('Mantenimiento') }}</p>
                 <p class="text-2xl font-bold text-orange-500 leading-none mt-1">
                     {{ number_format($maintenanceCost, 0, ',', '.') }} €
                 </p>
-                <p class="text-xs text-zinc-400 mt-1">Contenedores completados</p>
+                <p class="text-xs text-zinc-400 mt-1">{{ __('Contenedores completados') }}</p>
             </div>
             <div class="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center shrink-0">
                 <flux:icon icon="wrench-screwdriver" class="size-5 text-orange-500" />
@@ -85,7 +85,7 @@
     <x-agro.card class="border-l-4 {{ $grossMargin >= 0 ? 'border-l-indigo-500' : 'border-l-red-500' }}">
         <div class="flex items-start justify-between">
             <div>
-                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">Margen bruto</p>
+                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">{{ __('Margen bruto') }}</p>
                 <p class="text-2xl font-bold {{ $grossMargin >= 0 ? 'text-indigo-600' : 'text-red-500' }} leading-none mt-1">
                     {{ number_format($grossMargin, 0, ',', '.') }} €
                 </p>
@@ -101,11 +101,11 @@
     <x-agro.card class="border-l-4 border-l-amber-400">
         <div class="flex items-start justify-between">
             <div>
-                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">Pendiente total</p>
+                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">{{ __('Pendiente total') }}</p>
                 <p class="text-2xl font-bold text-amber-500 leading-none mt-1">
                     {{ number_format($pendingRevenue + $pendingGrapeCost, 0, ',', '.') }} €
                 </p>
-                <p class="text-xs text-zinc-400 mt-1">cobros + pagos pendientes</p>
+                <p class="text-xs text-zinc-400 mt-1">{{ __('cobros + pagos pendientes') }}</p>
             </div>
             <div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center shrink-0">
                 <flux:icon icon="clock" class="size-5 text-amber-500" />
@@ -157,14 +157,14 @@
                 <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
                     <flux:icon icon="users" class="size-4 text-blue-600" />
                 </div>
-                <span class="font-semibold text-zinc-900">Top clientes</span>
+                <span class="font-semibold text-zinc-900">{{ __('Top clientes') }}</span>
             </div>
         </x-slot:header>
 
         @if($topClients->isEmpty())
             <div class="py-6 text-center">
                 <flux:icon icon="users" class="size-8 text-zinc-200 mx-auto mb-2" />
-                <p class="text-sm text-zinc-400">Sin facturas cobradas</p>
+                <p class="text-sm text-zinc-400">{{ __('Sin facturas cobradas') }}</p>
             </div>
         @else
             @php $maxClient = $topClients->max('total') ?: 1; @endphp
@@ -203,26 +203,26 @@
                 <div class="w-8 h-8 rounded-lg bg-violet-50 flex items-center justify-center">
                     <flux:icon icon="beaker" class="size-4 text-violet-600" />
                 </div>
-                <span class="font-semibold text-zinc-900">Vinos en bodega</span>
+                <span class="font-semibold text-zinc-900">{{ __('Vinos en bodega') }}</span>
             </div>
         </x-slot:header>
 
         <div class="grid grid-cols-4 gap-4 mt-2">
             <div class="text-center">
                 <p class="text-2xl font-bold text-zinc-900">{{ $wineStats['total'] }}</p>
-                <p class="text-xs text-zinc-400 mt-0.5">Total</p>
+                <p class="text-xs text-zinc-400 mt-0.5">{{ __('Total') }}</p>
             </div>
             <div class="text-center">
                 <p class="text-2xl font-bold text-amber-500">{{ $wineStats['in_progress'] }}</p>
-                <p class="text-xs text-zinc-400 mt-0.5">En elaboración</p>
+                <p class="text-xs text-zinc-400 mt-0.5">{{ __('En elaboración') }}</p>
             </div>
             <div class="text-center">
                 <p class="text-2xl font-bold text-blue-500">{{ $wineStats['bottled'] }}</p>
-                <p class="text-xs text-zinc-400 mt-0.5">Embotellado</p>
+                <p class="text-xs text-zinc-400 mt-0.5">{{ __('Embotellado') }}</p>
             </div>
             <div class="text-center">
                 <p class="text-2xl font-bold text-green-500">{{ $wineStats['sold'] }}</p>
-                <p class="text-xs text-zinc-400 mt-0.5">Vendido</p>
+                <p class="text-xs text-zinc-400 mt-0.5">{{ __('Vendido') }}</p>
             </div>
         </div>
 
@@ -256,7 +256,7 @@
                 <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
                     <flux:icon icon="server-stack" class="size-4 text-blue-600" />
                 </div>
-                <span class="font-semibold text-zinc-900">Capacidad de depósitos</span>
+                <span class="font-semibold text-zinc-900">{{ __('Capacidad de depósitos') }}</span>
             </div>
         </x-slot:header>
 
@@ -287,13 +287,13 @@
             <div class="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-zinc-100">
                 <div class="text-center">
                     <p class="text-xl font-bold text-zinc-900">{{ $containerStats['total'] }}</p>
-                    <p class="text-xs text-zinc-400">depósitos activos</p>
+                    <p class="text-xs text-zinc-400">{{ __('depósitos activos') }}</p>
                 </div>
                 <div class="text-center">
                     <p class="text-xl font-bold text-zinc-900">
                         {{ number_format($containerStats['total_capacity'] - $containerStats['used_capacity'], 0, ',', '.') }} L
                     </p>
-                    <p class="text-xs text-zinc-400">capacidad libre</p>
+                    <p class="text-xs text-zinc-400">{{ __('capacidad libre') }}</p>
                 </div>
             </div>
         </div>
@@ -309,8 +309,8 @@
             <flux:icon icon="arrow-up-tray" class="size-5 text-green-600" />
         </div>
         <div>
-            <p class="text-sm font-semibold text-zinc-900">Venta de productos</p>
-            <p class="text-xs text-zinc-400">Facturas de vino</p>
+            <p class="text-sm font-semibold text-zinc-900">{{ __('Venta de productos') }}</p>
+            <p class="text-xs text-zinc-400">{{ __('Facturas de vino') }}</p>
         </div>
     </a>
 
@@ -320,8 +320,8 @@
             <flux:icon icon="arrow-down-tray" class="size-5 text-agro-600" />
         </div>
         <div>
-            <p class="text-sm font-semibold text-zinc-900">Compra de uva</p>
-            <p class="text-xs text-zinc-400">Liquidaciones</p>
+            <p class="text-sm font-semibold text-zinc-900">{{ __('Compra de uva') }}</p>
+            <p class="text-xs text-zinc-400">{{ __('Liquidaciones') }}</p>
         </div>
     </a>
 
@@ -331,8 +331,8 @@
             <flux:icon icon="users" class="size-5 text-blue-600" />
         </div>
         <div>
-            <p class="text-sm font-semibold text-zinc-900">Clientes</p>
-            <p class="text-xs text-zinc-400">Gestión de clientes</p>
+            <p class="text-sm font-semibold text-zinc-900">{{ __('Clientes') }}</p>
+            <p class="text-xs text-zinc-400">{{ __('Gestión de clientes') }}</p>
         </div>
     </a>
 
@@ -342,8 +342,8 @@
             <flux:icon icon="presentation-chart-line" class="size-5 text-indigo-600" />
         </div>
         <div>
-            <p class="text-sm font-semibold text-zinc-900">Estadísticas</p>
-            <p class="text-xs text-zinc-400">KPIs y tendencias</p>
+            <p class="text-sm font-semibold text-zinc-900">{{ __('Estadísticas') }}</p>
+            <p class="text-xs text-zinc-400">{{ __('KPIs y tendencias') }}</p>
         </div>
     </a>
 </div>

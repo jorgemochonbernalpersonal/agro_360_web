@@ -153,7 +153,7 @@ class Create extends Component
             return;
         }
 
-        $this->toastSuccess('Sesión de etiquetado registrada.');
+        $this->toastSuccess(__('Sesión de etiquetado registrada.'));
         $this->roleRedirect('labeling.index');
     }
 

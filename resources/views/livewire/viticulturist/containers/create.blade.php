@@ -15,7 +15,7 @@
 
                 <flux:field>
                     <flux:label>{{ __('Número de Serie') }}</flux:label>
-                    <flux:input wire:model="serial_number" type="text" id="serial_number" placeholder="Ej: BR-2024-001" />
+                    <flux:input wire:model="serial_number" type="text" id="serial_number" :placeholder="__('Ej: BR-2024-001')" />
                     <flux:error name="serial_number" />
                 </flux:field>
 
@@ -62,7 +62,7 @@
                 @if(in_array($material_id, [1, 2, 3]))
                     <flux:field>
                         <flux:label>{{ __('Tipo de Roble') }}</flux:label>
-                        <flux:input wire:model="oak_type" type="text" id="oak_type" placeholder="Ej: Quercus Petraea" />
+                        <flux:input wire:model="oak_type" type="text" id="oak_type" :placeholder="__('Ej: Quercus Petraea')" />
                         <flux:error name="oak_type" />
                     </flux:field>
 

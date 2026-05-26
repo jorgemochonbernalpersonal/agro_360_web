@@ -65,7 +65,7 @@ class Create extends Component
             'active'              => true,
         ]);
 
-        $this->toastSuccess('Insumo añadido al almacén.');
+        $this->toastSuccess(__('Insumo añadido al almacén.'));
 
         return $this->viticulturistRoleRedirect('warehouse.index', ['tab' => 'insumos']);
     }
@@ -80,6 +80,6 @@ class Create extends Component
                 ->where('active', true)
                 ->orderBy('name')
                 ->get(),
-        ])->layout('layouts.app', ['title' => 'Nuevo Insumo - Agro365']);
+        ])->layout('layouts.app', ['title' => __('Nuevo Insumo - Agro365')]);
     }
 }

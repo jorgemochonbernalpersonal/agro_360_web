@@ -2,8 +2,8 @@
 
     {{-- Header --}}
     <x-agro.page-header
-        title="Registros Sanitarios"
-        description="Gestión de registros RGSEAA, RESA, RPO y otros registros sanitarios oficiales"
+        title="{{ __('Registros Sanitarios') }}"
+        :description="__('Gestión de registros RGSEAA, RESA, RPO y otros registros sanitarios oficiales')"
         icon="shield-check"
     >
         <x-slot:actions>
@@ -16,25 +16,25 @@
     {{-- KPIs --}}
     <x-agro.stats-section key="sanitary-registrations">
         <x-agro.stat-card
-            label="Total registros"
+            :label="__('Total registros')"
             :value="$stats['total']"
             icon="shield-check"
             color="zinc"
         />
         <x-agro.stat-card
-            label="Activos"
+            :label="__('Activos')"
             :value="$stats['active']"
             icon="check-circle"
             color="agro"
         />
         <x-agro.stat-card
-            label="Próximos a vencer"
+            :label="__('Próximos a vencer')"
             :value="$stats['expiring']"
             icon="clock"
             color="amber"
         />
         <x-agro.stat-card
-            label="Caducados"
+            :label="__('Caducados')"
             :value="$stats['expired']"
             icon="x-circle"
             color="zinc"
@@ -43,26 +43,24 @@
 
     {{-- Toolbar --}}
     <div class="flex items-center gap-3">
-        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar por número, descripción..." />
+        <x-agro.search-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar por número, descripción...')" />
 
         <flux:select wire:model.live="typeFilter" class="w-44">
-            <flux:select.option value="">Todos los tipos</flux:select.option>
+            <flux:select.option value="">{{ __('Todos los tipos') }}</flux:select.option>
             @foreach($types as $key => $label)
                 <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
             @endforeach
         </flux:select>
 
         <flux:select wire:model.live="statusFilter" class="w-40">
-            <flux:select.option value="">Todos los estados</flux:select.option>
+            <flux:select.option value="">{{ __('Todos los estados') }}</flux:select.option>
             @foreach($statuses as $key => $label)
                 <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
             @endforeach
         </flux:select>
 
         @if($search || $typeFilter || $statusFilter)
-            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">
-                Limpiar
-            </flux:button>
+            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">{{ __('Limpiar') }}</flux:button>
         @endif
     </div>
 
@@ -127,7 +125,7 @@
                                         <flux:icon icon="clock" class="size-3.5 {{ $registration->isExpiringSoon() ? 'text-amber-500' : 'text-zinc-400' }}" />
                                         <span>Renovación: {{ $registration->renewal_date->format('d/m/Y') }}</span>
                                         @if($registration->isExpiringSoon())
-                                            <flux:badge color="amber" size="sm">Próximo</flux:badge>
+                                            <flux:badge color="amber" size="sm">{{ __('Próximo') }}</flux:badge>
                                         @endif
                                     </div>
                                 @endif
@@ -136,8 +134,8 @@
 
                         <x-slot:footer>
                             <div class="flex items-center justify-end gap-0.5">
-                                <x-agro.action-button variant="edit" href="{{ roleRoute('sanitary-registrations.edit', $registration) }}" wire:navigate title="Editar registro" />
-                                <x-agro.action-button variant="delete" wire:click="delete({{ $registration->id }})" wire:confirm="¿Eliminar este registro sanitario?" wire:loading.attr="disabled" title="Eliminar registro" />
+                                <x-agro.action-button variant="edit" href="{{ roleRoute('sanitary-registrations.edit', $registration) }}" wire:navigate title="{{ __('Editar registro') }}" />
+                                <x-agro.action-button variant="delete" wire:click="delete({{ $registration->id }})" wire:confirm="{{ __('¿Eliminar este registro sanitario?') }}" wire:loading.attr="disabled" title="{{ __('Eliminar registro') }}" />
                             </div>
                         </x-slot:footer>
                     </x-agro.card>
@@ -153,7 +151,7 @@
             >
                 @if($search || $typeFilter || $statusFilter)
                     <x-slot:action>
-                        <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
+                        <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">{{ __('Limpiar filtros') }}</flux:button>
                     </x-slot:action>
                 @else
                     <x-slot:action>

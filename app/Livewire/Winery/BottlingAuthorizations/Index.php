@@ -31,7 +31,7 @@ class Index extends AbstractIndex
     {
         $authorization = BottlingAuthorization::where('user_id', $this->wineryId())->findOrFail($id);
         $authorization->delete();
-        $this->toastSuccess('Autorización de embotellado eliminada.');
+        $this->toastSuccess(__('Autorización de embotellado eliminada.'));
     }
 
     protected function baseQuery(): Builder

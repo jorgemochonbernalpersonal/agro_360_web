@@ -21,8 +21,8 @@
         @click.stop="open = !open"
         class="inline-flex items-center justify-center rounded-full bg-zinc-100 hover:bg-blue-100 text-zinc-400 hover:text-blue-600 transition-colors focus:outline-none
                {{ $size === 'xs' ? 'w-4 h-4 text-[10px]' : 'w-5 h-5 text-xs' }}"
-        title="Más información"
-        aria-label="Ayuda"
+        title="{{ __('Más información') }}"
+        aria-:label="__('Ayuda')"
     >
         ?
     </button>

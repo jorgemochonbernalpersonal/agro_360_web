@@ -1,7 +1,7 @@
 <div class="space-y-6 animate-fade-in">
     <x-agro.page-header
         title="{{ $viticulturist->name }}"
-        description="Perfil del viticultor vinculado a tu bodega"
+        :description="__('Perfil del viticultor vinculado a tu bodega')"
     >
         <x-slot:actions>
             <flux:button href="{{ roleRoute('viticulturists.index') }}" variant="ghost" icon="arrow-left">
@@ -25,22 +25,22 @@
     {{-- Stats --}}
     <div class="grid grid-cols-2 gap-4">
         <x-agro.stat-card
-            label="Parcelas"
+            :label="__('Parcelas')"
             :value="$plots->count()"
             icon="map"
         />
         <x-agro.stat-card
-            label="Hectáreas totales"
+            :label="__('Hectáreas totales')"
             :value="number_format($totalHa, 2) . ' ha'"
             icon="chart-bar"
         />
         <x-agro.stat-card
-            label="Plantaciones"
+            :label="__('Plantaciones')"
             :value="$totalPlantings"
             icon="sparkles"
         />
         <x-agro.stat-card
-            label="Límite kg total"
+            :label="__('Límite kg total')"
             :value="$totalKgLimit > 0 ? number_format($totalKgLimit, 0) . ' kg' : '—'"
             icon="scale"
         />
@@ -53,34 +53,34 @@
                 <div class="p-1.5 rounded-lg bg-agro-50">
                     <flux:icon icon="user" class="size-4 text-agro-600" />
                 </div>
-                <span class="font-semibold text-zinc-900 text-sm">Datos del Viticultor</span>
+                <span class="font-semibold text-zinc-900 text-sm">{{ __('Datos del Viticultor') }}</span>
             </div>
         </x-slot:header>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-                <p class="text-sm text-zinc-500">Nombre</p>
+                <p class="text-sm text-zinc-500">{{ __('Nombre') }}</p>
                 <p class="font-semibold text-zinc-900">{{ $viticulturist->name }}</p>
             </div>
             @if($viticulturist->email && !str_starts_with($viticulturist->email, 'viticultores.'))
                 <div>
-                    <p class="text-sm text-zinc-500">Email</p>
+                    <p class="text-sm text-zinc-500">{{ __('Email') }}</p>
                     <p class="font-semibold text-zinc-900">{{ $viticulturist->email }}</p>
                 </div>
             @endif
             @if($viticulturist->dni)
                 <div>
-                    <p class="text-sm text-zinc-500">DNI</p>
+                    <p class="text-sm text-zinc-500">{{ __('DNI') }}</p>
                     <p class="font-semibold text-zinc-900">{{ mask_nif($viticulturist->dni) }}</p>
                 </div>
             @endif
             @if($viticulturist->profile?->phone)
                 <div>
-                    <p class="text-sm text-zinc-500">Teléfono</p>
+                    <p class="text-sm text-zinc-500">{{ __('Teléfono') }}</p>
                     <p class="font-semibold text-zinc-900">{{ $viticulturist->profile->phone }}</p>
                 </div>
             @endif
             <div>
-                <p class="text-sm text-zinc-500">Origen</p>
+                <p class="text-sm text-zinc-500">{{ __('Origen') }}</p>
                 @php
                     $sourceLabels = [
                         'own'          => ['label' => 'Ghost propio',   'color' => 'blue'],
@@ -93,7 +93,7 @@
                 <flux:badge :color="$src['color']" size="sm">{{ $src['label'] }}</flux:badge>
             </div>
             <div>
-                <p class="text-sm text-zinc-500">Acceso al sistema</p>
+                <p class="text-sm text-zinc-500">{{ __('Acceso al sistema') }}</p>
                 <flux:badge
                     :color="$viticulturist->can_login ? 'green' : null"
                     :icon="$viticulturist->can_login ? 'check' : 'x-mark'"
@@ -116,20 +116,20 @@
                             />
                             <div>
                                 @if($viticulturist->invitation_token)
-                                    <p class="text-sm font-medium text-amber-800">Invitación pendiente de aceptar</p>
+                                    <p class="text-sm font-medium text-amber-800">{{ __('Invitación pendiente de aceptar') }}</p>
                                     <p class="text-xs text-amber-600">
                                         Enviada el {{ $viticulturist->invitation_sent_at?->format('d/m/Y H:i') ?? '—' }}
                                         a {{ $hasRealEmail ? $viticulturist->email : '—' }}
                                         @if($viticulturist->invitation_expires_at)
                                             · Caduca el {{ $viticulturist->invitation_expires_at->format('d/m/Y') }}
                                             @if($viticulturist->invitation_expires_at->isPast())
-                                                <span class="text-red-600 font-medium">(Caducada)</span>
+                                                <span class="text-red-600 font-medium">{{ __('(Caducada)') }}</span>
                                             @endif
                                         @endif
                                     </p>
                                 @else
-                                    <p class="text-sm font-medium text-zinc-700">Sin acceso al sistema</p>
-                                    <p class="text-xs text-zinc-500">Invítale para que pueda usar el cuaderno de campo digital.</p>
+                                    <p class="text-sm font-medium text-zinc-700">{{ __('Sin acceso al sistema') }}</p>
+                                    <p class="text-xs text-zinc-500">{{ __('Invítale para que pueda usar el cuaderno de campo digital.') }}</p>
                                 @endif
                             </div>
                         </div>
@@ -142,16 +142,14 @@
                                     variant="ghost"
                                     icon="arrow-path"
                                     wire:click="$set('showEmailField', true)"
-                                >
-                                    Reenviar
-                                </flux:button>
+                                >{{ __('Reenviar') }}</flux:button>
                                 {{-- Revocar --}}
                                 <flux:button
                                     size="sm"
                                     variant="ghost"
                                     icon="x-mark"
                                     wire:click="revokeInvitation"
-                                    wire:confirm="¿Revocar la invitación? El enlace actual quedará inválido."
+                                    wire:confirm="{{ __('¿Revocar la invitación? El enlace actual quedará inválido.') }}"
                                 >
                                     Revocar
                                 </flux:button>
@@ -161,9 +159,7 @@
                                     variant="primary"
                                     icon="paper-airplane"
                                     wire:click="$set('showEmailField', true)"
-                                >
-                                    Enviar invitación
-                                </flux:button>
+                                >{{ __('Enviar invitación') }}</flux:button>
                             @endif
                         </div>
                     </div>
@@ -173,7 +169,7 @@
                         <div class="mt-3 pt-3 border-t {{ $viticulturist->invitation_token ? 'border-amber-200' : 'border-zinc-200' }}">
                             <div class="flex items-end gap-3">
                                 <flux:field class="flex-1">
-                                    <flux:label>Email del viticultor</flux:label>
+                                    <flux:label>{{ __('Email del viticultor') }}</flux:label>
                                     <flux:input
                                         wire:model="inviteEmail"
                                         type="email"
@@ -187,15 +183,11 @@
                                     icon="paper-airplane"
                                     wire:click="sendInvitation"
                                     wire:loading.attr="disabled"
-                                >
-                                    Enviar
-                                </flux:button>
+                                >{{ __('Enviar') }}</flux:button>
                                 <flux:button
                                     variant="ghost"
                                     wire:click="$set('showEmailField', false)"
-                                >
-                                    Cancelar
-                                </flux:button>
+                                >{{ __('Cancelar') }}</flux:button>
                             </div>
                         </div>
                     @endif
@@ -225,7 +217,7 @@
                 <div class="p-1.5 rounded-lg bg-purple-50">
                     <flux:icon icon="book-open" class="size-4 text-purple-600" />
                 </div>
-                <span class="font-semibold text-zinc-900 text-sm">Cuaderno de campo digital</span>
+                <span class="font-semibold text-zinc-900 text-sm">{{ __('Cuaderno de campo digital') }}</span>
             </div>
         </x-slot:header>
 
@@ -236,7 +228,7 @@
                         <flux:icon icon="check-circle" class="size-5 text-green-600" />
                     </div>
                     <div>
-                        <p class="text-sm font-medium text-zinc-900">Acceso concedido</p>
+                        <p class="text-sm font-medium text-zinc-900">{{ __('Acceso concedido') }}</p>
                         <p class="text-xs text-zinc-400">
                             Desde {{ $relation->notebook_granted_at?->format('d/m/Y') ?? '—' }}
                             · Puedes ver las actividades del viticultor en el cuaderno de campo.
@@ -247,7 +239,7 @@
                         <flux:icon icon="clock" class="size-5 text-amber-500" />
                     </div>
                     <div>
-                        <p class="text-sm font-medium text-amber-800">Solicitud pendiente</p>
+                        <p class="text-sm font-medium text-amber-800">{{ __('Solicitud pendiente') }}</p>
                         <p class="text-xs text-zinc-400">
                             Enviada el {{ $accessRequest->requested_at->format('d/m/Y') }}
                             · Esperando que el viticultor apruebe el acceso.
@@ -258,7 +250,7 @@
                         <flux:icon icon="x-circle" class="size-5 text-red-400" />
                     </div>
                     <div>
-                        <p class="text-sm font-medium text-zinc-700">Solicitud rechazada</p>
+                        <p class="text-sm font-medium text-zinc-700">{{ __('Solicitud rechazada') }}</p>
                         <p class="text-xs text-zinc-400">
                             El viticultor no concedió el acceso.
                             @if($accessRequest->responded_at)
@@ -271,7 +263,7 @@
                         <flux:icon icon="lock-closed" class="size-5 text-zinc-400" />
                     </div>
                     <div>
-                        <p class="text-sm font-medium text-zinc-700">Sin acceso al cuaderno</p>
+                        <p class="text-sm font-medium text-zinc-700">{{ __('Sin acceso al cuaderno') }}</p>
                         <p class="text-xs text-zinc-400">
                             El viticultor no ha concedido acceso a sus actividades de campo.
                             @if($relation->notebook_revoked_at)
@@ -292,7 +284,7 @@
                         variant="ghost"
                         icon="x-mark"
                         wire:click="cancelAccessRequest"
-                        wire:confirm="¿Cancelar la solicitud de acceso al cuaderno?"
+                        wire:confirm="{{ __('¿Cancelar la solicitud de acceso al cuaderno?') }}"
                     >
                         Cancelar solicitud
                     </flux:button>
@@ -335,12 +327,12 @@
                 <div class="p-1.5 rounded-lg bg-agro-50">
                     <flux:icon icon="map" class="size-4 text-agro-600" />
                 </div>
-                <span class="font-semibold text-zinc-900 text-sm">Parcelas y Plantaciones</span>
+                <span class="font-semibold text-zinc-900 text-sm">{{ __('Parcelas y Plantaciones') }}</span>
             </div>
         </x-slot:header>
 
         @if($plots->isEmpty())
-            <p class="text-sm text-zinc-400 py-4 text-center">Este viticultor no tiene parcelas registradas.</p>
+            <p class="text-sm text-zinc-400 py-4 text-center">{{ __('Este viticultor no tiene parcelas registradas.') }}</p>
         @else
             <div class="space-y-6">
                 @foreach($plots as $plot)
@@ -370,7 +362,7 @@
                         @if($plot->plantings->isNotEmpty())
                             <x-agro.data-table
                                 :headers="['Variedad', 'Ha plantadas', 'Año', 'Límite kg/ha', 'Estado']"
-                                empty-message="Sin plantaciones"
+                                empty-:message="__('Sin plantaciones')"
                             >
                                 @foreach($plot->plantings as $planting)
                                     <x-agro.table-row>
@@ -405,7 +397,7 @@
                                 @endforeach
                             </x-agro.data-table>
                         @else
-                            <p class="px-4 py-3 text-sm text-zinc-400">Sin plantaciones registradas.</p>
+                            <p class="px-4 py-3 text-sm text-zinc-400">{{ __('Sin plantaciones registradas.') }}</p>
                         @endif
                     </div>
                 @endforeach

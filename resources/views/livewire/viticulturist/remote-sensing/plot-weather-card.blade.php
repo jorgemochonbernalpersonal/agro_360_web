@@ -37,7 +37,7 @@
             <div class="bg-gradient-to-br from-orange-50 to-red-50 rounded-lg p-4 border border-orange-200">
                 <div class="flex items-center justify-between mb-2">
                     <span class="text-sm font-semibold text-zinc-600">{{ __('Temperatura') }}</span>
-                    <span class="text-xl">🌡️</span>
+                    <span class="text-xl">{{ __('🌡️') }}</span>
                 </div>
                 <div class="text-2xl font-bold text-orange-600">
                     {{ $weather['temperature'] ?? '--' }}°C
@@ -65,7 +65,7 @@
             <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-lg p-4 border border-indigo-200">
                 <div class="flex items-center justify-between mb-2">
                     <span class="text-sm font-semibold text-zinc-600">{{ __('Precipitación') }}</span>
-                    <span class="text-xl">🌧️</span>
+                    <span class="text-xl">{{ __('🌧️') }}</span>
                 </div>
                 <div class="text-2xl font-bold text-indigo-600">
                     {{ $weather['precipitation'] ?? 0 }} mm

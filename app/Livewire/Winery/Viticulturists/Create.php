@@ -31,9 +31,9 @@ class Create extends AbstractCreate
     protected function messages(): array
     {
         return [
-            'name.required'  => 'El nombre es obligatorio.',
-            'dni.unique'     => 'Ya existe un usuario con este DNI.',
-            'email.unique'   => 'Ya existe un usuario con este email.',
+            'name.required'  => __('El nombre es obligatorio.'),
+            'dni.unique'     => __('Ya existe un usuario con este DNI.'),
+            'email.unique'   => __('Ya existe un usuario con este email.'),
         ];
     }
 

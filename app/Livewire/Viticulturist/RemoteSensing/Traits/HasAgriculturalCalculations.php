@@ -43,10 +43,10 @@ trait HasAgriculturalCalculations
         $stressIndex = ($et0 * 10) - $moisture;
 
         return match (true) {
-            $stressIndex <= 0  => ['emoji' => '💧', 'text' => 'Óptimo',   'color' => 'text-green-600',  'bg' => 'bg-green-100'],
-            $stressIndex <= 20 => ['emoji' => '💦', 'text' => 'Leve',     'color' => 'text-yellow-600', 'bg' => 'bg-yellow-100'],
-            $stressIndex <= 40 => ['emoji' => '🏜️', 'text' => 'Moderado', 'color' => 'text-orange-600', 'bg' => 'bg-orange-100'],
-            default            => ['emoji' => '⚠️', 'text' => 'Severo',   'color' => 'text-red-600',    'bg' => 'bg-red-100'],
+            $stressIndex <= 0  => ['emoji' => '💧', 'text' => __('Óptimo'),   'color' => 'text-green-600',  'bg' => 'bg-green-100'],
+            $stressIndex <= 20 => ['emoji' => '💦', 'text' => __('Leve'),     'color' => 'text-yellow-600', 'bg' => 'bg-yellow-100'],
+            $stressIndex <= 40 => ['emoji' => '🏜️', 'text' => __('Moderado'), 'color' => 'text-orange-600', 'bg' => 'bg-orange-100'],
+            default            => ['emoji' => '⚠️', 'text' => __('Severo'),   'color' => 'text-red-600',    'bg' => 'bg-red-100'],
         };
     }
 
@@ -75,10 +75,10 @@ trait HasAgriculturalCalculations
         $litersPerHa     = round($irrigationNeed * 10000);
 
         $recommendation = match (true) {
-            $irrigationNeed <= 0  => ['text' => 'No regar',       'color' => 'text-green-600',  'bg' => 'bg-green-100'],
-            $irrigationNeed <= 10 => ['text' => 'Riego ligero',   'color' => 'text-yellow-600', 'bg' => 'bg-yellow-100'],
-            $irrigationNeed <= 25 => ['text' => 'Riego moderado', 'color' => 'text-orange-600', 'bg' => 'bg-orange-100'],
-            default               => ['text' => 'Riego urgente',  'color' => 'text-red-600',    'bg' => 'bg-red-100'],
+            $irrigationNeed <= 0  => ['text' => __('No regar'),       'color' => 'text-green-600',  'bg' => 'bg-green-100'],
+            $irrigationNeed <= 10 => ['text' => __('Riego ligero'),   'color' => 'text-yellow-600', 'bg' => 'bg-yellow-100'],
+            $irrigationNeed <= 25 => ['text' => __('Riego moderado'), 'color' => 'text-orange-600', 'bg' => 'bg-orange-100'],
+            default               => ['text' => __('Riego urgente'),  'color' => 'text-red-600',    'bg' => 'bg-red-100'],
         };
 
         return [
@@ -122,12 +122,12 @@ trait HasAgriculturalCalculations
         $accumulatedGDD = round($gddToday * max(1, $daysSinceStart * 0.7));
 
         $stage = match (true) {
-            $accumulatedGDD < 100  => ['name' => 'Brotacion',  'icon' => 'sprout', 'progress' => 10],
-            $accumulatedGDD < 300  => ['name' => 'Floracion',  'icon' => 'flower', 'progress' => 25],
-            $accumulatedGDD < 700  => ['name' => 'Cuajado',    'icon' => 'grape',  'progress' => 40],
-            $accumulatedGDD < 1200 => ['name' => 'Envero',     'icon' => 'green',  'progress' => 60],
-            $accumulatedGDD < 1600 => ['name' => 'Maduracion', 'icon' => 'purple', 'progress' => 80],
-            default                => ['name' => 'Vendimia',   'icon' => 'wine',   'progress' => 100],
+            $accumulatedGDD < 100  => ['name' => __('Brotacion'),  'icon' => 'sprout', 'progress' => 10],
+            $accumulatedGDD < 300  => ['name' => __('Floracion'),  'icon' => 'flower', 'progress' => 25],
+            $accumulatedGDD < 700  => ['name' => __('Cuajado'),    'icon' => 'grape',  'progress' => 40],
+            $accumulatedGDD < 1200 => ['name' => __('Envero'),     'icon' => 'green',  'progress' => 60],
+            $accumulatedGDD < 1600 => ['name' => __('Maduracion'), 'icon' => 'purple', 'progress' => 80],
+            default                => ['name' => __('Vendimia'),   'icon' => 'wine',   'progress' => 100],
         };
 
         $targetGDD   = 1600;

@@ -81,7 +81,7 @@ class Create extends Component
             'status'           => $this->status,
         ]);
 
-        $this->toastSuccess('Partida registrada correctamente.');
+        $this->toastSuccess(__('Partida registrada correctamente.'));
         $this->roleRedirect('external-grape.index');
     }
 

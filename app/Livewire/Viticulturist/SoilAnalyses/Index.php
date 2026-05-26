@@ -40,7 +40,7 @@ class Index extends AbstractIndex
     public function delete(int $id): void
     {
         $this->findOwned(SoilAnalysis::class, $id)->delete();
-        $this->toastSuccess('Análisis de suelo eliminado.');
+        $this->toastSuccess(__('Análisis de suelo eliminado.'));
     }
 
     protected function baseQuery(): Builder

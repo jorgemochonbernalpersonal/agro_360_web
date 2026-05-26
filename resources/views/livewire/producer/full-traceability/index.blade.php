@@ -124,7 +124,7 @@
                                     <th class="text-left px-3 py-2">{{ __('Parcela') }}</th>
                                     <th class="text-left px-3 py-2">{{ __('Variedad') }}</th>
                                     <th class="text-right px-3 py-2">{{ __('Vendimias') }}</th>
-                                    <th class="text-right px-3 py-2">kg</th>
+                                    <th class="text-right px-3 py-2">{{ __('kg') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-zinc-100">

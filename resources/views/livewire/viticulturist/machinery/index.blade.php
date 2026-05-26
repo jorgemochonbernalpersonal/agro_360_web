@@ -1,37 +1,37 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="Maquinaria"
-        description="Gestiona tu maquinaria y equipos agrícolas"
+        title="{{ __('Maquinaria') }}"
+        :description="__('Gestiona tu maquinaria y equipos agrícolas')"
     />
 
     {{-- Stats --}}
     <x-agro.stats-section key="machinery">
         <x-agro.stat-card
-            label="Total maquinaria"
+            :label="__('Total maquinaria')"
             :value="$stats['total']"
-            description="Equipos registrados"
+            :description="__('Equipos registrados')"
             icon="wrench-screwdriver"
             color="agro"
         />
         <x-agro.stat-card
-            label="Activa"
+            :label="__('Activa')"
             :value="$stats['active']"
-            description="En uso"
+            :description="__('En uso')"
             icon="check-circle"
             color="agro"
         />
         <x-agro.stat-card
-            label="Inactiva"
+            :label="__('Inactiva')"
             :value="$stats['inactive']"
-            description="Archivada o fuera de uso"
+            :description="__('Archivada o fuera de uso')"
             icon="archive-box"
             color="zinc"
         />
         <x-agro.stat-card
-            label="Tipos distintos"
+            :label="__('Tipos distintos')"
             :value="$stats['types_count']"
-            description="Categorías de maquinaria"
+            :description="__('Categorías de maquinaria')"
             icon="squares-2x2"
             color="blue"
         />
@@ -51,7 +51,7 @@
         <div class="flex items-center gap-3">
 
             {{-- Search --}}
-            <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar por nombre, marca, modelo..." />
+            <x-agro.search-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar por nombre, marca, modelo...')" />
 
             {{-- Filtros --}}
             @php $filterCount = ($typeFilter !== '' ? 1 : 0); @endphp
@@ -71,7 +71,7 @@
         {{-- Active filter chips --}}
         @if($search || $typeFilter !== '')
             <div class="flex flex-wrap items-center gap-2">
-                <span class="text-xs text-zinc-400">Filtros activos:</span>
+                <span class="text-xs text-zinc-400">{{ __('Filtros activos:') }}</span>
 
                 @if($search)
                     <x-agro.filter-chip icon="magnifying-glass" :label="'&quot;' . $search . '&quot;'" wireRemove="$set('search', '')" />
@@ -81,9 +81,7 @@
                     <x-agro.filter-chip :label="'Tipo: ' . $typeFilter" wireRemove="$set('typeFilter', '')" />
                 @endif
 
-                <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 underline">
-                    Limpiar todo
-                </button>
+                <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 underline">{{ __('Limpiar todo') }}</button>
             </div>
         @endif
     </div>
@@ -127,12 +125,12 @@
                     {{-- Métricas --}}
                     <div class="grid grid-cols-2 gap-2 mb-3">
                         <x-agro.metric-cell
-                            label="Marca/Modelo"
+                            :label="__('Marca/Modelo')"
                             :value="($item->brand || $item->model) ? trim(($item->brand ?? '') . ' ' . ($item->model ?? '')) : '—'"
                             color="zinc"
                         />
                         <x-agro.metric-cell
-                            label="Actividades"
+                            :label="__('Actividades')"
                             :value="$item->activities_count"
                             color="agro"
                         />
@@ -153,14 +151,14 @@
                                     <x-agro.action-button
                                         variant="view"
                                         href="{{ roleRoute('viticulturist.machinery.show', $item) }}"
-                                        title="Ver maquinaria"
+                                        title="{{ __('Ver maquinaria') }}"
                                     />
                                 @endcan
                                 @can('update', $item)
                                     <x-agro.action-button
                                         variant="edit"
                                         href="{{ roleRoute('viticulturist.machinery.edit', $item) }}"
-                                        title="Editar"
+                                        title="{{ __('Editar') }}"
                                     />
                                 @endcan
                                 @can('delete', $item)
@@ -168,8 +166,8 @@
                                         <x-agro.action-button
                                             variant="delete"
                                             wire:click="delete({{ $item->id }})"
-                                            wire:confirm="¿Eliminar esta maquinaria? Esta acción no se puede deshacer."
-                                            title="Eliminar maquinaria"
+                                            wire:confirm="{{ __('¿Eliminar esta maquinaria? Esta acción no se puede deshacer.') }}"
+                                            title="{{ __('Eliminar maquinaria') }}"
                                         />
                                     @endif
                                 @endcan
@@ -207,7 +205,7 @@
         >
             @if($search || $typeFilter !== '')
                 <x-slot:action>
-                    <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
+                    <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">{{ __('Limpiar filtros') }}</flux:button>
                 </x-slot:action>
             @else
                 @can('create', \App\Models\Machinery::class)
@@ -229,7 +227,7 @@
                     <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
                         <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
                     </div>
-                    <h3 class="text-base font-semibold text-zinc-900">Filtros</h3>
+                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Filtros') }}</h3>
                 </div>
                 <flux:button x-on:click="$dispatch('close-modal', 'machinery-filters')" variant="ghost" size="sm" icon="x-mark" />
             </div>
@@ -237,7 +235,7 @@
 
         <div class="px-6 py-5 space-y-5">
             <div>
-                <x-agro.filter-select label="Tipo de maquinaria" wire:model.live="typeFilter" placeholder="Todos los tipos">
+                <x-agro.filter-select :label="__('Tipo de maquinaria')" wire:model.live="typeFilter" :placeholder="__('Todos los tipos')">
                     @foreach($types as $type)
                         <flux:select.option value="{{ $type }}">{{ $type }}</flux:select.option>
                     @endforeach
@@ -247,12 +245,8 @@
 
         <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between rounded-b-2xl">
             <button wire:click="clearFilters" x-on:click="$dispatch('close-modal', 'machinery-filters')"
-                    class="text-sm text-zinc-500 hover:text-zinc-700 transition-colors">
-                Limpiar filtros
-            </button>
-            <flux:button x-on:click="$dispatch('close-modal', 'machinery-filters')" variant="primary" size="sm">
-                Aplicar
-            </flux:button>
+                    class="text-sm text-zinc-500 hover:text-zinc-700 transition-colors">{{ __('Limpiar filtros') }}</button>
+            <flux:button x-on:click="$dispatch('close-modal', 'machinery-filters')" variant="primary" size="sm">{{ __('Aplicar') }}</flux:button>
         </div>
     </x-agro.modal>
 

@@ -203,7 +203,7 @@ class Edit extends Component
                 $oldQty = (float) ($this->oldBottlingData['container_id'] == $this->container_id ? $this->oldBottlingData['quantity_liters'] : 0);
                 $available = $container->wine_volume_liters + $oldQty;
                 if ($available < (float) $this->quantity_liters) {
-                    $this->addError('quantity_liters', 'El depósito solo tiene ' . number_format($available, 1) . ' L disponibles para embotellar.');
+                    $this->addError('quantity_liters', __('El depósito solo tiene :volume L disponibles para embotellar.', ['volume' => number_format($available, 1)]));
                     return;
                 }
             }
@@ -243,7 +243,7 @@ class Edit extends Component
             }
         });
 
-        $this->toastSuccess('Embotellado actualizado correctamente.');
+        $this->toastSuccess(__('Embotellado actualizado correctamente.'));
         $this->roleRedirect('bottling.index');
     }
 

@@ -76,8 +76,8 @@ class CreateFertilization extends AbstractActivityForm
     protected function messages(): array
     {
         return [
-            'manure_type.required' => 'El tipo de estiércol es obligatorio para fertilizantes orgánicos (BCAM 6).',
-            'burial_date.required' => 'La fecha de enterrado es obligatoria para fertilizantes orgánicos (BCAM 6).',
+            'manure_type.required' => __('El tipo de estiércol es obligatorio para fertilizantes orgánicos (BCAM 6).'),
+            'burial_date.required' => __('La fecha de enterrado es obligatoria para fertilizantes orgánicos (BCAM 6).'),
         ];
     }
 
@@ -109,11 +109,11 @@ class CreateFertilization extends AbstractActivityForm
                 ]);
             });
 
-            $this->toastSuccess('Fertilización registrada correctamente.');
+            $this->toastSuccess(__('Fertilización registrada correctamente.'));
             return $this->viticulturistRoleRedirect('digital-notebook.fertilization.index');
         } catch (\Exception $e) {
             \Log::error('Error al registrar fertilización', ['error' => $e->getMessage(), 'user_id' => Auth::id()]);
-            $this->toastError('Error al registrar la fertilización. Por favor, intenta de nuevo.');
+            $this->toastError(__('Error al registrar la fertilización. Por favor, intenta de nuevo.'));
         }
     }
 

@@ -82,9 +82,7 @@
 
             <!-- Selector de Recintos -->
             <div class="mb-4">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">
-                    📍 Seleccionar Recinto:
-                </label>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">{{ __('📍 Seleccionar Recinto:') }}</label>
                 <select id="recinto-selector" 
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
                     <option value="all">🗺️ Todos los recintos ({{ count($plotGeometries) }})</option>
@@ -99,9 +97,7 @@
             <!-- 🛰️ Toggle NDVI -->
             <div class="mb-4 p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
                 <div class="flex items-center justify-between mb-2">
-                    <label class="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                        🛰️ Vista NDVI
-                    </label>
+                    <label class="text-sm font-semibold text-gray-700 flex items-center gap-2">{{ __('🛰️ Vista NDVI') }}</label>
                     <button id="ndvi-toggle" 
                             onclick="toggleNdviMode()"
                             class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors bg-gray-300"
@@ -117,12 +113,12 @@
                     <!-- Leyenda NDVI -->
                     <div class="flex items-center gap-1 text-[10px]">
                         <span class="w-4 h-3 rounded" style="background: rgba(239, 68, 68, 0.6)"></span>
-                        <span class="text-gray-500">Bajo</span>
+                        <span class="text-gray-500">{{ __('Bajo') }}</span>
                         <span class="w-4 h-3 rounded ml-1" style="background: rgba(251, 146, 60, 0.6)"></span>
                         <span class="w-4 h-3 rounded" style="background: rgba(250, 204, 21, 0.6)"></span>
                         <span class="w-4 h-3 rounded" style="background: rgba(52, 211, 153, 0.6)"></span>
                         <span class="w-4 h-3 rounded" style="background: rgba(34, 197, 94, 0.6)"></span>
-                        <span class="text-gray-500">Alto</span>
+                        <span class="text-gray-500">{{ __('Alto') }}</span>
                     </div>
                 </div>
                 <div id="ndvi-loading" class="hidden text-xs text-gray-500">
@@ -136,7 +132,7 @@
 
             <!-- Leyenda de Colores -->
             <div class="mb-4 p-3 bg-gray-50 rounded-lg">
-                <p class="text-xs font-semibold text-gray-600 mb-2">Leyenda de Recintos:</p>
+                <p class="text-xs font-semibold text-gray-600 mb-2">{{ __('Leyenda de Recintos:') }}</p>
                 <div class="space-y-1 max-h-40 overflow-y-auto">
                     @foreach($plotGeometries as $geometry)
                         <div class="flex items-center text-xs">
@@ -151,12 +147,12 @@
 
             <!-- Info -->
             <div class="text-sm text-gray-600 space-y-1 border-t pt-3">
-                <p><strong>Total recintos:</strong> {{ count($plotGeometries) }}</p>
+                <p><strong>{{ __('Total recintos:') }}</strong> {{ count($plotGeometries) }}</p>
                 @if($plot->area)
-                    <p><strong>Área total:</strong> {{ number_format($plot->area, 2) }} ha</p>
+                    <p><strong>{{ __('Área total:') }}</strong> {{ number_format($plot->area, 2) }} ha</p>
                 @endif
                 @if($plot->municipality)
-                    <p><strong>Municipio:</strong> {{ $plot->municipality->name }}</p>
+                    <p><strong>{{ __('Municipio:') }}</strong> {{ $plot->municipality->name }}</p>
                 @endif
             </div>
         </div>
@@ -380,10 +376,10 @@
                             </div>
                         </div>
                         <table style="width:100%; font-size:12px; border-collapse:collapse">
-                            <tr><td style="color:#888; padding:2px 0">Polígono</td><td style="font-weight:600; text-align:right">${geometry.polygon || '—'}</td></tr>
-                            <tr><td style="color:#888; padding:2px 0">Recinto</td><td style="font-weight:600; text-align:right">${geometry.enclosure || '—'}</td></tr>
-                            ${areaHa ? `<tr><td style="color:#888; padding:2px 0">Área aprox.</td><td style="font-weight:600; text-align:right">${areaHa} ha</td></tr>` : ''}
-                            <tr><td style="color:#888; padding:2px 0">Código</td><td style="font-family:monospace; font-size:11px; text-align:right">${geometry.sigpac_code}</td></tr>
+                            <tr><td style="color:#888; padding:2px 0">{{ __('Polígono') }}</td><td style="font-weight:600; text-align:right">{{ __('${geometry.polygon || \'—\'}') }}</td></tr>
+                            <tr><td style="color:#888; padding:2px 0">{{ __('Recinto') }}</td><td style="font-weight:600; text-align:right">{{ __('${geometry.enclosure || \'—\'}') }}</td></tr>
+                            ${areaHa ? `<tr><td style="color:#888; padding:2px 0">{{ __('Área aprox.') }}</td><td style="font-weight:600; text-align:right">{{ __('${areaHa} ha') }}</td></tr>` : ''}
+                            <tr><td style="color:#888; padding:2px 0">{{ __('Código') }}</td><td style="font-family:monospace; font-size:11px; text-align:right">{{ __('${geometry.sigpac_code}') }}</td></tr>
                         </table>
                     </div>
                 `, { maxWidth: 280 });
@@ -392,7 +388,7 @@
                 const polygonLabel = geometry.polygon ? ` · Pol. ${geometry.polygon}` : '';
                 const enclosureLabel = geometry.enclosure ? ` · Rec. ${geometry.enclosure}` : '';
                 polygon.bindTooltip(
-                    `<strong>Recinto ${geometry.index}</strong>${polygonLabel}${enclosureLabel}`,
+                    `<strong>{{ __('Recinto ${geometry.index}') }}</strong>${polygonLabel}${enclosureLabel}`,
                     { sticky: true, direction: 'top' }
                 );
 

@@ -28,7 +28,7 @@ class Index extends AbstractIndex
     {
         $supply = WinerySupply::where('user_id', $this->wineryId())->findOrFail($id);
         $supply->delete();
-        $this->toastSuccess('Insumo eliminado.');
+        $this->toastSuccess(__('Insumo eliminado.'));
     }
 
     protected function baseQuery(): Builder

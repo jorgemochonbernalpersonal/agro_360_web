@@ -5,8 +5,8 @@
 
     <x-agro.page-header
         :icon="$icon"
-        title="Configuración de Impuestos"
-        description="Activa los impuestos que usas y define cuál se aplica por defecto en tus facturas"
+        title="{{ __('Configuración de Impuestos') }}"
+        :description="__('Activa los impuestos que usas y define cuál se aplica por defecto en tus facturas')"
         icon-color="from-agro-500 to-agro-700"
     />
 
@@ -38,7 +38,7 @@
             <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
                 <flux:icon icon="receipt-percent" class="size-5 text-amber-600" />
             </div>
-            <span>Impuestos disponibles</span>
+            <span>{{ __('Impuestos disponibles') }}</span>
         </x-slot:header>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -108,8 +108,8 @@
         @if($taxes->isEmpty())
             <x-agro.empty-state
                 icon="document-text"
-                title="No hay impuestos configurados en el sistema"
-                description="Contacta con el administrador para que añada los tipos de impuesto disponibles."
+                title="{{ __('No hay impuestos configurados en el sistema') }}"
+                :description="__('Contacta con el administrador para que añada los tipos de impuesto disponibles.')"
             />
         @endif
     </x-agro.form-card>
@@ -119,9 +119,9 @@
         <flux:callout.heading>¿Cómo funciona?</flux:callout.heading>
         <flux:callout.text>
             <ul class="mt-1 space-y-1 text-sm">
-                <li><strong>Activa</strong> los impuestos que necesitas usar en tus facturas.</li>
-                <li><strong>Defecto</strong>: el impuesto marcado se pre-selecciona automáticamente en cada nuevo ítem de factura. Puedes cambiarlo manualmente en la factura.</li>
-                <li>Puedes tener varios activos — por ejemplo IVA 21% para servicios e IVA 10% para productos alimenticios.</li>
+                <li><strong>{{ __('Activa') }}</strong> los impuestos que necesitas usar en tus facturas.</li>
+                <li><strong>{{ __('Defecto') }}</strong>: el impuesto marcado se pre-selecciona automáticamente en cada nuevo ítem de factura. Puedes cambiarlo manualmente en la factura.</li>
+                <li>{{ __('Puedes tener varios activos — por ejemplo IVA 21% para servicios e IVA 10% para productos alimenticios.') }}</li>
             </ul>
         </flux:callout.text>
     </flux:callout>

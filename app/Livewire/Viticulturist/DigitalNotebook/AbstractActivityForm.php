@@ -59,7 +59,7 @@ abstract class AbstractActivityForm extends Component
 
         $campaign = Campaign::getOrCreateActiveForYear(Auth::id());
         if (!$campaign) {
-            $this->toastError('No se pudo obtener la campaña activa. Por favor, crea una campaña primero.');
+            $this->toastError(__('No se pudo obtener la campaña activa. Por favor, crea una campaña primero.'));
             $this->viticulturistRoleRedirect('campaign.create');
             return;
         }
@@ -78,7 +78,7 @@ abstract class AbstractActivityForm extends Component
         string $indexRoute
     ): bool {
         if ($activity->activity_type !== $expectedType) {
-            $this->toastError('Esta actividad no es del tipo esperado.');
+            $this->toastError(__('Esta actividad no es del tipo esperado.'));
             $this->viticulturistRoleRedirect($indexRoute);
             return false;
         }

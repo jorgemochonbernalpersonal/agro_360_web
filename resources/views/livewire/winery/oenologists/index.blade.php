@@ -1,8 +1,8 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="Enólogos"
-        description="Gestiona los técnicos enológicos de tu bodega"
+        title="{{ __('Enólogos') }}"
+        :description="__('Gestiona los técnicos enológicos de tu bodega')"
     />
 
     {{-- Tabs --}}
@@ -19,7 +19,7 @@
     <div class="space-y-3">
         <div class="flex items-center gap-3">
 
-            <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar por nombre, email o nº colegiado..." />
+            <x-agro.search-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar por nombre, email o nº colegiado...')" />
 
             <flux:button href="{{ roleRoute('oenologists.create') }}" wire:navigate variant="primary" icon="plus">
                 Nuevo Enólogo
@@ -30,11 +30,9 @@
         {{-- Active filter chips --}}
         @if($search)
             <div class="flex flex-wrap items-center gap-2">
-                <span class="text-xs text-zinc-400">Filtros activos:</span>
+                <span class="text-xs text-zinc-400">{{ __('Filtros activos:') }}</span>
                 <x-agro.filter-chip icon="magnifying-glass" :label="'&quot;' . $search . '&quot;'" wireRemove="$set('search', '')" />
-                <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 underline">
-                    Limpiar todo
-                </button>
+                <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 underline">{{ __('Limpiar todo') }}</button>
             </div>
         @endif
     </div>
@@ -64,7 +62,7 @@
                             radius="full"
                         >
                             @if(!$oenologist->active)
-                                <flux:badge color="zinc" size="sm">Inactivo</flux:badge>
+                                <flux:badge color="zinc" size="sm">{{ __('Inactivo') }}</flux:badge>
                             @endif
                         </x-agro.card-item-header>
                     </x-slot:header>
@@ -84,7 +82,7 @@
                             </div>
                         @endif
                         @if(!$oenologist->email && !$oenologist->phone)
-                            <p class="text-xs text-zinc-400 italic">Sin datos de contacto</p>
+                            <p class="text-xs text-zinc-400 italic">{{ __('Sin datos de contacto') }}</p>
                         @endif
                     </div>
 
@@ -95,15 +93,15 @@
                     <x-slot:footer>
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-1">
-                                <x-agro.action-button variant="edit" href="{{ roleRoute('oenologists.edit', $oenologist->id) }}" wire:navigate title="Editar" />
+                                <x-agro.action-button variant="edit" href="{{ roleRoute('oenologists.edit', $oenologist->id) }}" wire:navigate title="{{ __('Editar') }}" />
                             </div>
                             <div class="flex items-center gap-1">
                                 @if($oenologist->active)
-                                    <x-agro.action-button variant="deactivate" wire:click="toggleActive({{ $oenologist->id }})" wire:loading.attr="disabled" title="Desactivar" />
+                                    <x-agro.action-button variant="deactivate" wire:click="toggleActive({{ $oenologist->id }})" wire:loading.attr="disabled" title="{{ __('Desactivar') }}" />
                                 @else
-                                    <x-agro.action-button variant="activate" wire:click="toggleActive({{ $oenologist->id }})" wire:loading.attr="disabled" title="Activar" />
+                                    <x-agro.action-button variant="activate" wire:click="toggleActive({{ $oenologist->id }})" wire:loading.attr="disabled" title="{{ __('Activar') }}" />
                                 @endif
-                                <x-agro.action-button variant="delete" wire:click="delete({{ $oenologist->id }})" wire:loading.attr="disabled" wire:confirm="¿Seguro que quieres eliminar este enólogo?" title="Eliminar" />
+                                <x-agro.action-button variant="delete" wire:click="delete({{ $oenologist->id }})" wire:loading.attr="disabled" wire:confirm="{{ __('¿Seguro que quieres eliminar este enólogo?') }}" title="{{ __('Eliminar') }}" />
                             </div>
                         </div>
                     </x-slot:footer>
@@ -121,7 +119,7 @@
         >
             @if($search)
                 <x-slot:action>
-                    <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar búsqueda</flux:button>
+                    <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">{{ __('Limpiar búsqueda') }}</flux:button>
                 </x-slot:action>
             @elseif($currentTab === 'active')
                 <x-slot:action>

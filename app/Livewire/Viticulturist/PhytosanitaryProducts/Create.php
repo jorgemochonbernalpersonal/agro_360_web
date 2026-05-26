@@ -26,7 +26,7 @@ class Create extends Component
     public function mount(): void
     {
         if (! Auth::user()->hasViticulturistAccess()) {
-            abort(403, 'No tienes permiso para crear productos fitosanitarios.');
+            abort(403, __('No tienes permiso para crear productos fitosanitarios.'));
         }
     }
 
@@ -67,7 +67,7 @@ class Create extends Component
                 ]);
             });
 
-            $this->toastSuccess('Producto fitosanitario creado correctamente.');
+            $this->toastSuccess(__('Producto fitosanitario creado correctamente.'));
 
             return $this->viticulturistRoleRedirect('phytosanitary-products.index');
         } catch (\Exception $e) {
@@ -77,7 +77,7 @@ class Create extends Component
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            $this->toastError('Error al crear el producto fitosanitario. Por favor, intenta de nuevo.');
+            $this->toastError(__('Error al crear el producto fitosanitario. Por favor, intenta de nuevo.'));
             return;
         }
     }

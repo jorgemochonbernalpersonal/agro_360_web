@@ -54,7 +54,7 @@ class Index extends Component
             NotebookAccessRequest::STATUS_PENDING,
             NotebookAccessRequest::STATUS_APPROVED,
         ])) {
-            $this->toastError('Ya existe una solicitud activa o aprobada para este viticultor.');
+            $this->toastError(__('Ya existe una solicitud activa o aprobada para este viticultor.'));
             return;
         }
 
@@ -77,7 +77,7 @@ class Index extends Component
         Cache::forget("nav_badge_notebook_access_{$this->targetViticulturistId}");
 
         $this->closeRequestModal();
-        $this->toastSuccess('Solicitud de acceso al cuaderno enviada.');
+        $this->toastSuccess(__('Solicitud de acceso al cuaderno enviada.'));
     }
 
     public function revokeAccess(int $id): void
@@ -94,7 +94,7 @@ class Index extends Component
         $relation?->revokeNotebookAccess();
 
         $request->delete();
-        $this->toastSuccess('Acceso al cuaderno revocado.');
+        $this->toastSuccess(__('Acceso al cuaderno revocado.'));
     }
 
     #[Layout('layouts.app')]

@@ -1,12 +1,10 @@
 <div class="space-y-6 animate-fade-in">
     <x-agro.page-header
-        title="Parcelas del Sistema"
-        description="Visualiza todas las parcelas registradas por todos los usuarios"
+        title="{{ __('Parcelas del Sistema') }}"
+        :description="__('Visualiza todas las parcelas registradas por todos los usuarios')"
     >
         <x-slot:actions>
-            <flux:button wire:click="exportCsv" variant="ghost" icon="arrow-down-tray">
-                Exportar CSV
-            </flux:button>
+            <flux:button wire:click="exportCsv" variant="ghost" icon="arrow-down-tray">{{ __('Exportar CSV') }}</flux:button>
         </x-slot:actions>
     </x-agro.page-header>
 
@@ -22,7 +20,7 @@
             @click="toggle()"
             class="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-widest hover:text-zinc-600 transition-colors mb-3"
         >
-            <span>Estadísticas</span>
+            <span>{{ __('Estadísticas') }}</span>
             <flux:icon icon="chevron-up" class="size-3.5 transition-transform duration-200" ::class="{ 'rotate-180': !open }" />
         </button>
         <div
@@ -36,25 +34,25 @@
         >
         <div class="grid grid-cols-2 gap-4">
             <x-agro.stat-card
-                label="Total Parcelas"
+                :label="__('Total Parcelas')"
                 :value="$stats['total']"
                 icon="map"
                 color="agro"
             />
             <x-agro.stat-card
-                label="Parcelas Activas"
+                :label="__('Parcelas Activas')"
                 :value="$stats['active']"
                 icon="check-circle"
                 color="blue"
             />
             <x-agro.stat-card
-                label="Área Total"
+                :label="__('Área Total')"
                 :value="number_format($stats['total_area'], 2) . ' ha'"
                 icon="squares-2x2"
                 color="purple"
             />
             <x-agro.stat-card
-                label="Por Viticultores"
+                :label="__('Por Viticultores')"
                 :value="$stats['by_role']['viticulturist']"
                 icon="users"
                 color="orange"
@@ -67,18 +65,18 @@
     <x-agro.filter-bar>
         <x-agro.filter-input
             wire:model.live="search"
-            placeholder="Buscar por nombre, descripción o usuario..."
+            placeholder="{{ __('Buscar por nombre, descripción o usuario...') }}"
         />
         <x-agro.filter-select wire:model.live="activeFilter">
-            <option value="">Todas las parcelas</option>
-            <option value="1">Activas</option>
-            <option value="0">Inactivas</option>
+            <option value="">{{ __('Todas las parcelas') }}</option>
+            <option value="1">{{ __('Activas') }}</option>
+            <option value="0">{{ __('Inactivas') }}</option>
         </x-agro.filter-select>
         <x-agro.filter-select wire:model.live="roleFilter">
-            <option value="all">Todos los roles</option>
-            <option value="viticulturist">Viticultores</option>
-            <option value="winery">Bodegas</option>
-            <option value="supervisor">Supervisores</option>
+            <option value="all">{{ __('Todos los roles') }}</option>
+            <option value="viticulturist">{{ __('Viticultores') }}</option>
+            <option value="winery">{{ __('Bodegas') }}</option>
+            <option value="supervisor">{{ __('Supervisores') }}</option>
         </x-agro.filter-select>
         <flux:button
             wire:click="toggleInternal"
@@ -96,16 +94,16 @@
     @if($showInternal)
     <div class="flex items-center gap-2 rounded-lg bg-amber-50 border border-amber-200 px-4 py-2.5 text-sm text-amber-800">
         <flux:icon icon="bug-ant" class="size-4 flex-shrink-0" />
-        <span>Mostrando también parcelas de cuentas internas (demo / test / maestro). Las estadísticas siempre reflejan solo datos reales.</span>
-        <button wire:click="toggleInternal" class="ml-auto text-amber-600 hover:text-amber-800 font-medium text-xs">Ocultar</button>
+        <span>{{ __('Mostrando también parcelas de cuentas internas (demo / test / maestro). Las estadísticas siempre reflejan solo datos reales.') }}</span>
+        <button wire:click="toggleInternal" class="ml-auto text-amber-600 hover:text-amber-800 font-medium text-xs">{{ __('Ocultar') }}</button>
     </div>
     @endif
 
     {{-- Tabla --}}
     <x-agro.data-table
         :headers="['Nombre', 'Viticultor', 'Ubicación', 'Área', 'Estado', 'Registro', 'Acciones']"
-        empty-message="No se encontraron parcelas"
-        empty-description="No hay parcelas que coincidan con los filtros seleccionados"
+        empty-:message="__('No se encontraron parcelas')"
+        empty-:description="__('No hay parcelas que coincidan con los filtros seleccionados')"
         empty-icon="map"
     >
         @if($plots->count() > 0)
@@ -146,7 +144,7 @@
                                 </div>
                             @endif
                         @else
-                            <span class="text-sm text-zinc-400">N/A</span>
+                            <span class="text-sm text-zinc-400">{{ __('N/A') }}</span>
                         @endif
                     </x-agro.table-cell>
 
@@ -197,7 +195,7 @@
             </x-slot>
         @else
             <x-slot name="emptyAction">
-                <p class="text-sm text-zinc-400">Intenta ajustar los filtros de búsqueda</p>
+                <p class="text-sm text-zinc-400">{{ __('Intenta ajustar los filtros de búsqueda') }}</p>
             </x-slot>
         @endif
     </x-agro.data-table>
@@ -210,20 +208,20 @@
                     <flux:icon icon="arrow-path" class="size-5 text-agro-600" />
                 </div>
                 <div>
-                    <h3 class="text-base font-semibold text-zinc-900">Reasignar Parcela</h3>
+                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Reasignar Parcela') }}</h3>
                     <p class="text-xs text-zinc-500">{{ $reassignPlotName }}</p>
                 </div>
             </div>
 
             <div class="space-y-4">
                 <div>
-                    <label class="block text-xs font-medium text-zinc-700 mb-1">Buscar usuario</label>
-                    <flux:input wire:model.live="reassignSearch" placeholder="Nombre o email..." />
+                    <label class="block text-xs font-medium text-zinc-700 mb-1">{{ __('Buscar usuario') }}</label>
+                    <flux:input wire:model.live="reassignSearch" :placeholder="__('Nombre o email...')" />
                 </div>
 
                 @if($availableUsers->count() > 0)
                 <div>
-                    <label class="block text-xs font-medium text-zinc-700 mb-1">Seleccionar</label>
+                    <label class="block text-xs font-medium text-zinc-700 mb-1">{{ __('Seleccionar') }}</label>
                     <div class="space-y-1 max-h-48 overflow-y-auto border border-zinc-200 rounded-lg p-1">
                         @foreach($availableUsers as $u)
                         <label class="flex items-center gap-3 px-3 py-2 rounded-md cursor-pointer hover:bg-zinc-50 transition-colors {{ (string)$reassignViticulturistId === (string)$u->id ? 'bg-agro-50' : '' }}">
@@ -242,17 +240,17 @@
                     </div>
                 </div>
                 @elseif($reassignSearch)
-                    <p class="text-sm text-zinc-400 text-center py-3">No se encontraron usuarios</p>
+                    <p class="text-sm text-zinc-400 text-center py-3">{{ __('No se encontraron usuarios') }}</p>
                 @else
-                    <p class="text-sm text-zinc-400 text-center py-3">Escribe para buscar un usuario</p>
+                    <p class="text-sm text-zinc-400 text-center py-3">{{ __('Escribe para buscar un usuario') }}</p>
                 @endif
 
                 @error('reassignViticulturistId') <p class="text-xs text-red-500">{{ $message }}</p> @enderror
             </div>
 
             <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-zinc-100">
-                <flux:button variant="ghost" wire:click="closeReassignModal">Cancelar</flux:button>
-                <flux:button variant="primary" wire:click="reassignViticulturist">Reasignar</flux:button>
+                <flux:button variant="ghost" wire:click="closeReassignModal">{{ __('Cancelar') }}</flux:button>
+                <flux:button variant="primary" wire:click="reassignViticulturist">{{ __('Reasignar') }}</flux:button>
             </div>
         </div>
     </flux:modal>

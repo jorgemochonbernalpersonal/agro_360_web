@@ -123,8 +123,8 @@ class PlotAnalysis extends Component
                 $this->recommendations[] = [
                     'type' => 'warning',
                     'icon' => '🌱',
-                    'title' => 'Vigor bajo detectado',
-                    'text' => 'El NDVI indica vigor bajo. Revisa posibles deficiencias nutricionales o estrés.',
+                    'title' => __('Vigor bajo detectado'),
+                    'text' => __('El NDVI indica vigor bajo. Revisa posibles deficiencias nutricionales o estrés.'),
                 ];
             }
         }
@@ -135,15 +135,15 @@ class PlotAnalysis extends Component
             $this->recommendations[] = [
                 'type' => 'danger',
                 'icon' => '❄️',
-                'title' => 'Riesgo de helada',
-                'text' => 'Temperatura bajo cero detectada. Considera medidas de protección.',
+                'title' => __('Riesgo de helada'),
+                'text' => __('Temperatura bajo cero detectada. Considera medidas de protección.'),
             ];
         } elseif ($temp > 35) {
             $this->recommendations[] = [
                 'type' => 'warning',
                 'icon' => '🔥',
-                'title' => 'Estrés térmico',
-                'text' => 'Temperatura elevada. Monitoriza el riego y posible estrés hídrico.',
+                'title' => __('Estrés térmico'),
+                'text' => __('Temperatura elevada. Monitoriza el riego y posible estrés hídrico.'),
             ];
         }
         
@@ -153,15 +153,15 @@ class PlotAnalysis extends Component
             $this->recommendations[] = [
                 'type' => 'warning',
                 'icon' => '💧',
-                'title' => 'Suelo seco',
-                'text' => 'Humedad del suelo baja (' . round($soilMoisture) . '%). Considera riego.',
+                'title' => __('Suelo seco'),
+                'text' => __('Humedad del suelo baja (') . round($soilMoisture) . '%). Considera riego.',
             ];
         } elseif ($soilMoisture > 60) {
             $this->recommendations[] = [
                 'type' => 'info',
                 'icon' => '💦',
-                'title' => 'Suelo húmedo',
-                'text' => 'Alta humedad del suelo. Evita riego para prevenir encharcamiento.',
+                'title' => __('Suelo húmedo'),
+                'text' => __('Alta humedad del suelo. Evita riego para prevenir encharcamiento.'),
             ];
         }
         
@@ -171,7 +171,7 @@ class PlotAnalysis extends Component
             $this->recommendations[] = [
                 'type' => 'info',
                 'icon' => '🌧️',
-                'title' => 'Lluvia prevista',
+                'title' => __('Lluvia prevista'),
                 'text' => "Se esperan $rainDays días de lluvia esta semana. Planifica tratamientos.",
             ];
         }
@@ -181,8 +181,8 @@ class PlotAnalysis extends Component
             $this->recommendations[] = [
                 'type' => 'success',
                 'icon' => '✅',
-                'title' => 'Condiciones óptimas',
-                'text' => 'Todos los indicadores están en rangos normales.',
+                'title' => __('Condiciones óptimas'),
+                'text' => __('Todos los indicadores están en rangos normales.'),
             ];
         }
     }
@@ -194,10 +194,10 @@ class PlotAnalysis extends Component
         $stressIndex = ($et0 * 10) - $moisture;
         
         return match (true) {
-            $stressIndex <= 0 => ['status' => 'optimal', 'emoji' => '💧', 'text' => 'Óptimo', 'color' => 'text-green-600', 'bg' => 'bg-green-100'],
-            $stressIndex <= 20 => ['status' => 'mild', 'emoji' => '💦', 'text' => 'Leve', 'color' => 'text-yellow-600', 'bg' => 'bg-yellow-100'],
-            $stressIndex <= 40 => ['status' => 'moderate', 'emoji' => '🏜️', 'text' => 'Moderado', 'color' => 'text-orange-600', 'bg' => 'bg-orange-100'],
-            default => ['status' => 'severe', 'emoji' => '⚠️', 'text' => 'Severo', 'color' => 'text-red-600', 'bg' => 'bg-red-100'],
+            $stressIndex <= 0 => ['status' => 'optimal', 'emoji' => '💧', 'text' => __('Óptimo'), 'color' => 'text-green-600', 'bg' => 'bg-green-100'],
+            $stressIndex <= 20 => ['status' => 'mild', 'emoji' => '💦', 'text' => __('Leve'), 'color' => 'text-yellow-600', 'bg' => 'bg-yellow-100'],
+            $stressIndex <= 40 => ['status' => 'moderate', 'emoji' => '🏜️', 'text' => __('Moderado'), 'color' => 'text-orange-600', 'bg' => 'bg-orange-100'],
+            default => ['status' => 'severe', 'emoji' => '⚠️', 'text' => __('Severo'), 'color' => 'text-red-600', 'bg' => 'bg-red-100'],
         };
     }
 
@@ -215,7 +215,7 @@ class PlotAnalysis extends Component
         $this->loadAllData();
         $this->dispatch('notify', [
             'type' => 'success',
-            'message' => 'Datos actualizados correctamente',
+            'message' => __('Datos actualizados correctamente'),
         ]);
     }
 

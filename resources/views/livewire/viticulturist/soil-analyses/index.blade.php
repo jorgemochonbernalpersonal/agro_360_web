@@ -168,13 +168,13 @@
                             {{-- N-P-K --}}
                             @if ($entry->nitrogen_total !== null || $entry->phosphorus !== null || $entry->potassium !== null)
                                 <div class="flex items-center gap-2 text-xs">
-                                    <span class="text-zinc-400">N-P-K:</span>
+                                    <span class="text-zinc-400">{{ __('N-P-K:') }}</span>
                                     <span class="font-medium text-zinc-600">
                                         {{ $entry->nitrogen_total ?? '—' }} /
                                         {{ $entry->phosphorus ?? '—' }} /
                                         {{ $entry->potassium ?? '—' }}
                                     </span>
-                                    <span class="text-zinc-300">mg/kg</span>
+                                    <span class="text-zinc-300">{{ __('mg/kg') }}</span>
                                 </div>
                             @endif
 

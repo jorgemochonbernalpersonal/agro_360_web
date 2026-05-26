@@ -45,10 +45,10 @@ class Index extends Component
         $client->update(['active' => $newState]);
 
         if ($newState) {
-            $this->toastSuccess('Cliente activado correctamente.');
+            $this->toastSuccess(__('Cliente activado correctamente.'));
             if ($this->currentTab === 'inactive') $this->currentTab = 'active';
         } else {
-            $this->toastSuccess('Cliente desactivado correctamente.');
+            $this->toastSuccess(__('Cliente desactivado correctamente.'));
             if ($this->currentTab === 'active') $this->currentTab = 'inactive';
         }
     }
@@ -58,12 +58,12 @@ class Index extends Component
         $client = Client::where('user_id', Auth::id())->findOrFail($clientId);
 
         if ($client->invoices()->exists()) {
-            $this->toastError('No se puede eliminar un cliente con facturas asociadas.');
+            $this->toastError(__('No se puede eliminar un cliente con facturas asociadas.'));
             return;
         }
 
         $client->delete();
-        $this->toastSuccess('Cliente eliminado correctamente.');
+        $this->toastSuccess(__('Cliente eliminado correctamente.'));
     }
 
     public function render()

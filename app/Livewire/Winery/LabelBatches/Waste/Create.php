@@ -48,7 +48,7 @@ class Create extends Component
             - $this->labelBatch->wasted_quantity;
 
         if ((int) $this->quantity > $available) {
-            $this->addError('quantity', "Solo quedan {$available} etiquetas disponibles.");
+            $this->addError('quantity', __('Solo quedan :available etiquetas disponibles.', ['available' => $available]));
             return;
         }
 
@@ -65,7 +65,7 @@ class Create extends Component
 
         $this->labelBatch->increment('wasted_quantity', (int) $this->quantity);
 
-        $this->toastSuccess('Merma de etiquetas registrada correctamente.');
+        $this->toastSuccess(__('Merma de etiquetas registrada correctamente.'));
         $this->roleRedirect('label-batches.waste.index', $this->labelBatch);
     }
 

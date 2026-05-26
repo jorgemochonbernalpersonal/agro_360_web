@@ -1,8 +1,8 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="Configuración del sistema"
-        description="Parámetros globales de la plataforma Agro365"
+        title="{{ __('Configuración del sistema') }}"
+        :description="__('Parámetros globales de la plataforma Agro365')"
     />
 
     {{-- Plataforma --}}
@@ -13,8 +13,8 @@
                     <flux:icon icon="server" class="size-5 text-blue-600" />
                 </div>
                 <div>
-                    <h3 class="font-semibold text-zinc-900">Plataforma</h3>
-                    <p class="text-xs text-zinc-400">Controla el acceso y estado general del sistema</p>
+                    <h3 class="font-semibold text-zinc-900">{{ __('Plataforma') }}</h3>
+                    <p class="text-xs text-zinc-400">{{ __('Controla el acceso y estado general del sistema') }}</p>
                 </div>
             </div>
         </x-slot:header>
@@ -23,8 +23,8 @@
             {{-- Registro --}}
             <div class="flex items-center justify-between py-3 border-b border-zinc-100">
                 <div>
-                    <p class="text-sm font-medium text-zinc-900">Registro de nuevos usuarios</p>
-                    <p class="text-xs text-zinc-400 mt-0.5">Permite que nuevos usuarios se registren en la plataforma</p>
+                    <p class="text-sm font-medium text-zinc-900">{{ __('Registro de nuevos usuarios') }}</p>
+                    <p class="text-xs text-zinc-400 mt-0.5">{{ __('Permite que nuevos usuarios se registren en la plataforma') }}</p>
                 </div>
                 <flux:switch wire:model="registration_open" />
             </div>
@@ -32,16 +32,16 @@
             {{-- Mantenimiento --}}
             <div class="flex items-center justify-between py-3 border-b border-zinc-100">
                 <div>
-                    <p class="text-sm font-medium text-zinc-900">Modo mantenimiento</p>
-                    <p class="text-xs text-zinc-400 mt-0.5">Muestra una página de mantenimiento a todos los usuarios no admin</p>
+                    <p class="text-sm font-medium text-zinc-900">{{ __('Modo mantenimiento') }}</p>
+                    <p class="text-xs text-zinc-400 mt-0.5">{{ __('Muestra una página de mantenimiento a todos los usuarios no admin') }}</p>
                 </div>
                 <flux:switch wire:model="maintenance_mode" />
             </div>
 
             {{-- Email soporte --}}
             <div class="space-y-1.5">
-                <label class="block text-sm font-medium text-zinc-700">Email de soporte</label>
-                <p class="text-xs text-zinc-400">Dirección de contacto que se muestra a los usuarios</p>
+                <label class="block text-sm font-medium text-zinc-700">{{ __('Email de soporte') }}</label>
+                <p class="text-xs text-zinc-400">{{ __('Dirección de contacto que se muestra a los usuarios') }}</p>
                 <flux:input
                     wire:model="support_email"
                     type="email"
@@ -64,9 +64,7 @@
                 @else
                     <span></span>
                 @endif
-                <flux:button wire:click="savePlatform" variant="primary" wire:loading.attr="disabled">
-                    Guardar configuración
-                </flux:button>
+                <flux:button wire:click="savePlatform" variant="primary" wire:loading.attr="disabled">{{ __('Guardar configuración') }}</flux:button>
             </div>
         </x-slot:footer>
     </x-agro.card>
@@ -79,15 +77,15 @@
                     <flux:icon icon="beaker" class="size-5 text-violet-600" />
                 </div>
                 <div>
-                    <h3 class="font-semibold text-zinc-900">Acceso Beta</h3>
-                    <p class="text-xs text-zinc-400">Fecha límite por defecto al activar el acceso beta a un usuario</p>
+                    <h3 class="font-semibold text-zinc-900">{{ __('Acceso Beta') }}</h3>
+                    <p class="text-xs text-zinc-400">{{ __('Fecha límite por defecto al activar el acceso beta a un usuario') }}</p>
                 </div>
             </div>
         </x-slot:header>
 
         <div class="space-y-1.5">
-            <label class="block text-sm font-medium text-zinc-700">Fecha límite beta por defecto</label>
-            <p class="text-xs text-zinc-400">Se aplica al activar beta desde el panel de usuarios si no se especifica otra fecha</p>
+            <label class="block text-sm font-medium text-zinc-700">{{ __('Fecha límite beta por defecto') }}</label>
+            <p class="text-xs text-zinc-400">{{ __('Se aplica al activar beta desde el panel de usuarios si no se especifica otra fecha') }}</p>
             <flux:input
                 wire:model="beta_end_date"
                 type="date"
@@ -108,9 +106,7 @@
                 @else
                     <span></span>
                 @endif
-                <flux:button wire:click="saveBeta" variant="primary" wire:loading.attr="disabled">
-                    Guardar fecha beta
-                </flux:button>
+                <flux:button wire:click="saveBeta" variant="primary" wire:loading.attr="disabled">{{ __('Guardar fecha beta') }}</flux:button>
             </div>
         </x-slot:footer>
     </x-agro.card>
@@ -123,8 +119,8 @@
                     <flux:icon icon="shield-check" class="size-5 text-red-600" />
                 </div>
                 <div>
-                    <h3 class="font-semibold text-zinc-900">Política de contraseñas</h3>
-                    <p class="text-xs text-zinc-400">Se aplica al registrarse, al crear usuarios desde admin y al cambiar contraseña</p>
+                    <h3 class="font-semibold text-zinc-900">{{ __('Política de contraseñas') }}</h3>
+                    <p class="text-xs text-zinc-400">{{ __('Se aplica al registrarse, al crear usuarios desde admin y al cambiar contraseña') }}</p>
                 </div>
             </div>
         </x-slot:header>
@@ -132,8 +128,8 @@
         <div class="space-y-5">
             {{-- Longitud mínima --}}
             <div class="space-y-1.5">
-                <label class="block text-sm font-medium text-zinc-700">Longitud mínima de contraseña</label>
-                <p class="text-xs text-zinc-400">Mínimo 6, máximo 32 caracteres</p>
+                <label class="block text-sm font-medium text-zinc-700">{{ __('Longitud mínima de contraseña') }}</label>
+                <p class="text-xs text-zinc-400">{{ __('Mínimo 6, máximo 32 caracteres') }}</p>
                 <div class="flex items-center gap-3">
                     <flux:input
                         wire:model="password_min_length"
@@ -142,7 +138,7 @@
                         max="32"
                         class="max-w-[100px]"
                     />
-                    <span class="text-sm text-zinc-500">caracteres</span>
+                    <span class="text-sm text-zinc-500">{{ __('caracteres') }}</span>
                 </div>
                 @error('password_min_length')
                     <p class="text-xs text-red-500">{{ $message }}</p>
@@ -152,8 +148,8 @@
             {{-- Contraseña fuerte --}}
             <div class="flex items-center justify-between py-3 border-t border-zinc-100">
                 <div>
-                    <p class="text-sm font-medium text-zinc-900">Requerir contraseña fuerte</p>
-                    <p class="text-xs text-zinc-400 mt-0.5">Obliga a incluir mayúscula, número y símbolo</p>
+                    <p class="text-sm font-medium text-zinc-900">{{ __('Requerir contraseña fuerte') }}</p>
+                    <p class="text-xs text-zinc-400 mt-0.5">{{ __('Obliga a incluir mayúscula, número y símbolo') }}</p>
                 </div>
                 <flux:switch wire:model="require_strong_password" />
             </div>
@@ -169,9 +165,7 @@
                 @else
                     <span></span>
                 @endif
-                <flux:button wire:click="saveSecurity" variant="primary" wire:loading.attr="disabled">
-                    Guardar política
-                </flux:button>
+                <flux:button wire:click="saveSecurity" variant="primary" wire:loading.attr="disabled">{{ __('Guardar política') }}</flux:button>
             </div>
         </x-slot:footer>
     </x-agro.card>
@@ -184,8 +178,8 @@
                     <flux:icon icon="puzzle-piece" class="size-5 text-agro-600" />
                 </div>
                 <div>
-                    <h3 class="font-semibold text-zinc-900">Módulos</h3>
-                    <p class="text-xs text-zinc-400">Activa o desactiva funcionalidades para todos los usuarios</p>
+                    <h3 class="font-semibold text-zinc-900">{{ __('Módulos') }}</h3>
+                    <p class="text-xs text-zinc-400">{{ __('Activa o desactiva funcionalidades para todos los usuarios') }}</p>
                 </div>
             </div>
         </x-slot:header>
@@ -193,16 +187,16 @@
         <div class="space-y-1">
             <div class="flex items-center justify-between py-3 border-b border-zinc-100">
                 <div>
-                    <p class="text-sm font-medium text-zinc-900">SILICIE</p>
-                    <p class="text-xs text-zinc-400 mt-0.5">Integración con el Registro de Operadores de SILICIE (bodegas)</p>
+                    <p class="text-sm font-medium text-zinc-900">{{ __('SILICIE') }}</p>
+                    <p class="text-xs text-zinc-400 mt-0.5">{{ __('Integración con el Registro de Operadores de SILICIE (bodegas)') }}</p>
                 </div>
                 <flux:switch wire:model="module_silicie" />
             </div>
 
             <div class="flex items-center justify-between py-3">
                 <div>
-                    <p class="text-sm font-medium text-zinc-900">PAC / Cuaderno Digital</p>
-                    <p class="text-xs text-zinc-400 mt-0.5">Módulos de Política Agrícola Común: cuaderno de campo, BCAM, IPM (viticultores)</p>
+                    <p class="text-sm font-medium text-zinc-900">{{ __('PAC / Cuaderno Digital') }}</p>
+                    <p class="text-xs text-zinc-400 mt-0.5">{{ __('Módulos de Política Agrícola Común: cuaderno de campo, BCAM, IPM (viticultores)') }}</p>
                 </div>
                 <flux:switch wire:model="module_pac" />
             </div>
@@ -211,7 +205,7 @@
         <x-slot:footer>
             <div class="flex items-center justify-between gap-4">
                 <div class="flex flex-col gap-1">
-                    <p class="text-xs text-zinc-400">Los cambios se aplican en el próximo login del usuario</p>
+                    <p class="text-xs text-zinc-400">{{ __('Los cambios se aplican en el próximo login del usuario') }}</p>
                     @if($lastModules)
                         <p class="text-xs text-zinc-400">
                             Último cambio: {{ $lastModules->created_at->format('d/m/Y H:i') }}
@@ -219,9 +213,7 @@
                         </p>
                     @endif
                 </div>
-                <flux:button wire:click="saveModules" variant="primary" wire:loading.attr="disabled">
-                    Guardar módulos
-                </flux:button>
+                <flux:button wire:click="saveModules" variant="primary" wire:loading.attr="disabled">{{ __('Guardar módulos') }}</flux:button>
             </div>
         </x-slot:footer>
     </x-agro.card>

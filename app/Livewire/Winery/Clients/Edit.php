@@ -267,11 +267,11 @@ class Edit extends Component
                 $this->client->addresses()->whereNotIn('id', $keptIds)->delete();
             });
 
-            $this->toastSuccess('Cliente actualizado correctamente.');
+            $this->toastSuccess(__('Cliente actualizado correctamente.'));
             return $this->redirect(roleRoute('clients.index'), navigate: true);
 
         } catch (\Exception $e) {
-            $this->toastError('Error al actualizar el cliente: ' . $e->getMessage());
+            $this->toastError(__('Error al actualizar el cliente: :error', ['error' => $e->getMessage()]));
         }
     }
 

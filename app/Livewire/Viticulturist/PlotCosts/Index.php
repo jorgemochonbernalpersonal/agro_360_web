@@ -31,7 +31,7 @@ class Index extends Component
     public function delete(int $id): void
     {
         PlotCost::where('viticulturist_id', Auth::id())->findOrFail($id)->delete();
-        $this->toastSuccess('Coste eliminado correctamente.');
+        $this->toastSuccess(__('Coste eliminado correctamente.'));
     }
 
     public function render()

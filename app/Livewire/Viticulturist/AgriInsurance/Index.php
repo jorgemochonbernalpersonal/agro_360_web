@@ -26,7 +26,7 @@ class Index extends Component
     public function delete(int $id): void
     {
         AgriInsurance::where('viticulturist_id', Auth::id())->findOrFail($id)->delete();
-        $this->toastSuccess('Seguro eliminado.');
+        $this->toastSuccess(__('Seguro eliminado.'));
     }
 
     public function render()

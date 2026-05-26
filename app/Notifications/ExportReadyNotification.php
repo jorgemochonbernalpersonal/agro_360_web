@@ -39,11 +39,11 @@ class ExportReadyNotification extends Notification implements ShouldQueue
         $label = $typeLabels[$this->exportType] ?? $this->exportType;
 
         return (new MailMessage)
-            ->subject("Exportación lista - {$label}")
-            ->greeting('📦 Tu exportación está lista')
-            ->line("La exportación de **{$label}** en formato **{$this->format}** se ha completado.")
-            ->action('Ir al panel', url('/dashboard'))
-            ->line('El archivo estará disponible durante 7 días.');
+            ->subject(__('Exportación lista - :label', ['label' => $label]))
+            ->greeting(__('📦 Tu exportación está lista'))
+            ->line(__('La exportación de **:label** en formato **:format** se ha completado.', ['label' => $label, 'format' => $this->format]))
+            ->action(__('Ir al panel'), url('/dashboard'))
+            ->line(__('El archivo estará disponible durante 7 días.'));
     }
 
     public function toArray(object $notifiable): array

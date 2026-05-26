@@ -60,13 +60,13 @@ class Index extends Component
         
         // Verificar permisos
         if ($this->reportToInvalidate->user_id !== auth()->id()) {
-            $this->addError('invalidate', 'No tienes permiso para invalidar este informe.');
+            $this->addError('invalidate', __('No tienes permiso para invalidar este informe.'));
             return;
         }
         
         // Verificar si ya está invalidado
         if (!$this->reportToInvalidate->isValid()) {
-            $this->addError('invalidate', 'Este informe ya está invalidado.');
+            $this->addError('invalidate', __('Este informe ya está invalidado.'));
             return;
         }
         
@@ -74,7 +74,7 @@ class Index extends Component
         if (!$this->reportToInvalidate->canBeInvalidated()) {
             $maxDays = config('reports.max_days_to_invalidate', 30);
             $daysSinceSigned = $this->reportToInvalidate->signed_at->diffInDays(now());
-            $this->addError('invalidate', "Este informe no puede ser invalidado. Han pasado {$daysSinceSigned} días desde su firma. Solo se pueden invalidar informes con menos de {$maxDays} días.");
+            $this->addError('invalidate', __('Este informe no puede ser invalidado. Han pasado :days días desde su firma. Solo se pueden invalidar informes con menos de :max días.', ['days' => $daysSinceSigned, 'max' => $maxDays]));
             return;
         }
         
@@ -90,15 +90,15 @@ class Index extends Component
             'invalidatePassword' => 'required|string',
             'invalidateReason' => 'required|string|min:10',
         ], [
-            'invalidatePassword.required' => 'La contraseña es obligatoria.',
-            'invalidateReason.required' => 'Debes especificar un motivo.',
-            'invalidateReason.min' => 'El motivo debe tener al menos 10 caracteres.',
+            'invalidatePassword.required' => __('La contraseña es obligatoria.'),
+            'invalidateReason.required' => __('Debes especificar un motivo.'),
+            'invalidateReason.min' => __('El motivo debe tener al menos 10 caracteres.'),
         ]);
 
         try {
             // Verificar contraseña
             if (!\Hash::check($this->invalidatePassword, auth()->user()->password)) {
-                $this->addError('invalidatePassword', 'Contraseña incorrecta.');
+                $this->addError('invalidatePassword', __('Contraseña incorrecta.'));
                 return;
             }
 
@@ -106,10 +106,10 @@ class Index extends Component
             $this->reportToInvalidate->invalidate($this->invalidateReason);
 
             $this->closeInvalidateModal();
-            $this->toastSuccess('Informe invalidado correctamente.');
+            $this->toastSuccess(__('Informe invalidado correctamente.'));
             
         } catch (\Exception $e) {
-            $this->addError('invalidate', 'Error al invalidar: ' . $e->getMessage());
+            $this->addError('invalidate', __('Error al invalidar: :message', ['message' => $e->getMessage()]));
         }
     }
 
@@ -134,7 +134,7 @@ class Index extends Component
         
         // Verificar permisos
         if ($this->reportToShare->user_id !== auth()->id()) {
-            $this->addError('share', 'No tienes permiso para compartir este informe.');
+            $this->addError('share', __('No tienes permiso para compartir este informe.'));
             return;
         }
         
@@ -150,9 +150,9 @@ class Index extends Component
             'shareEmail' => 'required|email',
             'shareMessage' => 'nullable|string|max:500',
         ], [
-            'shareEmail.required' => 'El email es obligatorio.',
-            'shareEmail.email' => 'Introduce un email válido.',
-            'shareMessage.max' => 'El mensaje no puede superar 500 caracteres.',
+            'shareEmail.required' => __('El email es obligatorio.'),
+            'shareEmail.email' => __('Introduce un email válido.'),
+            'shareMessage.max' => __('El mensaje no puede superar 500 caracteres.'),
         ]);
 
         try {
@@ -166,10 +166,10 @@ class Index extends Component
             );
 
             $this->closeShareModal();
-            $this->toastSuccess('Informe compartido exitosamente a ' . $this->shareEmail);
+            $this->toastSuccess(__('Informe compartido exitosamente a :email.', ['email' => $this->shareEmail]));
             
         } catch (\Exception $e) {
-            $this->addError('share', 'Error al enviar email: ' . $e->getMessage());
+            $this->addError('share', __('Error al enviar email: :message', ['message' => $e->getMessage()]));
         }
     }
 
@@ -194,7 +194,7 @@ class Index extends Component
         
         // Verificar permisos
         if ($this->reportToPreview->user_id !== auth()->id()) {
-            $this->addError('preview', 'No tienes permiso para ver este informe.');
+            $this->addError('preview', __('No tienes permiso para ver este informe.'));
             return;
         }
         
@@ -220,13 +220,13 @@ class Index extends Component
             
             // Verificar permisos
             if ($report->user_id !== auth()->id()) {
-                $this->toastError('No tienes permiso para descargar este informe.');
+                $this->toastError(__('No tienes permiso para descargar este informe.'));
                 return;
             }
             
             // Validar que el informe esté completo
             if ($report->processing_status !== 'completed') {
-                $this->toastWarning('Este informe aún está siendo procesado. Espera a que se complete.');
+                $this->toastWarning(__('Este informe aún está siendo procesado. Espera a que se complete.'));
                 return;
             }
             
@@ -234,7 +234,7 @@ class Index extends Component
             return $service->downloadReportInFormat($report, $format);
             
         } catch (\Exception $e) {
-            $this->toastError($e instanceof RuntimeException ? $e->getMessage() : 'Error al descargar el informe. Inténtalo de nuevo.');
+            $this->toastError($e instanceof RuntimeException ? $e->getMessage()  : __('Error al descargar el informe. Inténtalo de nuevo.'));
         }
     }
 

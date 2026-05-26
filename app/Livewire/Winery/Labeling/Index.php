@@ -38,7 +38,7 @@ class Index extends AbstractIndex
             $labeling->delete();
         });
 
-        $this->toastSuccess('Sesión de etiquetado eliminada.');
+        $this->toastSuccess(__('Sesión de etiquetado eliminada.'));
     }
 
     protected function baseQuery(): Builder

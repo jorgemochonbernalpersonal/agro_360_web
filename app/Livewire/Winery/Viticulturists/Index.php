@@ -108,7 +108,7 @@ class Index extends AbstractIndex
         ]);
 
         $this->closeDOModal();
-        $this->toastSuccess('Viticultor asignado correctamente.');
+        $this->toastSuccess(__('Viticultor asignado correctamente.'));
     }
 
     public function unassignFromDO(int $viticulturistId): void
@@ -119,7 +119,7 @@ class Index extends AbstractIndex
             ->firstOrFail()
             ->delete();
 
-        $this->toastSuccess('Viticultor desasignado.');
+        $this->toastSuccess(__('Viticultor desasignado.'));
     }
 
     public function unlinkViticulturist(int $viticulturistId): void
@@ -136,7 +136,7 @@ class Index extends AbstractIndex
 
         $relation->delete();
 
-        $this->toastSuccess('Viticultor desvinculado correctamente.');
+        $this->toastSuccess(__('Viticultor desvinculado correctamente.'));
     }
 
     // ── Export ────────────────────────────────────────────────────────────────

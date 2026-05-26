@@ -31,7 +31,7 @@
     </div>
 
     <div class="max-w-xs">
-        <h3 class="text-base font-bold text-zinc-800">Plan Completo requerido</h3>
+        <h3 class="text-base font-bold text-zinc-800">{{ __('Plan Completo requerido') }}</h3>
         <p class="mt-1 text-sm text-zinc-500">
             {{ $description ?? ucfirst($feature) . ' está disponible en el Plan Completo.' }}
         </p>

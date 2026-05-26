@@ -68,7 +68,7 @@ class Edit extends Component
             'notes'               => $this->notes ?: null,
         ]);
 
-        $this->toastSuccess('Operación actualizada correctamente.');
+        $this->toastSuccess(__('Operación actualizada correctamente.'));
         $this->redirect(roleRoute('cellar-operations.index'), navigate: true);
     }
 

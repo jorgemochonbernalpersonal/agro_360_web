@@ -62,7 +62,7 @@ class Index extends Component
     public function assignTicket()
     {
         if (!$this->selectedTicket) {
-            $this->toastError('No hay ticket seleccionado.');
+            $this->toastError(__('No hay ticket seleccionado.'));
             return;
         }
 
@@ -78,13 +78,13 @@ class Index extends Component
             'to_user_id'    => $this->assignTo ?: null,
         ]);
 
-        $this->toastSuccess('Ticket asignado correctamente.');
+        $this->toastSuccess(__('Ticket asignado correctamente.'));
     }
 
     public function changeStatus($status)
     {
         if (!$this->selectedTicket) {
-            $this->toastError('No hay ticket seleccionado.');
+            $this->toastError(__('No hay ticket seleccionado.'));
             return;
         }
 
@@ -107,7 +107,7 @@ class Index extends Component
             'to_status'    => $status,
         ]);
 
-        $this->toastSuccess('Estado del ticket actualizado.');
+        $this->toastSuccess(__('Estado del ticket actualizado.'));
     }
 
     public function deleteTicket($ticketId)
@@ -143,7 +143,7 @@ class Index extends Component
         $this->validate(['newComment' => 'required|string|min:3']);
 
         if (!$this->selectedTicket) {
-            $this->toastError('No hay ticket seleccionado.');
+            $this->toastError(__('No hay ticket seleccionado.'));
             return;
         }
 
@@ -157,7 +157,7 @@ class Index extends Component
         $this->newComment     = '';
         $this->isInternal     = false;
         $this->selectedTicket = $this->selectedTicket->fresh(['comments.user']);
-        $this->toastSuccess($wasInternal ? 'Nota interna añadida.' : 'Comentario añadido.');
+        $this->toastSuccess($wasInternal ? __('Nota interna añadida.') : __('Comentario añadido.'));
     }
 
     public function exportCsv()
@@ -243,8 +243,8 @@ class Index extends Component
             'stats'           => $stats,
             'cannedResponses' => $cannedResponses,
         ])->layout('layouts.app', [
-            'title'       => 'Tickets de Soporte - Admin - Agro365',
-            'description' => 'Gestiona todos los tickets de soporte del sistema',
+            'title'       => __('Tickets de Soporte - Admin - Agro365'),
+            'description' => __('Gestiona todos los tickets de soporte del sistema'),
         ]);
     }
 }

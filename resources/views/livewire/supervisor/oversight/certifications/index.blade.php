@@ -1,15 +1,15 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="Certificaciones DO"
-        description="Certificaciones activas de los viticultores adscritos a la denominación."
+        title="{{ __('Certificaciones DO') }}"
+        :description="__('Certificaciones activas de los viticultores adscritos a la denominación.')"
     />
 
     {{-- Stats --}}
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <x-agro.stat-card label="Vigentes" :value="$totalActive" icon="check-badge" color="emerald" />
-        <x-agro.stat-card label="Próximas a vencer (60d)" :value="$totalExpiring" icon="clock" color="amber" />
-        <x-agro.stat-card label="Caducadas" :value="$totalExpired" icon="x-circle" color="red" />
+        <x-agro.stat-card :label="__('Vigentes')" :value="$totalActive" icon="check-badge" color="emerald" />
+        <x-agro.stat-card :label="__('Próximas a vencer (60d)')" :value="$totalExpiring" icon="clock" color="amber" />
+        <x-agro.stat-card :label="__('Caducadas')" :value="$totalExpired" icon="x-circle" color="red" />
     </div>
 
     {{-- Alerta si hay caducadas o próximas a vencer --}}
@@ -30,30 +30,28 @@
 
     {{-- Filtros --}}
     <x-agro.filter-bar>
-        <x-agro.filter-select wire:model.live="filterVit" label="Viticultor">
-            <option value="">Todos</option>
+        <x-agro.filter-select wire:model.live="filterVit" :label="__('Viticultor')">
+            <option value="">{{ __('Todos') }}</option>
             @foreach($viticulturists as $vit)
                 <option value="{{ $vit->id }}">{{ $vit->name }}</option>
             @endforeach
         </x-agro.filter-select>
 
-        <x-agro.filter-select wire:model.live="filterType" label="Tipo">
-            <option value="">Todos los tipos</option>
+        <x-agro.filter-select wire:model.live="filterType" :label="__('Tipo')">
+            <option value="">{{ __('Todos los tipos') }}</option>
             @foreach($certTypes as $key => $label)
                 <option value="{{ $key }}">{{ $label }}</option>
             @endforeach
         </x-agro.filter-select>
 
-        <x-agro.filter-select wire:model.live="filterStatus" label="Estado">
-            <option value="">Cualquier estado</option>
-            <option value="active">Vigentes</option>
-            <option value="expiring">Próximas a vencer</option>
-            <option value="expired">Caducadas</option>
+        <x-agro.filter-select wire:model.live="filterStatus" :label="__('Estado')">
+            <option value="">{{ __('Cualquier estado') }}</option>
+            <option value="active">{{ __('Vigentes') }}</option>
+            <option value="expiring">{{ __('Próximas a vencer') }}</option>
+            <option value="expired">{{ __('Caducadas') }}</option>
         </x-agro.filter-select>
 
-        <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 transition px-2 py-1.5">
-            Limpiar
-        </button>
+        <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 transition px-2 py-1.5">{{ __('Limpiar') }}</button>
     </x-agro.filter-bar>
 
     {{-- Card Grid --}}
@@ -91,11 +89,11 @@
                             radius="xl"
                         >
                             @if($cert->is_expired)
-                                <flux:badge color="red" size="sm">Caducada</flux:badge>
+                                <flux:badge color="red" size="sm">{{ __('Caducada') }}</flux:badge>
                             @elseif($cert->is_expiring_soon)
-                                <flux:badge color="yellow" size="sm">Pronto vence</flux:badge>
+                                <flux:badge color="yellow" size="sm">{{ __('Pronto vence') }}</flux:badge>
                             @else
-                                <flux:badge color="green" size="sm">Vigente</flux:badge>
+                                <flux:badge color="green" size="sm">{{ __('Vigente') }}</flux:badge>
                             @endif
                         </x-agro.card-item-header>
                     </x-slot:header>
@@ -104,7 +102,7 @@
                         {{-- Metric boxes --}}
                         <div class="grid grid-cols-2 gap-2">
                             <div class="bg-zinc-50 rounded-lg p-2 text-center">
-                                <p class="text-[9px] text-zinc-400 uppercase tracking-wide mb-0.5">Emisión</p>
+                                <p class="text-[9px] text-zinc-400 uppercase tracking-wide mb-0.5">{{ __('Emisión') }}</p>
                                 <p class="text-sm font-bold text-zinc-700">
                                     {{ $cert->issue_date?->format('d/m/Y') ?? '—' }}
                                 </p>
@@ -120,13 +118,13 @@
                         {{-- Key-value rows --}}
                         @if($cert->certifying_body)
                             <div class="flex items-center justify-between text-sm">
-                                <span class="text-zinc-400">Organismo</span>
+                                <span class="text-zinc-400">{{ __('Organismo') }}</span>
                                 <span class="text-zinc-700 truncate ml-2">{{ $cert->certifying_body }}</span>
                             </div>
                         @endif
                         @if($cert->certificate_number)
                             <div class="flex items-center justify-between text-sm">
-                                <span class="text-zinc-400">N.º certificado</span>
+                                <span class="text-zinc-400">{{ __('N.º certificado') }}</span>
                                 <span class="text-zinc-600 font-mono text-xs">{{ $cert->certificate_number }}</span>
                             </div>
                         @endif
@@ -139,8 +137,8 @@
     @else
         <x-agro.empty-state
             icon="check-badge"
-            title="Sin certificaciones"
-            description="No se encontraron certificaciones con los filtros seleccionados."
+            title="{{ __('Sin certificaciones') }}"
+            :description="__('No se encontraron certificaciones con los filtros seleccionados.')"
         />
     @endif
 

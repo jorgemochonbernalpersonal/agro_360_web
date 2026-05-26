@@ -1,26 +1,26 @@
 <div class="space-y-8 animate-fade-in">
 
     <x-agro.page-header
-        title="Estadísticas"
-        description="Métricas agregadas de producción, superficie y actividad en la denominación de origen."
+        title="{{ __('Estadísticas') }}"
+        :description="__('Métricas agregadas de producción, superficie y actividad en la denominación de origen.')"
     />
 
     {{-- Top-level stat cards --}}
     <x-agro.stats-section key="supervisor-statistics">
         <x-agro.stat-card
-            label="Bodegas"
+            :label="__('Bodegas')"
             :value="$totalWineries"
             icon="building-office-2"
             color="blue"
         />
         <x-agro.stat-card
-            label="Viticultores DO"
+            :label="__('Viticultores DO')"
             :value="$totalViticulturists"
             icon="users"
             color="agro"
         />
         <x-agro.stat-card
-            label="Superficie (ha)"
+            :label="__('Superficie (ha)')"
             :value="number_format($totalPlotAreaHa, 2)"
             icon="map"
             color="yellow"
@@ -42,7 +42,7 @@
             <x-slot:header>
                 <div class="flex items-center gap-2">
                     <flux:icon icon="users" class="size-4 text-agro-500" />
-                    <span>Composición del pool</span>
+                    <span>{{ __('Composición del pool') }}</span>
                 </div>
             </x-slot:header>
 
@@ -82,7 +82,7 @@
                     </div>
                 </div>
             @else
-                <p class="text-sm text-zinc-400 py-4 text-center">Sin viticultores en el pool.</p>
+                <p class="text-sm text-zinc-400 py-4 text-center">{{ __('Sin viticultores en el pool.') }}</p>
             @endif
         </x-agro.card>
 
@@ -91,7 +91,7 @@
             <x-slot:header>
                 <div class="flex items-center gap-2">
                     <flux:icon icon="sparkles" class="size-4 text-emerald-500" />
-                    <span>Agricultura ecológica</span>
+                    <span>{{ __('Agricultura ecológica') }}</span>
                 </div>
             </x-slot:header>
 
@@ -100,7 +100,7 @@
                     <div class="flex items-center justify-between">
                         <div class="text-center flex-1">
                             <p class="text-3xl font-bold text-emerald-600">{{ $organicPct }}%</p>
-                            <p class="text-xs text-zinc-400 mt-0.5">parcelas ecológicas</p>
+                            <p class="text-xs text-zinc-400 mt-0.5">{{ __('parcelas ecológicas') }}</p>
                         </div>
                         <div class="w-px h-12 bg-zinc-100"></div>
                         <div class="text-center flex-1">
@@ -110,7 +110,7 @@
                         <div class="w-px h-12 bg-zinc-100"></div>
                         <div class="text-center flex-1">
                             <p class="text-3xl font-bold text-zinc-700">{{ number_format($plotStats->organic_area, 1) }}</p>
-                            <p class="text-xs text-zinc-400 mt-0.5">ha ecológicas</p>
+                            <p class="text-xs text-zinc-400 mt-0.5">{{ __('ha ecológicas') }}</p>
                         </div>
                     </div>
                     <div class="w-full bg-zinc-100 rounded-full h-3">
@@ -118,7 +118,7 @@
                     </div>
                 </div>
             @else
-                <p class="text-sm text-zinc-400 py-4 text-center">Sin datos de parcelas.</p>
+                <p class="text-sm text-zinc-400 py-4 text-center">{{ __('Sin datos de parcelas.') }}</p>
             @endif
         </x-agro.card>
 
@@ -126,7 +126,7 @@
 
     {{-- Top grape varieties --}}
     <div>
-        <h2 class="text-sm font-semibold text-zinc-700 mb-3">Variedades principales</h2>
+        <h2 class="text-sm font-semibold text-zinc-700 mb-3">{{ __('Variedades principales') }}</h2>
 
         @if($topVarieties->count() > 0)
             @php
@@ -167,7 +167,7 @@
                 </div>
             </x-agro.card>
         @else
-            <x-agro.empty-state icon="sparkles" title="Sin variedades" description="No hay plantaciones activas con variedad asignada." />
+            <x-agro.empty-state icon="sparkles" title="{{ __('Sin variedades') }}" :description="__('No hay plantaciones activas con variedad asignada.')" />
         @endif
     </div>
 
@@ -219,13 +219,13 @@
                     </div>
                 </x-agro.card>
             @else
-                <x-agro.empty-state icon="chart-bar" title="Sin actividades" description="No se han registrado actividades este año." />
+                <x-agro.empty-state icon="chart-bar" title="{{ __('Sin actividades') }}" :description="__('No se han registrado actividades este año.')" />
             @endif
         </div>
 
         {{-- Harvest by vintage --}}
         <div>
-            <h2 class="text-sm font-semibold text-zinc-700 mb-3">Histórico de vendimias</h2>
+            <h2 class="text-sm font-semibold text-zinc-700 mb-3">{{ __('Histórico de vendimias') }}</h2>
 
             @if($harvestByVintage->count() > 0)
                 <div class="space-y-4">
@@ -239,20 +239,20 @@
                                     <div class="flex items-center gap-2 mb-1">
                                         <span class="font-semibold text-zinc-900">{{ $row->vintage }}</span>
                                         @if($row->vintage === $currentYear)
-                                            <flux:badge color="green" size="sm">Actual</flux:badge>
+                                            <flux:badge color="green" size="sm">{{ __('Actual') }}</flux:badge>
                                         @endif
                                     </div>
                                     <div class="grid grid-cols-3 gap-2 text-center">
                                         <div>
-                                            <p class="text-[10px] text-zinc-400 uppercase tracking-wide">Recepciones</p>
+                                            <p class="text-[10px] text-zinc-400 uppercase tracking-wide">{{ __('Recepciones') }}</p>
                                             <p class="text-sm font-bold text-zinc-700">{{ $row->reception_count }}</p>
                                         </div>
                                         <div>
-                                            <p class="text-[10px] text-zinc-400 uppercase tracking-wide">Uva (kg)</p>
+                                            <p class="text-[10px] text-zinc-400 uppercase tracking-wide">{{ __('Uva (kg)') }}</p>
                                             <p class="text-sm font-bold text-emerald-600">{{ number_format($row->total_kg, 0, ',', '.') }}</p>
                                         </div>
                                         <div>
-                                            <p class="text-[10px] text-zinc-400 uppercase tracking-wide">Brix</p>
+                                            <p class="text-[10px] text-zinc-400 uppercase tracking-wide">{{ __('Brix') }}</p>
                                             <p class="text-sm font-bold text-blue-600">{{ $row->avg_brix ? $row->avg_brix . '°' : '—' }}</p>
                                         </div>
                                     </div>
@@ -262,7 +262,7 @@
                     @endforeach
                 </div>
             @else
-                <x-agro.empty-state icon="calendar" title="Sin datos" description="No hay datos de vendimias aún." />
+                <x-agro.empty-state icon="calendar" title="{{ __('Sin datos') }}" :description="__('No hay datos de vendimias aún.')" />
             @endif
         </div>
 

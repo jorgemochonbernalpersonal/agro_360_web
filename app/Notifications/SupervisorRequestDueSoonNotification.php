@@ -46,12 +46,12 @@ class SupervisorRequestDueSoonNotification extends Notification implements Shoul
 
         return (new MailMessage)
             ->subject("⏰ Solicitud vence {$daysText} — {$typeLabel}")
-            ->greeting('Hola ' . ($notifiable->name ?: ''))
+            ->greeting(__('Hola :name', ['name' => $notifiable->name ?: '']))
             ->line("Tu solicitud de tipo **{$typeLabel}** vence **{$daysText}** ({$req->due_date->format('d/m/Y')}).")
             ->when($req->title, fn ($m) => $m->line('**Asunto:** ' . $req->title))
             ->line('Si aún no has respondido, hazlo antes de que se supere la fecha límite.')
-            ->action('Responder ahora', $url)
-            ->salutation("Saludos,\nAgro365");
+            ->action(__('Responder ahora'), $url)
+            ->salutation(__('Saludos,\nAgro365'));
     }
 
     public function toArray(object $notifiable): array

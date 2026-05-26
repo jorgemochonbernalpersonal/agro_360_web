@@ -2,8 +2,8 @@
 
     {{-- Header --}}
     <x-agro.page-header
-        title="Mantenimientos de Contenedores"
-        description="Todos los mantenimientos programados y realizados en depósitos y barricas"
+        title="{{ __('Mantenimientos de Contenedores') }}"
+        :description="__('Todos los mantenimientos programados y realizados en depósitos y barricas')"
         icon="wrench-screwdriver"
     >
         <x-slot:actions>
@@ -20,17 +20,17 @@
     }">
         <button @click="toggle()"
             class="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-widest hover:text-zinc-600 transition-colors mb-3">
-            <span>Estadísticas</span>
+            <span>{{ __('Estadísticas') }}</span>
             <flux:icon icon="chevron-up" class="size-3.5 transition-transform duration-200" ::class="{ 'rotate-180': !open }" />
         </button>
         <div x-show="open"
             x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100 translate-y-0"
             x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-1">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <x-agro.stat-card label="Total"       :value="$stats['total']"     icon="wrench-screwdriver" color="zinc" />
-                <x-agro.stat-card label="Programados"  :value="$stats['scheduled']" icon="clock"              color="amber" />
-                <x-agro.stat-card label="Completados"  :value="$stats['completed']" icon="check-circle"       color="agro" />
-                <x-agro.stat-card label="Coste total"  :value="number_format($stats['total_cost'], 2) . ' €'" icon="currency-euro" color="zinc" />
+                <x-agro.stat-card :label="__('Total')"       :value="$stats['total']"     icon="wrench-screwdriver" color="zinc" />
+                <x-agro.stat-card :label="__('Programados')"  :value="$stats['scheduled']" icon="clock"              color="amber" />
+                <x-agro.stat-card :label="__('Completados')"  :value="$stats['completed']" icon="check-circle"       color="agro" />
+                <x-agro.stat-card :label="__('Coste total')"  :value="number_format($stats['total_cost'], 2) . ' €'" icon="currency-euro" color="zinc" />
             </div>
         </div>
     </div>
@@ -45,34 +45,34 @@
             <input
                 wire:model.live.debounce.300ms="search"
                 type="text"
-                placeholder="Buscar por descripción o contenedor..."
+                placeholder="{{ __('Buscar por descripción o contenedor...') }}"
                 class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
             />
         </div>
 
         <flux:select wire:model.live="containerFilter" class="w-48">
-            <flux:select.option value="">Todos los contenedores</flux:select.option>
+            <flux:select.option value="">{{ __('Todos los contenedores') }}</flux:select.option>
             @foreach($containers as $c)
                 <flux:select.option value="{{ $c->id }}">{{ $c->name }}</flux:select.option>
             @endforeach
         </flux:select>
 
         <flux:select wire:model.live="statusFilter" class="w-40">
-            <flux:select.option value="">Todos los estados</flux:select.option>
+            <flux:select.option value="">{{ __('Todos los estados') }}</flux:select.option>
             @foreach($statuses as $key => $label)
                 <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
             @endforeach
         </flux:select>
 
         <flux:select wire:model.live="typeFilter" class="w-40">
-            <flux:select.option value="">Todos los tipos</flux:select.option>
+            <flux:select.option value="">{{ __('Todos los tipos') }}</flux:select.option>
             @foreach($types as $key => $label)
                 <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
             @endforeach
         </flux:select>
 
         @if($search || $filterCount)
-            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">Limpiar</flux:button>
+            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">{{ __('Limpiar') }}</flux:button>
         @endif
     </div>
 
@@ -120,18 +120,18 @@
 
                         <div class="flex-1 space-y-2 text-sm">
                             <div class="flex justify-between">
-                                <span class="text-zinc-500">Programado</span>
+                                <span class="text-zinc-500">{{ __('Programado') }}</span>
                                 <span class="font-medium text-zinc-800">{{ $m->scheduled_date?->format('d/m/Y') ?? '—' }}</span>
                             </div>
                             @if($m->performed_date)
                             <div class="flex justify-between">
-                                <span class="text-zinc-500">Realizado</span>
+                                <span class="text-zinc-500">{{ __('Realizado') }}</span>
                                 <span class="font-medium text-zinc-800">{{ $m->performed_date->format('d/m/Y') }}</span>
                             </div>
                             @endif
                             @if($m->cost)
                             <div class="flex justify-between">
-                                <span class="text-zinc-500">Coste</span>
+                                <span class="text-zinc-500">{{ __('Coste') }}</span>
                                 <span class="font-medium text-zinc-800">{{ number_format($m->cost, 2) }} €</span>
                             </div>
                             @endif
@@ -153,7 +153,7 @@
                                     </flux:button>
                                 @endif
                                 @if($m->status !== 'completed' && $m->status !== 'cancelled')
-                                    <flux:button wire:click="transition({{ $m->id }}, 'cancelled')" wire:confirm="¿Cancelar este mantenimiento?" variant="ghost" size="sm" icon="x-mark" class="text-red-500" />
+                                    <flux:button wire:click="transition({{ $m->id }}, 'cancelled')" wire:confirm="{{ __('¿Cancelar este mantenimiento?') }}" variant="ghost" size="sm" icon="x-mark" class="text-red-500" />
                                 @endif
                             </div>
                         </x-slot:footer>
@@ -165,7 +165,7 @@
         @else
             <x-agro.empty-state
                 icon="wrench-screwdriver"
-                title="Sin mantenimientos registrados"
+                title="{{ __('Sin mantenimientos registrados') }}"
                 description="{{ $search || $filterCount ? 'No hay mantenimientos que coincidan con los filtros.' : 'Los mantenimientos se programan desde el detalle de cada contenedor.' }}"
             />
         @endif

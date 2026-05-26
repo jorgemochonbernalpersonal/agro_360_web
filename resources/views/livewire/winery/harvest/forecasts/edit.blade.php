@@ -1,28 +1,28 @@
 <div>
     <x-agro.form-card
-        title="Editar Previsión de Vendimia"
-        description="Modifica el aforo estimado de uva."
+        title="{{ __('Editar Previsión de Vendimia') }}"
+        :description="__('Modifica el aforo estimado de uva.')"
         :back-url="roleRoute('harvest-forecasts.index')"
     >
         <form wire:submit.prevent="save" class="space-y-8">
 
             {{-- Contexto (read-only) --}}
-            <x-agro.form-section title="Información">
+            <x-agro.form-section title="{{ __('Información') }}">
                 <div class="grid grid-cols-2 gap-4 text-sm">
                     <div>
-                        <p class="text-zinc-500">Viticultor</p>
+                        <p class="text-zinc-500">{{ __('Viticultor') }}</p>
                         <p class="font-medium text-zinc-900">{{ $viticulturistName }}</p>
                     </div>
                     <div>
-                        <p class="text-zinc-500">Plantación / Variedad</p>
+                        <p class="text-zinc-500">{{ __('Plantación / Variedad') }}</p>
                         <p class="font-medium text-zinc-900">{{ $plantingLabel }}</p>
                     </div>
                     <div>
-                        <p class="text-zinc-500">Campaña</p>
+                        <p class="text-zinc-500">{{ __('Campaña') }}</p>
                         <p class="font-medium text-zinc-900">{{ $campaignLabel }}</p>
                     </div>
                     <div>
-                        <p class="text-zinc-500">Añada</p>
+                        <p class="text-zinc-500">{{ __('Añada') }}</p>
                         <p class="font-medium text-zinc-900">{{ $vintageYear }}</p>
                     </div>
                 </div>
@@ -43,7 +43,7 @@
                                 @endif
                                 <div class="text-blue-700 font-semibold">Efectivo: {{ number_format($pacLimit, 0) }} kg</div>
                             </div>
-                            <p class="text-xs text-blue-400 mt-1">Techo regulatorio. Tu previsión no puede superarlo.</p>
+                            <p class="text-xs text-blue-400 mt-1">{{ __('Techo regulatorio. Tu previsión no puede superarlo.') }}</p>
                         </div>
                     @else
                         <div class="p-3 rounded-lg bg-zinc-50 border border-zinc-200 text-sm text-zinc-400 flex items-center gap-2">
@@ -59,13 +59,13 @@
                                 <flux:icon icon="user-circle" class="size-4" />
                                 Aforo del viticultor
                                 @if($viticEstimateStatus === 'draft')
-                                    <span class="text-xs font-normal text-amber-500">(borrador)</span>
+                                    <span class="text-xs font-normal text-amber-500">{{ __('(borrador)') }}</span>
                                 @endif
                             </div>
                             <div class="text-violet-700 font-semibold text-base">
                                 {{ number_format($viticEstimateKg, 0) }} kg
                             </div>
-                            <p class="text-xs text-violet-400 mt-1">Estimación registrada por el propio viticultor.</p>
+                            <p class="text-xs text-violet-400 mt-1">{{ __('Estimación registrada por el propio viticultor.') }}</p>
                         </div>
                     @else
                         <div class="p-3 rounded-lg bg-zinc-50 border border-zinc-200 text-sm text-zinc-400 flex items-center gap-2">
@@ -78,40 +78,40 @@
             </x-agro.form-section>
 
             {{-- Estimación editable --}}
-            <x-agro.form-section title="Estimación">
+            <x-agro.form-section title="{{ __('Estimación') }}">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <flux:field>
-                        <flux:label>Kg estimados *</flux:label>
+                        <flux:label>{{ __('Kg estimados *') }}</flux:label>
                         <flux:input wire:model="estimated_kg" type="number" step="0.001" min="1"
                             :description="$pacLimit ? 'Máx. PAC: ' . number_format($pacLimit, 0) . ' kg' : ''" />
                         <flux:error name="estimated_kg" />
                     </flux:field>
 
                     <flux:field>
-                        <flux:label>Fecha del aforo *</flux:label>
+                        <flux:label>{{ __('Fecha del aforo *') }}</flux:label>
                         <flux:input wire:model="estimation_date" type="date" />
                         <flux:error name="estimation_date" />
                     </flux:field>
 
                     <flux:field>
-                        <flux:label>Estado</flux:label>
+                        <flux:label>{{ __('Estado') }}</flux:label>
                         <flux:select wire:model="status">
-                            <option value="draft">Borrador</option>
-                            <option value="confirmed">Confirmada</option>
+                            <option value="draft">{{ __('Borrador') }}</option>
+                            <option value="confirmed">{{ __('Confirmada') }}</option>
                         </flux:select>
                         <flux:description>Solo las confirmadas actúan como límite operativo.</flux:description>
                     </flux:field>
                 </div>
 
                 <flux:field class="mt-4">
-                    <flux:label>Notas</flux:label>
+                    <flux:label>{{ __('Notas') }}</flux:label>
                     <flux:textarea wire:model="notes" rows="2" />
                 </flux:field>
             </x-agro.form-section>
 
             <x-agro.form-actions
                 :cancel-url="roleRoute('harvest-forecasts.index')"
-                submit-label="Guardar cambios"
+                submit-:label="__('Guardar cambios')"
             />
 
         </form>

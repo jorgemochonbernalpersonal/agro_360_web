@@ -88,11 +88,11 @@ class CreateObservation extends AbstractActivityForm
                 ]);
             });
 
-            $this->toastSuccess('Observación registrada correctamente.');
+            $this->toastSuccess(__('Observación registrada correctamente.'));
             return $this->viticulturistRoleRedirect('digital-notebook.observation.index');
         } catch (\Exception $e) {
             \Log::error('Error al registrar observación', ['error' => $e->getMessage(), 'user_id' => Auth::id()]);
-            $this->toastError('Error al registrar la observación. Por favor, intenta de nuevo.');
+            $this->toastError(__('Error al registrar la observación. Por favor, intenta de nuevo.'));
         }
     }
 

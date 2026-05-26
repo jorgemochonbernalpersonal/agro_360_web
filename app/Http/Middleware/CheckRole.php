@@ -29,7 +29,7 @@ class CheckRole
                 'role_mismatch: required=' . implode(',', $roles) . ' actual=' . $user->role
             );
             
-            abort(403, 'No tienes permiso para acceder a esta página.');
+            abort(403, __('No tienes permiso para acceder a esta página.'));
         }
 
         return $next($request);

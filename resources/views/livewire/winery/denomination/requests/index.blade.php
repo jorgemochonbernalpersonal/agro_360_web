@@ -1,14 +1,12 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="Solicitudes DO"
-        description="Gestiona las comunicaciones con tu Denominación de Origen."
+        title="{{ __('Solicitudes DO') }}"
+        :description="__('Gestiona las comunicaciones con tu Denominación de Origen.')"
         icon="document-text"
     >
         <x-slot:actions>
-            <flux:button wire:click="openCreate" icon="plus" variant="primary" size="sm">
-                Nueva solicitud
-            </flux:button>
+            <flux:button wire:click="openCreate" icon="plus" variant="primary" size="sm">{{ __('Nueva solicitud') }}</flux:button>
         </x-slot:actions>
     </x-agro.page-header>
 
@@ -24,15 +22,15 @@
             <x-slot:header>
                 <div class="flex items-center gap-2">
                     <flux:icon icon="paper-airplane" class="size-4 text-blue-500" />
-                    <span>Nueva solicitud a la DO</span>
+                    <span>{{ __('Nueva solicitud a la DO') }}</span>
                 </div>
             </x-slot:header>
             <div class="space-y-4">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <flux:label>Tipo de solicitud <span class="text-red-500">*</span></flux:label>
+                        <flux:label>{{ __('Tipo de solicitud') }} <span class="text-red-500">*</span></flux:label>
                         <flux:select wire:model="createType" class="mt-1">
-                            <option value="">Selecciona un tipo…</option>
+                            <option value="">{{ __('Selecciona un tipo…') }}</option>
                             @foreach($wineryInitiatedLabels as $value => $label)
                                 <option value="{{ $value }}">{{ $label }}</option>
                             @endforeach
@@ -40,23 +38,19 @@
                         @error('createType') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <flux:label>Asunto <span class="text-red-500">*</span></flux:label>
-                        <flux:input wire:model="createTitle" placeholder="Título o referencia…" class="mt-1" />
+                        <flux:label>{{ __('Asunto') }} <span class="text-red-500">*</span></flux:label>
+                        <flux:input wire:model="createTitle" :placeholder="__('Título o referencia…')" class="mt-1" />
                         @error('createTitle') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
                 </div>
                 <div>
-                    <flux:label>Descripción / notas</flux:label>
-                    <flux:textarea wire:model="createNotes" rows="3" placeholder="Detalla el motivo o la información que necesitas…" class="mt-1" />
+                    <flux:label>{{ __('Descripción / notas') }}</flux:label>
+                    <flux:textarea wire:model="createNotes" rows="3" :placeholder="__('Detalla el motivo o la información que necesitas…')" class="mt-1" />
                     @error('createNotes') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
                 <div class="flex gap-2">
-                    <flux:button wire:click="saveRequest" variant="primary" size="sm" icon="paper-airplane">
-                        Enviar solicitud
-                    </flux:button>
-                    <flux:button wire:click="closeCreate" variant="ghost" size="sm">
-                        Cancelar
-                    </flux:button>
+                    <flux:button wire:click="saveRequest" variant="primary" size="sm" icon="paper-airplane">{{ __('Enviar solicitud') }}</flux:button>
+                    <flux:button wire:click="closeCreate" variant="ghost" size="sm">{{ __('Cancelar') }}</flux:button>
                 </div>
             </div>
         </x-agro.card>
@@ -65,7 +59,7 @@
     {{-- Filtro ──────────────────────────────────────────────────────────── --}}
     <div class="flex items-center gap-2">
         <flux:select wire:model.live="statusFilter" class="w-44 text-sm">
-            <option value="">Todos los estados</option>
+            <option value="">{{ __('Todos los estados') }}</option>
             @foreach($statusLabels as $val => $label)
                 <option value="{{ $val }}">{{ $label }}</option>
             @endforeach
@@ -113,13 +107,13 @@
 
                             <div class="space-y-2 text-sm">
                                 <div class="flex items-center justify-between">
-                                    <span class="text-zinc-400">Fecha</span>
+                                    <span class="text-zinc-400">{{ __('Fecha') }}</span>
                                     <span class="text-zinc-700 font-medium">
                                         {{ $req->sent_at ? $req->sent_at->format('d/m/Y') : $req->created_at->format('d/m/Y') }}
                                     </span>
                                 </div>
                                 <div class="flex items-center justify-between">
-                                    <span class="text-zinc-400">Vence</span>
+                                    <span class="text-zinc-400">{{ __('Vence') }}</span>
                                     <span class="font-medium">
                                         @if($req->due_date)
                                             @if($req->isOverdue())
@@ -146,12 +140,12 @@
                                     </flux:button>
                                     @if(in_array($req->type, \App\Models\SupervisorRequest::WINERY_INITIATED))
                                         <flux:button wire:click="retractRequest({{ $req->id }})"
-                                            wire:confirm="¿Retirar esta solicitud? Quedará archivada y la DO no podrá actuar sobre ella."
+                                            wire:confirm="{{ __('¿Retirar esta solicitud? Quedará archivada y la DO no podrá actuar sobre ella.') }}"
                                             variant="ghost" size="sm" icon="x-mark">
                                         </flux:button>
                                     @endif
                                 @elseif($req->response_notes)
-                                    <span class="text-xs text-zinc-400 italic">Respondida</span>
+                                    <span class="text-xs text-zinc-400 italic">{{ __('Respondida') }}</span>
                                 @else
                                     <span class="text-xs text-zinc-300">—</span>
                                 @endif
@@ -164,16 +158,16 @@
                         <x-agro.card class="md:col-span-2 lg:col-span-3 xl:col-span-4 border-blue-200 bg-blue-50/50">
                             <div class="space-y-3">
                                 @if($req->notes)
-                                    <p class="text-sm text-zinc-600"><span class="font-medium">Notas de la DO:</span> {{ $req->notes }}</p>
+                                    <p class="text-sm text-zinc-600"><span class="font-medium">{{ __('Notas de la DO:') }}</span> {{ $req->notes }}</p>
                                 @endif
                                 <div>
-                                    <label class="block text-sm font-medium text-zinc-700 mb-1">Tu respuesta</label>
-                                    <flux:textarea wire:model="responseNotes" rows="3" placeholder="Escribe tu respuesta o comentarios…" />
+                                    <label class="block text-sm font-medium text-zinc-700 mb-1">{{ __('Tu respuesta') }}</label>
+                                    <flux:textarea wire:model="responseNotes" rows="3" :placeholder="__('Escribe tu respuesta o comentarios…')" />
                                     @error('responseNotes') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                                 </div>
                                 <div class="flex gap-2">
-                                    <flux:button wire:click="respond" variant="primary" size="sm">Enviar respuesta</flux:button>
-                                    <flux:button wire:click="cancelResponding" variant="ghost" size="sm">Cancelar</flux:button>
+                                    <flux:button wire:click="respond" variant="primary" size="sm">{{ __('Enviar respuesta') }}</flux:button>
+                                    <flux:button wire:click="cancelResponding" variant="ghost" size="sm">{{ __('Cancelar') }}</flux:button>
                                 </div>
                             </div>
                         </x-agro.card>
@@ -185,8 +179,8 @@
         @else
             <x-agro.empty-state
                 icon="document-text"
-                title="Sin solicitudes"
-                description="Aquí aparecerán las comunicaciones con tu denominación de origen."
+                title="{{ __('Sin solicitudes') }}"
+                :description="__('Aquí aparecerán las comunicaciones con tu denominación de origen.')"
             />
         @endif
     </div>

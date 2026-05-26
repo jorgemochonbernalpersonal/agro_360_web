@@ -105,11 +105,11 @@ class EditIrrigation extends AbstractActivityForm
                 ]);
             });
 
-            $this->toastSuccess('Riego actualizado correctamente.');
+            $this->toastSuccess(__('Riego actualizado correctamente.'));
             return $this->viticulturistRoleRedirect('digital-notebook.irrigation.index');
         } catch (\Exception $e) {
             \Log::error('Error al actualizar riego', ['error' => $e->getMessage(), 'user_id' => Auth::id(), 'activity_id' => $this->activity->id]);
-            $this->toastError('Error al actualizar el riego. Por favor, intenta de nuevo.');
+            $this->toastError(__('Error al actualizar el riego. Por favor, intenta de nuevo.'));
         }
     }
 
@@ -118,6 +118,6 @@ class EditIrrigation extends AbstractActivityForm
     public function render()
     {
         return view('livewire.viticulturist.digital-notebook.edit-irrigation', $this->renderData())
-            ->layout('layouts.app', ['title' => 'Editar Riego - Agro365']);
+            ->layout('layouts.app', ['title' => __('Editar Riego - Agro365')]);
     }
 }

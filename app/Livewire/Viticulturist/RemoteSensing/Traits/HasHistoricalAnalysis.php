@@ -109,7 +109,7 @@ trait HasHistoricalAnalysis
     public function applyCustomDateRange(): void
     {
         if (!$this->customStartDate || !$this->customEndDate) {
-            $this->dispatch('notify', ['type' => 'error', 'message' => 'Por favor, selecciona ambas fechas']);
+            $this->dispatch('notify', ['type' => 'error', 'message' => __('Por favor, selecciona ambas fechas')]);
             return;
         }
 
@@ -117,24 +117,24 @@ trait HasHistoricalAnalysis
         $end   = \Carbon\Carbon::parse($this->customEndDate);
 
         if ($start->gt($end)) {
-            $this->dispatch('notify', ['type' => 'error', 'message' => 'La fecha inicial debe ser anterior a la final']);
+            $this->dispatch('notify', ['type' => 'error', 'message' => __('La fecha inicial debe ser anterior a la final')]);
             return;
         }
 
         if ($start->diffInDays($end) > 730) {
-            $this->dispatch('notify', ['type' => 'warning', 'message' => 'El rango máximo es de 2 años']);
+            $this->dispatch('notify', ['type' => 'warning', 'message' => __('El rango máximo es de 2 años')]);
             return;
         }
 
         $this->historyPeriod = 'custom';
         $this->loadHistoricalData();
-        $this->dispatch('notify', ['type' => 'success', 'message' => 'Rango personalizado aplicado']);
+        $this->dispatch('notify', ['type' => 'success', 'message' => __('Rango personalizado aplicado')]);
     }
 
     public function exportCSV()
     {
         if (empty($this->historicalData) || !$this->selectedPlot) {
-            $this->dispatch('notify', ['type' => 'error', 'message' => 'No hay datos para exportar']);
+            $this->dispatch('notify', ['type' => 'error', 'message' => __('No hay datos para exportar')]);
             return;
         }
 
@@ -152,7 +152,7 @@ trait HasHistoricalAnalysis
     public function exportPDF()
     {
         if (empty($this->historicalData) || !$this->selectedPlot) {
-            $this->dispatch('notify', ['type' => 'error', 'message' => 'No hay datos para exportar']);
+            $this->dispatch('notify', ['type' => 'error', 'message' => __('No hay datos para exportar')]);
             return;
         }
 
@@ -173,10 +173,10 @@ trait HasHistoricalAnalysis
                 return response()->download($result['pdf_path'])->deleteFileAfterSend(true);
             }
 
-            throw new \Exception('Error al generar PDF');
+            throw new \Exception(__('Error al generar PDF'));
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('PDF export error', ['error' => $e->getMessage()]);
-            $this->dispatch('notify', ['type' => 'error', 'message' => 'Error al generar PDF']);
+            $this->dispatch('notify', ['type' => 'error', 'message' => __('Error al generar PDF')]);
         }
     }
 

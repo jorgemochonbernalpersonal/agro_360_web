@@ -15,7 +15,7 @@
 
                 <flux:field>
                     <flux:label required>{{ __('Número ROPO') }}</flux:label>
-                    <flux:input wire:model="ropo_number" type="text" placeholder="Ej: ES-12345" />
+                    <flux:input wire:model="ropo_number" type="text" :placeholder="__('Ej: ES-12345')" />
                     <flux:error name="ropo_number" />
                 </flux:field>
 

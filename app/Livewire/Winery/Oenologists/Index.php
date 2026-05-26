@@ -41,10 +41,10 @@ class Index extends Component
         $oenologist->update(['active' => $newState]);
 
         if ($newState) {
-            $this->toastSuccess('Enólogo activado correctamente.');
+            $this->toastSuccess(__('Enólogo activado correctamente.'));
             if ($this->currentTab === 'inactive') $this->currentTab = 'active';
         } else {
-            $this->toastSuccess('Enólogo desactivado correctamente.');
+            $this->toastSuccess(__('Enólogo desactivado correctamente.'));
             if ($this->currentTab === 'active') $this->currentTab = 'inactive';
         }
     }
@@ -53,7 +53,7 @@ class Index extends Component
     {
         $oenologist = Oenologist::where('user_id', Auth::id())->findOrFail($id);
         $oenologist->delete();
-        $this->toastSuccess('Enólogo eliminado correctamente.');
+        $this->toastSuccess(__('Enólogo eliminado correctamente.'));
     }
 
     public function render()

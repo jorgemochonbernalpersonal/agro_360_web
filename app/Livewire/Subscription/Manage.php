@@ -33,7 +33,7 @@ class Manage extends Component
         
         // Verificar si ya tiene una suscripción activa
         if ($user->hasActiveSubscription()) {
-            $this->toastError('Ya tienes una suscripción activa.');
+            $this->toastError(__('Ya tienes una suscripción activa.'));
             return;
         }
 
@@ -100,14 +100,14 @@ class Manage extends Component
                 }
             }
 
-            $this->toastError('Error al crear la orden de pago. Por favor, inténtalo de nuevo.');
+            $this->toastError(__('Error al crear la orden de pago. Por favor, inténtalo de nuevo.'));
         } catch (\Exception $e) {
             Log::error('Error initiating PayPal payment', [
                 'user_id' => $user->id,
                 'plan' => $this->selectedPlan,
                 'error' => $e->getMessage(),
             ]);
-            $this->toastError('Error al procesar el pago: ' . $e->getMessage());
+            $this->toastError(__('Error al procesar el pago: :error', ['error' => $e->getMessage()]));
         }
     }
 
@@ -117,7 +117,7 @@ class Manage extends Component
         $subscription = $user->activeSubscription;
 
         if (!$subscription) {
-            $this->toastError('No tienes una suscripción activa.');
+            $this->toastError(__('No tienes una suscripción activa.'));
             return;
         }
 
@@ -134,13 +134,13 @@ class Manage extends Component
 
             $subscription->cancel();
             $this->activeSubscription = null;
-            $this->toastSuccess('Suscripción cancelada correctamente.');
+            $this->toastSuccess(__('Suscripción cancelada correctamente.'));
         } catch (\Exception $e) {
             Log::error('Error canceling subscription', [
                 'subscription_id' => $subscription->id,
                 'error' => $e->getMessage(),
             ]);
-            $this->toastError('Error al cancelar la suscripción: ' . $e->getMessage());
+            $this->toastError(__('Error al cancelar la suscripción: :error', ['error' => $e->getMessage()]));
         }
     }
 

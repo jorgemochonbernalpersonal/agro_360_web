@@ -9,7 +9,7 @@
         <x-agro.form-section :title="__('Datos del Plan')" color="green">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <flux:field>
-                    <flux:label for="campaign_id" badge="Obligatorio">{{ __('Campaña') }}</flux:label>
+                    <flux:label for="campaign_id" :badge="__('Obligatorio')">{{ __('Campaña') }}</flux:label>
                     <flux:select wire:model="campaign_id" id="campaign_id">
                         <option value="">{{ __('Seleccionar campaña...') }}</option>
                         @foreach($campaigns as $campaign)
@@ -20,7 +20,7 @@
                 </flux:field>
 
                 <flux:field>
-                    <flux:label for="plan_year" badge="Obligatorio">{{ __('Año del Plan') }}</flux:label>
+                    <flux:label for="plan_year" :badge="__('Obligatorio')">{{ __('Año del Plan') }}</flux:label>
                     <flux:input
                         wire:model="plan_year"
                         type="number"

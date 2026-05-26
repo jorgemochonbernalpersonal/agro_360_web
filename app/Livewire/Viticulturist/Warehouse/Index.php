@@ -126,9 +126,7 @@ class Index extends Component
         $warehouse->update(['active' => !$warehouse->active]);
 
         $this->toastSuccess($warehouse->active
-            ? 'Almacén activado exitosamente.'
-            : 'Almacén desactivado exitosamente.'
-        );
+            ? __('Almacén activado exitosamente.') : __('Almacén desactivado exitosamente.'));
 
         if ($warehouse->active && $this->wh_tab === 'inactive') {
             $this->wh_tab = 'active';
@@ -144,12 +142,12 @@ class Index extends Component
             ->findOrFail($warehouseId);
 
         if ($warehouse->stocks_count > 0 || $warehouse->supplies_count > 0) {
-            $this->toastError('No se puede eliminar el almacén porque tiene productos o insumos asociados.');
+            $this->toastError(__('No se puede eliminar el almacén porque tiene productos o insumos asociados.'));
             return;
         }
 
         $warehouse->delete();
-        $this->toastSuccess('Almacén eliminado exitosamente.');
+        $this->toastSuccess(__('Almacén eliminado exitosamente.'));
     }
 
     // ── Fitosanitarios actions ────────────────────────────────
@@ -158,7 +156,7 @@ class Index extends Component
     {
         $stock = ProductStock::where('user_id', Auth::id())->findOrFail($id);
         $stock->update(['active' => false]);
-        $this->toastSuccess('Lote archivado.');
+        $this->toastSuccess(__('Lote archivado.'));
     }
 
     // ── Insumos methods ───────────────────────────────────────
@@ -166,7 +164,7 @@ class Index extends Component
     public function deactivateSupply(int $id): void
     {
         Supply::where('viticulturist_id', Auth::id())->findOrFail($id)->update(['active' => false]);
-        $this->toastSuccess('Insumo archivado.');
+        $this->toastSuccess(__('Insumo archivado.'));
     }
 
     public function openPurchase(int $supplyId): void
@@ -211,7 +209,7 @@ class Index extends Component
             'notes'               => $this->p_notes ?: null,
         ]);
 
-        $this->toastSuccess('Compra registrada. Stock actualizado.');
+        $this->toastSuccess(__('Compra registrada. Stock actualizado.'));
         $this->js("window.dispatchEvent(new CustomEvent('close-modal', { detail: 'supply-purchase' }))");
         $this->resetPurchaseForm();
     }
@@ -329,6 +327,6 @@ class Index extends Component
         $viewData['units']       = Unit::active()->orderBy('category')->orderBy('name')->get();
 
         return view('livewire.viticulturist.warehouse.index', $viewData)
-            ->layout('layouts.app', ['title' => 'Almacén de Insumos - Agro365']);
+            ->layout('layouts.app', ['title' => __('Almacén de Insumos - Agro365')]);
     }
 }

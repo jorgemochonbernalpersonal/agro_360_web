@@ -49,8 +49,8 @@ class Index extends Component
             'body'     => 'required|string',
             'category' => 'nullable|string|max:50',
         ], [
-            'title.required' => 'El título es obligatorio.',
-            'body.required'  => 'El cuerpo es obligatorio.',
+            'title.required' => __('El título es obligatorio.'),
+            'body.required'  => __('El cuerpo es obligatorio.'),
         ]);
 
         $data = [
@@ -63,10 +63,10 @@ class Index extends Component
 
         if ($this->editingId) {
             CannedResponse::findOrFail($this->editingId)->update($data);
-            $this->toastSuccess('Respuesta actualizada.');
+            $this->toastSuccess(__('Respuesta actualizada.'));
         } else {
             CannedResponse::create($data);
-            $this->toastSuccess('Respuesta creada.');
+            $this->toastSuccess(__('Respuesta creada.'));
         }
 
         $this->closeModal();
@@ -75,7 +75,7 @@ class Index extends Component
     public function delete(int $id): void
     {
         CannedResponse::findOrFail($id)->delete();
-        $this->toastSuccess('Respuesta eliminada.');
+        $this->toastSuccess(__('Respuesta eliminada.'));
     }
 
     public function render()
@@ -83,8 +83,8 @@ class Index extends Component
         if (!\Illuminate\Support\Facades\Schema::hasTable('canned_responses')) {
             return view('livewire.admin.canned-responses.index', ['responses' => collect(), 'categories' => collect()])
                 ->layout('layouts.app', [
-                    'title'       => 'Respuestas Rápidas - Admin - Agro365',
-                    'description' => 'Gestiona plantillas de respuesta para tickets de soporte',
+                    'title'       => __('Respuestas Rápidas - Admin - Agro365'),
+                    'description' => __('Gestiona plantillas de respuesta para tickets de soporte'),
                 ]);
         }
 
@@ -97,8 +97,8 @@ class Index extends Component
 
         return view('livewire.admin.canned-responses.index', compact('responses', 'categories'))
             ->layout('layouts.app', [
-                'title'       => 'Respuestas Rápidas - Admin - Agro365',
-                'description' => 'Gestiona plantillas de respuesta para tickets de soporte',
+                'title'       => __('Respuestas Rápidas - Admin - Agro365'),
+                'description' => __('Gestiona plantillas de respuesta para tickets de soporte'),
             ]);
     }
 }

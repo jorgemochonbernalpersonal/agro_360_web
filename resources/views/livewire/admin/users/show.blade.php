@@ -1,7 +1,7 @@
 <div class="space-y-6 animate-fade-in">
     <x-agro.page-header
         title="Usuario: {{ $user->name }}"
-        description="Detalles y estadísticas del usuario"
+        :description="__('Detalles y estadísticas del usuario')"
     >
         <x-slot:actions>
             <flux:button href="{{ route('admin.users.index') }}" variant="ghost" icon="arrow-left">
@@ -11,7 +11,7 @@
             @if(!$user->email_verified_at)
                 <flux:button
                     wire:click="verifyEmailManually"
-                    wire:confirm="¿Verificar el email de {{ $user->name }} manualmente?"
+                    wire:confirm="{{ __('¿Verificar el email de :name manualmente?', ['name' => $user->name]) }}"
                     variant="ghost"
                     icon="check-badge"
                 >
@@ -21,7 +21,7 @@
 
             <flux:button
                 wire:click="sendPasswordReset"
-                wire:confirm="¿Enviar email de restablecimiento de contraseña a {{ $user->email }}?"
+                wire:confirm="{{ __('¿Enviar email de restablecimiento de contraseña a :email?', ['email' => $user->email]) }}"
                 variant="ghost"
                 icon="key"
             >
@@ -30,7 +30,7 @@
 
             <flux:button
                 wire:click="toggleActive"
-                wire:confirm="{{ $user->can_login ? '¿Desactivar a ' . $user->name . '?' : '¿Activar a ' . $user->name . '?' }}"
+                wire:confirm="{{ $user->can_login ? __('¿Desactivar a :name?', ['name' => $user->name]) : __('¿Activar a :name?', ['name' => $user->name]) }}"
                 variant="ghost"
                 icon="{{ $user->can_login ? 'lock-closed' : 'lock-open' }}"
             >
@@ -41,14 +41,12 @@
                 wire:click="openEditModal"
                 variant="ghost"
                 icon="pencil"
-            >
-                Editar
-            </flux:button>
+            >{{ __('Editar') }}</flux:button>
 
             @if(!$user->isAdmin() && $user->can_login)
                 <flux:button
                     wire:click="impersonate"
-                    wire:confirm="¿Estás seguro de que quieres entrar como {{ $user->name }}? Podrás volver a tu sesión de admin en cualquier momento."
+                    wire:confirm="{{ __('¿Estás seguro de que quieres entrar como :name? Podrás volver a tu sesión de admin en cualquier momento.', ['name' => $user->name]) }}"
                     variant="primary"
                     icon="arrow-right-end-on-rectangle"
                 >
@@ -59,7 +57,7 @@
             @if(!$user->isAdmin())
                 <flux:button
                     wire:click="deleteUser"
-                    wire:confirm="¿Eliminar a {{ $user->name }}? Esta acción no se puede deshacer."
+                    wire:confirm="{{ __('¿Eliminar a :name? Esta acción no se puede deshacer.', ['name' => $user->name]) }}"
                     variant="danger"
                     icon="trash"
                 >
@@ -87,33 +85,33 @@
                 <div class="p-1.5 rounded-lg bg-purple-50">
                     <flux:icon icon="information-circle" class="size-4 text-purple-600" />
                 </div>
-                <span class="font-semibold text-zinc-900 text-sm">Información Básica</span>
+                <span class="font-semibold text-zinc-900 text-sm">{{ __('Información Básica') }}</span>
             </div>
         </x-slot:header>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-5">
             <div>
-                <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">Nombre</p>
+                <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">{{ __('Nombre') }}</p>
                 <p class="text-sm font-semibold text-zinc-900 mt-0.5">{{ $user->name }}</p>
             </div>
             <div>
-                <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">Email</p>
+                <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">{{ __('Email') }}</p>
                 <p class="text-sm font-semibold text-zinc-900 mt-0.5">{{ $user->email }}</p>
             </div>
             <div>
-                <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">Rol</p>
+                <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">{{ __('Rol') }}</p>
                 <div class="mt-0.5">
                     <flux:badge :color="$roleInfo['color']" size="sm">{{ $roleInfo['label'] }}</flux:badge>
                 </div>
             </div>
             <div>
-                <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">Estado</p>
+                <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">{{ __('Estado') }}</p>
                 <div class="mt-0.5">
                     <x-agro.status-badge :active="$user->can_login" />
                 </div>
             </div>
             <div>
-                <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">Email Verificado</p>
+                <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">{{ __('Email Verificado') }}</p>
                 @if($user->email_verified_at)
                     <div class="flex items-center gap-1.5 mt-0.5 text-agro-600">
                         <flux:icon icon="check-circle" class="size-4" />
@@ -122,30 +120,30 @@
                 @else
                     <div class="flex items-center gap-1.5 mt-0.5 text-zinc-400">
                         <flux:icon icon="x-circle" class="size-4" />
-                        <span class="text-sm font-semibold">No verificado</span>
+                        <span class="text-sm font-semibold">{{ __('No verificado') }}</span>
                     </div>
                 @endif
             </div>
             <div>
-                <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">Beta</p>
+                <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">{{ __('Beta') }}</p>
                 <div class="mt-0.5">
                     @if($user->is_beta_user)
                         @if($user->beta_ends_at && $user->beta_ends_at->isPast())
-                            <x-agro.status-badge label="Beta Expirado" type="gray" />
+                            <x-agro.status-badge :label="__('Beta Expirado')" type="gray" />
                         @else
-                            <x-agro.status-badge label="Beta Activo" type="warning" />
+                            <x-agro.status-badge :label="__('Beta Activo')" type="warning" />
                         @endif
                         @if($user->beta_ends_at)
                             <p class="text-xs text-zinc-400 mt-1">Hasta: {{ $user->beta_ends_at->format('d/m/Y') }}</p>
                         @endif
                     @else
-                        <span class="text-sm text-zinc-400">Sin beta</span>
+                        <span class="text-sm text-zinc-400">{{ __('Sin beta') }}</span>
                     @endif
                 </div>
             </div>
             @if($user->isProducer())
             <div>
-                <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">Compra Uva Externa</p>
+                <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">{{ __('Compra Uva Externa') }}</p>
                 <div class="flex items-center gap-2 mt-0.5">
                     <x-agro.status-badge :active="$user->compra_uva_externa"
                         label="{{ $user->compra_uva_externa ? 'Activada' : 'Desactivada' }}" />
@@ -156,39 +154,39 @@
                         icon="{{ $user->compra_uva_externa ? 'x-mark' : 'check' }}"
                     >{{ $user->compra_uva_externa ? 'Desactivar' : 'Activar' }}</flux:button>
                 </div>
-                <p class="text-xs text-zinc-400 mt-1">Módulos: viticultores externos, aforos, disputas, facturas de uva</p>
+                <p class="text-xs text-zinc-400 mt-1">{{ __('Módulos: viticultores externos, aforos, disputas, facturas de uva') }}</p>
             </div>
             @endif
             @if($user->dni)
             <div>
-                <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">DNI/NIF</p>
+                <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">{{ __('DNI/NIF') }}</p>
                 <p class="text-sm font-semibold text-zinc-900 mt-0.5">{{ mask_nif($user->dni) }}</p>
             </div>
             @endif
             @if($user->organization)
             <div>
-                <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">Organización</p>
+                <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">{{ __('Organización') }}</p>
                 <p class="text-sm font-semibold text-zinc-900 mt-0.5">{{ $user->organization->name }}</p>
                 <p class="text-xs text-zinc-400">{{ $user->organization->type === 'denomination_of_origin' ? 'DO' : 'Bodega' }}</p>
             </div>
             @endif
             <div>
-                <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">Fecha de Registro</p>
+                <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">{{ __('Fecha de Registro') }}</p>
                 <p class="text-sm font-semibold text-zinc-900 mt-0.5">{{ $user->created_at->format('d/m/Y H:i') }}</p>
                 <p class="text-xs text-zinc-400">{{ $user->created_at->diffForHumans() }}</p>
             </div>
             <div>
-                <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">Última Conexión</p>
+                <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">{{ __('Última Conexión') }}</p>
                 @if($user->last_login_at)
                     <p class="text-sm font-semibold text-zinc-900 mt-0.5">{{ $user->last_login_at->format('d/m/Y H:i') }}</p>
                     <p class="text-xs text-zinc-400">{{ $user->last_login_at->diffForHumans() }}</p>
                 @else
-                    <p class="text-sm text-zinc-400 mt-0.5">Nunca</p>
+                    <p class="text-sm text-zinc-400 mt-0.5">{{ __('Nunca') }}</p>
                 @endif
             </div>
             @if($user->email_verified_at)
                 <div>
-                    <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">Verificación de Email</p>
+                    <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">{{ __('Verificación de Email') }}</p>
                     <p class="text-sm font-semibold text-zinc-900 mt-0.5">{{ $user->email_verified_at->format('d/m/Y H:i') }}</p>
                     <p class="text-xs text-zinc-400">{{ $user->email_verified_at->diffForHumans() }}</p>
                 </div>
@@ -204,7 +202,7 @@
                 <div class="p-1.5 rounded-lg bg-zinc-100">
                     <flux:icon icon="share" class="size-4 text-zinc-600" />
                 </div>
-                <span class="font-semibold text-zinc-900 text-sm">Relaciones</span>
+                <span class="font-semibold text-zinc-900 text-sm">{{ __('Relaciones') }}</span>
             </div>
         </x-slot:header>
 
@@ -308,34 +306,34 @@
                     <div class="p-1.5 rounded-lg bg-agro-50">
                         <flux:icon icon="chart-bar" class="size-4 text-agro-600" />
                     </div>
-                    <span class="font-semibold text-zinc-900 text-sm">Estadísticas de Viticultor</span>
+                    <span class="font-semibold text-zinc-900 text-sm">{{ __('Estadísticas de Viticultor') }}</span>
                 </div>
             </x-slot:header>
 
             <div class="grid grid-cols-2 gap-4 mb-4">
                 <x-agro.stat-card
-                    label="Parcelas"
+                    :label="__('Parcelas')"
                     :value="$stats['viticulturist']['plots']['total']"
                     :description="number_format($stats['viticulturist']['plots']['total_area'], 2) . ' ha'"
                     icon="map"
                     color="agro"
                 />
                 <x-agro.stat-card
-                    label="Clientes"
+                    :label="__('Clientes')"
                     :value="$stats['viticulturist']['clients']['total']"
                     :description="$stats['viticulturist']['clients']['active'] . ' activos'"
                     icon="user-group"
                     color="blue"
                 />
                 <x-agro.stat-card
-                    label="Facturas"
+                    :label="__('Facturas')"
                     :value="$stats['viticulturist']['invoices']['total']"
                     :description="number_format($stats['viticulturist']['invoices']['this_year_amount'], 2) . ' € este año'"
                     icon="document-text"
                     color="purple"
                 />
                 <x-agro.stat-card
-                    label="Actividades"
+                    :label="__('Actividades')"
                     :value="$stats['viticulturist']['activities']['total']"
                     :description="$stats['viticulturist']['activities']['this_year'] . ' este año'"
                     icon="clipboard-document-list"
@@ -345,21 +343,21 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-zinc-100">
                 <div class="bg-zinc-50 rounded-lg px-4 py-3">
-                    <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">Campañas</p>
+                    <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">{{ __('Campañas') }}</p>
                     <p class="text-sm font-semibold text-zinc-900 mt-1">
                         {{ $stats['viticulturist']['campaigns']['total'] }} total
                         <span class="text-zinc-400 font-normal">({{ $stats['viticulturist']['campaigns']['active'] }} activas)</span>
                     </p>
                 </div>
                 <div class="bg-zinc-50 rounded-lg px-4 py-3">
-                    <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">Tipos de Clientes</p>
+                    <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">{{ __('Tipos de Clientes') }}</p>
                     <p class="text-sm font-semibold text-zinc-900 mt-1">
                         {{ $stats['viticulturist']['clients']['individual'] }} particulares,
                         {{ $stats['viticulturist']['clients']['company'] }} empresas
                     </p>
                 </div>
                 <div class="bg-zinc-50 rounded-lg px-4 py-3">
-                    <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">Actividades Este Mes</p>
+                    <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">{{ __('Actividades Este Mes') }}</p>
                     <p class="text-lg font-bold text-zinc-900 mt-1">{{ $stats['viticulturist']['activities']['this_month'] }}</p>
                 </div>
             </div>
@@ -374,46 +372,46 @@
                     <div class="p-1.5 rounded-lg bg-violet-50">
                         <flux:icon icon="building-office" class="size-4 text-violet-600" />
                     </div>
-                    <span class="font-semibold text-zinc-900 text-sm">Estadísticas de Bodega</span>
+                    <span class="font-semibold text-zinc-900 text-sm">{{ __('Estadísticas de Bodega') }}</span>
                 </div>
             </x-slot:header>
 
             <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-4">
                 <x-agro.stat-card
-                    label="Viticultores"
+                    :label="__('Viticultores')"
                     :value="$stats['winery']['viticulturists']['total']"
                     icon="users"
                     color="agro"
                 />
                 <x-agro.stat-card
-                    label="Cuadrillas"
+                    :label="__('Cuadrillas')"
                     :value="$stats['winery']['crews']['total']"
                     icon="user-group"
                     color="blue"
                 />
                 <x-agro.stat-card
-                    label="Clientes"
+                    :label="__('Clientes')"
                     :value="$stats['winery']['clients']['total']"
                     :description="$stats['winery']['clients']['active'] . ' activos'"
                     icon="identification"
                     color="purple"
                 />
                 <x-agro.stat-card
-                    label="Facturas"
+                    :label="__('Facturas')"
                     :value="$stats['winery']['invoices']['total']"
                     :description="$stats['winery']['invoices']['pending'] . ' pendientes'"
                     icon="document-text"
                     color="orange"
                 />
                 <x-agro.stat-card
-                    label="Vinos"
+                    :label="__('Vinos')"
                     :value="$stats['winery']['wines']['total']"
                     :description="number_format($stats['winery']['wines']['total_liters'], 0) . ' L'"
                     icon="beaker"
                     color="violet"
                 />
                 <x-agro.stat-card
-                    label="Depósitos"
+                    :label="__('Depósitos')"
                     :value="$stats['winery']['containers']['total']"
                     :description="$stats['winery']['containers']['active'] . ' activos'"
                     icon="archive-box"
@@ -423,17 +421,17 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-zinc-100">
                 <div class="bg-zinc-50 rounded-lg px-4 py-3">
-                    <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">Facturación este año</p>
+                    <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">{{ __('Facturación este año') }}</p>
                     <p class="text-lg font-bold text-zinc-900 mt-1">{{ number_format($stats['winery']['invoices']['this_year_amount'], 2) }} €</p>
                     <p class="text-xs text-zinc-400">{{ $stats['winery']['invoices']['this_year'] }} facturas</p>
                 </div>
                 <div class="bg-zinc-50 rounded-lg px-4 py-3">
-                    <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">Vinos en elaboración</p>
+                    <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">{{ __('Vinos en elaboración') }}</p>
                     <p class="text-lg font-bold text-zinc-900 mt-1">{{ $stats['winery']['wines']['in_progress'] }}</p>
                     <p class="text-xs text-zinc-400">{{ $stats['winery']['wines']['bottled'] }} embotellados</p>
                 </div>
                 <div class="bg-zinc-50 rounded-lg px-4 py-3">
-                    <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">Facturación total</p>
+                    <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">{{ __('Facturación total') }}</p>
                     <p class="text-lg font-bold text-zinc-900 mt-1">{{ number_format($stats['winery']['invoices']['total_amount'], 2) }} €</p>
                 </div>
             </div>
@@ -448,20 +446,20 @@
                     <div class="p-1.5 rounded-lg bg-blue-50">
                         <flux:icon icon="shield-check" class="size-4 text-blue-600" />
                     </div>
-                    <span class="font-semibold text-zinc-900 text-sm">Estadísticas de Supervisor</span>
+                    <span class="font-semibold text-zinc-900 text-sm">{{ __('Estadísticas de Supervisor') }}</span>
                 </div>
             </x-slot:header>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <x-agro.stat-card
-                    label="Bodegas Supervisadas"
+                    :label="__('Bodegas Supervisadas')"
                     :value="$stats['supervisor']['wineries']['total']"
                     :description="$stats['supervisor']['wineries']['active'] . ' activas · ' . $stats['supervisor']['wineries']['inactive'] . ' inactivas'"
                     icon="building-office"
                     color="blue"
                 />
                 <x-agro.stat-card
-                    label="Viticultores Supervisados"
+                    :label="__('Viticultores Supervisados')"
                     :value="$stats['supervisor']['viticulturists']['total']"
                     :description="$stats['supervisor']['viticulturists']['active'] . ' activos · ' . $stats['supervisor']['viticulturists']['inactive'] . ' inactivos'"
                     icon="users"
@@ -479,34 +477,34 @@
                     <div class="p-1.5 rounded-lg bg-purple-50">
                         <flux:icon icon="shield-check" class="size-4 text-purple-600" />
                     </div>
-                    <span class="font-semibold text-zinc-900 text-sm">Estado del Sistema</span>
+                    <span class="font-semibold text-zinc-900 text-sm">{{ __('Estado del Sistema') }}</span>
                 </div>
             </x-slot:header>
 
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
                 <x-agro.stat-card
-                    label="Usuarios Totales"
+                    :label="__('Usuarios Totales')"
                     :value="$stats['admin']['users']['total']"
                     :description="$stats['admin']['users']['active'] . ' activos'"
                     icon="users"
                     color="purple"
                 />
                 <x-agro.stat-card
-                    label="Parcelas"
+                    :label="__('Parcelas')"
                     :value="$stats['admin']['plots']['total']"
                     :description="number_format($stats['admin']['plots']['total_area'], 1) . ' ha'"
                     icon="map"
                     color="agro"
                 />
                 <x-agro.stat-card
-                    label="Tickets abiertos"
+                    :label="__('Tickets abiertos')"
                     :value="$stats['admin']['support']['open']"
                     :description="$stats['admin']['support']['new_this_week'] . ' nuevos esta semana'"
                     icon="chat-bubble-left-ellipsis"
                     color="orange"
                 />
                 <x-agro.stat-card
-                    label="Facturas pendientes"
+                    :label="__('Facturas pendientes')"
                     :value="$stats['admin']['invoices']['pending']"
                     :description="number_format($stats['admin']['invoices']['this_year_amount'], 0) . ' € facturado este año'"
                     icon="document-text"
@@ -515,7 +513,7 @@
             </div>
 
             <div class="bg-zinc-50 rounded-lg px-4 py-3">
-                <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">Nuevos usuarios este mes</p>
+                <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">{{ __('Nuevos usuarios este mes') }}</p>
                 <p class="text-2xl font-bold text-zinc-900 mt-1">{{ $stats['admin']['users']['new_this_month'] }}</p>
             </div>
         </x-agro.card>
@@ -529,8 +527,8 @@
                 <div class="p-1.5 rounded-lg bg-zinc-100">
                     <flux:icon icon="clock" class="size-4 text-zinc-600" />
                 </div>
-                <span class="font-semibold text-zinc-900 text-sm">Historial de actividad</span>
-                <flux:badge color="zinc" size="sm">Últimos 20</flux:badge>
+                <span class="font-semibold text-zinc-900 text-sm">{{ __('Historial de actividad') }}</span>
+                <flux:badge color="zinc" size="sm">{{ __('Últimos 20') }}</flux:badge>
             </div>
         </x-slot:header>
 
@@ -600,30 +598,24 @@
                 <div class="p-1.5 rounded-lg {{ $user->is_readonly_admin ? 'bg-zinc-100' : 'bg-purple-50' }}">
                     <flux:icon icon="shield-check" class="size-4 {{ $user->is_readonly_admin ? 'text-zinc-500' : 'text-purple-600' }}" />
                 </div>
-                <span class="font-semibold text-zinc-900 text-sm">Permisos de Administrador</span>
+                <span class="font-semibold text-zinc-900 text-sm">{{ __('Permisos de Administrador') }}</span>
             </div>
         </x-slot:header>
 
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-sm font-medium text-zinc-900">Modo solo lectura</p>
-                <p class="text-xs text-zinc-400 mt-0.5">
-                    @if($user->is_readonly_admin)
-                        Este admin puede ver el panel pero no puede realizar cambios.
-                    @else
-                        Este admin tiene acceso completo al panel de administración.
-                    @endif
-                </p>
+                <p class="text-sm font-medium text-zinc-900">{{ __('Modo solo lectura') }}</p>
+                <p class="text-xs text-zinc-400 mt-0.5">@if($user->is_readonly_admin){{ __('Este admin puede ver el panel pero no puede realizar cambios.') }}@else{{ __('Este admin tiene acceso completo al panel de administración.') }}@endif</p>
             </div>
             <div class="flex items-center gap-3">
                 @if($user->is_readonly_admin)
-                    <flux:badge color="zinc" size="sm">Solo lectura</flux:badge>
+                    <flux:badge color="zinc" size="sm">{{ __('Solo lectura') }}</flux:badge>
                 @else
-                    <flux:badge color="purple" size="sm">Acceso completo</flux:badge>
+                    <flux:badge color="purple" size="sm">{{ __('Acceso completo') }}</flux:badge>
                 @endif
                 <flux:button
                     wire:click="toggleReadOnlyAdmin"
-                    wire:confirm="{{ $user->is_readonly_admin ? '¿Dar acceso completo a ' . $user->name . '?' : '¿Restringir a solo lectura a ' . $user->name . '?' }}"
+                    wire:confirm="{{ $user->is_readonly_admin ? __('¿Dar acceso completo a :name?', ['name' => $user->name]) : __('¿Restringir a solo lectura a :name?', ['name' => $user->name]) }}"
                     variant="ghost"
                     size="sm"
                     icon="{{ $user->is_readonly_admin ? 'lock-open' : 'lock-closed' }}"
@@ -643,50 +635,50 @@
                     <flux:icon icon="pencil-square" class="size-5 text-blue-600" />
                 </div>
                 <div>
-                    <h3 class="text-base font-semibold text-zinc-900">Editar Usuario</h3>
+                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Editar Usuario') }}</h3>
                     <p class="text-xs text-zinc-500">Modifica los datos de {{ $user->name }}</p>
                 </div>
             </div>
 
             <div class="space-y-4">
                 <div>
-                    <label class="block text-xs font-medium text-zinc-700 mb-1">Nombre completo</label>
-                    <flux:input wire:model="editName" placeholder="Nombre del usuario" />
+                    <label class="block text-xs font-medium text-zinc-700 mb-1">{{ __('Nombre completo') }}</label>
+                    <flux:input wire:model="editName" :placeholder="__('Nombre del usuario')" />
                     @error('editName') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 <div>
-                    <label class="block text-xs font-medium text-zinc-700 mb-1">Email</label>
+                    <label class="block text-xs font-medium text-zinc-700 mb-1">{{ __('Email') }}</label>
                     <flux:input wire:model="editEmail" type="email" placeholder="email@ejemplo.com" />
                     @error('editEmail') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                     @if($editEmail !== $user->email)
-                        <p class="text-xs text-amber-600 mt-1">Al cambiar el email, se requerirá nueva verificación.</p>
+                        <p class="text-xs text-amber-600 mt-1">{{ __('Al cambiar el email, se requerirá nueva verificación.') }}</p>
                     @endif
                 </div>
 
                 <div>
-                    <label class="block text-xs font-medium text-zinc-700 mb-1">Rol</label>
+                    <label class="block text-xs font-medium text-zinc-700 mb-1">{{ __('Rol') }}</label>
                     <flux:select wire:model="editRole">
-                        <option value="viticulturist">Viticultor</option>
-                        <option value="winery">Bodega</option>
-                        <option value="supervisor">Supervisor</option>
-                        <option value="producer">Productor</option>
-                        <option value="admin">Admin</option>
+                        <option value="viticulturist">{{ __('Viticultor') }}</option>
+                        <option value="winery">{{ __('Bodega') }}</option>
+                        <option value="supervisor">{{ __('Supervisor') }}</option>
+                        <option value="producer">{{ __('Productor') }}</option>
+                        <option value="admin">{{ __('Admin') }}</option>
                     </flux:select>
                     @error('editRole') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
             </div>
 
             <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-zinc-100">
-                <flux:button variant="ghost" wire:click="closeEditModal">Cancelar</flux:button>
-                <flux:button variant="primary" wire:click="saveUser">Guardar Cambios</flux:button>
+                <flux:button variant="ghost" wire:click="closeEditModal">{{ __('Cancelar') }}</flux:button>
+                <flux:button variant="primary" wire:click="saveUser">{{ __('Guardar Cambios') }}</flux:button>
             </div>
         </div>
     </flux:modal>
 
     {{-- Notas internas del admin --}}
     <div class="mt-6 space-y-3">
-        <h2 class="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Notas internas del admin</h2>
+        <h2 class="text-xs font-semibold text-zinc-500 uppercase tracking-wider">{{ __('Notas internas del admin') }}</h2>
         <x-agro.card>
             <div class="space-y-3">
                 @forelse($adminNotes as $note)
@@ -701,16 +693,16 @@
                             </div>
                             <p class="text-sm text-zinc-700 mt-0.5 whitespace-pre-wrap">{{ $note->note }}</p>
                         </div>
-                        <flux:button wire:click="deleteNote({{ $note->id }})" wire:confirm="¿Eliminar esta nota?"
+                        <flux:button wire:click="deleteNote({{ $note->id }})" wire:confirm="{{ __('¿Eliminar esta nota?') }}"
                             variant="ghost" size="sm" icon="trash"
                             class="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-600 transition-opacity" />
                     </div>
                 @empty
-                    <p class="text-sm text-zinc-400 text-center py-2">Sin notas. Solo visibles para administradores.</p>
+                    <p class="text-sm text-zinc-400 text-center py-2">{{ __('Sin notas. Solo visibles para administradores.') }}</p>
                 @endforelse
                 <div class="border-t border-zinc-100 pt-3 flex gap-3">
-                    <flux:textarea wire:model="newNote" rows="2" placeholder="Añadir nota interna..." class="flex-1" />
-                    <flux:button wire:click="addNote" variant="primary" size="sm" icon="plus" class="self-end">Añadir</flux:button>
+                    <flux:textarea wire:model="newNote" rows="2" :placeholder="__('Añadir nota interna...')" class="flex-1" />
+                    <flux:button wire:click="addNote" variant="primary" size="sm" icon="plus" class="self-end">{{ __('Añadir') }}</flux:button>
                 </div>
                 @error('newNote') <p class="text-xs text-red-500">{{ $message }}</p> @enderror
             </div>

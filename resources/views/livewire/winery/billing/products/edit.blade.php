@@ -19,12 +19,12 @@
             {{-- Entrega --}}
             <div class="flex-1 min-w-[160px]">
                 <flux:field>
-                    <flux:label class="text-xs font-semibold uppercase tracking-wide text-zinc-400">Entrega</flux:label>
+                    <flux:label class="text-xs font-semibold uppercase tracking-wide text-zinc-400">{{ __('Entrega') }}</flux:label>
                     <flux:select wire:model="delivery_status" :disabled="$isLocked">
-                        <option value="pending">Pendiente</option>
-                        <option value="in_transit">En tránsito</option>
-                        <option value="delivered">Entregada</option>
-                        <option value="cancelled">Cancelada</option>
+                        <option value="pending">{{ __('Pendiente') }}</option>
+                        <option value="in_transit">{{ __('En tránsito') }}</option>
+                        <option value="delivered">{{ __('Entregada') }}</option>
+                        <option value="cancelled">{{ __('Cancelada') }}</option>
                     </flux:select>
                 </flux:field>
             </div>
@@ -32,11 +32,11 @@
             {{-- Cobro --}}
             <div class="flex-1 min-w-[160px]">
                 <flux:field>
-                    <flux:label class="text-xs font-semibold uppercase tracking-wide text-zinc-400">Estado de cobro</flux:label>
+                    <flux:label class="text-xs font-semibold uppercase tracking-wide text-zinc-400">{{ __('Estado de cobro') }}</flux:label>
                     <flux:select wire:model="payment_status" :disabled="$invoice->status === 'cancelled'">
-                        <option value="unpaid">Pendiente de cobro</option>
-                        <option value="partial">Pago parcial</option>
-                        <option value="paid">Cobrada</option>
+                        <option value="unpaid">{{ __('Pendiente de cobro') }}</option>
+                        <option value="partial">{{ __('Pago parcial') }}</option>
+                        <option value="paid">{{ __('Cobrada') }}</option>
                     </flux:select>
                 </flux:field>
             </div>
@@ -44,31 +44,31 @@
             {{-- Forma de pago --}}
             <div class="flex-1 min-w-[160px]">
                 <flux:field>
-                    <flux:label class="text-xs font-semibold uppercase tracking-wide text-zinc-400">Forma de pago</flux:label>
+                    <flux:label class="text-xs font-semibold uppercase tracking-wide text-zinc-400">{{ __('Forma de pago') }}</flux:label>
                     <flux:select wire:model="payment_type" :disabled="$invoice->status === 'cancelled'">
-                        <option value="">Sin especificar</option>
-                        <option value="cash">Efectivo</option>
-                        <option value="transfer">Transferencia</option>
-                        <option value="check">Cheque</option>
-                        <option value="other">Otro</option>
+                        <option value="">{{ __('Sin especificar') }}</option>
+                        <option value="cash">{{ __('Efectivo') }}</option>
+                        <option value="transfer">{{ __('Transferencia') }}</option>
+                        <option value="check">{{ __('Cheque') }}</option>
+                        <option value="other">{{ __('Otro') }}</option>
                     </flux:select>
                 </flux:field>
             </div>
 
             {{-- Info factura --}}
             <div class="flex-1 min-w-[140px] space-y-1">
-                <p class="text-[11px] font-semibold uppercase tracking-wide text-zinc-400">Factura</p>
+                <p class="text-[11px] font-semibold uppercase tracking-wide text-zinc-400">{{ __('Factura') }}</p>
                 @if ($invoice->invoice_number)
                     <p class="font-mono font-bold text-zinc-900 text-sm">{{ $invoice->invoice_number }}</p>
                     @if ($invoice->invoice_date)
                         <p class="text-xs text-zinc-400">{{ $invoice->invoice_date->format('d/m/Y') }}</p>
                     @endif
-                    <flux:badge color="blue" size="sm">Emitida</flux:badge>
+                    <flux:badge color="blue" size="sm">{{ __('Emitida') }}</flux:badge>
                 @elseif ($invoice->status === 'cancelled')
-                    <flux:badge color="red" size="sm">Cancelada</flux:badge>
+                    <flux:badge color="red" size="sm">{{ __('Cancelada') }}</flux:badge>
                 @else
-                    <flux:badge color="zinc" size="sm">Borrador</flux:badge>
-                    <p class="text-xs text-zinc-400">Emite desde el listado</p>
+                    <flux:badge color="zinc" size="sm">{{ __('Borrador') }}</flux:badge>
+                    <p class="text-xs text-zinc-400">{{ __('Emite desde el listado') }}</p>
                 @endif
             </div>
 
@@ -78,8 +78,8 @@
                     <flux:button type="button" variant="primary" size="sm"
                         wire:click="saveStatuses"
                         wire:loading.attr="disabled" wire:target="saveStatuses,confirmPaymentDate,confirmDeliveryStatus">
-                        <span wire:loading.remove wire:target="saveStatuses,confirmPaymentDate,confirmDeliveryStatus">Guardar estados</span>
-                        <span wire:loading wire:target="saveStatuses,confirmPaymentDate,confirmDeliveryStatus">Guardando...</span>
+                        <span wire:loading.remove wire:target="saveStatuses,confirmPaymentDate,confirmDeliveryStatus">{{ __('Guardar estados') }}</span>
+                        <span wire:loading wire:target="saveStatuses,confirmPaymentDate,confirmDeliveryStatus">{{ __('Guardando...') }}</span>
                     </flux:button>
                 </div>
             @endif
@@ -94,7 +94,7 @@
         </flux:callout>
     @elseif ($isInvoiced)
         <flux:callout variant="info">
-            <strong>Factura emitida.</strong>
+            <strong>{{ __('Factura emitida.') }}</strong>
             Las líneas están bloqueadas. Para corregir errores usa una factura rectificativa.
         </flux:callout>
     @endif
@@ -104,28 +104,28 @@
         <form wire:submit="save" class="space-y-8">
 
             {{-- Documento --}}
-            <x-agro.form-section title="Documento">
+            <x-agro.form-section title="{{ __('Documento') }}">
                 <div class="grid grid-cols-2 gap-4">
                     <flux:field>
-                        <flux:label>Código de albarán</flux:label>
+                        <flux:label>{{ __('Código de albarán') }}</flux:label>
                         <flux:input value="{{ $invoice->delivery_note_code }}" disabled
                             class="bg-zinc-100 font-mono font-semibold cursor-not-allowed" />
                     </flux:field>
 
                     <flux:field>
-                        <flux:label>Número de factura</flux:label>
+                        <flux:label>{{ __('Número de factura') }}</flux:label>
                         <flux:input value="{{ $invoice->invoice_number ?? '— (pendiente de emitir)' }}" disabled
                             class="{{ $invoice->invoice_number ? 'bg-zinc-100 font-mono font-semibold' : 'bg-zinc-50 text-zinc-400' }} cursor-not-allowed" />
                     </flux:field>
 
                     <flux:field>
-                        <flux:label>Fecha de pedido</flux:label>
+                        <flux:label>{{ __('Fecha de pedido') }}</flux:label>
                         <flux:input value="{{ $invoice->order_date ? $invoice->order_date->format('d/m/Y') : '—' }}" disabled
                             class="bg-zinc-100 cursor-not-allowed" />
                     </flux:field>
 
                     <flux:field>
-                        <flux:label>Fecha de albarán</flux:label>
+                        <flux:label>{{ __('Fecha de albarán') }}</flux:label>
                         <flux:input value="{{ $invoice->delivery_note_date ? $invoice->delivery_note_date->format('d/m/Y') : '—' }}" disabled
                             class="bg-zinc-100 cursor-not-allowed" />
                     </flux:field>
@@ -133,17 +133,17 @@
 
                 {{-- Factura regalo --}}
                 <div class="mt-4">
-                    <flux:checkbox wire:model.live="is_gift" label="Factura regalo" description="Importes = 0, stock se deduce igualmente" :disabled="$isLocked" />
+                    <flux:checkbox wire:model.live="is_gift" :label="__('Factura regalo')" :description="__('Importes = 0, stock se deduce igualmente')" :disabled="$isLocked" />
                 </div>
             </x-agro.form-section>
 
             {{-- Cliente --}}
-            <x-agro.form-section title="Cliente">
+            <x-agro.form-section title="{{ __('Cliente') }}">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <flux:field>
-                        <flux:label required>Cliente</flux:label>
+                        <flux:label required>{{ __('Cliente') }}</flux:label>
                         <flux:select wire:model="client_id" required :disabled="$isLocked || $isInvoiced">
-                            <option value="">Selecciona un cliente</option>
+                            <option value="">{{ __('Selecciona un cliente') }}</option>
                             @foreach ($clients as $client)
                                 <option value="{{ $client->id }}">{{ $client->full_name }}</option>
                             @endforeach
@@ -155,11 +155,11 @@
 
             {{-- Añadir producto (solo borrador, no bloqueado) --}}
             @if (!$isLocked && $invoice->status === 'draft')
-                <x-agro.form-section title="Añadir producto">
+                <x-agro.form-section title="{{ __('Añadir producto') }}">
                     <flux:field>
-                        <flux:label>Lote de vino</flux:label>
+                        <flux:label>{{ __('Lote de vino') }}</flux:label>
                         <flux:select wire:model.live="selectedLotId" wire:change="addProductToInvoice">
-                            <option value="">-- Selecciona un lote con stock disponible --</option>
+                            <option value="">{{ __('-- Selecciona un lote con stock disponible --') }}</option>
                             @foreach ($wineLots as $lot)
                                 <option value="{{ $lot->id }}">
                                     {{ $lot->name }}
@@ -179,7 +179,7 @@
             @endif
 
             {{-- Líneas del albarán --}}
-            <x-agro.form-section title="Líneas del albarán">
+            <x-agro.form-section title="{{ __('Líneas del albarán') }}">
                 <div class="space-y-4">
                     @forelse ($items as $index => $item)
                         @php
@@ -204,7 +204,7 @@
                                 <div class="flex items-center gap-2">
                                     <h4 class="text-base font-bold text-zinc-900">Línea #{{ $index + 1 }}</h4>
                                     @if ($isWineItem)
-                                        <flux:badge color="purple" size="sm">Vino</flux:badge>
+                                        <flux:badge color="purple" size="sm">{{ __('Vino') }}</flux:badge>
                                     @endif
                                 </div>
                                 @if (!$locked)
@@ -216,29 +216,29 @@
                             <div class="grid grid-cols-1 md:grid-cols-12 gap-3">
                                 <div class="md:col-span-12">
                                     <flux:field>
-                                        <flux:label class="text-xs">Concepto <span class="text-red-500">*</span></flux:label>
+                                        <flux:label class="text-xs">{{ __('Concepto') }} <span class="text-red-500">*</span></flux:label>
                                         <flux:input wire:model="items.{{ $index }}.name"
-                                            placeholder="Ej: Rioja Reserva 2021..." class="text-sm" :disabled="$locked" />
+                                            placeholder="{{ __('Ej: Rioja Reserva 2021...') }}" class="text-sm" :disabled="$locked" />
                                         <flux:error name="items.{{ $index }}.name" />
                                     </flux:field>
                                 </div>
                                 <div class="md:col-span-8">
                                     <flux:field>
-                                        <flux:label class="text-xs">Descripción</flux:label>
+                                        <flux:label class="text-xs">{{ __('Descripción') }}</flux:label>
                                         <flux:textarea wire:model="items.{{ $index }}.description"
                                             rows="2" class="text-sm" :disabled="$locked" />
                                     </flux:field>
                                 </div>
                                 <div class="md:col-span-4">
                                     <flux:field>
-                                        <flux:label class="text-xs">SKU / Código</flux:label>
+                                        <flux:label class="text-xs">{{ __('SKU / Código') }}</flux:label>
                                         <flux:input wire:model="items.{{ $index }}.sku"
                                             class="text-sm" :disabled="$locked" />
                                     </flux:field>
                                 </div>
                                 <div class="md:col-span-3">
                                     <flux:field>
-                                        <flux:label class="text-xs">Cantidad <span class="text-red-500">*</span></flux:label>
+                                        <flux:label class="text-xs">{{ __('Cantidad') }} <span class="text-red-500">*</span></flux:label>
                                         <flux:input wire:model.live="items.{{ $index }}.quantity"
                                             type="number" step="0.001" min="0.001"
                                             class="text-sm" :disabled="$locked" />
@@ -253,7 +253,7 @@
                                 </div>
                                 <div class="md:col-span-3">
                                     <flux:field>
-                                        <flux:label class="text-xs">Precio/ud (€) <span class="text-red-500">*</span></flux:label>
+                                        <flux:label class="text-xs">{{ __('Precio/ud (€)') }} <span class="text-red-500">*</span></flux:label>
                                         <flux:input wire:model.live="items.{{ $index }}.unit_price"
                                             type="number" step="0.0001" min="0" class="text-sm" :disabled="$locked" />
                                         <flux:error name="items.{{ $index }}.unit_price" />
@@ -261,17 +261,17 @@
                                 </div>
                                 <div class="md:col-span-3">
                                     <flux:field>
-                                        <flux:label class="text-xs">Descuento %</flux:label>
+                                        <flux:label class="text-xs">{{ __('Descuento %') }}</flux:label>
                                         <flux:input wire:model.live="items.{{ $index }}.discount_percentage"
                                             type="number" step="0.01" min="0" max="100" class="text-sm" :disabled="$locked" />
                                     </flux:field>
                                 </div>
                                 <div class="md:col-span-3">
                                     <flux:field>
-                                        <flux:label class="text-xs">Impuesto</flux:label>
+                                        <flux:label class="text-xs">{{ __('Impuesto') }}</flux:label>
                                         <flux:select wire:model.live="items.{{ $index }}.tax_id"
                                             class="text-sm" :disabled="$locked">
-                                            <option value="">Sin impuesto</option>
+                                            <option value="">{{ __('Sin impuesto') }}</option>
                                             @foreach ($availableTaxes as $tax)
                                                 <option value="{{ $tax->id }}">{{ $tax->name }} ({{ number_format($tax->rate, 2) }}%)</option>
                                             @endforeach
@@ -296,15 +296,13 @@
                         </div>
                     @empty
                         <div class="text-center py-10 border-2 border-dashed border-zinc-300 rounded-xl">
-                            <p class="text-zinc-500">No hay líneas en el albarán.</p>
+                            <p class="text-zinc-500">{{ __('No hay líneas en el albarán.') }}</p>
                         </div>
                     @endforelse
 
                     @if (!$isLocked && !$isInvoiced)
                         <div class="flex justify-center pt-4 border-t border-zinc-200 mt-4">
-                            <flux:button type="button" wire:click="addItem" variant="outline" icon="plus">
-                                Añadir concepto manual
-                            </flux:button>
+                            <flux:button type="button" wire:click="addItem" variant="outline" icon="plus">{{ __('Añadir concepto manual') }}</flux:button>
                         </div>
                     @endif
                 </div>
@@ -312,31 +310,31 @@
 
             {{-- Resumen de totales --}}
             @if(count($items) > 0)
-            <x-agro.form-section title="Resumen">
+            <x-agro.form-section title="{{ __('Resumen') }}">
                 <div class="flex justify-end">
                     <div class="w-full max-w-sm space-y-2 text-sm">
                         <div class="flex justify-between text-zinc-600">
-                            <span>Subtotal</span>
+                            <span>{{ __('Subtotal') }}</span>
                             <span class="font-medium">{{ number_format($this->subtotal, 2, ',', '.') }} €</span>
                         </div>
                         @if($this->discountAmount > 0)
                         <div class="flex justify-between text-red-600">
-                            <span>Descuento</span>
+                            <span>{{ __('Descuento') }}</span>
                             <span class="font-medium">-{{ number_format($this->discountAmount, 2, ',', '.') }} €</span>
                         </div>
                         <div class="flex justify-between text-zinc-600">
-                            <span>Base imponible</span>
+                            <span>{{ __('Base imponible') }}</span>
                             <span class="font-medium">{{ number_format($this->subtotal - $this->discountAmount, 2, ',', '.') }} €</span>
                         </div>
                         @endif
                         <div class="flex justify-between text-zinc-600">
-                            <span>IVA</span>
+                            <span>{{ __('IVA') }}</span>
                             <span class="font-medium">{{ number_format($this->taxAmount, 2, ',', '.') }} €</span>
                         </div>
                         <div class="flex justify-between text-base font-bold text-zinc-900 border-t border-zinc-200 pt-2">
-                            <span>Total</span>
+                            <span>{{ __('Total') }}</span>
                             @if($is_gift)
-                                <span class="text-pink-600">0,00 € <span class="text-xs font-normal">(regalo)</span></span>
+                                <span class="text-pink-600">0,00 € <span class="text-xs font-normal">{{ __('(regalo)') }}</span></span>
                             @else
                                 <span class="text-agro-700">{{ number_format($this->totalAmount, 2, ',', '.') }} €</span>
                             @endif
@@ -347,19 +345,19 @@
             @endif
 
             {{-- Observaciones --}}
-            <x-agro.form-section title="Observaciones">
+            <x-agro.form-section title="{{ __('Observaciones') }}">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <flux:field>
-                        <flux:label>Observaciones internas</flux:label>
+                        <flux:label>{{ __('Observaciones internas') }}</flux:label>
                         <flux:textarea wire:model="observations" rows="3"
-                            placeholder="Notas internas (no aparecen en el documento)..."
+                            placeholder="{{ __('Notas internas (no aparecen en el documento)...') }}"
                             :disabled="$invoice->status === 'cancelled'" />
                         <flux:error name="observations" />
                     </flux:field>
                     <flux:field>
-                        <flux:label>Observaciones en documento</flux:label>
+                        <flux:label>{{ __('Observaciones en documento') }}</flux:label>
                         <flux:textarea wire:model="observations_invoice" rows="3"
-                            placeholder="Texto que aparecerá en el albarán y la factura..."
+                            placeholder="{{ __('Texto que aparecerá en el albarán y la factura...') }}"
                             :disabled="$invoice->status === 'cancelled'" />
                         <flux:error name="observations_invoice" />
                     </flux:field>
@@ -373,9 +371,7 @@
                         href="{{ roleRoute('invoices.products.index') }}" wire:navigate>
                         Cancelar
                     </flux:button>
-                    <flux:button type="submit" variant="primary">
-                        Guardar cambios
-                    </flux:button>
+                    <flux:button type="submit" variant="primary">{{ __('Guardar cambios') }}</flux:button>
                 </div>
             @else
                 <div class="flex justify-end pt-2">
@@ -403,37 +399,37 @@
                 <div class="p-6 space-y-4">
                     <div class="bg-zinc-50 rounded-lg p-4 grid grid-cols-2 gap-3 text-sm">
                         <div>
-                            <p class="text-zinc-500">Albarán</p>
+                            <p class="text-zinc-500">{{ __('Albarán') }}</p>
                             <p class="font-mono font-semibold text-zinc-900">{{ $invoice->delivery_note_code }}</p>
                         </div>
                         <div>
-                            <p class="text-zinc-500">Cliente</p>
+                            <p class="text-zinc-500">{{ __('Cliente') }}</p>
                             <p class="font-semibold text-zinc-900">{{ $invoice->client?->full_name ?? '—' }}</p>
                         </div>
                         <div>
-                            <p class="text-zinc-500">Total</p>
+                            <p class="text-zinc-500">{{ __('Total') }}</p>
                             <p class="font-bold text-green-600 text-base">{{ number_format($this->totalAmount, 2) }} €</p>
                         </div>
                     </div>
                     @if ($pendingDeliveryStatus === 'delivered')
                         <flux:callout variant="warning">
-                            El stock pasará de <strong>reservado → vendido</strong>. Esta acción bloquea la edición del contenido.
+                            El stock pasará de <strong>{{ __('reservado → vendido') }}</strong>. Esta acción bloquea la edición del contenido.
                         </flux:callout>
                     @else
                         <flux:callout variant="danger">
-                            El stock se restaurará a <strong>disponible</strong>. El albarán quedará cancelado.
+                            El stock se restaurará a <strong>{{ __('disponible') }}</strong>. El albarán quedará cancelado.
                         </flux:callout>
                     @endif
                 </div>
                 <div class="flex justify-end gap-3 px-6 py-4 bg-zinc-50 border-t border-zinc-200 rounded-b-2xl">
                     <flux:button wire:click="closeDeliveryModal" variant="outline"
-                        wire:loading.attr="disabled" wire:target="confirmDeliveryStatus">Cancelar</flux:button>
+                        wire:loading.attr="disabled" wire:target="confirmDeliveryStatus">{{ __('Cancelar') }}</flux:button>
                     <flux:button wire:click="confirmDeliveryStatus"
                         variant="{{ $pendingDeliveryStatus === 'delivered' ? 'primary' : 'danger' }}"
                         icon="{{ $pendingDeliveryStatus === 'delivered' ? 'check-circle' : 'x-circle' }}"
                         wire:loading.attr="disabled" wire:target="confirmDeliveryStatus">
                         <span wire:loading.remove wire:target="confirmDeliveryStatus">{{ $pendingDeliveryStatus === 'delivered' ? 'Confirmar entrega' : 'Confirmar cancelación' }}</span>
-                        <span wire:loading wire:target="confirmDeliveryStatus">Guardando...</span>
+                        <span wire:loading wire:target="confirmDeliveryStatus">{{ __('Guardando...') }}</span>
                     </flux:button>
                 </div>
             </div>
@@ -446,24 +442,24 @@
              x-data x-on:keydown.escape.window="$wire.closePaymentDateModal()">
             <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm" @click.stop>
                 <div class="px-6 py-4 border-b border-zinc-200 flex items-center justify-between">
-                    <h3 class="text-lg font-bold text-zinc-900">Fecha de pago</h3>
+                    <h3 class="text-lg font-bold text-zinc-900">{{ __('Fecha de pago') }}</h3>
                     <flux:button wire:click="closePaymentDateModal" variant="ghost" size="sm" icon="x-mark" />
                 </div>
                 <div class="p-6 space-y-4">
-                    <p class="text-sm text-zinc-600">Indica la fecha en que se realizó el cobro.</p>
+                    <p class="text-sm text-zinc-600">{{ __('Indica la fecha en que se realizó el cobro.') }}</p>
                     <flux:field>
-                        <flux:label required>Fecha de cobro</flux:label>
+                        <flux:label required>{{ __('Fecha de cobro') }}</flux:label>
                         <flux:input wire:model="payment_date" type="date" required />
                         <flux:error name="payment_date" />
                     </flux:field>
                 </div>
                 <div class="flex justify-end gap-3 px-6 py-4 bg-zinc-50 border-t border-zinc-200 rounded-b-2xl">
                     <flux:button wire:click="closePaymentDateModal" variant="outline"
-                        wire:loading.attr="disabled" wire:target="confirmPaymentDate">Cancelar</flux:button>
+                        wire:loading.attr="disabled" wire:target="confirmPaymentDate">{{ __('Cancelar') }}</flux:button>
                     <flux:button wire:click="confirmPaymentDate" variant="primary" icon="check"
                         wire:loading.attr="disabled" wire:target="confirmPaymentDate">
-                        <span wire:loading.remove wire:target="confirmPaymentDate">Confirmar</span>
-                        <span wire:loading wire:target="confirmPaymentDate">Guardando...</span>
+                        <span wire:loading.remove wire:target="confirmPaymentDate">{{ __('Confirmar') }}</span>
+                        <span wire:loading wire:target="confirmPaymentDate">{{ __('Guardando...') }}</span>
                     </flux:button>
                 </div>
             </div>

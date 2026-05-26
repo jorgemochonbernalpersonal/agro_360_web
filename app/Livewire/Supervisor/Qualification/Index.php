@@ -90,7 +90,7 @@ class Index extends Component
             ->exists();
 
         if (!$isLinked) {
-            $this->toastError('La bodega seleccionada no pertenece a esta denominación.');
+            $this->toastError(__('La bodega seleccionada no pertenece a esta denominación.'));
             return;
         }
 
@@ -107,7 +107,7 @@ class Index extends Component
 
         $this->reset(['wine_name', 'color', 'alcohol_percentage', 'tasting_notes']);
         $this->showCreate = false;
-        $this->toastSuccess('Calificación registrada.');
+        $this->toastSuccess(__('Calificación registrada.'));
     }
 
     public function openEdit(int $id): void
@@ -177,7 +177,7 @@ class Index extends Component
         ]);
 
         $this->closeEdit();
-        $this->toastSuccess('Calificación actualizada.');
+        $this->toastSuccess(__('Calificación actualizada.'));
     }
 
     public function qualify(int $id): void
@@ -185,7 +185,7 @@ class Index extends Component
         $q = DoQualification::forSupervisor(Auth::id())->findOrFail($id);
         Gate::authorize('update', $q);
         $q->update(['result' => DoQualification::RESULT_QUALIFIED, 'qualified_by' => Auth::id()]);
-        $this->toastSuccess('Vino calificado DO.');
+        $this->toastSuccess(__('Vino calificado DO.'));
     }
 
     public function disqualify(int $id): void
@@ -193,7 +193,7 @@ class Index extends Component
         $q = DoQualification::forSupervisor(Auth::id())->findOrFail($id);
         Gate::authorize('update', $q);
         $q->update(['result' => DoQualification::RESULT_DISQUALIFIED, 'qualified_by' => Auth::id()]);
-        $this->toastSuccess('Vino descalificado.');
+        $this->toastSuccess(__('Vino descalificado.'));
     }
 
     #[Layout('layouts.app')]
@@ -235,10 +235,10 @@ class Index extends Component
         )->orderBy('name')->get(['id', 'name']);
 
         $tabs = [
-            'all'          => ['label' => 'Todas',          'count' => $counts['all']],
-            'pending'      => ['label' => 'Pendientes',     'count' => $counts['pending']],
-            'qualified'    => ['label' => 'Calificados',    'count' => $counts['qualified']],
-            'disqualified' => ['label' => 'Descalificados', 'count' => $counts['disqualified']],
+            'all'          => ['label' => __('Todas'),          'count' => $counts['all']],
+            'pending'      => ['label' => __('Pendientes'),     'count' => $counts['pending']],
+            'qualified'    => ['label' => __('Calificados'),    'count' => $counts['qualified']],
+            'disqualified' => ['label' => __('Descalificados'), 'count' => $counts['disqualified']],
         ];
 
         return view('livewire.supervisor.qualification.index', [

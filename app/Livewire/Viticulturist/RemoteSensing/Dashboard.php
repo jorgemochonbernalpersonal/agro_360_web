@@ -319,7 +319,7 @@ class Dashboard extends Component
     public function requestDataForDate(?string $date = null): void
     {
         if (!$this->selectedPlot) {
-            $this->dispatch('notify', ['type' => 'error', 'message' => 'No hay parcela seleccionada']);
+            $this->dispatch('notify', ['type' => 'error', 'message' => __('No hay parcela seleccionada')]);
             return;
         }
 
@@ -330,20 +330,20 @@ class Dashboard extends Component
             if ($result) {
                 $this->loadSatelliteData();
                 $this->loadSatelliteAvailableDates();
-                $this->dispatch('notify', ['type' => 'success', 'message' => 'Datos Sentinel-2 actualizados correctamente.']);
+                $this->dispatch('notify', ['type' => 'success', 'message' => __('Datos Sentinel-2 actualizados correctamente.')]);
             } else {
-                $this->dispatch('notify', ['type' => 'warning', 'message' => 'No se pudieron obtener datos Sentinel-2 para esta parcela.']);
+                $this->dispatch('notify', ['type' => 'warning', 'message' => __('No se pudieron obtener datos Sentinel-2 para esta parcela.')]);
             }
         } catch (\Exception $e) {
             Log::error('Sentinel-2 manual fetch failed', ['plot_id' => $this->selectedPlot->id, 'error' => $e->getMessage()]);
-            $this->dispatch('notify', ['type' => 'error', 'message' => 'Error al obtener datos: ' . $e->getMessage()]);
+            $this->dispatch('notify', ['type' => 'error', 'message' => __('Error al obtener datos: :message', ['message' => $e->getMessage()])]);
         }
     }
 
     public function requestInitialData(): void
     {
         if (!$this->selectedPlot) {
-            $this->dispatch('notify', ['type' => 'error', 'message' => 'No hay parcela seleccionada']);
+            $this->dispatch('notify', ['type' => 'error', 'message' => __('No hay parcela seleccionada')]);
             return;
         }
 
@@ -351,10 +351,10 @@ class Dashboard extends Component
 
         try {
             \App\Jobs\UpdatePlotNdviJob::dispatch($this->selectedPlot)->onQueue('default');
-            $this->dispatch('notify', ['type' => 'info', 'message' => 'Solicitando datos satelitales... Se actualizará en 1-2 minutos.']);
+            $this->dispatch('notify', ['type' => 'info', 'message' => __('Solicitando datos satelitales... Se actualizará en 1-2 minutos.')]);
             $this->dispatch('poll-for-data', ['plotId' => $this->selectedPlot->id, 'delay' => 30000]);
         } catch (\Exception $e) {
-            $this->dispatch('notify', ['type' => 'error', 'message' => 'Error al solicitar datos: ' . $e->getMessage()]);
+            $this->dispatch('notify', ['type' => 'error', 'message' => __('Error al solicitar datos: :message', ['message' => $e->getMessage()])]);
         } finally {
             $this->loadingDataForDate = false;
         }
@@ -428,7 +428,7 @@ class Dashboard extends Component
         Cache::forget("solar_{$plotId}");
 
         $this->loadPlotData(true);
-        $this->dispatch('notify', ['type' => 'success', 'message' => 'Datos actualizados correctamente']);
+        $this->dispatch('notify', ['type' => 'success', 'message' => __('Datos actualizados correctamente')]);
     }
 
     public function downloadReport(): void
@@ -440,13 +440,13 @@ class Dashboard extends Component
             $result  = $service->generatePlotReport($this->selectedPlot);
 
             if ($result['success']) {
-                $this->dispatch('notify', ['type' => 'success', 'message' => 'Informe generado correctamente. Descargando...']);
+                $this->dispatch('notify', ['type' => 'success', 'message' => __('Informe generado correctamente. Descargando...')]);
                 // Note: download response must be returned directly in Livewire — handled by caller
                 $service->downloadReport($result['pdf_path']);
             }
         } catch (\Exception $e) {
             Log::error('Report generation error', ['error' => $e->getMessage()]);
-            $this->dispatch('notify', ['type' => 'error', 'message' => 'Error al generar el informe: ' . $e->getMessage()]);
+            $this->dispatch('notify', ['type' => 'error', 'message' => __('Error al generar el informe: :message', ['message' => $e->getMessage()])]);
         }
     }
 

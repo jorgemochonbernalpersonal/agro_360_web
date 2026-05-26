@@ -58,13 +58,13 @@ class Index extends Component
         ]);
 
         if ($newActiveState) {
-            $this->toastSuccess('Parcela activada exitosamente.');
+            $this->toastSuccess(__('Parcela activada exitosamente.'));
             // Si estamos en el tab de inactivos, cambiar al tab de activos para ver el cambio
             if ($this->currentTab === 'inactive') {
                 $this->currentTab = 'active';
             }
         } else {
-            $this->toastSuccess('Parcela desactivada exitosamente.');
+            $this->toastSuccess(__('Parcela desactivada exitosamente.'));
             // Si estamos en el tab de activos, cambiar al tab de inactivos para ver el cambio
             if ($this->currentTab === 'active') {
                 $this->currentTab = 'inactive';
@@ -178,8 +178,8 @@ class Index extends Component
             'firstPlotForMap'    => $firstPlotForMap,
             'auditPlot'          => $auditPlot,
         ])->layout('layouts.app', [
-            'title' => 'Gestión de Parcelas - Agro365',
-            'description' => 'Administra y visualiza todas tus parcelas agrícolas. Control total de viñedos con integración SIGPAC.',
+            'title' => __('Gestión de Parcelas - Agro365'),
+            'description' => __('Administra y visualiza todas tus parcelas agrícolas. Control total de viñedos con integración SIGPAC.'),
         ]);
     }
 
@@ -306,7 +306,7 @@ class Index extends Component
         $plot = Plot::findOrFail($plotId);
 
         if (!Auth::user()->can('update', $plot)) {
-            $this->toastError('No tienes permiso para modificar esta parcela.');
+            $this->toastError(__('No tienes permiso para modificar esta parcela.'));
             return;
         }
 
@@ -317,7 +317,7 @@ class Index extends Component
         }
 
         if ($sigpacCodes->isEmpty()) {
-            $this->toastError('Esta parcela no tiene códigos SIGPAC asociados.');
+            $this->toastError(__('Esta parcela no tiene códigos SIGPAC asociados.'));
             return;
         }
 
@@ -379,14 +379,14 @@ class Index extends Component
                 'sigpac_code_id' => $sigpacCodeId,
                 'error' => $e->getMessage(),
             ]);
-            $this->toastError('Error al generar los mapas. Por favor, intenta de nuevo.');
+            $this->toastError(__('Error al generar los mapas. Por favor, intenta de nuevo.'));
         }
     }
 
     public function generateAllMapsForMunicipality()
     {
         if (!$this->filterMunicipality) {
-            $this->toastError('Debes seleccionar un municipio primero.');
+            $this->toastError(__('Debes seleccionar un municipio primero.'));
             return;
         }
 
@@ -403,7 +403,7 @@ class Index extends Component
             ->get();
 
         if ($plotsWithoutGeometry->isEmpty()) {
-            $this->toastInfo('Todas las parcelas de este municipio ya tienen mapas generados.');
+            $this->toastInfo(__('Todas las parcelas de este municipio ya tienen mapas generados.'));
             return;
         }
 

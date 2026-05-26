@@ -61,7 +61,7 @@ class MapController extends Controller
         }
         
         // Si no es ninguno, error 404
-        abort(404, 'No se encontró el mapa solicitado.');
+        abort(404, __('No se encontró el mapa solicitado.'));
     }
     
     /**
@@ -87,7 +87,7 @@ class MapController extends Controller
 
         if (!$multipart || !$multipart->plot) {
             return redirect()->back()
-                ->with('error', 'Este código SIGPAC no tiene una parcela asociada con mapa generado.');
+                ->with('error', __('Este código SIGPAC no tiene una parcela asociada con mapa generado.'));
         }
 
         $plot = $multipart->plot;
@@ -108,7 +108,7 @@ class MapController extends Controller
 
         if (!$multipart || !$multipart->plot || !$multipart->plotGeometry) {
             return redirect()->back()
-                ->with('error', 'No se encontró el recinto solicitado o no tiene mapa generado.');
+                ->with('error', __('No se encontró el recinto solicitado o no tiene mapa generado.'));
         }
 
         $plot = $multipart->plot;
@@ -131,7 +131,7 @@ class MapController extends Controller
                 'plot_geometry_id' => $multipart->plot_geometry_id,
             ]);
             return redirect()->back()
-                ->with('error', 'No se pudo obtener la geometría para este recinto SIGPAC.');
+                ->with('error', __('No se pudo obtener la geometría para este recinto SIGPAC.'));
         }
 
         $plotGeometries = collect([[
@@ -201,7 +201,7 @@ class MapController extends Controller
 
         if ($plotGeometries->isEmpty()) {
             return redirect()->back()
-                ->with('error', 'Esta parcela no tiene recintos generados. Genera el mapa primero.');
+                ->with('error', __('Esta parcela no tiene recintos generados. Genera el mapa primero.'));
         }
 
         return view('map', compact('plot', 'plotGeometries', 'highlightSigpacId'));
@@ -221,7 +221,7 @@ class MapController extends Controller
 
         if ($plotIds->isEmpty()) {
             return redirect()->back()
-                ->with('error', 'No tienes parcelas en este municipio.');
+                ->with('error', __('No tienes parcelas en este municipio.'));
         }
 
         // Cargar todas las geometrías del municipio
@@ -264,7 +264,7 @@ class MapController extends Controller
 
         if ($plotGeometries->isEmpty()) {
             return redirect()->back()
-                ->with('error', 'No hay mapas generados para este municipio.');
+                ->with('error', __('No hay mapas generados para este municipio.'));
         }
 
         $highlightSigpacId = null;

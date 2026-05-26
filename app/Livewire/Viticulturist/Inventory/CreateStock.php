@@ -48,9 +48,9 @@ class CreateStock extends Component
             'expiry_date' => 'nullable|date|after:today',
             'warehouse_id' => 'nullable|exists:warehouses,id',
         ], [
-            'product_id.required' => 'Debes seleccionar un producto',
-            'quantity.required' => 'La cantidad es obligatoria',
-            'quantity.min' => 'La cantidad debe ser mayor a 0',
+            'product_id.required' => __('Debes seleccionar un producto'),
+            'quantity.required' => __('La cantidad es obligatoria'),
+            'quantity.min' => __('La cantidad debe ser mayor a 0'),
         ]);
 
         $user = Auth::user();
@@ -78,7 +78,7 @@ class CreateStock extends Component
             'notes' => $this->notes,
         ]);
 
-        $this->toastSuccess('Stock registrado correctamente');
+        $this->toastSuccess(__('Stock registrado correctamente'));
         return $this->viticulturistRoleRedirect('warehouse.index', ['tab' => 'fitosanitarios']);
     }
 
@@ -97,7 +97,7 @@ class CreateStock extends Component
                 ->where('active', true)
                 ->get(),
         ])->layout('layouts.app', [
-            'title' => 'Registrar Stock - Agro365',
+            'title' => __('Registrar Stock - Agro365'),
         ]);
     }
 }

@@ -54,7 +54,7 @@
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Email</flux:label>
+                    <flux:label>{{ __('Email') }}</flux:label>
                     <flux:input wire:model="email" type="email" autocomplete="email" />
                     <flux:error name="email" />
                 </flux:field>

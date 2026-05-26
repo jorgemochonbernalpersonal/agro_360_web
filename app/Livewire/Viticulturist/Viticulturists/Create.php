@@ -56,13 +56,13 @@ class Create extends Component
     protected function messages(): array
     {
         return [
-            'name.required' => 'El campo nombre es obligatorio.',
-            'name.max' => 'El nombre no puede tener más de 255 caracteres.',
-            'email.required' => 'El campo email es obligatorio.',
-            'email.email' => 'El email debe ser una dirección de correo válida.',
-            'email.max' => 'El email no puede tener más de 255 caracteres.',
-            'email.unique' => 'Este email ya está registrado. Por favor, usa otro email.',
-            'winery_id.exists' => 'La bodega seleccionada no es válida.',
+            'name.required' => __('El campo nombre es obligatorio.'),
+            'name.max' => __('El nombre no puede tener más de 255 caracteres.'),
+            'email.required' => __('El campo email es obligatorio.'),
+            'email.email' => __('El email debe ser una dirección de correo válida.'),
+            'email.max' => __('El email no puede tener más de 255 caracteres.'),
+            'email.unique' => __('Este email ya está registrado. Por favor, usa otro email.'),
+            'winery_id.exists' => __('La bodega seleccionada no es válida.'),
         ];
     }
 
@@ -74,7 +74,7 @@ class Create extends Component
         $wineries = $creator->wineries;
 
         if ($this->winery_id && !$wineries->contains('id', $this->winery_id)) {
-            $this->addError('winery_id', 'No estás asignado a esta bodega.');
+            $this->addError('winery_id', __('No estás asignado a esta bodega.'));
             return;
         }
 
@@ -102,7 +102,7 @@ class Create extends Component
                 ]);
             });
 
-            $this->toastSuccess('Viticultor creado correctamente. Puedes enviar la invitación desde la tabla de acciones.');
+            $this->toastSuccess(__('Viticultor creado correctamente. Puedes enviar la invitación desde la tabla de acciones.'));
             return $this->viticulturistRoleRedirect('personal.index', ['viewMode' => 'personal']);
         } catch (\Exception $e) {
             Log::error('Error al crear viticultor', [
@@ -110,7 +110,7 @@ class Create extends Component
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            $this->toastError('Error al crear el viticultor. Por favor, intenta de nuevo.');
+            $this->toastError(__('Error al crear el viticultor. Por favor, intenta de nuevo.'));
         }
     }
 

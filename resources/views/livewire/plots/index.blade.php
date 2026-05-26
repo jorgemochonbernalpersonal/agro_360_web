@@ -230,7 +230,7 @@
                                     @endif
                                 </div>
                                 <div class="bg-zinc-50 rounded-xl p-3">
-                                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">SIGPAC</p>
+                                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">{{ __('SIGPAC') }}</p>
                                     @if ($plot->sigpacCodes->isNotEmpty())
                                         <p class="text-2xl font-bold text-zinc-600 leading-none">
                                             {{ $plot->sigpacCodes->count() }}

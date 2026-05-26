@@ -2,8 +2,8 @@
 
     @if(!$embedded)
     <x-agro.page-header
-        title="Contraetiquetas DO"
-        description="Solicitudes de contraetiquetas emitidas por tu Denominación de Origen."
+        title="{{ __('Contraetiquetas DO') }}"
+        :description="__('Solicitudes de contraetiquetas emitidas por tu Denominación de Origen.')"
         icon="tag"
     />
     @endif
@@ -11,14 +11,14 @@
     {{-- Filtros --}}
     <div class="flex flex-wrap gap-3">
         <flux:select wire:model.live="vintageFilter">
-            <flux:select.option value="">Todas las añadas</flux:select.option>
+            <flux:select.option value="">{{ __('Todas las añadas') }}</flux:select.option>
             @foreach($availableVintages as $v)
                 <flux:select.option value="{{ $v }}">{{ $v }}</flux:select.option>
             @endforeach
         </flux:select>
 
         <flux:select wire:model.live="statusFilter">
-            <flux:select.option value="">Todos los estados</flux:select.option>
+            <flux:select.option value="">{{ __('Todos los estados') }}</flux:select.option>
             @foreach($statusLabels as $key => $label)
                 <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
             @endforeach
@@ -68,8 +68,8 @@
         @empty
             <x-agro.empty-state
                 icon="tag"
-                title="Sin contraetiquetas"
-                description="Tu denominación de origen aún no ha registrado solicitudes de contraetiquetas para esta bodega."
+                title="{{ __('Sin contraetiquetas') }}"
+                :description="__('Tu denominación de origen aún no ha registrado solicitudes de contraetiquetas para esta bodega.')"
             />
         @endforelse
     </x-agro.card>

@@ -36,13 +36,13 @@
             <flux:field>
                 <flux:label>{{ __('Nombre Completo') }}</flux:label>
                 <flux:input wire:model="name"
-                            placeholder="Juan Pérez"
+                            placeholder="{{ __('Juan Pérez') }}"
                             required autocomplete="name" autofocus />
                 <flux:error name="name" />
             </flux:field>
 
             <flux:field>
-                <flux:label>Email</flux:label>
+                <flux:label>{{ __('Email') }}</flux:label>
                 <flux:input wire:model="email" type="email"
                             :placeholder="__('correo@ejemplo.com')"
                             required autocomplete="email" />

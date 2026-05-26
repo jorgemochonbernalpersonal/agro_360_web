@@ -111,7 +111,7 @@
                         <span><span class="font-semibold text-red-500">{{ __('Rojo') }}</span> {{ number_format($spectralData['red_band'], 4) }}</span>
                     @endif
                     @if(isset($spectralData['nir_band']))
-                        <span><span class="font-semibold text-purple-500">NIR</span> {{ number_format($spectralData['nir_band'], 4) }}</span>
+                        <span><span class="font-semibold text-purple-500">{{ __('NIR') }}</span> {{ number_format($spectralData['nir_band'], 4) }}</span>
                     @endif
                     @if(isset($spectralData['green_band']))
                         <span><span class="font-semibold text-green-500">{{ __('Verde') }}</span> {{ number_format($spectralData['green_band'], 4) }}</span>

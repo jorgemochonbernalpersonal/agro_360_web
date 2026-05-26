@@ -257,7 +257,7 @@ class Edit extends Component
         $committed   = (float) $this->lot->reserved_quantity + (float) $this->lot->sold_quantity;
 
         if ($newQuantity < $committed) {
-            $this->addError('quantity', "La cantidad total no puede ser menor que lo ya comprometido ({$committed} {$this->lot->unit}).");
+            $this->addError('quantity', __('La cantidad total no puede ser menor que lo ya comprometido (:committed :unit).', ['committed' => $committed, 'unit' => $this->lot->unit]));
             return;
         }
 
@@ -269,14 +269,14 @@ class Edit extends Component
         }
 
         if ((float) $data['available_quantity'] > $newQuantity - $committed) {
-            $this->addError('available_quantity', 'La cantidad disponible no puede superar la cantidad libre (total − reservado − vendido).');
+            $this->addError('available_quantity', __('La cantidad disponible no puede superar la cantidad libre (total − reservado − vendido).'));
             return;
         }
 
         $validGrapes = collect($this->grapes)->filter(fn($g) => !empty($g['grape_variety_id']));
 
         if ($validGrapes->isNotEmpty() && $this->grapeTotal > 100.01) {
-            $this->addError('grapes', 'El total de variedades no puede superar el 100%.');
+            $this->addError('grapes', __('El total de variedades no puede superar el 100%.'));
             return;
         }
 
@@ -335,7 +335,7 @@ class Edit extends Component
             $this->lot->grapeVarieties()->sync($syncGrapes);
         });
 
-        $this->toastSuccess('Producto actualizado correctamente.');
+        $this->toastSuccess(__('Producto actualizado correctamente.'));
         $this->roleRedirect('product-lots.index');
     }
 

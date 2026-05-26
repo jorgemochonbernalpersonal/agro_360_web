@@ -40,41 +40,41 @@
                         <div class="p-1.5 rounded-lg bg-agro-50">
                             <flux:icon icon="information-circle" class="size-4 text-agro-600" />
                         </div>
-                        <span class="font-semibold text-zinc-900 text-sm">Informacion Basica</span>
+                        <span class="font-semibold text-zinc-900 text-sm">{{ __('Informacion Basica') }}</span>
                     </div>
                 </x-slot:header>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <p class="text-sm font-semibold text-zinc-500">Tipo</p>
+                        <p class="text-sm font-semibold text-zinc-500">{{ __('Tipo') }}</p>
                         <p class="text-base font-bold text-zinc-900">{{ $machinery->type }}</p>
                     </div>
                     @if($machinery->brand || $machinery->model)
                         <div>
-                            <p class="text-sm font-semibold text-zinc-500">Marca / Modelo</p>
+                            <p class="text-sm font-semibold text-zinc-500">{{ __('Marca / Modelo') }}</p>
                             <p class="text-base font-bold text-zinc-900">{{ $machinery->brand }} {{ $machinery->model }}</p>
                         </div>
                     @endif
                     @if($machinery->serial_number)
                         <div>
-                            <p class="text-sm font-semibold text-zinc-500">Numero de Serie</p>
+                            <p class="text-sm font-semibold text-zinc-500">{{ __('Numero de Serie') }}</p>
                             <p class="text-base font-bold text-zinc-900">{{ $machinery->serial_number }}</p>
                         </div>
                     @endif
                     @if($machinery->year)
                         <div>
-                            <p class="text-sm font-semibold text-zinc-500">Ano</p>
+                            <p class="text-sm font-semibold text-zinc-500">{{ __('Ano') }}</p>
                             <p class="text-base font-bold text-zinc-900">{{ $machinery->year }}</p>
                         </div>
                     @endif
                     @if($machinery->roma_registration)
                         <div>
-                            <p class="text-sm font-semibold text-zinc-500">Inscripcion ROMA</p>
+                            <p class="text-sm font-semibold text-zinc-500">{{ __('Inscripcion ROMA') }}</p>
                             <p class="text-base font-bold text-zinc-900">{{ $machinery->roma_registration }}</p>
                         </div>
                     @endif
                     @if($machinery->capacity)
                         <div>
-                            <p class="text-sm font-semibold text-zinc-500">Capacidad</p>
+                            <p class="text-sm font-semibold text-zinc-500">{{ __('Capacidad') }}</p>
                             <p class="text-base font-bold text-zinc-900">{{ $machinery->capacity }}</p>
                         </div>
                     @endif
@@ -88,31 +88,31 @@
                         <div class="p-1.5 rounded-lg bg-blue-50">
                             <flux:icon icon="calendar" class="size-4 text-blue-600" />
                         </div>
-                        <span class="font-semibold text-zinc-900 text-sm">Fechas y Valores</span>
+                        <span class="font-semibold text-zinc-900 text-sm">{{ __('Fechas y Valores') }}</span>
                     </div>
                 </x-slot:header>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     @if($machinery->purchase_date)
                         <div>
-                            <p class="text-sm font-semibold text-zinc-500">Fecha de Compra</p>
+                            <p class="text-sm font-semibold text-zinc-500">{{ __('Fecha de Compra') }}</p>
                             <p class="text-base font-bold text-zinc-900">{{ $machinery->purchase_date->format('d/m/Y') }}</p>
                         </div>
                     @endif
                     @if($machinery->last_revision_date)
                         <div>
-                            <p class="text-sm font-semibold text-zinc-500">Ultima Revision</p>
+                            <p class="text-sm font-semibold text-zinc-500">{{ __('Ultima Revision') }}</p>
                             <p class="text-base font-bold text-zinc-900">{{ $machinery->last_revision_date->format('d/m/Y') }}</p>
                         </div>
                     @endif
                     @if($machinery->purchase_price)
                         <div>
-                            <p class="text-sm font-semibold text-zinc-500">Precio de Compra</p>
+                            <p class="text-sm font-semibold text-zinc-500">{{ __('Precio de Compra') }}</p>
                             <p class="text-base font-bold text-zinc-900">{{ number_format($machinery->purchase_price, 2, ',', '.') }} EUR</p>
                         </div>
                     @endif
                     @if($machinery->current_value)
                         <div>
-                            <p class="text-sm font-semibold text-zinc-500">Valor Actual</p>
+                            <p class="text-sm font-semibold text-zinc-500">{{ __('Valor Actual') }}</p>
                             <p class="text-base font-bold text-zinc-900">{{ number_format($machinery->current_value, 2, ',', '.') }} EUR</p>
                         </div>
                     @endif
@@ -127,7 +127,7 @@
                             <div class="p-1.5 rounded-lg bg-zinc-50">
                                 <flux:icon icon="document-text" class="size-4 text-zinc-600" />
                             </div>
-                            <span class="font-semibold text-zinc-900 text-sm">Notas</span>
+                            <span class="font-semibold text-zinc-900 text-sm">{{ __('Notas') }}</span>
                         </div>
                     </x-slot:header>
                     <p class="text-zinc-700 whitespace-pre-wrap">{{ $machinery->notes }}</p>
@@ -173,7 +173,7 @@
                         <div class="p-1.5 rounded-lg bg-agro-50">
                             <flux:icon icon="check-circle" class="size-4 text-agro-600" />
                         </div>
-                        <span class="font-semibold text-zinc-900 text-sm">Estado</span>
+                        <span class="font-semibold text-zinc-900 text-sm">{{ __('Estado') }}</span>
                     </div>
                 </x-slot:header>
                 <div class="flex flex-wrap gap-2">
@@ -181,7 +181,7 @@
                         {{ $machinery->active ? 'Activa' : 'Inactiva' }}
                     </flux:badge>
                     @if($machinery->is_rented)
-                        <flux:badge color="blue">Alquilada</flux:badge>
+                        <flux:badge color="blue">{{ __('Alquilada') }}</flux:badge>
                     @endif
                 </div>
             </x-agro.card>
@@ -194,7 +194,7 @@
                             <div class="p-1.5 rounded-lg bg-zinc-50">
                                 <flux:icon icon="photo" class="size-4 text-zinc-600" />
                             </div>
-                            <span class="font-semibold text-zinc-900 text-sm">Imagen</span>
+                            <span class="font-semibold text-zinc-900 text-sm">{{ __('Imagen') }}</span>
                         </div>
                     </x-slot:header>
                     <img
@@ -214,12 +214,12 @@
                         <div class="p-1.5 rounded-lg bg-blue-50">
                             <flux:icon icon="chart-bar" class="size-4 text-blue-600" />
                         </div>
-                        <span class="font-semibold text-zinc-900 text-sm">Estadisticas</span>
+                        <span class="font-semibold text-zinc-900 text-sm">{{ __('Estadisticas') }}</span>
                     </div>
                 </x-slot:header>
                 <div class="space-y-3">
                     <div>
-                        <p class="text-sm font-semibold text-zinc-500">Actividades Registradas</p>
+                        <p class="text-sm font-semibold text-zinc-500">{{ __('Actividades Registradas') }}</p>
                         <p class="text-2xl font-bold text-agro-700">{{ $machinery->activities_count }}</p>
                     </div>
                 </div>

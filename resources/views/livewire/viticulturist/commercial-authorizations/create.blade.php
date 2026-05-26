@@ -19,7 +19,7 @@
 
                 <flux:field>
                     <flux:label>{{ __('Código de autorización') }}</flux:label>
-                    <flux:input wire:model="authorization_code" type="text" placeholder="Ej: DO-2024-001" />
+                    <flux:input wire:model="authorization_code" type="text" :placeholder="__('Ej: DO-2024-001')" />
                     <flux:error name="authorization_code" />
                 </flux:field>
 

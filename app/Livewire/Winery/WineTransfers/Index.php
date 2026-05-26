@@ -36,7 +36,7 @@ class Index extends AbstractIndex
 
         app(WineContainerStockService::class)->revertTransfer($transfer);
         $transfer->delete();
-        $this->toastSuccess('Trasvase eliminado.');
+        $this->toastSuccess(__('Trasvase eliminado.'));
     }
 
     protected function baseQuery(): Builder

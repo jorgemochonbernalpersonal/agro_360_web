@@ -21,11 +21,11 @@
             </h3>
             <div class="space-y-3">
                 <div class="flex justify-between items-center py-2 border-b">
-                    <span class="text-sm text-zinc-600">NDVI</span>
+                    <span class="text-sm text-zinc-600">{{ __('NDVI') }}</span>
                     <span class="font-bold text-2xl text-green-600">{{ number_format($ndviData?->ndvi_mean ?? 0, 2) }}</span>
                 </div>
                 <div class="flex justify-between items-center py-2 border-b">
-                    <span class="text-sm text-zinc-600">NDWI</span>
+                    <span class="text-sm text-zinc-600">{{ __('NDWI') }}</span>
                     <span class="font-bold text-blue-600">{{ number_format($ndviData?->ndwi_mean ?? 0, 2) }}</span>
                 </div>
                 <div class="flex justify-between items-center py-2 border-b">
@@ -37,7 +37,7 @@
                     <span class="font-bold text-amber-600">{{ $soil['soil_moisture'] ?? '--' }}%</span>
                 </div>
                 <div class="flex justify-between items-center py-2 border-b">
-                    <span class="text-sm text-zinc-600">ET0</span>
+                    <span class="text-sm text-zinc-600">{{ __('ET0') }}</span>
                     <span class="font-bold text-cyan-600">{{ $solar['et0'] ?? '--' }} mm</span>
                 </div>
                 <div class="flex justify-between items-center py-2">
@@ -60,11 +60,11 @@
             </h3>
             <div class="space-y-3">
                 <div class="flex justify-between items-center py-2 border-b">
-                    <span class="text-sm text-zinc-600">NDVI</span>
+                    <span class="text-sm text-zinc-600">{{ __('NDVI') }}</span>
                     <span class="font-bold text-2xl text-violet-600">{{ number_format($compareNdviData?->ndvi_mean ?? 0, 2) }}</span>
                 </div>
                 <div class="flex justify-between items-center py-2 border-b">
-                    <span class="text-sm text-zinc-600">NDWI</span>
+                    <span class="text-sm text-zinc-600">{{ __('NDWI') }}</span>
                     <span class="font-bold text-blue-600">{{ number_format($compareNdviData?->ndwi_mean ?? 0, 2) }}</span>
                 </div>
                 <div class="flex justify-between items-center py-2 border-b">
@@ -76,7 +76,7 @@
                     <span class="font-bold text-amber-600">{{ $compareSoil['soil_moisture'] ?? '--' }}%</span>
                 </div>
                 <div class="flex justify-between items-center py-2 border-b">
-                    <span class="text-sm text-zinc-600">ET0</span>
+                    <span class="text-sm text-zinc-600">{{ __('ET0') }}</span>
                     <span class="font-bold text-cyan-600">{{ $compareSolar['et0'] ?? '--' }} mm</span>
                 </div>
                 <div class="flex justify-between items-center py-2">

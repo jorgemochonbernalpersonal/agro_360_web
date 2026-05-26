@@ -123,7 +123,7 @@ class UserController extends Controller
 
         // No puede editar su propio rol ni a otros admins (sin ser superadmin)
         if ($user->isAdmin() && $user->id !== $admin->id) {
-            abort(403, 'No puedes editar a otro administrador.');
+            abort(403, __('No puedes editar a otro administrador.'));
         }
 
         $validated = $request->validate([
@@ -212,7 +212,7 @@ class UserController extends Controller
         $user = User::findOrFail($id);
 
         if ($user->id === $admin->id) {
-            abort(422, 'No puedes desactivarte a ti mismo.');
+            abort(422, __('No puedes desactivarte a ti mismo.'));
         }
 
         $user->update(['can_login' => false]);

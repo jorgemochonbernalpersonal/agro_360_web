@@ -86,7 +86,7 @@ class Settings extends Component
             'order'      => 1,
         ]);
         $this->activeTaxId = $taxId;
-        $this->toastSuccess('Impuesto configurado correctamente');
+        $this->toastSuccess(__('Impuesto configurado correctamente'));
     }
 
     // ==========================================
@@ -159,21 +159,21 @@ class Settings extends Component
         ]);
 
         $this->updatePreviews();
-        $this->toastSuccess('Configuración guardada correctamente');
+        $this->toastSuccess(__('Configuración guardada correctamente'));
     }
 
     public function resetInvoiceCounter(): void
     {
         $this->invoice_counter = 1;
         $this->updatePreviews();
-        $this->toastInfo('Contador de facturas reseteado. Haz clic en Guardar para aplicar.');
+        $this->toastInfo(__('Contador de facturas reseteado. Haz clic en Guardar para aplicar.'));
     }
 
     public function resetDeliveryNoteCounter(): void
     {
         $this->delivery_note_counter = 1;
         $this->updatePreviews();
-        $this->toastInfo('Contador de albaranes reseteado. Haz clic en Guardar para aplicar.');
+        $this->toastInfo(__('Contador de albaranes reseteado. Haz clic en Guardar para aplicar.'));
     }
 
     // ==========================================
@@ -201,7 +201,7 @@ class Settings extends Component
             'default_limit_kg_per_ha' => $this->default_limit_kg_per_ha ?: null,
         ]);
 
-        $this->toastSuccess('Configuración de parcelas guardada correctamente');
+        $this->toastSuccess(__('Configuración de parcelas guardada correctamente'));
     }
 
     // ==========================================
@@ -266,7 +266,7 @@ class Settings extends Component
             'email'       => !str_contains($user->email, '@noemail.agro365.es') ? $user->email : null,
         ]);
 
-        $this->toastSuccess('Datos fiscales guardados correctamente');
+        $this->toastSuccess(__('Datos fiscales guardados correctamente'));
     }
 
     // ==========================================
@@ -292,14 +292,14 @@ class Settings extends Component
             'nidpb'        => $this->nidpb ?: null,
         ]);
 
-        $this->toastSuccess('Configuración INFOVI guardada correctamente');
+        $this->toastSuccess(__('Configuración INFOVI guardada correctamente'));
     }
 
     public function render()
     {
         return view('livewire.winery.settings')->layout('layouts.app', [
-            'title'       => 'Configuración - Agro365',
-            'description' => 'Gestiona la configuración de tu cuenta de bodega.',
+            'title'       => __('Configuración - Agro365'),
+            'description' => __('Gestiona la configuración de tu cuenta de bodega.'),
         ]);
     }
 }

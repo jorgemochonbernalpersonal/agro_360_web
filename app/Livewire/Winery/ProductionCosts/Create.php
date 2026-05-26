@@ -61,7 +61,7 @@ class Create extends Component
             'created_by'        => $userId,
         ]);
 
-        session()->flash('success', 'Coste registrado correctamente.');
+        session()->flash('success', __('Coste registrado correctamente.'));
         $this->redirect(roleRoute('production-costs.index'), navigate: true);
     }
 

@@ -27,10 +27,10 @@ class ChangePasswordRequired extends Component
     protected function messages(): array
     {
         return [
-            'current_password.required' => 'El campo contraseña actual es obligatorio.',
-            'password.required' => 'El campo nueva contraseña es obligatorio.',
-            'password.confirmed' => 'Las contraseñas no coinciden. Por favor, verifica que ambas contraseñas sean iguales.',
-            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
+            'current_password.required' => __('El campo contraseña actual es obligatorio.'),
+            'password.required' => __('El campo nueva contraseña es obligatorio.'),
+            'password.confirmed' => __('Las contraseñas no coinciden. Por favor, verifica que ambas contraseñas sean iguales.'),
+            'password.min' => __('La contraseña debe tener al menos 8 caracteres.'),
         ];
     }
 
@@ -52,13 +52,13 @@ class ChangePasswordRequired extends Component
 
         // Verificar que la contraseña actual es correcta
         if (!Hash::check($this->current_password, $user->password)) {
-            $this->addError('current_password', 'La contraseña actual no es correcta.');
+            $this->addError('current_password', __('La contraseña actual no es correcta.'));
             return;
         }
 
         // Verificar que la nueva contraseña es diferente a la actual
         if (Hash::check($this->password, $user->password)) {
-            $this->addError('password', 'La nueva contraseña debe ser diferente a la actual.');
+            $this->addError('password', __('La nueva contraseña debe ser diferente a la actual.'));
             return;
         }
 
@@ -84,7 +84,7 @@ class ChangePasswordRequired extends Component
         unset($user->_needs_password_change_cache);
         unset($user->_was_created_by_another_cache);
 
-        $this->toastSuccess('Contraseña cambiada correctamente. Tu email ha sido verificado.');
+        $this->toastSuccess(__('Contraseña cambiada correctamente. Tu email ha sido verificado.'));
         
         return $this->redirect(route($this->getDashboardRoute()), navigate: true);
     }

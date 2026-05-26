@@ -35,17 +35,17 @@ class CreateTicket extends Component
     protected function messages(): array
     {
         return [
-            'title.required'       => 'El título es obligatorio.',
-            'title.max'            => 'El título no puede tener más de 255 caracteres.',
-            'description.required' => 'La descripción es obligatoria.',
-            'description.min'      => 'La descripción debe tener al menos 10 caracteres.',
-            'images.max'           => 'Puedes adjuntar un máximo de 5 imágenes.',
-            'images.*.image'       => 'Cada archivo debe ser una imagen válida.',
-            'images.*.max'         => 'Cada imagen no puede superar 5MB.',
-            'type.required'        => 'Debes seleccionar un tipo de ticket.',
-            'type.in'              => 'El tipo de ticket seleccionado no es válido.',
-            'priority.required'    => 'Debes seleccionar una prioridad.',
-            'priority.in'          => 'La prioridad seleccionada no es válida.',
+            'title.required'       => __('El título es obligatorio.'),
+            'title.max'            => __('El título no puede tener más de 255 caracteres.'),
+            'description.required' => __('La descripción es obligatoria.'),
+            'description.min'      => __('La descripción debe tener al menos 10 caracteres.'),
+            'images.max'           => __('Puedes adjuntar un máximo de 5 imágenes.'),
+            'images.*.image'       => __('Cada archivo debe ser una imagen válida.'),
+            'images.*.max'         => __('Cada imagen no puede superar 5MB.'),
+            'type.required'        => __('Debes seleccionar un tipo de ticket.'),
+            'type.in'              => __('El tipo de ticket seleccionado no es válido.'),
+            'priority.required'    => __('Debes seleccionar una prioridad.'),
+            'priority.in'          => __('La prioridad seleccionada no es válida.'),
         ];
     }
 
@@ -99,7 +99,7 @@ class CreateTicket extends Component
             ]);
         }
 
-        $this->toastSuccess('Ticket creado exitosamente. Te contactaremos pronto.');
+        $this->toastSuccess(__('Ticket creado exitosamente. Te contactaremos pronto.'));
 
         return $this->viticulturistRoleRedirect('support.index');
     }

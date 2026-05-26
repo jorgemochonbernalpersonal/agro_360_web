@@ -33,7 +33,7 @@
         </x-agro.filter-select>
         <x-agro.filter-select wire:model.live="filterType">
             <option value="all">{{ __('Todos los tipos') }}</option>
-            <option value="bug">Bugs</option>
+            <option value="bug">{{ __('Bugs') }}</option>
             <option value="feature">{{ __('Nuevas Funcionalidades') }}</option>
             <option value="improvement">{{ __('Mejoras') }}</option>
             <option value="question">{{ __('Preguntas') }}</option>

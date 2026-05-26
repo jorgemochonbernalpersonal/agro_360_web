@@ -98,7 +98,7 @@ class Edit extends Component
             'status'           => $this->status,
         ]);
 
-        $this->toastSuccess('Partida actualizada correctamente.');
+        $this->toastSuccess(__('Partida actualizada correctamente.'));
         $this->roleRedirect('external-grape.index');
     }
 

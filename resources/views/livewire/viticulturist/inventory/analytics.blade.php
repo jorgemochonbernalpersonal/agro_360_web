@@ -1,8 +1,8 @@
 <div class="space-y-6 animate-fade-in">
     <!-- Header -->
     <x-agro.page-header
-        title="Analíticas de Inventario"
-        description="Estadísticas y proyecciones de consumo de productos fitosanitarios"
+        title="{{ __('Analíticas de Inventario') }}"
+        :description="__('Estadísticas y proyecciones de consumo de productos fitosanitarios')"
     >
         <x-slot:actions>
             <flux:button href="{{ roleRoute('viticulturist.warehouse.index', ['tab' => 'fitosanitarios']) }}" variant="ghost" icon="arrow-left">
@@ -13,23 +13,23 @@
 
     {{-- KPIs --}}
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <x-agro.stat-card label="Total Productos" :value="$stats['total_products']" icon="archive-box" color="blue" />
-        <x-agro.stat-card label="Valor Total" :value="number_format($stats['total_value'], 2) . ' €'" icon="banknotes" color="green" />
-        <x-agro.stat-card label="Stock Bajo" :value="$stats['low_stock_count']" icon="exclamation-triangle" color="yellow" />
-        <x-agro.stat-card label="Próximos a Caducar" :value="$stats['expiring_count']" icon="calendar" color="red" />
+        <x-agro.stat-card :label="__('Total Productos')" :value="$stats['total_products']" icon="archive-box" color="blue" />
+        <x-agro.stat-card :label="__('Valor Total')" :value="number_format($stats['total_value'], 2) . ' €'" icon="banknotes" color="green" />
+        <x-agro.stat-card :label="__('Stock Bajo')" :value="$stats['low_stock_count']" icon="exclamation-triangle" color="yellow" />
+        <x-agro.stat-card :label="__('Próximos a Caducar')" :value="$stats['expiring_count']" icon="calendar" color="red" />
     </div>
 
     {{-- Gráficos --}}
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <x-agro.card>
             <x-slot:header>
-                <flux:heading size="lg">Consumo Mensual (Últimos 12 meses)</flux:heading>
+                <flux:heading size="lg">{{ __('Consumo Mensual (Últimos 12 meses)') }}</flux:heading>
             </x-slot:header>
             <canvas id="consumptionChart" height="300"></canvas>
         </x-agro.card>
         <x-agro.card>
             <x-slot:header>
-                <flux:heading size="lg">Top 5 Productos Más Consumidos</flux:heading>
+                <flux:heading size="lg">{{ __('Top 5 Productos Más Consumidos') }}</flux:heading>
             </x-slot:header>
             <canvas id="topProductsChart" height="300"></canvas>
         </x-agro.card>
@@ -44,8 +44,8 @@
                         <flux:icon icon="exclamation-triangle" class="size-4 text-red-600" />
                     </div>
                     <div>
-                        <span class="font-semibold text-zinc-900 text-sm">Proyección de Agotamiento de Stock</span>
-                        <p class="text-xs text-zinc-400">Estimación basada en consumo promedio de los últimos 30 días</p>
+                        <span class="font-semibold text-zinc-900 text-sm">{{ __('Proyección de Agotamiento de Stock') }}</span>
+                        <p class="text-xs text-zinc-400">{{ __('Estimación basada en consumo promedio de los últimos 30 días') }}</p>
                     </div>
                 </div>
             </x-slot:header>
@@ -75,19 +75,19 @@
                         </div>
                         <div class="grid grid-cols-2 gap-2 text-xs">
                             <div>
-                                <p class="text-zinc-500">Stock actual</p>
+                                <p class="text-zinc-500">{{ __('Stock actual') }}</p>
                                 <p class="font-bold text-zinc-700">{{ number_format($projection['current_stock'], 2) }} {{ $projection['unit'] }}</p>
                             </div>
                             <div>
-                                <p class="text-zinc-500">Días restantes</p>
+                                <p class="text-zinc-500">{{ __('Días restantes') }}</p>
                                 <p class="font-bold text-zinc-700">{{ $projection['days_until_empty'] }} días</p>
                             </div>
                             <div>
-                                <p class="text-zinc-500">Consumo diario</p>
+                                <p class="text-zinc-500">{{ __('Consumo diario') }}</p>
                                 <p class="font-medium text-zinc-600">{{ number_format($projection['avg_daily_consumption'], 3) }} {{ $projection['unit'] }}</p>
                             </div>
                             <div>
-                                <p class="text-zinc-500">Agotamiento est.</p>
+                                <p class="text-zinc-500">{{ __('Agotamiento est.') }}</p>
                                 <p class="font-medium text-zinc-600">{{ $projection['estimated_empty_date']->format('d/m/Y') }}</p>
                             </div>
                         </div>
@@ -102,7 +102,7 @@
         <x-agro.card>
             <x-slot:header>
                 <div>
-                    <flux:heading size="lg">Productos con Baja Rotación</flux:heading>
+                    <flux:heading size="lg">{{ __('Productos con Baja Rotación') }}</flux:heading>
                     <flux:subheading>Productos sin movimiento reciente (posible stock muerto)</flux:subheading>
                 </div>
             </x-slot:header>

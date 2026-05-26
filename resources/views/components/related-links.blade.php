@@ -6,7 +6,7 @@
 @if(count($relatedLinks) > 0)
 <section class="bg-gray-50 py-12">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-6">Artículos Relacionados</h2>
+        <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-6">{{ __('Artículos Relacionados') }}</h2>
         <div class="grid md:grid-cols-2 gap-4">
             @foreach($relatedLinks as $link)
             <a href="{{ $link['url'] }}" class="block p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-200">

@@ -44,10 +44,10 @@ class Index extends Component
         $machinery->update(['active' => $newActive]);
 
         if ($newActive) {
-            $this->toastSuccess('Maquinaria activada exitosamente.');
+            $this->toastSuccess(__('Maquinaria activada exitosamente.'));
             if ($this->currentTab === 'inactive') $this->currentTab = 'active';
         } else {
-            $this->toastSuccess('Maquinaria desactivada exitosamente.');
+            $this->toastSuccess(__('Maquinaria desactivada exitosamente.'));
             if ($this->currentTab === 'active') $this->currentTab = 'inactive';
         }
     }
@@ -62,12 +62,12 @@ class Index extends Component
         }
 
         if ($machinery->activities()->exists()) {
-            $this->toastError('No se puede eliminar maquinaria con actividades asociadas.');
+            $this->toastError(__('No se puede eliminar maquinaria con actividades asociadas.'));
             return;
         }
 
         $machinery->delete();
-        $this->toastSuccess('Maquinaria eliminada correctamente.');
+        $this->toastSuccess(__('Maquinaria eliminada correctamente.'));
     }
 
     public function clearFilters()
@@ -119,8 +119,8 @@ class Index extends Component
 
         return view('livewire.viticulturist.machinery.index', compact('machinery', 'types', 'stats'))
             ->layout('layouts.app', [
-                'title'       => 'Maquinaria Agrícola - Agro365',
-                'description' => 'Gestiona tu flota de maquinaria agrícola. Control de equipos, mantenimiento y registro de uso en actividades del viñedo.',
+                'title'       => __('Maquinaria Agrícola - Agro365'),
+                'description' => __('Gestiona tu flota de maquinaria agrícola. Control de equipos, mantenimiento y registro de uso en actividades del viñedo.'),
             ]);
     }
 }

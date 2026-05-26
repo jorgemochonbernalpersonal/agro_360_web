@@ -222,18 +222,18 @@
             @endif
             <div class="doc-num {{ $isGrape ? 'g' : '' }}">{{ $docNumber }}</div>
             <div class="doc-mt">
-                <div class="ln"><strong>Fecha:</strong> {{ $invoice->invoice_date?->format('d/m/Y') ?? now()->format('d/m/Y') }}</div>
+                <div class="ln"><strong>{{ __('Fecha:') }}</strong> {{ $invoice->invoice_date?->format('d/m/Y') ?? now()->format('d/m/Y') }}</div>
                 @if($invoice->delivery_note_date)
-                    <div class="ln"><strong>F. albarán:</strong> {{ $invoice->delivery_note_date->format('d/m/Y') }}</div>
+                    <div class="ln"><strong>{{ __('F. albarán:') }}</strong> {{ $invoice->delivery_note_date->format('d/m/Y') }}</div>
                 @endif
                 @if($invoice->delivery_note_code)
-                    <div class="ln"><strong>Ref. albarán:</strong> {{ $invoice->delivery_note_code }}</div>
+                    <div class="ln"><strong>{{ __('Ref. albarán:') }}</strong> {{ $invoice->delivery_note_code }}</div>
                 @endif
                 @if($paymentLabel)
-                    <div class="ln"><strong>Forma de pago:</strong> {{ $paymentLabel }}</div>
+                    <div class="ln"><strong>{{ __('Forma de pago:') }}</strong> {{ $paymentLabel }}</div>
                 @endif
                 @if($invoice->due_date)
-                    <div class="ln"><strong>Vencimiento:</strong> {{ $invoice->due_date->format('d/m/Y') }}</div>
+                    <div class="ln"><strong>{{ __('Vencimiento:') }}</strong> {{ $invoice->due_date->format('d/m/Y') }}</div>
                 @endif
             </div>
             @if(isset($statusLabels[$invoice->status]))
@@ -291,7 +291,7 @@
             @endif
         </td>
 
-        <td width="4%">&nbsp;</td>
+        <td width="4%">{{ __('&nbsp;') }}</td>
 
         {{-- De: emisor --}}
         <td width="48%" valign="top" class="pty-box">
@@ -320,13 +320,13 @@
     <table class="items">
         <thead>
             <tr class="grp">
-                <th style="width:36%">Descripción / Recepción</th>
-                <th class="r" style="width:12%">Kg</th>
-                <th class="r" style="width:11%">€/kg</th>
-                <th class="r" style="width:13%">Base imp.</th>
-                <th class="r" style="width:9%">IRPF %</th>
-                <th class="r" style="width:11%">Retención</th>
-                <th class="r" style="width:8%">A pagar</th>
+                <th style="width:36%">{{ __('Descripción / Recepción') }}</th>
+                <th class="r" style="width:12%">{{ __('Kg') }}</th>
+                <th class="r" style="width:11%">{{ __('€/kg') }}</th>
+                <th class="r" style="width:13%">{{ __('Base imp.') }}</th>
+                <th class="r" style="width:9%">{{ __('IRPF %') }}</th>
+                <th class="r" style="width:11%">{{ __('Retención') }}</th>
+                <th class="r" style="width:8%">{{ __('A pagar') }}</th>
             </tr>
         </thead>
         <tbody>
@@ -355,7 +355,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="7" style="text-align:center; color:#9ca3af; padding:16pt;">Sin líneas</td>
+                    <td colspan="7" style="text-align:center; color:#9ca3af; padding:16pt;">{{ __('Sin líneas') }}</td>
                 </tr>
             @endforelse
         </tbody>
@@ -367,19 +367,19 @@
     <table class="items">
         <thead>
             <tr>
-                <th style="width:{{ $hasWineLots ? '25%' : '37%' }}">Producto</th>
+                <th style="width:{{ $hasWineLots ? '25%' : '37%' }}">{{ __('Producto') }}</th>
                 @if($hasWineLots)
-                    <th style="width:15%">SKU / Lote</th>
+                    <th style="width:15%">{{ __('SKU / Lote') }}</th>
                 @else
-                    <th style="width:10%">SKU</th>
+                    <th style="width:10%">{{ __('SKU') }}</th>
                 @endif
-                <th class="r" style="width:9%">Cant. / Ud.</th>
-                <th class="r" style="width:11%">P. Unit.</th>
-                <th class="r" style="width:7%">Dto.%</th>
-                <th class="r" style="width:7%">IVA%</th>
-                <th class="r" style="width:11%">Base imp.</th>
-                <th class="r" style="width:9%">Cuota IVA</th>
-                <th class="r" style="width:8%">Total</th>
+                <th class="r" style="width:9%">{{ __('Cant. / Ud.') }}</th>
+                <th class="r" style="width:11%">{{ __('P. Unit.') }}</th>
+                <th class="r" style="width:7%">{{ __('Dto.%') }}</th>
+                <th class="r" style="width:7%">{{ __('IVA%') }}</th>
+                <th class="r" style="width:11%">{{ __('Base imp.') }}</th>
+                <th class="r" style="width:9%">{{ __('Cuota IVA') }}</th>
+                <th class="r" style="width:8%">{{ __('Total') }}</th>
             </tr>
         </thead>
         <tbody>
@@ -435,7 +435,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="9" style="text-align:center; color:#9ca3af; padding:16pt;">Sin líneas</td>
+                    <td colspan="9" style="text-align:center; color:#9ca3af; padding:16pt;">{{ __('Sin líneas') }}</td>
                 </tr>
             @endforelse
         </tbody>
@@ -449,7 +449,7 @@
         <td width="50%" valign="top" style="padding-right:20pt;">
             @if($isGrape)
                 <div class="irpf-n">
-                    <strong style="color:#92400e;">Nota:</strong> La retención IRPF se descuenta de la base imponible.
+                    <strong style="color:#92400e;">{{ __('Nota:') }}</strong> La retención IRPF se descuenta de la base imponible.
                     El importe &laquo;A pagar&raquo; es el neto a abonar al viticultor/proveedor.
                 </div>
             @elseif($multipleRates)
@@ -457,9 +457,9 @@
                 <table class="txg">
                     <thead>
                         <tr>
-                            <th>Tipo IVA</th>
-                            <th>Base imp.</th>
-                            <th>Cuota IVA</th>
+                            <th>{{ __('Tipo IVA') }}</th>
+                            <th>{{ __('Base imp.') }}</th>
+                            <th>{{ __('Cuota IVA') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -478,30 +478,30 @@
             <table class="tot">
                 @if($isGrape)
                     <tr>
-                        <td class="lbl">Base imponible</td>
+                        <td class="lbl">{{ __('Base imponible') }}</td>
                         <td class="val">{{ number_format((float) $invoice->tax_base, 2, ',', '.') }} €</td>
                     </tr>
                     <tr>
-                        <td class="lbl" style="color:#92400e;">Retención IRPF</td>
+                        <td class="lbl" style="color:#92400e;">{{ __('Retención IRPF') }}</td>
                         <td class="val" style="color:#92400e;">&minus; {{ number_format((float) $invoice->tax_amount, 2, ',', '.') }} €</td>
                     </tr>
                     <tr class="grand g">
-                        <td class="lbl" style="color:white;">A PAGAR</td>
+                        <td class="lbl" style="color:white;">{{ __('A PAGAR') }}</td>
                         <td class="val">{{ number_format((float) $invoice->total_amount, 2, ',', '.') }} €</td>
                     </tr>
                 @else
                     <tr>
-                        <td class="lbl">Subtotal</td>
+                        <td class="lbl">{{ __('Subtotal') }}</td>
                         <td class="val">{{ number_format((float) $invoice->subtotal, 2, ',', '.') }} €</td>
                     </tr>
                     @if((float) ($invoice->discount_amount ?? 0) > 0)
                         <tr class="disc">
-                            <td class="lbl">Descuento</td>
+                            <td class="lbl">{{ __('Descuento') }}</td>
                             <td class="val">&minus; {{ number_format((float) $invoice->discount_amount, 2, ',', '.') }} €</td>
                         </tr>
                     @endif
                     <tr class="sep">
-                        <td class="lbl">Base imponible</td>
+                        <td class="lbl">{{ __('Base imponible') }}</td>
                         <td class="val">{{ number_format((float) $invoice->tax_base, 2, ',', '.') }} €</td>
                     </tr>
                     <tr>
@@ -511,7 +511,7 @@
                         <td class="val">{{ number_format((float) $invoice->tax_amount, 2, ',', '.') }} €</td>
                     </tr>
                     <tr class="grand">
-                        <td class="lbl" style="color:white;">TOTAL</td>
+                        <td class="lbl" style="color:white;">{{ __('TOTAL') }}</td>
                         <td class="val">{{ number_format((float) $invoice->total_amount, 2, ',', '.') }} €</td>
                     </tr>
                 @endif
@@ -544,7 +544,7 @@
                 <div style="font-size:7pt; color:#9ca3af; margin-top:2pt;">Fecha de recepción: _______________</div>
             @endif
         </td>
-        <td width="10%">&nbsp;</td>
+        <td width="10%">{{ __('&nbsp;') }}</td>
         <td width="45%" valign="bottom" class="sig-box">
             <div class="sig-line"></div>
             <div class="sig-lbl">Firma y sello de la bodega</div>
@@ -575,7 +575,7 @@
                 Verificar en: {{ $verifactuUrl }}
             </div>
         </td>
-        <td width="2%">&nbsp;</td>
+        <td width="2%">{{ __('&nbsp;') }}</td>
         <td valign="top" width="26%" align="right">
             {{-- QR code: 30x30mm mínimo por normativa Verifactu --}}
             @if($verifactuQrSvg)

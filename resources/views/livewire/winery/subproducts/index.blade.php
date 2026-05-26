@@ -2,8 +2,8 @@
 
     {{-- Header --}}
     <x-agro.page-header
-        title="Subproductos"
-        description="Registro de orujo, lías, vinaza y otros subproductos de elaboración"
+        title="{{ __('Subproductos') }}"
+        :description="__('Registro de orujo, lías, vinaza y otros subproductos de elaboración')"
     >
         <x-slot:actions>
             <flux:button href="{{ roleRoute('subproducts.create') }}" variant="primary" icon="plus">
@@ -16,13 +16,13 @@
     <x-agro.stats-section key="subproducts-stats">
         <div class="grid grid-cols-2 gap-4">
             <x-agro.stat-card
-                label="Total subproductos"
+                :label="__('Total subproductos')"
                 :value="$stats['total']"
                 icon="archive-box"
                 color="zinc"
             />
             <x-agro.stat-card
-                label="Este año"
+                :label="__('Este año')"
                 :value="$stats['this_year']"
                 icon="calendar-days"
                 color="agro"
@@ -32,26 +32,24 @@
 
     {{-- Toolbar --}}
     <div class="flex items-center gap-3">
-        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar por vino, destino o lote..." />
+        <x-agro.search-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar por vino, destino o lote...')" />
 
         <flux:select wire:model.live="typeFilter" class="w-44">
-            <flux:select.option value="">Todos los tipos</flux:select.option>
+            <flux:select.option value="">{{ __('Todos los tipos') }}</flux:select.option>
             @foreach($types as $key => $label)
                 <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
             @endforeach
         </flux:select>
 
         <flux:select wire:model.live="wineFilter" class="w-48">
-            <flux:select.option value="">Todos los vinos</flux:select.option>
+            <flux:select.option value="">{{ __('Todos los vinos') }}</flux:select.option>
             @foreach($wines as $wine)
                 <flux:select.option value="{{ $wine->id }}">{{ $wine->name }}{{ $wine->vintage ? ' ' . $wine->vintage : '' }}</flux:select.option>
             @endforeach
         </flux:select>
 
         @if($search || $typeFilter || $wineFilter)
-            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">
-                Limpiar
-            </flux:button>
+            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">{{ __('Limpiar') }}</flux:button>
         @endif
     </div>
 
@@ -98,7 +96,7 @@
                         <div class="flex-1 space-y-4">
                             {{-- Cantidad --}}
                             <div class="bg-zinc-50 rounded-xl p-3">
-                                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">Cantidad</p>
+                                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">{{ __('Cantidad') }}</p>
                                 <p class="text-2xl font-bold text-zinc-700 leading-none">
                                     {{ number_format($sp->quantity, 3) }}
                                     @if($sp->unit)
@@ -129,8 +127,8 @@
 
                         <x-slot:footer>
                             <div class="flex items-center justify-end gap-0.5">
-                                <x-agro.action-button variant="edit" href="{{ roleRoute('subproducts.edit', $sp) }}" title="Editar subproducto" />
-                                <x-agro.action-button variant="delete" wire:click="delete({{ $sp->id }})" wire:confirm="¿Eliminar este registro de subproducto?" wire:loading.attr="disabled" title="Eliminar subproducto" />
+                                <x-agro.action-button variant="edit" href="{{ roleRoute('subproducts.edit', $sp) }}" title="{{ __('Editar subproducto') }}" />
+                                <x-agro.action-button variant="delete" wire:click="delete({{ $sp->id }})" wire:confirm="{{ __('¿Eliminar este registro de subproducto?') }}" wire:loading.attr="disabled" title="{{ __('Eliminar subproducto') }}" />
                             </div>
                         </x-slot:footer>
                     </x-agro.card>
@@ -146,11 +144,11 @@
             >
                 @if($search || $typeFilter || $wineFilter)
                     <x-slot:action>
-                        <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
+                        <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">{{ __('Limpiar filtros') }}</flux:button>
                     </x-slot:action>
                 @else
                     <x-slot:action>
-                        <flux:button href="{{ roleRoute('subproducts.create') }}" variant="primary" icon="plus">Nuevo subproducto</flux:button>
+                        <flux:button href="{{ roleRoute('subproducts.create') }}" variant="primary" icon="plus">{{ __('Nuevo subproducto') }}</flux:button>
                     </x-slot:action>
                 @endif
             </x-agro.empty-state>

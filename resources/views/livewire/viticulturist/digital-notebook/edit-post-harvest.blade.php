@@ -87,10 +87,10 @@
                 <flux:field>
                     <flux:label>{{ __('Unidad de Dosis') }}</flux:label>
                     <flux:select wire:model="dose_unit" data-cy="dose-unit-select">
-                        <option value="kg/ha">kg/ha</option>
-                        <option value="L/ha">L/ha</option>
-                        <option value="g/ha">g/ha</option>
-                        <option value="mL/ha">mL/ha</option>
+                        <option value="kg/ha">{{ __('kg/ha') }}</option>
+                        <option value="L/ha">{{ __('L/ha') }}</option>
+                        <option value="g/ha">{{ __('g/ha') }}</option>
+                        <option value="mL/ha">{{ __('mL/ha') }}</option>
                     </flux:select>
                 </flux:field>
             </div>

@@ -33,7 +33,7 @@ class ViticulturistCredentialsController extends Controller
         if (! $pdfPath || ! file_exists($pdfPath)) {
             return redirect()
                 ->route('viticulturist.personal.index')
-                ->with('error', 'El PDF de credenciales no está disponible. El archivo puede haber expirado.');
+                ->with('error', __('El PDF de credenciales no está disponible. El archivo puede haber expirado.'));
         }
 
         $filename = 'credenciales_' . Str::slug($viticulturistName ?? 'viticultor') . '_' . now()->format('Y-m-d') . '.pdf';

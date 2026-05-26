@@ -1,7 +1,7 @@
 <div class="space-y-6 animate-fade-in">
     <x-agro.page-header
-        title="Notificaciones"
-        description="Envía comunicaciones a los usuarios del sistema"
+        title="{{ __('Notificaciones') }}"
+        :description="__('Envía comunicaciones a los usuarios del sistema')"
     />
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -13,23 +13,23 @@
                         <div class="p-1.5 rounded-lg bg-blue-50">
                             <flux:icon icon="envelope" class="size-4 text-blue-600" />
                         </div>
-                        <span class="font-semibold text-zinc-900 text-sm">Componer Mensaje</span>
+                        <span class="font-semibold text-zinc-900 text-sm">{{ __('Componer Mensaje') }}</span>
                     </div>
                 </x-slot:header>
 
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-xs font-medium text-zinc-700 mb-1">Asunto</label>
-                        <flux:input wire:model.live="subject" placeholder="Asunto del email..." />
+                        <label class="block text-xs font-medium text-zinc-700 mb-1">{{ __('Asunto') }}</label>
+                        <flux:input wire:model.live="subject" :placeholder="__('Asunto del email...')" />
                         @error('subject') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <div>
-                        <label class="block text-xs font-medium text-zinc-700 mb-1">Mensaje</label>
+                        <label class="block text-xs font-medium text-zinc-700 mb-1">{{ __('Mensaje') }}</label>
                         <flux:textarea
                             wire:model.live="message"
                             rows="8"
-                            placeholder="Escribe el contenido del mensaje aquí..."
+                            placeholder="{{ __('Escribe el contenido del mensaje aquí...') }}"
                         />
                         @error('message') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
@@ -45,51 +45,51 @@
                         <div class="p-1.5 rounded-lg bg-purple-50">
                             <flux:icon icon="users" class="size-4 text-purple-600" />
                         </div>
-                        <span class="font-semibold text-zinc-900 text-sm">Audiencia</span>
+                        <span class="font-semibold text-zinc-900 text-sm">{{ __('Audiencia') }}</span>
                     </div>
                 </x-slot:header>
 
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-xs font-medium text-zinc-700 mb-1">Rol</label>
+                        <label class="block text-xs font-medium text-zinc-700 mb-1">{{ __('Rol') }}</label>
                         <flux:select wire:model.live="audienceRole">
-                            <option value="all">Todos los roles</option>
-                            <option value="viticulturist">Viticultores</option>
-                            <option value="winery">Bodegas</option>
-                            <option value="supervisor">Supervisores</option>
-                            <option value="producer">Productores</option>
-                            <option value="admin">Admins</option>
+                            <option value="all">{{ __('Todos los roles') }}</option>
+                            <option value="viticulturist">{{ __('Viticultores') }}</option>
+                            <option value="winery">{{ __('Bodegas') }}</option>
+                            <option value="supervisor">{{ __('Supervisores') }}</option>
+                            <option value="producer">{{ __('Productores') }}</option>
+                            <option value="admin">{{ __('Admins') }}</option>
                         </flux:select>
                     </div>
 
                     <div>
-                        <label class="block text-xs font-medium text-zinc-700 mb-1">Email verificado</label>
+                        <label class="block text-xs font-medium text-zinc-700 mb-1">{{ __('Email verificado') }}</label>
                         <flux:select wire:model.live="audienceVerified">
-                            <option value="">Todos</option>
-                            <option value="1">Solo verificados</option>
-                            <option value="0">Solo no verificados</option>
+                            <option value="">{{ __('Todos') }}</option>
+                            <option value="1">{{ __('Solo verificados') }}</option>
+                            <option value="0">{{ __('Solo no verificados') }}</option>
                         </flux:select>
                     </div>
 
                     <div>
-                        <label class="block text-xs font-medium text-zinc-700 mb-1">Estado</label>
+                        <label class="block text-xs font-medium text-zinc-700 mb-1">{{ __('Estado') }}</label>
                         <flux:select wire:model.live="audienceActive">
-                            <option value="1">Solo activos</option>
-                            <option value="">Todos</option>
-                            <option value="0">Solo inactivos</option>
+                            <option value="1">{{ __('Solo activos') }}</option>
+                            <option value="">{{ __('Todos') }}</option>
+                            <option value="0">{{ __('Solo inactivos') }}</option>
                         </flux:select>
                     </div>
 
                     {{-- Contador de destinatarios --}}
                     <div class="bg-zinc-50 rounded-lg p-4 text-center">
                         <p class="text-3xl font-bold text-zinc-900">{{ $recipientCount }}</p>
-                        <p class="text-xs text-zinc-500 mt-1">destinatario(s)</p>
+                        <p class="text-xs text-zinc-500 mt-1">{{ __('destinatario(s)') }}</p>
                     </div>
 
                     {{-- Preview de destinatarios --}}
                     @if($previewUsers->count() > 0)
                     <div>
-                        <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide mb-2">Vista previa</p>
+                        <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide mb-2">{{ __('Vista previa') }}</p>
                         <div class="space-y-1">
                             @foreach($previewUsers as $u)
                             <div class="flex items-center gap-2 text-xs">
@@ -112,12 +112,10 @@
                             icon="eye"
                             class="w-full"
                             :disabled="$recipientCount === 0"
-                        >
-                            Previsualizar email
-                        </flux:button>
+                        >{{ __('Previsualizar email') }}</flux:button>
                         <flux:button
                             wire:click="send"
-                            wire:confirm="¿Enviar este email a {{ $recipientCount }} usuario(s)? Los emails se pondrán en cola."
+                            wire:confirm="{{ __('¿Enviar este email a :count usuario(s)? Los emails se pondrán en cola.', ['count' => $recipientCount]) }}"
                             variant="primary"
                             icon="paper-airplane"
                             class="w-full"
@@ -139,8 +137,8 @@
                 <div class="p-1.5 rounded-lg bg-zinc-100">
                     <flux:icon icon="clock" class="size-4 text-zinc-600" />
                 </div>
-                <span class="font-semibold text-zinc-900 text-sm">Historial de envíos</span>
-                <flux:badge color="zinc" size="sm">Últimos 10</flux:badge>
+                <span class="font-semibold text-zinc-900 text-sm">{{ __('Historial de envíos') }}</span>
+                <flux:badge color="zinc" size="sm">{{ __('Últimos 10') }}</flux:badge>
             </div>
         </x-slot:header>
 
@@ -148,11 +146,11 @@
             <table class="w-full text-sm">
                 <thead>
                     <tr class="border-b border-zinc-100 bg-zinc-50">
-                        <th class="text-left text-xs font-medium text-zinc-500 px-5 sm:px-6 py-2.5">Asunto</th>
-                        <th class="text-left text-xs font-medium text-zinc-500 px-4 py-2.5">Audiencia</th>
-                        <th class="text-right text-xs font-medium text-zinc-500 px-4 py-2.5">Destinatarios</th>
-                        <th class="text-left text-xs font-medium text-zinc-500 px-4 py-2.5">Admin</th>
-                        <th class="text-left text-xs font-medium text-zinc-500 px-5 sm:px-6 py-2.5">Fecha</th>
+                        <th class="text-left text-xs font-medium text-zinc-500 px-5 sm:px-6 py-2.5">{{ __('Asunto') }}</th>
+                        <th class="text-left text-xs font-medium text-zinc-500 px-4 py-2.5">{{ __('Audiencia') }}</th>
+                        <th class="text-right text-xs font-medium text-zinc-500 px-4 py-2.5">{{ __('Destinatarios') }}</th>
+                        <th class="text-left text-xs font-medium text-zinc-500 px-4 py-2.5">{{ __('Admin') }}</th>
+                        <th class="text-left text-xs font-medium text-zinc-500 px-5 sm:px-6 py-2.5">{{ __('Fecha') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-zinc-100">
@@ -190,7 +188,7 @@
                     <flux:icon icon="envelope-open" class="size-5 text-blue-600" />
                 </div>
                 <div>
-                    <h3 class="text-base font-semibold text-zinc-900">Vista previa del email</h3>
+                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Vista previa del email') }}</h3>
                     <p class="text-xs text-zinc-500">Así verán el mensaje los {{ $recipientCount }} destinatario(s)</p>
                 </div>
             </div>
@@ -199,29 +197,29 @@
             <div class="border border-zinc-200 rounded-xl overflow-hidden">
                 {{-- Header del email --}}
                 <div class="bg-agro-600 px-6 py-4">
-                    <p class="text-white font-semibold text-sm">Agro365</p>
+                    <p class="text-white font-semibold text-sm">{{ __('Agro365') }}</p>
                 </div>
                 {{-- Body --}}
                 <div class="bg-white px-6 py-5 space-y-4">
                     <div class="border-b border-zinc-100 pb-3">
-                        <p class="text-xs text-zinc-400 uppercase tracking-wide font-medium">Asunto</p>
+                        <p class="text-xs text-zinc-400 uppercase tracking-wide font-medium">{{ __('Asunto') }}</p>
                         <p class="text-base font-semibold text-zinc-900 mt-1">{{ $subject ?: '(sin asunto)' }}</p>
                     </div>
                     <div class="text-sm text-zinc-700 leading-relaxed whitespace-pre-wrap">{{ $message ?: '(sin contenido)' }}</div>
                 </div>
                 {{-- Footer del email --}}
                 <div class="bg-zinc-50 px-6 py-3 border-t border-zinc-100">
-                    <p class="text-xs text-zinc-400">Este mensaje fue enviado desde Agro365. Si no esperabas este email, puedes ignorarlo.</p>
+                    <p class="text-xs text-zinc-400">{{ __('Este mensaje fue enviado desde Agro365. Si no esperabas este email, puedes ignorarlo.') }}</p>
                 </div>
             </div>
 
             <div class="flex justify-between gap-3 mt-6 pt-4 border-t border-zinc-100">
-                <flux:button variant="ghost" wire:click="closePreview">Cerrar</flux:button>
+                <flux:button variant="ghost" wire:click="closePreview">{{ __('Cerrar') }}</flux:button>
                 <flux:button
                     variant="primary"
                     icon="paper-airplane"
                     wire:click="send"
-                    wire:confirm="¿Enviar este email a {{ $recipientCount }} usuario(s)? Los emails se pondrán en cola."
+                    wire:confirm="{{ __('¿Enviar este email a :count usuario(s)? Los emails se pondrán en cola.', ['count' => $recipientCount]) }}"
                 >
                     Confirmar envío ({{ $recipientCount }})
                 </flux:button>

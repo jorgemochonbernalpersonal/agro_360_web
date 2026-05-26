@@ -21,7 +21,7 @@
             <div class="flex justify-between items-center h-16">
                 <a href="{{ url('/') }}" class="flex items-center gap-3">
                     <img src="{{ asset('images/logo.png') }}" alt="Agro365" class="h-10 w-auto">
-                    <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">Agro365</span>
+                    <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Agro365') }}</span>
                 </a>
                 @guest
                     <a href="{{ route('register') }}" class="px-4 py-2 rounded-lg bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white">Comenzar Gratis</a>
@@ -35,122 +35,118 @@
             <div class="mb-12">
                 <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-100 border border-indigo-300 mb-6">
                     <span class="text-lg">📄</span>
-                    <span class="text-sm font-semibold text-indigo-800">Documentación Oficial</span>
+                    <span class="text-sm font-semibold text-indigo-800">{{ __('Documentación Oficial') }}</span>
                 </div>
-                <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">
-                    Informes Oficiales de Agricultura con Firma Electrónica
-                </h1>
+                <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">{{ __('Informes Oficiales de Agricultura con Firma Electrónica') }}</h1>
                 <p class="text-xl text-gray-600 leading-relaxed">
-                    Genera <strong>informes certificados</strong> con firma electrónica SHA-256 y código QR de verificación. Válidos para inspecciones PAC y auditorías.
+                    Genera <strong>{{ __('informes certificados') }}</strong> con firma electrónica SHA-256 y código QR de verificación. Válidos para inspecciones PAC y auditorías.
                 </p>
             </div>
 
             <article class="prose prose-lg max-w-none">
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">7 Tipos de Informes Oficiales</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('7 Tipos de Informes Oficiales') }}</h2>
                     <div class="grid md:grid-cols-2 gap-4 mb-6">
                         <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
                             <div class="flex items-center gap-3 mb-2">
                                 <span class="text-2xl">📋</span>
-                                <h3 class="font-bold text-[var(--color-agro-green-dark)]">1. Cuaderno de Campo Completo</h3>
+                                <h3 class="font-bold text-[var(--color-agro-green-dark)]">{{ __('1. Cuaderno de Campo Completo') }}</h3>
                             </div>
                             <p class="text-gray-700 text-sm">Todas las actividades del <a href="{{ content_route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">cuaderno de campo</a>.</p>
                         </div>
                         <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
                             <div class="flex items-center gap-3 mb-2">
                                 <span class="text-2xl">🧪</span>
-                                <h3 class="font-bold text-[var(--color-agro-green-dark)]">2. Tratamientos Fitosanitarios</h3>
+                                <h3 class="font-bold text-[var(--color-agro-green-dark)]">{{ __('2. Tratamientos Fitosanitarios') }}</h3>
                             </div>
                             <p class="text-gray-700 text-sm">Detalle de <a href="{{ url('/registro-fitosanitarios') }}" class="text-[var(--color-agro-green)] hover:underline">tratamientos</a> con productos y dosis.</p>
                         </div>
                         <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
                             <div class="flex items-center gap-3 mb-2">
-                                <span class="text-2xl">🗺️</span>
-                                <h3 class="font-bold text-[var(--color-agro-green-dark)]">3. Parcelas SIGPAC</h3>
+                                <span class="text-2xl">{{ __('🗺️') }}</span>
+                                <h3 class="font-bold text-[var(--color-agro-green-dark)]">{{ __('3. Parcelas SIGPAC') }}</h3>
                             </div>
                             <p class="text-gray-700 text-sm">Listado de parcelas con códigos <a href="{{ content_route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a>.</p>
                         </div>
                         <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
                             <div class="flex items-center gap-3 mb-2">
                                 <span class="text-2xl">🍇</span>
-                                <h3 class="font-bold text-[var(--color-agro-green-dark)]">4. Informe de Cosecha</h3>
+                                <h3 class="font-bold text-[var(--color-agro-green-dark)]">{{ __('4. Informe de Cosecha') }}</h3>
                             </div>
                             <p class="text-gray-700 text-sm">Rendimientos y datos de <a href="{{ url('/gestion-vendimia') }}" class="text-[var(--color-agro-green)] hover:underline">vendimia</a>.</p>
                         </div>
                         <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
                             <div class="flex items-center gap-3 mb-2">
                                 <span class="text-2xl">💧</span>
-                                <h3 class="font-bold text-[var(--color-agro-green-dark)]">5. Informe de Riegos</h3>
+                                <h3 class="font-bold text-[var(--color-agro-green-dark)]">{{ __('5. Informe de Riegos') }}</h3>
                             </div>
-                            <p class="text-gray-700 text-sm">Consumos de agua con fuentes y caudales.</p>
+                            <p class="text-gray-700 text-sm">{{ __('Consumos de agua con fuentes y caudales.') }}</p>
                         </div>
                         <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
                             <div class="flex items-center gap-3 mb-2">
                                 <span class="text-2xl">🌿</span>
-                                <h3 class="font-bold text-[var(--color-agro-green-dark)]">6. Fertilizaciones</h3>
+                                <h3 class="font-bold text-[var(--color-agro-green-dark)]">{{ __('6. Fertilizaciones') }}</h3>
                             </div>
-                            <p class="text-gray-700 text-sm">Registro completo de abonados.</p>
+                            <p class="text-gray-700 text-sm">{{ __('Registro completo de abonados.') }}</p>
                         </div>
                         <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 md:col-span-2">
                             <div class="flex items-center gap-3 mb-2">
                                 <span class="text-2xl">📊</span>
-                                <h3 class="font-bold text-[var(--color-agro-green-dark)]">7. Informe de Campaña Completa</h3>
+                                <h3 class="font-bold text-[var(--color-agro-green-dark)]">{{ __('7. Informe de Campaña Completa') }}</h3>
                             </div>
-                            <p class="text-gray-700 text-sm">Resumen ejecutivo de toda la campaña con actividades, cosecha y análisis.</p>
+                            <p class="text-gray-700 text-sm">{{ __('Resumen ejecutivo de toda la campaña con actividades, cosecha y análisis.') }}</p>
                         </div>
                     </div>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Características de Seguridad</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Características de Seguridad') }}</h2>
                     <div class="grid md:grid-cols-2 gap-6 mb-6">
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                             <div class="text-3xl mb-3">🔐</div>
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">Firma Electrónica SHA-256</h3>
-                            <p class="text-gray-700">Cada informe está firmado digitalmente con hash SHA-256 que garantiza su integridad.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('Firma Electrónica SHA-256') }}</h3>
+                            <p class="text-gray-700">{{ __('Cada informe está firmado digitalmente con hash SHA-256 que garantiza su integridad.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                             <div class="text-3xl mb-3">📱</div>
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">Código QR de Verificación</h3>
-                            <p class="text-gray-700">Escanea el QR para verificar la autenticidad del documento en línea.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('Código QR de Verificación') }}</h3>
+                            <p class="text-gray-700">{{ __('Escanea el QR para verificar la autenticidad del documento en línea.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                             <div class="text-3xl mb-3">📅</div>
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">Fecha y Hora de Generación</h3>
-                            <p class="text-gray-700">Timestamp oficial que certifica cuándo se generó el informe.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('Fecha y Hora de Generación') }}</h3>
+                            <p class="text-gray-700">{{ __('Timestamp oficial que certifica cuándo se generó el informe.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                             <div class="text-3xl mb-3">👤</div>
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">Datos del Titular</h3>
-                            <p class="text-gray-700">Nombre, NIF y datos fiscales del agricultor titular.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('Datos del Titular') }}</h3>
+                            <p class="text-gray-700">{{ __('Nombre, NIF y datos fiscales del agricultor titular.') }}</p>
                         </div>
                     </div>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Validez para Inspecciones PAC</h2>
-                    <p class="text-gray-700 leading-relaxed mb-4">
-                        Los informes generados por Agro365 son válidos para:
-                    </p>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Validez para Inspecciones PAC') }}</h2>
+                    <p class="text-gray-700 leading-relaxed mb-4">{{ __('Los informes generados por Agro365 son válidos para:') }}</p>
                     <ul class="list-disc list-inside space-y-2 text-gray-700 mb-6 ml-4">
                         <li>Inspecciones de cumplimiento <a href="{{ url('/subvenciones-pac-2024') }}" class="text-[var(--color-agro-green)] hover:underline">PAC</a></li>
-                        <li>Auditorías de Denominación de Origen</li>
-                        <li>Certificaciones ecológicas</li>
-                        <li>Controles fitosanitarios</li>
-                        <li>Requerimientos legales</li>
+                        <li>{{ __('Auditorías de Denominación de Origen') }}</li>
+                        <li>{{ __('Certificaciones ecológicas') }}</li>
+                        <li>{{ __('Controles fitosanitarios') }}</li>
+                        <li>{{ __('Requerimientos legales') }}</li>
                     </ul>
                     <div class="bg-green-50 border-l-4 border-green-500 p-6 rounded-r-lg mb-6">
                         <p class="text-gray-700">
-                            <strong>✅ Importante:</strong> La firma electrónica SHA-256 garantiza que el documento no ha sido modificado después de su generación. Cualquier alteración invalidaría la firma.
+                            <strong>{{ __('✅ Importante:') }}</strong> La firma electrónica SHA-256 garantiza que el documento no ha sido modificado después de su generación. Cualquier alteración invalidaría la firma.
                         </p>
                     </div>
                 </section>
 
                 <section class="mb-12">
                     <div class="bg-gradient-to-r from-[var(--color-agro-green-bg)] to-[var(--color-agro-green-light)]/30 p-8 rounded-xl border border-[var(--color-agro-green)]/20">
-                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">📄 Documentación Oficial en Segundos</h3>
+                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('📄 Documentación Oficial en Segundos') }}</h3>
                         <p class="text-gray-700 mb-6">
-                            Genera informes certificados con firma digital. Listos para inspección. <strong>3 meses gratis</strong>.
+                            Genera informes certificados con firma digital. Listos para inspección. <strong>{{ __('3 meses gratis') }}</strong>.
                         </p>
                         <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:shadow-lg transition-all font-semibold">
                             Comenzar Gratis
@@ -159,27 +155,27 @@
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Preguntas Frecuentes</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Preguntas Frecuentes') }}</h2>
                     <div class="space-y-6">
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Son válidos para inspecciones PAC?</h3>
-                            <p class="text-gray-700">Sí, los informes incluyen firma electrónica SHA-256 y código QR de verificación aceptados en inspecciones.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Son válidos para inspecciones PAC?') }}</h3>
+                            <p class="text-gray-700">{{ __('Sí, los informes incluyen firma electrónica SHA-256 y código QR de verificación aceptados en inspecciones.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Cómo verifico un informe?</h3>
-                            <p class="text-gray-700">Escaneando el código QR del documento o introduciendo el hash en nuestra web de verificación.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Cómo verifico un informe?') }}</h3>
+                            <p class="text-gray-700">{{ __('Escaneando el código QR del documento o introduciendo el hash en nuestra web de verificación.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Puedo generar informes de campañas anteriores?</h3>
-                            <p class="text-gray-700">Sí, puedes generar informes oficiales de cualquier campaña almacenada en el sistema.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Puedo generar informes de campañas anteriores?') }}</h3>
+                            <p class="text-gray-700">{{ __('Sí, puedes generar informes oficiales de cualquier campaña almacenada en el sistema.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Qué pasa si modifico datos después de generar un informe?</h3>
-                            <p class="text-gray-700">El informe generado no se modifica. Puedes generar un nuevo informe actualizado que tendrá un hash diferente.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Qué pasa si modifico datos después de generar un informe?') }}</h3>
+                            <p class="text-gray-700">{{ __('El informe generado no se modifica. Puedes generar un nuevo informe actualizado que tendrá un hash diferente.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Cuántos informes puedo generar?</h3>
-                            <p class="text-gray-700">Ilimitados. Puedes generar todos los informes que necesites sin coste adicional.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Cuántos informes puedo generar?') }}</h3>
+                            <p class="text-gray-700">{{ __('Ilimitados. Puedes generar todos los informes que necesites sin coste adicional.') }}</p>
                         </div>
                     </div>
                 </section>

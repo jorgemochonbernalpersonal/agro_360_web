@@ -60,7 +60,7 @@
                             type="text"
                             id="model"
                             data-cy="machinery-model"
-                            placeholder="Ej: 6120M"
+                            placeholder="{{ __('Ej: 6120M') }}"
                         />
                         <flux:error name="model" />
                     </flux:field>
@@ -73,7 +73,7 @@
                             type="text"
                             id="serial_number"
                             data-cy="machinery-serial-number"
-                            placeholder="Ej: JD123456"
+                            placeholder="{{ __('Ej: JD123456') }}"
                         />
                         <flux:error name="serial_number" />
                     </flux:field>
@@ -104,7 +104,7 @@
                             wire:model="roma_registration"
                             type="text"
                             id="roma_registration"
-                            placeholder="Ej: ROMA-12345"
+                            placeholder="{{ __('Ej: ROMA-12345') }}"
                         />
                         <flux:error name="roma_registration" />
                     </flux:field>
@@ -116,7 +116,7 @@
                             wire:model="capacity"
                             type="text"
                             id="capacity"
-                            placeholder="Ej: 1000L, 5m3"
+                            placeholder="{{ __('Ej: 1000L, 5m3') }}"
                         />
                         <flux:error name="capacity" />
                     </flux:field>

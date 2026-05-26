@@ -52,7 +52,7 @@
                 <div class="flex items-center gap-3">
                     <a href="{{ url('/') }}" class="flex items-center gap-3">
                         <img src="{{ asset('images/logo.png') }}" alt="Agro365" width="120" height="40" loading="eager" fetchpriority="high" decoding="async" class="h-10 w-auto">
-                        <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">Agro365</span>
+                        <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Agro365') }}</span>
                     </a>
                 </div>
                 <div class="flex items-center gap-4">
@@ -81,13 +81,13 @@
                 <ol class="flex items-center space-x-2">
                     <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
                         <a href="{{ url('/') }}" class="hover:text-[var(--color-agro-green)]" itemprop="item">
-                            <span itemprop="name">Inicio</span>
+                            <span itemprop="name">{{ __('Inicio') }}</span>
                         </a>
                         <meta itemprop="position" content="1" />
                     </li>
                     <span class="mx-2">/</span>
                     <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                        <span class="text-gray-900" itemprop="name">SIGPAC</span>
+                        <span class="text-gray-900" itemprop="name">{{ __('SIGPAC') }}</span>
                         <meta itemprop="position" content="2" />
                     </li>
                 </ol>
@@ -95,93 +95,91 @@
 
             <!-- Header -->
             <div class="mb-12">
-                <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">
-                    Software de Gestión SIGPAC
-                </h1>
+                <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">{{ __('Software de Gestión SIGPAC') }}</h1>
                 <p class="text-xl text-gray-600 leading-relaxed">
-                    <strong>Gestiona tus parcelas SIGPAC</strong> de forma profesional. Software de gestión SIGPAC con códigos oficiales, visualización en mapa interactivo, cumplimiento normativo PAC y vinculación con el cuaderno digital. Todo en una plataforma integrada.
+                    <strong>{{ __('Gestiona tus parcelas SIGPAC') }}</strong> de forma profesional. Software de gestión SIGPAC con códigos oficiales, visualización en mapa interactivo, cumplimiento normativo PAC y vinculación con el cuaderno digital. Todo en una plataforma integrada.
                 </p>
             </div>
 
             <!-- Content -->
             <article class="prose prose-lg max-w-none">
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">¿Qué es SIGPAC?</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('¿Qué es SIGPAC?') }}</h2>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        <strong>SIGPAC</strong> (Sistema de Información Geográfica de Parcelas Agrícolas) es el sistema oficial del Ministerio de Agricultura que identifica y georreferencia todas las parcelas agrícolas de España. Cada parcela tiene un <strong>código SIGPAC</strong> único que es obligatorio para solicitar ayudas PAC y cumplir con la normativa.
+                        <strong>{{ __('SIGPAC') }}</strong> (Sistema de Información Geográfica de Parcelas Agrícolas) es el sistema oficial del Ministerio de Agricultura que identifica y georreferencia todas las parcelas agrícolas de España. Cada parcela tiene un <strong>{{ __('código SIGPAC') }}</strong> único que es obligatorio para solicitar ayudas PAC y cumplir con la normativa.
                     </p>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        Un <strong>software de gestión SIGPAC</strong> te permite gestionar todas tus parcelas con sus códigos oficiales, visualizarlas en un mapa interactivo, vincularlas con el cuaderno digital y cumplir con todas las normativas PAC.
+                        Un <strong>{{ __('software de gestión SIGPAC') }}</strong> te permite gestionar todas tus parcelas con sus códigos oficiales, visualizarlas en un mapa interactivo, vincularlas con el cuaderno digital y cumplir con todas las normativas PAC.
                     </p>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Funcionalidades del Software SIGPAC</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Funcionalidades del Software SIGPAC') }}</h2>
                     <div class="grid md:grid-cols-2 gap-6 mb-6">
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">🗺️ Gestión de Parcelas</h3>
-                            <p class="text-gray-700">Gestiona todas tus parcelas con códigos SIGPAC oficiales, superficie, cultivos y características.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('🗺️ Gestión de Parcelas') }}</h3>
+                            <p class="text-gray-700">{{ __('Gestiona todas tus parcelas con códigos SIGPAC oficiales, superficie, cultivos y características.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">📍 Mapa Interactivo</h3>
-                            <p class="text-gray-700">Visualiza todas tus parcelas en un mapa interactivo con información detallada de cada una.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('📍 Mapa Interactivo') }}</h3>
+                            <p class="text-gray-700">{{ __('Visualiza todas tus parcelas en un mapa interactivo con información detallada de cada una.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">📋 Vinculación Cuaderno Digital</h3>
-                            <p class="text-gray-700">Vincula automáticamente las actividades del cuaderno digital con las parcelas SIGPAC.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('📋 Vinculación Cuaderno Digital') }}</h3>
+                            <p class="text-gray-700">{{ __('Vincula automáticamente las actividades del cuaderno digital con las parcelas SIGPAC.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">✅ Cumplimiento PAC</h3>
-                            <p class="text-gray-700">Verifica el cumplimiento normativo PAC y detecta errores automáticamente.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('✅ Cumplimiento PAC') }}</h3>
+                            <p class="text-gray-700">{{ __('Verifica el cumplimiento normativo PAC y detecta errores automáticamente.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">📊 Informes Oficiales</h3>
-                            <p class="text-gray-700">Genera informes oficiales con información SIGPAC para inspecciones y solicitudes de ayudas.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('📊 Informes Oficiales') }}</h3>
+                            <p class="text-gray-700">{{ __('Genera informes oficiales con información SIGPAC para inspecciones y solicitudes de ayudas.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">🔍 Búsqueda Avanzada</h3>
-                            <p class="text-gray-700">Busca parcelas por código SIGPAC, municipio, cultivo o cualquier criterio.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('🔍 Búsqueda Avanzada') }}</h3>
+                            <p class="text-gray-700">{{ __('Busca parcelas por código SIGPAC, municipio, cultivo o cualquier criterio.') }}</p>
                         </div>
                     </div>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Agro365: Software SIGPAC Completo</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Agro365: Software SIGPAC Completo') }}</h2>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        <strong>Agro365</strong> incluye un módulo completo de <strong>gestión SIGPAC</strong> que te permite gestionar todas tus parcelas con códigos oficiales, visualizarlas en mapa y cumplir con todas las normativas PAC.
+                        <strong>{{ __('Agro365') }}</strong> incluye un módulo completo de <strong>{{ __('gestión SIGPAC') }}</strong> que te permite gestionar todas tus parcelas con códigos oficiales, visualizarlas en mapa y cumplir con todas las normativas PAC.
                     </p>
                     <div class="bg-gradient-to-r from-[var(--color-agro-green-bg)] to-[var(--color-agro-green-light)]/30 p-8 rounded-xl border border-[var(--color-agro-green)]/20 mb-6">
-                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">Ventajas del Software SIGPAC de Agro365</h3>
+                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Ventajas del Software SIGPAC de Agro365') }}</h3>
                         <ul class="space-y-3 text-gray-800">
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Códigos SIGPAC oficiales:</strong> Gestiona todas tus parcelas con códigos oficiales</span>
+                                <span><strong>{{ __('Códigos SIGPAC oficiales:') }}</strong> Gestiona todas tus parcelas con códigos oficiales</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Mapa interactivo:</strong> Visualiza todas tus parcelas en un mapa con información detallada</span>
+                                <span><strong>{{ __('Mapa interactivo:') }}</strong> Visualiza todas tus parcelas en un mapa con información detallada</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Integración cuaderno digital:</strong> Vincula actividades con parcelas automáticamente</span>
+                                <span><strong>{{ __('Integración cuaderno digital:') }}</strong> Vincula actividades con parcelas automáticamente</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Cumplimiento PAC:</strong> Verifica el cumplimiento normativo y detecta errores</span>
+                                <span><strong>{{ __('Cumplimiento PAC:') }}</strong> Verifica el cumplimiento normativo y detecta errores</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Informes oficiales:</strong> Genera informes con información SIGPAC para inspecciones</span>
+                                <span><strong>{{ __('Informes oficiales:') }}</strong> Genera informes con información SIGPAC para inspecciones</span>
                             </li>
                         </ul>
                     </div>
@@ -190,12 +188,8 @@
 
             <!-- CTA Section -->
             <div class="mt-16 pt-12 border-t border-gray-200 text-center">
-                <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">
-                    Software de Gestión SIGPAC Profesional
-                </h2>
-                <p class="text-gray-600 mb-8 text-lg">
-                    Gestiona tus parcelas SIGPAC con Agro365. Códigos oficiales, mapa interactivo y cumplimiento normativo PAC. Prueba gratis 3 meses.
-                </p>
+                <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Software de Gestión SIGPAC Profesional') }}</h2>
+                <p class="text-gray-600 mb-8 text-lg">{{ __('Gestiona tus parcelas SIGPAC con Agro365. Códigos oficiales, mapa interactivo y cumplimiento normativo PAC. Prueba gratis 3 meses.') }}</p>
                 <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-lg">
                     Comenzar Gratis
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

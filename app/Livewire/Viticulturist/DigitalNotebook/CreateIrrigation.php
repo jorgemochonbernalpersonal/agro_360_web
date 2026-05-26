@@ -84,11 +84,11 @@ class CreateIrrigation extends AbstractActivityForm
                 ]);
             });
 
-            $this->toastSuccess('Riego registrado correctamente.');
+            $this->toastSuccess(__('Riego registrado correctamente.'));
             return $this->viticulturistRoleRedirect('digital-notebook.irrigation.index');
         } catch (\Exception $e) {
             \Log::error('Error al registrar riego', ['error' => $e->getMessage(), 'user_id' => Auth::id()]);
-            $this->toastError('Error al registrar el riego. Por favor, intenta de nuevo.');
+            $this->toastError(__('Error al registrar el riego. Por favor, intenta de nuevo.'));
         }
     }
 

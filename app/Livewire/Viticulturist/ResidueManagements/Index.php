@@ -30,7 +30,7 @@ class Index extends AbstractIndex
     public function deactivate(int $id): void
     {
         $this->findOwned(ResidueManagement::class, $id)->update(['active' => false]);
-        $this->toastSuccess('Registro archivado.');
+        $this->toastSuccess(__('Registro archivado.'));
     }
 
     protected function baseQuery(): Builder

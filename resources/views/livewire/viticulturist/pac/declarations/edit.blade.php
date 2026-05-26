@@ -1,6 +1,6 @@
 <div>
     <x-agro.form-card
-        :title="'Editar Declaración PAC ' . $declaration->year"
+        :title="__('Editar Declaración PAC :year', ['year' => $declaration->year])"
         :description="__('Solo se pueden editar declaraciones en borrador')"
         :back-url="roleRoute('viticulturist.pac.declarations.show', $declaration)"
     >

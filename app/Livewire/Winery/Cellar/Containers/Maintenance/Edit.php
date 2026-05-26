@@ -170,7 +170,7 @@ class Edit extends Component
             $this->container->update(['next_maintenance_date' => $this->maintenance->next_maintenance_date]);
         }
 
-        $this->toastSuccess('Mantenimiento actualizado correctamente.');
+        $this->toastSuccess(__('Mantenimiento actualizado correctamente.'));
         $this->roleRedirect('containers.maintenance.index', $this->container);
     }
 

@@ -1,29 +1,27 @@
 <div class="space-y-6 animate-fade-in">
     <x-agro.page-header
-        title="Suscripciones"
-        description="Gestión de suscripciones y pagos de usuarios del sistema"
+        title="{{ __('Suscripciones') }}"
+        :description="__('Gestión de suscripciones y pagos de usuarios del sistema')"
     >
         <x-slot:actions>
-            <flux:button wire:click="exportCsv" variant="ghost" icon="arrow-down-tray">
-                Exportar CSV
-            </flux:button>
+            <flux:button wire:click="exportCsv" variant="ghost" icon="arrow-down-tray">{{ __('Exportar CSV') }}</flux:button>
         </x-slot:actions>
     </x-agro.page-header>
 
     {{-- Estadísticas --}}
     <div class="grid grid-cols-2 gap-4 sm:grid-cols-3">
-        <x-agro.stat-card label="Total"            :value="$stats['total']"             icon="credit-card"  color="blue"   />
-        <x-agro.stat-card label="Activas"          :value="$stats['active']"            icon="check-circle" color="agro"   />
-        <x-agro.stat-card label="Canceladas"       :value="$stats['cancelled']"         icon="x-circle"     color="red"    />
-        <x-agro.stat-card label="Expiradas"        :value="$stats['expired']"           icon="clock"        color="yellow" />
+        <x-agro.stat-card :label="__('Total')"            :value="$stats['total']"             icon="credit-card"  color="blue"   />
+        <x-agro.stat-card :label="__('Activas')"          :value="$stats['active']"            icon="check-circle" color="agro"   />
+        <x-agro.stat-card :label="__('Canceladas')"       :value="$stats['cancelled']"         icon="x-circle"     color="red"    />
+        <x-agro.stat-card :label="__('Expiradas')"        :value="$stats['expired']"           icon="clock"        color="yellow" />
         <x-agro.stat-card
-            label="Ingresos este año"
+            :label="__('Ingresos este año')"
             :value="number_format($stats['revenue_this_year'], 2) . ' €'"
             icon="banknotes"
             color="agro"
         />
         <x-agro.stat-card
-            label="Ingresos totales"
+            :label="__('Ingresos totales')"
             :value="number_format($stats['revenue_total'], 2) . ' €'"
             icon="banknotes"
             color="purple"
@@ -40,7 +38,7 @@
                 </div>
                 <div>
                     <h3 class="font-semibold text-zinc-900">Evolución mensual {{ now()->year }}</h3>
-                    <p class="text-xs text-zinc-400">Ingresos, nuevas suscripciones y cancelaciones por mes</p>
+                    <p class="text-xs text-zinc-400">{{ __('Ingresos, nuevas suscripciones y cancelaciones por mes') }}</p>
                 </div>
             </div>
         </x-slot:header>
@@ -75,11 +73,11 @@
             <table class="w-full text-sm">
                 <thead>
                     <tr class="border-t border-zinc-100 bg-zinc-50">
-                        <th class="text-left text-xs font-medium text-zinc-500 px-5 sm:px-6 py-2.5">Mes</th>
-                        <th class="text-right text-xs font-medium text-zinc-500 px-4 py-2.5">Ingresos</th>
-                        <th class="text-right text-xs font-medium text-zinc-500 px-4 py-2.5">Pagos</th>
-                        <th class="text-right text-xs font-medium text-zinc-500 px-4 py-2.5">Nuevas</th>
-                        <th class="text-right text-xs font-medium text-zinc-500 px-5 sm:px-6 py-2.5">Canceladas</th>
+                        <th class="text-left text-xs font-medium text-zinc-500 px-5 sm:px-6 py-2.5">{{ __('Mes') }}</th>
+                        <th class="text-right text-xs font-medium text-zinc-500 px-4 py-2.5">{{ __('Ingresos') }}</th>
+                        <th class="text-right text-xs font-medium text-zinc-500 px-4 py-2.5">{{ __('Pagos') }}</th>
+                        <th class="text-right text-xs font-medium text-zinc-500 px-4 py-2.5">{{ __('Nuevas') }}</th>
+                        <th class="text-right text-xs font-medium text-zinc-500 px-5 sm:px-6 py-2.5">{{ __('Canceladas') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-zinc-100">
@@ -132,8 +130,8 @@
                     <flux:icon icon="chart-pie" class="size-5 text-orange-600" />
                 </div>
                 <div>
-                    <h3 class="font-semibold text-zinc-900">Ingresos por rol</h3>
-                    <p class="text-xs text-zinc-400">Facturación total completada desglosada por tipo de cuenta</p>
+                    <h3 class="font-semibold text-zinc-900">{{ __('Ingresos por rol') }}</h3>
+                    <p class="text-xs text-zinc-400">{{ __('Facturación total completada desglosada por tipo de cuenta') }}</p>
                 </div>
             </div>
         </x-slot:header>
@@ -167,8 +165,8 @@
                     <flux:icon icon="arrow-trending-up" class="size-5 text-violet-600" />
                 </div>
                 <div>
-                    <h3 class="font-semibold text-zinc-900">Retención por cohorte</h3>
-                    <p class="text-xs text-zinc-400">Últimos 12 meses — % de suscriptores que siguen activos</p>
+                    <h3 class="font-semibold text-zinc-900">{{ __('Retención por cohorte') }}</h3>
+                    <p class="text-xs text-zinc-400">{{ __('Últimos 12 meses — % de suscriptores que siguen activos') }}</p>
                 </div>
             </div>
         </x-slot:header>
@@ -177,12 +175,12 @@
             <table class="w-full text-sm">
                 <thead>
                     <tr class="border-b border-zinc-100 bg-zinc-50">
-                        <th class="text-left text-xs font-medium text-zinc-500 px-5 sm:px-6 py-2.5">Cohorte</th>
-                        <th class="text-right text-xs font-medium text-zinc-500 px-4 py-2.5">Total</th>
-                        <th class="text-right text-xs font-medium text-zinc-500 px-4 py-2.5">Activos</th>
-                        <th class="text-right text-xs font-medium text-zinc-500 px-4 py-2.5">Cancelados</th>
-                        <th class="text-right text-xs font-medium text-zinc-500 px-4 py-2.5">Ingresos</th>
-                        <th class="text-left text-xs font-medium text-zinc-500 px-5 sm:px-6 py-2.5">Retención</th>
+                        <th class="text-left text-xs font-medium text-zinc-500 px-5 sm:px-6 py-2.5">{{ __('Cohorte') }}</th>
+                        <th class="text-right text-xs font-medium text-zinc-500 px-4 py-2.5">{{ __('Total') }}</th>
+                        <th class="text-right text-xs font-medium text-zinc-500 px-4 py-2.5">{{ __('Activos') }}</th>
+                        <th class="text-right text-xs font-medium text-zinc-500 px-4 py-2.5">{{ __('Cancelados') }}</th>
+                        <th class="text-right text-xs font-medium text-zinc-500 px-4 py-2.5">{{ __('Ingresos') }}</th>
+                        <th class="text-left text-xs font-medium text-zinc-500 px-5 sm:px-6 py-2.5">{{ __('Retención') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-zinc-100">
@@ -222,26 +220,26 @@
     <x-agro.filter-bar>
         <x-agro.filter-input
             wire:model.live="search"
-            placeholder="Buscar por nombre o email..."
+            placeholder="{{ __('Buscar por nombre o email...') }}"
         />
         <x-agro.filter-select wire:model.live="filterStatus">
-            <option value="all">Todos los estados</option>
-            <option value="active">Activas</option>
-            <option value="cancelled">Canceladas</option>
-            <option value="expired">Expiradas</option>
+            <option value="all">{{ __('Todos los estados') }}</option>
+            <option value="active">{{ __('Activas') }}</option>
+            <option value="cancelled">{{ __('Canceladas') }}</option>
+            <option value="expired">{{ __('Expiradas') }}</option>
         </x-agro.filter-select>
         <x-agro.filter-select wire:model.live="filterPlan">
-            <option value="all">Todos los planes</option>
-            <option value="monthly">Mensual</option>
-            <option value="yearly">Anual</option>
+            <option value="all">{{ __('Todos los planes') }}</option>
+            <option value="monthly">{{ __('Mensual') }}</option>
+            <option value="yearly">{{ __('Anual') }}</option>
         </x-agro.filter-select>
     </x-agro.filter-bar>
 
     {{-- Tabla --}}
     <x-agro.data-table
         :headers="['Usuario', 'Plan', 'Estado', 'Importe', 'Vigencia', 'PayPal', '']"
-        empty-message="No hay suscripciones"
-        empty-description="No se encontraron suscripciones con los filtros seleccionados"
+        empty-:message="__('No hay suscripciones')"
+        empty-:description="__('No se encontraron suscripciones con los filtros seleccionados')"
         empty-icon="credit-card"
     >
         @if($subscriptions->count() > 0)
@@ -289,9 +287,9 @@
                             <p class="text-sm text-zinc-700">{{ $sub->starts_at->format('d/m/Y') }}</p>
                             <p class="text-xs text-zinc-400">hasta {{ $sub->ends_at->format('d/m/Y') }}</p>
                             @if($sub->ends_at->isPast() && $sub->status === 'active')
-                                <flux:badge color="red" size="sm">Vencida</flux:badge>
+                                <flux:badge color="red" size="sm">{{ __('Vencida') }}</flux:badge>
                             @elseif($sub->ends_at->diffInDays(now()) < 0 && $sub->ends_at->diffInDays(now()) > -15)
-                                <flux:badge color="yellow" size="sm">Próx. vencimiento</flux:badge>
+                                <flux:badge color="yellow" size="sm">{{ __('Próx. vencimiento') }}</flux:badge>
                             @endif
                         @else
                             <span class="text-zinc-400">—</span>
@@ -314,7 +312,7 @@
                                 icon="x-circle"
                                 class="text-red-400 hover:text-red-600"
                                 wire:click="cancelSubscription({{ $sub->id }})"
-                                wire:confirm="¿Cancelar la suscripción de {{ $sub->user?->name }}?"
+                                wire:confirm="{{ __('¿Cancelar la suscripción de :name?', ['name' => $sub->user?->name]) }}"
                                 tooltip="Cancelar suscripción"
                             />
                         @endif

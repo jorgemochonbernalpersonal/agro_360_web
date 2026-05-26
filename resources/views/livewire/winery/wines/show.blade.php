@@ -31,31 +31,31 @@
                 'sparkling' => 'sky', default => 'purple',
             };
         @endphp
-        <x-agro.stat-card label="Estado" :value="$wine->status_label" icon="signal" :color="$statusColor" />
-        <x-agro.stat-card label="Tipo" :value="$wine->type_label" icon="beaker" :color="$typeColor" />
-        <x-agro.stat-card label="Volumen" :value="($wine->volume_liters ? number_format($wine->volume_liters, 0) . ' L' : '—')" icon="cube" color="zinc" />
-        <x-agro.stat-card label="Añada" :value="$wine->vintage ?? '—'" icon="calendar" color="zinc" />
+        <x-agro.stat-card :label="__('Estado')" :value="$wine->status_label" icon="signal" :color="$statusColor" />
+        <x-agro.stat-card :label="__('Tipo')" :value="$wine->type_label" icon="beaker" :color="$typeColor" />
+        <x-agro.stat-card :label="__('Volumen')" :value="($wine->volume_liters ? number_format($wine->volume_liters, 0) . ' L' : '—')" icon="cube" color="zinc" />
+        <x-agro.stat-card :label="__('Añada')" :value="$wine->vintage ?? '—'" icon="calendar" color="zinc" />
     </div>
 
     {{-- ── Botones de acción ────────────────────────────────────────────────── --}}
     <div class="flex flex-wrap gap-3">
         <flux:modal.trigger name="modal-fermentation">
-            <flux:button variant="primary" icon="plus" size="sm">Control fermentación</flux:button>
+            <flux:button variant="primary" icon="plus" size="sm">{{ __('Control fermentación') }}</flux:button>
         </flux:modal.trigger>
         <flux:modal.trigger name="modal-transfer">
-            <flux:button variant="filled" icon="arrows-right-left" size="sm">Trasvasar</flux:button>
+            <flux:button variant="filled" icon="arrows-right-left" size="sm">{{ __('Trasvasar') }}</flux:button>
         </flux:modal.trigger>
         <flux:modal.trigger name="modal-loss">
-            <flux:button variant="filled" icon="minus-circle" size="sm">Registrar merma</flux:button>
+            <flux:button variant="filled" icon="minus-circle" size="sm">{{ __('Registrar merma') }}</flux:button>
         </flux:modal.trigger>
         <flux:modal.trigger name="modal-analysis">
-            <flux:button variant="filled" icon="document-magnifying-glass" size="sm">Añadir análisis</flux:button>
+            <flux:button variant="filled" icon="document-magnifying-glass" size="sm">{{ __('Añadir análisis') }}</flux:button>
         </flux:modal.trigger>
         <flux:modal.trigger name="modal-composition">
-            <flux:button variant="outline" icon="queue-list" size="sm">Vincular recepción</flux:button>
+            <flux:button variant="outline" icon="queue-list" size="sm">{{ __('Vincular recepción') }}</flux:button>
         </flux:modal.trigger>
         <flux:modal.trigger name="modal-additive">
-            <flux:button variant="outline" icon="beaker" size="sm">Añadir aditivo</flux:button>
+            <flux:button variant="outline" icon="beaker" size="sm">{{ __('Añadir aditivo') }}</flux:button>
         </flux:modal.trigger>
     </div>
 
@@ -92,11 +92,11 @@
     ════════════════════════════════════════════════════════════════════════════ --}}
     <div x-show="tab === 'composition'" x-cloak>
         @if($composition->isEmpty())
-            <x-agro.empty-state icon="queue-list" message="Sin uva vinculada"
-                description="Vincula recepciones de uva para registrar la composición de este lote.">
+            <x-agro.empty-state icon="queue-list" :message="__('Sin uva vinculada')"
+                :description="__('Vincula recepciones de uva para registrar la composición de este lote.')">
                 <x-slot:action>
                     <flux:modal.trigger name="modal-composition">
-                        <flux:button variant="primary" icon="plus" size="sm">Vincular recepción</flux:button>
+                        <flux:button variant="primary" icon="plus" size="sm">{{ __('Vincular recepción') }}</flux:button>
                     </flux:modal.trigger>
                 </x-slot:action>
             </x-agro.empty-state>
@@ -109,7 +109,7 @@
                     Total vinculado: <span class="font-semibold text-zinc-900">{{ number_format($totalKg, 0) }} kg</span>
                 </p>
                 <flux:modal.trigger name="modal-composition">
-                    <flux:button variant="outline" icon="plus" size="sm">Añadir recepción</flux:button>
+                    <flux:button variant="outline" icon="plus" size="sm">{{ __('Añadir recepción') }}</flux:button>
                 </flux:modal.trigger>
             </div>
 
@@ -147,7 +147,7 @@
                         </div>
                         <button
                             wire:click="unlinkHarvest({{ $entry->id }})"
-                            wire:confirm="¿Desvincular esta recepción del lote?"
+                            wire:confirm="{{ __('¿Desvincular esta recepción del lote?') }}"
                             class="inline-flex items-center justify-center w-7 h-7 rounded-lg text-zinc-300 hover:text-red-500 hover:bg-red-50 transition-colors shrink-0"
                         >
                             <flux:icon icon="x-mark" class="size-4" />
@@ -163,18 +163,18 @@
     ════════════════════════════════════════════════════════════════════════════ --}}
     <div x-show="tab === 'additives'" x-cloak>
         @if($additives->isEmpty())
-            <x-agro.empty-state icon="beaker" message="Sin aditivos registrados"
-                description="Registra los aditivos enológicos aplicados en cada etapa del proceso.">
+            <x-agro.empty-state icon="beaker" :message="__('Sin aditivos registrados')"
+                :description="__('Registra los aditivos enológicos aplicados en cada etapa del proceso.')">
                 <x-slot:action>
                     <flux:modal.trigger name="modal-additive">
-                        <flux:button variant="primary" icon="plus" size="sm">Añadir aditivo</flux:button>
+                        <flux:button variant="primary" icon="plus" size="sm">{{ __('Añadir aditivo') }}</flux:button>
                     </flux:modal.trigger>
                 </x-slot:action>
             </x-agro.empty-state>
         @else
             <div class="flex justify-end mb-4">
                 <flux:modal.trigger name="modal-additive">
-                    <flux:button variant="outline" icon="plus" size="sm">Añadir aditivo</flux:button>
+                    <flux:button variant="outline" icon="plus" size="sm">{{ __('Añadir aditivo') }}</flux:button>
                 </flux:modal.trigger>
             </div>
             <div class="space-y-3">
@@ -190,7 +190,7 @@
                                     <flux:badge color="violet" size="sm">{{ $ad->processDetail->process_type_label }}</flux:badge>
                                 @endif
                                 @if($ad->supply?->isLowStock())
-                                    <flux:badge color="red" size="sm">Stock bajo</flux:badge>
+                                    <flux:badge color="red" size="sm">{{ __('Stock bajo') }}</flux:badge>
                                 @endif
                             </div>
                             <div class="flex flex-wrap gap-3 mt-1 text-xs text-zinc-500">
@@ -209,7 +209,7 @@
                         <button
                             wire:click="deleteAdditive({{ $ad->id }})"
                             wire:loading.attr="disabled"
-                            wire:confirm="¿Eliminar este aditivo? Se restaurará el stock del insumo si estaba vinculado."
+                            wire:confirm="{{ __('¿Eliminar este aditivo? Se restaurará el stock del insumo si estaba vinculado.') }}"
                             class="inline-flex items-center justify-center w-7 h-7 rounded-lg text-zinc-300 hover:text-red-500 hover:bg-red-50 transition-colors shrink-0"
                         >
                             <flux:icon icon="trash" class="size-4" />
@@ -225,8 +225,8 @@
     ════════════════════════════════════════════════════════════════════════════ --}}
     <div x-show="tab === 'timeline'" x-cloak>
         @if(empty($timeline))
-            <x-agro.empty-state icon="clock" title="Sin actividad registrada"
-                description="Usa los botones de acción para registrar controles, trasvases, mermas o análisis." />
+            <x-agro.empty-state icon="clock" title="{{ __('Sin actividad registrada') }}"
+                :description="__('Usa los botones de acción para registrar controles, trasvases, mermas o análisis.')" />
         @else
             <div class="space-y-6">
                 @foreach($timeline as $date => $events)
@@ -252,7 +252,7 @@
                                     <div class="flex-1 min-w-0">
                                         <div class="flex items-start justify-between gap-2">
                                             <div>
-                                                <span class="text-sm font-medium text-zinc-900 dark:text-zinc-100">Control fermentación</span>
+                                                <span class="text-sm font-medium text-zinc-900 dark:text-zinc-100">{{ __('Control fermentación') }}</span>
                                                 @if($m->container)
                                                     <span class="ml-2 text-xs text-zinc-500">{{ $m->container->name }}</span>
                                                 @endif
@@ -261,7 +261,7 @@
                                             <flux:button size="xs" variant="ghost" icon="trash"
                                                 wire:click="deleteFermentationControl({{ $m->id }})"
                                                 wire:loading.attr="disabled"
-                                                wire:confirm="¿Eliminar este control?" />
+                                                wire:confirm="{{ __('¿Eliminar este control?') }}" />
                                         </div>
                                         <div class="mt-1 flex flex-wrap gap-x-4 gap-y-1">
                                             @if($m->temperature !== null)
@@ -300,7 +300,7 @@
                                             <flux:button size="xs" variant="ghost" icon="trash"
                                                 wire:click="deleteTransfer({{ $m->id }})"
                                                 wire:loading.attr="disabled"
-                                                wire:confirm="¿Eliminar este trasvase? Se revertirán los cambios de capacidad." />
+                                                wire:confirm="{{ __('¿Eliminar este trasvase? Se revertirán los cambios de capacidad.') }}" />
                                         </div>
                                         <p class="text-xs text-zinc-600 dark:text-zinc-400 mt-1">
                                             {{ $m->fromContainer?->name ?? 'Origen externo' }}
@@ -333,7 +333,7 @@
                                             <flux:button size="xs" variant="ghost" icon="trash"
                                                 wire:click="deleteLoss({{ $m->id }})"
                                                 wire:loading.attr="disabled"
-                                                wire:confirm="¿Eliminar esta merma?" />
+                                                wire:confirm="{{ __('¿Eliminar esta merma?') }}" />
                                         </div>
                                         @if($m->notes)
                                             <p class="mt-1 text-xs text-zinc-500 italic">{{ $m->notes }}</p>
@@ -360,7 +360,7 @@
                                             <flux:button size="xs" variant="ghost" icon="trash"
                                                 wire:click="deleteAnalysis({{ $m->id }})"
                                                 wire:loading.attr="disabled"
-                                                wire:confirm="¿Eliminar este análisis?" />
+                                                wire:confirm="{{ __('¿Eliminar este análisis?') }}" />
                                         </div>
                                         <div class="mt-1 flex flex-wrap gap-x-4 gap-y-1">
                                             @if($m->alcohol !== null)
@@ -415,12 +415,12 @@
                             <flux:button size="sm" variant="ghost" icon="trash"
                                 wire:click="deleteFermentationControl({{ $fc->id }})"
                                 wire:loading.attr="disabled"
-                                wire:confirm="¿Eliminar este control?" />
+                                wire:confirm="{{ __('¿Eliminar este control?') }}" />
                         </x-agro.table-cell>
                     </x-agro.table-row>
                 @empty
-                    <x-agro.empty-state icon="fire" title="Sin controles registrados"
-                        description="Registra lecturas diarias de temperatura, densidad y pH." />
+                    <x-agro.empty-state icon="fire" title="{{ __('Sin controles registrados') }}"
+                        :description="__('Registra lecturas diarias de temperatura, densidad y pH.')" />
                 @endforelse
             </x-agro.data-table>
         </x-agro.card>
@@ -447,12 +447,12 @@
                             <flux:button size="sm" variant="ghost" icon="trash"
                                 wire:click="deleteTransfer({{ $tr->id }})"
                                 wire:loading.attr="disabled"
-                                wire:confirm="¿Eliminar este trasvase? Se revertirán los cambios de capacidad." />
+                                wire:confirm="{{ __('¿Eliminar este trasvase? Se revertirán los cambios de capacidad.') }}" />
                         </x-agro.table-cell>
                     </x-agro.table-row>
                 @empty
-                    <x-agro.empty-state icon="arrows-right-left" title="Sin trasvases registrados"
-                        description="Registra los movimientos de vino entre depósitos y barricas." />
+                    <x-agro.empty-state icon="arrows-right-left" title="{{ __('Sin trasvases registrados') }}"
+                        :description="__('Registra los movimientos de vino entre depósitos y barricas.')" />
                 @endforelse
             </x-agro.data-table>
         </x-agro.card>
@@ -479,12 +479,12 @@
                             <flux:button size="sm" variant="ghost" icon="trash"
                                 wire:click="deleteLoss({{ $lo->id }})"
                                 wire:loading.attr="disabled"
-                                wire:confirm="¿Eliminar esta merma?" />
+                                wire:confirm="{{ __('¿Eliminar esta merma?') }}" />
                         </x-agro.table-cell>
                     </x-agro.table-row>
                 @empty
-                    <x-agro.empty-state icon="minus-circle" title="Sin mermas registradas"
-                        description="Registra pérdidas por evaporación, filtración, muestreo o derrames." />
+                    <x-agro.empty-state icon="minus-circle" title="{{ __('Sin mermas registradas') }}"
+                        :description="__('Registra pérdidas por evaporación, filtración, muestreo o derrames.')" />
                 @endforelse
             </x-agro.data-table>
         </x-agro.card>
@@ -522,12 +522,12 @@
                             <flux:button size="sm" variant="ghost" icon="trash"
                                 wire:click="deleteAnalysis({{ $an->id }})"
                                 wire:loading.attr="disabled"
-                                wire:confirm="¿Eliminar este análisis?" />
+                                wire:confirm="{{ __('¿Eliminar este análisis?') }}" />
                         </x-agro.table-cell>
                     </x-agro.table-row>
                 @empty
-                    <x-agro.empty-state icon="document-magnifying-glass" title="Sin análisis registrados"
-                        description="Añade análisis propios o de laboratorio externo." />
+                    <x-agro.empty-state icon="document-magnifying-glass" title="{{ __('Sin análisis registrados') }}"
+                        :description="__('Añade análisis propios o de laboratorio externo.')" />
                 @endforelse
             </x-agro.data-table>
         </x-agro.card>
@@ -542,15 +542,15 @@
     <flux:modal name="modal-fermentation" class="w-full max-w-lg">
         <div class="p-6 space-y-5">
             <div>
-                <flux:heading size="lg">Control de fermentación</flux:heading>
+                <flux:heading size="lg">{{ __('Control de fermentación') }}</flux:heading>
                 <flux:subheading>Registra la lectura de parámetros del depósito.</flux:subheading>
             </div>
 
             <div class="grid grid-cols-2 gap-4">
                 <flux:field class="col-span-2">
-                    <flux:label required>Depósito</flux:label>
+                    <flux:label required>{{ __('Depósito') }}</flux:label>
                     <flux:select wire:model="fc_container_id">
-                        <option value="">Seleccionar depósito...</option>
+                        <option value="">{{ __('Seleccionar depósito...') }}</option>
                         @foreach($containers as $c)
                             <option value="{{ $c->id }}">{{ $c->name }}</option>
                         @endforeach
@@ -559,50 +559,50 @@
                 </flux:field>
 
                 <flux:field class="col-span-2">
-                    <flux:label required>Fecha y hora</flux:label>
+                    <flux:label required>{{ __('Fecha y hora') }}</flux:label>
                     <flux:input wire:model="fc_control_date" type="datetime-local" />
                     <flux:error name="fc_control_date" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Temperatura (°C)</flux:label>
+                    <flux:label>{{ __('Temperatura (°C)') }}</flux:label>
                     <flux:input wire:model="fc_temperature" type="number" step="0.1" placeholder="22.0" />
                     <flux:error name="fc_temperature" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Densidad (g/L)</flux:label>
+                    <flux:label>{{ __('Densidad (g/L)') }}</flux:label>
                     <flux:input wire:model="fc_density" type="number" step="0.001" placeholder="1.045" />
                     <flux:error name="fc_density" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>°Brix</flux:label>
+                    <flux:label>{{ __('°Brix') }}</flux:label>
                     <flux:input wire:model="fc_brix" type="number" step="0.1" placeholder="10.5" />
                     <flux:error name="fc_brix" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>pH</flux:label>
+                    <flux:label>{{ __('pH') }}</flux:label>
                     <flux:input wire:model="fc_ph" type="number" step="0.01" placeholder="3.50" />
                     <flux:error name="fc_ph" />
                 </flux:field>
 
                 <flux:field class="col-span-2">
-                    <flux:label>Acidez volátil (g/L)</flux:label>
+                    <flux:label>{{ __('Acidez volátil (g/L)') }}</flux:label>
                     <flux:input wire:model="fc_va" type="number" step="0.01" placeholder="0.30" />
                     <flux:error name="fc_va" />
                 </flux:field>
 
                 <flux:field class="col-span-2">
-                    <flux:label>Notas</flux:label>
-                    <flux:textarea wire:model="fc_notes" rows="2" placeholder="Observaciones..." />
+                    <flux:label>{{ __('Notas') }}</flux:label>
+                    <flux:textarea wire:model="fc_notes" rows="2" :placeholder="__('Observaciones...')" />
                 </flux:field>
             </div>
 
             <div class="flex justify-end gap-3 pt-2">
-                <flux:modal.close><flux:button variant="ghost">Cancelar</flux:button></flux:modal.close>
-                <flux:button variant="primary" wire:click="saveFermentationControl">Guardar control</flux:button>
+                <flux:modal.close><flux:button variant="ghost">{{ __('Cancelar') }}</flux:button></flux:modal.close>
+                <flux:button variant="primary" wire:click="saveFermentationControl">{{ __('Guardar control') }}</flux:button>
             </div>
         </div>
     </flux:modal>
@@ -611,13 +611,13 @@
     <flux:modal name="modal-transfer" class="w-full max-w-lg">
         <div class="p-6 space-y-5">
             <div>
-                <flux:heading size="lg">Registrar trasvase</flux:heading>
+                <flux:heading size="lg">{{ __('Registrar trasvase') }}</flux:heading>
                 <flux:subheading>Movimiento de vino entre contenedores.</flux:subheading>
             </div>
 
             <div class="grid grid-cols-2 gap-4">
                 <flux:field>
-                    <flux:label>Tipo</flux:label>
+                    <flux:label>{{ __('Tipo') }}</flux:label>
                     <flux:select wire:model="tr_type">
                         @foreach(\App\Models\WineTransfer::TRANSFER_TYPES as $key => $label)
                             <option value="{{ $key }}">{{ $label }}</option>
@@ -626,15 +626,15 @@
                 </flux:field>
 
                 <flux:field>
-                    <flux:label required>Fecha</flux:label>
+                    <flux:label required>{{ __('Fecha') }}</flux:label>
                     <flux:input wire:model="tr_date" type="date" />
                     <flux:error name="tr_date" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Origen (vacío = externo)</flux:label>
+                    <flux:label>{{ __('Origen (vacío = externo)') }}</flux:label>
                     <flux:select wire:model="tr_from_container_id">
-                        <option value="">Sin origen / Externo</option>
+                        <option value="">{{ __('Sin origen / Externo') }}</option>
                         @foreach($containers as $c)
                             <option value="{{ $c->id }}">{{ $c->name }}</option>
                         @endforeach
@@ -642,9 +642,9 @@
                 </flux:field>
 
                 <flux:field>
-                    <flux:label required>Destino</flux:label>
+                    <flux:label required>{{ __('Destino') }}</flux:label>
                     <flux:select wire:model="tr_to_container_id">
-                        <option value="">Seleccionar destino...</option>
+                        <option value="">{{ __('Seleccionar destino...') }}</option>
                         @foreach($containers as $c)
                             <option value="{{ $c->id }}">{{ $c->name }}</option>
                         @endforeach
@@ -653,15 +653,15 @@
                 </flux:field>
 
                 <flux:field>
-                    <flux:label required>Cantidad</flux:label>
+                    <flux:label required>{{ __('Cantidad') }}</flux:label>
                     <flux:input wire:model="tr_quantity" type="number" step="0.001" min="0" placeholder="0" />
                     <flux:error name="tr_quantity" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label required>Unidad</flux:label>
+                    <flux:label required>{{ __('Unidad') }}</flux:label>
                     <flux:select wire:model="tr_unit_id">
-                        <option value="">Seleccionar...</option>
+                        <option value="">{{ __('Seleccionar...') }}</option>
                         @foreach($units as $u)
                             <option value="{{ $u->id }}">{{ $u->name }}</option>
                         @endforeach
@@ -670,9 +670,9 @@
                 </flux:field>
 
                 <flux:field class="col-span-2">
-                    <flux:label>Enólogo responsable</flux:label>
+                    <flux:label>{{ __('Enólogo responsable') }}</flux:label>
                     <flux:select wire:model="tr_oenologist_id">
-                        <option value="">Sin asignar</option>
+                        <option value="">{{ __('Sin asignar') }}</option>
                         @foreach($oenologists as $oe)
                             <option value="{{ $oe->id }}">{{ $oe->full_name }}</option>
                         @endforeach
@@ -681,14 +681,14 @@
                 </flux:field>
 
                 <flux:field class="col-span-2">
-                    <flux:label>Notas</flux:label>
-                    <flux:textarea wire:model="tr_notes" rows="2" placeholder="Motivo del trasvase..." />
+                    <flux:label>{{ __('Notas') }}</flux:label>
+                    <flux:textarea wire:model="tr_notes" rows="2" :placeholder="__('Motivo del trasvase...')" />
                 </flux:field>
             </div>
 
             <div class="flex justify-end gap-3 pt-2">
-                <flux:modal.close><flux:button variant="ghost">Cancelar</flux:button></flux:modal.close>
-                <flux:button variant="primary" wire:click="saveTransfer">Guardar trasvase</flux:button>
+                <flux:modal.close><flux:button variant="ghost">{{ __('Cancelar') }}</flux:button></flux:modal.close>
+                <flux:button variant="primary" wire:click="saveTransfer">{{ __('Guardar trasvase') }}</flux:button>
             </div>
         </div>
     </flux:modal>
@@ -697,13 +697,13 @@
     <flux:modal name="modal-loss" class="w-full max-w-lg">
         <div class="p-6 space-y-5">
             <div>
-                <flux:heading size="lg">Registrar merma</flux:heading>
+                <flux:heading size="lg">{{ __('Registrar merma') }}</flux:heading>
                 <flux:subheading>Pérdida de volumen durante la elaboración.</flux:subheading>
             </div>
 
             <div class="grid grid-cols-2 gap-4">
                 <flux:field>
-                    <flux:label required>Tipo de merma</flux:label>
+                    <flux:label required>{{ __('Tipo de merma') }}</flux:label>
                     <flux:select wire:model="lo_type">
                         @foreach(\App\Models\WineLoss::LOSS_TYPES as $key => $label)
                             <option value="{{ $key }}">{{ $label }}</option>
@@ -712,15 +712,15 @@
                 </flux:field>
 
                 <flux:field>
-                    <flux:label required>Fecha</flux:label>
+                    <flux:label required>{{ __('Fecha') }}</flux:label>
                     <flux:input wire:model="lo_date" type="date" />
                     <flux:error name="lo_date" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Depósito (opcional)</flux:label>
+                    <flux:label>{{ __('Depósito (opcional)') }}</flux:label>
                     <flux:select wire:model="lo_container_id">
-                        <option value="">Sin depósito específico</option>
+                        <option value="">{{ __('Sin depósito específico') }}</option>
                         @foreach($containers as $c)
                             <option value="{{ $c->id }}">{{ $c->name }}</option>
                         @endforeach
@@ -728,15 +728,15 @@
                 </flux:field>
 
                 <flux:field>
-                    <flux:label required>Cantidad</flux:label>
+                    <flux:label required>{{ __('Cantidad') }}</flux:label>
                     <flux:input wire:model="lo_quantity" type="number" step="0.001" min="0" placeholder="0" />
                     <flux:error name="lo_quantity" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label required>Unidad</flux:label>
+                    <flux:label required>{{ __('Unidad') }}</flux:label>
                     <flux:select wire:model="lo_unit_id">
-                        <option value="">Seleccionar...</option>
+                        <option value="">{{ __('Seleccionar...') }}</option>
                         @foreach($units as $u)
                             <option value="{{ $u->id }}">{{ $u->name }}</option>
                         @endforeach
@@ -745,14 +745,14 @@
                 </flux:field>
 
                 <flux:field class="col-span-2">
-                    <flux:label>Notas</flux:label>
-                    <flux:textarea wire:model="lo_notes" rows="2" placeholder="Causa de la merma..." />
+                    <flux:label>{{ __('Notas') }}</flux:label>
+                    <flux:textarea wire:model="lo_notes" rows="2" :placeholder="__('Causa de la merma...')" />
                 </flux:field>
             </div>
 
             <div class="flex justify-end gap-3 pt-2">
-                <flux:modal.close><flux:button variant="ghost">Cancelar</flux:button></flux:modal.close>
-                <flux:button variant="primary" wire:click="saveLoss">Guardar merma</flux:button>
+                <flux:modal.close><flux:button variant="ghost">{{ __('Cancelar') }}</flux:button></flux:modal.close>
+                <flux:button variant="primary" wire:click="saveLoss">{{ __('Guardar merma') }}</flux:button>
             </div>
         </div>
     </flux:modal>
@@ -761,30 +761,30 @@
     <flux:modal name="modal-analysis" class="w-full max-w-2xl">
         <div class="p-6 space-y-5">
             <div>
-                <flux:heading size="lg">Añadir análisis</flux:heading>
+                <flux:heading size="lg">{{ __('Añadir análisis') }}</flux:heading>
                 <flux:subheading>Registra los parámetros fisicoquímicos del vino.</flux:subheading>
             </div>
 
             <div class="grid grid-cols-2 gap-4">
                 {{-- Cabecera --}}
                 <flux:field>
-                    <flux:label required>Tipo</flux:label>
+                    <flux:label required>{{ __('Tipo') }}</flux:label>
                     <flux:select wire:model="an_type">
-                        <option value="own">Análisis propio</option>
-                        <option value="external">Laboratorio externo</option>
+                        <option value="own">{{ __('Análisis propio') }}</option>
+                        <option value="external">{{ __('Laboratorio externo') }}</option>
                     </flux:select>
                 </flux:field>
 
                 <flux:field>
-                    <flux:label required>Fecha</flux:label>
+                    <flux:label required>{{ __('Fecha') }}</flux:label>
                     <flux:input wire:model="an_date" type="date" />
                     <flux:error name="an_date" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Depósito</flux:label>
+                    <flux:label>{{ __('Depósito') }}</flux:label>
                     <flux:select wire:model="an_container_id">
-                        <option value="">Sin depósito</option>
+                        <option value="">{{ __('Sin depósito') }}</option>
                         @foreach($containers as $c)
                             <option value="{{ $c->id }}">{{ $c->name }}</option>
                         @endforeach
@@ -792,14 +792,14 @@
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Laboratorio</flux:label>
-                    <flux:input wire:model="an_laboratory" type="text" placeholder="Nombre del lab." />
+                    <flux:label>{{ __('Laboratorio') }}</flux:label>
+                    <flux:input wire:model="an_laboratory" type="text" :placeholder="__('Nombre del lab.')" />
                 </flux:field>
 
                 <flux:field class="col-span-2 md:col-span-4">
-                    <flux:label>Enólogo responsable</flux:label>
+                    <flux:label>{{ __('Enólogo responsable') }}</flux:label>
                     <flux:select wire:model="an_oenologist_id">
-                        <option value="">Sin asignar</option>
+                        <option value="">{{ __('Sin asignar') }}</option>
                         @foreach($oenologists as $oe)
                             <option value="{{ $oe->id }}">{{ $oe->full_name }}</option>
                         @endforeach
@@ -809,70 +809,70 @@
 
                 {{-- Parámetros fisicoquímicos --}}
                 <flux:field>
-                    <flux:label>Alcohol (% vol)</flux:label>
+                    <flux:label>{{ __('Alcohol (% vol)') }}</flux:label>
                     <flux:input wire:model="an_alcohol" type="number" step="0.01" placeholder="12.50" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Azúcar res. (g/L)</flux:label>
+                    <flux:label>{{ __('Azúcar res. (g/L)') }}</flux:label>
                     <flux:input wire:model="an_residual_sugar" type="number" step="0.1" placeholder="2.5" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Acid. total (g/L)</flux:label>
+                    <flux:label>{{ __('Acid. total (g/L)') }}</flux:label>
                     <flux:input wire:model="an_total_acidity" type="number" step="0.1" placeholder="5.5" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Acid. volátil (g/L)</flux:label>
+                    <flux:label>{{ __('Acid. volátil (g/L)') }}</flux:label>
                     <flux:input wire:model="an_volatile_acidity" type="number" step="0.01" placeholder="0.35" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>pH</flux:label>
+                    <flux:label>{{ __('pH') }}</flux:label>
                     <flux:input wire:model="an_ph" type="number" step="0.01" placeholder="3.50" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>SO₂ libre (mg/L)</flux:label>
+                    <flux:label>{{ __('SO₂ libre (mg/L)') }}</flux:label>
                     <flux:input wire:model="an_so2_free" type="number" step="0.1" placeholder="25" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>SO₂ total (mg/L)</flux:label>
+                    <flux:label>{{ __('SO₂ total (mg/L)') }}</flux:label>
                     <flux:input wire:model="an_so2_total" type="number" step="0.1" placeholder="80" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Densidad (g/cm³)</flux:label>
+                    <flux:label>{{ __('Densidad (g/cm³)') }}</flux:label>
                     <flux:input wire:model="an_density" type="number" step="0.0001" placeholder="0.9950" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Turbidez (NTU)</flux:label>
+                    <flux:label>{{ __('Turbidez (NTU)') }}</flux:label>
                     <flux:input wire:model="an_turbidity" type="number" step="0.1" placeholder="0.5" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Intensidad color</flux:label>
+                    <flux:label>{{ __('Intensidad color') }}</flux:label>
                     <flux:input wire:model="an_color_intensity" type="number" step="0.001" placeholder="0.850" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Ácido málico (g/L)</flux:label>
+                    <flux:label>{{ __('Ácido málico (g/L)') }}</flux:label>
                     <flux:input wire:model="an_malic_acid" type="number" step="0.01" placeholder="1.20" />
                     <flux:description>Seguimiento FML</flux:description>
                 </flux:field>
 
                 <flux:field class="col-span-2 md:col-span-4">
-                    <flux:label>Notas</flux:label>
-                    <flux:textarea wire:model="an_notes" rows="2" placeholder="Observaciones del análisis..." />
+                    <flux:label>{{ __('Notas') }}</flux:label>
+                    <flux:textarea wire:model="an_notes" rows="2" :placeholder="__('Observaciones del análisis...')" />
                 </flux:field>
             </div>
 
             <div class="flex justify-end gap-3 pt-2">
-                <flux:modal.close><flux:button variant="ghost">Cancelar</flux:button></flux:modal.close>
-                <flux:button variant="primary" wire:click="saveAnalysis">Guardar análisis</flux:button>
+                <flux:modal.close><flux:button variant="ghost">{{ __('Cancelar') }}</flux:button></flux:modal.close>
+                <flux:button variant="primary" wire:click="saveAnalysis">{{ __('Guardar análisis') }}</flux:button>
             </div>
         </div>
     </flux:modal>
@@ -881,15 +881,15 @@
     <flux:modal name="modal-additive" class="w-full max-w-lg">
         <div class="p-6 space-y-5">
             <div>
-                <h3 class="text-base font-semibold text-zinc-900">Registrar aditivo</h3>
-                <p class="text-sm text-zinc-500 mt-1">Al guardar se descontará del stock del insumo si está vinculado.</p>
+                <h3 class="text-base font-semibold text-zinc-900">{{ __('Registrar aditivo') }}</h3>
+                <p class="text-sm text-zinc-500 mt-1">{{ __('Al guardar se descontará del stock del insumo si está vinculado.') }}</p>
             </div>
 
             {{-- Insumo de bodega (opcional) --}}
             <flux:field>
-                <flux:label>Insumo de bodega</flux:label>
+                <flux:label>{{ __('Insumo de bodega') }}</flux:label>
                 <flux:select wire:model.live="ad_supply_id">
-                    <flux:select.option value="">Introducir manualmente...</flux:select.option>
+                    <flux:select.option value="">{{ __('Introducir manualmente...') }}</flux:select.option>
                     @foreach($supplies as $supply)
                         <flux:select.option value="{{ $supply->id }}">
                             {{ $supply->name }}
@@ -903,21 +903,21 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <flux:field class="sm:col-span-2">
-                    <flux:label>Nombre del aditivo <span class="text-red-500">*</span></flux:label>
-                    <flux:input wire:model="ad_additive_name" placeholder="Ej. Bentonita, SO₂, Levadura EC1118..." />
+                    <flux:label>{{ __('Nombre del aditivo') }} <span class="text-red-500">*</span></flux:label>
+                    <flux:input wire:model="ad_additive_name" :placeholder="__('Ej. Bentonita, SO₂, Levadura EC1118...')" />
                     <flux:error name="ad_additive_name" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Cantidad <span class="text-red-500">*</span></flux:label>
+                    <flux:label>{{ __('Cantidad') }} <span class="text-red-500">*</span></flux:label>
                     <flux:input wire:model="ad_quantity" type="number" step="0.001" min="0.001" placeholder="0" />
                     <flux:error name="ad_quantity" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Unidad <span class="text-red-500">*</span></flux:label>
+                    <flux:label>{{ __('Unidad') }} <span class="text-red-500">*</span></flux:label>
                     <flux:select wire:model="ad_unit_id">
-                        <flux:select.option value="">Seleccionar...</flux:select.option>
+                        <flux:select.option value="">{{ __('Seleccionar...') }}</flux:select.option>
                         @foreach($units as $unit)
                             <flux:select.option value="{{ $unit->id }}">{{ $unit->abbreviation }} — {{ $unit->name }}</flux:select.option>
                         @endforeach
@@ -926,15 +926,15 @@
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Fecha aplicación <span class="text-red-500">*</span></flux:label>
+                    <flux:label>{{ __('Fecha aplicación') }} <span class="text-red-500">*</span></flux:label>
                     <flux:input wire:model="ad_date" type="date" />
                     <flux:error name="ad_date" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Etapa del proceso</flux:label>
+                    <flux:label>{{ __('Etapa del proceso') }}</flux:label>
                     <flux:select wire:model="ad_process_detail_id">
-                        <flux:select.option value="">Sin etapa específica</flux:select.option>
+                        <flux:select.option value="">{{ __('Sin etapa específica') }}</flux:select.option>
                         @foreach($processes as $process)
                             <flux:select.option value="{{ $process->id }}">
                                 {{ $process->process_type_label }} · {{ $process->start_date?->format('d/m/Y') }}
@@ -945,9 +945,9 @@
                 </flux:field>
 
                 <flux:field class="sm:col-span-2">
-                    <flux:label>Enólogo responsable</flux:label>
+                    <flux:label>{{ __('Enólogo responsable') }}</flux:label>
                     <flux:select wire:model="ad_oenologist_id">
-                        <flux:select.option value="">Sin asignar</flux:select.option>
+                        <flux:select.option value="">{{ __('Sin asignar') }}</flux:select.option>
                         @foreach($oenologists as $oenologist)
                             <flux:select.option value="{{ $oenologist->id }}">{{ $oenologist->full_name }}</flux:select.option>
                         @endforeach
@@ -956,15 +956,15 @@
                 </flux:field>
 
                 <flux:field class="sm:col-span-2">
-                    <flux:label>Observaciones</flux:label>
+                    <flux:label>{{ __('Observaciones') }}</flux:label>
                     <flux:textarea wire:model="ad_notes" rows="2" />
                     <flux:error name="ad_notes" />
                 </flux:field>
             </div>
 
             <div class="flex justify-end gap-3 pt-2">
-                <flux:modal.close><flux:button variant="ghost">Cancelar</flux:button></flux:modal.close>
-                <flux:button variant="primary" wire:click="saveAdditive">Registrar aditivo</flux:button>
+                <flux:modal.close><flux:button variant="ghost">{{ __('Cancelar') }}</flux:button></flux:modal.close>
+                <flux:button variant="primary" wire:click="saveAdditive">{{ __('Registrar aditivo') }}</flux:button>
             </div>
         </div>
     </flux:modal>
@@ -973,14 +973,14 @@
     <flux:modal name="modal-composition" class="w-full max-w-lg">
         <div class="p-6 space-y-5">
             <div>
-                <h3 class="text-base font-semibold text-zinc-900">Vincular recepción de uva</h3>
-                <p class="text-sm text-zinc-500 mt-1">Selecciona una recepción de uva y la cantidad aportada a este lote.</p>
+                <h3 class="text-base font-semibold text-zinc-900">{{ __('Vincular recepción de uva') }}</h3>
+                <p class="text-sm text-zinc-500 mt-1">{{ __('Selecciona una recepción de uva y la cantidad aportada a este lote.') }}</p>
             </div>
 
             <flux:field>
-                <flux:label>Recepción de uva <span class="text-red-500">*</span></flux:label>
+                <flux:label>{{ __('Recepción de uva') }} <span class="text-red-500">*</span></flux:label>
                 <flux:select wire:model="co_harvest_id">
-                    <flux:select.option value="">Seleccionar recepción...</flux:select.option>
+                    <flux:select.option value="">{{ __('Seleccionar recepción...') }}</flux:select.option>
                     @foreach($availableHarvests as $h)
                         @php
                             $label = ($h->plotPlanting?->plotVariety?->grapeVariety?->name ?? 'Sin variedad')
@@ -994,14 +994,14 @@
             </flux:field>
 
             <flux:field>
-                <flux:label>Cantidad aportada (kg) <span class="text-red-500">*</span></flux:label>
+                <flux:label>{{ __('Cantidad aportada (kg)') }} <span class="text-red-500">*</span></flux:label>
                 <flux:input wire:model="co_quantity_kg" type="number" step="0.001" min="0.001" placeholder="0" />
                 <flux:error name="co_quantity_kg" />
             </flux:field>
 
             <div class="flex justify-end gap-3 pt-2">
-                <flux:modal.close><flux:button variant="ghost">Cancelar</flux:button></flux:modal.close>
-                <flux:button variant="primary" wire:click="linkHarvest">Vincular</flux:button>
+                <flux:modal.close><flux:button variant="ghost">{{ __('Cancelar') }}</flux:button></flux:modal.close>
+                <flux:button variant="primary" wire:click="linkHarvest">{{ __('Vincular') }}</flux:button>
             </div>
         </div>
     </flux:modal>
@@ -1025,7 +1025,7 @@
                     <flux:icon icon="archive-box-arrow-down" class="size-4 text-emerald-600" />
                 </div>
                 <div>
-                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">Coste uva</p>
+                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">{{ __('Coste uva') }}</p>
                     <p class="text-lg font-bold text-zinc-900 leading-none">
                         {{ $grapeCost > 0 ? number_format($grapeCost, 2, ',', '.') . ' €' : '—' }}
                     </p>
@@ -1036,7 +1036,7 @@
                     <flux:icon icon="receipt-percent" class="size-4 text-violet-600" />
                 </div>
                 <div>
-                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">Costes extras</p>
+                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">{{ __('Costes extras') }}</p>
                     <p class="text-lg font-bold text-zinc-900 leading-none">
                         {{ $manualCost > 0 ? number_format($manualCost, 2, ',', '.') . ' €' : '—' }}
                     </p>
@@ -1047,7 +1047,7 @@
                     <flux:icon icon="currency-euro" class="size-4 text-zinc-600" />
                 </div>
                 <div>
-                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">Total</p>
+                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">{{ __('Total') }}</p>
                     <p class="text-lg font-bold text-zinc-900 leading-none">
                         {{ $totalCost > 0 ? number_format($totalCost, 2, ',', '.') . ' €' : '—' }}
                     </p>
@@ -1062,7 +1062,7 @@
                     <flux:icon icon="beaker" class="size-4 text-{{ $plColor }}-600" />
                 </div>
                 <div>
-                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">€ / Litro</p>
+                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">{{ __('€ / Litro') }}</p>
                     <p class="text-lg font-bold text-{{ $plColor }}-700 leading-none">
                         {{ $costPerL !== null ? number_format($costPerL, 3, ',', '.') . ' €' : '—' }}
                     </p>
@@ -1073,21 +1073,21 @@
         {{-- Tabla de costes manuales --}}
         <x-agro.card>
             <div class="flex items-center justify-between mb-4">
-                <p class="text-sm font-semibold text-zinc-700">Costes manuales registrados</p>
+                <p class="text-sm font-semibold text-zinc-700">{{ __('Costes manuales registrados') }}</p>
                 <a href="{{ roleRoute('production-costs.create', ['wineId' => $wine->id]) }}" wire:navigate>
-                    <flux:button variant="outline" icon="plus" size="sm">Añadir coste</flux:button>
+                    <flux:button variant="outline" icon="plus" size="sm">{{ __('Añadir coste') }}</flux:button>
                 </a>
             </div>
 
             @if($costs->isEmpty())
                 <x-agro.empty-state
                     icon="receipt-percent"
-                    title="Sin costes manuales"
-                    description="Registra aditivos, análisis, embotellado, etiquetado u otros costes asociados a este vino."
+                    title="{{ __('Sin costes manuales') }}"
+                    :description="__('Registra aditivos, análisis, embotellado, etiquetado u otros costes asociados a este vino.')"
                 >
                     <x-slot:action>
                         <a href="{{ roleRoute('production-costs.create', ['wineId' => $wine->id]) }}" wire:navigate>
-                            <flux:button variant="primary" icon="plus" size="sm">Añadir coste</flux:button>
+                            <flux:button variant="primary" icon="plus" size="sm">{{ __('Añadir coste') }}</flux:button>
                         </a>
                     </x-slot:action>
                 </x-agro.empty-state>
@@ -1096,11 +1096,11 @@
                     <table class="w-full text-sm">
                         <thead>
                             <tr class="border-b border-zinc-100 text-left text-xs font-semibold text-zinc-400 uppercase tracking-wider">
-                                <th class="py-2 px-3">Fecha</th>
-                                <th class="py-2 px-3">Categoría</th>
-                                <th class="py-2 px-3">Descripción</th>
-                                <th class="py-2 px-3">Proveedor</th>
-                                <th class="py-2 px-3 text-right">Importe</th>
+                                <th class="py-2 px-3">{{ __('Fecha') }}</th>
+                                <th class="py-2 px-3">{{ __('Categoría') }}</th>
+                                <th class="py-2 px-3">{{ __('Descripción') }}</th>
+                                <th class="py-2 px-3">{{ __('Proveedor') }}</th>
+                                <th class="py-2 px-3 text-right">{{ __('Importe') }}</th>
                                 <th class="py-2 px-3"></th>
                             </tr>
                         </thead>
@@ -1133,7 +1133,7 @@
                         </tbody>
                         <tfoot>
                             <tr class="border-t-2 border-zinc-200">
-                                <td colspan="4" class="py-2 px-3 text-xs font-semibold text-zinc-500 uppercase tracking-wide">Total costes manuales</td>
+                                <td colspan="4" class="py-2 px-3 text-xs font-semibold text-zinc-500 uppercase tracking-wide">{{ __('Total costes manuales') }}</td>
                                 <td class="py-2 px-3 text-right font-bold text-zinc-900">
                                     {{ number_format($manualCost, 2, ',', '.') }} €
                                 </td>
@@ -1160,8 +1160,8 @@
         x-effect="if (tab === 'diagram') { $nextTick(() => { if (window.mermaid) window.mermaid.run({ nodes: $el.querySelectorAll('.mermaid') }) }) }">
 
         @if(empty(trim($diagram)))
-            <x-agro.empty-state icon="share" title="Sin datos para el diagrama"
-                description="Añade etapas de proceso, trasvases o recepciones de uva para ver el diagrama." />
+            <x-agro.empty-state icon="share" title="{{ __('Sin datos para el diagrama') }}"
+                :description="__('Añade etapas de proceso, trasvases o recepciones de uva para ver el diagrama.')" />
         @else
             <x-agro.card>
                 <div class="overflow-x-auto">
@@ -1207,7 +1207,7 @@
 
                 {{-- Info --}}
                 <div class="text-center space-y-2 max-w-sm">
-                    <p class="text-sm font-semibold text-zinc-800">Ficha pública de trazabilidad</p>
+                    <p class="text-sm font-semibold text-zinc-800">{{ __('Ficha pública de trazabilidad') }}</p>
                     <p class="text-xs text-zinc-500">
                         Escanea este código para ver la información pública de <strong>{{ $wine->name }}</strong>:
                         composición varietal, análisis enológicos y datos de elaboración.
@@ -1222,9 +1222,7 @@
                 {{-- Acciones --}}
                 <div class="flex gap-3">
                     <a href="{{ $traceUrl }}" target="_blank">
-                        <flux:button variant="ghost" icon="arrow-top-right-on-square" size="sm">
-                            Ver ficha pública
-                        </flux:button>
+                        <flux:button variant="ghost" icon="arrow-top-right-on-square" size="sm">{{ __('Ver ficha pública') }}</flux:button>
                     </a>
                     <flux:button
                         x-on:click="

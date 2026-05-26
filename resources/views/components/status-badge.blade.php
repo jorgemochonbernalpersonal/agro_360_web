@@ -5,7 +5,7 @@
         $active = $status;
     }
     
-    $label = $label ?? ($active ? 'Activa' : 'Inactiva');
+    $label = $label ?? ($active ? __('Activa') : __('Inactiva'));
     
     if($type === 'default') {
         $classes = $active 

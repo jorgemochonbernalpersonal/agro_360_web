@@ -37,7 +37,7 @@ class Index extends AbstractIndex
         $control = WineFermentationControl::whereHas('wine', fn($q) => $q->where('user_id', $this->wineryId()))
             ->findOrFail($id);
         $control->delete();
-        $this->toastSuccess('Control eliminado.');
+        $this->toastSuccess(__('Control eliminado.'));
     }
 
     protected function baseQuery(): Builder

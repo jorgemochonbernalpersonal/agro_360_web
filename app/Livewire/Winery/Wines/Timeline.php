@@ -53,9 +53,9 @@ class Timeline extends Component
             ->pluck('vintage');
 
         $statusLabels = [
-            'in_progress' => 'En Proceso',
-            'aged'        => 'En Crianza',
-            'bottled'     => 'Embotellado',
+            'in_progress' => __('En Proceso'),
+            'aged'        => __('En Crianza'),
+            'bottled'     => __('Embotellado'),
         ];
 
         $statusColors = [

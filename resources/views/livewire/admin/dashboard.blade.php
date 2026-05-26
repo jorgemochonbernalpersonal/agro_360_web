@@ -145,7 +145,7 @@
                         <flux:icon icon="currency-euro" class="size-5 text-agro-600" />
                     </div>
                     <div class="min-w-0 flex-1">
-                        <p class="text-xs text-zinc-500 font-medium uppercase tracking-wide">MRR</p>
+                        <p class="text-xs text-zinc-500 font-medium uppercase tracking-wide">{{ __('MRR') }}</p>
                         <p class="text-2xl font-bold text-zinc-900">{{ number_format($stats['saas']['mrr'], 2) }} €</p>
                         <p class="text-xs text-zinc-400 mt-0.5">ARR {{ number_format($stats['saas']['arr'], 0) }} €</p>
                     </div>
@@ -490,7 +490,7 @@
                         <flux:icon icon="document-text" class="size-5 text-blue-600" />
                     </div>
                     <div class="min-w-0">
-                        <p class="font-semibold text-zinc-900 group-hover:text-blue-600 transition-colors text-sm">SIGPACs</p>
+                        <p class="font-semibold text-zinc-900 group-hover:text-blue-600 transition-colors text-sm">{{ __('SIGPACs') }}</p>
                         <p class="text-xs text-zinc-500 truncate">{{ __('Códigos SIGPAC') }}</p>
                     </div>
                     <flux:icon icon="chevron-right" class="size-4 text-zinc-300 ml-auto group-hover:text-blue-400 transition-colors" />
@@ -529,7 +529,7 @@
                         <flux:icon icon="clock" class="size-5 text-teal-600" />
                     </div>
                     <div class="min-w-0">
-                        <p class="font-semibold text-zinc-900 group-hover:text-teal-600 transition-colors text-sm">Scheduler</p>
+                        <p class="font-semibold text-zinc-900 group-hover:text-teal-600 transition-colors text-sm">{{ __('Scheduler') }}</p>
                         <p class="text-xs text-zinc-500 truncate">{{ __('Tareas programadas') }}</p>
                     </div>
                     <flux:icon icon="chevron-right" class="size-4 text-zinc-300 ml-auto group-hover:text-teal-400 transition-colors" />

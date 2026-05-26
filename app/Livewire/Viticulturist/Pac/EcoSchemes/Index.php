@@ -146,7 +146,7 @@ class Index extends Component
         $evidence['biodiversity'] = [
             'count'   => null,
             'status'  => 'info',
-            'detail'  => 'No verificable automáticamente — requiere inspección en campo',
+            'detail'  => __('No verificable automáticamente — requiere inspección en campo'),
         ];
 
         // precision_fertilization — fertilizaciones registradas

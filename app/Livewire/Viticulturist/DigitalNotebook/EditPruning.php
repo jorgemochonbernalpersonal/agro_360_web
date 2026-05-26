@@ -80,11 +80,11 @@ class EditPruning extends AbstractActivityForm
                 ]);
             });
 
-            $this->toastSuccess('Poda actualizada correctamente.');
+            $this->toastSuccess(__('Poda actualizada correctamente.'));
             return $this->viticulturistRoleRedirect('digital-notebook.pruning.index');
         } catch (\Exception $e) {
             \Log::error('Error al actualizar poda', ['error' => $e->getMessage(), 'user_id' => Auth::id(), 'activity_id' => $this->activity->id]);
-            $this->toastError('Error al actualizar la poda. Por favor, intenta de nuevo.');
+            $this->toastError(__('Error al actualizar la poda. Por favor, intenta de nuevo.'));
         }
     }
 
@@ -93,6 +93,6 @@ class EditPruning extends AbstractActivityForm
     public function render()
     {
         return view('livewire.viticulturist.digital-notebook.edit-pruning', $this->renderData())
-            ->layout('layouts.app', ['title' => 'Editar Poda - Agro365']);
+            ->layout('layouts.app', ['title' => __('Editar Poda - Agro365')]);
     }
 }

@@ -64,7 +64,7 @@ class QuickEntry extends Component
             'notes'            => $this->notes ?: null,
         ]);
 
-        $this->toastSuccess('Actividad registrada.');
+        $this->toastSuccess(__('Actividad registrada.'));
         $this->reset(['activityType', 'plotId', 'notes']);
         $this->step         = 1;
         $this->activityDate = now()->toDateString();
@@ -79,19 +79,19 @@ class QuickEntry extends Component
             ->get(['id', 'name']);
 
         $activityTypes = [
-            'observation'   => ['label' => 'Observación',    'icon' => '👁️',  'color' => 'bg-zinc-100 border-zinc-300 text-zinc-700'],
-            'irrigation'    => ['label' => 'Riego',          'icon' => '💧',  'color' => 'bg-blue-50 border-blue-300 text-blue-700'],
-            'fertilization' => ['label' => 'Fertilización',  'icon' => '🌿',  'color' => 'bg-green-50 border-green-300 text-green-700'],
-            'pruning'       => ['label' => 'Poda',           'icon' => '✂️',  'color' => 'bg-yellow-50 border-yellow-300 text-yellow-700'],
-            'phytosanitary' => ['label' => 'Fitosanitario',  'icon' => '💊',  'color' => 'bg-red-50 border-red-300 text-red-700'],
-            'cultural'      => ['label' => 'Labor cultural', 'icon' => '🚜',  'color' => 'bg-orange-50 border-orange-300 text-orange-700'],
-            'harvest'       => ['label' => 'Cosecha',        'icon' => '🍇',  'color' => 'bg-purple-50 border-purple-300 text-purple-700'],
-            'post_harvest'  => ['label' => 'Post-vendimia',  'icon' => '📦',  'color' => 'bg-indigo-50 border-indigo-300 text-indigo-700'],
+            'observation'   => ['label' => __('Observación'),    'icon' => '👁️',  'color' => 'bg-zinc-100 border-zinc-300 text-zinc-700'],
+            'irrigation'    => ['label' => __('Riego'),          'icon' => '💧',  'color' => 'bg-blue-50 border-blue-300 text-blue-700'],
+            'fertilization' => ['label' => __('Fertilización'),  'icon' => '🌿',  'color' => 'bg-green-50 border-green-300 text-green-700'],
+            'pruning'       => ['label' => __('Poda'),           'icon' => '✂️',  'color' => 'bg-yellow-50 border-yellow-300 text-yellow-700'],
+            'phytosanitary' => ['label' => __('Fitosanitario'),  'icon' => '💊',  'color' => 'bg-red-50 border-red-300 text-red-700'],
+            'cultural'      => ['label' => __('Labor cultural'), 'icon' => '🚜',  'color' => 'bg-orange-50 border-orange-300 text-orange-700'],
+            'harvest'       => ['label' => __('Cosecha'),        'icon' => '🍇',  'color' => 'bg-purple-50 border-purple-300 text-purple-700'],
+            'post_harvest'  => ['label' => __('Post-vendimia'),  'icon' => '📦',  'color' => 'bg-indigo-50 border-indigo-300 text-indigo-700'],
         ];
 
         return view('livewire.viticulturist.quick-entry', [
             'plots'         => $plots,
             'activityTypes' => $activityTypes,
-        ])->layout('layouts.app', ['title' => 'Entrada rápida - Agro365']);
+        ])->layout('layouts.app', ['title' => __('Entrada rápida - Agro365')]);
     }
 }

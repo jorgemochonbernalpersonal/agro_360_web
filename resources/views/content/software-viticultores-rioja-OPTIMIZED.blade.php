@@ -30,7 +30,7 @@
             <div class="flex justify-between items-center h-16">
                 <a href="{{ url('/') }}" class="flex items-center gap-3">
                     <img src="{{ asset('images/logo.png') }}" alt="Agro365" class="h-10 w-auto">
-                    <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">Agro365</span>
+                    <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Agro365') }}</span>
                 </a>
                 <div class="flex items-center gap-4">
                     <a href="{{ url('/') }}" class="text-gray-600 hover:text-[var(--color-agro-green)]">Inicio</a>
@@ -49,27 +49,23 @@
             <nav class="text-sm text-gray-500 mb-6">
                 <a href="{{ url('/') }}" class="hover:text-[var(--color-agro-green)]">Inicio</a> → 
                 <a href="{{ content_route('content.software-viticultores') }}" class="hover:text-[var(--color-agro-green)]">Software Viticultores</a> → 
-                <span class="text-gray-700">Rioja</span>
+                <span class="text-gray-700">{{ __('Rioja') }}</span>
             </nav>
 
             <!-- Header -->
             <div class="mb-12">
                 <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-100 border border-red-300 mb-6">
                     <span class="text-lg">🍷</span>
-                    <span class="text-sm font-semibold text-red-800">DOCa Rioja - Denominación de Origen Calificada</span>
+                    <span class="text-sm font-semibold text-red-800">{{ __('DOCa Rioja - Denominación de Origen Calificada') }}</span>
                 </div>
-                <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">
-                    Software para Viticultores en Rioja
-                </h1>
+                <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">{{ __('Software para Viticultores en Rioja') }}</h1>
                 <p class="text-xl text-gray-600 leading-relaxed">
-                    Gestiona tus viñedos en la <strong>DOCa Rioja</strong> con Agro365. Cuaderno de campo digital, control PAC y cumplimiento del Consejo Regulador. Más de <strong>65.000 hectáreas</strong> de viñedo en la primera Denominación de Origen Calificada de España.
+                    Gestiona tus viñedos en la <strong>{{ __('DOCa Rioja') }}</strong> con Agro365. Cuaderno de campo digital, control PAC y cumplimiento del Consejo Regulador. Más de <strong>{{ __('65.000 hectáreas') }}</strong> de viñedo en la primera Denominación de Origen Calificada de España.
                 </p>
             </div>
 
             <!-- Content continues with the optimized version... -->
-            <p class="text-center text-gray-500 py-12">
-                ✅ Contenido optimizado implementado. Visita la página para ver el contenido completo con datos específicos de Rioja, desafíos locales (heladas, granizo), normativa del Consejo Regulador y funcionalidades especializadas.
-            </p>
+            <p class="text-center text-gray-500 py-12">{{ __('✅ Contenido optimizado implementado. Visita la página para ver el contenido completo con datos específicos de Rioja, desafíos locales (heladas, granizo), normativa del Consejo Regulador y funcionalidades especializadas.') }}</p>
 
         </div>
     </div>

@@ -85,10 +85,10 @@ class Index extends Component
             CampaignDocument::where('viticulturist_id', $user->id)
                 ->findOrFail($this->editingId)
                 ->update($data);
-            $this->toastSuccess('Documento actualizado correctamente.');
+            $this->toastSuccess(__('Documento actualizado correctamente.'));
         } else {
             CampaignDocument::create($data);
-            $this->toastSuccess('Documento subido correctamente.');
+            $this->toastSuccess(__('Documento subido correctamente.'));
         }
 
         $this->showModal = false;
@@ -102,7 +102,7 @@ class Index extends Component
             Storage::disk('private')->delete($doc->file_path);
         }
         $doc->delete();
-        $this->toastSuccess('Documento eliminado.');
+        $this->toastSuccess(__('Documento eliminado.'));
     }
 
     protected function rules(): array

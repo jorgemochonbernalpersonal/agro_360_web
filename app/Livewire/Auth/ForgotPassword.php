@@ -55,7 +55,7 @@ class ForgotPassword extends Component
                 $this->email = ''; // Limpiar el campo
             } else {
                 // Por seguridad, siempre mostrar el mismo mensaje aunque el email no exista
-                $this->toastSuccess('Si el email existe en nuestro sistema, recibirás un enlace de restablecimiento de contraseña.');
+                $this->toastSuccess(__('Si el email existe en nuestro sistema, recibirás un enlace de restablecimiento de contraseña.'));
                 $this->email = ''; // Limpiar el campo
             }
         } catch (\Exception $e) {
@@ -69,10 +69,10 @@ class ForgotPassword extends Component
             
             // En desarrollo, mostrar el error detallado
             if (app()->environment('local')) {
-                $this->toastError('Error al enviar el correo: ' . $e->getMessage() . '. Revisa los logs y MailHog.');
+                $this->toastError(__('Error al enviar el correo: :error. Revisa los logs y MailHog.', ['error' => $e->getMessage()]));
             } else {
                 // En producción, mensaje genérico por seguridad
-                $this->toastSuccess('Si el email existe en nuestro sistema, recibirás un enlace de restablecimiento de contraseña.');
+                $this->toastSuccess(__('Si el email existe en nuestro sistema, recibirás un enlace de restablecimiento de contraseña.'));
             }
             $this->email = '';
         }

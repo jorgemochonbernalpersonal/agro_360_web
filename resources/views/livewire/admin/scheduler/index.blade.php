@@ -1,7 +1,7 @@
 <div class="space-y-6 animate-fade-in">
     <x-agro.page-header
-        title="Tareas Programadas"
-        description="Monitor del scheduler de Laravel — comandos definidos en routes/console.php"
+        title="{{ __('Tareas Programadas') }}"
+        :description="__('Monitor del scheduler de Laravel — comandos definidos en routes/console.php')"
     >
         <x-slot:actions>
             @if($failedCount > 0)
@@ -9,14 +9,14 @@
                     <flux:badge color="red">{{ $failedCount }} job(s) fallido(s)</flux:badge>
                 </a>
             @else
-                <flux:badge color="agro">Cola limpia</flux:badge>
+                <flux:badge color="agro">{{ __('Cola limpia') }}</flux:badge>
             @endif
         </x-slot:actions>
     </x-agro.page-header>
 
     <div class="rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800 flex items-center gap-2">
         <flux:icon icon="information-circle" class="size-4 flex-shrink-0" />
-        <span>El "último ejecutado" solo se registra cuando se usa el botón "Ejecutar ahora" desde esta página. Para producción, el cron ejecuta estas tareas automáticamente.</span>
+        <span>{{ __('El "último ejecutado" solo se registra cuando se usa el botón "Ejecutar ahora" desde esta página. Para producción, el cron ejecuta estas tareas automáticamente.') }}</span>
     </div>
 
     <x-agro.card :padding="false">
@@ -34,13 +34,13 @@
                             @if($task['last_run'])
                                 <span class="text-xs text-zinc-400">Último: {{ $task['last_run'] }}</span>
                             @else
-                                <span class="text-xs text-zinc-300">Sin registro</span>
+                                <span class="text-xs text-zinc-300">{{ __('Sin registro') }}</span>
                             @endif
                         </div>
                     </div>
                     <flux:button
                         wire:click="runNow('{{ $task['command'] }}')"
-                        wire:confirm="¿Ejecutar '{{ $task['command'] }}' ahora? El comando se ejecutará de forma sincrónica."
+                        wire:confirm="{{ __('¿Ejecutar \':command\' ahora? El comando se ejecutará de forma sincrónica.', ['command' => $task['command']]) }}"
                         wire:loading.attr="disabled"
                         variant="ghost"
                         size="sm"

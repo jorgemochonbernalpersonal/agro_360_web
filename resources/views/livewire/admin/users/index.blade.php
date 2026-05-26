@@ -1,15 +1,11 @@
 <div class="space-y-6 animate-fade-in">
     <x-agro.page-header
-        title="Usuarios"
-        description="Gestiona todos los usuarios del sistema"
+        title="{{ __('Usuarios') }}"
+        :description="__('Gestiona todos los usuarios del sistema')"
     >
         <x-slot:actions>
-            <flux:button wire:click="exportCsv" variant="ghost" icon="arrow-down-tray">
-                Exportar CSV
-            </flux:button>
-            <flux:button wire:click="openCreateModal" variant="primary" icon="plus">
-                Nuevo Usuario
-            </flux:button>
+            <flux:button wire:click="exportCsv" variant="ghost" icon="arrow-down-tray">{{ __('Exportar CSV') }}</flux:button>
+            <flux:button wire:click="openCreateModal" variant="primary" icon="plus">{{ __('Nuevo Usuario') }}</flux:button>
         </x-slot:actions>
     </x-agro.page-header>
 
@@ -25,7 +21,7 @@
             @click="toggle()"
             class="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-widest hover:text-zinc-600 transition-colors mb-3"
         >
-            <span>Estadísticas</span>
+            <span>{{ __('Estadísticas') }}</span>
             <flux:icon icon="chevron-up" class="size-3.5 transition-transform duration-200" ::class="{ 'rotate-180': !open }" />
         </button>
         <div
@@ -38,10 +34,10 @@
             x-transition:leave-end="opacity-0 -translate-y-1"
         >
             <div class="grid grid-cols-2 gap-4">
-                <x-agro.stat-card label="Total Usuarios"  :value="$stats['total']"       icon="users"        color="purple" />
-                <x-agro.stat-card label="Activos"          :value="$stats['active']"      icon="check-circle" color="agro"   />
-                <x-agro.stat-card label="Verificados"      :value="$stats['verified']"    icon="envelope"     color="blue"   />
-                <x-agro.stat-card label="Beta Activos"     :value="$stats['beta_active']" icon="clock"        color="orange" />
+                <x-agro.stat-card :label="__('Total Usuarios')"  :value="$stats['total']"       icon="users"        color="purple" />
+                <x-agro.stat-card :label="__('Activos')"          :value="$stats['active']"      icon="check-circle" color="agro"   />
+                <x-agro.stat-card :label="__('Verificados')"      :value="$stats['verified']"    icon="envelope"     color="blue"   />
+                <x-agro.stat-card :label="__('Beta Activos')"     :value="$stats['beta_active']" icon="clock"        color="orange" />
             </div>
         </div>
     </div>
@@ -66,34 +62,34 @@
         {{-- Filtros --}}
         <div class="px-6 pb-3">
             <x-agro.filter-bar class="mb-0">
-                <x-agro.filter-input wire:model.live="search" placeholder="Buscar por nombre o email..." />
+                <x-agro.filter-input wire:model.live="search" :placeholder="__('Buscar por nombre o email...')" />
                 <x-agro.filter-select wire:model.live="filterActive">
-                    <option value="">Todos los estados</option>
-                    <option value="1">Activos</option>
-                    <option value="0">Inactivos</option>
+                    <option value="">{{ __('Todos los estados') }}</option>
+                    <option value="1">{{ __('Activos') }}</option>
+                    <option value="0">{{ __('Inactivos') }}</option>
                 </x-agro.filter-select>
                 <x-agro.filter-select wire:model.live="filterVerified">
-                    <option value="">Verificación email</option>
-                    <option value="1">Verificado</option>
-                    <option value="0">No verificado</option>
+                    <option value="">{{ __('Verificación email') }}</option>
+                    <option value="1">{{ __('Verificado') }}</option>
+                    <option value="0">{{ __('No verificado') }}</option>
                 </x-agro.filter-select>
                 <x-agro.filter-select wire:model.live="filterBeta">
-                    <option value="">Estado beta</option>
-                    <option value="active">Beta activo</option>
-                    <option value="expired">Beta expirado</option>
-                    <option value="never">Sin beta</option>
+                    <option value="">{{ __('Estado beta') }}</option>
+                    <option value="active">{{ __('Beta activo') }}</option>
+                    <option value="expired">{{ __('Beta expirado') }}</option>
+                    <option value="never">{{ __('Sin beta') }}</option>
                 </x-agro.filter-select>
                 {{-- Rango de fecha de registro --}}
                 <input
                     type="date"
                     wire:model.live="filterDateFrom"
-                    title="Registro desde"
+                    title="{{ __('Registro desde') }}"
                     class="text-xs border border-zinc-200 rounded-md px-2 py-1.5 text-zinc-700 focus:outline-none focus:ring-2 focus:ring-agro-500 h-9"
                 />
                 <input
                     type="date"
                     wire:model.live="filterDateTo"
-                    title="Registro hasta"
+                    title="{{ __('Registro hasta') }}"
                     class="text-xs border border-zinc-200 rounded-md px-2 py-1.5 text-zinc-700 focus:outline-none focus:ring-2 focus:ring-agro-500 h-9"
                 />
                 <flux:button
@@ -113,15 +109,15 @@
         @if($showInternal)
         <div class="mx-6 mb-3 flex items-center gap-2 rounded-lg bg-amber-50 border border-amber-200 px-4 py-2.5 text-sm text-amber-800">
             <flux:icon icon="bug-ant" class="size-4 flex-shrink-0" />
-            <span>Mostrando también cuentas internas (demo / test / maestro). Las estadísticas siempre reflejan solo usuarios reales.</span>
-            <button wire:click="toggleInternal" class="ml-auto text-amber-600 hover:text-amber-800 font-medium text-xs">Ocultar</button>
+            <span>{{ __('Mostrando también cuentas internas (demo / test / maestro). Las estadísticas siempre reflejan solo usuarios reales.') }}</span>
+            <button wire:click="toggleInternal" class="ml-auto text-amber-600 hover:text-amber-800 font-medium text-xs">{{ __('Ocultar') }}</button>
         </div>
         @endif
 
         {{-- Fecha fin beta configurable --}}
         <div class="px-6 pb-3 flex items-center gap-2 text-xs text-zinc-500 border-t border-zinc-100 pt-3">
             <flux:icon icon="clock" class="size-3.5 flex-shrink-0" />
-            <span>Fecha fin beta para nuevas activaciones:</span>
+            <span>{{ __('Fecha fin beta para nuevas activaciones:') }}</span>
             <input
                 type="date"
                 wire:model.live="betaEndsAt"
@@ -135,25 +131,23 @@
             <span class="text-sm font-semibold text-blue-800">{{ count($selectedUsers) }} seleccionados</span>
             <div class="flex items-center gap-1.5 ml-2">
                 <flux:button size="xs" variant="ghost" wire:click="bulkActivate"
-                    wire:confirm="¿Activar los {{ count($selectedUsers) }} usuarios seleccionados?">
+                    wire:confirm="{{ __('¿Activar los :count usuarios seleccionados?', ['count' => count($selectedUsers)]) }}">
                     Activar
                 </flux:button>
                 <flux:button size="xs" variant="ghost" wire:click="bulkDeactivate"
-                    wire:confirm="¿Desactivar los {{ count($selectedUsers) }} usuarios seleccionados?">
+                    wire:confirm="{{ __('¿Desactivar los :count usuarios seleccionados?', ['count' => count($selectedUsers)]) }}">
                     Desactivar
                 </flux:button>
                 <flux:button size="xs" variant="ghost" wire:click="bulkEnableBeta"
-                    wire:confirm="¿Activar beta para los {{ count($selectedUsers) }} usuarios seleccionados?">
+                    wire:confirm="{{ __('¿Activar beta para los :count usuarios seleccionados?', ['count' => count($selectedUsers)]) }}">
                     Beta ON
                 </flux:button>
                 <flux:button size="xs" variant="ghost" wire:click="bulkDisableBeta"
-                    wire:confirm="¿Desactivar beta para los {{ count($selectedUsers) }} usuarios seleccionados?">
+                    wire:confirm="{{ __('¿Desactivar beta para los :count usuarios seleccionados?', ['count' => count($selectedUsers)]) }}">
                     Beta OFF
                 </flux:button>
             </div>
-            <flux:button size="xs" variant="ghost" class="ml-auto text-zinc-500" wire:click="clearSelection">
-                Deseleccionar
-            </flux:button>
+            <flux:button size="xs" variant="ghost" class="ml-auto text-zinc-500" wire:click="clearSelection">{{ __('Deseleccionar') }}</flux:button>
         </div>
         @endif
 
@@ -173,13 +167,13 @@
                                     : $wire.selectedUsers = []"
                             />
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold text-zinc-600 uppercase tracking-wider">Usuario</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold text-zinc-600 uppercase tracking-wider">Rol</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold text-zinc-600 uppercase tracking-wider">Email</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold text-zinc-600 uppercase tracking-wider">Estado</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold text-zinc-600 uppercase tracking-wider">Registro</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold text-zinc-600 uppercase tracking-wider">Última conexión</th>
-                        <th class="px-6 py-3 text-right text-xs font-semibold text-zinc-600 uppercase tracking-wider">Acciones</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-zinc-600 uppercase tracking-wider">{{ __('Usuario') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-zinc-600 uppercase tracking-wider">{{ __('Rol') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-zinc-600 uppercase tracking-wider">{{ __('Email') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-zinc-600 uppercase tracking-wider">{{ __('Estado') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-zinc-600 uppercase tracking-wider">{{ __('Registro') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-zinc-600 uppercase tracking-wider">{{ __('Última conexión') }}</th>
+                        <th class="px-6 py-3 text-right text-xs font-semibold text-zinc-600 uppercase tracking-wider">{{ __('Acciones') }}</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-zinc-100">
@@ -213,7 +207,7 @@
                                         <div class="flex items-center gap-1.5">
                                             <p class="text-sm font-semibold text-zinc-900">{{ $user->name }}</p>
                                             @if($user->isInternal())
-                                                <flux:badge color="yellow" size="sm">Interno</flux:badge>
+                                                <flux:badge color="yellow" size="sm">{{ __('Interno') }}</flux:badge>
                                             @endif
                                         </div>
                                         <p class="text-xs text-zinc-400">ID: {{ $user->id }}</p>
@@ -225,7 +219,7 @@
                                 <div class="flex items-center gap-1.5 flex-wrap">
                                     <flux:badge :color="$roleInfo['color']" size="sm">{{ $roleInfo['label'] }}</flux:badge>
                                     @if($user->is_readonly_admin)
-                                        <flux:badge color="zinc" size="sm">Solo lectura</flux:badge>
+                                        <flux:badge color="zinc" size="sm">{{ __('Solo lectura') }}</flux:badge>
                                     @endif
                                 </div>
                             </x-agro.table-cell>
@@ -238,12 +232,12 @@
                                 @if($user->email_verified_at)
                                     <div class="flex items-center gap-1 mt-0.5 text-xs text-agro-600">
                                         <flux:icon icon="check-circle" class="size-3" />
-                                        <span>Verificado</span>
+                                        <span>{{ __('Verificado') }}</span>
                                     </div>
                                 @else
                                     <div class="flex items-center gap-1 mt-0.5 text-xs text-zinc-400">
                                         <flux:icon icon="x-circle" class="size-3" />
-                                        <span>No verificado</span>
+                                        <span>{{ __('No verificado') }}</span>
                                     </div>
                                 @endif
                             </x-agro.table-cell>
@@ -253,9 +247,9 @@
                                     <x-agro.status-badge :active="$user->can_login" />
                                     @if($user->is_beta_user)
                                         @if($user->beta_ends_at && $user->beta_ends_at->isPast())
-                                            <x-agro.status-badge label="Beta expirado" type="gray" />
+                                            <x-agro.status-badge :label="__('Beta expirado')" type="gray" />
                                         @else
-                                            <x-agro.status-badge label="Beta activo" type="warning" />
+                                            <x-agro.status-badge :label="__('Beta activo')" type="warning" />
                                         @endif
                                     @endif
                                 </div>
@@ -271,7 +265,7 @@
                                     <p class="text-sm text-zinc-700">{{ $user->last_login_at->format('d/m/Y H:i') }}</p>
                                     <p class="text-xs text-zinc-400">{{ $user->last_login_at->diffForHumans() }}</p>
                                 @else
-                                    <p class="text-xs text-zinc-400">Nunca</p>
+                                    <p class="text-xs text-zinc-400">{{ __('Nunca') }}</p>
                                 @endif
                             </x-agro.table-cell>
 
@@ -296,7 +290,7 @@
                                             size="sm"
                                             icon="clock"
                                             wire:click="toggleBeta({{ $user->id }})"
-                                            wire:confirm="{{ $user->is_beta_user ? '¿Quitar acceso beta a este usuario?' : '¿Dar acceso beta a este usuario?' }}"
+                                            wire:confirm="{{ $user->is_beta_user ? __('¿Quitar acceso beta a este usuario?') : __('¿Dar acceso beta a este usuario?') }}"
                                             tooltip="{{ $user->is_beta_user ? 'Quitar beta' : 'Dar beta' }}"
                                             @class(['text-yellow-500' => $user->is_beta_user])
                                         />
@@ -308,7 +302,7 @@
                                             size="sm"
                                             icon="arrow-right-end-on-rectangle"
                                             wire:click="impersonate({{ $user->id }})"
-                                            wire:confirm="¿Entrar como {{ $user->name }}? Podrás volver a tu sesión de admin en cualquier momento."
+                                            wire:confirm="{{ __('¿Entrar como :name? Podrás volver a tu sesión de admin en cualquier momento.', ['name' => $user->name]) }}"
                                             tooltip="Entrar como este usuario"
                                         />
                                     @endif
@@ -320,7 +314,7 @@
                                             icon="trash"
                                             class="text-red-400 hover:text-red-600"
                                             wire:click="deleteUser({{ $user->id }})"
-                                            wire:confirm="¿Eliminar a {{ $user->name }}? Esta acción no se puede deshacer."
+                                            wire:confirm="{{ __('¿Eliminar a :name? Esta acción no se puede deshacer.', ['name' => $user->name]) }}"
                                             tooltip="Eliminar usuario"
                                         />
                                     @endif
@@ -332,8 +326,8 @@
                             <td colspan="8">
                                 <x-agro.empty-state
                                     icon="users"
-                                    message="No se encontraron usuarios"
-                                    description="Intenta ajustar los filtros de búsqueda"
+                                    :message="__('No se encontraron usuarios')"
+                                    :description="__('Intenta ajustar los filtros de búsqueda')"
                                 />
                             </td>
                         </tr>
@@ -353,57 +347,57 @@
                     <flux:icon icon="user-plus" class="size-5 text-purple-600" />
                 </div>
                 <div>
-                    <h3 class="text-base font-semibold text-zinc-900">Nuevo Usuario</h3>
-                    <p class="text-xs text-zinc-500">Crea una nueva cuenta en el sistema</p>
+                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Nuevo Usuario') }}</h3>
+                    <p class="text-xs text-zinc-500">{{ __('Crea una nueva cuenta en el sistema') }}</p>
                 </div>
             </div>
 
             <div class="space-y-4">
                 <div>
-                    <label class="block text-xs font-medium text-zinc-700 mb-1">Nombre completo</label>
-                    <flux:input wire:model="createName" placeholder="Nombre del usuario" />
+                    <label class="block text-xs font-medium text-zinc-700 mb-1">{{ __('Nombre completo') }}</label>
+                    <flux:input wire:model="createName" :placeholder="__('Nombre del usuario')" />
                     @error('createName') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 <div>
-                    <label class="block text-xs font-medium text-zinc-700 mb-1">Email</label>
+                    <label class="block text-xs font-medium text-zinc-700 mb-1">{{ __('Email') }}</label>
                     <flux:input wire:model="createEmail" type="email" placeholder="email@ejemplo.com" />
                     @error('createEmail') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 <div>
-                    <label class="block text-xs font-medium text-zinc-700 mb-1">Rol</label>
+                    <label class="block text-xs font-medium text-zinc-700 mb-1">{{ __('Rol') }}</label>
                     <flux:select wire:model="createRole">
-                        <option value="viticulturist">Viticultor</option>
-                        <option value="winery">Bodega</option>
-                        <option value="supervisor">Supervisor</option>
-                        <option value="producer">Productor</option>
-                        <option value="admin">Admin</option>
+                        <option value="viticulturist">{{ __('Viticultor') }}</option>
+                        <option value="winery">{{ __('Bodega') }}</option>
+                        <option value="supervisor">{{ __('Supervisor') }}</option>
+                        <option value="producer">{{ __('Productor') }}</option>
+                        <option value="admin">{{ __('Admin') }}</option>
                     </flux:select>
                     @error('createRole') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 <div>
-                    <label class="block text-xs font-medium text-zinc-700 mb-1">Contraseña</label>
-                    <flux:input wire:model="createPassword" type="password" placeholder="Mínimo 8 caracteres" />
+                    <label class="block text-xs font-medium text-zinc-700 mb-1">{{ __('Contraseña') }}</label>
+                    <flux:input wire:model="createPassword" type="password" :placeholder="__('Mínimo 8 caracteres')" />
                     @error('createPassword') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 <div class="space-y-2 pt-1">
                     <label class="flex items-center gap-2 cursor-pointer">
                         <input type="checkbox" wire:model="createForceReset" class="rounded border-zinc-300 text-agro-600 focus:ring-agro-500" />
-                        <span class="text-sm text-zinc-700">Forzar cambio de contraseña en primer acceso</span>
+                        <span class="text-sm text-zinc-700">{{ __('Forzar cambio de contraseña en primer acceso') }}</span>
                     </label>
                     <label class="flex items-center gap-2 cursor-pointer">
                         <input type="checkbox" wire:model="createSendVerification" class="rounded border-zinc-300 text-agro-600 focus:ring-agro-500" />
-                        <span class="text-sm text-zinc-700">Enviar email de verificación</span>
+                        <span class="text-sm text-zinc-700">{{ __('Enviar email de verificación') }}</span>
                     </label>
                 </div>
             </div>
 
             <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-zinc-100">
-                <flux:button variant="ghost" wire:click="closeCreateModal">Cancelar</flux:button>
-                <flux:button variant="primary" wire:click="createUser">Crear Usuario</flux:button>
+                <flux:button variant="ghost" wire:click="closeCreateModal">{{ __('Cancelar') }}</flux:button>
+                <flux:button variant="primary" wire:click="createUser">{{ __('Crear Usuario') }}</flux:button>
             </div>
         </div>
     </flux:modal>

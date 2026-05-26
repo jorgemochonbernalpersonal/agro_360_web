@@ -89,7 +89,7 @@ class Create extends Component
         if ($this->container_id) {
             $container = Container::where('user_id', Auth::id())->find($this->container_id);
             if ($container && $container->wine_volume_liters < (float) $this->quantity) {
-                $this->addError('quantity', 'El contenedor solo tiene ' . number_format($container->wine_volume_liters, 1) . ' L de vino disponibles.');
+                $this->addError('quantity', __('El depósito solo tiene :volume L disponibles para embotellar.', ['volume' => number_format($container->wine_volume_liters, 1)]));
                 return;
             }
         }
@@ -109,7 +109,7 @@ class Create extends Component
 
         app(WineContainerStockService::class)->recordLoss($loss);
 
-        $this->toastSuccess('Merma registrada correctamente.');
+        $this->toastSuccess(__('Merma registrada correctamente.'));
         $this->redirect(roleRoute('wine-losses.index'), navigate: true);
     }
 

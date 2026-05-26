@@ -1,24 +1,24 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="Disputas abiertas"
-        description="Entregas declaradas por viticultores con diferencia pendiente de respuesta"
+        title="{{ __('Disputas abiertas') }}"
+        :description="__('Entregas declaradas por viticultores con diferencia pendiente de respuesta')"
     />
 
     {{-- Filtros --}}
     <div class="flex flex-wrap items-center gap-3">
 
         <flux:select wire:model.live="vintageFilter">
-            <flux:select.option value="">Todas las añadas</flux:select.option>
+            <flux:select.option value="">{{ __('Todas las añadas') }}</flux:select.option>
             @foreach($vintageYears as $year)
                 <flux:select.option value="{{ $year }}">{{ $year }}</flux:select.option>
             @endforeach
         </flux:select>
 
         <flux:select wire:model.live="noteFilter">
-            <flux:select.option value="">Todas las reclamaciones</flux:select.option>
-            <flux:select.option value="with_note">Con nota enviada</flux:select.option>
-            <flux:select.option value="without_note">Sin nota aún</flux:select.option>
+            <flux:select.option value="">{{ __('Todas las reclamaciones') }}</flux:select.option>
+            <flux:select.option value="with_note">{{ __('Con nota enviada') }}</flux:select.option>
+            <flux:select.option value="without_note">{{ __('Sin nota aún') }}</flux:select.option>
         </flux:select>
 
         @if($disputes->count() > 0)
@@ -58,24 +58,24 @@
                                 <span class="text-sm text-zinc-500">{{ $plot }}</span>
                                 <flux:badge color="zinc" size="sm">{{ $delivery->vintage_year }}</flux:badge>
                                 @if($hasNote)
-                                    <flux:badge color="amber" size="sm">Con reclamación</flux:badge>
+                                    <flux:badge color="amber" size="sm">{{ __('Con reclamación') }}</flux:badge>
                                 @else
-                                    <flux:badge color="zinc" size="sm">Sin nota aún</flux:badge>
+                                    <flux:badge color="zinc" size="sm">{{ __('Sin nota aún') }}</flux:badge>
                                 @endif
                             </div>
 
                             {{-- Diferencia --}}
                             <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs mb-3">
                                 <div>
-                                    <p class="text-zinc-400 uppercase tracking-wide font-medium mb-0.5">Declarado</p>
+                                    <p class="text-zinc-400 uppercase tracking-wide font-medium mb-0.5">{{ __('Declarado') }}</p>
                                     <p class="font-bold text-violet-700">{{ number_format($delivery->delivered_kg, 0) }} kg</p>
                                 </div>
                                 <div>
-                                    <p class="text-zinc-400 uppercase tracking-wide font-medium mb-0.5">Recibido</p>
+                                    <p class="text-zinc-400 uppercase tracking-wide font-medium mb-0.5">{{ __('Recibido') }}</p>
                                     <p class="font-bold text-blue-700">{{ $delivery->harvest ? number_format($delivery->harvest->total_weight, 0) . ' kg' : '—' }}</p>
                                 </div>
                                 <div>
-                                    <p class="text-zinc-400 uppercase tracking-wide font-medium mb-0.5">Diferencia</p>
+                                    <p class="text-zinc-400 uppercase tracking-wide font-medium mb-0.5">{{ __('Diferencia') }}</p>
                                     <p class="font-bold text-amber-600">
                                         {{ number_format($delivery->discrepancy_kg, 0) }} kg
                                         @if($delivery->discrepancyPercentage())
@@ -84,7 +84,7 @@
                                     </p>
                                 </div>
                                 <div>
-                                    <p class="text-zinc-400 uppercase tracking-wide font-medium mb-0.5">Ticket</p>
+                                    <p class="text-zinc-400 uppercase tracking-wide font-medium mb-0.5">{{ __('Ticket') }}</p>
                                     <p class="font-mono text-zinc-600">{{ $delivery->ticket_number ?? '—' }}</p>
                                 </div>
                             </div>
@@ -98,7 +98,7 @@
                                     <p class="text-xs text-amber-800 line-clamp-2">{{ $delivery->dispute_note }}</p>
                                 </div>
                             @else
-                                <p class="text-xs text-zinc-400 italic mb-2">El viticultor aún no ha enviado su nota de reclamación.</p>
+                                <p class="text-xs text-zinc-400 italic mb-2">{{ __('El viticultor aún no ha enviado su nota de reclamación.') }}</p>
                             @endif
                         </div>
 
@@ -124,7 +124,7 @@
     @else
         <x-agro.empty-state
             icon="check-circle"
-            message="Sin disputas abiertas"
+            :message="__('Sin disputas abiertas')"
             description="No hay entregas con diferencias pendientes de resolver{{ $vintageFilter ? ' para la añada ' . $vintageFilter : '' }}."
         />
     @endif

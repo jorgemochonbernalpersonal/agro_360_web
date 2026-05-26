@@ -79,7 +79,7 @@ class Index extends Component
                 },
             ],
         ], [
-            'linkWineryId.required' => 'Selecciona una bodega.',
+            'linkWineryId.required' => __('Selecciona una bodega.'),
         ]);
 
         $doId   = Auth::id();
@@ -115,7 +115,7 @@ class Index extends Component
         $winery = User::find($wineryId);
         $relation->delete();
 
-        $this->toastSuccess(($winery?->name ?? 'La bodega') . ' desvinculada de la denominación.');
+        $this->toastSuccess(__(':name desvinculada de la denominación.', ['name' => $winery?->name ?? __('La bodega')]));
     }
 
     #[Layout('layouts.app')]

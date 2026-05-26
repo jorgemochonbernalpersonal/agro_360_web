@@ -80,26 +80,26 @@ class SpectralBandsCard extends Component
             $this->indices = [
                 'ndvi' => [
                     'value'       => $remoteSensing->ndvi_mean,
-                    'label'       => 'NDVI',
-                    'description' => 'Vigor vegetativo general',
+                    'label'       => __('NDVI'),
+                    'description' => __('Vigor vegetativo general'),
                     'color'       => 'green',
                 ],
                 'gndvi' => [
                     'value'       => $remoteSensing->gndvi,
-                    'label'       => 'GNDVI',
-                    'description' => 'Contenido de nitrógeno/clorofila',
+                    'label'       => __('GNDVI'),
+                    'description' => __('Contenido de nitrógeno/clorofila'),
                     'color'       => 'emerald',
                 ],
                 'ndwi' => [
                     'value'       => $remoteSensing->ndwi_mean,
-                    'label'       => 'NDWI',
-                    'description' => 'Contenido de agua en vegetación',
+                    'label'       => __('NDWI'),
+                    'description' => __('Contenido de agua en vegetación'),
                     'color'       => 'blue',
                 ],
                 'ndre' => [
                     'value'       => $remoteSensing->ndre,
-                    'label'       => 'NDRE',
-                    'description' => 'Clorofila sin saturación (Red-Edge)',
+                    'label'       => __('NDRE'),
+                    'description' => __('Clorofila sin saturación (Red-Edge)'),
                     'color'       => 'lime',
                 ],
             ];
@@ -121,7 +121,7 @@ class SpectralBandsCard extends Component
         
         $this->dispatch('notify', [
             'type' => 'success',
-            'message' => 'Datos espectrales actualizados',
+            'message' => __('Datos espectrales actualizados'),
         ]);
     }
 

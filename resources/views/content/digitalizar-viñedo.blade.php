@@ -52,7 +52,7 @@
                 <div class="flex items-center gap-3">
                     <a href="{{ url('/') }}" class="flex items-center gap-3">
                         <img src="{{ asset('images/logo.png') }}" alt="Agro365" width="120" height="40" loading="eager" fetchpriority="high" decoding="async" class="h-10 w-auto">
-                        <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">Agro365</span>
+                        <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Agro365') }}</span>
                     </a>
                 </div>
                 <div class="flex items-center gap-4">
@@ -80,55 +80,53 @@
             <nav class="mb-8 text-sm text-gray-600">
                 <a href="{{ url('/') }}" class="hover:text-[var(--color-agro-green)]">Inicio</a>
                 <span class="mx-2">/</span>
-                <span class="text-gray-900">Digitalizar Viñedo</span>
+                <span class="text-gray-900">{{ __('Digitalizar Viñedo') }}</span>
             </nav>
 
             <!-- Header -->
             <div class="mb-12">
-                <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">
-                    Cómo Digitalizar tu Viñedo: Guía Completa 2027
-                </h1>
+                <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">{{ __('Cómo Digitalizar tu Viñedo: Guía Completa 2027') }}</h1>
                 <p class="text-xl text-gray-600 leading-relaxed">
-                    Guía paso a paso para <strong>digitalizar tu viñedo</strong> y modernizar tu gestión agrícola. Descubre los beneficios, herramientas necesarias y cómo Agro365 puede ayudarte en el proceso.
+                    Guía paso a paso para <strong>{{ __('digitalizar tu viñedo') }}</strong> y modernizar tu gestión agrícola. Descubre los beneficios, herramientas necesarias y cómo Agro365 puede ayudarte en el proceso.
                 </p>
             </div>
 
             <!-- Content -->
             <article class="prose prose-lg max-w-none">
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">¿Por Qué Digitalizar tu Viñedo?</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('¿Por Qué Digitalizar tu Viñedo?') }}</h2>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        La digitalización del viñedo no es solo una tendencia, es una <strong>necesidad obligatoria desde 2027</strong> según la normativa europea. Pero además de cumplir con la ley, digitalizar tu viñedo te ofrece beneficios reales:
+                        La digitalización del viñedo no es solo una tendencia, es una <strong>{{ __('necesidad obligatoria desde 2027') }}</strong> según la normativa europea. Pero además de cumplir con la ley, digitalizar tu viñedo te ofrece beneficios reales:
                     </p>
                     <div class="grid md:grid-cols-2 gap-6 mb-6">
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">⏱️ Ahorro de Tiempo</h3>
-                            <p class="text-gray-700">Reduce el tiempo de gestión administrativa en un 70%. Más tiempo para lo que realmente importa: tu viñedo.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('⏱️ Ahorro de Tiempo') }}</h3>
+                            <p class="text-gray-700">{{ __('Reduce el tiempo de gestión administrativa en un 70%. Más tiempo para lo que realmente importa: tu viñedo.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">✅ Cumplimiento Normativo</h3>
-                            <p class="text-gray-700">Cumple automáticamente con todas las normativas vigentes. Sin preocupaciones, sin multas.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('✅ Cumplimiento Normativo') }}</h3>
+                            <p class="text-gray-700">{{ __('Cumple automáticamente con todas las normativas vigentes. Sin preocupaciones, sin multas.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">📊 Decisiones Basadas en Datos</h3>
-                            <p class="text-gray-700">Toma decisiones basadas en datos reales. Analiza rendimientos, costos y optimiza tu rentabilidad.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('📊 Decisiones Basadas en Datos') }}</h3>
+                            <p class="text-gray-700">{{ __('Toma decisiones basadas en datos reales. Analiza rendimientos, costos y optimiza tu rentabilidad.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">🔍 Trazabilidad Completa</h3>
-                            <p class="text-gray-700">Trazabilidad completa desde la parcela hasta la facturación. Perfecto para certificaciones y calidad.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('🔍 Trazabilidad Completa') }}</h3>
+                            <p class="text-gray-700">{{ __('Trazabilidad completa desde la parcela hasta la facturación. Perfecto para certificaciones y calidad.') }}</p>
                         </div>
                     </div>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Pasos para Digitalizar tu Viñedo</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Pasos para Digitalizar tu Viñedo') }}</h2>
                     <div class="space-y-6 mb-6">
                         <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-[var(--color-agro-green)]">
                             <div class="flex items-start gap-4">
                                 <div class="flex-shrink-0 w-10 h-10 rounded-full bg-[var(--color-agro-green)] text-white flex items-center justify-center font-bold text-lg">1</div>
                                 <div>
-                                    <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)] mb-2">Registra tus Parcelas SIGPAC</h3>
-                                    <p class="text-gray-700">El primer paso es registrar todas tus parcelas con sus códigos SIGPAC. Esto es obligatorio desde 2027 y es la base de toda la digitalización.</p>
+                                    <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)] mb-2">{{ __('Registra tus Parcelas SIGPAC') }}</h3>
+                                    <p class="text-gray-700">{{ __('El primer paso es registrar todas tus parcelas con sus códigos SIGPAC. Esto es obligatorio desde 2027 y es la base de toda la digitalización.') }}</p>
                                 </div>
                             </div>
                         </div>
@@ -136,8 +134,8 @@
                             <div class="flex items-start gap-4">
                                 <div class="flex-shrink-0 w-10 h-10 rounded-full bg-[var(--color-agro-green)] text-white flex items-center justify-center font-bold text-lg">2</div>
                                 <div>
-                                    <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)] mb-2">Configura tu Cuaderno Digital</h3>
-                                    <p class="text-gray-700">Configura tu cuaderno de campo digital. Asegúrate de que incluya todos los campos obligatorios: tratamientos, riegos, fertilizaciones y labores.</p>
+                                    <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)] mb-2">{{ __('Configura tu Cuaderno Digital') }}</h3>
+                                    <p class="text-gray-700">{{ __('Configura tu cuaderno de campo digital. Asegúrate de que incluya todos los campos obligatorios: tratamientos, riegos, fertilizaciones y labores.') }}</p>
                                 </div>
                             </div>
                         </div>
@@ -145,8 +143,8 @@
                             <div class="flex items-start gap-4">
                                 <div class="flex-shrink-0 w-10 h-10 rounded-full bg-[var(--color-agro-green)] text-white flex items-center justify-center font-bold text-lg">3</div>
                                 <div>
-                                    <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)] mb-2">Registra Actividades en Tiempo Real</h3>
-                                    <p class="text-gray-700">Comienza a registrar todas tus actividades agrícolas en tiempo real. Desde el móvil directamente en el viñedo, sin esperar a llegar a casa.</p>
+                                    <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)] mb-2">{{ __('Registra Actividades en Tiempo Real') }}</h3>
+                                    <p class="text-gray-700">{{ __('Comienza a registrar todas tus actividades agrícolas en tiempo real. Desde el móvil directamente en el viñedo, sin esperar a llegar a casa.') }}</p>
                                 </div>
                             </div>
                         </div>
@@ -154,8 +152,8 @@
                             <div class="flex items-start gap-4">
                                 <div class="flex-shrink-0 w-10 h-10 rounded-full bg-[var(--color-agro-green)] text-white flex items-center justify-center font-bold text-lg">4</div>
                                 <div>
-                                    <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)] mb-2">Gestiona Cosechas y Rendimientos</h3>
-                                    <p class="text-gray-700">Digitaliza la gestión de tus cosechas. Registra contenedores, compara rendimientos estimados vs reales y analiza por parcela y variedad.</p>
+                                    <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)] mb-2">{{ __('Gestiona Cosechas y Rendimientos') }}</h3>
+                                    <p class="text-gray-700">{{ __('Digitaliza la gestión de tus cosechas. Registra contenedores, compara rendimientos estimados vs reales y analiza por parcela y variedad.') }}</p>
                                 </div>
                             </div>
                         </div>
@@ -163,8 +161,8 @@
                             <div class="flex items-start gap-4">
                                 <div class="flex-shrink-0 w-10 h-10 rounded-full bg-[var(--color-agro-green)] text-white flex items-center justify-center font-bold text-lg">5</div>
                                 <div>
-                                    <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)] mb-2">Genera Informes Oficiales</h3>
-                                    <p class="text-gray-700">Genera informes oficiales con firma electrónica cuando los necesites. Listos para inspecciones en segundos.</p>
+                                    <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)] mb-2">{{ __('Genera Informes Oficiales') }}</h3>
+                                    <p class="text-gray-700">{{ __('Genera informes oficiales con firma electrónica cuando los necesites. Listos para inspecciones en segundos.') }}</p>
                                 </div>
                             </div>
                         </div>
@@ -172,8 +170,8 @@
                             <div class="flex items-start gap-4">
                                 <div class="flex-shrink-0 w-10 h-10 rounded-full bg-[var(--color-agro-green)] text-white flex items-center justify-center font-bold text-lg">6</div>
                                 <div>
-                                    <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)] mb-2">Integra Facturación</h3>
-                                    <p class="text-gray-700">Completa la digitalización integrando la facturación. Desde la cosecha hasta la factura en un solo sistema.</p>
+                                    <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)] mb-2">{{ __('Integra Facturación') }}</h3>
+                                    <p class="text-gray-700">{{ __('Completa la digitalización integrando la facturación. Desde la cosecha hasta la factura en un solo sistema.') }}</p>
                                 </div>
                             </div>
                         </div>
@@ -181,22 +179,20 @@
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Herramientas Necesarias para Digitalizar</h2>
-                    <p class="text-gray-700 leading-relaxed mb-4">
-                        Para digitalizar tu viñedo necesitas:
-                    </p>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Herramientas Necesarias para Digitalizar') }}</h2>
+                    <p class="text-gray-700 leading-relaxed mb-4">{{ __('Para digitalizar tu viñedo necesitas:') }}</p>
                     <ul class="list-disc list-inside space-y-3 text-gray-700 mb-6 ml-4">
-                        <li><strong>Software de gestión agrícola:</strong> Un sistema completo que incluya cuaderno digital, SIGPAC, informes oficiales y facturación</li>
-                        <li><strong>Dispositivo móvil o tablet:</strong> Para registrar actividades directamente en el viñedo</li>
-                        <li><strong>Conexión a internet:</strong> Aunque muchos sistemas funcionan offline y sincronizan después</li>
-                        <li><strong>Códigos SIGPAC:</strong> Tus códigos SIGPAC oficiales de todas tus parcelas</li>
+                        <li><strong>{{ __('Software de gestión agrícola:') }}</strong> Un sistema completo que incluya cuaderno digital, SIGPAC, informes oficiales y facturación</li>
+                        <li><strong>{{ __('Dispositivo móvil o tablet:') }}</strong> Para registrar actividades directamente en el viñedo</li>
+                        <li><strong>{{ __('Conexión a internet:') }}</strong> Aunque muchos sistemas funcionan offline y sincronizan después</li>
+                        <li><strong>{{ __('Códigos SIGPAC:') }}</strong> Tus códigos SIGPAC oficiales de todas tus parcelas</li>
                     </ul>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Cómo Agro365 Facilita la Digitalización</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Cómo Agro365 Facilita la Digitalización') }}</h2>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        <strong>Agro365</strong> es la solución completa para digitalizar tu viñedo. Incluye todo lo que necesitas en una sola plataforma:
+                        <strong>{{ __('Agro365') }}</strong> es la solución completa para digitalizar tu viñedo. Incluye todo lo que necesitas en una sola plataforma:
                     </p>
                     <div class="bg-gradient-to-r from-[var(--color-agro-green-bg)] to-[var(--color-agro-green-light)]/30 p-8 rounded-xl border border-[var(--color-agro-green)]/20 mb-6">
                         <ul class="space-y-4 text-gray-800">
@@ -204,56 +200,56 @@
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Cuaderno de campo digital:</strong> Registra todas tus actividades desde el móvil</span>
+                                <span><strong>{{ __('Cuaderno de campo digital:') }}</strong> Registra todas tus actividades desde el móvil</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Integración SIGPAC completa:</strong> Gestiona todas tus parcelas con códigos SIGPAC</span>
+                                <span><strong>{{ __('Integración SIGPAC completa:') }}</strong> Gestiona todas tus parcelas con códigos SIGPAC</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Informes oficiales:</strong> Genera informes certificados con firma electrónica</span>
+                                <span><strong>{{ __('Informes oficiales:') }}</strong> Genera informes certificados con firma electrónica</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Gestión de cosechas:</strong> Control completo de vendimia y rendimientos</span>
+                                <span><strong>{{ __('Gestión de cosechas:') }}</strong> Control completo de vendimia y rendimientos</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Facturación integrada:</strong> Desde la cosecha hasta la factura en un solo sistema</span>
+                                <span><strong>{{ __('Facturación integrada:') }}</strong> Desde la cosecha hasta la factura en un solo sistema</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Dashboard de cumplimiento:</strong> Detecta errores automáticamente y prepárate para inspecciones</span>
+                                <span><strong>{{ __('Dashboard de cumplimiento:') }}</strong> Detecta errores automáticamente y prepárate para inspecciones</span>
                             </li>
                         </ul>
                     </div>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Preguntas Frecuentes</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Preguntas Frecuentes') }}</h2>
                     <div class="space-y-6">
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Cuánto tiempo tarda digitalizar un viñedo?</h3>
-                            <p class="text-gray-700">Con Agro365, puedes comenzar a digitalizar tu viñedo en menos de 30 minutos. La configuración inicial es rápida y el sistema te guía paso a paso.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Cuánto tiempo tarda digitalizar un viñedo?') }}</h3>
+                            <p class="text-gray-700">{{ __('Con Agro365, puedes comenzar a digitalizar tu viñedo en menos de 30 minutos. La configuración inicial es rápida y el sistema te guía paso a paso.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Necesito conocimientos técnicos?</h3>
-                            <p class="text-gray-700">No, Agro365 está diseñado para ser intuitivo y fácil de usar. No necesitas conocimientos técnicos avanzados.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Necesito conocimientos técnicos?') }}</h3>
+                            <p class="text-gray-700">{{ __('No, Agro365 está diseñado para ser intuitivo y fácil de usar. No necesitas conocimientos técnicos avanzados.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Puedo usar el sistema desde el móvil en el viñedo?</h3>
-                            <p class="text-gray-700">Sí, Agro365 está 100% optimizado para móviles. Puedes registrar actividades directamente desde el viñedo, incluso con conexión limitada.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Puedo usar el sistema desde el móvil en el viñedo?') }}</h3>
+                            <p class="text-gray-700">{{ __('Sí, Agro365 está 100% optimizado para móviles. Puedes registrar actividades directamente desde el viñedo, incluso con conexión limitada.') }}</p>
                         </div>
                     </div>
                 </section>
@@ -261,12 +257,8 @@
 
             <!-- CTA Section -->
             <div class="mt-16 pt-12 border-t border-gray-200 text-center">
-                <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">
-                    Comienza a Digitalizar tu Viñedo Hoy
-                </h2>
-                <p class="text-gray-600 mb-8 text-lg">
-                    Agro365 incluye todo lo que necesitas para digitalizar tu viñedo. Prueba gratis 3 meses sin compromiso.
-                </p>
+                <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Comienza a Digitalizar tu Viñedo Hoy') }}</h2>
+                <p class="text-gray-600 mb-8 text-lg">{{ __('Agro365 incluye todo lo que necesitas para digitalizar tu viñedo. Prueba gratis 3 meses sin compromiso.') }}</p>
                 <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-lg">
                     Comenzar Gratis
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

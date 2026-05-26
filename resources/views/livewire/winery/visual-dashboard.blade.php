@@ -25,7 +25,7 @@
                 <span :class="tab === 'dashboard' ? 'text-agro-600' : 'text-zinc-400'"><flux:icon icon="chart-bar" class="size-4" /></span>
             </div>
             <div class="text-left hidden md:block">
-                <p class="text-sm font-semibold leading-tight" :class="tab === 'dashboard' ? 'text-agro-700' : 'text-zinc-600'">Resumen</p>
+                <p class="text-sm font-semibold leading-tight" :class="tab === 'dashboard' ? 'text-agro-700' : 'text-zinc-600'">{{ __('Resumen') }}</p>
                 <p class="text-[10px] leading-tight mt-0.5 text-zinc-400">{{ $kgFmt }} · {{ $dashboardStats['campaign_year'] }}</p>
             </div>
         </button>
@@ -40,7 +40,7 @@
                 <span :class="tab === 'plots' ? 'text-blue-600' : 'text-zinc-400'"><flux:icon icon="map-pin" class="size-4" /></span>
             </div>
             <div class="text-left hidden md:block">
-                <p class="text-sm font-semibold leading-tight" :class="tab === 'plots' ? 'text-blue-700' : 'text-zinc-600'">Mapa de parcelas</p>
+                <p class="text-sm font-semibold leading-tight" :class="tab === 'plots' ? 'text-blue-700' : 'text-zinc-600'">{{ __('Mapa de parcelas') }}</p>
                 <p class="text-[10px] leading-tight mt-0.5 text-zinc-400">{{ count($mapPlots) }} parcelas · {{ $haFmt }}</p>
             </div>
         </button>
@@ -58,7 +58,7 @@
                 @endif
             </div>
             <div class="text-left hidden md:block">
-                <p class="text-sm font-semibold leading-tight" :class="tab === 'containers' ? 'text-violet-700' : 'text-zinc-600'">Bodega</p>
+                <p class="text-sm font-semibold leading-tight" :class="tab === 'containers' ? 'text-violet-700' : 'text-zinc-600'">{{ __('Bodega') }}</p>
                 <p class="text-[10px] leading-tight mt-0.5 text-zinc-400">
                     {{ $containerStats['total'] }} depósitos ·
                     @if($wineryAlert > 0)<span class="text-red-400 font-semibold">{{ $wineryAlert }} alertas</span>@else{{ $containerStats['used_pct'] }}% ocupado @endif
@@ -98,7 +98,7 @@
                 <input x-model="search"
                        @input.debounce.250ms="updateMapData()"
                        type="text"
-                       placeholder="Buscar parcela..."
+                       placeholder="{{ __('Buscar parcela...') }}"
                        class="pl-9 pr-4 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm w-44 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition" />
             </div>
             {{-- CCAA --}}
@@ -106,7 +106,7 @@
                     @change="provinceId = ''; municipalityId = ''; updateMapData()"
                     x-show="filterOptions.communities.length > 1"
                     class="px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm text-zinc-700 focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition max-w-[160px]">
-                <option value="">Todas las CCAA</option>
+                <option value="">{{ __('Todas las CCAA') }}</option>
                 <template x-for="c in filterOptions.communities" :key="c.id">
                     <option :value="c.id" x-text="c.name"></option>
                 </template>
@@ -117,7 +117,7 @@
                     x-show="availableProvinces.length > 1"
                     :disabled="availableProvinces.length === 0"
                     class="px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm text-zinc-700 focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition max-w-[160px] disabled:opacity-40">
-                <option value="">Todas las prov.</option>
+                <option value="">{{ __('Todas las prov.') }}</option>
                 <template x-for="p in availableProvinces" :key="p.id">
                     <option :value="p.id" x-text="p.name"></option>
                 </template>
@@ -128,7 +128,7 @@
                     x-show="availableMunicipalities.length > 1"
                     :disabled="availableMunicipalities.length === 0"
                     class="px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm text-zinc-700 focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition max-w-[160px] disabled:opacity-40">
-                <option value="">Todos los mun.</option>
+                <option value="">{{ __('Todos los mun.') }}</option>
                 <template x-for="m in availableMunicipalities" :key="m.id">
                     <option :value="m.id" x-text="m.name"></option>
                 </template>
@@ -143,11 +143,11 @@
             </button>
             {{-- Toggle lista lateral --}}
             <button @click="showList = !showList; $wire.saveShowList(showList)"
-                    title="Mostrar lista de parcelas"
+                    title="{{ __('Mostrar lista de parcelas') }}"
                     class="flex items-center gap-1.5 px-2.5 py-2 rounded-xl border text-xs font-medium transition-all"
                     :class="showList ? 'bg-agro-50 border-agro-300 text-agro-700' : 'bg-zinc-50 border-zinc-200 text-zinc-500 hover:text-zinc-700 hover:bg-zinc-100'">
                 <flux:icon icon="list-bullet" class="size-4 shrink-0" />
-                <span class="hidden sm:inline">Lista</span>
+                <span class="hidden sm:inline">{{ __('Lista') }}</span>
             </button>
             <span class="ml-auto text-xs text-zinc-400 whitespace-nowrap">
                 <span x-text="filteredCount"></span> parcelas
@@ -203,7 +203,7 @@
                 {{-- Botones flotantes top-right (fullscreen + tile toggle) --}}
                 <div class="absolute top-3 right-3 z-[1000] flex items-center gap-1.5">
                     <button @click="toggleFullscreen()"
-                            title="Pantalla completa"
+                            title="{{ __('Pantalla completa') }}"
                             class="flex items-center justify-center w-8 h-8 rounded-xl text-xs font-semibold shadow-lg border transition-all bg-white/90 backdrop-blur-sm border-zinc-200 text-zinc-600 hover:bg-white hover:shadow-xl">
                         <template x-if="!isFullscreen">
                             <flux:icon icon="arrows-pointing-out" class="size-4" />
@@ -213,20 +213,20 @@
                         </template>
                     </button>
                     <button @click="toggleTile()"
-                            :title="tileMode === 'satellite' ? 'Cambiar a callejero' : 'Cambiar a satélite'"
+                            :title="tileMode === 'satellite' ? '{{ __('Cambiar a callejero') }}' : '{{ __('Cambiar a satélite') }}'"
                             class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold shadow-lg border transition-all
                                    bg-white/90 backdrop-blur-sm border-zinc-200 text-zinc-700 hover:bg-white hover:shadow-xl">
                         <template x-if="tileMode === 'satellite'">
                             <span class="flex items-center gap-1.5">
                                 <flux:icon icon="globe-europe-africa" class="size-3.5 text-agro-500" />
-                                <span>Satélite</span>
+                                <span>{{ __('Satélite') }}</span>
                                 <flux:icon icon="arrows-right-left" class="size-3 text-zinc-400" />
                             </span>
                         </template>
                         <template x-if="tileMode === 'street'">
                             <span class="flex items-center gap-1.5">
                                 <flux:icon icon="map" class="size-3.5 text-zinc-500" />
-                                <span>Callejero</span>
+                                <span>{{ __('Callejero') }}</span>
                                 <flux:icon icon="arrows-right-left" class="size-3 text-zinc-400" />
                             </span>
                         </template>
@@ -238,8 +238,8 @@
                         <flux:icon icon="map" class="size-8 text-zinc-300" />
                     </div>
                     <div class="text-center">
-                        <p class="font-semibold text-zinc-500">Sin coordenadas disponibles</p>
-                        <p class="text-sm text-zinc-400 mt-1">Las parcelas necesitan municipio con coordenadas para aparecer en el mapa</p>
+                        <p class="font-semibold text-zinc-500">{{ __('Sin coordenadas disponibles') }}</p>
+                        <p class="text-sm text-zinc-400 mt-1">{{ __('Las parcelas necesitan municipio con coordenadas para aparecer en el mapa') }}</p>
                     </div>
                 </div>
             @endif
@@ -278,7 +278,7 @@
                     <div class="grid grid-cols-2 gap-2">
                         @if($selectedPlot->area)
                         <div class="bg-agro-50 rounded-xl p-3">
-                            <p class="text-[9px] font-semibold text-agro-400 uppercase tracking-widest">Superficie</p>
+                            <p class="text-[9px] font-semibold text-agro-400 uppercase tracking-widest">{{ __('Superficie') }}</p>
                             <p class="text-xl font-black text-agro-700 mt-0.5">
                                 {{ number_format($selectedPlot->area, 2) }}
                                 <span class="text-xs font-normal text-agro-400">ha</span>
@@ -288,7 +288,7 @@
                         @php $varieties = $selectedPlot->plantings->pluck('grapeVariety')->filter()->unique('id'); @endphp
                         @if($varieties->isNotEmpty())
                         <div class="bg-amber-50 rounded-xl p-3">
-                            <p class="text-[9px] font-semibold text-amber-400 uppercase tracking-widest mb-1.5">Variedades</p>
+                            <p class="text-[9px] font-semibold text-amber-400 uppercase tracking-widest mb-1.5">{{ __('Variedades') }}</p>
                             <div class="flex flex-wrap gap-1">
                                 @foreach($varieties->take(3) as $v)
                                 <span class="text-[9px] font-bold text-amber-700 bg-amber-100 rounded-md px-1.5 py-0.5 leading-tight">{{ $v->name }}</span>
@@ -300,7 +300,7 @@
                         </div>
                         @elseif($selectedPlot->sigpacCodes->isNotEmpty())
                         <div class="bg-amber-50 rounded-xl p-3">
-                            <p class="text-[9px] font-semibold text-amber-400 uppercase tracking-widest">SIGPAC</p>
+                            <p class="text-[9px] font-semibold text-amber-400 uppercase tracking-widest">{{ __('SIGPAC') }}</p>
                             <p class="text-xl font-black text-amber-700 mt-0.5">
                                 {{ $selectedPlot->sigpacCodes->count() }}
                                 <span class="text-xs font-normal text-amber-400">rec.</span>
@@ -350,27 +350,27 @@
                 {{-- ── Registrar actividad (solo productor) ── --}}
                 @if(auth()->user()->isProducer())
                 <div>
-                    <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5 px-1">Registrar actividad</p>
+                    <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5 px-1">{{ __('Registrar actividad') }}</p>
                     <div class="grid grid-cols-2 gap-1.5">
                         <a href="{{ roleRoute('digital-notebook.treatment.create', ['plot_id' => $selectedPlot->id]) }}" wire:navigate
                            class="flex flex-col items-center gap-1 px-2 py-2.5 rounded-xl bg-orange-50 hover:bg-orange-100 text-orange-700 transition-colors text-center">
                             <flux:icon icon="shield-exclamation" class="size-4" />
-                            <span class="text-[10px] font-semibold leading-tight">Tratamiento</span>
+                            <span class="text-[10px] font-semibold leading-tight">{{ __('Tratamiento') }}</span>
                         </a>
                         <a href="{{ roleRoute('digital-notebook.irrigation.create', ['plot_id' => $selectedPlot->id]) }}" wire:navigate
                            class="flex flex-col items-center gap-1 px-2 py-2.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 transition-colors text-center">
                             <flux:icon icon="beaker" class="size-4" />
-                            <span class="text-[10px] font-semibold leading-tight">Riego</span>
+                            <span class="text-[10px] font-semibold leading-tight">{{ __('Riego') }}</span>
                         </a>
                         <a href="{{ roleRoute('digital-notebook.cultural.create', ['plot_id' => $selectedPlot->id]) }}" wire:navigate
                            class="flex flex-col items-center gap-1 px-2 py-2.5 rounded-xl bg-green-50 hover:bg-green-100 text-green-700 transition-colors text-center">
                             <flux:icon icon="wrench-screwdriver" class="size-4" />
-                            <span class="text-[10px] font-semibold leading-tight">Trab. campo</span>
+                            <span class="text-[10px] font-semibold leading-tight">{{ __('Trab. campo') }}</span>
                         </a>
                         <a href="{{ roleRoute('digital-notebook.observation.create', ['plot_id' => $selectedPlot->id]) }}" wire:navigate
                            class="flex flex-col items-center gap-1 px-2 py-2.5 rounded-xl bg-zinc-100 hover:bg-zinc-200 text-zinc-700 transition-colors text-center">
                             <flux:icon icon="eye" class="size-4" />
-                            <span class="text-[10px] font-semibold leading-tight">Observación</span>
+                            <span class="text-[10px] font-semibold leading-tight">{{ __('Observación') }}</span>
                         </a>
                     </div>
                 </div>
@@ -378,7 +378,7 @@
 
                 {{-- ── Esta parcela ── --}}
                 <div>
-                    <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5 px-1">Esta parcela</p>
+                    <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5 px-1">{{ __('Esta parcela') }}</p>
                     <div class="space-y-0.5">
                         <a href="{{ roleRoute('plots.show', $selectedPlot) }}?from=visual" wire:navigate
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-agro-50 hover:text-agro-700 transition-colors group">
@@ -410,7 +410,7 @@
 
                 {{-- ── Vendimia ── --}}
                 <div>
-                    <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2 px-1">Vendimia</p>
+                    <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2 px-1">{{ __('Vendimia') }}</p>
                     <button wire:click="openModalGrapeReception({{ $selectedPlot->viticulturist?->id ?? 'null' }})"
                             class="flex items-center justify-center gap-2 w-full px-3 py-2.5 mb-2 rounded-xl text-sm font-semibold bg-agro-600 text-white hover:bg-agro-700 transition-colors shadow-sm">
                         <flux:icon icon="archive-box-arrow-down" class="size-4 shrink-0" />
@@ -444,7 +444,7 @@
                 <div x-data="{ open: false }">
                     <button @click="open = !open"
                             class="flex items-center justify-between w-full px-1 mb-1 group">
-                        <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest group-hover:text-zinc-500 transition-colors">Explorar</p>
+                        <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest group-hover:text-zinc-500 transition-colors">{{ __('Explorar') }}</p>
                         <flux:icon icon="chevron-down" class="size-3.5 text-zinc-300 transition-transform duration-200"
                                    ::class="open ? 'rotate-180' : ''" />
                     </button>
@@ -479,8 +479,8 @@
                 <flux:icon icon="map-pin" class="size-7 text-zinc-300" />
             </div>
             <div class="text-center">
-                <p class="text-sm font-semibold text-zinc-500">Selecciona una parcela</p>
-                <p class="text-xs mt-1 leading-relaxed">Pulsa en un polígono del mapa para ver todas las opciones disponibles</p>
+                <p class="text-sm font-semibold text-zinc-500">{{ __('Selecciona una parcela') }}</p>
+                <p class="text-xs mt-1 leading-relaxed">{{ __('Pulsa en un polígono del mapa para ver todas las opciones disponibles') }}</p>
             </div>
         </div>
         @endif
@@ -504,11 +504,11 @@
                     </div>
                     <input wire:model.live.debounce.300ms="containerSearch"
                            type="text"
-                           placeholder="Buscar contenedor..."
+                           placeholder="{{ __('Buscar contenedor...') }}"
                            class="pl-9 pr-4 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm w-52 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition" />
                 </div>
                 <flux:select wire:model.live="containerTypeFilter" size="sm" class="w-36">
-                    <flux:select.option value="">Todos los tipos</flux:select.option>
+                    <flux:select.option value="">{{ __('Todos los tipos') }}</flux:select.option>
                     @foreach($containerTypes as $type)
                         <flux:select.option value="{{ $type->id }}">{{ $type->name }}</flux:select.option>
                     @endforeach
@@ -523,23 +523,23 @@
                 {{-- Ordenación --}}
                 <div class="flex items-center gap-0.5 bg-zinc-100 rounded-lg p-0.5 text-xs shrink-0">
                     <button wire:click="$set('containerSort', 'name')"
-                            title="Ordenar A–Z"
+                            title="{{ __('Ordenar A–Z') }}"
                             class="px-2.5 py-1 rounded-md font-medium transition-all {{ $containerSort === 'name' ? 'bg-white shadow-sm text-zinc-800' : 'text-zinc-400 hover:text-zinc-600' }}">
                         A–Z
                     </button>
                     <button wire:click="$set('containerSort', 'pct_desc')"
-                            title="Más llenos primero"
+                            title="{{ __('Más llenos primero') }}"
                             class="flex items-center gap-1 px-2.5 py-1 rounded-md font-medium transition-all {{ $containerSort === 'pct_desc' ? 'bg-white shadow-sm text-zinc-800' : 'text-zinc-400 hover:text-zinc-600' }}">
                         <flux:icon icon="arrow-down" class="size-3" />%
                     </button>
                     <button wire:click="$set('containerSort', 'pct_asc')"
-                            title="Más vacíos primero"
+                            title="{{ __('Más vacíos primero') }}"
                             class="flex items-center gap-1 px-2.5 py-1 rounded-md font-medium transition-all {{ $containerSort === 'pct_asc' ? 'bg-white shadow-sm text-zinc-800' : 'text-zinc-400 hover:text-zinc-600' }}">
                         <flux:icon icon="arrow-up" class="size-3" />%
                     </button>
                 </div>
                 <a href="{{ roleRoute('containers.create') }}" wire:navigate class="ml-auto">
-                    <flux:button variant="primary" icon="plus" size="sm">Nuevo contenedor</flux:button>
+                    <flux:button variant="primary" icon="plus" size="sm">{{ __('Nuevo contenedor') }}</flux:button>
                 </a>
             </div>
 
@@ -547,7 +547,7 @@
             @if($containerStats['total'] > 0 && $containerStats['total_capacity_kg'] > 0)
             <div class="shrink-0 px-6 py-3 border-b border-zinc-100 bg-zinc-50/60">
                 <div class="flex items-center justify-between mb-1.5 text-xs">
-                    <span class="font-semibold text-zinc-600">Capacidad total bodega</span>
+                    <span class="font-semibold text-zinc-600">{{ __('Capacidad total bodega') }}</span>
                     <span class="text-zinc-400">
                         <span class="font-bold text-zinc-700">{{ number_format($containerStats['used_pct']) }}%</span>
                         uva ·
@@ -663,7 +663,7 @@
                         <flux:icon icon="beaker" class="size-7 text-zinc-300" />
                     </div>
                     <div class="text-center">
-                        <p class="font-semibold text-zinc-500">No hay contenedores</p>
+                        <p class="font-semibold text-zinc-500">{{ __('No hay contenedores') }}</p>
                         <p class="text-sm mt-1">{{ $containerSearch || $containerTypeFilter ? 'Sin resultados para los filtros' : 'Crea tu primer contenedor' }}</p>
                     </div>
                 </div>
@@ -706,7 +706,7 @@
                 @endphp
                 <div class="bg-zinc-50 rounded-2xl p-4">
                     <div class="flex items-end justify-between mb-2">
-                        <span class="text-xs text-zinc-500 font-medium">Ocupación</span>
+                        <span class="text-xs text-zinc-500 font-medium">{{ __('Ocupación') }}</span>
                         <span class="text-3xl font-black {{ $textPctColor }}">
                             {{ round($cpct) }}<span class="text-sm font-normal text-zinc-400">%</span>
                         </span>
@@ -717,17 +717,17 @@
                     </div>
                     <div class="grid grid-cols-3 gap-2 mt-4">
                         <div class="bg-amber-50 rounded-xl p-2.5 text-center">
-                            <p class="text-[8px] text-amber-400 uppercase font-bold tracking-wider">Uva</p>
+                            <p class="text-[8px] text-amber-400 uppercase font-bold tracking-wider">{{ __('Uva') }}</p>
                             <p class="text-sm font-black text-amber-700 mt-0.5">{{ number_format($selectedContainer->used_capacity, 0) }}</p>
                             <p class="text-[8px] text-amber-400">kg</p>
                         </div>
                         <div class="bg-violet-50 rounded-xl p-2.5 text-center">
-                            <p class="text-[8px] text-violet-400 uppercase font-bold tracking-wider">Vino</p>
+                            <p class="text-[8px] text-violet-400 uppercase font-bold tracking-wider">{{ __('Vino') }}</p>
                             <p class="text-sm font-black text-violet-700 mt-0.5">{{ number_format($selectedContainer->wine_volume_liters, 0) }}</p>
                             <p class="text-[8px] text-violet-400">L</p>
                         </div>
                         <div class="bg-zinc-100 rounded-xl p-2.5 text-center">
-                            <p class="text-[8px] text-zinc-400 uppercase font-bold tracking-wider">Cap.</p>
+                            <p class="text-[8px] text-zinc-400 uppercase font-bold tracking-wider">{{ __('Cap.') }}</p>
                             <p class="text-sm font-black text-zinc-600 mt-0.5">{{ number_format($selectedContainer->capacity, 0) }}</p>
                             <p class="text-[8px] text-zinc-400">kg</p>
                         </div>
@@ -742,7 +742,7 @@
 
                 {{-- ── Acciones rápidas ── --}}
                 <div>
-                    <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5 px-1">Acciones</p>
+                    <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5 px-1">{{ __('Acciones') }}</p>
                     <div class="space-y-0.5">
                         <a href="{{ roleRoute('containers.show', $selectedContainer) }}?from=visual" wire:navigate
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-agro-50 hover:text-agro-700 transition-colors group">
@@ -756,14 +756,14 @@
                         </a>
                         @if($selectedContainer->wine_volume_liters > 0)
                         <button wire:click="emptyWine({{ $selectedContainer->id }})"
-                                wire:confirm="¿Vaciar el vino de «{{ $selectedContainer->name }}»?"
+                                wire:confirm="{{ __('¿Vaciar el vino de «:name»?', ['name' => $selectedContainer->name]) }}"
                                 class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-orange-50 hover:text-orange-700 transition-colors group">
                             <flux:icon icon="arrow-path" class="size-4 text-zinc-400 group-hover:text-orange-600 shrink-0" />
                             Vaciar vino elaborado
                         </button>
                         @endif
                         <button wire:click="archiveContainer({{ $selectedContainer->id }})"
-                                wire:confirm="¿Desactivar «{{ $selectedContainer->name }}»?"
+                                wire:confirm="{{ __('¿Desactivar «:name»?', ['name' => $selectedContainer->name]) }}"
                                 class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-red-50 hover:text-red-700 transition-colors group">
                             <flux:icon icon="no-symbol" class="size-4 text-zinc-400 group-hover:text-red-600 shrink-0" />
                             Desactivar contenedor
@@ -775,7 +775,7 @@
 
                 {{-- ── Elaboración (acciones contextuales) ── --}}
                 <div>
-                    <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5 px-1">Elaboración</p>
+                    <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5 px-1">{{ __('Elaboración') }}</p>
                     <div class="space-y-0.5">
                         <button wire:click="openModalFermentation({{ $selectedContainer->id }})"
                                 class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-violet-50 hover:text-violet-700 transition-colors group">
@@ -822,8 +822,8 @@
                 <flux:icon icon="cursor-arrow-rays" class="size-7 text-zinc-300" />
             </div>
             <div class="text-center">
-                <p class="text-sm font-semibold text-zinc-500">Selecciona un contenedor</p>
-                <p class="text-xs mt-1 leading-relaxed">Pulsa en un depósito para ver todas las opciones disponibles</p>
+                <p class="text-sm font-semibold text-zinc-500">{{ __('Selecciona un contenedor') }}</p>
+                <p class="text-xs mt-1 leading-relaxed">{{ __('Pulsa en un depósito para ver todas las opciones disponibles') }}</p>
             </div>
         </div>
         @endif
@@ -883,9 +883,9 @@
 
                 {{-- Vinos en elaboración --}}
                 <div class="bg-white rounded-2xl border border-zinc-100 shadow-sm p-5">
-                    <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3">En elaboración</p>
+                    <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3">{{ __('En elaboración') }}</p>
                     <p class="text-3xl font-black text-violet-700 leading-none">
-                        {{ $dashboardStats['wines_in_progress'] }}<span class="text-lg font-semibold text-violet-300 ml-1">vinos</span>
+                        {{ $dashboardStats['wines_in_progress'] }}<span class="text-lg font-semibold text-violet-300 ml-1">{{ __('vinos') }}</span>
                     </p>
                     <div class="flex items-center gap-1.5 mt-3">
                         <div class="w-6 h-6 bg-violet-100 rounded-lg flex items-center justify-center">
@@ -899,7 +899,7 @@
 
                 {{-- Fermentaciones activas --}}
                 <div class="bg-white rounded-2xl border border-zinc-100 shadow-sm p-5">
-                    <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3">Fermentaciones activas</p>
+                    <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3">{{ __('Fermentaciones activas') }}</p>
                     <p class="text-3xl font-black leading-none {{ $dashboardStats['active_fermentations'] > 0 ? 'text-agro-700' : 'text-zinc-300' }}">
                         {{ $dashboardStats['active_fermentations'] }}<span class="text-lg font-semibold {{ $dashboardStats['active_fermentations'] > 0 ? 'text-agro-400' : 'text-zinc-300' }} ml-1">activas</span>
                     </p>
@@ -907,7 +907,7 @@
                         <div class="w-6 h-6 bg-agro-100 rounded-lg flex items-center justify-center">
                             <flux:icon icon="arrow-trending-up" class="size-3.5 text-agro-600" />
                         </div>
-                        <span class="text-xs text-zinc-400">Últimos 7 días · brix > 2</span>
+                        <span class="text-xs text-zinc-400">{{ __('Últimos 7 días · brix > 2') }}</span>
                     </div>
                 </div>
             </div>
@@ -918,28 +918,28 @@
                 <div class="absolute top-0 right-0 w-48 h-48 rounded-full opacity-10" style="background: radial-gradient(circle, #fff 0%, transparent 70%); transform: translate(30%, -30%);"></div>
                 <div class="flex items-start justify-between relative z-10">
                     <div>
-                        <p class="text-white/60 text-xs font-semibold uppercase tracking-widest mb-1">Campaña activa</p>
+                        <p class="text-white/60 text-xs font-semibold uppercase tracking-widest mb-1">{{ __('Campaña activa') }}</p>
                         <p class="text-4xl font-black">{{ $dashboardStats['campaign_year'] }}</p>
                     </div>
-                    <span class="px-3 py-1 bg-white/15 rounded-full text-xs font-bold border border-white/20">EN CURSO</span>
+                    <span class="px-3 py-1 bg-white/15 rounded-full text-xs font-bold border border-white/20">{{ __('EN CURSO') }}</span>
                 </div>
                 <div class="grid grid-cols-3 gap-4 mt-6 relative z-10">
                     <div>
-                        <p class="text-white/50 text-[9px] uppercase tracking-widest font-bold mb-1">Depósitos</p>
+                        <p class="text-white/50 text-[9px] uppercase tracking-widest font-bold mb-1">{{ __('Depósitos') }}</p>
                         <p class="text-2xl font-black">{{ $dashboardStats['containers_total'] }}</p>
                         @if($dashboardStats['containers_critical'] > 0)
                         <p class="text-[10px] text-red-300 font-semibold mt-0.5">{{ $dashboardStats['containers_critical'] }} críticos</p>
                         @endif
                     </div>
                     <div>
-                        <p class="text-white/50 text-[9px] uppercase tracking-widest font-bold mb-1">Vinos</p>
+                        <p class="text-white/50 text-[9px] uppercase tracking-widest font-bold mb-1">{{ __('Vinos') }}</p>
                         <p class="text-2xl font-black">{{ $dashboardStats['wines_in_progress'] }}</p>
-                        <p class="text-[10px] text-white/50 font-semibold mt-0.5">en elaboración</p>
+                        <p class="text-[10px] text-white/50 font-semibold mt-0.5">{{ __('en elaboración') }}</p>
                     </div>
                     <div>
-                        <p class="text-white/50 text-[9px] uppercase tracking-widest font-bold mb-1">Ferment.</p>
+                        <p class="text-white/50 text-[9px] uppercase tracking-widest font-bold mb-1">{{ __('Ferment.') }}</p>
                         <p class="text-2xl font-black">{{ $dashboardStats['active_fermentations'] }}</p>
-                        <p class="text-[10px] text-white/50 font-semibold mt-0.5">activas</p>
+                        <p class="text-[10px] text-white/50 font-semibold mt-0.5">{{ __('activas') }}</p>
                     </div>
                 </div>
             </div>
@@ -952,15 +952,15 @@
                     <div class="flex items-center justify-between px-5 py-4 border-b border-zinc-50">
                         <div class="flex items-center gap-2">
                             <div class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
-                            <p class="text-sm font-bold text-zinc-800">Depósitos críticos</p>
-                            <span class="text-xs text-zinc-400">(≥ 85%)</span>
+                            <p class="text-sm font-bold text-zinc-800">{{ __('Depósitos críticos') }}</p>
+                            <span class="text-xs text-zinc-400">{{ __('(≥ 85%)') }}</span>
                         </div>
                         <a href="{{ roleRoute('containers.index') }}" wire:navigate class="text-xs text-agro-600 hover:text-agro-800 font-medium transition-colors">Ver todos</a>
                     </div>
                     @if($criticalContainers->isEmpty())
                     <div class="flex flex-col items-center justify-center py-10 text-zinc-300 gap-2">
                         <flux:icon icon="check-circle" class="size-8" />
-                        <p class="text-sm text-zinc-400">Sin depósitos críticos</p>
+                        <p class="text-sm text-zinc-400">{{ __('Sin depósitos críticos') }}</p>
                     </div>
                     @else
                     <div class="divide-y divide-zinc-50">
@@ -990,13 +990,13 @@
                 {{-- Últimos controles de fermentación --}}
                 <div class="bg-white rounded-2xl border border-zinc-100 shadow-sm overflow-hidden">
                     <div class="flex items-center justify-between px-5 py-4 border-b border-zinc-50">
-                        <p class="text-sm font-bold text-zinc-800">Últimos controles</p>
+                        <p class="text-sm font-bold text-zinc-800">{{ __('Últimos controles') }}</p>
                         <a href="{{ roleRoute('fermentation-controls.index') }}" wire:navigate class="text-xs text-agro-600 hover:text-agro-800 font-medium transition-colors">Ver todos</a>
                     </div>
                     @if($recentControls->isEmpty())
                     <div class="flex flex-col items-center justify-center py-10 text-zinc-300 gap-2">
                         <flux:icon icon="beaker" class="size-8" />
-                        <p class="text-sm text-zinc-400">Sin controles registrados</p>
+                        <p class="text-sm text-zinc-400">{{ __('Sin controles registrados') }}</p>
                     </div>
                     @else
                     <div class="divide-y divide-zinc-50">
@@ -1057,17 +1057,17 @@
                     <flux:icon icon="archive-box-arrow-down" class="size-5 text-agro-600" />
                 </div>
                 <div>
-                    <h3 class="text-base font-bold text-zinc-900">Recibir uva</h3>
-                    <p class="text-xs text-zinc-400">Registro rápido de recepción</p>
+                    <h3 class="text-base font-bold text-zinc-900">{{ __('Recibir uva') }}</h3>
+                    <p class="text-xs text-zinc-400">{{ __('Registro rápido de recepción') }}</p>
                 </div>
             </div>
 
             <div class="space-y-3">
                 {{-- Viticultor --}}
                 <div>
-                    <flux:label>Viticultor *</flux:label>
+                    <flux:label>{{ __('Viticultor *') }}</flux:label>
                     <flux:select wire:model.live="gr_viticulturistId">
-                        <flux:select.option value="">Seleccionar viticultor...</flux:select.option>
+                        <flux:select.option value="">{{ __('Seleccionar viticultor...') }}</flux:select.option>
                         @foreach($modalViticulturists as $v)
                             <flux:select.option value="{{ $v->id }}">{{ $v->name }}</flux:select.option>
                         @endforeach
@@ -1078,9 +1078,9 @@
                 {{-- Parcela --}}
                 @if($gr_viticulturistId && count($gr_availablePlots))
                 <div>
-                    <flux:label>Parcela *</flux:label>
+                    <flux:label>{{ __('Parcela *') }}</flux:label>
                     <flux:select wire:model.live="gr_plotId">
-                        <flux:select.option value="">Seleccionar parcela...</flux:select.option>
+                        <flux:select.option value="">{{ __('Seleccionar parcela...') }}</flux:select.option>
                         @foreach($gr_availablePlots as $p)
                             <flux:select.option value="{{ $p['id'] }}">{{ $p['name'] }}</flux:select.option>
                         @endforeach
@@ -1092,9 +1092,9 @@
                 {{-- Plantación --}}
                 @if($gr_plotId && count($gr_availablePlantings))
                 <div>
-                    <flux:label>Variedad / Plantación *</flux:label>
+                    <flux:label>{{ __('Variedad / Plantación *') }}</flux:label>
                     <flux:select wire:model="gr_plantingId">
-                        <flux:select.option value="">Seleccionar plantación...</flux:select.option>
+                        <flux:select.option value="">{{ __('Seleccionar plantación...') }}</flux:select.option>
                         @foreach($gr_availablePlantings as $p)
                             <flux:select.option value="{{ $p['id'] }}">{{ $p['label'] }}</flux:select.option>
                         @endforeach
@@ -1106,14 +1106,14 @@
                 <div class="grid grid-cols-2 gap-3">
                     {{-- Fecha --}}
                     <div>
-                        <label class="block text-xs font-semibold text-zinc-600 mb-1">Fecha *</label>
+                        <label class="block text-xs font-semibold text-zinc-600 mb-1">{{ __('Fecha *') }}</label>
                         <input type="date" wire:model="gr_harvestDate"
                                class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-agro-500" />
                         @error('gr_harvestDate') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
                     {{-- Añada --}}
                     <div>
-                        <label class="block text-xs font-semibold text-zinc-600 mb-1">Añada *</label>
+                        <label class="block text-xs font-semibold text-zinc-600 mb-1">{{ __('Añada *') }}</label>
                         <input type="number" wire:model="gr_vintageYear" min="2000" max="{{ now()->year + 1 }}"
                                class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-agro-500" />
                     </div>
@@ -1122,16 +1122,16 @@
                 <div class="grid grid-cols-2 gap-3">
                     {{-- Kg recibidos --}}
                     <div>
-                        <label class="block text-xs font-semibold text-zinc-600 mb-1">Kg recibidos *</label>
+                        <label class="block text-xs font-semibold text-zinc-600 mb-1">{{ __('Kg recibidos *') }}</label>
                         <input type="number" step="0.1" wire:model="gr_totalWeight" placeholder="0.0"
                                class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-agro-500" />
                         @error('gr_totalWeight') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
                     {{-- Depósito --}}
                     <div>
-                        <flux:label>Depósito destino *</flux:label>
+                        <flux:label>{{ __('Depósito destino *') }}</flux:label>
                         <flux:select wire:model="gr_containerId">
-                            <flux:select.option value="">Depósito...</flux:select.option>
+                            <flux:select.option value="">{{ __('Depósito...') }}</flux:select.option>
                             @foreach($modalContainersKg as $c)
                                 <flux:select.option value="{{ $c->id }}">{{ $c->name }} ({{ number_format($c->capacity - $c->used_capacity, 0) }} kg lib.)</flux:select.option>
                             @endforeach
@@ -1142,10 +1142,10 @@
             </div>
 
             <div class="flex justify-end gap-2 pt-2 border-t border-zinc-100">
-                <flux:button variant="ghost" wire:click="$set('modalGrapeReception', false)">Cancelar</flux:button>
+                <flux:button variant="ghost" wire:click="$set('modalGrapeReception', false)">{{ __('Cancelar') }}</flux:button>
                 <flux:button variant="primary" wire:click="saveGrapeReception()" wire:loading.attr="disabled">
-                    <span wire:loading.remove wire:target="saveGrapeReception">Registrar recepción</span>
-                    <span wire:loading wire:target="saveGrapeReception">Guardando...</span>
+                    <span wire:loading.remove wire:target="saveGrapeReception">{{ __('Registrar recepción') }}</span>
+                    <span wire:loading wire:target="saveGrapeReception">{{ __('Guardando...') }}</span>
                 </flux:button>
             </div>
         </div>
@@ -1159,16 +1159,16 @@
                     <flux:icon icon="beaker" class="size-5 text-violet-600" />
                 </div>
                 <div>
-                    <h3 class="text-base font-bold text-zinc-900">Control de fermentación</h3>
-                    <p class="text-xs text-zinc-400">Registro rápido</p>
+                    <h3 class="text-base font-bold text-zinc-900">{{ __('Control de fermentación') }}</h3>
+                    <p class="text-xs text-zinc-400">{{ __('Registro rápido') }}</p>
                 </div>
             </div>
 
             <div class="space-y-3">
                 <div>
-                    <flux:label>Vino *</flux:label>
+                    <flux:label>{{ __('Vino *') }}</flux:label>
                     <flux:select wire:model="fc_wineId">
-                        <flux:select.option value="">Seleccionar vino...</flux:select.option>
+                        <flux:select.option value="">{{ __('Seleccionar vino...') }}</flux:select.option>
                         @foreach($modalWines as $w)
                             <flux:select.option value="{{ $w->id }}">{{ $w->name }}</flux:select.option>
                         @endforeach
@@ -1176,9 +1176,9 @@
                     @error('fc_wineId') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <flux:label>Contenedor *</flux:label>
+                    <flux:label>{{ __('Contenedor *') }}</flux:label>
                     <flux:select wire:model="fc_containerId">
-                        <flux:select.option value="">Seleccionar contenedor...</flux:select.option>
+                        <flux:select.option value="">{{ __('Seleccionar contenedor...') }}</flux:select.option>
                         @foreach($modalContainersAll as $c)
                             <flux:select.option value="{{ $c->id }}">{{ $c->name }}</flux:select.option>
                         @endforeach
@@ -1186,21 +1186,21 @@
                     @error('fc_containerId') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-zinc-600 mb-1">Fecha y hora *</label>
+                    <label class="block text-xs font-semibold text-zinc-600 mb-1">{{ __('Fecha y hora *') }}</label>
                     <input type="datetime-local" wire:model="fc_controlDate"
                            class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500" />
                     @error('fc_controlDate') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-semibold text-zinc-600 mb-1">Temperatura (°C)</label>
-                        <input type="number" step="0.1" wire:model="fc_temperature" placeholder="—"
+                        <label class="block text-xs font-semibold text-zinc-600 mb-1">{{ __('Temperatura (°C)') }}</label>
+                        <input type="number" step="0.1" wire:model="fc_temperature" placeholder="{{ __('—') }}"
                                class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500" />
                         @error('fc_temperature') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-zinc-600 mb-1">Brix</label>
-                        <input type="number" step="0.1" wire:model="fc_brix" placeholder="—"
+                        <label class="block text-xs font-semibold text-zinc-600 mb-1">{{ __('Brix') }}</label>
+                        <input type="number" step="0.1" wire:model="fc_brix" placeholder="{{ __('—') }}"
                                class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500" />
                         @error('fc_brix') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
@@ -1208,10 +1208,10 @@
             </div>
 
             <div class="flex justify-end gap-2 pt-2 border-t border-zinc-100">
-                <flux:button variant="ghost" wire:click="$set('modalFermentation', false)">Cancelar</flux:button>
+                <flux:button variant="ghost" wire:click="$set('modalFermentation', false)">{{ __('Cancelar') }}</flux:button>
                 <flux:button variant="primary" wire:click="saveFermentationControl()" wire:loading.attr="disabled">
-                    <span wire:loading.remove wire:target="saveFermentationControl">Guardar control</span>
-                    <span wire:loading wire:target="saveFermentationControl">Guardando...</span>
+                    <span wire:loading.remove wire:target="saveFermentationControl">{{ __('Guardar control') }}</span>
+                    <span wire:loading wire:target="saveFermentationControl">{{ __('Guardando...') }}</span>
                 </flux:button>
             </div>
         </div>
@@ -1225,16 +1225,16 @@
                     <flux:icon icon="arrows-right-left" class="size-5 text-blue-600" />
                 </div>
                 <div>
-                    <h3 class="text-base font-bold text-zinc-900">Nuevo trasvase</h3>
-                    <p class="text-xs text-zinc-400">Registro rápido</p>
+                    <h3 class="text-base font-bold text-zinc-900">{{ __('Nuevo trasvase') }}</h3>
+                    <p class="text-xs text-zinc-400">{{ __('Registro rápido') }}</p>
                 </div>
             </div>
 
             <div class="space-y-3">
                 <div>
-                    <flux:label>Vino *</flux:label>
+                    <flux:label>{{ __('Vino *') }}</flux:label>
                     <flux:select wire:model="tr_wineId">
-                        <flux:select.option value="">Seleccionar vino...</flux:select.option>
+                        <flux:select.option value="">{{ __('Seleccionar vino...') }}</flux:select.option>
                         @foreach($modalWines as $w)
                             <flux:select.option value="{{ $w->id }}">{{ $w->name }}</flux:select.option>
                         @endforeach
@@ -1243,18 +1243,18 @@
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <flux:label>Desde contenedor</flux:label>
+                        <flux:label>{{ __('Desde contenedor') }}</flux:label>
                         <flux:select wire:model="tr_fromContainerId">
-                            <flux:select.option value="">— Ninguno —</flux:select.option>
+                            <flux:select.option value="">{{ __('— Ninguno —') }}</flux:select.option>
                             @foreach($modalContainersAll as $c)
                                 <flux:select.option value="{{ $c->id }}">{{ $c->name }}</flux:select.option>
                             @endforeach
                         </flux:select>
                     </div>
                     <div>
-                        <flux:label>Hacia contenedor *</flux:label>
+                        <flux:label>{{ __('Hacia contenedor *') }}</flux:label>
                         <flux:select wire:model="tr_toContainerId">
-                            <flux:select.option value="">Seleccionar...</flux:select.option>
+                            <flux:select.option value="">{{ __('Seleccionar...') }}</flux:select.option>
                             @foreach($modalContainersAll as $c)
                                 <flux:select.option value="{{ $c->id }}">{{ $c->name }}</flux:select.option>
                             @endforeach
@@ -1264,15 +1264,15 @@
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-semibold text-zinc-600 mb-1">Cantidad *</label>
+                        <label class="block text-xs font-semibold text-zinc-600 mb-1">{{ __('Cantidad *') }}</label>
                         <input type="number" step="0.01" wire:model="tr_quantity" placeholder="0.0"
                                class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
                         @error('tr_quantity') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <flux:label>Unidad *</flux:label>
+                        <flux:label>{{ __('Unidad *') }}</flux:label>
                         <flux:select wire:model="tr_unitId">
-                            <flux:select.option value="">Unidad...</flux:select.option>
+                            <flux:select.option value="">{{ __('Unidad...') }}</flux:select.option>
                             @foreach($modalUnits as $u)
                                 <flux:select.option value="{{ $u->id }}">{{ $u->symbol }}</flux:select.option>
                             @endforeach
@@ -1282,7 +1282,7 @@
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <flux:label>Tipo *</flux:label>
+                        <flux:label>{{ __('Tipo *') }}</flux:label>
                         <flux:select wire:model="tr_transferType">
                             @foreach($transferTypes as $key => $label)
                                 <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
@@ -1290,7 +1290,7 @@
                         </flux:select>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-zinc-600 mb-1">Fecha *</label>
+                        <label class="block text-xs font-semibold text-zinc-600 mb-1">{{ __('Fecha *') }}</label>
                         <input type="date" wire:model="tr_transferDate"
                                class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
                         @error('tr_transferDate') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
@@ -1299,10 +1299,10 @@
             </div>
 
             <div class="flex justify-end gap-2 pt-2 border-t border-zinc-100">
-                <flux:button variant="ghost" wire:click="$set('modalTransfer', false)">Cancelar</flux:button>
+                <flux:button variant="ghost" wire:click="$set('modalTransfer', false)">{{ __('Cancelar') }}</flux:button>
                 <flux:button variant="primary" wire:click="saveTransfer()" wire:loading.attr="disabled">
-                    <span wire:loading.remove wire:target="saveTransfer">Guardar trasvase</span>
-                    <span wire:loading wire:target="saveTransfer">Guardando...</span>
+                    <span wire:loading.remove wire:target="saveTransfer">{{ __('Guardar trasvase') }}</span>
+                    <span wire:loading wire:target="saveTransfer">{{ __('Guardando...') }}</span>
                 </flux:button>
             </div>
         </div>
@@ -1315,20 +1315,20 @@
                 <div class="w-9 h-9 bg-agro-100 rounded-xl flex items-center justify-center shrink-0">
                     <flux:icon icon="beaker" class="size-5 text-agro-600" />
                 </div>
-                <h3 class="text-base font-bold text-zinc-900">Nuevo vino</h3>
+                <h3 class="text-base font-bold text-zinc-900">{{ __('Nuevo vino') }}</h3>
             </div>
 
             <div class="space-y-3">
                 <div>
-                    <label class="block text-xs font-semibold text-zinc-600 mb-1">Nombre *</label>
-                    <input type="text" wire:model="wine_name" placeholder="Nombre del vino..."
+                    <label class="block text-xs font-semibold text-zinc-600 mb-1">{{ __('Nombre *') }}</label>
+                    <input type="text" wire:model="wine_name" placeholder="{{ __('Nombre del vino...') }}"
                            class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-agro-500" />
                     @error('wine_name') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <flux:label>Tipo *</flux:label>
+                    <flux:label>{{ __('Tipo *') }}</flux:label>
                     <flux:select wire:model="wine_type">
-                        <flux:select.option value="">Seleccionar tipo...</flux:select.option>
+                        <flux:select.option value="">{{ __('Seleccionar tipo...') }}</flux:select.option>
                         @foreach($wineTypes as $key => $label)
                             <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
                         @endforeach
@@ -1338,10 +1338,10 @@
             </div>
 
             <div class="flex justify-end gap-2 pt-2 border-t border-zinc-100">
-                <flux:button variant="ghost" wire:click="$set('modalWine', false)">Cancelar</flux:button>
+                <flux:button variant="ghost" wire:click="$set('modalWine', false)">{{ __('Cancelar') }}</flux:button>
                 <flux:button variant="primary" wire:click="saveWine()" wire:loading.attr="disabled">
-                    <span wire:loading.remove wire:target="saveWine">Crear vino</span>
-                    <span wire:loading wire:target="saveWine">Guardando...</span>
+                    <span wire:loading.remove wire:target="saveWine">{{ __('Crear vino') }}</span>
+                    <span wire:loading wire:target="saveWine">{{ __('Guardando...') }}</span>
                 </flux:button>
             </div>
         </div>
@@ -1354,20 +1354,20 @@
                 <div class="w-9 h-9 bg-violet-100 rounded-xl flex items-center justify-center shrink-0">
                     <flux:icon icon="archive-box" class="size-5 text-violet-600" />
                 </div>
-                <h3 class="text-base font-bold text-zinc-900">Nuevo contenedor</h3>
+                <h3 class="text-base font-bold text-zinc-900">{{ __('Nuevo contenedor') }}</h3>
             </div>
 
             <div class="space-y-3">
                 <div>
-                    <label class="block text-xs font-semibold text-zinc-600 mb-1">Nombre *</label>
-                    <input type="text" wire:model="cont_name" placeholder="Ej: Depósito 101"
+                    <label class="block text-xs font-semibold text-zinc-600 mb-1">{{ __('Nombre *') }}</label>
+                    <input type="text" wire:model="cont_name" placeholder="{{ __('Ej: Depósito 101') }}"
                            class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500" />
                     @error('cont_name') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <flux:label>Tipo *</flux:label>
+                    <flux:label>{{ __('Tipo *') }}</flux:label>
                     <flux:select wire:model="cont_typeId">
-                        <flux:select.option value="">Seleccionar tipo...</flux:select.option>
+                        <flux:select.option value="">{{ __('Seleccionar tipo...') }}</flux:select.option>
                         @foreach($containerTypes as $t)
                             <flux:select.option value="{{ $t->id }}">{{ $t->name }}</flux:select.option>
                         @endforeach
@@ -1376,15 +1376,15 @@
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-semibold text-zinc-600 mb-1">Capacidad *</label>
+                        <label class="block text-xs font-semibold text-zinc-600 mb-1">{{ __('Capacidad *') }}</label>
                         <input type="number" step="1" wire:model="cont_capacity" placeholder="0"
                                class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500" />
                         @error('cont_capacity') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <flux:label>Unidad *</flux:label>
+                        <flux:label>{{ __('Unidad *') }}</flux:label>
                         <flux:select wire:model="cont_unit">
-                            <flux:select.option value="litros">Litros</flux:select.option>
+                            <flux:select.option value="litros">{{ __('Litros') }}</flux:select.option>
                             <flux:select.option value="kg">Kg</flux:select.option>
                         </flux:select>
                     </div>
@@ -1392,10 +1392,10 @@
             </div>
 
             <div class="flex justify-end gap-2 pt-2 border-t border-zinc-100">
-                <flux:button variant="ghost" wire:click="$set('modalContainer', false)">Cancelar</flux:button>
+                <flux:button variant="ghost" wire:click="$set('modalContainer', false)">{{ __('Cancelar') }}</flux:button>
                 <flux:button variant="primary" wire:click="saveContainer()" wire:loading.attr="disabled">
-                    <span wire:loading.remove wire:target="saveContainer">Crear contenedor</span>
-                    <span wire:loading wire:target="saveContainer">Guardando...</span>
+                    <span wire:loading.remove wire:target="saveContainer">{{ __('Crear contenedor') }}</span>
+                    <span wire:loading wire:target="saveContainer">{{ __('Guardando...') }}</span>
                 </flux:button>
             </div>
         </div>

@@ -17,7 +17,7 @@ class RequireWinery
 
         if (!$user || !$user->hasViticulturistAccess() || !$user->hasWinery()) {
             return redirect()->route('viticulturist.dashboard')
-                ->with('warning', 'Esta funcionalidad requiere estar vinculado a una bodega.');
+                ->with('warning', __('Esta funcionalidad requiere estar vinculado a una bodega.'));
         }
 
         return $next($request);

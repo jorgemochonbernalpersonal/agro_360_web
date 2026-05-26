@@ -8,7 +8,7 @@
                 </span>
             @endif
         </h3>
-        <button wire:click="loadData" class="text-zinc-400 hover:text-zinc-600 transition-colors" title="Actualizar">
+        <button wire:click="loadData" class="text-zinc-400 hover:text-zinc-600 transition-colors" title="{{ __('Actualizar') }}">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
             </svg>
@@ -58,8 +58,8 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                 </svg>
             </div>
-            <h4 class="text-lg font-medium text-zinc-900 mb-1">Sin alertas activas</h4>
-            <p class="text-sm text-zinc-500">Todas tus parcelas están en buen estado</p>
+            <h4 class="text-lg font-medium text-zinc-900 mb-1">{{ __('Sin alertas activas') }}</h4>
+            <p class="text-sm text-zinc-500">{{ __('Todas tus parcelas están en buen estado') }}</p>
         </div>
     @endif
 </div>

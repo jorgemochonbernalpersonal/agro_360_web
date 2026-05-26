@@ -1,38 +1,36 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        :title="'Ventas — ' . $lot->name . ($lot->vintage ? ' (' . $lot->vintage . ')' : '')"
-        description="Historial de albaranes y facturas de este lote"
+        :title="__('Ventas — :name', ['name' => $lot->name . ($lot->vintage ? ' (' . $lot->vintage . ')' : '')])"
+        :description="__('Historial de albaranes y facturas de este lote')"
     >
         <x-slot:actions>
-            <flux:button :href="roleRoute('product-lots.index')" icon="arrow-left" variant="ghost">
-                Volver a lotes
-            </flux:button>
+            <flux:button :href="roleRoute('product-lots.index')" icon="arrow-left" variant="ghost">{{ __('Volver a lotes') }}</flux:button>
         </x-slot:actions>
     </x-agro.page-header>
 
     {{-- KPIs del lote --}}
     <div class="grid grid-cols-2 gap-4">
         <x-agro.stat-card
-            label="Unidades totales"
+            :label="__('Unidades totales')"
             :value="number_format((float) $lot->quantity, 0, ',', '.')"
             icon="archive-box"
             color="blue"
         />
         <x-agro.stat-card
-            label="Disponibles"
+            :label="__('Disponibles')"
             :value="number_format((float) $lot->available_quantity, 0, ',', '.')"
             icon="check-circle"
             color="green"
         />
         <x-agro.stat-card
-            label="Vendidas"
+            :label="__('Vendidas')"
             :value="number_format((float) $lot->sold_quantity, 0, ',', '.')"
             icon="shopping-cart"
             color="violet"
         />
         <x-agro.stat-card
-            label="Importe vendido"
+            :label="__('Importe vendido')"
             :value="'€ ' . number_format((float) $totals->total_amount, 2, ',', '.')"
             icon="banknotes"
             color="teal"
@@ -48,19 +46,17 @@
             <input
                 wire:model.live.debounce.300ms="search"
                 type="text"
-                placeholder="Buscar por cliente, factura o albarán..."
+                placeholder="{{ __('Buscar por cliente, factura o albarán...') }}"
                 class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
             />
         </div>
 
-        <x-agro.filter-input wire:model.live="dateFrom" type="date" label="Desde" />
-        <x-agro.filter-input wire:model.live="dateTo"   type="date" label="Hasta" />
+        <x-agro.filter-input wire:model.live="dateFrom" type="date" :label="__('Desde')" />
+        <x-agro.filter-input wire:model.live="dateTo"   type="date" :label="__('Hasta')" />
 
         @if($search || $dateFrom || $dateTo)
             <div class="flex items-end">
-                <flux:button wire:click="clearFilters" variant="ghost" icon="x-mark" size="sm">
-                    Limpiar
-                </flux:button>
+                <flux:button wire:click="clearFilters" variant="ghost" icon="x-mark" size="sm">{{ __('Limpiar') }}</flux:button>
             </div>
         @endif
     </x-agro.filter-bar>
@@ -69,8 +65,8 @@
     @if($items->isEmpty())
         <x-agro.empty-state
             icon="shopping-cart"
-            title="Sin ventas"
-            description="Este lote no tiene albaranes ni facturas con los filtros aplicados."
+            title="{{ __('Sin ventas') }}"
+            :description="__('Este lote no tiene albaranes ni facturas con los filtros aplicados.')"
         />
     @else
         <x-agro.card>
@@ -98,7 +94,7 @@
                         <x-agro.table-cell>
                             {{ $item->invoice_date ? \Carbon\Carbon::parse($item->invoice_date)->format('d/m/Y') : '—' }}
                             @if($item->gift)
-                                <flux:badge color="pink" size="sm" class="ml-1">Regalo</flux:badge>
+                                <flux:badge color="pink" size="sm" class="ml-1">{{ __('Regalo') }}</flux:badge>
                             @endif
                         </x-agro.table-cell>
 

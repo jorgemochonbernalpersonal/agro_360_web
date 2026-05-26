@@ -23,7 +23,7 @@ class Create extends Component
     {
         // Validar autorización
         if (!Auth::user()->can('create', Campaign::class)) {
-            abort(403, 'No tienes permiso para crear campañas.');
+            abort(403, __('No tienes permiso para crear campañas.'));
         }
 
         // Valores por defecto
@@ -57,7 +57,7 @@ class Create extends Component
             ->first();
 
         if ($existingCampaign) {
-            $this->addError('year', 'Ya existe una campaña para el año ' . $this->year . '.');
+            $this->addError('year', __('Ya existe una campaña para el año :year.', ['year' => $this->year]));
             return;
         }
 
@@ -90,12 +90,12 @@ class Create extends Component
             });
 
             if ($this->active) {
-                session()->flash('campaign_activated', "Campaña {$this->year} activada. Ya puedes registrar actividades.");
+                session()->flash('campaign_activated', __('Campaña :year activada. Ya puedes registrar actividades.', ['year' => $this->year]));
                 $route = $user->isProducer() ? route('producer.digital-notebook.estimated-yields.index') : route('viticulturist.digital-notebook');
                 return $this->redirect($route, navigate: true);
             }
 
-            $this->toastSuccess('Campaña creada correctamente. Actívala cuando quieras empezar a registrar actividades.');
+            $this->toastSuccess(__('Campaña creada correctamente. Actívala cuando quieras empezar a registrar actividades.'));
             $route = $user->isProducer() ? route('producer.campaign.index') : route('viticulturist.campaign.index');
             return $this->redirect($route, navigate: true);
         } catch (\Exception $e) {
@@ -106,7 +106,7 @@ class Create extends Component
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            $this->toastError('Error al crear la campaña. Por favor, intenta de nuevo.');
+            $this->toastError(__('Error al crear la campaña. Por favor, intenta de nuevo.'));
             return;
         }
     }

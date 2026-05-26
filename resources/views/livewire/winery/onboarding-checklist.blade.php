@@ -10,7 +10,7 @@
                             🚀
                         </div>
                         <div>
-                            <h3 class="text-sm font-bold text-zinc-900">Primeros pasos en Agro365</h3>
+                            <h3 class="text-sm font-bold text-zinc-900">{{ __('Primeros pasos en Agro365') }}</h3>
                             <div class="flex items-center gap-2 mt-0.5">
                                 <div class="w-32 bg-zinc-200 rounded-full h-1.5">
                                     <div class="bg-agro-600 h-1.5 rounded-full transition-all duration-500"
@@ -74,14 +74,12 @@
                 {{-- Footer --}}
                 <div class="flex items-center justify-between pt-3 border-t border-zinc-200">
                     <button wire:click="skipAll"
-                            class="text-xs text-zinc-500 hover:text-zinc-700 transition-colors">
-                        Saltar tour
-                    </button>
+                            class="text-xs text-zinc-500 hover:text-zinc-700 transition-colors">{{ __('Saltar tour') }}</button>
 
                     @if($progressPercentage === 100)
                         <div class="flex items-center gap-1 text-agro-700">
                             <flux:icon icon="check-circle" class="size-4" />
-                            <span class="text-xs font-semibold">¡Configuración completa!</span>
+                            <span class="text-xs font-semibold">{{ __('¡Configuración completa!') }}</span>
                         </div>
                     @endif
                 </div>
@@ -93,7 +91,7 @@
             <div class="bg-agro-50 border border-agro-200 text-agro-800 px-3 py-2 rounded-lg mb-4 text-sm" role="alert">
                 <div class="flex items-center gap-2">
                     <flux:icon icon="check-circle" class="size-4" />
-                    <span class="font-semibold">¡Enhorabuena! Tu bodega está lista para trabajar.</span>
+                    <span class="font-semibold">{{ __('¡Enhorabuena! Tu bodega está lista para trabajar.') }}</span>
                 </div>
             </div>
         @endif

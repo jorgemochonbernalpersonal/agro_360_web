@@ -2,8 +2,8 @@
 
     {{-- Header --}}
     <x-agro.page-header
-        title="Cosecha Comercializada"
-        description="Registro de entregas y ventas por campaña"
+        title="{{ __('Cosecha Comercializada') }}"
+        :description="__('Registro de entregas y ventas por campaña')"
         icon="truck"
     >
         <x-slot:actions>
@@ -16,25 +16,25 @@
     {{-- KPIs --}}
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <x-agro.stat-card
-            label="Total entregas"
+            :label="__('Total entregas')"
             :value="$stats['total']"
             icon="truck"
             color="zinc"
         />
         <x-agro.stat-card
-            label="Esta campaña"
+            :label="__('Esta campaña')"
             :value="$stats['this_campaign']"
             icon="calendar-days"
             color="agro"
         />
         <x-agro.stat-card
-            label="Total kg"
+            :label="__('Total kg')"
             :value="number_format($stats['total_kg'], 0, ',', '.')"
             icon="scale"
             color="agro"
         />
         <x-agro.stat-card
-            label="Facturadas"
+            :label="__('Facturadas')"
             :value="$stats['invoiced']"
             icon="document-check"
             color="zinc"
@@ -44,19 +44,19 @@
     {{-- Toolbar --}}
     <div class="flex items-center gap-3 flex-wrap">
         <flux:select wire:model.live="filterCampaign" class="w-48">
-            <flux:select.option value="">Todas las campañas</flux:select.option>
+            <flux:select.option value="">{{ __('Todas las campañas') }}</flux:select.option>
             @foreach($campaigns as $c)
                 <flux:select.option value="{{ $c->id }}">{{ $c->name }}</flux:select.option>
             @endforeach
         </flux:select>
         <flux:select wire:model.live="filterDestination" class="w-44">
-            <flux:select.option value="">Todos los destinos</flux:select.option>
+            <flux:select.option value="">{{ __('Todos los destinos') }}</flux:select.option>
             @foreach($destinations as $key => $label)
                 <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
             @endforeach
         </flux:select>
         @if($filterCampaign || $filterDestination)
-            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">Limpiar</flux:button>
+            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">{{ __('Limpiar') }}</flux:button>
         @endif
     </div>
 
@@ -69,7 +69,7 @@
         >
             <x-slot:action>
                 @if($filterCampaign || $filterDestination)
-                    <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
+                    <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">{{ __('Limpiar filtros') }}</flux:button>
                 @else
                     <flux:button href="{{ roleRoute('viticulturist.marketed-harvests.create') }}" variant="primary" icon="plus">
                         Nueva Entrega
@@ -110,14 +110,14 @@
 
                         <div class="grid grid-cols-2 gap-2">
                             <div class="bg-zinc-50 rounded-xl p-3">
-                                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">Cantidad</p>
+                                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">{{ __('Cantidad') }}</p>
                                 <p class="text-xl font-bold text-zinc-700 leading-none">
                                     {{ number_format($entry->quantity_kg, 0, ',', '.') }}<span class="text-xs font-normal text-zinc-400 ml-0.5">kg</span>
                                 </p>
                             </div>
                             @if($entry->price_per_kg)
                                 <div class="bg-zinc-50 rounded-xl p-3">
-                                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">€/kg</p>
+                                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">{{ __('€/kg') }}</p>
                                     <p class="text-xl font-bold text-zinc-700 leading-none">
                                         {{ number_format($entry->price_per_kg, 3, ',', '.') }}
                                     </p>
@@ -127,7 +127,7 @@
 
                         @if($entry->total_value)
                             <div class="flex items-center justify-between text-sm">
-                                <span class="text-zinc-400">Valor total</span>
+                                <span class="text-zinc-400">{{ __('Valor total') }}</span>
                                 <span class="text-lg font-bold text-zinc-900">{{ number_format($entry->total_value, 2, ',', '.') }} €</span>
                             </div>
                         @endif
@@ -138,15 +138,15 @@
                                 <a href="{{ roleRoute('viticulturist.invoices.show', $entry->invoice_id) }}"
                                    class="flex items-center gap-2 text-xs text-agro-600 hover:text-agro-700">
                                     <flux:icon icon="document-check" class="size-3.5 shrink-0" />
-                                    <span>Ver factura</span>
+                                    <span>{{ __('Ver factura') }}</span>
                                 </a>
                             @else
                                 <button
                                     wire:click="generateInvoice({{ $entry->id }})"
-                                    wire:confirm="¿Generar factura para esta entrega?"
+                                    wire:confirm="{{ __('¿Generar factura para esta entrega?') }}"
                                     class="flex items-center gap-2 text-xs text-zinc-500 hover:text-agro-600 transition-colors">
                                     <flux:icon icon="document-plus" class="size-3.5 shrink-0" />
-                                    <span>Generar factura</span>
+                                    <span>{{ __('Generar factura') }}</span>
                                 </button>
                             @endif
                         @endif
@@ -157,13 +157,13 @@
                             <x-agro.action-button
                                 variant="edit"
                                 href="{{ roleRoute('viticulturist.marketed-harvests.edit', $entry) }}"
-                                title="Editar"
+                                title="{{ __('Editar') }}"
                             />
                             <x-agro.action-button
                                 variant="delete"
                                 wire:click="delete({{ $entry->id }})"
-                                wire:confirm="¿Eliminar esta entrega?"
-                                title="Eliminar"
+                                wire:confirm="{{ __('¿Eliminar esta entrega?') }}"
+                                title="{{ __('Eliminar') }}"
                             />
                         </div>
                     </x-slot:footer>

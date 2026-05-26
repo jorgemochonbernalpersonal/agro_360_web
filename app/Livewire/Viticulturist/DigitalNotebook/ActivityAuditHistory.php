@@ -29,12 +29,12 @@ class ActivityAuditHistory extends Component
     public function mount(AgriculturalActivity $activity = null)
     {
         if (!$activity) {
-            abort(404, 'Actividad no encontrada.');
+            abort(404, __('Actividad no encontrada.'));
         }
         
         // Verificar autorización
         if (!Auth::user()->can('view', $activity)) {
-            abort(403, 'No tienes permiso para ver el historial de esta actividad.');
+            abort(403, __('No tienes permiso para ver el historial de esta actividad.'));
         }
 
         $this->activity = $activity;
@@ -122,14 +122,14 @@ class ActivityAuditHistory extends Component
     protected function getFieldLabel($field)
     {
         $labels = [
-            'activity_date' => 'Fecha de actividad',
-            'notes' => 'Notas',
-            'weather_conditions' => 'Condiciones meteorológicas',
-            'temperature' => 'Temperatura',
-            'phenological_stage' => 'Estadio fenológico',
-            'crew_id' => 'Cuadrilla',
-            'machinery_id' => 'Maquinaria',
-            'is_locked' => 'Estado de bloqueo',
+            'activity_date' => __('Fecha de actividad'),
+            'notes' => __('Notas'),
+            'weather_conditions' => __('Condiciones meteorológicas'),
+            'temperature' => __('Temperatura'),
+            'phenological_stage' => __('Estadio fenológico'),
+            'crew_id' => __('Cuadrilla'),
+            'machinery_id' => __('Maquinaria'),
+            'is_locked' => __('Estado de bloqueo'),
         ];
 
         return $labels[$field] ?? ucfirst(str_replace('_', ' ', $field));

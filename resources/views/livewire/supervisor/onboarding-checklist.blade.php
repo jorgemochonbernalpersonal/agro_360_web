@@ -10,7 +10,7 @@
                             🚀
                         </div>
                         <div>
-                            <h3 class="text-sm font-bold text-zinc-900">Primeros pasos en Agro365</h3>
+                            <h3 class="text-sm font-bold text-zinc-900">{{ __('Primeros pasos en Agro365') }}</h3>
                             <div class="flex items-center gap-2 mt-0.5">
                                 <div class="w-32 bg-zinc-200 rounded-full h-1.5">
                                     <div class="bg-indigo-600 h-1.5 rounded-full transition-all duration-500"
@@ -69,14 +69,12 @@
 
                 <div class="flex items-center justify-between pt-3 border-t border-zinc-200">
                     <button wire:click="skipAll"
-                            class="text-xs text-zinc-500 hover:text-zinc-700 transition-colors">
-                        Saltar tour
-                    </button>
+                            class="text-xs text-zinc-500 hover:text-zinc-700 transition-colors">{{ __('Saltar tour') }}</button>
 
                     @if($progressPercentage === 100)
                         <div class="flex items-center gap-1 text-indigo-700">
                             <flux:icon icon="check-circle" class="size-4" />
-                            <span class="text-xs font-semibold">¡Denominación configurada!</span>
+                            <span class="text-xs font-semibold">{{ __('¡Denominación configurada!') }}</span>
                         </div>
                     @endif
                 </div>

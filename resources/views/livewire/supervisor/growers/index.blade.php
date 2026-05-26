@@ -1,24 +1,20 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="Viticultores DO"
-        description="Viticultores gestionados directamente por la denominación de origen."
+        title="{{ __('Viticultores DO') }}"
+        :description="__('Viticultores gestionados directamente por la denominación de origen.')"
     >
         <x-slot:actions>
-            <flux:button wire:click="openLinkModal" variant="ghost" icon="link">
-                Vincular existente
-            </flux:button>
-            <flux:button wire:click="openCreateModal" variant="primary" icon="plus">
-                Nuevo viticultor
-            </flux:button>
+            <flux:button wire:click="openLinkModal" variant="ghost" icon="link">{{ __('Vincular existente') }}</flux:button>
+            <flux:button wire:click="openCreateModal" variant="primary" icon="plus">{{ __('Nuevo viticultor') }}</flux:button>
         </x-slot:actions>
     </x-agro.page-header>
 
     {{-- Stats --}}
     <x-agro.stats-section key="supervisor-growers" columns="3">
-        <x-agro.stat-card label="Viticultores DO" :value="$totalGrowerCount" icon="users" color="agro" />
-        <x-agro.stat-card label="Total parcelas activas" :value="$plotStatsByVit->sum('plot_count')" icon="map" color="blue" />
-        <x-agro.stat-card label="Superficie total (ha)" :value="number_format($plotStatsByVit->sum('total_area'), 2)" icon="square-3-stack-3d" color="yellow" />
+        <x-agro.stat-card :label="__('Viticultores DO')" :value="$totalGrowerCount" icon="users" color="agro" />
+        <x-agro.stat-card :label="__('Total parcelas activas')" :value="$plotStatsByVit->sum('plot_count')" icon="map" color="blue" />
+        <x-agro.stat-card :label="__('Superficie total (ha)')" :value="number_format($plotStatsByVit->sum('total_area'), 2)" icon="square-3-stack-3d" color="yellow" />
     </x-agro.stats-section>
 
     {{-- Status filter tabs --}}
@@ -49,9 +45,9 @@
 
     {{-- Search --}}
     <div class="flex items-center gap-2">
-        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar viticultor..." />
+        <x-agro.search-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar viticultor...')" />
         @if($search)
-            <button wire:click="clearSearch" class="text-xs text-zinc-400 hover:text-zinc-600 transition px-2 py-1.5">Limpiar</button>
+            <button wire:click="clearSearch" class="text-xs text-zinc-400 hover:text-zinc-600 transition px-2 py-1.5">{{ __('Limpiar') }}</button>
         @endif
     </div>
 
@@ -86,11 +82,11 @@
                                 radius="xl"
                             >
                                 @if(!$isGhost)
-                                    <flux:badge color="green" size="sm">Activo</flux:badge>
+                                    <flux:badge color="green" size="sm">{{ __('Activo') }}</flux:badge>
                                 @elseif($hasPendingInvite)
-                                    <flux:badge color="amber" size="sm">Invitación enviada</flux:badge>
+                                    <flux:badge color="amber" size="sm">{{ __('Invitación enviada') }}</flux:badge>
                                 @else
-                                    <flux:badge color="zinc" size="sm">Ghost</flux:badge>
+                                    <flux:badge color="zinc" size="sm">{{ __('Ghost') }}</flux:badge>
                                 @endif
                             </x-agro.card-item-header>
                         </x-slot:header>
@@ -98,18 +94,18 @@
                         <div class="flex-1 space-y-4">
                             <div class="grid grid-cols-2 gap-2">
                                 <div class="bg-blue-50 rounded-xl p-3">
-                                    <p class="text-[10px] font-semibold text-blue-400 uppercase tracking-widest mb-0.5">Parcelas</p>
+                                    <p class="text-[10px] font-semibold text-blue-400 uppercase tracking-widest mb-0.5">{{ __('Parcelas') }}</p>
                                     <p class="text-2xl font-bold text-blue-700 leading-none">{{ $plots?->plot_count ?? 0 }}</p>
                                 </div>
                                 <div class="bg-agro-50 rounded-xl p-3">
-                                    <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Plantaciones</p>
+                                    <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">{{ __('Plantaciones') }}</p>
                                     <p class="text-2xl font-bold text-agro-700 leading-none">{{ $plantings?->planting_count ?? 0 }}</p>
                                 </div>
                             </div>
 
                             <div class="space-y-2 text-sm">
                                 <div class="flex items-center justify-between">
-                                    <span class="text-zinc-400">Bodegas</span>
+                                    <span class="text-zinc-400">{{ __('Bodegas') }}</span>
                                     <span class="text-zinc-700 font-medium truncate ml-2 max-w-[60%] text-right">{{ $wineryNamesByVit[$grower->id] ?? '---' }}</span>
                                 </div>
                             </div>
@@ -118,14 +114,14 @@
                         <x-slot:footer>
                             <div class="flex items-center justify-between gap-0.5">
                                 {{-- Remove from pool --}}
-                                <x-agro.action-button variant="delete" wire:click="removeGrower({{ $grower->id }})" wire:confirm="¿Eliminar a {{ $grower->name }} del pool de la DO? Se retirarán también sus asignaciones a bodegas." title="Eliminar del pool" />
+                                <x-agro.action-button variant="delete" wire:click="removeGrower({{ $grower->id }})" wire:confirm="{{ __('¿Eliminar a :name del pool de la DO? Se retirarán también sus asignaciones a bodegas.', ['name' => $grower->name]) }}" title="{{ __('Eliminar del pool') }}" />
 
                                 <div class="flex items-center gap-0.5">
                                     @if($isGhost)
                                         @if($hasPendingInvite)
-                                            <x-agro.action-button icon="x-mark" variant="danger" wire:click="revokeInvitation({{ $grower->id }})" wire:confirm="¿Revocar la invitación de {{ $grower->name }}?" title="Revocar invitación" />
+                                            <x-agro.action-button icon="x-mark" variant="danger" wire:click="revokeInvitation({{ $grower->id }})" wire:confirm="{{ __('¿Revocar la invitación de :name?', ['name' => $grower->name]) }}" title="{{ __('Revocar invitación') }}" />
                                         @else
-                                            <x-agro.action-button icon="envelope" variant="default" wire:click="openInviteModal({{ $grower->id }})" title="Invitar" />
+                                            <x-agro.action-button icon="envelope" variant="default" wire:click="openInviteModal({{ $grower->id }})" title="{{ __('Invitar') }}" />
                                         @endif
                                     @endif
                                 </div>
@@ -137,7 +133,7 @@
 
             <x-agro-pagination :paginator="$growers" />
         @else
-            <x-agro.empty-state icon="users" title="No hay viticultores" description="No hay viticultores adscritos a esta denominación." />
+            <x-agro.empty-state icon="users" title="{{ __('No hay viticultores') }}" :description="__('No hay viticultores adscritos a esta denominación.')" />
         @endif
     </div>
 
@@ -149,17 +145,17 @@
                     <flux:icon icon="link" class="size-5 text-blue-600" />
                 </div>
                 <div>
-                    <h3 class="text-base font-semibold text-zinc-900">Vincular viticultor existente</h3>
-                    <p class="text-xs text-zinc-500">Añade al pool un viticultor que ya tiene cuenta activa</p>
+                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Vincular viticultor existente') }}</h3>
+                    <p class="text-xs text-zinc-500">{{ __('Añade al pool un viticultor que ya tiene cuenta activa') }}</p>
                 </div>
             </div>
 
             <div class="space-y-4">
                 <flux:field>
-                    <flux:label>Buscar por nombre, email o DNI</flux:label>
+                    <flux:label>{{ __('Buscar por nombre, email o DNI') }}</flux:label>
                     <flux:input
                         wire:model.live.debounce.300ms="linkQuery"
-                        placeholder="Juan García..."
+                        placeholder="{{ __('Juan García...') }}"
                         autofocus
                     />
                 </flux:field>
@@ -193,25 +189,25 @@
                             @endforeach
                         </div>
                     @else
-                        <p class="text-sm text-zinc-400 text-center py-4">Sin resultados. Solo se muestran viticultores con cuenta activa que aún no pertenecen a este pool.</p>
+                        <p class="text-sm text-zinc-400 text-center py-4">{{ __('Sin resultados. Solo se muestran viticultores con cuenta activa que aún no pertenecen a este pool.') }}</p>
                     @endif
                 @elseif(strlen(trim($linkQuery)) > 0)
-                    <p class="text-xs text-zinc-400">Escribe al menos 2 caracteres para buscar.</p>
+                    <p class="text-xs text-zinc-400">{{ __('Escribe al menos 2 caracteres para buscar.') }}</p>
                 @endif
 
                 <flux:error name="linkSelectedId" />
             </div>
 
             <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-zinc-100">
-                <flux:button variant="ghost" wire:click="closeLinkModal">Cancelar</flux:button>
+                <flux:button variant="ghost" wire:click="closeLinkModal">{{ __('Cancelar') }}</flux:button>
                 <flux:button
                     variant="primary"
                     wire:click="linkExistingGrower"
                     wire:loading.attr="disabled"
                     :disabled="!$linkSelectedId"
                 >
-                    <span wire:loading.remove wire:target="linkExistingGrower">Vincular al pool</span>
-                    <span wire:loading wire:target="linkExistingGrower">Vinculando...</span>
+                    <span wire:loading.remove wire:target="linkExistingGrower">{{ __('Vincular al pool') }}</span>
+                    <span wire:loading wire:target="linkExistingGrower">{{ __('Vinculando...') }}</span>
                 </flux:button>
             </div>
         </div>
@@ -225,20 +221,20 @@
                     <flux:icon icon="user-plus" class="size-5 text-agro-600" />
                 </div>
                 <div>
-                    <h3 class="text-base font-semibold text-zinc-900">Nuevo viticultor</h3>
-                    <p class="text-xs text-zinc-500">Puedes invitarle a registrarse más adelante</p>
+                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Nuevo viticultor') }}</h3>
+                    <p class="text-xs text-zinc-500">{{ __('Puedes invitarle a registrarse más adelante') }}</p>
                 </div>
             </div>
 
             <div class="space-y-4">
                 <flux:field>
-                    <flux:label>Nombre completo <span class="text-red-400">*</span></flux:label>
-                    <flux:input wire:model="createName" placeholder="Juan García López" autofocus />
+                    <flux:label>{{ __('Nombre completo') }} <span class="text-red-400">*</span></flux:label>
+                    <flux:input wire:model="createName" :placeholder="__('Juan García López')" autofocus />
                     <flux:error name="createName" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Email <span class="text-zinc-400 font-normal text-xs">(opcional)</span></flux:label>
+                    <flux:label>{{ __('Email') }} <span class="text-zinc-400 font-normal text-xs">{{ __('(opcional)') }}</span></flux:label>
                     <flux:input wire:model="createEmail" type="email" placeholder="viticultor@ejemplo.com" />
                     <flux:description class="text-xs text-zinc-400">Si lo introduces podrás enviarle una invitación directamente.</flux:description>
                     <flux:error name="createEmail" />
@@ -246,12 +242,12 @@
 
                 <div class="grid grid-cols-2 gap-3">
                     <flux:field>
-                        <flux:label>DNI / NIF <span class="text-zinc-400 font-normal text-xs">(opcional)</span></flux:label>
+                        <flux:label>{{ __('DNI / NIF') }} <span class="text-zinc-400 font-normal text-xs">{{ __('(opcional)') }}</span></flux:label>
                         <flux:input wire:model="createDni" placeholder="12345678A" maxlength="20" />
                         <flux:error name="createDni" />
                     </flux:field>
                     <flux:field>
-                        <flux:label>Teléfono <span class="text-zinc-400 font-normal text-xs">(opcional)</span></flux:label>
+                        <flux:label>{{ __('Teléfono') }} <span class="text-zinc-400 font-normal text-xs">{{ __('(opcional)') }}</span></flux:label>
                         <flux:input wire:model="createPhone" placeholder="600 000 000" maxlength="20" />
                     </flux:field>
                 </div>
@@ -264,10 +260,10 @@
             </div>
 
             <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-zinc-100">
-                <flux:button variant="ghost" wire:click="closeCreateModal">Cancelar</flux:button>
+                <flux:button variant="ghost" wire:click="closeCreateModal">{{ __('Cancelar') }}</flux:button>
                 <flux:button variant="primary" wire:click="createGrower" wire:loading.attr="disabled">
-                    <span wire:loading.remove wire:target="createGrower">Crear viticultor</span>
-                    <span wire:loading wire:target="createGrower">Creando...</span>
+                    <span wire:loading.remove wire:target="createGrower">{{ __('Crear viticultor') }}</span>
+                    <span wire:loading wire:target="createGrower">{{ __('Creando...') }}</span>
                 </flux:button>
             </div>
         </div>
@@ -281,13 +277,13 @@
                     <flux:icon icon="envelope" class="size-5 text-blue-600" />
                 </div>
                 <div>
-                    <h3 class="text-base font-semibold text-zinc-900">Enviar invitación</h3>
-                    <p class="text-xs text-zinc-500">El viticultor recibirá un enlace de activación (7 días)</p>
+                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Enviar invitación') }}</h3>
+                    <p class="text-xs text-zinc-500">{{ __('El viticultor recibirá un enlace de activación (7 días)') }}</p>
                 </div>
             </div>
 
             <flux:field>
-                <flux:label>Email del viticultor</flux:label>
+                <flux:label>{{ __('Email del viticultor') }}</flux:label>
                 <flux:input wire:model="inviteEmail" type="email" placeholder="viticultor@ejemplo.com" autofocus />
                 <flux:description class="text-xs text-zinc-400">
                     Al activar la cuenta, el viticultor tendrá acceso gratuito al cuaderno de campo.
@@ -296,10 +292,10 @@
             </flux:field>
 
             <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-zinc-100">
-                <flux:button variant="ghost" wire:click="closeInviteModal">Cancelar</flux:button>
+                <flux:button variant="ghost" wire:click="closeInviteModal">{{ __('Cancelar') }}</flux:button>
                 <flux:button variant="primary" wire:click="sendInvitation" wire:loading.attr="disabled">
-                    <span wire:loading.remove wire:target="sendInvitation">Enviar invitación</span>
-                    <span wire:loading wire:target="sendInvitation">Enviando...</span>
+                    <span wire:loading.remove wire:target="sendInvitation">{{ __('Enviar invitación') }}</span>
+                    <span wire:loading wire:target="sendInvitation">{{ __('Enviando...') }}</span>
                 </flux:button>
             </div>
         </div>

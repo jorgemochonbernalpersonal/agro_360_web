@@ -21,7 +21,7 @@
             <div class="flex justify-between items-center h-16">
                 <a href="{{ url('/') }}" class="flex items-center gap-3">
                     <img src="{{ asset('images/logo.png') }}" alt="Agro365" class="h-10 w-auto">
-                    <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">Agro365</span>
+                    <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Agro365') }}</span>
                 </a>
                 @guest
                     <a href="{{ route('register') }}" class="px-4 py-2 rounded-lg bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white">Comenzar Gratis</a>
@@ -35,92 +35,90 @@
             <div class="mb-12">
                 <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 border border-blue-300 mb-6">
                     <span class="text-lg">📅</span>
-                    <span class="text-sm font-semibold text-blue-800">Planificación Anual</span>
+                    <span class="text-sm font-semibold text-blue-800">{{ __('Planificación Anual') }}</span>
                 </div>
-                <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">
-                    Calendario Vitícola: Labores por Mes
-                </h1>
+                <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">{{ __('Calendario Vitícola: Labores por Mes') }}</h1>
                 <p class="text-xl text-gray-600 leading-relaxed">
-                    <strong>Planifica todas las labores</strong> de tu viñedo a lo largo del año. Poda, tratamientos, labores culturales, vendimia y más. Organiza tu trabajo con el calendario integrado de Agro365.
+                    <strong>{{ __('Planifica todas las labores') }}</strong> de tu viñedo a lo largo del año. Poda, tratamientos, labores culturales, vendimia y más. Organiza tu trabajo con el calendario integrado de Agro365.
                 </p>
             </div>
 
             <article class="prose prose-lg max-w-none">
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Calendario Anual del Viñedo</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Calendario Anual del Viñedo') }}</h2>
                     <div class="space-y-4">
                         <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-blue-400">
-                            <h3 class="font-bold text-[var(--color-agro-green-dark)]">❄️ Enero - Febrero: Reposo Invernal</h3>
+                            <h3 class="font-bold text-[var(--color-agro-green-dark)]">{{ __('❄️ Enero - Febrero: Reposo Invernal') }}</h3>
                             <ul class="text-gray-700 text-sm mt-2 space-y-1">
-                                <li>• <strong>Poda en seco</strong> de formación y producción</li>
-                                <li>• Reparación y mantenimiento de estructuras</li>
-                                <li>• Análisis de suelo</li>
+                                <li>• <strong>{{ __('Poda en seco') }}</strong> de formación y producción</li>
+                                <li>{{ __('• Reparación y mantenimiento de estructuras') }}</li>
+                                <li>{{ __('• Análisis de suelo') }}</li>
                             </ul>
                         </div>
                         <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-green-400">
-                            <h3 class="font-bold text-[var(--color-agro-green-dark)]">🌱 Marzo - Abril: Brotación</h3>
+                            <h3 class="font-bold text-[var(--color-agro-green-dark)]">{{ __('🌱 Marzo - Abril: Brotación') }}</h3>
                             <ul class="text-gray-700 text-sm mt-2 space-y-1">
-                                <li>• Lloro de la vid y brotación</li>
+                                <li>{{ __('• Lloro de la vid y brotación') }}</li>
                                 <li>• Primeros <a href="{{ url('/registro-fitosanitarios') }}" class="text-[var(--color-agro-green)] hover:underline">tratamientos preventivos</a> (mildiu, oídio)</li>
-                                <li>• Laboreo del suelo</li>
+                                <li>{{ __('• Laboreo del suelo') }}</li>
                             </ul>
                         </div>
                         <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-pink-400">
-                            <h3 class="font-bold text-[var(--color-agro-green-dark)]">🌸 Mayo - Junio: Floración y Cuajado</h3>
+                            <h3 class="font-bold text-[var(--color-agro-green-dark)]">{{ __('🌸 Mayo - Junio: Floración y Cuajado') }}</h3>
                             <ul class="text-gray-700 text-sm mt-2 space-y-1">
-                                <li>• Floración y cuajado de racimos</li>
+                                <li>{{ __('• Floración y cuajado de racimos') }}</li>
                                 <li>• <a href="{{ url('/control-plagas-viñedo') }}" class="text-[var(--color-agro-green)] hover:underline">Control de polilla</a> 1ª generación</li>
-                                <li>• Espergura y desniete</li>
-                                <li>• Estimación de cosecha</li>
+                                <li>{{ __('• Espergura y desniete') }}</li>
+                                <li>{{ __('• Estimación de cosecha') }}</li>
                             </ul>
                         </div>
                         <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-amber-400">
-                            <h3 class="font-bold text-[var(--color-agro-green-dark)]">☀️ Julio - Agosto: Envero y Maduración</h3>
+                            <h3 class="font-bold text-[var(--color-agro-green-dark)]">{{ __('☀️ Julio - Agosto: Envero y Maduración') }}</h3>
                             <ul class="text-gray-700 text-sm mt-2 space-y-1">
-                                <li>• Envero (cambio de color)</li>
-                                <li>• Despunte y deshojado</li>
-                                <li>• Control de estrés hídrico</li>
-                                <li>• Tratamientos contra botritis</li>
+                                <li>{{ __('• Envero (cambio de color)') }}</li>
+                                <li>{{ __('• Despunte y deshojado') }}</li>
+                                <li>{{ __('• Control de estrés hídrico') }}</li>
+                                <li>{{ __('• Tratamientos contra botritis') }}</li>
                             </ul>
                         </div>
                         <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-purple-400">
-                            <h3 class="font-bold text-[var(--color-agro-green-dark)]">🍇 Septiembre - Octubre: Vendimia</h3>
+                            <h3 class="font-bold text-[var(--color-agro-green-dark)]">{{ __('🍇 Septiembre - Octubre: Vendimia') }}</h3>
                             <ul class="text-gray-700 text-sm mt-2 space-y-1">
-                                <li>• Control de maduración (Baumé, acidez)</li>
+                                <li>{{ __('• Control de maduración (Baumé, acidez)') }}</li>
                                 <li>• <a href="{{ url('/gestion-vendimia') }}" class="text-[var(--color-agro-green)] hover:underline">Vendimia</a> manual o mecánica</li>
-                                <li>• Gestión de contenedores</li>
+                                <li>{{ __('• Gestión de contenedores') }}</li>
                                 <li>• <a href="{{ url('/facturacion-agricola') }}" class="text-[var(--color-agro-green)] hover:underline">Facturación</a> a bodegas</li>
                             </ul>
                         </div>
                         <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-orange-400">
-                            <h3 class="font-bold text-[var(--color-agro-green-dark)]">🍂 Noviembre - Diciembre: Post-vendimia</h3>
+                            <h3 class="font-bold text-[var(--color-agro-green-dark)]">{{ __('🍂 Noviembre - Diciembre: Post-vendimia') }}</h3>
                             <ul class="text-gray-700 text-sm mt-2 space-y-1">
-                                <li>• Caída de hoja y entrada en reposo</li>
-                                <li>• Pre-poda</li>
-                                <li>• Abonado de fondo</li>
-                                <li>• Planificación de próxima campaña</li>
+                                <li>{{ __('• Caída de hoja y entrada en reposo') }}</li>
+                                <li>{{ __('• Pre-poda') }}</li>
+                                <li>{{ __('• Abonado de fondo') }}</li>
+                                <li>{{ __('• Planificación de próxima campaña') }}</li>
                             </ul>
                         </div>
                     </div>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Calendario Digital en Agro365</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Calendario Digital en Agro365') }}</h2>
                     <div class="grid md:grid-cols-2 gap-6 mb-6">
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">📆 Vista de Calendario</h3>
-                            <p class="text-gray-700">Visualiza todas las actividades programadas en vista mensual, semanal o diaria.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('📆 Vista de Calendario') }}</h3>
+                            <p class="text-gray-700">{{ __('Visualiza todas las actividades programadas en vista mensual, semanal o diaria.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">🔔 Recordatorios</h3>
-                            <p class="text-gray-700">Alertas de tareas pendientes y tratamientos programados.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('🔔 Recordatorios') }}</h3>
+                            <p class="text-gray-700">{{ __('Alertas de tareas pendientes y tratamientos programados.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">📋 Vinculación al Cuaderno</h3>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('📋 Vinculación al Cuaderno') }}</h3>
                             <p class="text-gray-700">Cada tarea completada se registra automáticamente en el <a href="{{ content_route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">cuaderno de campo</a>.</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">👥 Asignación a Cuadrillas</h3>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('👥 Asignación a Cuadrillas') }}</h3>
                             <p class="text-gray-700">Asigna tareas a <a href="{{ url('/gestion-cuadrillas-agricolas') }}" class="text-[var(--color-agro-green)] hover:underline">cuadrillas</a> específicas.</p>
                         </div>
                     </div>
@@ -128,9 +126,9 @@
 
                 <section class="mb-12">
                     <div class="bg-gradient-to-r from-[var(--color-agro-green-bg)] to-[var(--color-agro-green-light)]/30 p-8 rounded-xl border border-[var(--color-agro-green)]/20">
-                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">📅 Organiza tu Viñedo</h3>
+                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('📅 Organiza tu Viñedo') }}</h3>
                         <p class="text-gray-700 mb-6">
-                            Calendario integrado con cuaderno de campo, tratamientos y gestión de personal. <strong>3 meses gratis</strong>.
+                            Calendario integrado con cuaderno de campo, tratamientos y gestión de personal. <strong>{{ __('3 meses gratis') }}</strong>.
                         </p>
                         <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:shadow-lg transition-all font-semibold">
                             Comenzar Gratis
@@ -139,27 +137,27 @@
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Preguntas Frecuentes</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Preguntas Frecuentes') }}</h2>
                     <div class="space-y-6">
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Cuándo debo iniciar la poda?</h3>
-                            <p class="text-gray-700">La poda en seco se realiza durante el reposo invernal, generalmente entre enero y febrero.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Cuándo debo iniciar la poda?') }}</h3>
+                            <p class="text-gray-700">{{ __('La poda en seco se realiza durante el reposo invernal, generalmente entre enero y febrero.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Cuándo aplicar tratamientos preventivos?</h3>
-                            <p class="text-gray-700">Los primeros tratamientos preventivos contra mildiu y oídio se aplican tras la brotación en marzo-abril.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Cuándo aplicar tratamientos preventivos?') }}</h3>
+                            <p class="text-gray-700">{{ __('Los primeros tratamientos preventivos contra mildiu y oídio se aplican tras la brotación en marzo-abril.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Qué es el envero?</h3>
-                            <p class="text-gray-700">Es el cambio de color de las uvas tintas (de verde a rojo/negro) que marca el inicio de la maduración, en julio-agosto.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Qué es el envero?') }}</h3>
+                            <p class="text-gray-700">{{ __('Es el cambio de color de las uvas tintas (de verde a rojo/negro) que marca el inicio de la maduración, en julio-agosto.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Puedo crear tareas recurrentes?</h3>
-                            <p class="text-gray-700">Sí, el calendario permite programar tareas que se repiten cada año o cada ciertos días.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Puedo crear tareas recurrentes?') }}</h3>
+                            <p class="text-gray-700">{{ __('Sí, el calendario permite programar tareas que se repiten cada año o cada ciertos días.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Se sincroniza con mi móvil?</h3>
-                            <p class="text-gray-700">La aplicación web es responsive y accesible desde cualquier dispositivo móvil.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Se sincroniza con mi móvil?') }}</h3>
+                            <p class="text-gray-700">{{ __('La aplicación web es responsive y accesible desde cualquier dispositivo móvil.') }}</p>
                         </div>
                     </div>
                 </section>

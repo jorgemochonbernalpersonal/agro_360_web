@@ -37,13 +37,13 @@
 
                 <flux:field>
                     <flux:label required>{{ __('Nombre del producto') }}</flux:label>
-                    <flux:input wire:model="product_name" type="text" placeholder="Ej: Mancozeb 80 WP" />
+                    <flux:input wire:model="product_name" type="text" :placeholder="__('Ej: Mancozeb 80 WP')" />
                     <flux:error name="product_name" />
                 </flux:field>
 
                 <flux:field>
                     <flux:label>{{ __('Nº Registro MAPA') }}</flux:label>
-                    <flux:input wire:model="registration_number" type="text" placeholder="ES-XXXXXXXX" />
+                    <flux:input wire:model="registration_number" type="text" :placeholder="__('ES-XXXXXXXX')" />
                     <flux:error name="registration_number" />
                 </flux:field>
 
@@ -65,19 +65,19 @@
 
                 <flux:field>
                     <flux:label>{{ __('Capacidad unitaria (L)') }}</flux:label>
-                    <flux:input wire:model="container_size_liters" type="number" step="0.001" min="0" placeholder="Ej: 5.000" />
+                    <flux:input wire:model="container_size_liters" type="number" step="0.001" min="0" :placeholder="__('Ej: 5.000')" />
                     <flux:error name="container_size_liters" />
                 </flux:field>
 
                 <flux:field>
                     <flux:label required>{{ __('Número de envases') }}</flux:label>
-                    <flux:input wire:model="containers_quantity" type="number" min="1" placeholder="Ej: 10" />
+                    <flux:input wire:model="containers_quantity" type="number" min="1" :placeholder="__('Ej: 10')" />
                     <flux:error name="containers_quantity" />
                 </flux:field>
 
                 <flux:field>
                     <flux:label>{{ __('Peso total envases vacíos (kg)') }}</flux:label>
-                    <flux:input wire:model="total_weight_kg" type="number" step="0.001" min="0" placeholder="Ej: 2.500" />
+                    <flux:input wire:model="total_weight_kg" type="number" step="0.001" min="0" :placeholder="__('Ej: 2.500')" />
                     <flux:error name="total_weight_kg" />
                 </flux:field>
 
@@ -105,7 +105,7 @@
 
                 <flux:field>
                     <flux:label>{{ __('Nº albarán / documento') }}</flux:label>
-                    <flux:input wire:model="transport_document" type="text" placeholder="Ej: ALB-2025-001234" />
+                    <flux:input wire:model="transport_document" type="text" :placeholder="__('Ej: ALB-2025-001234')" />
                     <flux:description>{{ __('Número del albarán de entrega emitido por el punto de recogida') }}</flux:description>
                     <flux:error name="transport_document" />
                 </flux:field>

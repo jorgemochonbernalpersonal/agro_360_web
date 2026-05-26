@@ -1,8 +1,8 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="Campañas"
-        description="Resumen de campañas de vendimia y actividad por viticultor en la denominación."
+        title="{{ __('Campañas') }}"
+        :description="__('Resumen de campañas de vendimia y actividad por viticultor en la denominación.')"
     />
 
     {{-- Tabs --}}
@@ -36,7 +36,7 @@
                                         radius="xl"
                                     >
                                         @if($row->year === $currentYear)
-                                            <flux:badge color="green" size="sm">Actual</flux:badge>
+                                            <flux:badge color="green" size="sm">{{ __('Actual') }}</flux:badge>
                                         @endif
                                     </x-agro.card-item-header>
                                 </x-slot:header>
@@ -44,22 +44,22 @@
                                 <div class="flex-1 space-y-4">
                                     <div class="grid grid-cols-2 gap-2">
                                         <div class="bg-blue-50 rounded-xl p-3">
-                                            <p class="text-[10px] font-semibold text-blue-400 uppercase tracking-widest mb-0.5">Campañas</p>
+                                            <p class="text-[10px] font-semibold text-blue-400 uppercase tracking-widest mb-0.5">{{ __('Campañas') }}</p>
                                             <p class="text-2xl font-bold text-blue-700 leading-none">{{ $row->campaign_count }}</p>
                                         </div>
                                         <div class="bg-agro-50 rounded-xl p-3">
-                                            <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Activas</p>
+                                            <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">{{ __('Activas') }}</p>
                                             <p class="text-2xl font-bold text-agro-700 leading-none">{{ $row->active_count }}</p>
                                         </div>
                                     </div>
 
                                     <div class="space-y-2 text-sm">
                                         <div class="flex items-center justify-between">
-                                            <span class="text-zinc-400">Recepciones</span>
+                                            <span class="text-zinc-400">{{ __('Recepciones') }}</span>
                                             <span class="text-zinc-700 font-medium">{{ $row->reception_count > 0 ? $row->reception_count : '---' }}</span>
                                         </div>
                                         <div class="flex items-center justify-between">
-                                            <span class="text-zinc-400">Total uva</span>
+                                            <span class="text-zinc-400">{{ __('Total uva') }}</span>
                                             <span class="text-zinc-700 font-medium">
                                                 @if($row->total_kg > 0)
                                                     {{ number_format($row->total_kg, 0, ',', '.') }} kg
@@ -74,7 +74,7 @@
                         @endforeach
                     </div>
                 @else
-                    <x-agro.empty-state icon="calendar-days" title="No hay campañas" description="No hay datos de campañas aún." />
+                    <x-agro.empty-state icon="calendar-days" title="{{ __('No hay campañas') }}" :description="__('No hay datos de campañas aún.')" />
                 @endif
 
             @else
@@ -108,7 +108,7 @@
                                                 Activa
                                             </span>
                                         @else
-                                            <flux:badge color="zinc" size="sm">Sin activa</flux:badge>
+                                            <flux:badge color="zinc" size="sm">{{ __('Sin activa') }}</flux:badge>
                                         @endif
                                     </x-agro.card-item-header>
                                 </x-slot:header>
@@ -116,11 +116,11 @@
                                 <div class="flex-1 space-y-4">
                                     <div class="grid grid-cols-2 gap-2">
                                         <div class="bg-blue-50 rounded-xl p-3">
-                                            <p class="text-[10px] font-semibold text-blue-400 uppercase tracking-widest mb-0.5">Campañas</p>
+                                            <p class="text-[10px] font-semibold text-blue-400 uppercase tracking-widest mb-0.5">{{ __('Campañas') }}</p>
                                             <p class="text-2xl font-bold text-blue-700 leading-none">{{ $cs?->total_campaigns ?? 0 }}</p>
                                         </div>
                                         <div class="bg-amber-50 rounded-xl p-3">
-                                            <p class="text-[10px] font-semibold text-amber-400 uppercase tracking-widest mb-0.5">Última</p>
+                                            <p class="text-[10px] font-semibold text-amber-400 uppercase tracking-widest mb-0.5">{{ __('Última') }}</p>
                                             <p class="text-2xl font-bold text-amber-700 leading-none">{{ $cs?->latest_year ?? '---' }}</p>
                                         </div>
                                     </div>
@@ -144,7 +144,7 @@
 
                     <x-agro-pagination :paginator="$viticulturistList" />
                 @else
-                    <x-agro.empty-state icon="users" title="No hay viticultores" description="No hay viticultores adscritos a esta denominación." />
+                    <x-agro.empty-state icon="users" title="{{ __('No hay viticultores') }}" :description="__('No hay viticultores adscritos a esta denominación.')" />
                 @endif
 
             @endif

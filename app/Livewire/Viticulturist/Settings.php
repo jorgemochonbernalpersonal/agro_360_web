@@ -108,7 +108,7 @@ class Settings extends Component
         ]);
         
         $this->activeTaxId = $taxId;
-        $this->toastSuccess('Impuesto configurado correctamente');
+        $this->toastSuccess(__('Impuesto configurado correctamente'));
     }
 
     // ==========================================
@@ -192,21 +192,21 @@ class Settings extends Component
         ]);
 
         $this->updatePreviews();
-        $this->toastSuccess('Configuración guardada exitosamente');
+        $this->toastSuccess(__('Configuración guardada exitosamente'));
     }
 
     public function resetInvoiceCounter()
     {
         $this->invoice_counter = 1;
         $this->updatePreviews();
-        $this->toastInfo('Contador de facturas resetado. Haz clic en Guardar para aplicar.');
+        $this->toastInfo(__('Contador de facturas resetado. Haz clic en Guardar para aplicar.'));
     }
 
     public function resetDeliveryNoteCounter()
     {
         $this->delivery_note_counter = 1;
         $this->updatePreviews();
-        $this->toastInfo('Contador de albaranes resetado. Haz clic en Guardar para aplicar.');
+        $this->toastInfo(__('Contador de albaranes resetado. Haz clic en Guardar para aplicar.'));
     }
 
     // ==========================================
@@ -256,7 +256,7 @@ class Settings extends Component
             ]
         );
 
-        $this->toastSuccess('Datos fiscales guardados correctamente');
+        $this->toastSuccess(__('Datos fiscales guardados correctamente'));
     }
 
     // ==========================================
@@ -285,10 +285,10 @@ class Settings extends Component
                 'regex:/[0-9]/',      // al menos un número
             ],
         ], [
-            'signaturePassword.required' => 'La contraseña de firma es obligatoria.',
-            'signaturePassword.min' => 'La contraseña debe tener al menos 8 caracteres.',
-            'signaturePassword.confirmed' => 'Las contraseñas no coinciden.',
-            'signaturePassword.regex' => 'La contraseña debe contener al menos una mayúscula, una minúscula y un número.',
+            'signaturePassword.required' => __('La contraseña de firma es obligatoria.'),
+            'signaturePassword.min' => __('La contraseña debe tener al menos 8 caracteres.'),
+            'signaturePassword.confirmed' => __('Las contraseñas no coinciden.'),
+            'signaturePassword.regex' => __('La contraseña debe contener al menos una mayúscula, una minúscula y un número.'),
         ]);
         
         // Lista de contraseñas prohibidas (comunes)
@@ -303,7 +303,7 @@ class Settings extends Component
         // Verificar si la contraseña está en la lista prohibida (case-insensitive)
         foreach ($forbiddenPasswords as $forbidden) {
             if (strcasecmp($this->signaturePassword, $forbidden) === 0) {
-                $this->addError('signaturePassword', 'Esta contraseña es demasiado común y predecible. Por seguridad, elige una contraseña más única para firmar documentos oficiales.');
+                $this->addError('signaturePassword', __('Esta contraseña es demasiado común y predecible. Por seguridad, elige una contraseña más única para firmar documentos oficiales.'));
                 return;
             }
         }
@@ -321,10 +321,10 @@ class Settings extends Component
             // Emitir evento para que otros componentes se enteren
             $this->dispatch('signature-updated');
             
-            $this->toastSuccess('Contraseña de firma digital ' . ($wasUpdate ? 'actualizada' : 'creada') . ' correctamente');
+            $this->toastSuccess('Contraseña de firma digital ' . ($wasUpdate ? __('actualizada') : __('creada')) . ' correctamente');
             
         } catch (\Exception $e) {
-            $this->toastError($e instanceof RuntimeException ? $e->getMessage() : 'Error al guardar la configuración. Inténtalo de nuevo.');
+            $this->toastError($e instanceof RuntimeException ? $e->getMessage()  : __('Error al guardar la configuración. Inténtalo de nuevo.'));
         }
     }
     
@@ -345,13 +345,13 @@ class Settings extends Component
         $this->validate([
             'loginPasswordForReset' => 'required|string',
         ], [
-            'loginPasswordForReset.required' => 'Debes ingresar tu contraseña de login.',
+            'loginPasswordForReset.required' => __('Debes ingresar tu contraseña de login.'),
         ]);
         
         // Verificar contraseña de login
         $user = Auth::user();
         if (!\Hash::check($this->loginPasswordForReset, $user->password)) {
-            $this->addError('loginPasswordForReset', 'Contraseña de login incorrecta.');
+            $this->addError('loginPasswordForReset', __('Contraseña de login incorrecta.'));
             return;
         }
         
@@ -395,10 +395,10 @@ class Settings extends Component
             // Emitir evento
             $this->dispatch('signature-updated');
             
-            $this->toastSuccess('Contraseña de firma eliminada. Te hemos enviado un email de confirmación. Ahora puedes crear una nueva.');
+            $this->toastSuccess(__('Contraseña de firma eliminada. Te hemos enviado un email de confirmación. Ahora puedes crear una nueva.'));
             
         } catch (\Exception $e) {
-            $this->toastError($e instanceof RuntimeException ? $e->getMessage() : 'Error al resetear. Inténtalo de nuevo.');
+            $this->toastError($e instanceof RuntimeException ? $e->getMessage()  : __('Error al resetear. Inténtalo de nuevo.'));
         }
     }
     
@@ -459,8 +459,8 @@ class Settings extends Component
             'document_prefix_harvest'  => 'required|string|max:20|regex:/^[A-Z0-9_\-]+$/',
             'legal_text_fieldbook'     => 'nullable|string|max:2000',
         ], [
-            'document_prefix_activity.regex' => 'Solo letras mayúsculas, números, guión y guión bajo.',
-            'document_prefix_harvest.regex'  => 'Solo letras mayúsculas, números, guión y guión bajo.',
+            'document_prefix_activity.regex' => __('Solo letras mayúsculas, números, guión y guión bajo.'),
+            'document_prefix_harvest.regex'  => __('Solo letras mayúsculas, números, guión y guión bajo.'),
         ]);
 
         $user = Auth::user();
@@ -478,14 +478,14 @@ class Settings extends Component
         ]);
 
         $this->loadFieldbook();
-        $this->toastSuccess('Configuración del cuaderno guardada correctamente');
+        $this->toastSuccess(__('Configuración del cuaderno guardada correctamente'));
     }
 
     public function render()
     {
         return view('livewire.viticulturist.settings')->layout('layouts.app', [
-            'title' => 'Configuración - Agro365',
-            'description' => 'Gestiona la configuración de tu cuenta: impuestos, numeración de facturas y albaranes, y preferencias de facturación.',
+            'title' => __('Configuración - Agro365'),
+            'description' => __('Gestiona la configuración de tu cuenta: impuestos, numeración de facturas y albaranes, y preferencias de facturación.'),
         ]);
     }
 }

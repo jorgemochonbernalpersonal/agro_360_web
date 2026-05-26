@@ -51,7 +51,7 @@ class ContainerMaintenanceAlertNotification extends Notification implements Shou
 
         $mail = (new MailMessage)
             ->subject($subject)
-            ->greeting('Hola ' . ($notifiable->name ?: ''));
+            ->greeting(__('Hola :name', ['name' => $notifiable->name ?: '']));
 
         if ($overdueCount > 0) {
             $rows = $this->overdue->map(fn ($m) =>
@@ -100,9 +100,9 @@ class ContainerMaintenanceAlertNotification extends Notification implements Shou
         }
 
         return $mail
-            ->action('Ver mis contenedores', $url)
-            ->line('Accede a tu panel de bodega para gestionar los mantenimientos.')
-            ->salutation("Saludos,\nAgro365");
+            ->action(__('Ver mis contenedores'), $url)
+            ->line(__('Accede a tu panel de bodega para gestionar los mantenimientos.'))
+            ->salutation(__('Saludos,\nAgro365'));
     }
 
     public function toArray(object $notifiable): array

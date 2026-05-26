@@ -41,7 +41,7 @@ class Index extends Component
             $q->where('viticulturist_id', Auth::id());
         })->findOrFail($id)->delete();
 
-        $this->toastSuccess('Observación eliminada.');
+        $this->toastSuccess(__('Observación eliminada.'));
     }
 
     public function render()

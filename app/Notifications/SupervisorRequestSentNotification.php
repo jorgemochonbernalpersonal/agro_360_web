@@ -46,18 +46,18 @@ class SupervisorRequestSentNotification extends Notification implements ShouldQu
 
         return (new MailMessage)
             ->subject(($isNonconformity ? '⚠️ Acta de no conformidad' : 'Nueva actuación de tu DO') . ' — ' . $supervisor->name)
-            ->greeting('Hola ' . ($notifiable->name ?: ''))
+            ->greeting(__('Hola :name', ['name' => $notifiable->name ?: '']))
             ->line('Tu Denominación de Origen **' . $supervisor->name . '** te ha enviado una actuación que requiere tu atención.')
             ->line('**Tipo:** ' . $typeLabel)
             ->when($req->title, fn ($m) => $m->line('**Asunto:** ' . $req->title))
             ->when($req->notes, fn ($m) => $m->line('**Notas:** ' . $req->notes))
-            ->action('Ver actuación', $url)
+            ->action(__('Ver actuación'), $url)
             ->when(
                 $isNonconformity,
                 fn ($m) => $m->line('⚠️ Esta acta requiere respuesta. Por favor revisa los detalles y responde en el plazo indicado por tu DO.'),
                 fn ($m) => $m->line('Puedes responder a esta actuación desde tu panel de denominación de origen.')
             )
-            ->salutation("Saludos,\nAgro365");
+            ->salutation(__('Saludos,\nAgro365'));
     }
 
     public function toArray(object $notifiable): array

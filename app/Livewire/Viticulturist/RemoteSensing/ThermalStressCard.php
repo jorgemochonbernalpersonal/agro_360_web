@@ -128,7 +128,7 @@ class ThermalStressCard extends Component
 
             $this->dispatch('notify', [
                 'type'    => 'success',
-                'message' => 'Datos térmicos actualizados',
+                'message' => __('Datos térmicos actualizados'),
             ]);
 
         } catch (\Exception $e) {
@@ -136,7 +136,7 @@ class ThermalStressCard extends Component
 
             $this->dispatch('notify', [
                 'type'    => 'error',
-                'message' => 'Error al actualizar datos térmicos',
+                'message' => __('Error al actualizar datos térmicos'),
             ]);
         } finally {
             $this->loading = false;

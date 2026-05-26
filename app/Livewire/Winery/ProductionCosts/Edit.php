@@ -68,7 +68,7 @@ class Edit extends Component
             'notes'             => $this->notes ?: null,
         ]);
 
-        session()->flash('success', 'Coste actualizado correctamente.');
+        session()->flash('success', __('Coste actualizado correctamente.'));
         $this->redirect(roleRoute('production-costs.index'), navigate: true);
     }
 
@@ -76,7 +76,7 @@ class Edit extends Component
     {
         abort_if($this->cost->user_id !== Auth::id(), 403);
         $this->cost->delete();
-        session()->flash('success', 'Coste eliminado.');
+        session()->flash('success', __('Coste eliminado.'));
         $this->redirect(roleRoute('production-costs.index'), navigate: true);
     }
 

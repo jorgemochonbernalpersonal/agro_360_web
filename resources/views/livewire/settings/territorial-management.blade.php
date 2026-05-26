@@ -1,7 +1,7 @@
 <div class="space-y-6 animate-fade-in">
     <x-agro.page-header
-        title="Gestión Territorial"
-        description="Administra los catálogos de parcelas: parajes, valles, suelos, riegos y más"
+        title="{{ __('Gestión Territorial') }}"
+        :description="__('Administra los catálogos de parcelas: parajes, valles, suelos, riegos y más')"
     />
 
     {{-- Tabs --}}
@@ -41,15 +41,15 @@
                         <div class="w-9 h-9 rounded-lg bg-agro-50 flex items-center justify-center">
                             <flux:icon icon="map-pin" class="size-4 text-agro-600" />
                         </div>
-                        <h3 class="font-semibold text-zinc-900">Seleccionar ubicación</h3>
+                        <h3 class="font-semibold text-zinc-900">{{ __('Seleccionar ubicación') }}</h3>
                     </div>
                 </x-slot:header>
 
                 <div class="space-y-3">
                     <flux:field>
-                        <flux:label>Comunidad Autónoma</flux:label>
+                        <flux:label>{{ __('Comunidad Autónoma') }}</flux:label>
                         <flux:select wire:model.live="selectedCommunityId">
-                            <option value="">Seleccionar...</option>
+                            <option value="">{{ __('Seleccionar...') }}</option>
                             @foreach ($communities as $community)
                                 <option value="{{ $community->id }}">{{ $community->name }}</option>
                             @endforeach
@@ -57,9 +57,9 @@
                     </flux:field>
 
                     <flux:field>
-                        <flux:label>Provincia</flux:label>
+                        <flux:label>{{ __('Provincia') }}</flux:label>
                         <flux:select wire:model.live="selectedProvinceId" :disabled="!$selectedCommunityId">
-                            <option value="">Seleccionar...</option>
+                            <option value="">{{ __('Seleccionar...') }}</option>
                             @foreach ($provinces as $province)
                                 <option value="{{ $province->id }}">{{ $province->name }}</option>
                             @endforeach
@@ -68,9 +68,9 @@
 
                     <div wire:key="mun-wrapper-{{ $selectedProvinceId }}">
                         <flux:field>
-                            <flux:label>Municipio</flux:label>
+                            <flux:label>{{ __('Municipio') }}</flux:label>
                             <flux:select wire:model.live="selectedMunicipalityId" :disabled="!$selectedProvinceId">
-                                <option value="">Seleccionar...</option>
+                                <option value="">{{ __('Seleccionar...') }}</option>
                                 @foreach ($municipalities as $mun)
                                     <option value="{{ $mun->id }}">{{ $mun->name }}</option>
                                 @endforeach
@@ -107,12 +107,10 @@
                     <div class="flex gap-2">
                         <flux:input
                             wire:model="newSiteName"
-                            placeholder="Nombre del paraje..."
+                            placeholder="{{ __('Nombre del paraje...') }}"
                             class="flex-1"
                         />
-                        <flux:button wire:click="addSite" variant="primary" size="sm" icon="plus">
-                            Añadir
-                        </flux:button>
+                        <flux:button wire:click="addSite" variant="primary" size="sm" icon="plus">{{ __('Añadir') }}</flux:button>
                     </div>
                     @error('newSiteName')
                         <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
@@ -124,8 +122,8 @@
                             <div class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-zinc-50 group">
                                 @if ($editingSiteId === $site->id)
                                     <flux:input wire:model="editingSiteName" class="flex-1 text-sm" />
-                                    <flux:button wire:click="saveEditSite" variant="primary" size="xs">Guardar</flux:button>
-                                    <flux:button wire:click="cancelEditSite" variant="ghost" size="xs">Cancelar</flux:button>
+                                    <flux:button wire:click="saveEditSite" variant="primary" size="xs">{{ __('Guardar') }}</flux:button>
+                                    <flux:button wire:click="cancelEditSite" variant="ghost" size="xs">{{ __('Cancelar') }}</flux:button>
                                 @else
                                     <span class="flex-1 text-sm text-zinc-700">{{ $site->name }}</span>
                                     @if ($site->user_id)
@@ -133,15 +131,15 @@
                                         <button
                                             wire:click="startEditSite({{ $site->id }}, '{{ addslashes($site->name) }}')"
                                             class="inline-flex items-center justify-center w-7 h-7 rounded text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors"
-                                            title="Editar"
+                                            title="{{ __('Editar') }}"
                                         >
                                             <flux:icon icon="pencil" class="size-3.5" />
                                         </button>
                                         <button
                                             wire:click="deleteSite({{ $site->id }})"
-                                            wire:confirm="¿Eliminar el paraje '{{ $site->name }}'?"
+                                            wire:confirm="{{ __('¿Eliminar el paraje \':name\'?', ['name' => $site->name]) }}"
                                             class="inline-flex items-center justify-center w-7 h-7 rounded text-zinc-400 hover:text-red-600 hover:bg-red-50 transition-colors"
-                                            title="Eliminar"
+                                            title="{{ __('Eliminar') }}"
                                         >
                                             <flux:icon icon="trash" class="size-3.5" />
                                         </button>
@@ -161,13 +159,13 @@
                                 @endif
                             </div>
                         @empty
-                            <p class="text-sm text-zinc-400 text-center py-6">No hay parajes. Añade el primero.</p>
+                            <p class="text-sm text-zinc-400 text-center py-6">{{ __('No hay parajes. Añade el primero.') }}</p>
                         @endforelse
                     </div>
                 @else
                     <div class="flex flex-col items-center justify-center py-12 text-zinc-400">
                         <flux:icon icon="map-pin" class="size-10 mb-3 opacity-30" />
-                        <p class="text-sm">Selecciona comunidad → provincia → municipio</p>
+                        <p class="text-sm">{{ __('Selecciona comunidad → provincia → municipio') }}</p>
                     </div>
                 @endif
             </x-agro.card>
@@ -198,22 +196,22 @@
 
                     <div class="space-y-4">
                         <flux:field>
-                            <flux:label>Nombre *</flux:label>
-                            <flux:input wire:model="newName" placeholder="Nombre..." />
+                            <flux:label>{{ __('Nombre *') }}</flux:label>
+                            <flux:input wire:model="newName" :placeholder="__('Nombre...')" />
                             <flux:error name="newName" />
                         </flux:field>
 
                         @if ($cfg['hasCode'])
                             <flux:field>
-                                <flux:label>Código</flux:label>
-                                <flux:input wire:model="newCode" placeholder="Ej: V01" />
+                                <flux:label>{{ __('Código') }}</flux:label>
+                                <flux:input wire:model="newCode" :placeholder="__('Ej: V01')" />
                             </flux:field>
                         @endif
 
                         @if ($cfg['hasDesc'])
                             <flux:field>
-                                <flux:label>Descripción</flux:label>
-                                <flux:input wire:model="newDescription" placeholder="Descripción opcional..." />
+                                <flux:label>{{ __('Descripción') }}</flux:label>
+                                <flux:input wire:model="newDescription" :placeholder="__('Descripción opcional...')" />
                             </flux:field>
                         @endif
 
@@ -239,7 +237,7 @@
 
                     <flux:input
                         wire:model.live.debounce.300ms="catalogSearch"
-                        placeholder="Buscar..."
+                        placeholder="{{ __('Buscar...') }}"
                         icon="magnifying-glass"
                         class="mb-4"
                     />
@@ -249,13 +247,13 @@
                             <div class="flex items-center gap-2 px-3 py-2.5 rounded-lg hover:bg-zinc-50 group">
                                 @if ($editingId === $item->id)
                                     <div class="flex-1 flex gap-2 flex-wrap">
-                                        <flux:input wire:model="editingName" placeholder="Nombre" class="flex-1 min-w-0 text-sm" />
+                                        <flux:input wire:model="editingName" :placeholder="__('Nombre')" class="flex-1 min-w-0 text-sm" />
                                         @if ($cfg['hasDesc'])
-                                            <flux:input wire:model="editingDescription" placeholder="Descripción" class="flex-1 min-w-0 text-sm" />
+                                            <flux:input wire:model="editingDescription" :placeholder="__('Descripción')" class="flex-1 min-w-0 text-sm" />
                                         @endif
                                     </div>
-                                    <flux:button wire:click="saveEdit('{{ $tab }}')" variant="primary" size="xs">Guardar</flux:button>
-                                    <flux:button wire:click="cancelEdit" variant="ghost" size="xs">Cancelar</flux:button>
+                                    <flux:button wire:click="saveEdit('{{ $tab }}')" variant="primary" size="xs">{{ __('Guardar') }}</flux:button>
+                                    <flux:button wire:click="cancelEdit" variant="ghost" size="xs">{{ __('Cancelar') }}</flux:button>
                                 @else
                                     <div class="flex-1 min-w-0">
                                         <span class="text-sm text-zinc-800 font-medium">{{ $item->name }}</span>
@@ -271,15 +269,15 @@
                                         <button
                                             wire:click="startEdit({{ $item->id }}, '{{ addslashes($item->name) }}', '{{ addslashes($item->description ?? '') }}')"
                                             class="inline-flex items-center justify-center w-7 h-7 rounded text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors"
-                                            title="Editar"
+                                            title="{{ __('Editar') }}"
                                         >
                                             <flux:icon icon="pencil" class="size-3.5" />
                                         </button>
                                         <button
                                             wire:click="deleteCatalogItem('{{ $tab }}', {{ $item->id }})"
-                                            wire:confirm="¿Eliminar '{{ $item->name }}'? Esta acción no se puede deshacer."
+                                            wire:confirm="{{ __('¿Eliminar \':name\'? Esta acción no se puede deshacer.', ['name' => $item->name]) }}"
                                             class="inline-flex items-center justify-center w-7 h-7 rounded text-zinc-400 hover:text-red-600 hover:bg-red-50 transition-colors"
-                                            title="Eliminar"
+                                            title="{{ __('Eliminar') }}"
                                         >
                                             <flux:icon icon="trash" class="size-3.5" />
                                         </button>
@@ -301,7 +299,7 @@
                         @empty
                             <div class="text-center py-10 text-zinc-400">
                                 <flux:icon icon="inbox" class="size-10 mx-auto mb-2 opacity-30" />
-                                <p class="text-sm">No hay elementos. Añade el primero.</p>
+                                <p class="text-sm">{{ __('No hay elementos. Añade el primero.') }}</p>
                             </div>
                         @endforelse
                     </div>

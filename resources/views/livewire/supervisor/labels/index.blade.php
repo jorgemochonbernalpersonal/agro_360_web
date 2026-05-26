@@ -1,27 +1,27 @@
 <div class="space-y-6 animate-fade-in">
 
-    <x-agro.page-header title="Contraetiquetas" description="Solicitudes de contraetiquetas por bodega y añada.">
+    <x-agro.page-header title="{{ __('Contraetiquetas') }}" :description="__('Solicitudes de contraetiquetas por bodega y añada.')">
         <x-slot name="actions">
-            <flux:button wire:click="toggleCreate" variant="primary" icon="plus">Nueva solicitud</flux:button>
+            <flux:button wire:click="toggleCreate" variant="primary" icon="plus">{{ __('Nueva solicitud') }}</flux:button>
         </x-slot>
     </x-agro.page-header>
 
     {{-- Stats --}}
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <x-agro.stat-card label="Total emitidas" :value="number_format($totalIssued, 0, ',', '.')" icon="tag" color="agro"
+        <x-agro.stat-card :label="__('Total emitidas')" :value="number_format($totalIssued, 0, ',', '.')" icon="tag" color="agro"
             :description="$vintageFilter ? 'Añada ' . $vintageFilter : 'Todas las añadas'" />
-        <x-agro.stat-card label="Solicitudes pendientes" :value="$tabs['pending']['count']" icon="inbox" color="yellow" />
+        <x-agro.stat-card :label="__('Solicitudes pendientes')" :value="$tabs['pending']['count']" icon="inbox" color="yellow" />
     </div>
 
     {{-- Create form --}}
     @if($showCreate)
     <x-agro.card>
-        <h3 class="text-sm font-semibold text-zinc-700 mb-4">Nueva solicitud de contraetiquetas</h3>
+        <h3 class="text-sm font-semibold text-zinc-700 mb-4">{{ __('Nueva solicitud de contraetiquetas') }}</h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-                <flux:label>Bodega</flux:label>
+                <flux:label>{{ __('Bodega') }}</flux:label>
                 <flux:select wire:model="winery_id">
-                    <flux:select.option value="">Selecciona bodega...</flux:select.option>
+                    <flux:select.option value="">{{ __('Selecciona bodega...') }}</flux:select.option>
                     @foreach($wineries as $w)
                         <flux:select.option value="{{ $w->id }}">{{ $w->name }}</flux:select.option>
                     @endforeach
@@ -29,27 +29,27 @@
                 <flux:error name="winery_id" />
             </div>
             <div>
-                <flux:label>Añada</flux:label>
+                <flux:label>{{ __('Añada') }}</flux:label>
                 <flux:input type="number" wire:model="vintage" min="1990" max="2100" />
                 <flux:error name="vintage" />
             </div>
             <div>
-                <flux:label>Nº de lote</flux:label>
-                <flux:input type="text" wire:model="batch_number" placeholder="Opcional" />
+                <flux:label>{{ __('Nº de lote') }}</flux:label>
+                <flux:input type="text" wire:model="batch_number" :placeholder="__('Opcional')" />
             </div>
             <div>
-                <flux:label>Cantidad solicitada</flux:label>
+                <flux:label>{{ __('Cantidad solicitada') }}</flux:label>
                 <flux:input type="number" wire:model="quantity_requested" min="1" />
                 <flux:error name="quantity_requested" />
             </div>
             <div class="sm:col-span-2">
-                <flux:label>Notas</flux:label>
+                <flux:label>{{ __('Notas') }}</flux:label>
                 <flux:textarea wire:model="notes" rows="2" />
             </div>
         </div>
         <div class="flex gap-3 mt-4">
-            <flux:button wire:click="saveLabel" variant="primary">Registrar solicitud</flux:button>
-            <flux:button wire:click="toggleCreate" variant="ghost">Cancelar</flux:button>
+            <flux:button wire:click="saveLabel" variant="primary">{{ __('Registrar solicitud') }}</flux:button>
+            <flux:button wire:click="toggleCreate" variant="ghost">{{ __('Cancelar') }}</flux:button>
         </div>
     </x-agro.card>
     @endif
@@ -58,7 +58,7 @@
     <div class="flex items-center gap-3">
         @if($availableVintages->isNotEmpty())
             <flux:select wire:model.live="vintageFilter">
-                <flux:select.option value="">Todas las añadas</flux:select.option>
+                <flux:select.option value="">{{ __('Todas las añadas') }}</flux:select.option>
                 @foreach($availableVintages as $v)
                     <flux:select.option value="{{ $v }}">{{ $v }}</flux:select.option>
                 @endforeach
@@ -100,18 +100,18 @@
                             <div class="flex-1 space-y-4">
                                 <div class="grid grid-cols-2 gap-2">
                                     <div class="bg-indigo-50 rounded-xl p-3">
-                                        <p class="text-[10px] font-semibold text-indigo-400 uppercase tracking-widest mb-0.5">Solicitadas</p>
+                                        <p class="text-[10px] font-semibold text-indigo-400 uppercase tracking-widest mb-0.5">{{ __('Solicitadas') }}</p>
                                         <p class="text-2xl font-bold text-indigo-700 leading-none">{{ number_format($label->quantity_requested, 0, ',', '.') }}</p>
                                     </div>
                                     <div class="bg-agro-50 rounded-xl p-3">
-                                        <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Emitidas</p>
+                                        <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">{{ __('Emitidas') }}</p>
                                         <p class="text-2xl font-bold text-agro-700 leading-none">{{ $label->quantity_issued > 0 ? number_format($label->quantity_issued, 0, ',', '.') : '---' }}</p>
                                     </div>
                                 </div>
 
                                 <div class="space-y-2 text-sm">
                                     <div class="flex items-center justify-between">
-                                        <span class="text-zinc-400">Lote</span>
+                                        <span class="text-zinc-400">{{ __('Lote') }}</span>
                                         <span class="text-zinc-700 font-medium">{{ $label->batch_number ?? '---' }}</span>
                                     </div>
                                 </div>
@@ -120,11 +120,11 @@
                             <x-slot:footer>
                                 <div class="flex items-center justify-end gap-0.5">
                                     @if($label->status === 'pending')
-                                        <x-agro.action-button icon="check-circle" variant="success" wire:click="approve({{ $label->id }})" title="Aprobar" />
+                                        <x-agro.action-button icon="check-circle" variant="success" wire:click="approve({{ $label->id }})" title="{{ __('Aprobar') }}" />
                                     @endif
                                     @if(in_array($label->status, ['pending', 'approved']))
-                                        <x-agro.action-button icon="printer" variant="primary" wire:click="issue({{ $label->id }})" title="Emitir" />
-                                        <x-agro.action-button icon="x-mark" variant="danger" wire:click="cancel({{ $label->id }})" title="Cancelar" />
+                                        <x-agro.action-button icon="printer" variant="primary" wire:click="issue({{ $label->id }})" title="{{ __('Emitir') }}" />
+                                        <x-agro.action-button icon="x-mark" variant="danger" wire:click="cancel({{ $label->id }})" title="{{ __('Cancelar') }}" />
                                     @endif
                                 </div>
                             </x-slot:footer>
@@ -134,7 +134,7 @@
 
                 <x-agro-pagination :paginator="$labels" />
             @else
-                <x-agro.empty-state icon="tag" title="No hay solicitudes" description="No hay solicitudes de contraetiquetas." />
+                <x-agro.empty-state icon="tag" title="{{ __('No hay solicitudes') }}" :description="__('No hay solicitudes de contraetiquetas.')" />
             @endif
         </div>
     </div>

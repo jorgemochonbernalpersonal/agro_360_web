@@ -19,14 +19,14 @@
 <body>
     <div class="wrapper">
         <div class="header">
-            <h1>Agro365</h1>
-            <p>Comunicación del equipo</p>
+            <h1>{{ __('Agro365') }}</h1>
+            <p>{{ __('Comunicación del equipo') }}</p>
         </div>
         <div class="body">
             <div class="message">{{ $broadcastMessage }}</div>
         </div>
         <div class="footer">
-            <p>Has recibido este email porque tienes una cuenta en Agro365.</p>
+            <p>{{ __('Has recibido este email porque tienes una cuenta en Agro365.') }}</p>
             <p style="margin-top:4px;">© {{ date('Y') }} Agro365 — Todos los derechos reservados</p>
         </div>
     </div>

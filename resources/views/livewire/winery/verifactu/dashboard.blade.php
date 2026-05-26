@@ -2,7 +2,7 @@
 
     <x-agro.page-header
         title="VeriFactu"
-        description="Registro de facturas en el sistema de la Agencia Tributaria. Verifica y envía tus facturas a la AEAT."
+        :description="__('Registro de facturas en el sistema de la Agencia Tributaria. Verifica y envía tus facturas a la AEAT.')"
     />
 
     {{-- NIF warning ─────────────────────────────────────────────────────────── --}}
@@ -21,25 +21,25 @@
         <button wire:click="$set('tab','pending')"
             class="text-left bg-white border-2 rounded-xl p-4 shadow-sm transition-all
                 {{ $tab === 'pending' ? 'border-amber-400 ring-1 ring-amber-300' : 'border-zinc-200 hover:border-amber-300' }}">
-            <p class="text-xs font-semibold text-amber-500 uppercase tracking-wide mb-1">Pendientes</p>
+            <p class="text-xs font-semibold text-amber-500 uppercase tracking-wide mb-1">{{ __('Pendientes') }}</p>
             <p class="text-3xl font-bold text-zinc-900">{{ $stats['pending'] }}</p>
-            <p class="text-xs text-zinc-400 mt-0.5">Facturas por verificar</p>
+            <p class="text-xs text-zinc-400 mt-0.5">{{ __('Facturas por verificar') }}</p>
         </button>
 
         <button wire:click="$set('tab','sent')"
             class="text-left bg-white border-2 rounded-xl p-4 shadow-sm transition-all
                 {{ $tab === 'sent' ? 'border-green-400 ring-1 ring-green-300' : 'border-zinc-200 hover:border-green-300' }}">
-            <p class="text-xs font-semibold text-green-600 uppercase tracking-wide mb-1">Verificadas</p>
+            <p class="text-xs font-semibold text-green-600 uppercase tracking-wide mb-1">{{ __('Verificadas') }}</p>
             <p class="text-3xl font-bold text-zinc-900">{{ $stats['sent'] }}</p>
-            <p class="text-xs text-zinc-400 mt-0.5">Aceptadas por la AEAT</p>
+            <p class="text-xs text-zinc-400 mt-0.5">{{ __('Aceptadas por la AEAT') }}</p>
         </button>
 
         <button wire:click="$set('tab','errors')"
             class="text-left bg-white border-2 rounded-xl p-4 shadow-sm transition-all
                 {{ $tab === 'errors' ? 'border-red-400 ring-1 ring-red-300' : 'border-zinc-200 hover:border-red-300' }}">
-            <p class="text-xs font-semibold text-red-500 uppercase tracking-wide mb-1">Errores</p>
+            <p class="text-xs font-semibold text-red-500 uppercase tracking-wide mb-1">{{ __('Errores') }}</p>
             <p class="text-3xl font-bold text-zinc-900">{{ $stats['errors'] }}</p>
-            <p class="text-xs text-zinc-400 mt-0.5">Requieren atención</p>
+            <p class="text-xs text-zinc-400 mt-0.5">{{ __('Requieren atención') }}</p>
         </button>
     </div>
 
@@ -83,20 +83,20 @@
                                 <flux:icon icon="clock" class="size-4 text-amber-600" />
                             </div>
                             <div>
-                                <h3 class="text-sm font-semibold text-zinc-800">Facturas pendientes de verificar</h3>
+                                <h3 class="text-sm font-semibold text-zinc-800">{{ __('Facturas pendientes de verificar') }}</h3>
                                 <p class="text-xs text-zinc-400">{{ $pending->total() }} facturas emitidas sin verificar en AEAT</p>
                             </div>
                         </div>
                         <div class="flex items-center gap-2">
                             <flux:button wire:click="excludeAll"
                                 wire:loading.attr="disabled"
-                                wire:confirm="¿Excluir TODAS las facturas pendientes de Verifactu? Usa esto para facturas anteriores a la activación de Verifactu."
+                                wire:confirm="{{ __('¿Excluir TODAS las facturas pendientes de Verifactu? Usa esto para facturas anteriores a la activación de Verifactu.') }}"
                                 variant="ghost" size="sm" icon="x-circle">
                                 Excluir todas
                             </flux:button>
                             <flux:button wire:click="sendAll"
                                 wire:loading.attr="disabled"
-                                wire:confirm="¿Verificar todas las facturas pendientes en la AEAT?"
+                                wire:confirm="{{ __('¿Verificar todas las facturas pendientes en la AEAT?') }}"
                                 variant="primary" icon="paper-airplane" size="sm">
                                 Verificar todas
                             </flux:button>
@@ -117,7 +117,7 @@
                                 <div class="flex items-center gap-2">
                                     <span class="font-semibold text-sm text-zinc-900">{{ $invoice->invoice_number }}</span>
                                     @if($invoice->corrective)
-                                        <flux:badge color="orange" size="sm">Rectificativa</flux:badge>
+                                        <flux:badge color="orange" size="sm">{{ __('Rectificativa') }}</flux:badge>
                                     @endif
                                 </div>
                                 <p class="text-xs text-zinc-500 truncate mt-0.5">
@@ -131,8 +131,8 @@
                             <div class="flex items-center gap-1">
                                 <flux:button wire:click="excludeInvoice({{ $invoice->id }})"
                                     wire:loading.attr="disabled"
-                                    wire:confirm="¿Excluir esta factura de Verifactu?"
-                                    size="sm" variant="ghost" icon="x-mark" title="Excluir de Verifactu">
+                                    wire:confirm="{{ __('¿Excluir esta factura de Verifactu?') }}"
+                                    size="sm" variant="ghost" icon="x-mark" title="{{ __('Excluir de Verifactu') }}">
                                 </flux:button>
                                 <flux:button wire:click="sendInvoice({{ $invoice->id }})"
                                     wire:loading.attr="disabled"
@@ -149,8 +149,8 @@
         @else
             <x-agro.empty-state
                 icon="check-circle"
-                title="Sin facturas pendientes"
-                description="Todas tus facturas están verificadas en la AEAT."
+                title="{{ __('Sin facturas pendientes') }}"
+                :description="__('Todas tus facturas están verificadas en la AEAT.')"
             />
         @endif
     </div>
@@ -167,7 +167,7 @@
                             <flux:icon icon="check-circle" class="size-4 text-green-600" />
                         </div>
                         <div>
-                            <h3 class="text-sm font-semibold text-zinc-800">Facturas verificadas</h3>
+                            <h3 class="text-sm font-semibold text-zinc-800">{{ __('Facturas verificadas') }}</h3>
                             <p class="text-xs text-zinc-400">{{ $sent->total() }} facturas aceptadas por la AEAT</p>
                         </div>
                     </div>
@@ -186,7 +186,7 @@
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center gap-2">
                                     <span class="font-semibold text-sm text-zinc-900">{{ $invoice->invoice_number }}</span>
-                                    <flux:badge color="green" size="sm">Verificada</flux:badge>
+                                    <flux:badge color="green" size="sm">{{ __('Verificada') }}</flux:badge>
                                 </div>
                                 <p class="text-xs text-zinc-500 truncate mt-0.5">
                                     {{ $clientName }} &middot; {{ $invoice->invoice_date?->format('d/m/Y') }}
@@ -203,7 +203,7 @@
                             </div>
                             <flux:button wire:click="cancelInvoice({{ $invoice->id }})"
                                 wire:loading.attr="disabled"
-                                wire:confirm="¿Anular esta factura en Verifactu? Volverá a estado pendiente."
+                                wire:confirm="{{ __('¿Anular esta factura en Verifactu? Volverá a estado pendiente.') }}"
                                 size="sm" variant="ghost" icon="x-circle" class="text-zinc-400 hover:text-red-500">
                             </flux:button>
                         </div>
@@ -215,8 +215,8 @@
         @else
             <x-agro.empty-state
                 icon="check-circle"
-                title="Sin facturas verificadas"
-                description="Aún no has verificado ninguna factura en la AEAT."
+                title="{{ __('Sin facturas verificadas') }}"
+                :description="__('Aún no has verificado ninguna factura en la AEAT.')"
             />
         @endif
     </div>
@@ -233,7 +233,7 @@
                             <flux:icon icon="exclamation-circle" class="size-4 text-red-500" />
                         </div>
                         <div>
-                            <h3 class="text-sm font-semibold text-zinc-800">Facturas con error</h3>
+                            <h3 class="text-sm font-semibold text-zinc-800">{{ __('Facturas con error') }}</h3>
                             <p class="text-xs text-zinc-400">{{ $errors->total() }} facturas con error en el envío a AEAT</p>
                         </div>
                     </div>
@@ -253,7 +253,7 @@
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center gap-2">
                                     <span class="font-semibold text-sm text-zinc-900">{{ $invoice->invoice_number }}</span>
-                                    <flux:badge color="red" size="sm">Error</flux:badge>
+                                    <flux:badge color="red" size="sm">{{ __('Error') }}</flux:badge>
                                 </div>
                                 <p class="text-xs text-zinc-500 truncate">{{ $clientName }} &middot; {{ $invoice->invoice_date?->format('d/m/Y') }}</p>
                                 <p class="text-xs text-red-500 mt-1 line-clamp-2">{{ $lastError }}</p>
@@ -275,8 +275,8 @@
         @else
             <x-agro.empty-state
                 icon="check-circle"
-                title="Sin errores"
-                description="No hay facturas con errores de verificación."
+                title="{{ __('Sin errores') }}"
+                :description="__('No hay facturas con errores de verificación.')"
             />
         @endif
     </div>
@@ -291,7 +291,7 @@
                     <div class="w-8 h-8 bg-zinc-100 rounded-lg flex items-center justify-center">
                         <flux:icon icon="cog-6-tooth" class="size-4 text-zinc-500" />
                     </div>
-                    <h3 class="text-sm font-semibold text-zinc-800">Configuración Verifactu</h3>
+                    <h3 class="text-sm font-semibold text-zinc-800">{{ __('Configuración Verifactu') }}</h3>
                 </div>
             </x-slot:header>
 
@@ -299,20 +299,20 @@
                 {{-- Entorno --}}
                 <div class="flex items-center justify-between p-4 bg-zinc-50 rounded-xl border border-zinc-200">
                     <div>
-                        <p class="text-sm font-semibold text-zinc-800">Entorno</p>
-                        <p class="text-xs text-zinc-500 mt-0.5">Indica si las facturas se envían al entorno real de AEAT o al de pruebas.</p>
+                        <p class="text-sm font-semibold text-zinc-800">{{ __('Entorno') }}</p>
+                        <p class="text-xs text-zinc-500 mt-0.5">{{ __('Indica si las facturas se envían al entorno real de AEAT o al de pruebas.') }}</p>
                     </div>
                     @if($config['is_production'])
-                        <flux:badge color="green">Producción</flux:badge>
+                        <flux:badge color="green">{{ __('Producción') }}</flux:badge>
                     @else
-                        <flux:badge color="yellow">Pruebas (test)</flux:badge>
+                        <flux:badge color="yellow">{{ __('Pruebas (test)') }}</flux:badge>
                     @endif
                 </div>
 
                 {{-- Certificado --}}
                 <div class="flex items-center justify-between p-4 bg-zinc-50 rounded-xl border border-zinc-200">
                     <div>
-                        <p class="text-sm font-semibold text-zinc-800">Certificado digital</p>
+                        <p class="text-sm font-semibold text-zinc-800">{{ __('Certificado digital') }}</p>
                         <p class="text-xs text-zinc-500 mt-0.5">
                             @if($config['cert_configured'])
                                 Certificado cargado en: <code class="text-xs bg-white px-1 rounded border border-zinc-200">{{ $config['cert_path'] }}</code>
@@ -322,33 +322,31 @@
                         </p>
                     </div>
                     @if($config['cert_configured'])
-                        <flux:badge color="green">Configurado</flux:badge>
+                        <flux:badge color="green">{{ __('Configurado') }}</flux:badge>
                     @else
-                        <flux:badge color="zinc">Sin certificado</flux:badge>
+                        <flux:badge color="zinc">{{ __('Sin certificado') }}</flux:badge>
                     @endif
                 </div>
 
                 {{-- Endpoint --}}
                 <div class="p-4 bg-zinc-50 rounded-xl border border-zinc-200">
-                    <p class="text-sm font-semibold text-zinc-800 mb-1">Endpoint AEAT</p>
+                    <p class="text-sm font-semibold text-zinc-800 mb-1">{{ __('Endpoint AEAT') }}</p>
                     <code class="text-xs text-zinc-600 break-all">{{ $config['endpoint'] ?? 'No configurado' }}</code>
                 </div>
 
                 {{-- NIF check --}}
                 <div class="flex items-center justify-between p-4 bg-amber-50 rounded-xl border border-amber-200">
                     <div>
-                        <p class="text-sm font-semibold text-amber-800">NIF/DNI del emisor</p>
-                        <p class="text-xs text-amber-600 mt-0.5">
-                            Tu NIF es el campo obligatorio para generar facturas Verifactu.
-                            Se configura en tu perfil de usuario.
-                        </p>
+                        <p class="text-sm font-semibold text-amber-800">{{ __('NIF/DNI del emisor') }}</p>
+                        <p class="text-xs text-amber-600 mt-0.5">{{ __('Tu NIF es el campo obligatorio para generar facturas Verifactu.
+                            Se configura en tu perfil de usuario.') }}</p>
                     </div>
                     @php $nif = auth()->user()->dni ?? null; @endphp
                     @if($nif)
                         <flux:badge color="green">{{ mask_nif($nif) }}</flux:badge>
                     @else
                         <div class="flex items-center gap-2">
-                            <flux:badge color="red">No configurado</flux:badge>
+                            <flux:badge color="red">{{ __('No configurado') }}</flux:badge>
                             <flux:button href="{{ roleRoute('settings') }}" wire:navigate size="sm" variant="ghost" icon="arrow-top-right-on-square">
                                 Configurar
                             </flux:button>

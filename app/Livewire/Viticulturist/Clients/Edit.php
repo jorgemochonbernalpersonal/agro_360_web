@@ -76,7 +76,7 @@ class Edit extends Component
         } else {
             // Asegurar que el cliente pertenece al usuario actual
             if ($this->client->user_id !== $user->id) {
-                abort(403, 'No tienes permiso para editar este cliente.');
+                abort(403, __('No tienes permiso para editar este cliente.'));
             }
             // Cargar relaciones si no están cargadas
             if (!$this->client->relationLoaded('addresses')) {
@@ -322,10 +322,10 @@ class Edit extends Component
                 }
             });
 
-            $this->toastSuccess('Cliente actualizado exitosamente.');
+            $this->toastSuccess(__('Cliente actualizado exitosamente.'));
             return $this->viticulturistRoleRedirect('clients.index');
         } catch (\Exception $e) {
-            $this->toastError($e instanceof RuntimeException ? $e->getMessage() : 'Error al actualizar el cliente. Inténtalo de nuevo.');
+            $this->toastError($e instanceof RuntimeException ? $e->getMessage()  : __('Error al actualizar el cliente. Inténtalo de nuevo.'));
         }
     }
 

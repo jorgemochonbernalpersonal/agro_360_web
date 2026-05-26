@@ -3,7 +3,7 @@
         {{-- Tabs Navigation --}}
         <x-agro.card :padding="false">
             <div class="border-b border-zinc-200">
-                <nav class="flex space-x-4 px-6" aria-label="Tabs">
+                <nav class="flex space-x-4 px-6" aria-:label="__('Tabs')">
                     <button
                         wire:click="setActiveTab('personal')"
                         class="py-4 px-6 text-sm font-semibold border-b-2 transition-all duration-200 {{ $activeTab === 'personal' ? 'border-agro-700 text-agro-700' : 'border-transparent text-zinc-500 hover:text-zinc-700 hover:border-zinc-400' }}"
@@ -54,7 +54,7 @@
                                         <flux:error name="name" />
                                     </flux:field>
                                     <flux:field>
-                                        <flux:label required>Email</flux:label>
+                                        <flux:label required>{{ __('Email') }}</flux:label>
                                         <flux:input wire:model="email" type="email" id="email" placeholder="tu@email.com" required />
                                         <flux:error name="email" />
                                     </flux:field>

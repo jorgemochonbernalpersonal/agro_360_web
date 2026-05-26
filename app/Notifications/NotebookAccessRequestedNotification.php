@@ -38,12 +38,12 @@ class NotebookAccessRequestedNotification extends Notification implements Should
 
         return (new MailMessage)
             ->subject('Nueva solicitud de acceso al cuaderno — ' . $this->winery->name)
-            ->greeting('Hola ' . ($notifiable->name ?: ''))
+            ->greeting(__('Hola :name', ['name' => $notifiable->name ?: '']))
             ->line('La bodega **' . $this->winery->name . '** ha solicitado acceso a tu cuaderno de campo digital.')
             ->line('Puedes aprobar o rechazar esta solicitud desde tu panel de control. Recuerda que tú tienes el control total: puedes revocar el acceso en cualquier momento.')
-            ->action('Ver solicitudes de acceso', $url)
+            ->action(__('Ver solicitudes de acceso'), $url)
             ->line('Si no conoces esta bodega, simplemente rechaza la solicitud.')
-            ->salutation("Saludos,\nAgro365");
+            ->salutation(__('Saludos,\nAgro365'));
     }
 
     public function toArray(object $notifiable): array

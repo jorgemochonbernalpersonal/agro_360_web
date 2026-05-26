@@ -321,9 +321,9 @@
         <div class="doc-subtitle">Valorado</div>
         <div class="doc-code">{{ $code }}</div>
         <div class="doc-meta">
-            <strong>Fecha:</strong> {{ ($invoice->delivery_note_date ?? $invoice->invoice_date)?->format('d/m/Y') ?? now()->format('d/m/Y') }}<br>
+            <strong>{{ __('Fecha:') }}</strong> {{ ($invoice->delivery_note_date ?? $invoice->invoice_date)?->format('d/m/Y') ?? now()->format('d/m/Y') }}<br>
             @if($invoice->invoice_number && $invoice->delivery_note_code)
-                <strong>Ref. factura:</strong> {{ $invoice->invoice_number }}<br>
+                <strong>{{ __('Ref. factura:') }}</strong> {{ $invoice->invoice_number }}<br>
             @endif
         </div>
     </div>
@@ -382,12 +382,12 @@
     <table class="items">
         <thead>
             <tr class="grape-head">
-                <th style="width:35%">Descripción</th>
-                <th class="right" style="width:14%">Kg</th>
-                <th class="right" style="width:12%">€/kg</th>
-                <th class="right" style="width:13%">Base</th>
-                <th class="right" style="width:12%">IRPF%</th>
-                <th class="right" style="width:14%">A pagar</th>
+                <th style="width:35%">{{ __('Descripción') }}</th>
+                <th class="right" style="width:14%">{{ __('Kg') }}</th>
+                <th class="right" style="width:12%">{{ __('€/kg') }}</th>
+                <th class="right" style="width:13%">{{ __('Base') }}</th>
+                <th class="right" style="width:12%">{{ __('IRPF%') }}</th>
+                <th class="right" style="width:14%">{{ __('A pagar') }}</th>
             </tr>
         </thead>
         <tbody>
@@ -415,7 +415,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="6" style="text-align:center; color:#9ca3af; padding:18pt;">Sin líneas</td>
+                    <td colspan="6" style="text-align:center; color:#9ca3af; padding:18pt;">{{ __('Sin líneas') }}</td>
                 </tr>
             @endforelse
         </tbody>
@@ -425,16 +425,16 @@
     <table class="items">
         <thead>
             <tr>
-                <th style="width:{{ $hasWineLots ? '28%' : '38%' }}">Producto</th>
+                <th style="width:{{ $hasWineLots ? '28%' : '38%' }}">{{ __('Producto') }}</th>
                 @if($hasWineLots)
-                    <th style="width:14%">Lote / Vino</th>
+                    <th style="width:14%">{{ __('Lote / Vino') }}</th>
                 @endif
-                <th class="right" style="width:8%">Cant.</th>
-                <th class="right" style="width:11%">Precio unit.</th>
-                <th class="right" style="width:7%">Dto.%</th>
-                <th class="right" style="width:12%">Base</th>
-                <th class="right" style="width:7%">IVA%</th>
-                <th class="right" style="width:13%">Total</th>
+                <th class="right" style="width:8%">{{ __('Cant.') }}</th>
+                <th class="right" style="width:11%">{{ __('Precio unit.') }}</th>
+                <th class="right" style="width:7%">{{ __('Dto.%') }}</th>
+                <th class="right" style="width:12%">{{ __('Base') }}</th>
+                <th class="right" style="width:7%">{{ __('IVA%') }}</th>
+                <th class="right" style="width:13%">{{ __('Total') }}</th>
             </tr>
         </thead>
         <tbody>
@@ -492,7 +492,7 @@
     <div class="totals-left">
         @if($isGrape)
             <div style="font-size:7.5pt; color:#6b7280; line-height:1.65;">
-                <strong style="color:#92400e;">Nota:</strong> La retención IRPF se descuenta de la base imponible.<br>
+                <strong style="color:#92400e;">{{ __('Nota:') }}</strong> La retención IRPF se descuenta de la base imponible.<br>
                 El importe «A pagar» es el neto a abonar al viticultor.<br>
                 Documento orientativo sin valor fiscal.
             </div>
@@ -508,38 +508,38 @@
         <table class="totals">
             @if($isGrape)
                 <tr>
-                    <td>Base bruta</td>
+                    <td>{{ __('Base bruta') }}</td>
                     <td>{{ number_format($taxBaseTotal, 2, ',', '.') }} €</td>
                 </tr>
                 <tr>
-                    <td>Retención IRPF</td>
+                    <td>{{ __('Retención IRPF') }}</td>
                     <td style="color:#92400e;">&minus; {{ number_format($taxAmountTotal, 2, ',', '.') }} €</td>
                 </tr>
                 <tr class="total-row grape-total">
-                    <td>A PAGAR</td>
+                    <td>{{ __('A PAGAR') }}</td>
                     <td>{{ number_format($totalOrientativo, 2, ',', '.') }} €</td>
                 </tr>
             @else
                 <tr>
-                    <td>Subtotal</td>
+                    <td>{{ __('Subtotal') }}</td>
                     <td>{{ number_format($subtotalOrientativo, 2, ',', '.') }} €</td>
                 </tr>
                 @if($discountTotal > 0)
                     <tr class="discount">
-                        <td>Descuento</td>
+                        <td>{{ __('Descuento') }}</td>
                         <td>&minus; {{ number_format($discountTotal, 2, ',', '.') }} €</td>
                     </tr>
                 @endif
                 <tr class="sep">
-                    <td>Base imponible</td>
+                    <td>{{ __('Base imponible') }}</td>
                     <td>{{ number_format($taxBaseTotal, 2, ',', '.') }} €</td>
                 </tr>
                 <tr>
-                    <td>IVA (estimado)</td>
+                    <td>{{ __('IVA (estimado)') }}</td>
                     <td>{{ number_format($taxAmountTotal, 2, ',', '.') }} €</td>
                 </tr>
                 <tr class="total-row">
-                    <td>TOTAL ORIENTATIVO</td>
+                    <td>{{ __('TOTAL ORIENTATIVO') }}</td>
                     <td>{{ number_format($totalOrientativo, 2, ',', '.') }} €</td>
                 </tr>
             @endif

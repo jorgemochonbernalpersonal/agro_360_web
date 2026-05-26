@@ -240,7 +240,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <flux:field>
                                 <flux:label>{{ __('NIF / DNI') }} <span class="text-red-500">*</span></flux:label>
-                                <flux:input wire:model="fiscal_nif" placeholder="Ej: 12345678A" maxlength="20" />
+                                <flux:input wire:model="fiscal_nif" :placeholder="__('Ej: 12345678A')" maxlength="20" />
                                 <flux:description>{{ __('Número de Identificación Fiscal. Obligatorio para Verifactu.') }}</flux:description>
                                 <flux:error name="fiscal_nif" />
                                 <p class="text-[11px] text-zinc-400 mt-1 flex items-center gap-1">
@@ -258,7 +258,7 @@
 
                             <flux:field>
                                 <flux:label>{{ __('Teléfono de contacto') }}</flux:label>
-                                <flux:input wire:model="fiscal_phone" placeholder="Ej: +34 600 000 000" maxlength="20" />
+                                <flux:input wire:model="fiscal_phone" :placeholder="__('Ej: +34 600 000 000')" maxlength="20" />
                                 <flux:error name="fiscal_phone" />
                             </flux:field>
                         </div>
@@ -293,7 +293,7 @@
 
                             <flux:field>
                                 <flux:label>{{ __('Código postal') }}</flux:label>
-                                <flux:input wire:model="fiscal_postal_code" placeholder="Ej: 01330" maxlength="10" />
+                                <flux:input wire:model="fiscal_postal_code" :placeholder="__('Ej: 01330')" maxlength="10" />
                                 <flux:error name="fiscal_postal_code" />
                             </flux:field>
                         </div>
@@ -331,7 +331,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <flux:field>
                                 <flux:label>{{ __('Límite kg/ha por defecto') }}</flux:label>
-                                <flux:input wire:model="default_limit_kg_per_ha" type="number" step="0.01" min="0" placeholder="Ej: 8000" />
+                                <flux:input wire:model="default_limit_kg_per_ha" type="number" step="0.01" min="0" :placeholder="__('Ej: 8000')" />
                                 <flux:description>{{ __('Rendimiento máximo para nuevas plantaciones (kg/ha)') }}</flux:description>
                                 <flux:error name="default_limit_kg_per_ha" />
                             </flux:field>
@@ -662,7 +662,7 @@
                                 <li>• {{ __('Cada informe incluye un código QR único para verificación pública') }}</li>
                             </ul>
                             <p class="mt-3 text-xs">
-                                <strong>Tip:</strong> {{ __('La contraseña de firma digital es diferente a tu contraseña de usuario. Puedes cambiarla cuando quieras sin afectar tu acceso a la plataforma. Para ver tus estadísticas y actividad reciente de firmas, visita la sección de') }}
+                                <strong>{{ __('Tip:') }}</strong> {{ __('La contraseña de firma digital es diferente a tu contraseña de usuario. Puedes cambiarla cuando quieras sin afectar tu acceso a la plataforma. Para ver tus estadísticas y actividad reciente de firmas, visita la sección de') }}
                                 <a href="{{ roleRoute('viticulturist.official-reports.index') }}" class="underline font-semibold">{{ __('Informes Oficiales') }}</a>.
                             </p>
                         </flux:callout.text>

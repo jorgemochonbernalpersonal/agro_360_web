@@ -52,7 +52,7 @@
                 <div class="flex items-center gap-3">
                     <a href="{{ url('/') }}" class="flex items-center gap-3">
                         <img src="{{ asset('images/logo.png') }}" alt="Agro365" width="120" height="40" loading="eager" fetchpriority="high" decoding="async" class="h-10 w-auto">
-                        <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">Agro365</span>
+                        <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Agro365') }}</span>
                     </a>
                 </div>
                 <div class="flex items-center gap-4">
@@ -81,13 +81,13 @@
                 <ol class="flex items-center space-x-2">
                     <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
                         <a href="{{ url('/') }}" class="hover:text-[var(--color-agro-green)]" itemprop="item">
-                            <span itemprop="name">Inicio</span>
+                            <span itemprop="name">{{ __('Inicio') }}</span>
                         </a>
                         <meta itemprop="position" content="1" />
                     </li>
                     <span class="mx-2">/</span>
                     <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                        <span class="text-gray-900" itemprop="name">Cuaderno Digital para Viticultores</span>
+                        <span class="text-gray-900" itemprop="name">{{ __('Cuaderno Digital para Viticultores') }}</span>
                         <meta itemprop="position" content="2" />
                     </li>
                 </ol>
@@ -97,146 +97,142 @@
             <div class="mb-12">
                 <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-100 border border-red-300 mb-4">
                     <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
-                    <span class="text-sm font-semibold text-red-700">OBLIGATORIO DESDE 2027</span>
+                    <span class="text-sm font-semibold text-red-700">{{ __('OBLIGATORIO DESDE 2027') }}</span>
                 </div>
-                <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">
-                    Cuaderno Digital para Viticultores
-                </h1>
+                <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">{{ __('Cuaderno Digital para Viticultores') }}</h1>
                 <p class="text-xl text-gray-600 leading-relaxed">
-                    <strong>Cuaderno de campo digital obligatorio para viticultores</strong> desde 2027 según normativa europea. Gestión completa de tratamientos fitosanitarios, riegos, fertilizaciones y labores culturales. Integración SIGPAC y cumplimiento normativo PAC garantizado.
+                    <strong>{{ __('Cuaderno de campo digital obligatorio para viticultores') }}</strong> desde 2027 según normativa europea. Gestión completa de tratamientos fitosanitarios, riegos, fertilizaciones y labores culturales. Integración SIGPAC y cumplimiento normativo PAC garantizado.
                 </p>
             </div>
 
             <!-- Content -->
             <article class="prose prose-lg max-w-none">
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">¿Por Qué los Viticultores Necesitan un Cuaderno Digital?</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('¿Por Qué los Viticultores Necesitan un Cuaderno Digital?') }}</h2>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        Los <strong>viticultores profesionales</strong> están obligados a mantener un <strong>cuaderno de campo digital</strong> desde 2027 según la normativa europea. Este cuaderno digital debe registrar todas las actividades realizadas en el viñedo: tratamientos fitosanitarios, riegos, fertilizaciones, labores culturales y cosechas.
+                        Los <strong>{{ __('viticultores profesionales') }}</strong> están obligados a mantener un <strong>{{ __('cuaderno de campo digital') }}</strong> desde 2027 según la normativa europea. Este cuaderno digital debe registrar todas las actividades realizadas en el viñedo: tratamientos fitosanitarios, riegos, fertilizaciones, labores culturales y cosechas.
                     </p>
                     <div class="bg-red-50 border-l-4 border-red-500 p-6 rounded-r-lg mb-6">
-                        <p class="text-red-800 font-semibold mb-2">⚠️ Importante para Viticultores:</p>
-                        <p class="text-red-700">
-                            A partir de 2027, el cuaderno de campo en papel NO será válido para viticultores profesionales. Debes tener un cuaderno digital que cumpla con todos los requisitos normativos, incluyendo integración SIGPAC y firma electrónica.
-                        </p>
+                        <p class="text-red-800 font-semibold mb-2">{{ __('⚠️ Importante para Viticultores:') }}</p>
+                        <p class="text-red-700">{{ __('A partir de 2027, el cuaderno de campo en papel NO será válido para viticultores profesionales. Debes tener un cuaderno digital que cumpla con todos los requisitos normativos, incluyendo integración SIGPAC y firma electrónica.') }}</p>
                     </div>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        Un <strong>cuaderno digital para viticultores</strong> no solo cumple con la normativa, sino que también te permite gestionar tu viñedo de forma más eficiente, con trazabilidad completa y control total de todas las actividades.
+                        Un <strong>{{ __('cuaderno digital para viticultores') }}</strong> no solo cumple con la normativa, sino que también te permite gestionar tu viñedo de forma más eficiente, con trazabilidad completa y control total de todas las actividades.
                     </p>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">¿Qué Debe Registrar el Cuaderno Digital para Viticultores?</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('¿Qué Debe Registrar el Cuaderno Digital para Viticultores?') }}</h2>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        El <strong>cuaderno de campo digital para viticultores</strong> debe registrar obligatoriamente:
+                        El <strong>{{ __('cuaderno de campo digital para viticultores') }}</strong> debe registrar obligatoriamente:
                     </p>
                     <div class="grid md:grid-cols-2 gap-6 mb-6">
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">🌿 Tratamientos Fitosanitarios</h3>
-                            <p class="text-gray-700">Producto utilizado, dosis, fecha, parcela SIGPAC, condiciones meteorológicas, plazo de seguridad y variedad tratada.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('🌿 Tratamientos Fitosanitarios') }}</h3>
+                            <p class="text-gray-700">{{ __('Producto utilizado, dosis, fecha, parcela SIGPAC, condiciones meteorológicas, plazo de seguridad y variedad tratada.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">💧 Riegos</h3>
-                            <p class="text-gray-700">Fecha, cantidad de agua, método de riego, parcela, condiciones aplicadas y variedad regada.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('💧 Riegos') }}</h3>
+                            <p class="text-gray-700">{{ __('Fecha, cantidad de agua, método de riego, parcela, condiciones aplicadas y variedad regada.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">🌱 Fertilizaciones</h3>
-                            <p class="text-gray-700">Tipo de fertilizante, dosis, fecha, parcela SIGPAC, método de aplicación y variedad fertilizada.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('🌱 Fertilizaciones') }}</h3>
+                            <p class="text-gray-700">{{ __('Tipo de fertilizante, dosis, fecha, parcela SIGPAC, método de aplicación y variedad fertilizada.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">🔧 Labores Culturales</h3>
-                            <p class="text-gray-700">Tipo de labor, fecha, parcela, maquinaria utilizada, cuadrilla responsable y variedad trabajada.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('🔧 Labores Culturales') }}</h3>
+                            <p class="text-gray-700">{{ __('Tipo de labor, fecha, parcela, maquinaria utilizada, cuadrilla responsable y variedad trabajada.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">🍷 Cosechas y Vendimia</h3>
-                            <p class="text-gray-700">Fecha de cosecha, rendimiento por parcela, variedad, calidad de uva y destino de la cosecha.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('🍷 Cosechas y Vendimia') }}</h3>
+                            <p class="text-gray-700">{{ __('Fecha de cosecha, rendimiento por parcela, variedad, calidad de uva y destino de la cosecha.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">📊 Variedades y Parcelas</h3>
-                            <p class="text-gray-700">Gestión de variedades de uva, sistemas de conducción, densidad de plantación y características de cada parcela SIGPAC.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('📊 Variedades y Parcelas') }}</h3>
+                            <p class="text-gray-700">{{ __('Gestión de variedades de uva, sistemas de conducción, densidad de plantación y características de cada parcela SIGPAC.') }}</p>
                         </div>
                     </div>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Requisitos del Cuaderno Digital para Viticultores</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Requisitos del Cuaderno Digital para Viticultores') }}</h2>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        Para cumplir con la normativa, tu <strong>cuaderno digital para viticultores</strong> debe cumplir estos requisitos obligatorios:
+                        Para cumplir con la normativa, tu <strong>{{ __('cuaderno digital para viticultores') }}</strong> debe cumplir estos requisitos obligatorios:
                     </p>
                     <ul class="list-disc list-inside space-y-3 text-gray-700 mb-6 ml-4">
-                        <li><strong>Registro en tiempo real:</strong> Las actividades deben registrarse inmediatamente después de realizarse</li>
-                        <li><strong>Asociación SIGPAC obligatoria:</strong> Cada actividad debe estar asociada a un código SIGPAC válido</li>
-                        <li><strong>Inmutabilidad:</strong> Los registros no pueden modificarse una vez guardados (solo añadir correcciones documentadas)</li>
-                        <li><strong>Firma electrónica SHA-256:</strong> Los informes oficiales deben incluir firma electrónica para inspecciones</li>
-                        <li><strong>Trazabilidad completa:</strong> Desde la parcela SIGPAC hasta la cosecha y facturación</li>
-                        <li><strong>Gestión de variedades:</strong> Control de variedades de uva, sistemas de conducción y características específicas</li>
-                        <li><strong>Acceso para inspecciones:</strong> Debe poder generarse un informe oficial en cualquier momento</li>
-                        <li><strong>Almacenamiento seguro:</strong> Los datos deben estar protegidos y respaldados automáticamente</li>
+                        <li><strong>{{ __('Registro en tiempo real:') }}</strong> Las actividades deben registrarse inmediatamente después de realizarse</li>
+                        <li><strong>{{ __('Asociación SIGPAC obligatoria:') }}</strong> Cada actividad debe estar asociada a un código SIGPAC válido</li>
+                        <li><strong>{{ __('Inmutabilidad:') }}</strong> Los registros no pueden modificarse una vez guardados (solo añadir correcciones documentadas)</li>
+                        <li><strong>{{ __('Firma electrónica SHA-256:') }}</strong> Los informes oficiales deben incluir firma electrónica para inspecciones</li>
+                        <li><strong>{{ __('Trazabilidad completa:') }}</strong> Desde la parcela SIGPAC hasta la cosecha y facturación</li>
+                        <li><strong>{{ __('Gestión de variedades:') }}</strong> Control de variedades de uva, sistemas de conducción y características específicas</li>
+                        <li><strong>{{ __('Acceso para inspecciones:') }}</strong> Debe poder generarse un informe oficial en cualquier momento</li>
+                        <li><strong>{{ __('Almacenamiento seguro:') }}</strong> Los datos deben estar protegidos y respaldados automáticamente</li>
                     </ul>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Agro365: Cuaderno Digital Completo para Viticultores</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Agro365: Cuaderno Digital Completo para Viticultores') }}</h2>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        <strong>Agro365</strong> es el <strong>cuaderno digital para viticultores</strong> más completo del mercado. Nuestra plataforma está diseñada específicamente para viticultores profesionales y cumple con todos los requisitos de la normativa 2027.
+                        <strong>{{ __('Agro365') }}</strong> es el <strong>{{ __('cuaderno digital para viticultores') }}</strong> más completo del mercado. Nuestra plataforma está diseñada específicamente para viticultores profesionales y cumple con todos los requisitos de la normativa 2027.
                     </p>
                     <div class="bg-gradient-to-r from-[var(--color-agro-green-bg)] to-[var(--color-agro-green-light)]/30 p-8 rounded-xl border border-[var(--color-agro-green)]/20 mb-6">
-                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">Ventajas del Cuaderno Digital Agro365 para Viticultores</h3>
+                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Ventajas del Cuaderno Digital Agro365 para Viticultores') }}</h3>
                         <ul class="space-y-3 text-gray-800">
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Cumplimiento normativo 2027:</strong> Cumple con todos los requisitos del cuaderno digital obligatorio</span>
+                                <span><strong>{{ __('Cumplimiento normativo 2027:') }}</strong> Cumple con todos los requisitos del cuaderno digital obligatorio</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Integración SIGPAC completa:</strong> Asocia automáticamente actividades a códigos SIGPAC oficiales</span>
+                                <span><strong>{{ __('Integración SIGPAC completa:') }}</strong> Asocia automáticamente actividades a códigos SIGPAC oficiales</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Gestión de variedades:</strong> Control completo de variedades de uva, sistemas de conducción y características</span>
+                                <span><strong>{{ __('Gestión de variedades:') }}</strong> Control completo de variedades de uva, sistemas de conducción y características</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Registro desde el campo:</strong> Registra actividades directamente desde el viñedo con tu móvil</span>
+                                <span><strong>{{ __('Registro desde el campo:') }}</strong> Registra actividades directamente desde el viñedo con tu móvil</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Informes oficiales con firma SHA-256:</strong> Genera informes certificados listos para inspecciones</span>
+                                <span><strong>{{ __('Informes oficiales con firma SHA-256:') }}</strong> Genera informes certificados listos para inspecciones</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Control de vendimia:</strong> Registra cosechas, rendimientos y calidad de uva por parcela y variedad</span>
+                                <span><strong>{{ __('Control de vendimia:') }}</strong> Registra cosechas, rendimientos y calidad de uva por parcela y variedad</span>
                             </li>
                         </ul>
                     </div>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Preguntas Frecuentes sobre Cuaderno Digital para Viticultores</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Preguntas Frecuentes sobre Cuaderno Digital para Viticultores') }}</h2>
                     <div class="space-y-6">
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Es obligatorio el cuaderno digital para viticultores?</h3>
-                            <p class="text-gray-700">Sí, desde 2027 es obligatorio para todos los viticultores profesionales tener un cuaderno de campo digital que cumpla con la normativa europea, incluyendo integración SIGPAC y firma electrónica.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Es obligatorio el cuaderno digital para viticultores?') }}</h3>
+                            <p class="text-gray-700">{{ __('Sí, desde 2027 es obligatorio para todos los viticultores profesionales tener un cuaderno de campo digital que cumpla con la normativa europea, incluyendo integración SIGPAC y firma electrónica.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Qué diferencia a un cuaderno digital para viticultores de uno genérico?</h3>
-                            <p class="text-gray-700">Un cuaderno digital para viticultores incluye funcionalidades específicas como gestión de variedades de uva, sistemas de conducción, control de vendimia y características específicas del sector vitícola.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Qué diferencia a un cuaderno digital para viticultores de uno genérico?') }}</h3>
+                            <p class="text-gray-700">{{ __('Un cuaderno digital para viticultores incluye funcionalidades específicas como gestión de variedades de uva, sistemas de conducción, control de vendimia y características específicas del sector vitícola.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Puedo registrar actividades desde el campo?</h3>
-                            <p class="text-gray-700">Sí, con Agro365 puedes registrar todas las actividades directamente desde el viñedo usando tu smartphone o tablet, sin necesidad de estar en la oficina.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Puedo registrar actividades desde el campo?') }}</h3>
+                            <p class="text-gray-700">{{ __('Sí, con Agro365 puedes registrar todas las actividades directamente desde el viñedo usando tu smartphone o tablet, sin necesidad de estar en la oficina.') }}</p>
                         </div>
                     </div>
                 </section>
@@ -244,12 +240,8 @@
 
             <!-- CTA Section -->
             <div class="mt-16 pt-12 border-t border-gray-200 text-center">
-                <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">
-                    Cuaderno Digital para Viticultores Obligatorio 2027
-                </h2>
-                <p class="text-gray-600 mb-8 text-lg">
-                    Cumple con la normativa desde el primer día con Agro365. Cuaderno digital, SIGPAC, gestión de variedades y cumplimiento normativo. Prueba gratis 3 meses.
-                </p>
+                <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Cuaderno Digital para Viticultores Obligatorio 2027') }}</h2>
+                <p class="text-gray-600 mb-8 text-lg">{{ __('Cumple con la normativa desde el primer día con Agro365. Cuaderno digital, SIGPAC, gestión de variedades y cumplimiento normativo. Prueba gratis 3 meses.') }}</p>
                 <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-lg">
                     Comenzar Gratis
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -70,7 +70,7 @@ class Dashboard extends Component
             );
         }
 
-        $this->dispatch('toast', message: 'Instantánea de existencias registrada.', type: 'success');
+        $this->dispatch('toast', message: __('Instantánea de existencias registrada.'), type: 'success');
     }
 
     /** Descarga el CSV SILICIE del año seleccionado y muestra la guía post-exportación */
@@ -452,8 +452,8 @@ class Dashboard extends Component
                     'DESCRIPCION_PRODUCTO'  => $label,
                     'CANTIDAD'              => number_format($hl, 3, ',', ''),
                     'UNIDAD_MEDIDA'         => 'HL',
-                    'NUM_DOCUMENTO'         => 'APERTURA-' . $fiscalYear,
-                    'OBSERVACIONES'         => 'Apertura ejercicio ' . $fiscalYear,
+                    'NUM_DOCUMENTO'         => __('APERTURA-') . $fiscalYear,
+                    'OBSERVACIONES'         => __('Apertura ejercicio ') . $fiscalYear,
                 ],
             ];
             $total += $hl;

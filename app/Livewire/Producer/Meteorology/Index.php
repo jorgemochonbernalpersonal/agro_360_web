@@ -91,7 +91,7 @@ class Index extends Component
         $this->loadWeatherData(true);
         $this->dispatch('notify', [
             'type'    => 'success',
-            'message' => 'Datos meteorológicos actualizados',
+            'message' => __('Datos meteorológicos actualizados'),
         ]);
     }
 
@@ -103,10 +103,10 @@ class Index extends Component
         $stressIndex = ($et0 * 10) - $moisture;
 
         return match (true) {
-            $stressIndex <= 0  => ['status' => 'optimal',  'text' => 'Optimo',   'color' => 'green',  'icon' => 'check-circle'],
-            $stressIndex <= 20 => ['status' => 'mild',     'text' => 'Leve',     'color' => 'amber',  'icon' => 'minus-circle'],
-            $stressIndex <= 40 => ['status' => 'moderate', 'text' => 'Moderado', 'color' => 'orange', 'icon' => 'exclamation-triangle'],
-            default            => ['status' => 'severe',   'text' => 'Severo',   'color' => 'red',    'icon' => 'exclamation-circle'],
+            $stressIndex <= 0  => ['status' => 'optimal',  'text' => __('Optimo'),   'color' => 'green',  'icon' => 'check-circle'],
+            $stressIndex <= 20 => ['status' => 'mild',     'text' => __('Leve'),     'color' => 'amber',  'icon' => 'minus-circle'],
+            $stressIndex <= 40 => ['status' => 'moderate', 'text' => __('Moderado'), 'color' => 'orange', 'icon' => 'exclamation-triangle'],
+            default            => ['status' => 'severe',   'text' => __('Severo'),   'color' => 'red',    'icon' => 'exclamation-circle'],
         };
     }
 
@@ -142,8 +142,8 @@ class Index extends Component
             'plotSummaries' => $plotSummaries,
             'waterStress'   => $this->getWaterStressStatus(),
         ])->layout('layouts.app', [
-            'title'       => 'Meteorologia',
-            'description' => 'Datos meteorologicos en tiempo real de tus parcelas',
+            'title'       => __('Meteorologia'),
+            'description' => __('Datos meteorologicos en tiempo real de tus parcelas'),
         ]);
     }
 }

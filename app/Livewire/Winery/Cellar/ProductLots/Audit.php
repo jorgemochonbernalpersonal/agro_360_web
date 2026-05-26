@@ -51,8 +51,8 @@ class Audit extends Component
             'manualSold'      => 'required|numeric|min:0',
             'adjustmentNote'  => 'required|string|min:5|max:500',
         ], [
-            'adjustmentNote.required' => 'La justificación es obligatoria.',
-            'adjustmentNote.min'      => 'La justificación debe tener al menos 5 caracteres.',
+            'adjustmentNote.required' => __('La justificación es obligatoria.'),
+            'adjustmentNote.min'      => __('La justificación debe tener al menos 5 caracteres.'),
         ]);
 
         $lot = ProductLot::where('user_id', Auth::id())->findOrFail($this->adjustingLotId);

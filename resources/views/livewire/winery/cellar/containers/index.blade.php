@@ -1,8 +1,8 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="Contenedores de Bodega"
-        description="Gestiona tus depósitos, barricas y otros contenedores"
+        title="{{ __('Contenedores de Bodega') }}"
+        :description="__('Gestiona tus depósitos, barricas y otros contenedores')"
     >
         <x-slot:actions>
             <flux:button href="{{ roleRoute('containers.analytics') }}" wire:navigate variant="ghost" icon="chart-bar">
@@ -38,7 +38,7 @@
     <div class="flex items-center gap-3">
 
         {{-- Search --}}
-        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar contenedor..." />
+        <x-agro.search-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar contenedor...')" />
 
         {{-- Botón Filtros --}}
         <x-agro.filter-button modal="container-filters" :count="$filterCount" />
@@ -78,9 +78,7 @@
             <button
                 wire:click="clearFilters"
                 class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors"
-            >
-                Limpiar todo
-            </button>
+            >{{ __('Limpiar todo') }}</button>
         </div>
     @endif
 
@@ -121,11 +119,11 @@
                                 </div>
                             </div>
                             @if($container->isFull())
-                                <flux:badge color="red" size="sm" class="shrink-0">Lleno</flux:badge>
+                                <flux:badge color="red" size="sm" class="shrink-0">{{ __('Lleno') }}</flux:badge>
                             @elseif($container->isEmpty())
-                                <flux:badge color="green" size="sm" class="shrink-0">Vacío</flux:badge>
+                                <flux:badge color="green" size="sm" class="shrink-0">{{ __('Vacío') }}</flux:badge>
                             @else
-                                <flux:badge color="yellow" size="sm" class="shrink-0">En uso</flux:badge>
+                                <flux:badge color="yellow" size="sm" class="shrink-0">{{ __('En uso') }}</flux:badge>
                             @endif
                         </div>
                     </x-slot:header>
@@ -134,28 +132,28 @@
                         {{-- Barra de ocupación --}}
                         <x-agro.progress-bar
                             :percentage="$pct"
-                            label="Ocupación"
+                            :label="__('Ocupación')"
                             :showValues="false"
                         />
 
                         {{-- Kg cosecha / vino / capacidad --}}
                         <div class="grid grid-cols-3 gap-2">
                             <div class="bg-amber-50 rounded-lg p-2 text-center">
-                                <p class="text-[9px] text-amber-400 uppercase tracking-wide mb-0.5">Uva</p>
+                                <p class="text-[9px] text-amber-400 uppercase tracking-wide mb-0.5">{{ __('Uva') }}</p>
                                 <p class="text-sm font-bold text-amber-700">
                                     {{ number_format($container->used_capacity, 0) }}
                                     <span class="text-[9px] font-normal text-amber-400">kg</span>
                                 </p>
                             </div>
                             <div class="bg-violet-50 rounded-lg p-2 text-center">
-                                <p class="text-[9px] text-violet-400 uppercase tracking-wide mb-0.5">Vino</p>
+                                <p class="text-[9px] text-violet-400 uppercase tracking-wide mb-0.5">{{ __('Vino') }}</p>
                                 <p class="text-sm font-bold text-violet-700">
                                     {{ number_format($container->wine_volume_liters, 0) }}
                                     <span class="text-[9px] font-normal text-violet-400">L</span>
                                 </p>
                             </div>
                             <div class="bg-zinc-50 rounded-lg p-2 text-center">
-                                <p class="text-[9px] text-zinc-400 uppercase tracking-wide mb-0.5">Cap.</p>
+                                <p class="text-[9px] text-zinc-400 uppercase tracking-wide mb-0.5">{{ __('Cap.') }}</p>
                                 <p class="text-sm font-bold text-zinc-600">
                                     {{ number_format($container->capacity, 0) }}
                                     <span class="text-[9px] font-normal text-zinc-400">kg</span>
@@ -165,12 +163,12 @@
 
                         {{-- Tipo + recepciones --}}
                         <div class="flex items-center justify-between text-sm">
-                            <span class="text-zinc-400">Tipo</span>
+                            <span class="text-zinc-400">{{ __('Tipo') }}</span>
                             <flux:badge color="zinc" size="sm">{{ $typeName }}</flux:badge>
                         </div>
                         @if($container->harvests_count > 0)
                             <div class="flex items-center justify-between text-sm">
-                                <span class="text-zinc-400">Recepciones</span>
+                                <span class="text-zinc-400">{{ __('Recepciones') }}</span>
                                 <span class="text-zinc-700 font-medium">{{ $container->harvests_count }}</span>
                             </div>
                         @endif
@@ -181,18 +179,18 @@
 
                     <x-slot:footer>
                         <div class="flex items-center justify-end gap-1">
-                            <x-agro.action-button icon="eye" variant="primary" href="{{ roleRoute('containers.show', $container) }}" title="Ver detalle" />
+                            <x-agro.action-button icon="eye" variant="primary" href="{{ roleRoute('containers.show', $container) }}" title="{{ __('Ver detalle') }}" />
                             @if(!$container->archived && $container->wine_volume_liters > 0)
-                                <x-agro.action-button icon="arrow-path" variant="warning" wire:click="emptyWine({{ $container->id }})" wire:confirm="¿Vaciar el vino elaborado de «{{ $container->name }}»?" wire:loading.attr="disabled" title="Vaciar vino" />
+                                <x-agro.action-button icon="arrow-path" variant="warning" wire:click="emptyWine({{ $container->id }})" wire:confirm="{{ __('¿Vaciar el vino elaborado de «:name»?', ['name' => $container->name]) }}" wire:loading.attr="disabled" title="{{ __('Vaciar vino') }}" />
                             @endif
-                            <x-agro.action-button icon="pencil" variant="default" href="{{ roleRoute('containers.edit', $container) }}" title="Editar" />
+                            <x-agro.action-button icon="pencil" variant="default" href="{{ roleRoute('containers.edit', $container) }}" title="{{ __('Editar') }}" />
                             @if($container->archived)
-                                <x-agro.action-button variant="activate" wire:click="unarchive({{ $container->id }})" title="Activar" />
+                                <x-agro.action-button variant="activate" wire:click="unarchive({{ $container->id }})" title="{{ __('Activar') }}" />
                             @else
-                                <x-agro.action-button variant="deactivate" wire:click="archive({{ $container->id }})" wire:loading.attr="disabled" wire:confirm="¿Desactivar este contenedor?" title="Desactivar" />
+                                <x-agro.action-button variant="deactivate" wire:click="archive({{ $container->id }})" wire:loading.attr="disabled" wire:confirm="{{ __('¿Desactivar este contenedor?') }}" title="{{ __('Desactivar') }}" />
                             @endif
                             @if($container->harvests_count === 0)
-                                <x-agro.action-button variant="delete" wire:click="delete({{ $container->id }})" wire:loading.attr="disabled" wire:confirm="¿Eliminar este contenedor permanentemente?" title="Eliminar" />
+                                <x-agro.action-button variant="delete" wire:click="delete({{ $container->id }})" wire:loading.attr="disabled" wire:confirm="{{ __('¿Eliminar este contenedor permanentemente?') }}" title="{{ __('Eliminar') }}" />
                             @endif
                         </div>
                     </x-slot:footer>
@@ -209,7 +207,7 @@
         >
             @if($search || $filterCount > 0)
                 <x-slot:action>
-                    <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
+                    <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">{{ __('Limpiar filtros') }}</flux:button>
                 </x-slot:action>
             @elseif($currentTab === 'active')
                 <x-slot:action>
@@ -229,7 +227,7 @@
                     <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
                         <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
                     </div>
-                    <h3 class="text-base font-semibold text-zinc-900">Filtros</h3>
+                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Filtros') }}</h3>
                 </div>
                 <flux:button x-on:click="$dispatch('close-modal', 'container-filters')" variant="ghost" size="sm" icon="x-mark" />
             </div>
@@ -238,9 +236,9 @@
         <div class="px-6 py-5 space-y-5">
 
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Tipo de contenedor</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Tipo de contenedor') }}</label>
                 <flux:select wire:model.live="typeFilter">
-                    <option value="">Todos los tipos</option>
+                    <option value="">{{ __('Todos los tipos') }}</option>
                     @foreach($types as $type)
                         <option value="{{ $type->id }}">{{ $type->name }}</option>
                     @endforeach
@@ -248,20 +246,20 @@
             </div>
 
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Ocupación</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Ocupación') }}</label>
                 <flux:select wire:model.live="occupancyFilter">
-                    <option value="">Cualquier estado</option>
-                    <option value="empty">Vacíos</option>
-                    <option value="in_use">En uso</option>
-                    <option value="full">Llenos</option>
+                    <option value="">{{ __('Cualquier estado') }}</option>
+                    <option value="empty">{{ __('Vacíos') }}</option>
+                    <option value="in_use">{{ __('En uso') }}</option>
+                    <option value="full">{{ __('Llenos') }}</option>
                 </flux:select>
             </div>
 
             @if($rooms->isNotEmpty())
                 <div>
-                    <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Sala de bodega</label>
+                    <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Sala de bodega') }}</label>
                     <flux:select wire:model.live="roomFilter">
-                        <option value="">Todas las salas</option>
+                        <option value="">{{ __('Todas las salas') }}</option>
                         @foreach($rooms as $room)
                             <option value="{{ $room->id }}">{{ $room->name }}</option>
                         @endforeach
@@ -271,9 +269,9 @@
 
             @if($materials->isNotEmpty())
                 <div>
-                    <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Material</label>
+                    <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Material') }}</label>
                     <flux:select wire:model.live="materialFilter">
-                        <option value="">Todos los materiales</option>
+                        <option value="">{{ __('Todos los materiales') }}</option>
                         @foreach($materials as $material)
                             <option value="{{ $material->id }}">{{ $material->name }}</option>
                         @endforeach
@@ -288,15 +286,11 @@
                 <button
                     wire:click="clearFilters"
                     class="text-sm text-zinc-400 hover:text-zinc-600 transition-colors"
-                >
-                    Limpiar filtros
-                </button>
+                >{{ __('Limpiar filtros') }}</button>
             @else
                 <span></span>
             @endif
-            <flux:button x-on:click="$dispatch('close-modal', 'container-filters')" variant="primary">
-                Aplicar
-            </flux:button>
+            <flux:button x-on:click="$dispatch('close-modal', 'container-filters')" variant="primary">{{ __('Aplicar') }}</flux:button>
         </div>
     </x-agro.modal>
 

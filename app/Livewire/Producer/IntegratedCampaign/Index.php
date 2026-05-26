@@ -46,8 +46,8 @@ class Index extends Component
             'campaign'  => $campaign,
             'data'      => $data,
         ])->layout('layouts.app', [
-            'title'       => 'Dashboard Integrado de Campaña',
-            'description' => 'Visión completa viñedo + bodega por campaña',
+            'title'       => __('Dashboard Integrado de Campaña'),
+            'description' => __('Visión completa viñedo + bodega por campaña'),
         ]);
     }
 

@@ -31,13 +31,13 @@ class Index extends AbstractIndex
         $bottling = WineBottling::where('user_id', $this->wineryId())->findOrFail($id);
 
         if ($bottling->product_lot_id) {
-            $this->toastError('No se puede eliminar un embotellado vinculado a un lote de producto.');
+            $this->toastError(__('No se puede eliminar un embotellado vinculado a un lote de producto.'));
             return;
         }
 
         app(WineContainerStockService::class)->revertBottling($bottling);
         $bottling->delete();
-        $this->toastSuccess('Registro de embotellado eliminado.');
+        $this->toastSuccess(__('Registro de embotellado eliminado.'));
     }
 
     protected function baseQuery(): Builder

@@ -1,7 +1,7 @@
 <div class="space-y-6 animate-fade-in">
 <x-agro.page-header
     title="Aditivos — {{ $container->name }}"
-    description="Registro de aditivos enológicos aplicados al contenido de este depósito."
+    :description="__('Registro de aditivos enológicos aplicados al contenido de este depósito.')"
     icon="beaker"
 >
     <x-slot:actions>
@@ -43,7 +43,7 @@
                     <div class="flex-1 space-y-4">
                         <div class="grid grid-cols-1 gap-2">
                             <div class="bg-agro-50 rounded-xl p-3">
-                                <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Cantidad</p>
+                                <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">{{ __('Cantidad') }}</p>
                                 <p class="text-2xl font-bold text-agro-700 leading-none">
                                     {{ number_format($additive->quantity, 3) }}
                                     <span class="text-sm font-medium text-agro-400">{{ $additive->unitOfMeasurement?->symbol }}</span>
@@ -53,7 +53,7 @@
 
                         <div class="space-y-2 text-sm">
                             <div class="flex items-center justify-between">
-                                <span class="text-zinc-400">Registrado por</span>
+                                <span class="text-zinc-400">{{ __('Registrado por') }}</span>
                                 <span class="text-zinc-700 font-medium">{{ $additive->creator?->name ?? '—' }}</span>
                             </div>
                         </div>
@@ -65,8 +65,8 @@
 
                     <x-slot:footer>
                         <div class="flex items-center justify-end gap-0.5">
-                            <x-agro.action-button variant="edit" href="{{ roleRoute('containers.additives.edit', [$container, $additive]) }}" wire:navigate title="Editar" />
-                            <x-agro.action-button variant="delete" wire:click="delete({{ $additive->id }})" wire:loading.attr="disabled" wire:confirm="¿Eliminar este registro de aditivo?" title="Eliminar" />
+                            <x-agro.action-button variant="edit" href="{{ roleRoute('containers.additives.edit', [$container, $additive]) }}" wire:navigate title="{{ __('Editar') }}" />
+                            <x-agro.action-button variant="delete" wire:click="delete({{ $additive->id }})" wire:loading.attr="disabled" wire:confirm="{{ __('¿Eliminar este registro de aditivo?') }}" title="{{ __('Eliminar') }}" />
                         </div>
                     </x-slot:footer>
                 </x-agro.card>
@@ -74,8 +74,8 @@
         </div>
         <x-agro-pagination :paginator="$additives" />
     @else
-        <x-agro.empty-state icon="beaker" title="Sin aditivos registrados"
-            description="Registra los aditivos aplicados a este depósito (SO₂, bentonita, etc.)." />
+        <x-agro.empty-state icon="beaker" title="{{ __('Sin aditivos registrados') }}"
+            :description="__('Registra los aditivos aplicados a este depósito (SO₂, bentonita, etc.).')" />
     @endif
 </div>
 </div>

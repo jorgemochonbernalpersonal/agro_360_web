@@ -26,7 +26,7 @@ class Index extends Component
         ContainerAdditiveSupply::where('container_id', $this->container->id)
             ->findOrFail($id)
             ->delete();
-        $this->toastSuccess('Aditivo eliminado.');
+        $this->toastSuccess(__('Aditivo eliminado.'));
     }
 
     public function render()

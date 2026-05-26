@@ -77,7 +77,7 @@ class OnboardingChecklist extends Component
         Cache::forget("nav_onboarding_pending_{$userId}");
         $this->show = false;
 
-        $this->toastInfo('Onboarding saltado. Puedes reactivarlo desde el dashboard.');
+        $this->toastInfo(__('Onboarding saltado. Puedes reactivarlo desde el dashboard.'));
     }
 
     public function resetOnboarding(): void
@@ -87,7 +87,7 @@ class OnboardingChecklist extends Component
         Cache::forget("nav_onboarding_pending_{$userId}");
         $this->loadProgress();
 
-        $this->toastSuccess('Onboarding reiniciado. Recarga la página para ver el tour de nuevo.');
+        $this->toastSuccess(__('Onboarding reiniciado. Recarga la página para ver el tour de nuevo.'));
     }
 
     private function getStepTitle(string $step): string

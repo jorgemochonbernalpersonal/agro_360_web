@@ -50,12 +50,12 @@ class Index extends Component
         $planting->update(['active' => $newActiveState]);
 
         if ($newActiveState) {
-            $this->toastSuccess('Plantación activada exitosamente.');
+            $this->toastSuccess(__('Plantación activada exitosamente.'));
             if ($this->currentTab === 'inactive') {
                 $this->currentTab = 'active';
             }
         } else {
-            $this->toastSuccess('Plantación desactivada exitosamente.');
+            $this->toastSuccess(__('Plantación desactivada exitosamente.'));
             if ($this->currentTab === 'active') {
                 $this->currentTab = 'inactive';
             }
@@ -145,8 +145,8 @@ class Index extends Component
 
         return view('livewire.plots.plantings.index', compact('plantings', 'years', 'stats', 'wineryOnly', 'selectablePlots'))
             ->layout('layouts.app', [
-                'title'       => 'Plantaciones - Agro365',
-                'description' => 'Gestiona las plantaciones de tus parcelas. Variedades de uva, años de plantación, hectáreas y estado de cada viñedo.',
+                'title'       => __('Plantaciones - Agro365'),
+                'description' => __('Gestiona las plantaciones de tus parcelas. Variedades de uva, años de plantación, hectáreas y estado de cada viñedo.'),
             ]);
     }
 }

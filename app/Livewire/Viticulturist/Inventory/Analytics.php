@@ -54,7 +54,7 @@ class Analytics extends Component
             'stats' => $stats,
             'slowMoving' => $slowMoving,
         ])->layout('layouts.app', [
-            'title' => 'Analíticas de Inventario - Agro365',
+            'title' => __('Analíticas de Inventario - Agro365'),
         ]);
     }
 }

@@ -1,7 +1,7 @@
 <div class="space-y-6 animate-fade-in">
 <x-agro.page-header
-    title="Centro de Alertas"
-    description="Resumen de incidencias activas en tu bodega."
+    title="{{ __('Centro de Alertas') }}"
+    :description="__('Resumen de incidencias activas en tu bodega.')"
     icon="bell-alert"
 >
 </x-agro.page-header>
@@ -24,8 +24,8 @@
     <x-agro.card>
         <x-agro.empty-state
             icon="check-circle"
-            title="Todo en orden"
-            description="No hay alertas activas en este momento. Tu bodega está al día."
+            title="{{ __('Todo en orden') }}"
+            :description="__('No hay alertas activas en este momento. Tu bodega está al día.')"
         />
     </x-agro.card>
 @else

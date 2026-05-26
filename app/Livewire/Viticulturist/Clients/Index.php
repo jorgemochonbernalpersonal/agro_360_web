@@ -50,12 +50,12 @@ class Index extends Component
         $client = Client::forUser(Auth::id())->findOrFail($clientId);
 
         if ($client->invoices()->exists()) {
-            $this->toastError('No se puede eliminar un cliente con facturas asociadas.');
+            $this->toastError(__('No se puede eliminar un cliente con facturas asociadas.'));
             return;
         }
 
         $client->delete();
-        $this->toastSuccess('Cliente eliminado correctamente.');
+        $this->toastSuccess(__('Cliente eliminado correctamente.'));
     }
 
     public function toggleActive($clientId)
@@ -68,12 +68,12 @@ class Index extends Component
         $client->update(['active' => $newActiveState]);
 
         if ($newActiveState) {
-            $this->toastSuccess('Cliente activado exitosamente.');
+            $this->toastSuccess(__('Cliente activado exitosamente.'));
             if ($this->currentTab === 'inactive') {
                 $this->currentTab = 'active';
             }
         } else {
-            $this->toastSuccess('Cliente desactivado exitosamente.');
+            $this->toastSuccess(__('Cliente desactivado exitosamente.'));
             if ($this->currentTab === 'active') {
                 $this->currentTab = 'inactive';
             }
@@ -121,8 +121,8 @@ class Index extends Component
             'clients' => $clients,
             'stats'   => $stats,
         ])->layout('layouts.app', [
-            'title'       => 'Clientes - Agro365',
-            'description' => 'Gestiona tus clientes y analiza tu cartera. Control completo de clientes particulares y empresas.',
+            'title'       => __('Clientes - Agro365'),
+            'description' => __('Gestiona tus clientes y analiza tu cartera. Control completo de clientes particulares y empresas.'),
         ]);
     }
 }

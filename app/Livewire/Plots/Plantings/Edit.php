@@ -114,7 +114,7 @@ class Edit extends Component
         $this->validate();
 
         if (!Auth::user()->hasWineryAccess() && empty($this->vine_count) && empty($this->density)) {
-            $this->addError('vine_count', 'Debe indicar el número de cepas o la densidad de plantación.');
+            $this->addError('vine_count', __('Debe indicar el número de cepas o la densidad de plantación.'));
             return;
         }
 
@@ -141,7 +141,7 @@ class Edit extends Component
             'designation_of_origin' => $this->designation_of_origin ?: null,
         ]);
 
-        $this->toastSuccess('Plantación actualizada correctamente.');
+        $this->toastSuccess(__('Plantación actualizada correctamente.'));
 
         $user = Auth::user();
         $showRoute = $user->isProducer()

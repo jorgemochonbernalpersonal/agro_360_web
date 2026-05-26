@@ -313,7 +313,7 @@ class Create extends Component
 
             // Verificar permisos
             if (!Auth::user()->can('update', $plot)) {
-                throw new \Exception('No tienes permisos para asociar códigos SIGPAC a esta parcela.');
+                throw new \Exception(__('No tienes permisos para asociar códigos SIGPAC a esta parcela.'));
             }
 
             // Validar duplicados final antes de guardar
@@ -380,7 +380,7 @@ class Create extends Component
             return $this->redirect(route('sigpac.codes'));
         } catch (\Exception $e) {
             DB::rollBack();
-            session()->flash('error', 'Error: ' . $e->getMessage());
+            session()->flash('error', __('Error: :message', ['message' => $e->getMessage()]));
         }
     }
 

@@ -25,10 +25,10 @@ class ConsumeStock extends Component
     ];
 
     protected $messages = [
-        'quantity.required' => 'La cantidad es obligatoria',
-        'quantity.min' => 'La cantidad debe ser mayor a 0',
-        'reason.required' => 'Debes seleccionar un motivo',
-        'notes.required_if' => 'Debes especificar el motivo cuando seleccionas "Otro"',
+        'quantity.required' => __('La cantidad es obligatoria'),
+        'quantity.min' => __('La cantidad debe ser mayor a 0'),
+        'reason.required' => __('Debes seleccionar un motivo'),
+        'notes.required_if' => __('Debes especificar el motivo cuando seleccionas "Otro"'),
     ];
 
     public function mount($stock)
@@ -60,10 +60,10 @@ class ConsumeStock extends Component
 
         // Determinar nota según motivo
         $reasonLabels = [
-            'loss' => 'Pérdida/Derrame',
-            'expired' => 'Producto caducado',
-            'donation' => 'Donación',
-            'adjustment' => 'Ajuste de inventario',
+            'loss' => __('Pérdida/Derrame'),
+            'expired' => __('Producto caducado'),
+            'donation' => __('Donación'),
+            'adjustment' => __('Ajuste de inventario'),
             'other' => $this->notes,
         ];
 
@@ -75,7 +75,7 @@ class ConsumeStock extends Component
         // Consumir stock
         $this->stock->consume($this->quantity, null, $note);
 
-        $this->toastSuccess('Consumo registrado correctamente');
+        $this->toastSuccess(__('Consumo registrado correctamente'));
         return $this->viticulturistRoleRedirect('warehouse.index', ['tab' => 'fitosanitarios']);
     }
 
@@ -89,7 +89,7 @@ class ConsumeStock extends Component
             'availableQuantity' => $this->stock->getAvailableQuantity(),
             'maxQuantity'       => $maxQuantity,
         ])->layout('layouts.app', [
-            'title' => 'Registrar Consumo - Agro365',
+            'title' => __('Registrar Consumo - Agro365'),
         ]);
     }
 }

@@ -88,7 +88,7 @@ class PlotWeatherCard extends Component
         $this->loadData(true);
         $this->dispatch('notify', [
             'type' => 'success',
-            'message' => 'Datos meteorológicos actualizados',
+            'message' => __('Datos meteorológicos actualizados'),
         ]);
     }
 
@@ -104,10 +104,10 @@ class PlotWeatherCard extends Component
         $stressIndex = ($et0 * 10) - $moisture;
         
         return match (true) {
-            $stressIndex <= 0 => ['status' => 'optimal', 'emoji' => '💧', 'text' => 'Óptimo', 'color' => 'text-green-600'],
-            $stressIndex <= 20 => ['status' => 'mild', 'emoji' => '💦', 'text' => 'Leve', 'color' => 'text-yellow-600'],
-            $stressIndex <= 40 => ['status' => 'moderate', 'emoji' => '🏜️', 'text' => 'Moderado', 'color' => 'text-orange-600'],
-            default => ['status' => 'severe', 'emoji' => '⚠️', 'text' => 'Severo', 'color' => 'text-red-600'],
+            $stressIndex <= 0 => ['status' => 'optimal', 'emoji' => '💧', 'text' => __('Óptimo'), 'color' => 'text-green-600'],
+            $stressIndex <= 20 => ['status' => 'mild', 'emoji' => '💦', 'text' => __('Leve'), 'color' => 'text-yellow-600'],
+            $stressIndex <= 40 => ['status' => 'moderate', 'emoji' => '🏜️', 'text' => __('Moderado'), 'color' => 'text-orange-600'],
+            default => ['status' => 'severe', 'emoji' => '⚠️', 'text' => __('Severo'), 'color' => 'text-red-600'],
         };
     }
 

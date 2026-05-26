@@ -28,7 +28,7 @@ class Index extends AbstractIndex
     {
         $document = WineryDocument::where('user_id', $this->wineryId())->findOrFail($id);
         $document->delete();
-        $this->toastSuccess('Documento eliminado.');
+        $this->toastSuccess(__('Documento eliminado.'));
     }
 
     protected function baseQuery(): Builder

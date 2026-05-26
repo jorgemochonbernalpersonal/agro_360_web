@@ -31,7 +31,7 @@
         <form wire:submit="login" class="space-y-4">
 
             <flux:field>
-                <flux:label>Email</flux:label>
+                <flux:label>{{ __('Email') }}</flux:label>
                 <flux:input wire:model="email" type="email"
                             :placeholder="__('correo@ejemplo.com')"
                             required autocomplete="email" autofocus />

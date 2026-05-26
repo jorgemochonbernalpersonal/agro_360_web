@@ -50,7 +50,7 @@
         </div>
 
         <h1>{{ __('¡Contraseña restablecida!') }}</h1>
-        <p>{{ __('Tu contraseña de') }} <span class="highlight">Agro365</span> {{ __('ha sido actualizada correctamente.') }}</p>
+        <p>{{ __('Tu contraseña de') }} <span class="highlight">{{ __('Agro365') }}</span> {{ __('ha sido actualizada correctamente.') }}</p>
 
         <hr class="divider">
 

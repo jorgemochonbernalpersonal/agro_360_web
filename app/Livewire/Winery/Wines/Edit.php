@@ -88,7 +88,7 @@ class Edit extends Component
             'notes'          => $this->notes ?: null,
         ]);
 
-        $this->toastSuccess('Vino actualizado correctamente.');
+        $this->toastSuccess(__('Vino actualizado correctamente.'));
         $this->roleRedirect('wines.index');
     }
 

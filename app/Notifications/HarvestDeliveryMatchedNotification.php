@@ -52,7 +52,7 @@ class HarvestDeliveryMatchedNotification extends Notification implements ShouldQ
 
         return (new MailMessage)
             ->subject('Entrega confirmada — ' . $variety . ' · ' . $delivery->vintage_year)
-            ->greeting('Hola ' . ($notifiable->name ?: ''))
+            ->greeting(__('Hola :name', ['name' => $notifiable->name ?: '']))
             ->line('La bodega **' . $winery . '** ha confirmado la recepción de tu entrega de uva. Las cantidades coinciden.')
             ->line(new HtmlString(
                 '<div style="background-color:#f0fdf4;border:1px solid #bbf7d0;padding:16px;border-radius:8px;margin:16px 0;">
@@ -64,8 +64,8 @@ class HarvestDeliveryMatchedNotification extends Notification implements ShouldQ
                     <p style="margin:0;color:#166534;font-weight:bold;">✓ Cantidades confirmadas sin diferencia significativa</p>
                  </div>'
             ))
-            ->action('Ver detalle de cosecha', $showUrl)
-            ->salutation("Saludos,\nAgro365");
+            ->action(__('Ver detalle de cosecha'), $showUrl)
+            ->salutation(__('Saludos,\nAgro365'));
     }
 
     public function toArray(object $notifiable): array

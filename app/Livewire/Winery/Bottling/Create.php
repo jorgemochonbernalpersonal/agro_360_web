@@ -190,11 +190,11 @@ class Create extends Component
     protected function messages(): array
     {
         return [
-            'wine_id.required'             => 'Debes seleccionar un vino.',
-            'quantity_bottles.required'    => 'Indica la cantidad de botellas.',
-            'quantity_bottles.min'         => 'La cantidad mínima es 1 botella.',
-            'quantity_liters.required'     => 'Indica los litros embotellados.',
-            'quantity_liters.min'          => 'La cantidad de litros debe ser mayor que cero.',
+            'wine_id.required'             => __('Debes seleccionar un vino.'),
+            'quantity_bottles.required'    => __('Indica la cantidad de botellas.'),
+            'quantity_bottles.min'         => __('La cantidad mínima es 1 botella.'),
+            'quantity_liters.required'     => __('Indica los litros embotellados.'),
+            'quantity_liters.min'          => __('La cantidad de litros debe ser mayor que cero.'),
         ];
     }
 
@@ -209,7 +209,7 @@ class Create extends Component
         if (! empty($data['container_id'])) {
             $container = Container::where('user_id', Auth::id())->find($data['container_id']);
             if ($container && $container->wine_volume_liters < (float) $data['quantity_liters']) {
-                $this->addError('quantity_liters', 'El depósito solo tiene ' . number_format($container->wine_volume_liters, 1) . ' L disponibles para embotellar.');
+                $this->addError('quantity_liters', __('El depósito solo tiene :volume L disponibles para embotellar.', ['volume' => number_format($container->wine_volume_liters, 1)]));
                 return;
             }
         }
@@ -249,7 +249,7 @@ class Create extends Component
             }
         });
 
-        $this->toastSuccess('Embotellado registrado correctamente.');
+        $this->toastSuccess(__('Embotellado registrado correctamente.'));
         $this->roleRedirect('bottling.index');
     }
 

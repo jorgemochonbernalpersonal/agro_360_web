@@ -42,16 +42,16 @@ class ViticulturistInvitationNotification extends Notification implements Should
         }
 
         return (new MailMessage)
-            ->subject('Invitación a Agro365')
-            ->greeting('Hola ' . ($notifiable->name ?: ''))
+            ->subject(__('Invitación a Agro365'))
+            ->greeting(__('Hola :name', ['name' => $notifiable->name ?: '']))
             ->line($this->creatorLabel() . ' te ha invitado a acceder a Agro365.')
-            ->line('Ya tienes tus parcelas y plantaciones configuradas. Solo necesitas activar tu cuenta para acceder al cuaderno de campo digital.')
-            ->line('El enlace de activación es válido — úsalo para elegir tu contraseña:')
-            ->action('Activar mi cuenta', AppLink::url($webUrl, $deepUrl))
-            ->line('---')
+            ->line(__('Ya tienes tus parcelas y plantaciones configuradas. Solo necesitas activar tu cuenta para acceder al cuaderno de campo digital.'))
+            ->line(__('El enlace de activación es válido — úsalo para elegir tu contraseña:'))
+            ->action(__('Activar mi cuenta'), AppLink::url($webUrl, $deepUrl))
+            ->line(__('---'))
             ->line('**Para volver a entrar después:** ve a agro365.es, haz clic en "Iniciar sesión" y usa tu email con la contraseña que elijas ahora. Si no la recuerdas, usa "¿Olvidaste tu contraseña?".')
-            ->line('Si no esperabas esta invitación, puedes ignorar este correo.')
-            ->salutation("Saludos,\nAgro365");
+            ->line(__('Si no esperabas esta invitación, puedes ignorar este correo.'))
+            ->salutation(__('Saludos,\nAgro365'));
     }
 
     private function creatorLabel(): string

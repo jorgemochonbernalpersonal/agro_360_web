@@ -178,7 +178,7 @@ class Index extends Component
                 return [
                     'status' => 'ok',
                     'driver' => $driver,
-                    'note'   => 'Driver local — sin conexión real',
+                    'note'   => __('Driver local — sin conexión real'),
                 ];
             }
 
@@ -208,7 +208,7 @@ class Index extends Component
                 ];
             }
 
-            return ['status' => 'warning', 'driver' => $driver, 'note' => 'Host no configurado'];
+            return ['status' => 'warning', 'driver' => $driver, 'note' => __('Host no configurado')];
         } catch (\Throwable $e) {
             return ['status' => 'error', 'driver' => config('mail.default', '?'), 'error' => $e->getMessage()];
         }
@@ -265,8 +265,8 @@ class Index extends Component
             'health'       => $this->health,
             'refreshedAt'  => now(),
         ])->layout('layouts.app', [
-            'title'       => 'Salud del Sistema - Admin - Agro365',
-            'description' => 'Estado de los servicios y métricas del sistema',
+            'title'       => __('Salud del Sistema - Admin - Agro365'),
+            'description' => __('Estado de los servicios y métricas del sistema'),
         ]);
     }
 }

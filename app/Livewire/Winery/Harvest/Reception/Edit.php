@@ -207,10 +207,10 @@ class Edit extends Component
     protected function messages(): array
     {
         return [
-            'harvest_start_date.required' => 'La fecha de recepción es obligatoria.',
-            'total_weight.required'       => 'El peso recibido es obligatorio.',
-            'total_weight.min'            => 'El peso debe ser mayor que 0.',
-            'container_id.required'       => 'Selecciona un depósito de destino.',
+            'harvest_start_date.required' => __('La fecha de recepción es obligatoria.'),
+            'total_weight.required'       => __('El peso recibido es obligatorio.'),
+            'total_weight.min'            => __('El peso debe ser mayor que 0.'),
+            'container_id.required'       => __('Selecciona un depósito de destino.'),
         ];
     }
 
@@ -237,10 +237,7 @@ class Edit extends Component
             : $container->getAvailableCapacity();
 
         if ($weight > $effectiveAvailable) {
-            $this->addError('container_id',
-                "El contenedor «{$container->name}» no tiene capacidad suficiente. " .
-                "Disponible: " . number_format($effectiveAvailable, 0) . " kg."
-            );
+            $this->addError('container_id', __('El contenedor «:name» no tiene capacidad suficiente. Disponible: :available kg.', ['name' => $container->name, 'available' => number_format($effectiveAvailable, 0)]));
             return null;
         }
 
@@ -296,7 +293,7 @@ class Edit extends Component
                 }
             });
 
-            $this->toastSuccess('Recepción actualizada correctamente.');
+            $this->toastSuccess(__('Recepción actualizada correctamente.'));
             return $this->roleRedirect('grape-reception.index');
 
         } catch (\Exception $e) {
@@ -305,7 +302,7 @@ class Edit extends Component
                 'error'      => $e->getMessage(),
                 'winery'     => Auth::id(),
             ]);
-            $this->toastError('Error al guardar la recepción: ' . $e->getMessage());
+            $this->toastError(__('Error al guardar la recepción: :error', ['error' => $e->getMessage()]));
         }
     }
 

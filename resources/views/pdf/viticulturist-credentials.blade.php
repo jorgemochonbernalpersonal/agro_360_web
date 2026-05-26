@@ -114,44 +114,42 @@
 <body>
     <div class="header">
         <div class="logo">Agro365</div>
-        <h1>Credenciales de Acceso</h1>
-        <p>Sistema de Gestión Vitícola</p>
+        <h1>{{ __('Credenciales de Acceso') }}</h1>
+        <p>{{ __('Sistema de Gestión Vitícola') }}</p>
     </div>
     
     <div class="credentials">
-        <h2>Datos del Viticultor</h2>
+        <h2>{{ __('Datos del Viticultor') }}</h2>
         <div class="field">
-            <span class="label">Nombre:</span>
+            <span class="label">{{ __('Nombre:') }}</span>
             <span class="value">{{ $viticulturist->name }}</span>
         </div>
         <div class="field">
-            <span class="label">Email:</span>
+            <span class="label">{{ __('Email:') }}</span>
             <span class="value">{{ $viticulturist->email }}</span>
         </div>
         <div class="field">
-            <span class="label">Contraseña Temporal:</span>
+            <span class="label">{{ __('Contraseña Temporal:') }}</span>
             <div class="password-value">{{ $password }}</div>
         </div>
     </div>
     
     <div class="warning">
-        <p>⚠️ Importante:</p>
+        <p>{{ __('⚠️ Importante:') }}</p>
         <ul>
-            <li>Guarda este documento de forma segura</li>
-            <li><strong>La contraseña es temporal y DEBES cambiarla en tu primer acceso</strong></li>
-            <li>Al iniciar sesión, el sistema te pedirá cambiar tu contraseña</li>
-            <li>Una vez que cambies la contraseña, tu email será verificado automáticamente</li>
+            <li>{{ __('Guarda este documento de forma segura') }}</li>
+            <li><strong>{{ __('La contraseña es temporal y DEBES cambiarla en tu primer acceso') }}</strong></li>
+            <li>{{ __('Al iniciar sesión, el sistema te pedirá cambiar tu contraseña') }}</li>
+            <li>{{ __('Una vez que cambies la contraseña, tu email será verificado automáticamente') }}</li>
             <li>Accede al sistema en: {{ config('app.url') }}/login</li>
-            <li>No compartas estas credenciales con terceros</li>
+            <li>{{ __('No compartas estas credenciales con terceros') }}</li>
         </ul>
     </div>
     
     <div class="footer">
         <p>Creado por: <strong>{{ $creator->name }}</strong></p>
         <p>Fecha de creación: {{ now()->format('d/m/Y H:i') }}</p>
-        <p style="margin-top: 10px; font-size: 10px; color: #9ca3af;">
-            Este documento contiene información confidencial. Manténlo seguro.
-        </p>
+        <p style="margin-top: 10px; font-size: 10px; color: #9ca3af;">{{ __('Este documento contiene información confidencial. Manténlo seguro.') }}</p>
     </div>
 </body>
 </html>

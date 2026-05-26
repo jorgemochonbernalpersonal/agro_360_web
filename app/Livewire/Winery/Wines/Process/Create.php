@@ -86,7 +86,7 @@ class Create extends Component
             ]);
         }
 
-        $this->toastSuccess('Operación de vinificación registrada correctamente.');
+        $this->toastSuccess(__('Operación de vinificación registrada correctamente.'));
         $this->roleRedirect('wines.edit', $this->wine);
     }
 

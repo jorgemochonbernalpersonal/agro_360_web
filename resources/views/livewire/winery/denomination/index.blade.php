@@ -1,8 +1,8 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="Mi Denominación de Origen"
-        description="Información sobre tu adscripción a una DO y los viticultores asignados por ella."
+        title="{{ __('Mi Denominación de Origen') }}"
+        :description="__('Información sobre tu adscripción a una DO y los viticultores asignados por ella.')"
         icon="building-office-2"
     />
 
@@ -11,8 +11,8 @@
         <x-agro.card>
             <x-agro.empty-state
                 icon="building-office-2"
-                title="Sin Denominación de Origen asignada"
-                description="Esta bodega aún no está adscrita a ninguna Denominación de Origen. Contacta con tu DO para que te asigne desde su panel de supervisión."
+                title="{{ __('Sin Denominación de Origen asignada') }}"
+                :description="__('Esta bodega aún no está adscrita a ninguna Denominación de Origen. Contacta con tu DO para que te asigne desde su panel de supervisión.')"
             />
         </x-agro.card>
 
@@ -74,7 +74,7 @@
                 <x-slot:header>
                     <div class="flex items-center gap-2">
                         <flux:icon icon="users" class="size-4 text-blue-500" />
-                        <span>Viticultores asignados por la DO</span>
+                        <span>{{ __('Viticultores asignados por la DO') }}</span>
                         <span class="ml-1 text-xs text-zinc-400">({{ $doViticulturists->count() }})</span>
                     </div>
                 </x-slot:header>
@@ -82,8 +82,8 @@
                 @if($doViticulturists->isEmpty())
                     <x-agro.empty-state
                         icon="users"
-                        title="Sin viticultores asignados"
-                        description="La DO no ha asignado aún viticultores a tu bodega."
+                        title="{{ __('Sin viticultores asignados') }}"
+                        :description="__('La DO no ha asignado aún viticultores a tu bodega.')"
                     />
                 @else
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-1">
@@ -111,11 +111,11 @@
                                 <div class="flex-1 space-y-4">
                                     <div class="grid grid-cols-2 gap-2">
                                         <div class="bg-agro-50 rounded-xl p-3">
-                                            <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Parcelas</p>
+                                            <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">{{ __('Parcelas') }}</p>
                                             <p class="text-2xl font-bold text-agro-700 leading-none">{{ $row->plot_count ?: '—' }}</p>
                                         </div>
                                         <div class="bg-agro-50 rounded-xl p-3">
-                                            <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Superficie</p>
+                                            <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">{{ __('Superficie') }}</p>
                                             <p class="text-2xl font-bold text-agro-700 leading-none">
                                                 @if($row->total_area)
                                                     {{ number_format($row->total_area, 2, ',', '.') }}
@@ -131,7 +131,7 @@
 
                                     <div class="space-y-2 text-sm">
                                         <div class="flex items-center justify-between">
-                                            <span class="text-zinc-400">Última actividad</span>
+                                            <span class="text-zinc-400">{{ __('Última actividad') }}</span>
                                             <span class="text-zinc-700 font-medium">
                                                 @if($row->last_activity)
                                                     {{ \Carbon\Carbon::parse($row->last_activity)->translatedFormat('d M Y') }}
@@ -154,7 +154,7 @@
                     <x-slot:header>
                         <div class="flex items-center gap-2">
                             <flux:icon icon="puzzle-piece" class="size-4 text-violet-500" />
-                            <span>Módulos habilitados por la DO</span>
+                            <span>{{ __('Módulos habilitados por la DO') }}</span>
                         </div>
                     </x-slot:header>
                     @php $byModule = $grantedAbilities->groupBy('module'); @endphp

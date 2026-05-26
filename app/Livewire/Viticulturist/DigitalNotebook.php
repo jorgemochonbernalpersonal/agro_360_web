@@ -35,7 +35,7 @@ class DigitalNotebook extends Component
             $campaign = Campaign::getOrCreateActiveForYear(Auth::id());
 
             if (!$campaign) {
-                $this->toastError('No se pudo obtener la campaña activa. Por favor, crea una campaña primero.');
+                $this->toastError(__('No se pudo obtener la campaña activa. Por favor, crea una campaña primero.'));
                 $this->viticulturistRoleRedirect('campaign.index');
                 return;
             }
@@ -54,8 +54,8 @@ class DigitalNotebook extends Component
     }
 
     #[Layout('layouts.app', [
-        'title'       => 'Cuaderno de Campo - Agro365',
-        'description' => 'Resumen de actividades agrícolas por campaña.',
+        'title'       => __('Cuaderno de Campo - Agro365'),
+        'description' => __('Resumen de actividades agrícolas por campaña.'),
     ])]
     public function render()
     {

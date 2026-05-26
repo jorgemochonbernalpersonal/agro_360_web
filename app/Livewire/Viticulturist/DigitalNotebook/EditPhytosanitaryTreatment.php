@@ -201,11 +201,11 @@ class EditPhytosanitaryTreatment extends AbstractActivityForm
                 ]);
             });
 
-            $this->toastSuccess('Tratamiento fitosanitario actualizado correctamente.');
+            $this->toastSuccess(__('Tratamiento fitosanitario actualizado correctamente.'));
             return $this->viticulturistRoleRedirect('digital-notebook.treatment.index');
         } catch (\Exception $e) {
             \Log::error('Error al actualizar tratamiento fitosanitario', ['error' => $e->getMessage(), 'user_id' => Auth::id(), 'activity_id' => $this->activity->id]);
-            $this->toastError('Error al actualizar el tratamiento fitosanitario. Por favor, intenta de nuevo.');
+            $this->toastError(__('Error al actualizar el tratamiento fitosanitario. Por favor, intenta de nuevo.'));
         }
     }
 
@@ -218,6 +218,6 @@ class EditPhytosanitaryTreatment extends AbstractActivityForm
             'products'    => PhytosanitaryProduct::forUser($user->id)->where('active', true)->orderBy('name')->get(),
             'pests'       => Pest::active()->orderBy('name')->get(),
             'applicators' => FieldApplicator::forViticulturist($user->id)->active()->orderBy('name')->get(),
-        ]))->layout('layouts.app', ['title' => 'Editar Tratamiento Fitosanitario - Agro365']);
+        ]))->layout('layouts.app', ['title' => __('Editar Tratamiento Fitosanitario - Agro365')]);
     }
 }

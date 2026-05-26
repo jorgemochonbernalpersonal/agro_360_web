@@ -43,7 +43,7 @@ class Index extends AbstractIndex
     public function delete(int $id): void
     {
         $this->findOwned(MarketedHarvest::class, $id)->delete();
-        $this->toastSuccess('Entrega eliminada.');
+        $this->toastSuccess(__('Entrega eliminada.'));
     }
 
     protected function baseQuery(): Builder

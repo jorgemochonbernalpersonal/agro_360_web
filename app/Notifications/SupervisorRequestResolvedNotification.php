@@ -50,7 +50,7 @@ class SupervisorRequestResolvedNotification extends Notification implements Shou
 
         return (new MailMessage)
             ->subject($subject)
-            ->greeting('Hola ' . ($notifiable->name ?: ''))
+            ->greeting(__('Hola :name', ['name' => $notifiable->name ?: '']))
             ->line(
                 $approved
                     ? 'Tu Denominación de Origen **' . $supervisor->name . '** ha **aprobado** tu solicitud.'
@@ -58,12 +58,12 @@ class SupervisorRequestResolvedNotification extends Notification implements Shou
             )
             ->line('**Tipo:** ' . $typeLabel)
             ->when($req->title, fn ($m) => $m->line('**Asunto:** ' . $req->title))
-            ->action('Ver detalle', $url)
+            ->action(__('Ver detalle'), $url)
             ->when(
                 ! $approved,
                 fn ($m) => $m->line('Si tienes dudas sobre la resolución, contacta directamente con tu denominación de origen.')
             )
-            ->salutation("Saludos,\nAgro365");
+            ->salutation(__('Saludos,\nAgro365'));
     }
 
     public function toArray(object $notifiable): array

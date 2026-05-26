@@ -164,21 +164,21 @@
                                     <p class="text-sm font-bold text-zinc-800">
                                         {{ $plan->total_n_kg_ha !== null ? number_format($plan->total_n_kg_ha, 1) : '—' }}
                                     </p>
-                                    <p class="text-[10px] text-zinc-400">kg/ha</p>
+                                    <p class="text-[10px] text-zinc-400">{{ __('kg/ha') }}</p>
                                 </div>
                                 <div class="text-center border-x border-zinc-200">
                                     <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">P</p>
                                     <p class="text-sm font-bold text-zinc-800">
                                         {{ $plan->total_p_kg_ha !== null ? number_format($plan->total_p_kg_ha, 1) : '—' }}
                                     </p>
-                                    <p class="text-[10px] text-zinc-400">kg/ha</p>
+                                    <p class="text-[10px] text-zinc-400">{{ __('kg/ha') }}</p>
                                 </div>
                                 <div class="text-center">
                                     <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">K</p>
                                     <p class="text-sm font-bold text-zinc-800">
                                         {{ $plan->total_k_kg_ha !== null ? number_format($plan->total_k_kg_ha, 1) : '—' }}
                                     </p>
-                                    <p class="text-[10px] text-zinc-400">kg/ha</p>
+                                    <p class="text-[10px] text-zinc-400">{{ __('kg/ha') }}</p>
                                 </div>
                             </div>
                         @endif

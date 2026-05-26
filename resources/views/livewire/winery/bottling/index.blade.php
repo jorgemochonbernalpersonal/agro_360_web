@@ -2,8 +2,8 @@
 
     {{-- Header --}}
     <x-agro.page-header
-        title="Embotellado"
-        description="Registro de operaciones de embotellado y materiales utilizados"
+        title="{{ __('Embotellado') }}"
+        :description="__('Registro de operaciones de embotellado y materiales utilizados')"
     >
         <x-slot:actions>
             <flux:button href="{{ roleRoute('bottling.create') }}" variant="primary" icon="plus">
@@ -16,25 +16,25 @@
     <x-agro.stats-section key="bottling-stats">
         <div class="grid grid-cols-2 gap-4">
             <x-agro.stat-card
-                label="Total embotellamientos"
+                :label="__('Total embotellamientos')"
                 :value="$stats['total']"
                 icon="archive-box-arrow-down"
                 color="zinc"
             />
             <x-agro.stat-card
-                label="Este año"
+                :label="__('Este año')"
                 :value="$stats['this_year']"
                 icon="calendar-days"
                 color="agro"
             />
             <x-agro.stat-card
-                label="Botellas totales"
+                :label="__('Botellas totales')"
                 :value="number_format($stats['total_bottles'])"
                 icon="sparkles"
                 color="zinc"
             />
             <x-agro.stat-card
-                label="Litros embotellados"
+                :label="__('Litros embotellados')"
                 :value="number_format($stats['total_liters'], 0) . ' L'"
                 icon="beaker"
                 color="amber"
@@ -44,19 +44,17 @@
 
     {{-- Toolbar --}}
     <div class="flex items-center gap-3">
-        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar por vino o nº lote..." />
+        <x-agro.search-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar por vino o nº lote...')" />
 
         <flux:select wire:model.live="wineFilter" class="w-48">
-            <flux:select.option value="">Todos los vinos</flux:select.option>
+            <flux:select.option value="">{{ __('Todos los vinos') }}</flux:select.option>
             @foreach($wines as $wine)
                 <flux:select.option value="{{ $wine->id }}">{{ $wine->name }}{{ $wine->vintage ? ' ' . $wine->vintage : '' }}</flux:select.option>
             @endforeach
         </flux:select>
 
         @if($search || $wineFilter)
-            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">
-                Limpiar
-            </flux:button>
+            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">{{ __('Limpiar') }}</flux:button>
         @endif
     </div>
 
@@ -94,13 +92,13 @@
                             {{-- Stats --}}
                             <div class="grid grid-cols-2 gap-2">
                                 <div class="bg-agro-50 rounded-xl p-3">
-                                    <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Botellas</p>
+                                    <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">{{ __('Botellas') }}</p>
                                     <p class="text-2xl font-bold text-agro-700 leading-none">
                                         {{ number_format($bottling->quantity_bottles) }}
                                     </p>
                                 </div>
                                 <div class="bg-zinc-50 rounded-xl p-3">
-                                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">Litros</p>
+                                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">{{ __('Litros') }}</p>
                                     <p class="text-2xl font-bold text-zinc-700 leading-none">
                                         {{ number_format($bottling->quantity_liters, 1) }}
                                     </p>
@@ -136,9 +134,9 @@
 
                         <x-slot:footer>
                             <div class="flex items-center justify-end gap-0.5">
-                                <x-agro.action-button variant="edit" href="{{ roleRoute('bottling.edit', $bottling) }}" title="Editar embotellado" />
+                                <x-agro.action-button variant="edit" href="{{ roleRoute('bottling.edit', $bottling) }}" title="{{ __('Editar embotellado') }}" />
                                 @if(! $bottling->product_lot_id)
-                                    <x-agro.action-button variant="delete" wire:click="delete({{ $bottling->id }})" wire:confirm="¿Eliminar este registro de embotellado?" wire:loading.attr="disabled" title="Eliminar embotellado" />
+                                    <x-agro.action-button variant="delete" wire:click="delete({{ $bottling->id }})" wire:confirm="{{ __('¿Eliminar este registro de embotellado?') }}" wire:loading.attr="disabled" title="{{ __('Eliminar embotellado') }}" />
                                 @endif
                             </div>
                         </x-slot:footer>
@@ -155,9 +153,7 @@
             >
                 @if($search || $wineFilter)
                     <x-slot:action>
-                        <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">
-                            Limpiar filtros
-                        </flux:button>
+                        <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">{{ __('Limpiar filtros') }}</flux:button>
                     </x-slot:action>
                 @else
                     <x-slot:action>

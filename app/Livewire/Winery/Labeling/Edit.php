@@ -148,7 +148,7 @@ class Edit extends Component
             return;
         }
 
-        $this->toastSuccess('Sesión de etiquetado actualizada.');
+        $this->toastSuccess(__('Sesión de etiquetado actualizada.'));
         $this->roleRedirect('labeling.index');
     }
 

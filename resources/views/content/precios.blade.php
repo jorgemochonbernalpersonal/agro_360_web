@@ -101,7 +101,7 @@
                 <div class="flex items-center gap-3">
                     <a href="{{ url('/') }}" class="flex items-center gap-3">
                         <img src="{{ asset('images/logo.png') }}" alt="Agro365" width="120" height="40" loading="eager" class="h-10 w-auto">
-                        <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">Agro365</span>
+                        <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Agro365') }}</span>
                     </a>
                 </div>
                 <div class="flex items-center gap-4">
@@ -131,23 +131,19 @@
                 <nav class="mb-8 text-sm text-zinc-500" itemscope itemtype="https://schema.org/BreadcrumbList">
                     <ol class="flex items-center justify-center space-x-2">
                         <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                            <a href="{{ url('/') }}" class="hover:text-[var(--color-agro-green)]" itemprop="item"><span itemprop="name">Inicio</span></a>
+                            <a href="{{ url('/') }}" class="hover:text-[var(--color-agro-green)]" itemprop="item"><span itemprop="name">{{ __('Inicio') }}</span></a>
                             <meta itemprop="position" content="1" />
                         </li>
                         <span class="mx-2">/</span>
                         <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                            <span class="text-zinc-900 font-medium" itemprop="name">Precios</span>
+                            <span class="text-zinc-900 font-medium" itemprop="name">{{ __('Precios') }}</span>
                             <meta itemprop="position" content="2" />
                         </li>
                     </ol>
                 </nav>
 
-                <h1 class="text-4xl lg:text-5xl font-bold text-[var(--color-agro-green-dark)] mb-4">
-                    Precio justo para cada perfil
-                </h1>
-                <p class="text-xl text-zinc-600 max-w-2xl mx-auto">
-                    Desde gratis para el viticultor basico hasta planes escalados para Denominaciones de Origen. Sin sorpresas.
-                </p>
+                <h1 class="text-4xl lg:text-5xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Precio justo para cada perfil') }}</h1>
+                <p class="text-xl text-zinc-600 max-w-2xl mx-auto">{{ __('Desde gratis para el viticultor basico hasta planes escalados para Denominaciones de Origen. Sin sorpresas.') }}</p>
             </div>
         </section>
 
@@ -165,28 +161,28 @@
                         </div>
                         <div class="mb-6 pt-6">
                             <div class="text-4xl mb-2">🌿</div>
-                            <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)]">Viticultor</h2>
-                            <p class="text-zinc-500 text-sm mt-1">Autoservicio · Sin llamadas · Cancela cuando quieras</p>
+                            <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Viticultor') }}</h2>
+                            <p class="text-zinc-500 text-sm mt-1">{{ __('Autoservicio · Sin llamadas · Cancela cuando quieras') }}</p>
                         </div>
 
                         <!-- Tier gratuito -->
                         <div class="mb-3 p-4 bg-zinc-50 rounded-xl border border-zinc-200">
                             <div class="flex items-center justify-between mb-1">
-                                <span class="font-semibold text-zinc-700 text-sm">Basico (invitado por bodega)</span>
-                                <span class="text-lg font-bold text-zinc-800">Gratis</span>
+                                <span class="font-semibold text-zinc-700 text-sm">{{ __('Basico (invitado por bodega)') }}</span>
+                                <span class="text-lg font-bold text-zinc-800">{{ __('Gratis') }}</span>
                             </div>
-                            <p class="text-xs text-zinc-500">Cuaderno de campo basico. Acceso limitado a traves de tu bodega.</p>
+                            <p class="text-xs text-zinc-500">{{ __('Cuaderno de campo basico. Acceso limitado a traves de tu bodega.') }}</p>
                         </div>
 
                         <!-- Tier invitado completo -->
                         <div class="mb-3 p-4 bg-[var(--color-agro-green-bg)] rounded-xl border border-[var(--color-agro-green-light)]/40">
                             <div class="flex items-center justify-between mb-1">
-                                <span class="font-semibold text-[var(--color-agro-green-dark)] text-sm">Completo (invitado por bodega)</span>
+                                <span class="font-semibold text-[var(--color-agro-green-dark)] text-sm">{{ __('Completo (invitado por bodega)') }}</span>
                                 <div class="text-right">
-                                    <span class="text-lg font-bold text-[var(--color-agro-green-dark)]">9€/mes</span>
+                                    <span class="text-lg font-bold text-[var(--color-agro-green-dark)]">{{ __('9€/mes') }}</span>
                                 </div>
                             </div>
-                            <p class="text-xs text-zinc-600">o <strong>85€/ano</strong> — SIGPAC, teledeteccion, PAC, facturacion y mas.</p>
+                            <p class="text-xs text-zinc-600">o <strong>{{ __('85€/ano') }}</strong> — SIGPAC, teledeteccion, PAC, facturacion y mas.</p>
                         </div>
 
                         <!-- Tier independiente -->
@@ -195,12 +191,12 @@
                                 INDEPENDIENTE
                             </div>
                             <div class="flex items-center justify-between mb-1">
-                                <span class="font-semibold text-[var(--color-agro-green-dark)] text-sm">Sin bodega asociada</span>
+                                <span class="font-semibold text-[var(--color-agro-green-dark)] text-sm">{{ __('Sin bodega asociada') }}</span>
                                 <div class="text-right">
-                                    <span class="text-2xl font-bold text-[var(--color-agro-green-dark)]">14€/mes</span>
+                                    <span class="text-2xl font-bold text-[var(--color-agro-green-dark)]">{{ __('14€/mes') }}</span>
                                 </div>
                             </div>
-                            <p class="text-xs text-zinc-600">o <strong>130€/ano</strong> — acceso completo a todas las funcionalidades.</p>
+                            <p class="text-xs text-zinc-600">o <strong>{{ __('130€/ano') }}</strong> — acceso completo a todas las funcionalidades.</p>
                         </div>
 
                         <ul class="space-y-3 mb-8 text-sm">
@@ -224,31 +220,31 @@
                         </ul>
 
                         <div class="mb-4 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-center">
-                            <p class="text-sm font-semibold text-amber-800">🎁 3 meses gratis al registrarte</p>
-                            <p class="text-xs text-amber-600 mt-0.5">Acceso completo sin tarjeta · Sin compromiso</p>
+                            <p class="text-sm font-semibold text-amber-800">{{ __('🎁 3 meses gratis al registrarte') }}</p>
+                            <p class="text-xs text-amber-600 mt-0.5">{{ __('Acceso completo sin tarjeta · Sin compromiso') }}</p>
                         </div>
 
                         <a href="{{ route('register') }}" class="block w-full text-center px-6 py-4 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg font-bold text-lg">
                             Comenzar Gratis
                         </a>
-                        <p class="text-center text-xs text-zinc-400 mt-3">Sin tarjeta requerida · Cancela cuando quieras</p>
+                        <p class="text-center text-xs text-zinc-400 mt-3">{{ __('Sin tarjeta requerida · Cancela cuando quieras') }}</p>
                     </div>
 
                     <!-- Bodega -->
                     <div class="rounded-2xl p-8 border-2 border-red-200 hover:border-red-400 transition-all duration-300 bg-white shadow-md">
                         <div class="mb-6">
                             <div class="text-4xl mb-2">🍷</div>
-                            <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)]">Bodega</h2>
-                            <p class="text-zinc-500 text-sm mt-1">Demo gratuita · Onboarding incluido</p>
+                            <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Bodega') }}</h2>
+                            <p class="text-zinc-500 text-sm mt-1">{{ __('Demo gratuita · Onboarding incluido') }}</p>
                         </div>
 
                         <!-- Tier bodega en DO -->
                         <div class="mb-3 p-4 bg-zinc-50 rounded-xl border border-zinc-200">
                             <div class="flex items-center justify-between mb-1">
-                                <span class="font-semibold text-zinc-700 text-sm">Dentro de una Denominacion de Origen</span>
-                                <span class="text-lg font-bold text-zinc-800">Gratis</span>
+                                <span class="font-semibold text-zinc-700 text-sm">{{ __('Dentro de una Denominacion de Origen') }}</span>
+                                <span class="text-lg font-bold text-zinc-800">{{ __('Gratis') }}</span>
                             </div>
-                            <p class="text-xs text-zinc-500">El paquete DO cubre el acceso de todas sus bodegas adscritas.</p>
+                            <p class="text-xs text-zinc-500">{{ __('El paquete DO cubre el acceso de todas sus bodegas adscritas.') }}</p>
                         </div>
 
                         <!-- Tier bodega independiente -->
@@ -257,13 +253,13 @@
                                 INDEPENDIENTE
                             </div>
                             <div class="flex items-center justify-between mb-1">
-                                <span class="font-semibold text-red-700 text-sm">Sin Denominacion de Origen</span>
+                                <span class="font-semibold text-red-700 text-sm">{{ __('Sin Denominacion de Origen') }}</span>
                                 <div class="text-right">
-                                    <span class="text-2xl font-bold text-red-700">14€/mes</span>
+                                    <span class="text-2xl font-bold text-red-700">{{ __('14€/mes') }}</span>
                                 </div>
                             </div>
-                            <p class="text-sm text-zinc-600">o <strong>130€/ano</strong> — gestion completa de bodega.</p>
-                            <p class="text-xs text-red-600 font-semibold mt-1.5">Onboarding personalizado incluido + migracion gratuita</p>
+                            <p class="text-sm text-zinc-600">o <strong>{{ __('130€/ano') }}</strong> — gestion completa de bodega.</p>
+                            <p class="text-xs text-red-600 font-semibold mt-1.5">{{ __('Onboarding personalizado incluido + migracion gratuita') }}</p>
                         </div>
 
                         <ul class="space-y-3 mb-8 text-sm">
@@ -289,22 +285,22 @@
                         </ul>
 
                         <div class="mb-4 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-center">
-                            <p class="text-sm font-semibold text-amber-800">🎁 3 meses gratis al registrarte</p>
-                            <p class="text-xs text-amber-600 mt-0.5">Demo gratuita · Onboarding incluido</p>
+                            <p class="text-sm font-semibold text-amber-800">{{ __('🎁 3 meses gratis al registrarte') }}</p>
+                            <p class="text-xs text-amber-600 mt-0.5">{{ __('Demo gratuita · Onboarding incluido') }}</p>
                         </div>
 
                         <a href="{{ route('register') }}" class="block w-full text-center px-6 py-4 rounded-xl bg-gradient-to-r from-red-600 to-red-500 text-white hover:from-red-700 hover:to-red-600 transition-all duration-300 shadow-lg font-bold text-lg">
                             Comenzar Gratis
                         </a>
-                        <p class="text-center text-xs text-zinc-400 mt-3">Sin tarjeta requerida · Cancela cuando quieras</p>
+                        <p class="text-center text-xs text-zinc-400 mt-3">{{ __('Sin tarjeta requerida · Cancela cuando quieras') }}</p>
                     </div>
 
                     <!-- DO -->
                     <div class="rounded-2xl p-8 border-2 border-amber-200 hover:border-amber-400 transition-all duration-300 bg-white shadow-md">
                         <div class="mb-6">
                             <div class="text-4xl mb-2">🏛️</div>
-                            <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)]">Denominacion de Origen</h2>
-                            <p class="text-zinc-500 text-sm mt-1">Solucion a medida · Contrato anual · Account manager dedicado</p>
+                            <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Denominacion de Origen') }}</h2>
+                            <p class="text-zinc-500 text-sm mt-1">{{ __('Solucion a medida · Contrato anual · Account manager dedicado') }}</p>
                         </div>
 
                         <!-- Tabla de escala DO -->
@@ -312,9 +308,9 @@
                             <table class="w-full text-sm">
                                 <thead>
                                     <tr class="bg-amber-50 border-b border-amber-200">
-                                        <th class="text-left px-3 py-2 text-xs font-semibold text-amber-800">Bodegas</th>
-                                        <th class="text-right px-3 py-2 text-xs font-semibold text-amber-800">Mensual</th>
-                                        <th class="text-right px-3 py-2 text-xs font-semibold text-amber-800">Anual</th>
+                                        <th class="text-left px-3 py-2 text-xs font-semibold text-amber-800">{{ __('Bodegas') }}</th>
+                                        <th class="text-right px-3 py-2 text-xs font-semibold text-amber-800">{{ __('Mensual') }}</th>
+                                        <th class="text-right px-3 py-2 text-xs font-semibold text-amber-800">{{ __('Anual') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-amber-100 bg-white">
@@ -338,7 +334,7 @@
                             </table>
                         </div>
 
-                        <p class="text-xs text-zinc-500 mb-6 text-center">Las bodegas incluidas en el paquete DO no pagan cuota individual.</p>
+                        <p class="text-xs text-zinc-500 mb-6 text-center">{{ __('Las bodegas incluidas en el paquete DO no pagan cuota individual.') }}</p>
 
                         <ul class="space-y-3 mb-8 text-sm">
                             @foreach([
@@ -372,15 +368,15 @@
                             <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                             Enviar un email
                         </a>
-                        <p class="text-center text-xs text-zinc-400 mt-3">Propuesta sin compromiso para tu denominacion</p>
+                        <p class="text-center text-xs text-zinc-400 mt-3">{{ __('Propuesta sin compromiso para tu denominacion') }}</p>
                     </div>
                 </div>
 
                 <!-- Nota modelo viticultor invitado -->
                 <div class="mt-10 max-w-3xl mx-auto text-center p-6 bg-[var(--color-agro-green-bg)] rounded-2xl border border-[var(--color-agro-green-light)]/30">
                     <p class="text-zinc-700 text-sm">
-                        <strong>Como funciona con viticultores invitados:</strong> la bodega puede invitar a sus viticultores proveedores.
-                        El viticultor accede en modo <strong>basico gratis</strong> (cuaderno de campo) o puede activar el <strong>plan completo por 9€/mes</strong>
+                        <strong>{{ __('Como funciona con viticultores invitados:') }}</strong> la bodega puede invitar a sus viticultores proveedores.
+                        El viticultor accede en modo <strong>{{ __('basico gratis') }}</strong> (cuaderno de campo) o puede activar el <strong>{{ __('plan completo por 9€/mes') }}</strong>
                         (SIGPAC, teledeteccion, PAC, facturacion...). La bodega no paga por ello — el viticultor decide si amplia su plan.
                     </p>
                 </div>
@@ -390,19 +386,17 @@
         <!-- Tabla comparativa -->
         <section class="py-16 bg-zinc-50">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] text-center mb-10">
-                    Comparativa completa por perfil
-                </h2>
+                <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] text-center mb-10">{{ __('Comparativa completa por perfil') }}</h2>
                 <div class="overflow-x-auto rounded-2xl border border-zinc-200 shadow-sm">
                     <table class="w-full text-sm bg-white">
                         <thead>
                             <tr class="bg-zinc-50 border-b border-zinc-200">
-                                <th class="text-left px-6 py-4 font-semibold text-zinc-600 w-1/3">Funcionalidad</th>
-                                <th class="text-center px-3 py-4 font-bold text-zinc-500">🌿 Vit. Basico<br><span class="font-normal text-xs text-zinc-400">Gratis</span></th>
-                                <th class="text-center px-3 py-4 font-bold text-[var(--color-agro-green-dark)]">🌿 Vit. Completo<br><span class="font-normal text-xs text-zinc-400">9€/mes (invitado)</span></th>
-                                <th class="text-center px-3 py-4 font-bold text-[var(--color-agro-green-dark)]">🌿 Vit. Independiente<br><span class="font-normal text-xs text-zinc-400">14€/mes</span></th>
-                                <th class="text-center px-3 py-4 font-bold text-red-700">🍷 Bodega<br><span class="font-normal text-xs text-zinc-400">14€/mes</span></th>
-                                <th class="text-center px-3 py-4 font-bold text-amber-700">🏛️ DO<br><span class="font-normal text-xs text-zinc-400">desde 149€/mes</span></th>
+                                <th class="text-left px-6 py-4 font-semibold text-zinc-600 w-1/3">{{ __('Funcionalidad') }}</th>
+                                <th class="text-center px-3 py-4 font-bold text-zinc-500">🌿 Vit. Basico<br><span class="font-normal text-xs text-zinc-400">{{ __('Gratis') }}</span></th>
+                                <th class="text-center px-3 py-4 font-bold text-[var(--color-agro-green-dark)]">🌿 Vit. Completo<br><span class="font-normal text-xs text-zinc-400">{{ __('9€/mes (invitado)') }}</span></th>
+                                <th class="text-center px-3 py-4 font-bold text-[var(--color-agro-green-dark)]">🌿 Vit. Independiente<br><span class="font-normal text-xs text-zinc-400">{{ __('14€/mes') }}</span></th>
+                                <th class="text-center px-3 py-4 font-bold text-red-700">🍷 Bodega<br><span class="font-normal text-xs text-zinc-400">{{ __('14€/mes') }}</span></th>
+                                <th class="text-center px-3 py-4 font-bold text-amber-700">🏛️ DO<br><span class="font-normal text-xs text-zinc-400">{{ __('desde 149€/mes') }}</span></th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-zinc-100">
@@ -437,51 +431,51 @@
         <!-- Resumen ejecutivo -->
         <section class="py-12 bg-white">
             <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)] text-center mb-8">Resumen de precios</h2>
+                <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)] text-center mb-8">{{ __('Resumen de precios') }}</h2>
                 <div class="overflow-x-auto rounded-2xl border border-zinc-200 shadow-sm">
                     <table class="w-full text-sm bg-white">
                         <thead>
                             <tr class="bg-zinc-50 border-b border-zinc-200">
-                                <th class="text-left px-6 py-3 font-semibold text-zinc-600">Perfil</th>
-                                <th class="text-right px-6 py-3 font-semibold text-zinc-600">Mensual</th>
-                                <th class="text-right px-6 py-3 font-semibold text-zinc-600">Anual</th>
+                                <th class="text-left px-6 py-3 font-semibold text-zinc-600">{{ __('Perfil') }}</th>
+                                <th class="text-right px-6 py-3 font-semibold text-zinc-600">{{ __('Mensual') }}</th>
+                                <th class="text-right px-6 py-3 font-semibold text-zinc-600">{{ __('Anual') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-zinc-100">
                             <tr class="bg-white">
-                                <td class="px-6 py-3 text-zinc-700">Viticultor invitado por bodega — uso basico</td>
-                                <td class="px-6 py-3 text-right font-semibold text-zinc-800">Gratis</td>
-                                <td class="px-6 py-3 text-right text-zinc-500">Gratis</td>
+                                <td class="px-6 py-3 text-zinc-700">{{ __('Viticultor invitado por bodega — uso basico') }}</td>
+                                <td class="px-6 py-3 text-right font-semibold text-zinc-800">{{ __('Gratis') }}</td>
+                                <td class="px-6 py-3 text-right text-zinc-500">{{ __('Gratis') }}</td>
                             </tr>
                             <tr class="bg-zinc-50/50">
-                                <td class="px-6 py-3 text-zinc-700">Viticultor invitado por bodega — plan completo</td>
-                                <td class="px-6 py-3 text-right font-semibold text-[var(--color-agro-green-dark)]">9€/mes</td>
-                                <td class="px-6 py-3 text-right text-zinc-600">85€/ano</td>
+                                <td class="px-6 py-3 text-zinc-700">{{ __('Viticultor invitado por bodega — plan completo') }}</td>
+                                <td class="px-6 py-3 text-right font-semibold text-[var(--color-agro-green-dark)]">{{ __('9€/mes') }}</td>
+                                <td class="px-6 py-3 text-right text-zinc-600">{{ __('85€/ano') }}</td>
                             </tr>
                             <tr class="bg-white">
-                                <td class="px-6 py-3 text-zinc-700">Viticultor independiente (sin bodega)</td>
-                                <td class="px-6 py-3 text-right font-semibold text-[var(--color-agro-green-dark)]">14€/mes</td>
-                                <td class="px-6 py-3 text-right text-zinc-600">130€/ano</td>
+                                <td class="px-6 py-3 text-zinc-700">{{ __('Viticultor independiente (sin bodega)') }}</td>
+                                <td class="px-6 py-3 text-right font-semibold text-[var(--color-agro-green-dark)]">{{ __('14€/mes') }}</td>
+                                <td class="px-6 py-3 text-right text-zinc-600">{{ __('130€/ano') }}</td>
                             </tr>
                             <tr class="bg-zinc-50/50">
-                                <td class="px-6 py-3 text-zinc-700">Bodega dentro de una Denominacion de Origen</td>
-                                <td class="px-6 py-3 text-right font-semibold text-zinc-800">Gratis</td>
-                                <td class="px-6 py-3 text-right text-zinc-500">Gratis</td>
+                                <td class="px-6 py-3 text-zinc-700">{{ __('Bodega dentro de una Denominacion de Origen') }}</td>
+                                <td class="px-6 py-3 text-right font-semibold text-zinc-800">{{ __('Gratis') }}</td>
+                                <td class="px-6 py-3 text-right text-zinc-500">{{ __('Gratis') }}</td>
                             </tr>
                             <tr class="bg-white">
-                                <td class="px-6 py-3 text-zinc-700">Bodega independiente (sin DO)</td>
-                                <td class="px-6 py-3 text-right font-semibold text-red-700">14€/mes</td>
-                                <td class="px-6 py-3 text-right text-zinc-600">130€/ano</td>
+                                <td class="px-6 py-3 text-zinc-700">{{ __('Bodega independiente (sin DO)') }}</td>
+                                <td class="px-6 py-3 text-right font-semibold text-red-700">{{ __('14€/mes') }}</td>
+                                <td class="px-6 py-3 text-right text-zinc-600">{{ __('130€/ano') }}</td>
                             </tr>
                             <tr class="bg-zinc-50/50">
-                                <td class="px-6 py-3 text-zinc-700">Denominacion de Origen (hasta 25 bodegas)</td>
-                                <td class="px-6 py-3 text-right font-semibold text-amber-700">149€/mes</td>
-                                <td class="px-6 py-3 text-right text-zinc-600">1.400€/ano</td>
+                                <td class="px-6 py-3 text-zinc-700">{{ __('Denominacion de Origen (hasta 25 bodegas)') }}</td>
+                                <td class="px-6 py-3 text-right font-semibold text-amber-700">{{ __('149€/mes') }}</td>
+                                <td class="px-6 py-3 text-right text-zinc-600">{{ __('1.400€/ano') }}</td>
                             </tr>
                             <tr class="bg-white">
-                                <td class="px-6 py-3 text-zinc-700">Denominacion de Origen (+100 bodegas)</td>
-                                <td class="px-6 py-3 text-right font-semibold text-amber-700">A negociar</td>
-                                <td class="px-6 py-3 text-right text-zinc-500">A negociar</td>
+                                <td class="px-6 py-3 text-zinc-700">{{ __('Denominacion de Origen (+100 bodegas)') }}</td>
+                                <td class="px-6 py-3 text-right font-semibold text-amber-700">{{ __('A negociar') }}</td>
+                                <td class="px-6 py-3 text-right text-zinc-500">{{ __('A negociar') }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -492,9 +486,7 @@
         <!-- FAQs de precios -->
         <section class="py-16 bg-zinc-50">
             <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] text-center mb-10">
-                    Preguntas frecuentes sobre precios
-                </h2>
+                <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] text-center mb-10">{{ __('Preguntas frecuentes sobre precios') }}</h2>
                 <div class="space-y-4">
                     @php
                     $faqs = [
@@ -552,12 +544,8 @@
         <!-- CTA final -->
         <section class="py-16 bg-gradient-to-br from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)]">
             <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <h2 class="text-3xl lg:text-4xl font-bold text-white mb-4">
-                    La normativa no espera. Tu vinedo tampoco.
-                </h2>
-                <p class="text-green-100 text-lg mb-8">
-                    El cuaderno de campo digital es obligatorio desde 2027. Agro365 esta listo hoy.
-                </p>
+                <h2 class="text-3xl lg:text-4xl font-bold text-white mb-4">{{ __('La normativa no espera. Tu vinedo tampoco.') }}</h2>
+                <p class="text-green-100 text-lg mb-8">{{ __('El cuaderno de campo digital es obligatorio desde 2027. Agro365 esta listo hoy.') }}</p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
                     <a href="{{ route('register') }}" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-white text-[var(--color-agro-green-dark)] hover:bg-green-50 transition-all font-bold text-lg shadow-lg">
                         Empezar como Viticultor — Gratis

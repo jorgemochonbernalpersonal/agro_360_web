@@ -112,7 +112,7 @@ class Edit extends Component
             'notes'              => $this->notes ?: null,
         ]);
 
-        $this->toastSuccess('Análisis actualizado correctamente.');
+        $this->toastSuccess(__('Análisis actualizado correctamente.'));
         $this->redirect(roleRoute('wine-analysis.index'), navigate: true);
     }
 

@@ -39,7 +39,7 @@ class Show extends Component
         $container = Container::where('user_id', Auth::id())->findOrFail($this->container->id);
         app(WineContainerStockService::class)->emptyWineContent($container);
         $this->container->refresh();
-        $this->toastSuccess('Contenedor vaciado de vino elaborado.');
+        $this->toastSuccess(__('Contenedor vaciado de vino elaborado.'));
     }
 
     public function openAdjustModal(): void
@@ -65,7 +65,7 @@ class Show extends Component
 
         $this->container->refresh();
         $this->showAdjustModal = false;
-        $this->toastSuccess('Stock de vino ajustado correctamente.');
+        $this->toastSuccess(__('Stock de vino ajustado correctamente.'));
     }
 
     public function render()

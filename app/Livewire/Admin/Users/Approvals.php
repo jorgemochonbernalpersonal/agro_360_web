@@ -68,8 +68,8 @@ class Approvals extends Component
 
         return view('livewire.admin.users.approvals', compact('pending', 'total'))
             ->layout('layouts.app', [
-                'title'       => 'Aprobaciones - Admin - Agro365',
-                'description' => 'Usuarios verificados pendientes de activación manual',
+                'title'       => __('Aprobaciones - Admin - Agro365'),
+                'description' => __('Usuarios verificados pendientes de activación manual'),
             ]);
     }
 }

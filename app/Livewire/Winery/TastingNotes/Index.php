@@ -28,7 +28,7 @@ class Index extends AbstractIndex
     public function delete(int $id): void
     {
         WineTastingNote::where('user_id', $this->wineryId())->findOrFail($id)->delete();
-        $this->toastSuccess('Nota de cata eliminada.');
+        $this->toastSuccess(__('Nota de cata eliminada.'));
     }
 
     protected function baseQuery(): Builder

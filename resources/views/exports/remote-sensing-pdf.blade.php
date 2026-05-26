@@ -116,13 +116,13 @@
 </head>
 <body>
     <div class="header">
-        <h1>📊 Informe de Teledetección</h1>
-        <p><strong>Parcela:</strong> {{ $plot->name }} | <strong>Período:</strong> {{ $startDate->format('d/m/Y') }} - {{ $endDate->format('d/m/Y') }}</p>
+        <h1>{{ __('📊 Informe de Teledetección') }}</h1>
+        <p><strong>{{ __('Parcela:') }}</strong> {{ $plot->name }} | <strong>{{ __('Período:') }}</strong> {{ $startDate->format('d/m/Y') }} - {{ $endDate->format('d/m/Y') }}</p>
         <p>Generado el {{ $generatedAt->format('d/m/Y H:i') }}</p>
     </div>
 
     <div class="summary">
-        <h2>📈 Resumen del Período</h2>
+        <h2>{{ __('📈 Resumen del Período') }}</h2>
         <div class="summary-grid">
             <div class="summary-item">
                 <div class="value">{{ $summary['total_records'] }}</div>
@@ -151,15 +151,15 @@
     <table>
         <thead>
             <tr>
-                <th>Fecha</th>
-                <th>NDVI</th>
-                <th>NDVI Mín</th>
-                <th>NDVI Máx</th>
-                <th>NDWI</th>
-                <th>Estado</th>
-                <th>Temp (°C)</th>
-                <th>Precip (mm)</th>
-                <th>Humedad (%)</th>
+                <th>{{ __('Fecha') }}</th>
+                <th>{{ __('NDVI') }}</th>
+                <th>{{ __('NDVI Mín') }}</th>
+                <th>{{ __('NDVI Máx') }}</th>
+                <th>{{ __('NDWI') }}</th>
+                <th>{{ __('Estado') }}</th>
+                <th>{{ __('Temp (°C)') }}</th>
+                <th>{{ __('Precip (mm)') }}</th>
+                <th>{{ __('Humedad (%)') }}</th>
             </tr>
         </thead>
         <tbody>
@@ -179,7 +179,7 @@
         </tbody>
     </table>
     @else
-    <p style="text-align: center; color: #999; padding: 40px;">No hay datos de teledetección para el período seleccionado.</p>
+    <p style="text-align: center; color: #999; padding: 40px;">{{ __('No hay datos de teledetección para el período seleccionado.') }}</p>
     @endif
 
     <div class="footer">

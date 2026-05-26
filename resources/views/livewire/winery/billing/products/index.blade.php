@@ -1,28 +1,24 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="Venta de Productos"
-        description="Facturas y albaranes de venta de productos a clientes"
+        title="{{ __('Venta de Productos') }}"
+        :description="__('Facturas y albaranes de venta de productos a clientes')"
     />
 
     {{-- Toolbar --}}
     <div class="space-y-3">
         <div class="flex items-center gap-3">
 
-            <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar por nº factura, albarán o cliente..." />
+            <x-agro.search-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar por nº factura, albarán o cliente...')" />
 
             @php $filterCount = ($filterStatus ? 1 : 0) + ($filterPaymentStatus ? 1 : 0) + ($filterDeliveryStatus ? 1 : 0) + ($filterGift ? 1 : 0); @endphp
             <x-agro.filter-button modal="products-invoice-filters" :count="$filterCount" />
 
-            <flux:button wire:click="openExportModal" variant="outline" icon="arrow-down-tray">
-                Exportar
-            </flux:button>
+            <flux:button wire:click="openExportModal" variant="outline" icon="arrow-down-tray">{{ __('Exportar') }}</flux:button>
 
             <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
-            <flux:button wire:click="openQuickModal" variant="outline" icon="bolt">
-                Rápida
-            </flux:button>
+            <flux:button wire:click="openQuickModal" variant="outline" icon="bolt">{{ __('Rápida') }}</flux:button>
 
             <flux:button href="{{ roleRoute('invoices.products.create') }}" wire:navigate variant="primary" icon="plus">
                 Nueva Factura
@@ -33,7 +29,7 @@
         {{-- Active filter chips --}}
         @if($search || $filterStatus || $filterPaymentStatus || $filterDeliveryStatus || $filterGift)
             <div class="flex flex-wrap items-center gap-2">
-                <span class="text-xs text-zinc-400">Filtros activos:</span>
+                <span class="text-xs text-zinc-400">{{ __('Filtros activos:') }}</span>
 
                 @if($search)
                     <x-agro.filter-chip icon="magnifying-glass" :label="'&quot;' . $search . '&quot;'" wireRemove="$set('search', '')" />
@@ -61,7 +57,7 @@
                     </span>
                 @endif
 
-                <flux:button wire:click="clearFilters" variant="ghost" size="sm">Limpiar todo</flux:button>
+                <flux:button wire:click="clearFilters" variant="ghost" size="sm">{{ __('Limpiar todo') }}</flux:button>
             </div>
         @endif
     </div>
@@ -71,7 +67,7 @@
         <flux:button wire:click="$set('filterGift', true)" variant="ghost" size="sm" icon="gift"
             class="bg-pink-50 border border-pink-200 text-pink-700 hover:bg-pink-100 rounded-full">
             {{ $giftCount }} {{ $giftCount === 1 ? 'factura regalo' : 'facturas regalo' }}
-            <span class="text-pink-400 ml-1">· ver solo estas</span>
+            <span class="text-pink-400 ml-1">{{ __('· ver solo estas') }}</span>
         </flux:button>
     @endif
 
@@ -116,13 +112,13 @@
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center gap-1.5">
                                     <p class="font-semibold text-zinc-900 text-sm font-mono truncate leading-tight">
-                                        {{ $invoice->invoice_number ?? 'Sin código de factura' }}
+                                        {{ $invoice->invoice_number ?? __('Sin código de factura') }}
                                     </p>
                                     @if($invoice->corrective)
                                         <span class="text-[10px] font-bold text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded shrink-0">R/</span>
                                     @endif
                                     @if($invoice->gift)
-                                        <span class="text-[10px] font-bold text-pink-600 bg-pink-50 px-1.5 py-0.5 rounded shrink-0">REGALO</span>
+                                        <span class="text-[10px] font-bold text-pink-600 bg-pink-50 px-1.5 py-0.5 rounded shrink-0">{{ __('REGALO') }}</span>
                                     @endif
                                 </div>
                                 @if($invoice->delivery_note_code)
@@ -141,11 +137,11 @@
 
                         <div class="grid grid-cols-2 gap-2">
                             <div class="bg-agro-50 rounded-xl p-2.5">
-                                <p class="text-[10px] text-agro-600 font-medium uppercase tracking-wide mb-0.5">Total</p>
+                                <p class="text-[10px] text-agro-600 font-medium uppercase tracking-wide mb-0.5">{{ __('Total') }}</p>
                                 <p class="text-sm font-bold text-agro-700">{{ number_format($invoice->total_amount, 2) }} €</p>
                             </div>
                             <div class="bg-zinc-50 rounded-xl p-2.5">
-                                <p class="text-[10px] text-zinc-500 font-medium uppercase tracking-wide mb-0.5">Unidades</p>
+                                <p class="text-[10px] text-zinc-500 font-medium uppercase tracking-wide mb-0.5">{{ __('Unidades') }}</p>
                                 <p class="text-sm font-bold text-zinc-700">{{ $totalUnits > 0 ? number_format($totalUnits, 0) : '—' }}</p>
                             </div>
                         </div>
@@ -166,33 +162,33 @@
                             <div class="flex items-center gap-0.5 flex-wrap justify-end">
 
                                 @if(!$isLocked)
-                                    <x-agro.action-button variant="edit" href="{{ roleRoute('invoices.products.edit', $invoice->id) }}" wire:navigate title="Editar" />
+                                    <x-agro.action-button variant="edit" href="{{ roleRoute('invoices.products.edit', $invoice->id) }}" wire:navigate title="{{ __('Editar') }}" />
                                 @endif
 
                                 @if($invoice->status !== 'cancelled')
-                                    <x-agro.action-button icon="document-duplicate" variant="default" wire:click="duplicate({{ $invoice->id }})" wire:confirm="¿Duplicar esta factura? Se creará una nueva en borrador con los mismos productos y cantidades." title="Duplicar factura" />
+                                    <x-agro.action-button icon="document-duplicate" variant="default" wire:click="duplicate({{ $invoice->id }})" wire:confirm="{{ __('¿Duplicar esta factura? Se creará una nueva en borrador con los mismos productos y cantidades.') }}" title="{{ __('Duplicar factura') }}" />
                                 @endif
 
-                                <x-agro.action-button icon="document-text" variant="default" href="{{ roleRoute('invoices.products.pdf', $invoice->id) }}" target="_blank" title="Descargar Factura" />
+                                <x-agro.action-button icon="document-text" variant="default" href="{{ roleRoute('invoices.products.pdf', $invoice->id) }}" target="_blank" title="{{ __('Descargar Factura') }}" />
 
-                                <x-agro.action-button icon="document-arrow-down" variant="default" href="{{ roleRoute('invoices.products.delivery-note-pdf', $invoice->id) }}" target="_blank" title="Descargar Albarán" />
+                                <x-agro.action-button icon="document-arrow-down" variant="default" href="{{ roleRoute('invoices.products.delivery-note-pdf', $invoice->id) }}" target="_blank" title="{{ __('Descargar Albarán') }}" />
 
-                                <x-agro.action-button icon="currency-euro" variant="default" href="{{ roleRoute('invoices.products.valorado-pdf', $invoice->id) }}" target="_blank" title="Descargar Albarán Valorado" />
+                                <x-agro.action-button icon="currency-euro" variant="default" href="{{ roleRoute('invoices.products.valorado-pdf', $invoice->id) }}" target="_blank" title="{{ __('Descargar Albarán Valorado') }}" />
 
                                 @if($invoice->status === 'draft')
-                                    <x-agro.action-button icon="paper-airplane" variant="primary" wire:click="openEmitirModal({{ $invoice->id }})" title="Emitir factura" />
+                                    <x-agro.action-button icon="paper-airplane" variant="primary" wire:click="openEmitirModal({{ $invoice->id }})" title="{{ __('Emitir factura') }}" />
                                 @endif
 
 @if($invoice->status === 'sent' && ($invoice->billing_email ?: $invoice->client?->email))
-                                    <x-agro.action-button icon="envelope" variant="default" wire:click="sendEmail({{ $invoice->id }})" wire:loading.attr="disabled" wire:target="sendEmail({{ $invoice->id }})" title="Enviar por email" />
+                                    <x-agro.action-button icon="envelope" variant="default" wire:click="sendEmail({{ $invoice->id }})" wire:loading.attr="disabled" wire:target="sendEmail({{ $invoice->id }})" title="{{ __('Enviar por email') }}" />
                                 @endif
 
                                 @if($invoice->status === 'sent' && !$invoice->corrective && $invoice->correctives_count === 0)
-                                    <x-agro.action-button icon="arrow-uturn-left" variant="warning" wire:click="openCorrectiveModal({{ $invoice->id }})" title="Crear rectificativa" />
+                                    <x-agro.action-button icon="arrow-uturn-left" variant="warning" wire:click="openCorrectiveModal({{ $invoice->id }})" title="{{ __('Crear rectificativa') }}" />
                                 @endif
 
                                 @if($invoice->correctives_count > 0)
-                                    <span class="text-[10px] font-medium text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded">RECT</span>
+                                    <span class="text-[10px] font-medium text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded">{{ __('RECT') }}</span>
                                 @endif
 
 
@@ -208,14 +204,14 @@
     @else
         <x-agro.empty-state
             icon="document-text"
-            title="No hay facturas de productos"
+            title="{{ __('No hay facturas de productos') }}"
             :description="$search || $filterStatus || $filterPaymentStatus || $filterDeliveryStatus
                 ? 'Ninguna factura coincide con los filtros aplicados.'
                 : 'Crea tu primera factura para empezar a gestionar la venta de productos.'"
         >
             @if($search || $filterStatus || $filterPaymentStatus || $filterDeliveryStatus)
                 <x-slot:action>
-                    <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
+                    <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">{{ __('Limpiar filtros') }}</flux:button>
                 </x-slot:action>
             @else
                 <x-slot:action>
@@ -237,26 +233,26 @@
                         <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
                             <flux:icon icon="paper-airplane" class="size-4 text-agro-600" />
                         </div>
-                        <h3 class="text-base font-semibold text-zinc-900">Emitir Factura</h3>
+                        <h3 class="text-base font-semibold text-zinc-900">{{ __('Emitir Factura') }}</h3>
                     </div>
                     <flux:button wire:click="closeEmitirModal" variant="ghost" size="sm" icon="x-mark" />
                 </div>
                 <div class="px-6 py-5 space-y-4">
                     <p class="text-sm text-zinc-500">
-                        Se generará un número de factura secuencial. El stock permanece <strong>reservado</strong> hasta confirmar la entrega.
+                        Se generará un número de factura secuencial. El stock permanece <strong>{{ __('reservado') }}</strong> hasta confirmar la entrega.
                     </p>
                     <div>
-                        <label class="block text-sm font-medium text-zinc-700 mb-1.5">Fecha de factura <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-medium text-zinc-700 mb-1.5">{{ __('Fecha de factura') }} <span class="text-red-500">*</span></label>
                         <input wire:model="emitirDate" type="date"
                             class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent" />
                         @error('emitirDate') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                     </div>
                 </div>
                 <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 rounded-b-2xl flex justify-end gap-3">
-                    <flux:button wire:click="closeEmitirModal" variant="ghost" size="sm">Cancelar</flux:button>
+                    <flux:button wire:click="closeEmitirModal" variant="ghost" size="sm">{{ __('Cancelar') }}</flux:button>
                     <flux:button wire:click="confirmEmitir" wire:loading.attr="disabled" variant="primary" size="sm" icon="paper-airplane">
-                        <span wire:loading.remove wire:target="confirmEmitir">Emitir Factura</span>
-                        <span wire:loading wire:target="confirmEmitir">Emitiendo...</span>
+                        <span wire:loading.remove wire:target="confirmEmitir">{{ __('Emitir Factura') }}</span>
+                        <span wire:loading wire:target="confirmEmitir">{{ __('Emitiendo...') }}</span>
                     </flux:button>
                 </div>
             </div>
@@ -273,32 +269,30 @@
                         <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
                             <flux:icon icon="arrow-uturn-left" class="size-4 text-orange-600" />
                         </div>
-                        <h3 class="text-base font-semibold text-zinc-900">Crear Rectificativa</h3>
+                        <h3 class="text-base font-semibold text-zinc-900">{{ __('Crear Rectificativa') }}</h3>
                     </div>
                     <flux:button wire:click="closeCorrectiveModal" variant="ghost" size="sm" icon="x-mark" />
                 </div>
                 <div class="px-6 py-5 space-y-4">
-                    <p class="text-sm text-zinc-500">
-                        Se creará una factura rectificativa con importes negativos. El stock quedará restaurado como disponible.
-                    </p>
+                    <p class="text-sm text-zinc-500">{{ __('Se creará una factura rectificativa con importes negativos. El stock quedará restaurado como disponible.') }}</p>
                     <div>
-                        <label class="block text-sm font-medium text-zinc-700 mb-1.5">Fecha <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-medium text-zinc-700 mb-1.5">{{ __('Fecha') }} <span class="text-red-500">*</span></label>
                         <input wire:model="correctiveDate" type="date"
                             class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent" />
                         @error('correctiveDate') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-zinc-700 mb-1.5">Motivo <span class="text-zinc-400 font-normal">(opcional)</span></label>
-                        <textarea wire:model="correctiveReason" rows="2" placeholder="Error en precio, devolución, etc."
+                        <label class="block text-sm font-medium text-zinc-700 mb-1.5">{{ __('Motivo') }} <span class="text-zinc-400 font-normal">{{ __('(opcional)') }}</span></label>
+                        <textarea wire:model="correctiveReason" rows="2" placeholder="{{ __('Error en precio, devolución, etc.') }}"
                             class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent resize-none"></textarea>
                         @error('correctiveReason') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                     </div>
                 </div>
                 <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 rounded-b-2xl flex justify-end gap-3">
-                    <flux:button wire:click="closeCorrectiveModal" variant="ghost" size="sm">Cancelar</flux:button>
+                    <flux:button wire:click="closeCorrectiveModal" variant="ghost" size="sm">{{ __('Cancelar') }}</flux:button>
                     <flux:button wire:click="confirmCorrective" wire:loading.attr="disabled" variant="primary" size="sm" icon="arrow-uturn-left">
-                        <span wire:loading.remove wire:target="confirmCorrective">Emitir Rectificativa</span>
-                        <span wire:loading wire:target="confirmCorrective">Generando...</span>
+                        <span wire:loading.remove wire:target="confirmCorrective">{{ __('Emitir Rectificativa') }}</span>
+                        <span wire:loading wire:target="confirmCorrective">{{ __('Generando...') }}</span>
                     </flux:button>
                 </div>
             </div>
@@ -315,16 +309,16 @@
                         <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
                             <flux:icon icon="bolt" class="size-4 text-blue-600" />
                         </div>
-                        <h3 class="text-base font-semibold text-zinc-900">Albarán Rápido</h3>
+                        <h3 class="text-base font-semibold text-zinc-900">{{ __('Albarán Rápido') }}</h3>
                     </div>
                     <flux:button wire:click="closeQuickModal" variant="ghost" size="sm" icon="x-mark" />
                 </div>
                 <div class="px-6 py-5 space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <flux:label>Cliente <span class="text-red-500">*</span></flux:label>
+                            <flux:label>{{ __('Cliente') }} <span class="text-red-500">*</span></flux:label>
                             <flux:select wire:model.live="quickClientId">
-                                <flux:select.option value="">Selecciona cliente</flux:select.option>
+                                <flux:select.option value="">{{ __('Selecciona cliente') }}</flux:select.option>
                                 @foreach(\App\Models\Client::where('user_id', Auth::id())->where('active', true)->orderBy('first_name')->get() as $c)
                                     <flux:select.option value="{{ $c->id }}">{{ $c->full_name }}</flux:select.option>
                                 @endforeach
@@ -332,9 +326,9 @@
                             @error('quickClientId') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                         </div>
                         <div>
-                            <flux:label>Dirección <span class="text-red-500">*</span></flux:label>
+                            <flux:label>{{ __('Dirección') }} <span class="text-red-500">*</span></flux:label>
                             <flux:select wire:model="quickClientAddressId">
-                                <flux:select.option value="">Selecciona dirección</flux:select.option>
+                                <flux:select.option value="">{{ __('Selecciona dirección') }}</flux:select.option>
                                 @foreach($quickAvailableAddresses as $addr)
                                     <flux:select.option value="{{ $addr->id }}">{{ $addr->full_address ?? $addr->address ?? '' }}</flux:select.option>
                                 @endforeach
@@ -343,9 +337,9 @@
                         </div>
                     </div>
                     <div>
-                        <flux:label>Producto <span class="text-red-500">*</span></flux:label>
+                        <flux:label>{{ __('Producto') }} <span class="text-red-500">*</span></flux:label>
                         <flux:select wire:model.live="quickLotId">
-                            <flux:select.option value="">Selecciona lote con stock</flux:select.option>
+                            <flux:select.option value="">{{ __('Selecciona lote con stock') }}</flux:select.option>
                             @foreach(\App\Models\ProductLot::where('user_id', Auth::id())->where('archived', false)->where('available_quantity', '>', 0)->orderByDesc('vintage')->orderBy('name')->get() as $wl)
                                 <flux:select.option value="{{ $wl->id }}">{{ $wl->name }}@if($wl->vintage) ({{ $wl->vintage }})@endif – {{ number_format($wl->available_quantity, 0) }} {{ $wl->unit }}</flux:select.option>
                             @endforeach
@@ -353,14 +347,14 @@
                         @error('quickLotId') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-zinc-700 mb-1.5">Concepto <span class="text-red-500">*</span></label>
-                        <input wire:model="quickConceptName" type="text" placeholder="Nombre del producto"
+                        <label class="block text-sm font-medium text-zinc-700 mb-1.5">{{ __('Concepto') }} <span class="text-red-500">*</span></label>
+                        <input wire:model="quickConceptName" type="text" placeholder="{{ __('Nombre del producto') }}"
                             class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400" />
                         @error('quickConceptName') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-medium text-zinc-700 mb-1.5">Cantidad <span class="text-red-500">*</span></label>
+                            <label class="block text-sm font-medium text-zinc-700 mb-1.5">{{ __('Cantidad') }} <span class="text-red-500">*</span></label>
                             <input wire:model="quickQty" type="number" step="0.001" min="0.001"
                                 @if($quickAvailableQty > 0) max="{{ $quickAvailableQty }}" @endif
                                 placeholder="0.000"
@@ -371,7 +365,7 @@
                             @error('quickQty') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-zinc-700 mb-1.5">Precio/ud (€) <span class="text-red-500">*</span></label>
+                            <label class="block text-sm font-medium text-zinc-700 mb-1.5">{{ __('Precio/ud (€)') }} <span class="text-red-500">*</span></label>
                             <input wire:model="quickPrice" type="number" step="0.0001" min="0" placeholder="0.0000"
                                 class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400" />
                             @error('quickPrice') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
@@ -379,31 +373,31 @@
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <flux:label>Impuesto</flux:label>
+                            <flux:label>{{ __('Impuesto') }}</flux:label>
                             <flux:select wire:model="quickTaxId">
-                                <flux:select.option value="">Sin impuesto</flux:select.option>
+                                <flux:select.option value="">{{ __('Sin impuesto') }}</flux:select.option>
                                 @foreach(\App\Models\Tax::where('active', true)->orderBy('rate')->get() as $t)
                                     <flux:select.option value="{{ $t->id }}">{{ $t->name }} ({{ number_format($t->rate, 2) }}%)</flux:select.option>
                                 @endforeach
                             </flux:select>
                         </div>
                         <div>
-                            <flux:label>Forma de pago</flux:label>
+                            <flux:label>{{ __('Forma de pago') }}</flux:label>
                             <flux:select wire:model="quickPaymentType">
-                                <flux:select.option value="">Sin especificar</flux:select.option>
-                                <flux:select.option value="cash">Efectivo</flux:select.option>
-                                <flux:select.option value="transfer">Transferencia</flux:select.option>
-                                <flux:select.option value="check">Cheque</flux:select.option>
-                                <flux:select.option value="other">Otro</flux:select.option>
+                                <flux:select.option value="">{{ __('Sin especificar') }}</flux:select.option>
+                                <flux:select.option value="cash">{{ __('Efectivo') }}</flux:select.option>
+                                <flux:select.option value="transfer">{{ __('Transferencia') }}</flux:select.option>
+                                <flux:select.option value="check">{{ __('Cheque') }}</flux:select.option>
+                                <flux:select.option value="other">{{ __('Otro') }}</flux:select.option>
                             </flux:select>
                         </div>
                     </div>
                 </div>
                 <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 rounded-b-2xl flex justify-end gap-3">
-                    <flux:button wire:click="closeQuickModal" variant="ghost" size="sm">Cancelar</flux:button>
+                    <flux:button wire:click="closeQuickModal" variant="ghost" size="sm">{{ __('Cancelar') }}</flux:button>
                     <flux:button wire:click="confirmQuick" wire:loading.attr="disabled" variant="primary" size="sm" icon="bolt">
-                        <span wire:loading.remove wire:target="confirmQuick">Crear Albarán</span>
-                        <span wire:loading wire:target="confirmQuick">Creando...</span>
+                        <span wire:loading.remove wire:target="confirmQuick">{{ __('Crear Albarán') }}</span>
+                        <span wire:loading wire:target="confirmQuick">{{ __('Creando...') }}</span>
                     </flux:button>
                 </div>
             </div>
@@ -420,30 +414,30 @@
                         <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
                             <flux:icon icon="arrow-down-tray" class="size-4 text-green-600" />
                         </div>
-                        <h3 class="text-base font-semibold text-zinc-900">Exportar Facturas</h3>
+                        <h3 class="text-base font-semibold text-zinc-900">{{ __('Exportar Facturas') }}</h3>
                     </div>
                     <flux:button wire:click="closeExportModal" variant="ghost" size="sm" icon="x-mark" />
                 </div>
                 <div class="px-6 py-5 space-y-4">
-                    <p class="text-sm text-zinc-500">Exporta a Excel las facturas emitidas en el rango de fechas seleccionado.</p>
+                    <p class="text-sm text-zinc-500">{{ __('Exporta a Excel las facturas emitidas en el rango de fechas seleccionado.') }}</p>
                     <div>
-                        <label class="block text-sm font-medium text-zinc-700 mb-1.5">Desde <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-medium text-zinc-700 mb-1.5">{{ __('Desde') }} <span class="text-red-500">*</span></label>
                         <input wire:model="exportDateFrom" type="date"
                             class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400" />
                         @error('exportDateFrom') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-zinc-700 mb-1.5">Hasta <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-medium text-zinc-700 mb-1.5">{{ __('Hasta') }} <span class="text-red-500">*</span></label>
                         <input wire:model="exportDateTo" type="date"
                             class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400" />
                         @error('exportDateTo') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                     </div>
                 </div>
                 <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 rounded-b-2xl flex justify-end gap-3">
-                    <flux:button wire:click="closeExportModal" variant="ghost" size="sm">Cancelar</flux:button>
+                    <flux:button wire:click="closeExportModal" variant="ghost" size="sm">{{ __('Cancelar') }}</flux:button>
                     <flux:button wire:click="export" wire:loading.attr="disabled" variant="primary" size="sm" icon="arrow-down-tray">
-                        <span wire:loading.remove wire:target="export">Descargar Excel</span>
-                        <span wire:loading wire:target="export">Generando...</span>
+                        <span wire:loading.remove wire:target="export">{{ __('Descargar Excel') }}</span>
+                        <span wire:loading wire:target="export">{{ __('Generando...') }}</span>
                     </flux:button>
                 </div>
             </div>
@@ -457,37 +451,37 @@
                 <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
                     <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
                 </div>
-                <h3 class="text-base font-semibold text-zinc-900">Filtros</h3>
+                <h3 class="text-base font-semibold text-zinc-900">{{ __('Filtros') }}</h3>
             </div>
             <flux:button x-on:click="$dispatch('close-modal', 'products-invoice-filters')" variant="ghost" size="sm" icon="x-mark" />
         </div>
         <div class="px-6 py-5 space-y-5">
-            <x-agro.filter-select label="Estado de factura" wire:model.live="filterStatus" placeholder="Todos">
-                <flux:select.option value="draft">Borrador</flux:select.option>
-                <flux:select.option value="sent">Emitida</flux:select.option>
-                <flux:select.option value="cancelled">Cancelada</flux:select.option>
+            <x-agro.filter-select :label="__('Estado de factura')" wire:model.live="filterStatus" :placeholder="__('Todos')">
+                <flux:select.option value="draft">{{ __('Borrador') }}</flux:select.option>
+                <flux:select.option value="sent">{{ __('Emitida') }}</flux:select.option>
+                <flux:select.option value="cancelled">{{ __('Cancelada') }}</flux:select.option>
             </x-agro.filter-select>
-            <x-agro.filter-select label="Estado de cobro" wire:model.live="filterPaymentStatus" placeholder="Todos">
-                <flux:select.option value="unpaid">Pendiente</flux:select.option>
-                <flux:select.option value="partial">Parcial</flux:select.option>
-                <flux:select.option value="paid">Cobrada</flux:select.option>
+            <x-agro.filter-select :label="__('Estado de cobro')" wire:model.live="filterPaymentStatus" :placeholder="__('Todos')">
+                <flux:select.option value="unpaid">{{ __('Pendiente') }}</flux:select.option>
+                <flux:select.option value="partial">{{ __('Parcial') }}</flux:select.option>
+                <flux:select.option value="paid">{{ __('Cobrada') }}</flux:select.option>
             </x-agro.filter-select>
-            <x-agro.filter-select label="Estado de entrega" wire:model.live="filterDeliveryStatus" placeholder="Todos">
-                <flux:select.option value="pending">Pendiente</flux:select.option>
-                <flux:select.option value="delivered">Entregada</flux:select.option>
-                <flux:select.option value="cancelled">Cancelada</flux:select.option>
+            <x-agro.filter-select :label="__('Estado de entrega')" wire:model.live="filterDeliveryStatus" :placeholder="__('Todos')">
+                <flux:select.option value="pending">{{ __('Pendiente') }}</flux:select.option>
+                <flux:select.option value="delivered">{{ __('Entregada') }}</flux:select.option>
+                <flux:select.option value="cancelled">{{ __('Cancelada') }}</flux:select.option>
             </x-agro.filter-select>
             <div class="flex items-center justify-between py-2 px-3 bg-pink-50 rounded-xl border border-pink-100">
                 <div class="flex items-center gap-2">
                     <flux:icon icon="gift" class="size-4 text-pink-500" />
-                    <span class="text-sm font-medium text-pink-700">Solo facturas regalo</span>
+                    <span class="text-sm font-medium text-pink-700">{{ __('Solo facturas regalo') }}</span>
                 </div>
                 <flux:checkbox wire:model.live="filterGift" />
             </div>
         </div>
         <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between rounded-b-2xl">
-            <flux:button wire:click="clearFilters" x-on:click="$dispatch('close-modal', 'products-invoice-filters')" variant="ghost" size="sm">Limpiar filtros</flux:button>
-            <flux:button x-on:click="$dispatch('close-modal', 'products-invoice-filters')" variant="primary" size="sm">Aplicar</flux:button>
+            <flux:button wire:click="clearFilters" x-on:click="$dispatch('close-modal', 'products-invoice-filters')" variant="ghost" size="sm">{{ __('Limpiar filtros') }}</flux:button>
+            <flux:button x-on:click="$dispatch('close-modal', 'products-invoice-filters')" variant="primary" size="sm">{{ __('Aplicar') }}</flux:button>
         </div>
     </x-agro.modal>
 

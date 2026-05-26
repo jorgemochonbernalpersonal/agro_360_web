@@ -111,7 +111,7 @@ class PlotNdviCard extends Component
         $this->loadData();
         $this->dispatch('notify', [
             'type' => 'success',
-            'message' => 'Datos actualizados correctamente',
+            'message' => __('Datos actualizados correctamente'),
         ]);
     }
 

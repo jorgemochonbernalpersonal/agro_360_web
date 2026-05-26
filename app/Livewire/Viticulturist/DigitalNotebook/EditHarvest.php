@@ -127,11 +127,11 @@ class EditHarvest extends Component
         $activity = $this->harvest->activity;
 
         if (!$user->can('update', $activity)) {
-            abort(403, 'No tienes permiso para editar esta actividad.');
+            abort(403, __('No tienes permiso para editar esta actividad.'));
         }
 
         if ($activity->isLocked()) {
-            $this->toastError('No se puede editar una actividad bloqueada. Las actividades se bloquean automáticamente después de ' . config('activities.lock_days', 7) . ' días para cumplimiento PAC.');
+            $this->toastError(__('No se puede editar una actividad bloqueada. Las actividades se bloquean automáticamente después de :days días para cumplimiento PAC.', ['days' => config('activities.lock_days', 7)]));
             $this->viticulturistRoleRedirect('harvests.index');
             return;
         }
@@ -510,17 +510,17 @@ class EditHarvest extends Component
 
         // Validar workType
         if (!$this->workType) {
-            $this->addError('workType', 'Debes seleccionar quién realizó el trabajo.');
+            $this->addError('workType', __('Debes seleccionar quién realizó el trabajo.'));
             return;
         }
 
         if ($this->workType === 'crew' && !$this->crew_id) {
-            $this->addError('crew_id', 'Debes seleccionar un equipo.');
+            $this->addError('crew_id', __('Debes seleccionar un equipo.'));
             return;
         }
 
         if ($this->workType === 'individual' && !$this->crew_member_id) {
-            $this->addError('crew_member_id', 'Debes seleccionar un viticultor.');
+            $this->addError('crew_member_id', __('Debes seleccionar un viticultor.'));
             return;
         }
 
@@ -532,11 +532,11 @@ class EditHarvest extends Component
         if ($this->container_id) {
             $container = Container::find($this->container_id);
             if (!$container) {
-                $this->addError('container_id', 'El contenedor seleccionado no existe.');
+                $this->addError('container_id', __('El contenedor seleccionado no existe.'));
                 return;
             }
             if ($this->container_id != $this->original_container_id && !$container->isAvailable()) {
-                $this->addError('container_id', 'El contenedor seleccionado ya está asignado a otra cosecha.');
+                $this->addError('container_id', __('El contenedor seleccionado ya está asignado a otra cosecha.'));
                 return;
             }
         }
@@ -637,7 +637,7 @@ class EditHarvest extends Component
                 );
             });
 
-            $this->toastSuccess('Cosecha actualizada correctamente.');
+            $this->toastSuccess(__('Cosecha actualizada correctamente.'));
             return $this->viticulturistRoleRedirect('digital-notebook.harvest.show', $this->harvest->id);
         } catch (\Exception $e) {
             \Log::error('Error al actualizar cosecha', [
@@ -647,7 +647,7 @@ class EditHarvest extends Component
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            $this->toastError('Error al actualizar la cosecha. Por favor, intenta de nuevo.');
+            $this->toastError(__('Error al actualizar la cosecha. Por favor, intenta de nuevo.'));
             return;
         }
     }

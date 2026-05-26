@@ -86,9 +86,9 @@ class Edit extends Component
     protected function messages(): array
     {
         return [
-            'items.*.declared_area.required' => 'La superficie declarada es obligatoria.',
-            'items.*.declared_area.min'      => 'La superficie declarada debe ser mayor que 0.',
-            'items.*.eligible_area.required' => 'La superficie admisible es obligatoria.',
+            'items.*.declared_area.required' => __('La superficie declarada es obligatoria.'),
+            'items.*.declared_area.min'      => __('La superficie declarada debe ser mayor que 0.'),
+            'items.*.eligible_area.required' => __('La superficie admisible es obligatoria.'),
         ];
     }
 
@@ -97,14 +97,14 @@ class Edit extends Component
         $selectedIds = array_keys(array_filter($this->items, fn($i) => $i['selected'] ?? false));
 
         if (empty($selectedIds)) {
-            $this->addError('items', 'Selecciona al menos una parcela.');
+            $this->addError('items', __('Selecciona al menos una parcela.'));
             return;
         }
 
         $this->validate();
 
         if (!$this->validatePacDeclaredAreas($selectedIds, $this->items)) {
-            $this->toastError('Revisa las superficies declaradas antes de continuar.');
+            $this->toastError(__('Revisa las superficies declaradas antes de continuar.'));
             return;
         }
 

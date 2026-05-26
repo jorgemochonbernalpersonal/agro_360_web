@@ -25,7 +25,7 @@ class Index extends Component
         $user = Auth::user();
         
         if (!$user->can('viewAny', Crew::class)) {
-            abort(403, 'No tienes permiso para ver cuadrillas.');
+            abort(403, __('No tienes permiso para ver cuadrillas.'));
         }
 
         $crews = Crew::forViticulturist($user->id)
@@ -59,12 +59,12 @@ class Index extends Component
     public function delete(Crew $crew)
     {
         if (!Auth::user()->can('delete', $crew)) {
-            $this->toastError('No tienes permiso para eliminar esta cuadrilla.');
+            $this->toastError(__('No tienes permiso para eliminar esta cuadrilla.'));
             return;
         }
 
         if ($crew->activities()->exists()) {
-            $this->toastError('No se puede eliminar una cuadrilla con actividades asociadas.');
+            $this->toastError(__('No se puede eliminar una cuadrilla con actividades asociadas.'));
             return;
         }
 
@@ -75,7 +75,7 @@ class Index extends Component
                 $crew->delete();
             });
             
-            $this->toastSuccess('Cuadrilla eliminada correctamente.');
+            $this->toastSuccess(__('Cuadrilla eliminada correctamente.'));
         } catch (\Exception $e) {
             Log::error('Error deleting crew', [
                 'crew_id' => $crew->id,
@@ -83,7 +83,7 @@ class Index extends Component
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
-            $this->toastError('Hubo un error al eliminar la cuadrilla. Por favor, inténtalo de nuevo.');
+            $this->toastError(__('Hubo un error al eliminar la cuadrilla. Por favor, inténtalo de nuevo.'));
         }
     }
 

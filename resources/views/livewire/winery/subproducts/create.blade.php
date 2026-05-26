@@ -1,6 +1,6 @@
 <x-agro.form-card
-    title="Nuevo Subproducto"
-    description="Registra orujo, lías, vinaza u otros subproductos generados durante la elaboración."
+    title="{{ __('Nuevo Subproducto') }}"
+    :description="__('Registra orujo, lías, vinaza u otros subproductos generados durante la elaboración.')"
     icon="archive-box"
     icon-color="from-amber-600 to-orange-700"
     :back-url="roleRoute('subproducts.index')"
@@ -8,13 +8,13 @@
     <form wire:submit="save" class="space-y-8">
 
         {{-- ── Identificación ──────────────────────────────────────────────── --}}
-        <x-agro.form-section title="Identificación" color="amber">
+        <x-agro.form-section title="{{ __('Identificación') }}" color="amber">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
                 <flux:field>
-                    <flux:label required>Tipo de subproducto</flux:label>
+                    <flux:label required>{{ __('Tipo de subproducto') }}</flux:label>
                     <flux:select wire:model="type" required>
-                        <flux:select.option value="">Seleccionar tipo...</flux:select.option>
+                        <flux:select.option value="">{{ __('Seleccionar tipo...') }}</flux:select.option>
                         @foreach($types as $key => $label)
                             <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
                         @endforeach
@@ -23,15 +23,15 @@
                 </flux:field>
 
                 <flux:field>
-                    <flux:label required>Fecha</flux:label>
+                    <flux:label required>{{ __('Fecha') }}</flux:label>
                     <flux:input wire:model="subproduct_date" type="date" required />
                     <flux:error name="subproduct_date" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Vino origen</flux:label>
+                    <flux:label>{{ __('Vino origen') }}</flux:label>
                     <flux:select wire:model="wine_id">
-                        <flux:select.option value="">Sin vino asociado</flux:select.option>
+                        <flux:select.option value="">{{ __('Sin vino asociado') }}</flux:select.option>
                         @foreach($wines as $wine)
                             <flux:select.option value="{{ $wine->id }}">
                                 {{ $wine->name }}{{ $wine->vintage ? ' · ' . $wine->vintage : '' }}
@@ -46,20 +46,20 @@
         </x-agro.form-section>
 
         {{-- ── Cantidad ─────────────────────────────────────────────────────── --}}
-        <x-agro.form-section title="Cantidad" color="orange">
+        <x-agro.form-section title="{{ __('Cantidad') }}" color="orange">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                 <flux:field>
-                    <flux:label required>Cantidad</flux:label>
+                    <flux:label required>{{ __('Cantidad') }}</flux:label>
                     <flux:input wire:model="quantity" type="number" min="0.001" step="0.001"
-                        placeholder="Ej: 500.000" required />
+                        placeholder="{{ __('Ej: 500.000') }}" required />
                     <flux:error name="quantity" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Unidad de medida</flux:label>
+                    <flux:label>{{ __('Unidad de medida') }}</flux:label>
                     <flux:select wire:model="unit_of_measurement_id">
-                        <flux:select.option value="">Sin unidad</flux:select.option>
+                        <flux:select.option value="">{{ __('Sin unidad') }}</flux:select.option>
                         @foreach($units as $unit)
                             <flux:select.option value="{{ $unit->id }}">
                                 {{ $unit->name }}{{ $unit->abbreviation ? ' (' . $unit->abbreviation . ')' : '' }}
@@ -73,13 +73,13 @@
         </x-agro.form-section>
 
         {{-- ── Destino ──────────────────────────────────────────────────────── --}}
-        <x-agro.form-section title="Destino" color="zinc">
+        <x-agro.form-section title="{{ __('Destino') }}" color="zinc">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
                 <flux:field>
-                    <flux:label required>Destino</flux:label>
+                    <flux:label required>{{ __('Destino') }}</flux:label>
                     <flux:select wire:model="destination" required>
-                        <flux:select.option value="">Seleccionar destino...</flux:select.option>
+                        <flux:select.option value="">{{ __('Seleccionar destino...') }}</flux:select.option>
                         @foreach($destinations as $key => $label)
                             <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
                         @endforeach
@@ -88,15 +88,15 @@
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Nombre del destino</flux:label>
-                    <flux:input wire:model="destination_name" placeholder="Ej: Destilería García S.L." />
+                    <flux:label>{{ __('Nombre del destino') }}</flux:label>
+                    <flux:input wire:model="destination_name" :placeholder="__('Ej: Destilería García S.L.')" />
                     <flux:description>Nombre de la destilería, planta o entidad receptora.</flux:description>
                     <flux:error name="destination_name" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Número de lote / albarán</flux:label>
-                    <flux:input wire:model="lot_number" placeholder="Ej: OR-2026-001" />
+                    <flux:label>{{ __('Número de lote / albarán') }}</flux:label>
+                    <flux:input wire:model="lot_number" :placeholder="__('Ej: OR-2026-001')" />
                     <flux:error name="lot_number" />
                 </flux:field>
 
@@ -104,15 +104,15 @@
         </x-agro.form-section>
 
         {{-- ── Notas ────────────────────────────────────────────────────────── --}}
-        <x-agro.form-section title="Notas" color="zinc">
+        <x-agro.form-section title="{{ __('Notas') }}" color="zinc">
             <flux:field>
-                <flux:label>Observaciones</flux:label>
+                <flux:label>{{ __('Observaciones') }}</flux:label>
                 <flux:textarea wire:model="notes" rows="3"
-                    placeholder="Condiciones de entrega, referencias legales, etc." />
+                    placeholder="{{ __('Condiciones de entrega, referencias legales, etc.') }}" />
                 <flux:error name="notes" />
             </flux:field>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="roleRoute('subproducts.index')" submit-label="Registrar subproducto" />
+        <x-agro.form-actions :back-url="roleRoute('subproducts.index')" submit-:label="__('Registrar subproducto')" />
     </form>
 </x-agro.form-card>

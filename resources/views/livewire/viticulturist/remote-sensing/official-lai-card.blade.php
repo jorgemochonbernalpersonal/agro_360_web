@@ -97,7 +97,7 @@
                     <div class="bg-white rounded-lg p-3">
                         <div class="text-xs text-zinc-600">{{ __('Por Hectárea') }}</div>
                         <div class="text-2xl font-bold text-purple-900">
-                            {{ number_format($yieldEstimate['yield_per_ha'], 2) }} <span class="text-sm">t/ha</span>
+                            {{ number_format($yieldEstimate['yield_per_ha'], 2) }} <span class="text-sm">{{ __('t/ha') }}</span>
                         </div>
                     </div>
 
@@ -153,7 +153,7 @@
         {{-- Info --}}
         <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-3">
             <div class="flex items-center">
-                <span class="text-lg mr-2">🛰️</span>
+                <span class="text-lg mr-2">{{ __('🛰️') }}</span>
                 <div class="text-xs text-blue-700">
                     <strong>{{ __('Fuente:') }}</strong> {{ $laiData['source'] }}
                     @if(str_contains($laiData['source'], 'MODIS'))

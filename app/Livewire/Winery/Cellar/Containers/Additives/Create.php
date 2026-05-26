@@ -66,7 +66,7 @@ class Create extends Component
             'notes'                    => $this->notes ?: null,
         ]);
 
-        $this->toastSuccess('Aditivo registrado correctamente.');
+        $this->toastSuccess(__('Aditivo registrado correctamente.'));
         $this->roleRedirect('containers.additives.index', $this->container);
     }
 

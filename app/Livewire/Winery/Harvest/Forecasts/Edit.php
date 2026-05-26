@@ -96,8 +96,8 @@ class Edit extends Component
     protected function messages(): array
     {
         return [
-            'estimated_kg.required' => 'Introduce los kg estimados.',
-            'estimated_kg.min'      => 'Los kg estimados deben ser mayor que 0.',
+            'estimated_kg.required' => __('Introduce los kg estimados.'),
+            'estimated_kg.min'      => __('Los kg estimados deben ser mayor que 0.'),
         ];
     }
 
@@ -112,7 +112,7 @@ class Edit extends Component
             'notes'           => $this->notes ?: null,
         ]);
 
-        $this->toastSuccess('Previsión actualizada correctamente.');
+        $this->toastSuccess(__('Previsión actualizada correctamente.'));
         return $this->roleRedirect('harvest-forecasts.index');
     }
 

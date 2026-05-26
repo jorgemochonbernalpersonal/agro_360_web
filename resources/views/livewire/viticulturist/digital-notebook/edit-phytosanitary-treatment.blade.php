@@ -314,7 +314,7 @@
         {{-- ── Gestión Integrada de Plagas (IPM) ────────────────────────────── --}}
         <x-agro.form-section :title="__('Gestión Integrada de Plagas (IPM)')" color="green">
             <flux:callout variant="info" icon="information-circle">
-                <strong>RD 1311/2012 — Art. 14:</strong> {{ __('Documenta los métodos alternativos y preventivos aplicados antes del tratamiento químico.') }}
+                <strong>{{ __('RD 1311/2012 — Art. 14:') }}</strong> {{ __('Documenta los métodos alternativos y preventivos aplicados antes del tratamiento químico.') }}
             </flux:callout>
             <div class="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
                 <label class="flex items-start gap-3 p-3 border border-zinc-200 rounded-lg cursor-pointer hover:bg-zinc-50 transition-colors">

@@ -24,7 +24,7 @@ class Edit extends AbstractEdit
         $this->authorizeOwnership($cueExport);
 
         if ($cueExport->status !== 'draft') {
-            session()->flash('error', 'Solo se pueden editar exportaciones en estado Borrador.');
+            session()->flash('error', __('Solo se pueden editar exportaciones en estado Borrador.'));
             $this->viticulturistRoleRedirect('cue-exports.index');
             return;
         }

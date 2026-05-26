@@ -52,7 +52,7 @@
                 <div class="flex items-center gap-3">
                     <a href="{{ url('/') }}" class="flex items-center gap-3">
                         <img src="{{ asset('images/logo.png') }}" alt="Agro365" width="120" height="40" loading="eager" fetchpriority="high" decoding="async" class="h-10 w-auto">
-                        <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">Agro365</span>
+                        <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Agro365') }}</span>
                     </a>
                 </div>
                 <div class="flex items-center gap-4">
@@ -81,13 +81,13 @@
                 <ol class="flex items-center space-x-2">
                     <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
                         <a href="{{ url('/') }}" class="hover:text-[var(--color-agro-green)]" itemprop="item">
-                            <span itemprop="name">Inicio</span>
+                            <span itemprop="name">{{ __('Inicio') }}</span>
                         </a>
                         <meta itemprop="position" content="1" />
                     </li>
                     <span class="mx-2">/</span>
                     <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                        <span class="text-gray-900" itemprop="name">Cuaderno Digital</span>
+                        <span class="text-gray-900" itemprop="name">{{ __('Cuaderno Digital') }}</span>
                         <meta itemprop="position" content="2" />
                     </li>
                 </ol>
@@ -95,93 +95,91 @@
 
             <!-- Header -->
             <div class="mb-12">
-                <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">
-                    Cuaderno Digital Obligatorio desde 2027
-                </h1>
+                <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">{{ __('Cuaderno Digital Obligatorio desde 2027') }}</h1>
                 <p class="text-xl text-gray-600 leading-relaxed">
-                    El <strong>cuaderno digital</strong> es obligatorio para todos los agricultores desde 2027. Software de cuaderno de campo digital para registrar tratamientos, riegos, fertilizaciones y todas las actividades agrícolas. Cumplimiento normativo PAC garantizado.
+                    El <strong>{{ __('cuaderno digital') }}</strong> es obligatorio para todos los agricultores desde 2027. Software de cuaderno de campo digital para registrar tratamientos, riegos, fertilizaciones y todas las actividades agrícolas. Cumplimiento normativo PAC garantizado.
                 </p>
             </div>
 
             <!-- Content -->
             <article class="prose prose-lg max-w-none">
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">¿Qué es el Cuaderno Digital?</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('¿Qué es el Cuaderno Digital?') }}</h2>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        El <strong>cuaderno digital</strong> o <strong>cuaderno de campo digital</strong> es el registro obligatorio de todas las actividades realizadas en una explotación agrícola. Desde 2027, todos los agricultores deben llevar este registro de forma digital, sustituyendo al cuaderno de campo en papel.
+                        El <strong>{{ __('cuaderno digital') }}</strong> o <strong>{{ __('cuaderno de campo digital') }}</strong> es el registro obligatorio de todas las actividades realizadas en una explotación agrícola. Desde 2027, todos los agricultores deben llevar este registro de forma digital, sustituyendo al cuaderno de campo en papel.
                     </p>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        El <strong>cuaderno digital</strong> debe registrar: tratamientos fitosanitarios, riegos, fertilizaciones, labores culturales, siembras, cosechas y cualquier otra actividad relacionada con la explotación agrícola.
+                        El <strong>{{ __('cuaderno digital') }}</strong> debe registrar: tratamientos fitosanitarios, riegos, fertilizaciones, labores culturales, siembras, cosechas y cualquier otra actividad relacionada con la explotación agrícola.
                     </p>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Funcionalidades del Cuaderno Digital</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Funcionalidades del Cuaderno Digital') }}</h2>
                     <div class="grid md:grid-cols-2 gap-6 mb-6">
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">📋 Registro de Tratamientos</h3>
-                            <p class="text-gray-700">Registra todos los tratamientos fitosanitarios con fecha, producto, dosis, parcela y condiciones de aplicación.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('📋 Registro de Tratamientos') }}</h3>
+                            <p class="text-gray-700">{{ __('Registra todos los tratamientos fitosanitarios con fecha, producto, dosis, parcela y condiciones de aplicación.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">💧 Control de Riegos</h3>
-                            <p class="text-gray-700">Registra riegos con fecha, cantidad de agua, método de riego y parcela tratada.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('💧 Control de Riegos') }}</h3>
+                            <p class="text-gray-700">{{ __('Registra riegos con fecha, cantidad de agua, método de riego y parcela tratada.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">🌱 Fertilizaciones</h3>
-                            <p class="text-gray-700">Registra fertilizaciones con tipo de fertilizante, dosis, fecha y parcela.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('🌱 Fertilizaciones') }}</h3>
+                            <p class="text-gray-700">{{ __('Registra fertilizaciones con tipo de fertilizante, dosis, fecha y parcela.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">🔍 Trazabilidad</h3>
-                            <p class="text-gray-700">Trazabilidad completa de todas las actividades desde la parcela hasta el producto final.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('🔍 Trazabilidad') }}</h3>
+                            <p class="text-gray-700">{{ __('Trazabilidad completa de todas las actividades desde la parcela hasta el producto final.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">📊 Informes Oficiales</h3>
-                            <p class="text-gray-700">Genera informes oficiales con firma electrónica SHA-256 para inspecciones.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('📊 Informes Oficiales') }}</h3>
+                            <p class="text-gray-700">{{ __('Genera informes oficiales con firma electrónica SHA-256 para inspecciones.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">📱 Acceso Móvil</h3>
-                            <p class="text-gray-700">Registra actividades directamente desde el campo con tu smartphone o tablet.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('📱 Acceso Móvil') }}</h3>
+                            <p class="text-gray-700">{{ __('Registra actividades directamente desde el campo con tu smartphone o tablet.') }}</p>
                         </div>
                     </div>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Agro365: Tu Cuaderno Digital Completo</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Agro365: Tu Cuaderno Digital Completo') }}</h2>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        <strong>Agro365</strong> incluye un <strong>cuaderno digital</strong> completo que cumple con todas las normativas vigentes desde 2027. Nuestra plataforma te permite registrar todas las actividades agrícolas de forma sencilla y cumplir con la normativa PAC.
+                        <strong>{{ __('Agro365') }}</strong> incluye un <strong>{{ __('cuaderno digital') }}</strong> completo que cumple con todas las normativas vigentes desde 2027. Nuestra plataforma te permite registrar todas las actividades agrícolas de forma sencilla y cumplir con la normativa PAC.
                     </p>
                     <div class="bg-gradient-to-r from-[var(--color-agro-green-bg)] to-[var(--color-agro-green-light)]/30 p-8 rounded-xl border border-[var(--color-agro-green)]/20 mb-6">
-                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">Ventajas del Cuaderno Digital de Agro365</h3>
+                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Ventajas del Cuaderno Digital de Agro365') }}</h3>
                         <ul class="space-y-3 text-gray-800">
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Cumplimiento normativo:</strong> Cumple con todas las normativas desde 2027</span>
+                                <span><strong>{{ __('Cumplimiento normativo:') }}</strong> Cumple con todas las normativas desde 2027</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Fácil de usar:</strong> Interfaz intuitiva para registrar actividades rápidamente</span>
+                                <span><strong>{{ __('Fácil de usar:') }}</strong> Interfaz intuitiva para registrar actividades rápidamente</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Integración SIGPAC:</strong> Vincula actividades con parcelas SIGPAC automáticamente</span>
+                                <span><strong>{{ __('Integración SIGPAC:') }}</strong> Vincula actividades con parcelas SIGPAC automáticamente</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Informes oficiales:</strong> Genera informes con firma electrónica para inspecciones</span>
+                                <span><strong>{{ __('Informes oficiales:') }}</strong> Genera informes con firma electrónica para inspecciones</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Acceso móvil:</strong> Registra actividades desde el campo con tu smartphone</span>
+                                <span><strong>{{ __('Acceso móvil:') }}</strong> Registra actividades desde el campo con tu smartphone</span>
                             </li>
                         </ul>
                     </div>
@@ -190,48 +188,48 @@
 
             <!-- Internal linking: Funcionalidades relacionadas -->
             <div class="mt-16 pt-12 border-t border-gray-200">
-                <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-6">Funcionalidades relacionadas</h2>
+                <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-6">{{ __('Funcionalidades relacionadas') }}</h2>
                 <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     <a href="{{ content_route('content.ndvi-viñedo-teledeteccion') }}" class="flex items-start gap-3 p-4 rounded-xl border border-gray-200 hover:border-[var(--color-agro-green)] hover:bg-green-50 transition-all group">
-                        <span class="text-2xl">🛰️</span>
+                        <span class="text-2xl">{{ __('🛰️') }}</span>
                         <div>
-                            <p class="font-semibold text-gray-900 group-hover:text-[var(--color-agro-green-dark)]">Teledetección NDVI</p>
-                            <p class="text-sm text-gray-500">Vigor vegetativo e índice de salud de tus parcelas desde satélite</p>
+                            <p class="font-semibold text-gray-900 group-hover:text-[var(--color-agro-green-dark)]">{{ __('Teledetección NDVI') }}</p>
+                            <p class="text-sm text-gray-500">{{ __('Vigor vegetativo e índice de salud de tus parcelas desde satélite') }}</p>
                         </div>
                     </a>
                     <a href="{{ content_route('content.facturacion-agricola') }}" class="flex items-start gap-3 p-4 rounded-xl border border-gray-200 hover:border-[var(--color-agro-green)] hover:bg-green-50 transition-all group">
                         <span class="text-2xl">🧾</span>
                         <div>
-                            <p class="font-semibold text-gray-900 group-hover:text-[var(--color-agro-green-dark)]">Facturación Verifactu</p>
-                            <p class="text-sm text-gray-500">Facturas de cosecha certificadas con cumplimiento fiscal 2025</p>
+                            <p class="font-semibold text-gray-900 group-hover:text-[var(--color-agro-green-dark)]">{{ __('Facturación Verifactu') }}</p>
+                            <p class="text-sm text-gray-500">{{ __('Facturas de cosecha certificadas con cumplimiento fiscal 2025') }}</p>
                         </div>
                     </a>
                     <a href="{{ content_route('content.trazabilidad-agricola') }}" class="flex items-start gap-3 p-4 rounded-xl border border-gray-200 hover:border-[var(--color-agro-green)] hover:bg-green-50 transition-all group">
                         <span class="text-2xl">🔍</span>
                         <div>
-                            <p class="font-semibold text-gray-900 group-hover:text-[var(--color-agro-green-dark)]">Trazabilidad Agrícola</p>
-                            <p class="text-sm text-gray-500">De la parcela SIGPAC al producto final con trazabilidad completa</p>
+                            <p class="font-semibold text-gray-900 group-hover:text-[var(--color-agro-green-dark)]">{{ __('Trazabilidad Agrícola') }}</p>
+                            <p class="text-sm text-gray-500">{{ __('De la parcela SIGPAC al producto final con trazabilidad completa') }}</p>
                         </div>
                     </a>
                     <a href="{{ content_route('content.informes-oficiales-agricultura') }}" class="flex items-start gap-3 p-4 rounded-xl border border-gray-200 hover:border-[var(--color-agro-green)] hover:bg-green-50 transition-all group">
                         <span class="text-2xl">📄</span>
                         <div>
-                            <p class="font-semibold text-gray-900 group-hover:text-[var(--color-agro-green-dark)]">Informes Oficiales SHA-256</p>
-                            <p class="text-sm text-gray-500">Firma electrónica y QR de verificación para inspecciones PAC</p>
+                            <p class="font-semibold text-gray-900 group-hover:text-[var(--color-agro-green-dark)]">{{ __('Informes Oficiales SHA-256') }}</p>
+                            <p class="text-sm text-gray-500">{{ __('Firma electrónica y QR de verificación para inspecciones PAC') }}</p>
                         </div>
                     </a>
                     <a href="{{ content_route('content.que-es-sigpac') }}" class="flex items-start gap-3 p-4 rounded-xl border border-gray-200 hover:border-[var(--color-agro-green)] hover:bg-green-50 transition-all group">
-                        <span class="text-2xl">🗺️</span>
+                        <span class="text-2xl">{{ __('🗺️') }}</span>
                         <div>
-                            <p class="font-semibold text-gray-900 group-hover:text-[var(--color-agro-green-dark)]">Gestión SIGPAC</p>
-                            <p class="text-sm text-gray-500">Parcelas con códigos SIGPAC oficiales en mapa interactivo</p>
+                            <p class="font-semibold text-gray-900 group-hover:text-[var(--color-agro-green-dark)]">{{ __('Gestión SIGPAC') }}</p>
+                            <p class="text-sm text-gray-500">{{ __('Parcelas con códigos SIGPAC oficiales en mapa interactivo') }}</p>
                         </div>
                     </a>
                     <a href="{{ content_route('content.gestion-vendimia') }}" class="flex items-start gap-3 p-4 rounded-xl border border-gray-200 hover:border-[var(--color-agro-green)] hover:bg-green-50 transition-all group">
                         <span class="text-2xl">🍇</span>
                         <div>
-                            <p class="font-semibold text-gray-900 group-hover:text-[var(--color-agro-green-dark)]">Gestión de Vendimia</p>
-                            <p class="text-sm text-gray-500">Contenedores, kg por parcela, baumé y albaranes automáticos</p>
+                            <p class="font-semibold text-gray-900 group-hover:text-[var(--color-agro-green-dark)]">{{ __('Gestión de Vendimia') }}</p>
+                            <p class="text-sm text-gray-500">{{ __('Contenedores, kg por parcela, baumé y albaranes automáticos') }}</p>
                         </div>
                     </a>
                 </div>
@@ -239,12 +237,8 @@
 
             <!-- CTA Section -->
             <div class="mt-12 pt-12 border-t border-gray-200 text-center">
-                <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">
-                    Cuaderno Digital Obligatorio desde 2027
-                </h2>
-                <p class="text-gray-600 mb-8 text-lg">
-                    Cumple con la normativa del cuaderno digital desde el primer día con Agro365. Registro de tratamientos, riegos y actividades. Prueba gratis 3 meses.
-                </p>
+                <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Cuaderno Digital Obligatorio desde 2027') }}</h2>
+                <p class="text-gray-600 mb-8 text-lg">{{ __('Cumple con la normativa del cuaderno digital desde el primer día con Agro365. Registro de tratamientos, riegos y actividades. Prueba gratis 3 meses.') }}</p>
                 <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-lg">
                     Comenzar Gratis
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

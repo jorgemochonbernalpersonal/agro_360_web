@@ -1,6 +1,6 @@
 <x-agro.form-card
-    title="Nueva Nota de Cata"
-    description="Evaluación sensorial del vino: fase visual, olfativa, gustativa y valoración global."
+    title="{{ __('Nueva Nota de Cata') }}"
+    :description="__('Evaluación sensorial del vino: fase visual, olfativa, gustativa y valoración global.')"
     icon="beaker"
     icon-color="from-amber-500 to-amber-700"
     :back-url="roleRoute('tasting-notes.index')"
@@ -8,13 +8,13 @@
     <form wire:submit="save" class="space-y-8">
 
         {{-- ── Vino y catador ─────────────────────────────────────────────── --}}
-        <x-agro.form-section title="Vino y catador" color="amber">
+        <x-agro.form-section title="{{ __('Vino y catador') }}" color="amber">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
                 <flux:field>
-                    <flux:label required>Vino</flux:label>
+                    <flux:label required>{{ __('Vino') }}</flux:label>
                     <flux:select wire:model.live="wine_id" required>
-                        <flux:select.option value="">Seleccionar vino...</flux:select.option>
+                        <flux:select.option value="">{{ __('Seleccionar vino...') }}</flux:select.option>
                         @foreach($wines as $wine)
                             <flux:select.option value="{{ $wine->id }}">
                                 {{ $wine->name }}{{ $wine->vintage ? ' · ' . $wine->vintage : '' }}
@@ -25,15 +25,15 @@
                 </flux:field>
 
                 <flux:field>
-                    <flux:label required>Fecha de cata</flux:label>
+                    <flux:label required>{{ __('Fecha de cata') }}</flux:label>
                     <flux:input wire:model="evaluation_date" type="date" required />
                     <flux:error name="evaluation_date" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Enólogo / catador</flux:label>
+                    <flux:label>{{ __('Enólogo / catador') }}</flux:label>
                     <flux:select wire:model="oenologist_id">
-                        <flux:select.option value="">Sin enólogo asignado</flux:select.option>
+                        <flux:select.option value="">{{ __('Sin enólogo asignado') }}</flux:select.option>
                         @foreach($oenologists as $oenologist)
                             <flux:select.option value="{{ $oenologist->id }}">{{ $oenologist->surname }}, {{ $oenologist->name }}</flux:select.option>
                         @endforeach
@@ -42,8 +42,8 @@
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Nombre del catador (externo)</flux:label>
-                    <flux:input wire:model="evaluator_name" placeholder="Ej: Juan García" />
+                    <flux:label>{{ __('Nombre del catador (externo)') }}</flux:label>
+                    <flux:input wire:model="evaluator_name" :placeholder="__('Ej: Juan García')" />
                     <flux:description>Solo si el catador no es uno de los enólogos registrados.</flux:description>
                     <flux:error name="evaluator_name" />
                 </flux:field>
@@ -52,17 +52,17 @@
         </x-agro.form-section>
 
         {{-- ── Fase visual ─────────────────────────────────────────────────── --}}
-        <x-agro.form-section title="Fase visual" color="yellow">
+        <x-agro.form-section title="{{ __('Fase visual') }}" color="yellow">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
                 <flux:field>
-                    <flux:label>Color</flux:label>
-                    <flux:input wire:model="visual_color" placeholder="Ej: rojo rubí, amarillo dorado..." />
+                    <flux:label>{{ __('Color') }}</flux:label>
+                    <flux:input wire:model="visual_color" :placeholder="__('Ej: rojo rubí, amarillo dorado...')" />
                     <flux:error name="visual_color" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Limpidez</flux:label>
+                    <flux:label>{{ __('Limpidez') }}</flux:label>
                     <flux:select wire:model="visual_clarity">
                         <flux:select.option value="">—</flux:select.option>
                         @foreach($visualClarityOptions as $key => $label)
@@ -73,7 +73,7 @@
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Intensidad</flux:label>
+                    <flux:label>{{ __('Intensidad') }}</flux:label>
                     <flux:select wire:model="visual_intensity">
                         <flux:select.option value="">—</flux:select.option>
                         @foreach($visualIntensityOptions as $key => $label)
@@ -87,11 +87,11 @@
         </x-agro.form-section>
 
         {{-- ── Fase olfativa ──────────────────────────────────────────────── --}}
-        <x-agro.form-section title="Fase olfativa" color="green">
+        <x-agro.form-section title="{{ __('Fase olfativa') }}" color="green">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                 <flux:field>
-                    <flux:label>Intensidad aromática</flux:label>
+                    <flux:label>{{ __('Intensidad aromática') }}</flux:label>
                     <flux:select wire:model="aroma_intensity">
                         <flux:select.option value="">—</flux:select.option>
                         @foreach($aromaIntensityOptions as $key => $label)
@@ -102,9 +102,9 @@
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Descriptores aromáticos</flux:label>
+                    <flux:label>{{ __('Descriptores aromáticos') }}</flux:label>
                     <flux:textarea wire:model="aroma_descriptors" rows="3"
-                        placeholder="Frutas rojas, especias, vainilla, roble tostado..." />
+                        placeholder="{{ __('Frutas rojas, especias, vainilla, roble tostado...') }}" />
                     <flux:error name="aroma_descriptors" />
                 </flux:field>
 
@@ -112,11 +112,11 @@
         </x-agro.form-section>
 
         {{-- ── Fase gustativa ─────────────────────────────────────────────── --}}
-        <x-agro.form-section title="Fase gustativa" color="blue">
+        <x-agro.form-section title="{{ __('Fase gustativa') }}" color="blue">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
 
                 <flux:field>
-                    <flux:label>Acidez</flux:label>
+                    <flux:label>{{ __('Acidez') }}</flux:label>
                     <flux:select wire:model="palate_acidity">
                         <flux:select.option value="">—</flux:select.option>
                         @foreach($palateLevelOptions as $key => $label)
@@ -127,7 +127,7 @@
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Taninos</flux:label>
+                    <flux:label>{{ __('Taninos') }}</flux:label>
                     <flux:select wire:model="palate_tannins">
                         <flux:select.option value="">—</flux:select.option>
                         @foreach($palateLevelOptions as $key => $label)
@@ -139,7 +139,7 @@
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Cuerpo</flux:label>
+                    <flux:label>{{ __('Cuerpo') }}</flux:label>
                     <flux:select wire:model="palate_body">
                         <flux:select.option value="">—</flux:select.option>
                         @foreach($palateBodyOptions as $key => $label)
@@ -150,7 +150,7 @@
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Persistencia</flux:label>
+                    <flux:label>{{ __('Persistencia') }}</flux:label>
                     <flux:select wire:model="palate_finish">
                         <flux:select.option value="">—</flux:select.option>
                         @foreach($palateFinishOptions as $key => $label)
@@ -164,34 +164,34 @@
         </x-agro.form-section>
 
         {{-- ── Valoración global ──────────────────────────────────────────── --}}
-        <x-agro.form-section title="Valoración global" color="indigo">
+        <x-agro.form-section title="{{ __('Valoración global') }}" color="indigo">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
                 <flux:field>
-                    <flux:label>Puntuación (0–100)</flux:label>
+                    <flux:label>{{ __('Puntuación (0–100)') }}</flux:label>
                     <flux:input wire:model="overall_score" type="number" min="0" max="100" step="0.5"
-                        placeholder="Ej: 87.5" />
+                        placeholder="{{ __('Ej: 87.5') }}" />
                     <flux:description>Escala Parker / WSET.</flux:description>
                     <flux:error name="overall_score" />
                 </flux:field>
 
                 <flux:field class="md:col-span-2">
-                    <flux:label>Conclusión</flux:label>
+                    <flux:label>{{ __('Conclusión') }}</flux:label>
                     <flux:textarea wire:model="overall_conclusion" rows="3"
-                        placeholder="Vino equilibrado con buena estructura tánica..." />
+                        placeholder="{{ __('Vino equilibrado con buena estructura tánica...') }}" />
                     <flux:error name="overall_conclusion" />
                 </flux:field>
 
             </div>
 
             <flux:field class="mt-4">
-                <flux:label>Notas adicionales</flux:label>
+                <flux:label>{{ __('Notas adicionales') }}</flux:label>
                 <flux:textarea wire:model="notes" rows="2"
-                    placeholder="Potencial de crianza, recomendaciones de maridaje..." />
+                    placeholder="{{ __('Potencial de crianza, recomendaciones de maridaje...') }}" />
                 <flux:error name="notes" />
             </flux:field>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="roleRoute('tasting-notes.index')" submit-label="Guardar cata" />
+        <x-agro.form-actions :back-url="roleRoute('tasting-notes.index')" submit-:label="__('Guardar cata')" />
     </form>
 </x-agro.form-card>

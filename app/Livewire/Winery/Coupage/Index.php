@@ -36,7 +36,7 @@ class Index extends Component
             $transfer->delete();
         });
 
-        $this->toastSuccess('Coupage eliminado correctamente.');
+        $this->toastSuccess(__('Coupage eliminado correctamente.'));
     }
 
     #[Layout('layouts.app')]

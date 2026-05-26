@@ -13,7 +13,7 @@ trait WithReadOnlyGuard
     protected function isReadOnly(): bool
     {
         if (Auth::check() && Auth::user()->isAdmin() && Auth::user()->is_readonly_admin) {
-            $this->toastError('Tu cuenta es de solo lectura. Contacta con el superadmin para realizar cambios.');
+            $this->toastError(__('Tu cuenta es de solo lectura. Contacta con el superadmin para realizar cambios.'));
             return true;
         }
 

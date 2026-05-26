@@ -143,7 +143,7 @@ class Create extends Component
                     $this->client_address_id = (string) $primary->id;
                 } else {
                     $this->client_address_id = '';
-                    $this->addError('client_id', 'Este cliente no tiene ninguna dirección configurada. Por favor, añade una dirección al cliente primero.');
+                    $this->addError('client_id', __('Este cliente no tiene ninguna dirección configurada. Por favor, añade una dirección al cliente primero.'));
                 }
 
                 $this->availableAddresses = $client->addresses;
@@ -174,13 +174,13 @@ class Create extends Component
             ->find($this->selectedHarvestId);
 
         if (!$harvest) {
-            $this->toastError('Cosecha no encontrada.');
+            $this->toastError(__('Cosecha no encontrada.'));
             return;
         }
 
         foreach ($this->items as $item) {
             if (isset($item['harvest_id']) && (int) $item['harvest_id'] === $harvest->id) {
-                $this->toastError('Esta cosecha ya está en la factura actual.');
+                $this->toastError(__('Esta cosecha ya está en la factura actual.'));
                 return;
             }
         }
@@ -191,7 +191,7 @@ class Create extends Component
             : (float) $harvest->total_weight;
 
         if ($availableQty <= 0) {
-            $this->toastError('Esta cosecha no tiene stock disponible para facturar.');
+            $this->toastError(__('Esta cosecha no tiene stock disponible para facturar.'));
             return;
         }
 
@@ -209,9 +209,9 @@ class Create extends Component
             'wine_lot_id'         => null,
             'concept_type'        => 'harvest',
             'name'                => $itemName,
-            'description'         => 'Cosecha del ' . $harvest->harvest_start_date->format('d/m/Y') .
+            'description'         => __('Cosecha del ') . $harvest->harvest_start_date->format('d/m/Y') .
                                      ($harvest->plotPlanting->grapeVariety ? ' - Variedad: ' . $harvest->plotPlanting->grapeVariety->name : ''),
-            'sku'                 => 'HARV-' . $harvest->id,
+            'sku'                 => __('HARV-') . $harvest->id,
             'quantity'            => $availableQty,
             'unit'                => 'kg',
             'available_qty'       => $availableQty,
@@ -221,7 +221,7 @@ class Create extends Component
         ];
 
         $this->selectedHarvestId = '';
-        $this->toastSuccess('Cosecha añadida a la factura.');
+        $this->toastSuccess(__('Cosecha añadida a la factura.'));
     }
 
     // ── Add wine lot item ─────────────────────────────────────────────────────
@@ -235,18 +235,18 @@ class Create extends Component
         $lot = ProductLot::where('user_id', Auth::id())->find($this->selectedLotId);
 
         if (!$lot) {
-            $this->toastError('Lote no encontrado.');
+            $this->toastError(__('Lote no encontrado.'));
             return;
         }
 
         if ((float) $lot->available_quantity <= 0) {
-            $this->toastError('Este lote no tiene stock disponible para facturar.');
+            $this->toastError(__('Este lote no tiene stock disponible para facturar.'));
             return;
         }
 
         foreach ($this->items as $item) {
             if (isset($item['wine_lot_id']) && (int) $item['wine_lot_id'] === $lot->id) {
-                $this->toastError('Este lote ya está en la factura.');
+                $this->toastError(__('Este lote ya está en la factura.'));
                 return;
             }
         }
@@ -267,7 +267,7 @@ class Create extends Component
         ];
 
         $this->selectedLotId = '';
-        $this->toastSuccess('Producto añadido al albarán.');
+        $this->toastSuccess(__('Producto añadido al albarán.'));
     }
 
     // ── Add manual item ───────────────────────────────────────────────────────
@@ -376,9 +376,9 @@ class Create extends Component
     protected function messages(): array
     {
         return [
-            'client_address_id.required' => 'Debes seleccionar un cliente con dirección. Este cliente no tiene direcciones configuradas.',
-            'items.required'             => 'Debes añadir al menos un ítem a la factura.',
-            'items.min'                  => 'Debes añadir al menos un ítem a la factura.',
+            'client_address_id.required' => __('Debes seleccionar un cliente con dirección. Este cliente no tiene direcciones configuradas.'),
+            'items.required'             => __('Debes añadir al menos un ítem a la factura.'),
+            'items.min'                  => __('Debes añadir al menos un ítem a la factura.'),
         ];
     }
 
@@ -509,7 +509,7 @@ class Create extends Component
                 'user_id'   => Auth::id(),
                 'exception' => $e,
             ]);
-            $this->toastError($e instanceof \RuntimeException ? $e->getMessage() : 'Error al crear la factura. Inténtalo de nuevo.');
+            $this->toastError($e instanceof \RuntimeException ? $e->getMessage()  : __('Error al crear la factura. Inténtalo de nuevo.'));
         }
     }
 
@@ -524,6 +524,6 @@ class Create extends Component
 
         return view('livewire.producer.invoices.create', [
             'campaigns' => $campaigns,
-        ])->layout('layouts.app', ['title' => 'Crear albarán - Agro365']);
+        ])->layout('layouts.app', ['title' => __('Crear albarán - Agro365')]);
     }
 }

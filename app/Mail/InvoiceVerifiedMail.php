@@ -18,7 +18,7 @@ class InvoiceVerifiedMail extends Mailable
     public function envelope(): Envelope
     {
         $number  = $this->invoice->invoice_number ?? $this->invoice->id;
-        $subject = 'Factura verificada ' . $number . ' — ' . config('app.name');
+        $subject = __('Factura verificada :number — :app', ['number' => $number, 'app' => config('app.name')]);
 
         return new Envelope(subject: $subject);
     }

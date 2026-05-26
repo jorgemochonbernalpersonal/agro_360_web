@@ -176,8 +176,8 @@ class Dashboard extends Component
             'recentTransfers'        => $recentTransfers,
             'recentViticulturists'   => $recentViticulturists,
         ])->layout('layouts.app', [
-            'title'       => 'Dashboard Productor - Agro365',
-            'description' => 'Panel de control combinado campo y bodega',
+            'title'       => __('Dashboard Productor - Agro365'),
+            'description' => __('Panel de control combinado campo y bodega'),
         ]);
     }
 }

@@ -102,17 +102,17 @@
 </head>
 <body>
     <div class="header">
-        <h1>📊 Informe de Análisis Histórico NDVI</h1>
+        <h1>{{ __('📊 Informe de Análisis Histórico NDVI') }}</h1>
         <div class="plot-name">{{ $plot->name }}</div>
         <div style="font-size: 10px; color: #999;">Generado: {{ $generated_at }}</div>
     </div>
 
     <div class="info-box">
-        <h3>Información del Período</h3>
+        <h3>{{ __('Información del Período') }}</h3>
         <p style="margin: 5px 0; font-size: 10px;">
-            <strong>Período analizado:</strong> {{ $stats['period'] }} días<br>
-            <strong>Total de registros:</strong> {{ $stats['count'] }}<br>
-            <strong>Área de la parcela:</strong> {{ number_format($plot->area ?? 0, 2) }} ha
+            <strong>{{ __('Período analizado:') }}</strong> {{ $stats['period'] }} días<br>
+            <strong>{{ __('Total de registros:') }}</strong> {{ $stats['count'] }}<br>
+            <strong>{{ __('Área de la parcela:') }}</strong> {{ number_format($plot->area ?? 0, 2) }} ha
         </p>
     </div>
 
@@ -137,13 +137,13 @@
         </div>
     </div>
 
-    <h3 style="color: #047857; margin-top: 20px;">Datos Históricos</h3>
+    <h3 style="color: #047857; margin-top: 20px;">{{ __('Datos Históricos') }}</h3>
     <table class="data-table">
         <thead>
             <tr>
-                <th>Fecha</th>
-                <th>NDVI</th>
-                <th>Estado de Salud</th>
+                <th>{{ __('Fecha') }}</th>
+                <th>{{ __('NDVI') }}</th>
+                <th>{{ __('Estado de Salud') }}</th>
             </tr>
         </thead>
         <tbody>
@@ -162,9 +162,9 @@
     </table>
 
     <div class="footer">
-        <p><strong>Agro365 - Remote Sensing Dashboard</strong></p>
-        <p>Datos satelitales NASA VIIRS/MODIS • 100% Gratuito</p>
-        <p>Este informe contiene datos de teledetección para análisis profesional de viñedos</p>
+        <p><strong>{{ __('Agro365 - Remote Sensing Dashboard') }}</strong></p>
+        <p>{{ __('Datos satelitales NASA VIIRS/MODIS • 100% Gratuito') }}</p>
+        <p>{{ __('Este informe contiene datos de teledetección para análisis profesional de viñedos') }}</p>
     </div>
 </body>
 </html>

@@ -65,10 +65,10 @@ class Index extends Component
         $yield->update(['active' => $newActive]);
 
         if ($newActive) {
-            $this->toastSuccess('Estimación activada exitosamente.');
+            $this->toastSuccess(__('Estimación activada exitosamente.'));
             if ($this->currentTab === 'inactive') $this->currentTab = 'active';
         } else {
-            $this->toastSuccess('Estimación desactivada exitosamente.');
+            $this->toastSuccess(__('Estimación desactivada exitosamente.'));
             if ($this->currentTab === 'active') $this->currentTab = 'inactive';
         }
     }
@@ -121,8 +121,8 @@ class Index extends Component
             'campaigns'       => $campaigns,
             'stats'           => $stats,
         ])->layout('layouts.app', [
-            'title'       => 'Rendimientos Estimados - Agro365',
-            'description' => 'Gestiona las estimaciones de producción de tus viñedos.',
+            'title'       => __('Rendimientos Estimados - Agro365'),
+            'description' => __('Gestiona las estimaciones de producción de tus viñedos.'),
         ]);
     }
 }

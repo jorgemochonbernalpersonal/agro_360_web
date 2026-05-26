@@ -11,11 +11,11 @@ class CampaignDocumentController extends Controller
     public function download(CampaignDocument $document)
     {
         if ($document->viticulturist_id !== auth()->id()) {
-            abort(403, 'No tienes permiso para descargar este documento.');
+            abort(403, __('No tienes permiso para descargar este documento.'));
         }
 
         if (! $document->file_path || ! Storage::disk('private')->exists($document->file_path)) {
-            abort(404, 'El archivo no existe.');
+            abort(404, __('El archivo no existe.'));
         }
 
         return Storage::disk('private')->download(

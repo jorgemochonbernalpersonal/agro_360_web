@@ -366,7 +366,7 @@
         @if($user->role === 'producer')
         {{-- Producer: Frecuentes (solo si hay pins) --}}
         <template x-if="pins.length > 0">
-            <button type="button" x-on:click="$store.nav.toggle('_favorites')" title="Frecuentes"
+            <button type="button" x-on:click="$store.nav.toggle('_favorites')" title="{{ __('Frecuentes') }}"
                 class="notebook-tab flex-shrink-0 relative group flex items-center justify-center w-11 h-11 rounded-xl transition-all duration-200 mb-0.5"
                 :class="$store.nav.open === '_favorites' ? 'tab-open' : ''"
                 data-key="_favorites" data-active="false"
@@ -398,12 +398,12 @@
                 x-on:click="setProducerTab('vineyard')"
                 :class="producerTab === 'vineyard' ? 'bg-green-500/20 text-green-400 ring-1 ring-inset ring-green-500/40' : 'text-white/40 hover:text-white/70 hover:bg-white/10'"
                 class="flex-1 h-7 rounded-lg text-[10px] font-bold transition-all leading-none"
-                title="Viñedo">🌿</button>
+                title="{{ __('Viñedo') }}">{{ __('🌿') }}</button>
             <button type="button"
                 x-on:click="setProducerTab('bodega')"
                 :class="producerTab === 'bodega' ? 'bg-red-500/20 text-red-400 ring-1 ring-inset ring-red-500/40' : 'text-white/40 hover:text-white/70 hover:bg-white/10'"
                 class="flex-1 h-7 rounded-lg text-[10px] font-bold transition-all leading-none"
-                title="Bodega">🏛</button>
+                title="{{ __('Bodega') }}">{{ __('🏛') }}</button>
         </div>
         {{-- Producer: capítulos exclusivos Viñedo --}}
         <div x-show="producerTab === 'vineyard'"
@@ -471,7 +471,7 @@
                        class="flex-1 flex flex-col items-center justify-center py-2 gap-1 rounded-[10px] transition-all duration-200
                               {{ !$isVisual ? 'bg-white/[0.18] text-white shadow-sm' : 'text-white/35 hover:text-white/65 hover:bg-white/[0.08]' }}">
                         <flux:icon icon="bars-3" class="w-4 h-4 shrink-0" />
-                        <span class="text-[8px] font-semibold tracking-wide leading-none">Nav</span>
+                        <span class="text-[8px] font-semibold tracking-wide leading-none">{{ __('Nav') }}</span>
                     </a>
                     <a href="{{ route('winery.visual') }}" wire:navigate
                        title="{{ __('Vista mapa + bodega') }}"
@@ -687,7 +687,7 @@
                                     <span @click.prevent.stop="togglePin('{{ route($item['route']) }}', {{ \Illuminate\Support\Js::from($item['label']) }})"
                                           class="flex-shrink-0 w-5 h-5 flex items-center justify-center cursor-pointer transition-all duration-150"
                                           :class="isPinned('{{ route($item['route']) }}') ? 'text-amber-400' : 'text-zinc-300 opacity-0 group-hover:opacity-100 hover:text-amber-400'"
-                                          title="Añadir a frecuentes">
+                                          title="{{ __('Añadir a frecuentes') }}">
                                         <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
                                     </span>
                                 @endif
@@ -768,7 +768,7 @@
                    class="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
                     <img src="{{ asset('images/logo.png') }}" alt="Agro365" width="22" height="22" class="object-contain">
                 </a>
-                <span class="text-white font-semibold text-sm tracking-wide flex-1">Agro365</span>
+                <span class="text-white font-semibold text-sm tracking-wide flex-1">{{ __('Agro365') }}</span>
                 <button type="button" @click="mobileOpen = false"
                         class="w-8 h-8 flex items-center justify-center rounded-lg text-white/50 hover:text-white hover:bg-white/10 transition">
                     <flux:icon icon="x-mark" class="w-4 h-4" />
@@ -898,9 +898,9 @@
                                         @if(isset($item['badge']) && $item['badge'] > 0)
                                             <span class="px-1.5 py-0.5 text-[10px] font-bold bg-red-500 text-white rounded-full">{{ $item['badge'] }}</span>
                                         @elseif(isset($item['wip']) && $item['wip'])
-                                            <span class="px-1.5 py-0.5 text-[9px] font-bold bg-amber-100 text-amber-600 rounded-full">Pronto</span>
+                                            <span class="px-1.5 py-0.5 text-[9px] font-bold bg-amber-100 text-amber-600 rounded-full">{{ __('Pronto') }}</span>
                                         @elseif(isset($item['new']) && $item['new'])
-                                            <span class="px-1.5 py-0.5 text-[9px] font-bold bg-emerald-100 text-emerald-600 rounded-full">Nuevo</span>
+                                            <span class="px-1.5 py-0.5 text-[9px] font-bold bg-emerald-100 text-emerald-600 rounded-full">{{ __('Nuevo') }}</span>
                                         @elseif(isset($item['locked']) && $item['locked'])
                                             <svg class="w-3 h-3 flex-shrink-0 text-amber-400/70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                                         @endif

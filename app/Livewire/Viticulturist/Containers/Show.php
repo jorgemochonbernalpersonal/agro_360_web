@@ -74,21 +74,21 @@ class Show extends Component
         if ($daysUntil < 0) {
             return [
                 'type' => 'danger',
-                'message' => 'Mantenimiento vencido hace ' . abs($daysUntil) . ' días',
+                'message' => __('Mantenimiento vencido hace ') . abs($daysUntil) . ' días',
             ];
         }
         
         if ($daysUntil <= 7) {
             return [
                 'type' => 'warning',
-                'message' => 'Mantenimiento en ' . $daysUntil . ' días',
+                'message' => __('Mantenimiento en ') . $daysUntil . ' días',
             ];
         }
         
         if ($daysUntil <= 30) {
             return [
                 'type' => 'info',
-                'message' => 'Mantenimiento en ' . $daysUntil . ' días',
+                'message' => __('Mantenimiento en ') . $daysUntil . ' días',
             ];
         }
         

@@ -339,11 +339,11 @@ class Dashboard extends Component
                 ->count();
 
             return [
-                ['label' => 'Registrados',          'count' => $total,          'pct' => 100],
-                ['label' => 'Email verificado',      'count' => $verified,       'pct' => $total > 0 ? round($verified / $total * 100) : 0],
-                ['label' => 'Primera parcela',       'count' => $withPlots,      'pct' => $total > 0 ? round($withPlots / $total * 100) : 0],
-                ['label' => 'Primera actividad',     'count' => $withActivities, 'pct' => $total > 0 ? round($withActivities / $total * 100) : 0],
-                ['label' => 'Activo últimos 30 días','count' => $active30d,      'pct' => $total > 0 ? round($active30d / $total * 100) : 0],
+                ['label' => __('Registrados'),          'count' => $total,          'pct' => 100],
+                ['label' => __('Email verificado'),      'count' => $verified,       'pct' => $total > 0 ? round($verified / $total * 100) : 0],
+                ['label' => __('Primera parcela'),       'count' => $withPlots,      'pct' => $total > 0 ? round($withPlots / $total * 100) : 0],
+                ['label' => __('Primera actividad'),     'count' => $withActivities, 'pct' => $total > 0 ? round($withActivities / $total * 100) : 0],
+                ['label' => __('Activo últimos 30 días'),'count' => $active30d,      'pct' => $total > 0 ? round($active30d / $total * 100) : 0],
             ];
         } catch (\Throwable) {
             return [];
@@ -403,8 +403,8 @@ class Dashboard extends Component
             'activityHeatmap'     => $this->buildActivityHeatmap(),
             'geoDistribution'     => $this->buildGeoDistribution(),
         ])->layout('layouts.app', [
-            'title'       => 'Dashboard Administrador - Agro365',
-            'description' => 'Panel de control con estadísticas generales del sistema',
+            'title'       => __('Dashboard Administrador - Agro365'),
+            'description' => __('Panel de control con estadísticas generales del sistema'),
         ]);
     }
 }

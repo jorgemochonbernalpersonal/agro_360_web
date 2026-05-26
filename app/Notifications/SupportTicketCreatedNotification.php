@@ -79,7 +79,7 @@ class SupportTicketCreatedNotification extends Notification implements ShouldQue
                          style="max-width: 160px; height: auto;">
                  </div>'
             ))
-            ->greeting('Hola ' . ($notifiable->name ?: 'Administrador'))
+            ->greeting(__('Hola :name', ['name' => $notifiable->name ?: '']))
             ->line('Se ha creado un nuevo ticket de soporte en Agro365.')
             ->line(new HtmlString(
                 '<div style="background-color: #f3f4f6; padding: 16px; border-radius: 8px; margin: 16px 0;">
@@ -92,7 +92,7 @@ class SupportTicketCreatedNotification extends Notification implements ShouldQue
                     ($this->ticket->image ? '<p style="margin: 16px 0 0 0;"><strong>Imagen adjunta:</strong> <a href="' . url($this->ticket->image_url) . '" style="color: #059669; text-decoration: underline;">Ver imagen</a></p>' : '') .
                 '</div>'
             ))
-            ->action('Ver Ticket', $ticketUrl)
+            ->action(__('Ver Ticket'), $ticketUrl)
             ->line('Por favor, revisa el ticket y responde al usuario lo antes posible.')
             ->salutation("Saludos,\nEl equipo de Agro365");
     }

@@ -2,7 +2,7 @@
 
 <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
     <div class="bg-gradient-to-br from-orange-50 to-red-50 rounded-lg p-4 border border-orange-200 text-center">
-        <span class="text-2xl">🌡️</span>
+        <span class="text-2xl">{{ __('🌡️') }}</span>
         <div class="text-2xl font-bold text-orange-600">{{ $weather['temperature'] ?? '--' }}°C</div>
         <div class="text-xs text-zinc-500">{{ $weather['temperature_min'] ?? '--' }}° / {{ $weather['temperature_max'] ?? '--' }}°</div>
     </div>
@@ -12,7 +12,7 @@
         <div class="text-xs text-zinc-500">{{ __('Humedad') }}</div>
     </div>
     <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-lg p-4 border border-indigo-200 text-center">
-        <span class="text-2xl">🌧️</span>
+        <span class="text-2xl">{{ __('🌧️') }}</span>
         <div class="text-2xl font-bold text-indigo-600">{{ $weather['precipitation'] ?? 0 }}mm</div>
         <div class="text-xs text-zinc-500">{{ __('Precipitación') }}</div>
     </div>
@@ -49,11 +49,11 @@
             <span class="text-2xl">☀️</span>
         </div>
         <div class="text-4xl font-bold text-yellow-600">{{ $solar['solar_radiation'] ?? '--' }}</div>
-        <p class="text-xs text-zinc-500 mt-1">MJ/m²</p>
+        <p class="text-xs text-zinc-500 mt-1">{{ __('MJ/m²') }}</p>
     </div>
     <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-5 border border-blue-200">
         <div class="flex items-center justify-between mb-2">
-            <span class="text-sm font-semibold text-zinc-600">ET0</span>
+            <span class="text-sm font-semibold text-zinc-600">{{ __('ET0') }}</span>
             <span class="text-2xl">💦</span>
         </div>
         <div class="text-4xl font-bold text-blue-600">{{ $solar['et0'] ?? '--' }}</div>
@@ -62,7 +62,7 @@
     <div class="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-lg p-5 border border-amber-200">
         <div class="flex items-center justify-between mb-2">
             <span class="text-sm font-semibold text-zinc-600">{{ __('Horas de Sol') }}</span>
-            <span class="text-2xl">🌤️</span>
+            <span class="text-2xl">{{ __('🌤️') }}</span>
         </div>
         <div class="text-4xl font-bold text-amber-600">{{ round($solar['sunshine_hours'] ?? 0, 1) }}h</div>
     </div>

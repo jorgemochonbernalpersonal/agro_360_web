@@ -21,7 +21,7 @@ class Index extends AbstractIndex
     public function deactivate(int $id): void
     {
         $this->findOwned(CommercialAuthorization::class, $id)->update(['active' => false]);
-        $this->toastSuccess('Autorización archivada.');
+        $this->toastSuccess(__('Autorización archivada.'));
     }
 
     protected function baseQuery(): Builder

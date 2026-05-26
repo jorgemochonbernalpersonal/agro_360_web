@@ -60,7 +60,7 @@ class Index extends Component
         $maintenance->update($updates);
 
         $labels = ContainerMaintenance::STATUSES;
-        $this->toastSuccess('Estado actualizado a: ' . ($labels[$status] ?? $status));
+        $this->toastSuccess(__('Estado actualizado a: :status', ['status' => $labels[$status] ?? $status]));
     }
 
     public function markCompleted(int $id): void

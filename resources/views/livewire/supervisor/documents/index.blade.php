@@ -1,13 +1,11 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="Documentos DO"
-        description="Gestiona los pliegos de condiciones y reglamentos publicados para tus viticultores."
+        title="{{ __('Documentos DO') }}"
+        :description="__('Gestiona los pliegos de condiciones y reglamentos publicados para tus viticultores.')"
     >
         <x-slot:actions>
-            <flux:button wire:click="openCreate" variant="primary" icon="plus">
-                Nuevo documento
-            </flux:button>
+            <flux:button wire:click="openCreate" variant="primary" icon="plus">{{ __('Nuevo documento') }}</flux:button>
         </x-slot:actions>
     </x-agro.page-header>
 
@@ -63,17 +61,11 @@
                                     </span>
                                 @endif
                                 @if($doc->status === 'active')
-                                    <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-medium border border-emerald-200">
-                                        Vigente
-                                    </span>
+                                    <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-medium border border-emerald-200">{{ __('Vigente') }}</span>
                                 @elseif($doc->status === 'draft')
-                                    <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-700 font-medium border border-amber-200">
-                                        Borrador
-                                    </span>
+                                    <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-700 font-medium border border-amber-200">{{ __('Borrador') }}</span>
                                 @else
-                                    <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-zinc-100 text-zinc-500 font-medium border border-zinc-200">
-                                        Archivado
-                                    </span>
+                                    <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-zinc-100 text-zinc-500 font-medium border border-zinc-200">{{ __('Archivado') }}</span>
                                 @endif
                             </div>
                             <div class="flex items-center gap-3 text-xs text-zinc-400">
@@ -90,26 +82,26 @@
                         {{-- Actions --}}
                         <div class="flex items-center gap-1 shrink-0">
                             @if($doc->status === 'draft')
-                                <flux:button wire:click="openEdit({{ $doc->id }})" variant="ghost" size="sm" icon="pencil" title="Editar" />
+                                <flux:button wire:click="openEdit({{ $doc->id }})" variant="ghost" size="sm" icon="pencil" title="{{ __('Editar') }}" />
                                 <flux:button
                                     wire:click="publish({{ $doc->id }})"
-                                    wire:confirm="¿Publicar '{{ $doc->title }}'? El documento anterior del mismo tipo quedará archivado."
+                                    wire:confirm="{{ __('¿Publicar \':title\'? El documento anterior del mismo tipo quedará archivado.', ['title' => $doc->title]) }}"
                                     variant="ghost" size="sm" icon="arrow-up-tray"
-                                    title="Publicar"
+                                    title="{{ __('Publicar') }}"
                                 />
                                 <flux:button
                                     wire:click="delete({{ $doc->id }})"
-                                    wire:confirm="¿Eliminar '{{ $doc->title }}'? Esta acción no se puede deshacer."
+                                    wire:confirm="{{ __('¿Eliminar \':title\'? Esta acción no se puede deshacer.', ['title' => $doc->title]) }}"
                                     variant="ghost" size="sm" icon="trash"
                                     class="text-red-400 hover:text-red-600"
-                                    title="Eliminar"
+                                    title="{{ __('Eliminar') }}"
                                 />
                             @elseif($doc->status === 'active')
                                 <flux:button
                                     wire:click="archive({{ $doc->id }})"
-                                    wire:confirm="¿Archivar '{{ $doc->title }}'? Dejará de ser visible para los viticultores."
+                                    wire:confirm="{{ __('¿Archivar \':title\'? Dejará de ser visible para los viticultores.', ['title' => $doc->title]) }}"
                                     variant="ghost" size="sm" icon="archive-box"
-                                    title="Archivar"
+                                    title="{{ __('Archivar') }}"
                                 />
                             @endif
                         </div>
@@ -119,11 +111,11 @@
         </div>
     @else
         @if($activeTab === 'draft')
-            <x-agro.empty-state icon="document-text" title="Sin borradores" description="Crea un nuevo documento para empezar." />
+            <x-agro.empty-state icon="document-text" title="{{ __('Sin borradores') }}" :description="__('Crea un nuevo documento para empezar.')" />
         @elseif($activeTab === 'active')
-            <x-agro.empty-state icon="document-text" title="Sin documentos vigentes" description="Publica un borrador para que sea visible por tus viticultores." />
+            <x-agro.empty-state icon="document-text" title="{{ __('Sin documentos vigentes') }}" :description="__('Publica un borrador para que sea visible por tus viticultores.')" />
         @else
-            <x-agro.empty-state icon="archive-box" title="Sin documentos archivados" description="Los documentos archivados aparecerán aquí." />
+            <x-agro.empty-state icon="archive-box" title="{{ __('Sin documentos archivados') }}" :description="__('Los documentos archivados aparecerán aquí.')" />
         @endif
     @endif
 
@@ -138,43 +130,43 @@
                     <h3 class="text-base font-semibold text-zinc-900">
                         {{ $editingId ? 'Editar documento' : 'Nuevo documento' }}
                     </h3>
-                    <p class="text-xs text-zinc-500">Se guardará como borrador. Publícalo cuando esté listo.</p>
+                    <p class="text-xs text-zinc-500">{{ __('Se guardará como borrador. Publícalo cuando esté listo.') }}</p>
                 </div>
             </div>
 
             <div class="space-y-4">
                 <div class="grid grid-cols-2 gap-4">
                     <flux:field>
-                        <flux:label>Tipo <span class="text-red-400">*</span></flux:label>
+                        <flux:label>{{ __('Tipo') }} <span class="text-red-400">*</span></flux:label>
                         <flux:select wire:model="formType">
-                            <flux:select.option value="pliego">Pliego de condiciones</flux:select.option>
-                            <flux:select.option value="reglamento">Reglamento</flux:select.option>
+                            <flux:select.option value="pliego">{{ __('Pliego de condiciones') }}</flux:select.option>
+                            <flux:select.option value="reglamento">{{ __('Reglamento') }}</flux:select.option>
                         </flux:select>
                         <flux:error name="formType" />
                     </flux:field>
 
                     <flux:field>
-                        <flux:label>Versión <span class="text-zinc-400 text-xs font-normal">(opcional)</span></flux:label>
-                        <flux:input wire:model="formVersion" placeholder="Ej: 2024-v3" />
+                        <flux:label>{{ __('Versión') }} <span class="text-zinc-400 text-xs font-normal">{{ __('(opcional)') }}</span></flux:label>
+                        <flux:input wire:model="formVersion" :placeholder="__('Ej: 2024-v3')" />
                         <flux:error name="formVersion" />
                     </flux:field>
                 </div>
 
                 <flux:field>
-                    <flux:label>Título <span class="text-red-400">*</span></flux:label>
-                    <flux:input wire:model="formTitle" placeholder="Pliego de condiciones DO Rioja 2024" autofocus />
+                    <flux:label>{{ __('Título') }} <span class="text-red-400">*</span></flux:label>
+                    <flux:input wire:model="formTitle" :placeholder="__('Pliego de condiciones DO Rioja 2024')" autofocus />
                     <flux:error name="formTitle" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Fecha de entrada en vigor <span class="text-zinc-400 text-xs font-normal">(opcional)</span></flux:label>
+                    <flux:label>{{ __('Fecha de entrada en vigor') }} <span class="text-zinc-400 text-xs font-normal">{{ __('(opcional)') }}</span></flux:label>
                     <flux:input wire:model="formDate" type="date" />
                     <flux:error name="formDate" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Contenido <span class="text-zinc-400 text-xs font-normal">(opcional)</span></flux:label>
-                    <flux:textarea wire:model="formContent" rows="6" placeholder="Texto del pliego o reglamento..." />
+                    <flux:label>{{ __('Contenido') }} <span class="text-zinc-400 text-xs font-normal">{{ __('(opcional)') }}</span></flux:label>
+                    <flux:textarea wire:model="formContent" rows="6" :placeholder="__('Texto del pliego o reglamento...')" />
                     <flux:description class="text-xs text-zinc-400">
                         Puedes incluir el texto completo o un resumen. Los viticultores lo verán en su panel.
                     </flux:description>
@@ -182,10 +174,10 @@
             </div>
 
             <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-zinc-100">
-                <flux:button variant="ghost" wire:click="closeModal">Cancelar</flux:button>
+                <flux:button variant="ghost" wire:click="closeModal">{{ __('Cancelar') }}</flux:button>
                 <flux:button variant="primary" wire:click="save" wire:loading.attr="disabled">
                     <span wire:loading.remove wire:target="save">{{ $editingId ? 'Guardar cambios' : 'Crear borrador' }}</span>
-                    <span wire:loading wire:target="save">Guardando...</span>
+                    <span wire:loading wire:target="save">{{ __('Guardando...') }}</span>
                 </flux:button>
             </div>
         </div>

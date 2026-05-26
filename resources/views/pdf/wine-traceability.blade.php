@@ -108,10 +108,10 @@
         <table>
             <thead>
                 <tr>
-                    <th>Cosecha / Ref.</th>
-                    <th>Cantidad (kg)</th>
-                    <th>Porcentaje</th>
-                    <th>Variedad</th>
+                    <th>{{ __('Cosecha / Ref.') }}</th>
+                    <th>{{ __('Cantidad (kg)') }}</th>
+                    <th>{{ __('Porcentaje') }}</th>
+                    <th>{{ __('Variedad') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -135,11 +135,11 @@
         <table>
             <thead>
                 <tr>
-                    <th>Etapa</th>
-                    <th>Inicio</th>
-                    <th>Fin</th>
-                    <th>Duración</th>
-                    <th>Observaciones</th>
+                    <th>{{ __('Etapa') }}</th>
+                    <th>{{ __('Inicio') }}</th>
+                    <th>{{ __('Fin') }}</th>
+                    <th>{{ __('Duración') }}</th>
+                    <th>{{ __('Observaciones') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -172,14 +172,14 @@
         <table>
             <thead>
                 <tr>
-                    <th>Fecha</th>
-                    <th>Tipo</th>
-                    <th>Grado (% vol)</th>
-                    <th>SO₂ libre (mg/L)</th>
-                    <th>SO₂ total (mg/L)</th>
-                    <th>Acidez total (g/L)</th>
+                    <th>{{ __('Fecha') }}</th>
+                    <th>{{ __('Tipo') }}</th>
+                    <th>{{ __('Grado (% vol)') }}</th>
+                    <th>{{ __('SO₂ libre (mg/L)') }}</th>
+                    <th>{{ __('SO₂ total (mg/L)') }}</th>
+                    <th>{{ __('Acidez total (g/L)') }}</th>
                     <th>pH</th>
-                    <th>Resultado</th>
+                    <th>{{ __('Resultado') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -210,11 +210,11 @@
         <table>
             <thead>
                 <tr>
-                    <th>Fecha</th>
-                    <th>Formato</th>
-                    <th>Botellas</th>
-                    <th>Litros</th>
-                    <th>Nº Lote</th>
+                    <th>{{ __('Fecha') }}</th>
+                    <th>{{ __('Formato') }}</th>
+                    <th>{{ __('Botellas') }}</th>
+                    <th>{{ __('Litros') }}</th>
+                    <th>{{ __('Nº Lote') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -239,10 +239,10 @@
         <table>
             <thead>
                 <tr>
-                    <th>Fecha</th>
-                    <th>Lote etiquetas</th>
-                    <th>Cantidad</th>
-                    <th>Rango</th>
+                    <th>{{ __('Fecha') }}</th>
+                    <th>{{ __('Lote etiquetas') }}</th>
+                    <th>{{ __('Cantidad') }}</th>
+                    <th>{{ __('Rango') }}</th>
                 </tr>
             </thead>
             <tbody>

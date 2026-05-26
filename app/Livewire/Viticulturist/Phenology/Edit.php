@@ -83,7 +83,7 @@ class Edit extends Component
             'notes'                   => $this->notes ?: null,
         ]);
 
-        $this->toastSuccess('Observación fenológica actualizada correctamente.');
+        $this->toastSuccess(__('Observación fenológica actualizada correctamente.'));
 
         return $this->viticulturistRoleRedirect('phenology.index', ['filter_planting_id' => $this->plot_planting_id]);
     }

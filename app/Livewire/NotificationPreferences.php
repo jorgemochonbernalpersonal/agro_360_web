@@ -47,7 +47,7 @@ class NotificationPreferences extends Component
             $this->delivery
         );
 
-        $this->toastSuccess('Preferencias de notificación guardadas');
+        $this->toastSuccess(__('Preferencias de notificación guardadas'));
     }
 
     public function render()

@@ -91,7 +91,7 @@ class Edit extends Component
             'notes'            => $this->notes ?: null,
         ]);
 
-        $this->toastSuccess('Subcontratación actualizada correctamente.');
+        $this->toastSuccess(__('Subcontratación actualizada correctamente.'));
 
         return $this->viticulturistRoleRedirect('subcontracting.index');
     }

@@ -45,10 +45,10 @@ class Index extends Component
         $client->update(['active' => $newState]);
 
         if ($newState) {
-            $this->toastSuccess('Cliente activado correctamente.');
+            $this->toastSuccess(__('Cliente activado correctamente.'));
             if ($this->currentTab === 'inactive') $this->currentTab = 'active';
         } else {
-            $this->toastSuccess('Cliente desactivado correctamente.');
+            $this->toastSuccess(__('Cliente desactivado correctamente.'));
             if ($this->currentTab === 'active') $this->currentTab = 'inactive';
         }
     }

@@ -42,7 +42,7 @@ class CheckWineryAbility
         // y con bodegas existentes antes de que el supervisor configure restricciones).
         // Alineado con User::hasAbility().
         if (! empty($granted) && ! in_array($ability, $granted, true)) {
-            abort(403, 'Tu denominación de origen no ha habilitado el módulo requerido para acceder a esta sección.');
+            abort(403, __('Tu denominación de origen no ha habilitado el módulo requerido para acceder a esta sección.'));
         }
 
         return $next($request);

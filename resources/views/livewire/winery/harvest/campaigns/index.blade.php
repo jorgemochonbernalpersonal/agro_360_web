@@ -2,8 +2,8 @@
 
     {{-- Header --}}
     <x-agro.page-header
-        title="Campañas de Vendimia"
-        description="Gestiona las campañas de recepción de uva de tu bodega"
+        title="{{ __('Campañas de Vendimia') }}"
+        :description="__('Gestiona las campañas de recepción de uva de tu bodega')"
     >
         <x-slot:actions>
             <flux:button href="{{ roleRoute('campaigns.create') }}" wire:navigate variant="primary" icon="plus">
@@ -15,25 +15,25 @@
     {{-- KPIs --}}
     <x-agro.stats-section key="harvest-campaigns">
         <x-agro.stat-card
-            label="Total campañas"
+            :label="__('Total campañas')"
             :value="$stats['total']"
             icon="clipboard-document-list"
             color="zinc"
         />
         <x-agro.stat-card
-            label="Campaña activa"
+            :label="__('Campaña activa')"
             :value="$stats['active']"
             icon="play-circle"
             color="agro"
         />
         <x-agro.stat-card
-            label="Cerradas"
+            :label="__('Cerradas')"
             :value="$stats['cerradas']"
             icon="lock-closed"
             color="zinc"
         />
         <x-agro.stat-card
-            label="Bloqueadas"
+            :label="__('Bloqueadas')"
             :value="$stats['locked']"
             icon="shield-check"
             color="amber"
@@ -42,19 +42,17 @@
 
     {{-- Toolbar --}}
     <div class="flex items-center gap-3">
-        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar campaña por nombre..." />
+        <x-agro.search-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar campaña por nombre...')" />
 
         <flux:select wire:model.live="yearFilter" class="w-36">
-            <flux:select.option value="">Todos los años</flux:select.option>
+            <flux:select.option value="">{{ __('Todos los años') }}</flux:select.option>
             @foreach($years as $year)
                 <flux:select.option value="{{ $year }}">{{ $year }}</flux:select.option>
             @endforeach
         </flux:select>
 
         @if($search || $yearFilter)
-            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">
-                Limpiar
-            </flux:button>
+            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">{{ __('Limpiar') }}</flux:button>
         @endif
     </div>
 
@@ -87,11 +85,11 @@
                                 radius="xl"
                             >
                                 @if($isActive)
-                                    <flux:badge color="green" size="sm">Activa</flux:badge>
+                                    <flux:badge color="green" size="sm">{{ __('Activa') }}</flux:badge>
                                 @elseif($isLocked)
-                                    <flux:badge color="indigo" size="sm">Bloqueada</flux:badge>
+                                    <flux:badge color="indigo" size="sm">{{ __('Bloqueada') }}</flux:badge>
                                 @else
-                                    <flux:badge color="zinc" size="sm">Cerrada</flux:badge>
+                                    <flux:badge color="zinc" size="sm">{{ __('Cerrada') }}</flux:badge>
                                 @endif
                             </x-agro.card-item-header>
                         </x-slot:header>
@@ -100,13 +98,13 @@
                             {{-- Stats --}}
                             <div class="grid grid-cols-2 gap-2">
                                 <div class="bg-agro-50 rounded-xl p-3">
-                                    <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Recepciones</p>
+                                    <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">{{ __('Recepciones') }}</p>
                                     <p class="text-2xl font-bold text-agro-700 leading-none">
                                         {{ $campaign->activities_count }}
                                     </p>
                                 </div>
                                 <div class="bg-zinc-50 rounded-xl p-3">
-                                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">Año</p>
+                                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">{{ __('Año') }}</p>
                                     <p class="text-2xl font-bold text-zinc-700 leading-none">
                                         {{ $campaign->year }}
                                     </p>
@@ -152,24 +150,24 @@
                         <x-slot:footer>
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-0.5">
-                                    <x-agro.action-button icon="archive-box-arrow-down" variant="primary" href="{{ roleRoute('grape-reception.index', ['campaignFilter' => $campaign->id]) }}" wire:navigate title="Ver recepciones" />
+                                    <x-agro.action-button icon="archive-box-arrow-down" variant="primary" href="{{ roleRoute('grape-reception.index', ['campaignFilter' => $campaign->id]) }}" wire:navigate title="{{ __('Ver recepciones') }}" />
                                 </div>
 
                                 <div class="w-px h-5 bg-zinc-200 mx-1"></div>
 
                                 <div class="flex items-center gap-0.5">
                                     @if(!$isLocked)
-                                        <x-agro.action-button variant="edit" href="{{ roleRoute('campaigns.edit', $campaign) }}" wire:navigate title="Editar campaña" />
+                                        <x-agro.action-button variant="edit" href="{{ roleRoute('campaigns.edit', $campaign) }}" wire:navigate title="{{ __('Editar campaña') }}" />
                                     @endif
 
                                     @if($isActive)
-                                        <x-agro.action-button icon="lock-closed" variant="warning" wire:click="toggleActive({{ $campaign->id }})" wire:loading.attr="disabled" title="Cerrar campaña" />
+                                        <x-agro.action-button icon="lock-closed" variant="warning" wire:click="toggleActive({{ $campaign->id }})" wire:loading.attr="disabled" title="{{ __('Cerrar campaña') }}" />
                                     @else
-                                        <x-agro.action-button icon="lock-open" variant="primary" wire:click="toggleActive({{ $campaign->id }})" wire:loading.attr="disabled" title="Activar campaña" />
+                                        <x-agro.action-button icon="lock-open" variant="primary" wire:click="toggleActive({{ $campaign->id }})" wire:loading.attr="disabled" title="{{ __('Activar campaña') }}" />
                                     @endif
 
                                     @if($campaign->activities_count === 0)
-                                        <x-agro.action-button variant="delete" wire:click="delete({{ $campaign->id }})" wire:loading.attr="disabled" wire:confirm="¿Eliminar esta campaña permanentemente?" title="Eliminar campaña" />
+                                        <x-agro.action-button variant="delete" wire:click="delete({{ $campaign->id }})" wire:loading.attr="disabled" wire:confirm="{{ __('¿Eliminar esta campaña permanentemente?') }}" title="{{ __('Eliminar campaña') }}" />
                                     @endif
                                 </div>
                             </div>
@@ -187,9 +185,7 @@
             >
                 @if($search || $yearFilter)
                     <x-slot:action>
-                        <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">
-                            Limpiar filtros
-                        </flux:button>
+                        <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">{{ __('Limpiar filtros') }}</flux:button>
                     </x-slot:action>
                 @else
                     <x-slot:action>

@@ -28,7 +28,7 @@ class Edit extends Component
     public function mount(PhytosanitaryProduct $product): void
     {
         if (! Auth::user()->hasViticulturistAccess()) {
-            abort(403, 'No tienes permiso para editar productos fitosanitarios.');
+            abort(403, __('No tienes permiso para editar productos fitosanitarios.'));
         }
 
         if ($product->user_id !== Auth::id()) {
@@ -85,7 +85,7 @@ class Edit extends Component
                 ]);
             });
 
-            $this->toastSuccess('Producto fitosanitario actualizado correctamente.');
+            $this->toastSuccess(__('Producto fitosanitario actualizado correctamente.'));
 
             return $this->viticulturistRoleRedirect('phytosanitary-products.index');
         } catch (\Exception $e) {
@@ -96,7 +96,7 @@ class Edit extends Component
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            $this->toastError('Error al actualizar el producto fitosanitario. Por favor, intenta de nuevo.');
+            $this->toastError(__('Error al actualizar el producto fitosanitario. Por favor, intenta de nuevo.'));
             return;
         }
     }

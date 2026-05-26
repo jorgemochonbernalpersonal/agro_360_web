@@ -1,6 +1,6 @@
 <div>
     <x-agro.form-card
-        title="Editar Liquidación de Vendimia"
+        title="{{ __('Editar Liquidación de Vendimia') }}"
         description="{{ $invoice->invoice_number }} — {{ $invoice->viticulturist?->name }}"
         :back-url="roleRoute('invoices.grape-purchase.index')">
 
@@ -15,27 +15,27 @@
         <form wire:submit.prevent="save" class="space-y-8">
 
             <!-- Cabecera -->
-            <x-agro.form-section title="Datos de la Liquidación">
+            <x-agro.form-section title="{{ __('Datos de la Liquidación') }}">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <flux:field>
-                        <flux:label>Viticultor</flux:label>
+                        <flux:label>{{ __('Viticultor') }}</flux:label>
                         <flux:input value="{{ $invoice->viticulturist?->name }}" readonly />
                     </flux:field>
 
                     <flux:field>
-                        <flux:label for="invoice_date">Fecha *</flux:label>
+                        <flux:label for="invoice_date">{{ __('Fecha *') }}</flux:label>
                         <flux:input wire:model="invoice_date" type="date" id="invoice_date" required />
                         <flux:error name="invoice_date" />
                     </flux:field>
 
                     <flux:field>
-                        <flux:label for="payment_type">Forma de pago</flux:label>
+                        <flux:label for="payment_type">{{ __('Forma de pago') }}</flux:label>
                         <flux:select wire:model="payment_type" id="payment_type">
-                            <option value="">Sin especificar</option>
-                            <option value="cash">Efectivo</option>
-                            <option value="transfer">Transferencia</option>
-                            <option value="check">Cheque</option>
-                            <option value="other">Otro</option>
+                            <option value="">{{ __('Sin especificar') }}</option>
+                            <option value="cash">{{ __('Efectivo') }}</option>
+                            <option value="transfer">{{ __('Transferencia') }}</option>
+                            <option value="check">{{ __('Cheque') }}</option>
+                            <option value="other">{{ __('Otro') }}</option>
                         </flux:select>
                     </flux:field>
                 </div>
@@ -43,22 +43,22 @@
                 <!-- Números (solo lectura) -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
                     <flux:field>
-                        <flux:label>Nº Liquidación</flux:label>
+                        <flux:label>{{ __('Nº Liquidación') }}</flux:label>
                         <flux:input value="{{ $invoice->invoice_number }}" readonly />
                     </flux:field>
                     <flux:field>
-                        <flux:label>Nº Referencia</flux:label>
+                        <flux:label>{{ __('Nº Referencia') }}</flux:label>
                         <flux:input value="{{ $invoice->delivery_note_code }}" readonly />
                     </flux:field>
                 </div>
             </x-agro.form-section>
 
             <!-- Selección de recepciones -->
-            <x-agro.form-section title="Recepciones de Uva">
+            <x-agro.form-section title="{{ __('Recepciones de Uva') }}">
                 @if ($availableHarvests->isEmpty())
-                    <p class="text-zinc-500 text-sm">No hay recepciones disponibles para este viticultor en tus campañas.</p>
+                    <p class="text-zinc-500 text-sm">{{ __('No hay recepciones disponibles para este viticultor en tus campañas.') }}</p>
                 @else
-                    <p class="text-sm text-zinc-500 mb-3">Selecciona las recepciones a incluir en la liquidación:</p>
+                    <p class="text-sm text-zinc-500 mb-3">{{ __('Selecciona las recepciones a incluir en la liquidación:') }}</p>
                     <div class="space-y-2">
                         @foreach ($availableHarvests as $harvest)
                             @php $selected = in_array($harvest->id, $selectedIds); @endphp
@@ -82,7 +82,7 @@
 
             <!-- Líneas seleccionadas (edición de precios) -->
             @if (!empty($lines))
-                <x-agro.form-section title="Detalle de Líneas">
+                <x-agro.form-section title="{{ __('Detalle de Líneas') }}">
                     <div class="space-y-4">
                         @foreach ($lines as $i => $line)
                             <div class="grid grid-cols-12 gap-3 items-end p-4 bg-zinc-50 dark:bg-zinc-800/50 rounded-lg" wire:key="gp-line-{{ $i }}">
@@ -95,7 +95,7 @@
 
                                 <div class="col-span-4 md:col-span-2">
                                     <flux:field>
-                                        <flux:label>Kg *</flux:label>
+                                        <flux:label>{{ __('Kg *') }}</flux:label>
                                         <flux:input wire:model.live.debounce.300ms="lines.{{ $i }}.quantity" type="number" step="0.001" min="0.001" />
                                         <flux:error name="lines.{{ $i }}.quantity" />
                                     </flux:field>
@@ -103,7 +103,7 @@
 
                                 <div class="col-span-4 md:col-span-2">
                                     <flux:field>
-                                        <flux:label>€/kg *</flux:label>
+                                        <flux:label>{{ __('€/kg *') }}</flux:label>
                                         <flux:input wire:model.live.debounce.300ms="lines.{{ $i }}.unit_price" type="number" step="0.001" min="0" placeholder="0.000" />
                                         <flux:error name="lines.{{ $i }}.unit_price" />
                                     </flux:field>
@@ -111,15 +111,15 @@
 
                                 <div class="col-span-4 md:col-span-1">
                                     <flux:field>
-                                        <flux:label>IRPF %</flux:label>
+                                        <flux:label>{{ __('IRPF %') }}</flux:label>
                                         <flux:input wire:model.live.debounce.300ms="lines.{{ $i }}.tax_rate" type="number" step="0.01" min="0" max="100" />
                                     </flux:field>
                                 </div>
 
                                 <div class="col-span-10 md:col-span-2">
                                     <flux:field>
-                                        <flux:label>Descripción</flux:label>
-                                        <flux:input wire:model="lines.{{ $i }}.description" type="text" placeholder="Opcional" />
+                                        <flux:label>{{ __('Descripción') }}</flux:label>
+                                        <flux:input wire:model="lines.{{ $i }}.description" type="text" :placeholder="__('Opcional')" />
                                     </flux:field>
                                 </div>
 
@@ -131,7 +131,7 @@
                                         $sub   = $qty * $price;
                                         $total = $sub - ($sub * $tax / 100);
                                     @endphp
-                                    <span class="text-xs text-zinc-500">Total</span>
+                                    <span class="text-xs text-zinc-500">{{ __('Total') }}</span>
                                     <span class="font-semibold text-sm">{{ number_format($total, 2) }} €</span>
                                     <flux:button wire:click="removeLine({{ $i }})" size="xs" variant="ghost" icon="trash" class="text-red-500" />
                                 </div>
@@ -152,15 +152,15 @@
                     <div class="flex justify-end mt-4">
                         <div class="w-64 space-y-1 text-sm">
                             <div class="flex justify-between">
-                                <span class="text-zinc-500">Base:</span>
+                                <span class="text-zinc-500">{{ __('Base:') }}</span>
                                 <span>{{ number_format($grandSubtotal, 2) }} €</span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="text-zinc-500">Retención:</span>
+                                <span class="text-zinc-500">{{ __('Retención:') }}</span>
                                 <span>-{{ number_format($grandTax, 2) }} €</span>
                             </div>
                             <div class="flex justify-between font-bold text-base border-t pt-1">
-                                <span>A pagar:</span>
+                                <span>{{ __('A pagar:') }}</span>
                                 <span>{{ number_format($grandSubtotal - $grandTax, 2) }} €</span>
                             </div>
                         </div>
@@ -170,13 +170,13 @@
             @endif
 
             <!-- Observaciones -->
-            <x-agro.form-section title="Observaciones">
+            <x-agro.form-section title="{{ __('Observaciones') }}">
                 <flux:field>
-                    <flux:textarea wire:model="observations" rows="3" placeholder="Observaciones para la liquidación..." />
+                    <flux:textarea wire:model="observations" rows="3" :placeholder="__('Observaciones para la liquidación...')" />
                 </flux:field>
             </x-agro.form-section>
 
-            <x-agro.form-actions :cancel-url="roleRoute('invoices.grape-purchase.index')" submit-label="Guardar Cambios" />
+            <x-agro.form-actions :cancel-url="roleRoute('invoices.grape-purchase.index')" submit-:label="__('Guardar Cambios')" />
         </form>
 
         @endif

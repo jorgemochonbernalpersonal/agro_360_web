@@ -56,7 +56,7 @@ class MaintenanceGlobal extends AbstractIndex
         $maintenance->update($updates);
 
         $labels = ContainerMaintenance::STATUSES;
-        $this->toastSuccess('Estado actualizado a: ' . ($labels[$status] ?? $status));
+        $this->toastSuccess(__('Estado actualizado a: :status', ['status' => $labels[$status] ?? $status]));
     }
 
     public function delete(int $id): void
@@ -64,7 +64,7 @@ class MaintenanceGlobal extends AbstractIndex
         ContainerMaintenance::whereHas('container', fn($q) => $q->where('user_id', $this->wineryId()))
             ->findOrFail($id)
             ->delete();
-        $this->toastSuccess('Mantenimiento eliminado.');
+        $this->toastSuccess(__('Mantenimiento eliminado.'));
     }
 
     protected function baseQuery(): Builder

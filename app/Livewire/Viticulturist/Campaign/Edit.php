@@ -24,7 +24,7 @@ class Edit extends Component
     {
         // Validar autorización
         if (!Auth::user()->can('update', $campaign)) {
-            abort(403, 'No tienes permiso para editar esta campaña.');
+            abort(403, __('No tienes permiso para editar esta campaña.'));
         }
 
         $this->campaign = $campaign;
@@ -61,7 +61,7 @@ class Edit extends Component
             ->first();
 
         if ($existingCampaign) {
-            $this->addError('year', 'Ya existe otra campaña para el año ' . $this->year . '.');
+            $this->addError('year', __('Ya existe otra campaña para el año :year.', ['year' => $this->year]));
             return;
         }
 
@@ -88,12 +88,12 @@ class Edit extends Component
 
             $justActivated = $this->active && !$wasActive;
             if ($justActivated) {
-                session()->flash('campaign_activated', "Campaña {$this->campaign->year} activada. Ya puedes registrar actividades.");
+                session()->flash('campaign_activated', __('Campaña :year activada. Ya puedes registrar actividades.', ['year' => $this->campaign->year]));
                 $route = $user->isProducer() ? route('producer.digital-notebook.estimated-yields.index') : route('viticulturist.digital-notebook');
                 return $this->redirect($route, navigate: true);
             }
 
-            $this->toastSuccess('Campaña actualizada correctamente.');
+            $this->toastSuccess(__('Campaña actualizada correctamente.'));
             $route = $user->isProducer() ? route('producer.campaign.index') : route('viticulturist.campaign.index');
             return $this->redirect($route, navigate: true);
         } catch (\Exception $e) {
@@ -104,7 +104,7 @@ class Edit extends Component
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            $this->toastError('Error al actualizar la campaña. Por favor, intenta de nuevo.');
+            $this->toastError(__('Error al actualizar la campaña. Por favor, intenta de nuevo.'));
             return;
         }
     }

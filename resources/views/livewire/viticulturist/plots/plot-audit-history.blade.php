@@ -1,16 +1,16 @@
 <div class="space-y-6">
     {{-- Header --}}
-    <x-agro-page-header title="Historial de Auditoría" :description="'Parcela: '.$plot->name.' ('.$plot->surface_area.' ha)'" />
+    <x-agro-page-header title="{{ __('Historial de Auditoría') }}" :description="'Parcela: '.$plot->name.' ('.$plot->surface_area.' ha)'" />
 
     {{-- Filtros --}}
     <x-agro-filter-bar>
-        <x-agro-filter-select label="Usuario" wire:model.live="filterUser" placeholder="Todos">
+        <x-agro-filter-select :label="__('Usuario')" wire:model.live="filterUser" :placeholder="__('Todos')">
             @foreach($users as $user)
                 <flux:select.option value="{{ $user->id }}">{{ $user->name }}</flux:select.option>
             @endforeach
         </x-agro-filter-select>
 
-        <x-agro-filter-select label="Acción" wire:model.live="filterAction" placeholder="Todas">
+        <x-agro-filter-select :label="__('Acción')" wire:model.live="filterAction" :placeholder="__('Todas')">
             @foreach($actions as $action)
                 <flux:select.option value="{{ $action }}">{{ ucfirst($action) }}</flux:select.option>
             @endforeach
@@ -28,9 +28,7 @@
 
         @if($filterUser || $filterAction || $filterDateFrom || $filterDateTo)
             <div class="flex items-end">
-                <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">
-                    Limpiar filtros
-                </flux:button>
+                <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">{{ __('Limpiar filtros') }}</flux:button>
             </div>
         @endif
     </x-agro-filter-bar>
@@ -79,7 +77,7 @@
                     </div>
 
                     {{-- IP --}}
-                    <span class="text-xs text-zinc-400" title="Dirección IP">🌐 {{ $log->ip_address }}</span>
+                    <span class="text-xs text-zinc-400" title="{{ __('Dirección IP') }}">🌐 {{ $log->ip_address }}</span>
                 </div>
 
                 {{-- Cambios realizados --}}
@@ -87,18 +85,18 @@
 
                 @if(!empty($diff))
                     <div class="mt-4 pt-4 border-t border-zinc-100">
-                        <p class="text-xs font-medium text-zinc-600 mb-2">Cambios realizados:</p>
+                        <p class="text-xs font-medium text-zinc-600 mb-2">{{ __('Cambios realizados:') }}</p>
                         <div class="space-y-2">
                             @foreach($diff as $change)
                                 <div class="bg-zinc-50 rounded-lg p-3 text-xs">
                                     <p class="font-medium text-zinc-700 mb-2">{{ $change['field'] }}</p>
                                     <div class="grid grid-cols-2 gap-2">
                                         <div class="bg-red-50 border border-red-200 rounded p-2">
-                                            <p class="text-red-600 font-medium mb-1">Antes:</p>
+                                            <p class="text-red-600 font-medium mb-1">{{ __('Antes:') }}</p>
                                             <p class="text-zinc-700">{!! $change['old'] !!}</p>
                                         </div>
                                         <div class="bg-green-50 border border-green-200 rounded p-2">
-                                            <p class="text-green-600 font-medium mb-1">Después:</p>
+                                            <p class="text-green-600 font-medium mb-1">{{ __('Después:') }}</p>
                                             <p class="text-zinc-700">{!! $change['new'] !!}</p>
                                         </div>
                                     </div>
@@ -109,7 +107,7 @@
                 @endif
             </x-agro-card>
         @empty
-            <x-agro-empty-state icon="document-text" title="Sin registros" description="No hay registros de auditoría para esta parcela" />
+            <x-agro-empty-state icon="document-text" title="{{ __('Sin registros') }}" :description="__('No hay registros de auditoría para esta parcela')" />
         @endforelse
     </div>
 

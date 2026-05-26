@@ -2,25 +2,25 @@
 
     {{-- Header --}}
     <x-agro.page-header
-        title="Documentos de Campaña"
-        description="Facturas, certificados, informes y autorizaciones del cuaderno de campo"
+        title="{{ __('Documentos de Campaña') }}"
+        :description="__('Facturas, certificados, informes y autorizaciones del cuaderno de campo')"
         icon="document-text"
     >
         <x-slot:actions>
-            <flux:button variant="primary" icon="arrow-up-tray" wire:click="openCreate">Subir Documento</flux:button>
+            <flux:button variant="primary" icon="arrow-up-tray" wire:click="openCreate">{{ __('Subir Documento') }}</flux:button>
         </x-slot:actions>
     </x-agro.page-header>
 
     {{-- KPIs --}}
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <x-agro.stat-card
-            label="Total documentos"
+            :label="__('Total documentos')"
             :value="$stats['total']"
             icon="document-text"
             color="zinc"
         />
         <x-agro.stat-card
-            label="Esta campaña"
+            :label="__('Esta campaña')"
             :value="$stats['this_campaign']"
             icon="calendar-days"
             color="agro"
@@ -30,19 +30,19 @@
     {{-- Toolbar --}}
     <div class="flex items-center gap-3 flex-wrap">
         <flux:select wire:model.live="filterCampaign" class="w-48">
-            <flux:select.option value="">Todas las campañas</flux:select.option>
+            <flux:select.option value="">{{ __('Todas las campañas') }}</flux:select.option>
             @foreach($campaigns as $c)
                 <flux:select.option value="{{ $c->id }}">{{ $c->name }}</flux:select.option>
             @endforeach
         </flux:select>
         <flux:select wire:model.live="filterType" class="w-44">
-            <flux:select.option value="">Todos los tipos</flux:select.option>
+            <flux:select.option value="">{{ __('Todos los tipos') }}</flux:select.option>
             @foreach($documentTypes as $key => $label)
                 <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
             @endforeach
         </flux:select>
         @if($filterCampaign || $filterType)
-            <flux:button wire:click="$set('filterCampaign', ''); $set('filterType', '')" variant="ghost" size="sm" icon="x-mark">Limpiar</flux:button>
+            <flux:button wire:click="$set('filterCampaign', ''); $set('filterType', '')" variant="ghost" size="sm" icon="x-mark">{{ __('Limpiar') }}</flux:button>
         @endif
     </div>
 
@@ -55,9 +55,9 @@
         >
             <x-slot:action>
                 @if($filterCampaign || $filterType)
-                    <flux:button wire:click="$set('filterCampaign', ''); $set('filterType', '')" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
+                    <flux:button wire:click="$set('filterCampaign', ''); $set('filterType', '')" variant="outline" icon="x-mark">{{ __('Limpiar filtros') }}</flux:button>
                 @else
-                    <flux:button variant="primary" icon="arrow-up-tray" wire:click="openCreate">Subir Documento</flux:button>
+                    <flux:button variant="primary" icon="arrow-up-tray" wire:click="openCreate">{{ __('Subir Documento') }}</flux:button>
                 @endif
             </x-slot:action>
         </x-agro.empty-state>
@@ -109,19 +109,19 @@
                                     icon="arrow-down-tray"
                                     variant="default"
                                     href="{{ roleRoute('viticulturist.campaign-documents.download', $entry) }}"
-                                    title="Descargar"
+                                    title="{{ __('Descargar') }}"
                                 />
                             @endif
                             <x-agro.action-button
                                 variant="edit"
                                 wire:click="openEdit({{ $entry->id }})"
-                                title="Editar"
+                                title="{{ __('Editar') }}"
                             />
                             <x-agro.action-button
                                 variant="delete"
                                 wire:click="delete({{ $entry->id }})"
-                                wire:confirm="¿Eliminar este documento? Esta acción no se puede deshacer."
-                                title="Eliminar"
+                                wire:confirm="{{ __('¿Eliminar este documento? Esta acción no se puede deshacer.') }}"
+                                title="{{ __('Eliminar') }}"
                             />
                         </div>
                     </x-slot:footer>
@@ -141,9 +141,9 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <flux:field>
-                    <flux:label required>Campaña</flux:label>
+                    <flux:label required>{{ __('Campaña') }}</flux:label>
                     <flux:select wire:model="campaign_id">
-                        <option value="">Seleccionar...</option>
+                        <option value="">{{ __('Seleccionar...') }}</option>
                         @foreach($campaigns as $c)
                             <option value="{{ $c->id }}">{{ $c->name }}</option>
                         @endforeach
@@ -151,7 +151,7 @@
                     <flux:error name="campaign_id" />
                 </flux:field>
                 <flux:field>
-                    <flux:label required>Tipo de documento</flux:label>
+                    <flux:label required>{{ __('Tipo de documento') }}</flux:label>
                     <flux:select wire:model="document_type">
                         @foreach($documentTypes as $key => $label)
                             <option value="{{ $key }}">{{ $label }}</option>
@@ -161,14 +161,14 @@
                 </flux:field>
 
                 <flux:field class="md:col-span-2">
-                    <flux:label required>Nombre descriptivo</flux:label>
-                    <flux:input wire:model="name" type="text" placeholder="Ej: Factura herbicidas primavera 2026" />
+                    <flux:label required>{{ __('Nombre descriptivo') }}</flux:label>
+                    <flux:input wire:model="name" type="text" :placeholder="__('Ej: Factura herbicidas primavera 2026')" />
                     <flux:error name="name" />
                 </flux:field>
 
                 @if(!$editingId)
                     <flux:field class="md:col-span-2">
-                        <flux:label required>Archivo</flux:label>
+                        <flux:label required>{{ __('Archivo') }}</flux:label>
                         <input
                             type="file"
                             wire:model="uploadedFile"
@@ -182,14 +182,14 @@
                 @endif
 
                 <flux:field class="md:col-span-2">
-                    <flux:label>Notas</flux:label>
-                    <flux:textarea wire:model="notes" rows="2" placeholder="Descripción adicional..." />
+                    <flux:label>{{ __('Notas') }}</flux:label>
+                    <flux:textarea wire:model="notes" rows="2" :placeholder="__('Descripción adicional...')" />
                     <flux:error name="notes" />
                 </flux:field>
             </div>
 
             <div class="flex justify-end gap-3 pt-4 border-t border-zinc-200">
-                <flux:button variant="ghost" wire:click="$set('showModal', false)">Cancelar</flux:button>
+                <flux:button variant="ghost" wire:click="$set('showModal', false)">{{ __('Cancelar') }}</flux:button>
                 <flux:button variant="primary" wire:click="save" wire:loading.attr="disabled" wire:loading.class="opacity-60 cursor-not-allowed">
                     <span wire:loading.remove wire:target="save">{{ $editingId ? 'Actualizar' : 'Subir Documento' }}</span>
                     <span wire:loading wire:target="save" class="flex items-center gap-2">

@@ -79,7 +79,7 @@ class Edit extends Component
             'notes'            => $this->notes ?: null,
         ]);
 
-        $this->toastSuccess('Control actualizado.');
+        $this->toastSuccess(__('Control actualizado.'));
         $this->redirect(roleRoute('fermentation-controls.index'), navigate: true);
     }
 

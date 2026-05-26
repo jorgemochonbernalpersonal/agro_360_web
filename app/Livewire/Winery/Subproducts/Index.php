@@ -31,7 +31,7 @@ class Index extends AbstractIndex
     public function delete(int $id): void
     {
         WineSubproduct::where('user_id', $this->wineryId())->findOrFail($id)->delete();
-        $this->toastSuccess('Subproducto eliminado.');
+        $this->toastSuccess(__('Subproducto eliminado.'));
     }
 
     protected function baseQuery(): Builder

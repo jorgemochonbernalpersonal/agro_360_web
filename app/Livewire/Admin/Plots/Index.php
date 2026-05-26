@@ -66,8 +66,8 @@ class Index extends Component
         $this->validate([
             'reassignViticulturistId' => 'required|exists:users,id',
         ], [
-            'reassignViticulturistId.required' => 'Selecciona un viticultor.',
-            'reassignViticulturistId.exists'   => 'El usuario seleccionado no existe.',
+            'reassignViticulturistId.required' => __('Selecciona un viticultor.'),
+            'reassignViticulturistId.exists'   => __('El usuario seleccionado no existe.'),
         ]);
 
         $plot = Plot::findOrFail($this->reassignPlotId);
@@ -193,8 +193,8 @@ class Index extends Component
             'stats'          => $stats,
             'availableUsers' => $availableUsers,
         ])->layout('layouts.app', [
-            'title'       => 'Parcelas - Admin - Agro365',
-            'description' => 'Visualiza y gestiona todas las parcelas del sistema',
+            'title'       => __('Parcelas - Admin - Agro365'),
+            'description' => __('Visualiza y gestiona todas las parcelas del sistema'),
         ]);
     }
 }

@@ -143,14 +143,14 @@ class Create extends Component
             ->find($this->selectedHarvestId);
 
         if (!$harvest) {
-            $this->toastError('Cosecha no encontrada.');
+            $this->toastError(__('Cosecha no encontrada.'));
             return;
         }
 
         // Verificar que la cosecha no esté ya en los items locales (esta factura)
         foreach ($this->items as $item) {
             if (isset($item['harvest_id']) && $item['harvest_id'] == $harvest->id) {
-                $this->toastError('Esta cosecha ya está en la factura actual.');
+                $this->toastError(__('Esta cosecha ya está en la factura actual.'));
                 return;
             }
         }
@@ -165,7 +165,7 @@ class Create extends Component
             : (float) $harvest->total_weight;
 
         if ($availableQty <= 0) {
-            $this->toastError('Esta cosecha no tiene stock disponible para facturar.');
+            $this->toastError(__('Esta cosecha no tiene stock disponible para facturar.'));
             return;
         }
 
@@ -182,9 +182,9 @@ class Create extends Component
         $this->items[] = [
             'harvest_id'          => $harvest->id,
             'name'                => $itemName,
-            'description'         => 'Cosecha del ' . $harvest->harvest_start_date->format('d/m/Y') .
+            'description'         => __('Cosecha del ') . $harvest->harvest_start_date->format('d/m/Y') .
                                      ($harvest->plotPlanting->grapeVariety ? ' - Variedad: ' . $harvest->plotPlanting->grapeVariety->name : ''),
-            'sku'                 => 'HARV-' . $harvest->id,
+            'sku'                 => __('HARV-') . $harvest->id,
             'quantity'            => $availableQty,
             'unit'                => 'kg',
             'available_qty'       => $availableQty,
@@ -197,7 +197,7 @@ class Create extends Component
 
         $this->selectedHarvestId = '';
         $this->harvestAdded = true;
-        $this->toastSuccess('Cosecha añadida a la factura.');
+        $this->toastSuccess(__('Cosecha añadida a la factura.'));
     }
 
     public function updatedClientId($value)
@@ -218,7 +218,7 @@ class Create extends Component
                 } else {
                     // Si no tiene dirección, mostrar error
                     $this->client_address_id = '';
-                    $this->addError('client_id', 'Este cliente no tiene ninguna dirección configurada. Por favor, añade una dirección al cliente primero.');
+                    $this->addError('client_id', __('Este cliente no tiene ninguna dirección configurada. Por favor, añade una dirección al cliente primero.'));
                 }
                 
                 $this->availableAddresses = $client->addresses;
@@ -269,7 +269,7 @@ class Create extends Component
             }
             
             if ($harvestItemsCount <= 1) {
-                $this->toastError('Debes mantener al menos una cosecha en la factura.');
+                $this->toastError(__('Debes mantener al menos una cosecha en la factura.'));
                 return;
             }
         }
@@ -319,9 +319,9 @@ class Create extends Component
     protected function messages(): array
     {
         return [
-            'client_address_id.required' => 'Debes seleccionar un cliente con dirección. Este cliente no tiene direcciones configuradas.',
-            'items.required' => 'Debes añadir al menos un item a la factura.',
-            'items.min' => 'Debes añadir al menos un item a la factura.',
+            'client_address_id.required' => __('Debes seleccionar un cliente con dirección. Este cliente no tiene direcciones configuradas.'),
+            'items.required' => __('Debes añadir al menos un item a la factura.'),
+            'items.min' => __('Debes añadir al menos un item a la factura.'),
         ];
     }
 
@@ -338,7 +338,7 @@ class Create extends Component
             }
             
             if (!$hasHarvest) {
-                $this->addError('items', 'Debes seleccionar al menos una cosecha para facturar.');
+                $this->addError('items', __('Debes seleccionar al menos una cosecha para facturar.'));
                 return;
             }
         }
@@ -466,7 +466,7 @@ class Create extends Component
             $this->toastSuccess("Albarán {$deliveryNoteCode} creado. Emítelo para generar el número de factura.");
             return $this->viticulturistRoleRedirect('invoices.index');
         } catch (\Exception $e) {
-            $this->toastError($e instanceof RuntimeException ? $e->getMessage() : 'Error al crear la factura. Inténtalo de nuevo.');
+            $this->toastError($e instanceof RuntimeException ? $e->getMessage()  : __('Error al crear la factura. Inténtalo de nuevo.'));
         }
     }
 

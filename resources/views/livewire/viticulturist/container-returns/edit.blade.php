@@ -42,7 +42,7 @@
 
                 <flux:field>
                     <flux:label>{{ __('Nº Registro MAPA') }}</flux:label>
-                    <flux:input wire:model="registration_number" type="text" placeholder="ES-XXXXXXXX" />
+                    <flux:input wire:model="registration_number" type="text" :placeholder="__('ES-XXXXXXXX')" />
                     <flux:error name="registration_number" />
                 </flux:field>
 

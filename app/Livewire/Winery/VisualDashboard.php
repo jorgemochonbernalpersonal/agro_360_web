@@ -239,13 +239,13 @@ class VisualDashboard extends Component
             'gr_containerId'     => ['required', Rule::exists('containers', 'id')
                 ->where('user_id', Auth::id())->where('unit', 'kg')],
         ], [
-            'gr_viticulturistId.required' => 'Selecciona un viticultor.',
-            'gr_plotId.required'          => 'Selecciona una parcela.',
-            'gr_plantingId.required'      => 'Selecciona una plantación.',
-            'gr_harvestDate.required'     => 'La fecha es obligatoria.',
-            'gr_totalWeight.required'     => 'El peso es obligatorio.',
-            'gr_totalWeight.min'          => 'El peso debe ser mayor que 0.',
-            'gr_containerId.required'     => 'Selecciona un depósito de destino.',
+            'gr_viticulturistId.required' => __('Selecciona un viticultor.'),
+            'gr_plotId.required'          => __('Selecciona una parcela.'),
+            'gr_plantingId.required'      => __('Selecciona una plantación.'),
+            'gr_harvestDate.required'     => __('La fecha es obligatoria.'),
+            'gr_totalWeight.required'     => __('El peso es obligatorio.'),
+            'gr_totalWeight.min'          => __('El peso debe ser mayor que 0.'),
+            'gr_containerId.required'     => __('Selecciona un depósito de destino.'),
         ]);
 
         $userId    = Auth::id();
@@ -254,32 +254,31 @@ class VisualDashboard extends Component
             ->where('viticulturist_id', $this->gr_viticulturistId)
             ->exists();
 
-        if (!$isLinked) { $this->addError('gr_viticulturistId', 'Viticultor no vinculado.'); return; }
+        if (!$isLinked) { $this->addError('gr_viticulturistId', __('Viticultor no vinculado.')); return; }
 
         $plot      = Plot::where('viticulturist_id', $this->gr_viticulturistId)->find($this->gr_plotId);
         $planting  = $plot ? PlotPlanting::where('plot_id', $plot->id)->find($this->gr_plantingId) : null;
         $container = Container::where('user_id', $userId)->find((int) $this->gr_containerId);
 
         if (!$plot || !$planting || !$container) {
-            $this->toastError('Datos no válidos. Revisa la selección.'); return;
+            $this->toastError(__('Datos no válidos. Revisa la selección.')); return;
         }
 
         $weight = (float) $this->gr_totalWeight;
         if (!$container->hasAvailableCapacity($weight)) {
-            $this->addError('gr_containerId',
-                "Sin capacidad suficiente. Disponible: " . number_format($container->getAvailableCapacity(), 0) . " kg.");
+            $this->addError('gr_containerId', __('Sin capacidad suficiente. Disponible: :available kg.', ['available' => number_format($container->getAvailableCapacity(), 0)]));
             return;
         }
 
         $campaign = Campaign::getOrCreateActiveForYear($userId, $this->gr_vintageYear);
-        if (!$campaign) { $this->toastError('No se pudo obtener la campaña.'); return; }
+        if (!$campaign) { $this->toastError(__('No se pudo obtener la campaña.')); return; }
 
         $existingBatch = GrapeReceptionBatch::where('winery_id', $userId)
             ->where('plot_planting_id', $planting->id)
             ->where('campaign_id', $campaign->id)
             ->first();
         if ($existingBatch && $existingBatch->status === 'closed') {
-            $this->toastError('El lote de esta plantación está cerrado.'); return;
+            $this->toastError(__('El lote de esta plantación está cerrado.')); return;
         }
 
         try {
@@ -317,7 +316,7 @@ class VisualDashboard extends Component
 
         } catch (\Exception $e) {
             \Log::error('VisualDashboard::saveGrapeReception', ['error' => $e->getMessage()]);
-            $this->toastError('Error al guardar. Inténtalo de nuevo.');
+            $this->toastError(__('Error al guardar. Inténtalo de nuevo.'));
         }
     }
 
@@ -353,9 +352,9 @@ class VisualDashboard extends Component
             'fc_temperature' => ['nullable', 'numeric', 'min:-20', 'max:60'],
             'fc_brix'        => ['nullable', 'numeric', 'min:0', 'max:100'],
         ], [
-            'fc_wineId.required'      => 'Selecciona un vino.',
-            'fc_containerId.required' => 'Selecciona un contenedor.',
-            'fc_controlDate.required' => 'La fecha es obligatoria.',
+            'fc_wineId.required'      => __('Selecciona un vino.'),
+            'fc_containerId.required' => __('Selecciona un contenedor.'),
+            'fc_controlDate.required' => __('La fecha es obligatoria.'),
         ]);
 
         WineFermentationControl::create([
@@ -367,7 +366,7 @@ class VisualDashboard extends Component
             'created_by'   => Auth::id(),
         ]);
 
-        $this->toastSuccess('Control de fermentación registrado.');
+        $this->toastSuccess(__('Control de fermentación registrado.'));
         $this->modalFermentation = false;
     }
 
@@ -395,16 +394,15 @@ class VisualDashboard extends Component
             'tr_transferType'  => ['required', 'in:' . implode(',', array_keys(WineTransfer::TRANSFER_TYPES))],
             'tr_transferDate'  => ['required', 'date'],
         ], [
-            'tr_wineId.required'        => 'Selecciona un vino.',
-            'tr_toContainerId.required' => 'Selecciona contenedor destino.',
-            'tr_quantity.required'      => 'La cantidad es obligatoria.',
-            'tr_quantity.min'           => 'La cantidad debe ser mayor que 0.',
+            'tr_wineId.required'        => __('Selecciona un vino.'),
+            'tr_toContainerId.required' => __('Selecciona contenedor destino.'),
+            'tr_quantity.required'      => __('La cantidad es obligatoria.'),
+            'tr_quantity.min'           => __('La cantidad debe ser mayor que 0.'),
         ]);
 
         $dest = Container::where('user_id', Auth::id())->find($this->tr_toContainerId);
         if ($dest && $dest->getAvailableCapacity() < (float) $this->tr_quantity) {
-            $this->addError('tr_quantity',
-                'Sin capacidad suficiente (' . number_format($dest->getAvailableCapacity(), 1) . ' L disponibles).');
+            $this->addError('tr_quantity', __('Sin capacidad suficiente. Disponible: :available kg.', ['available' => number_format($dest->getAvailableCapacity(), 1)]));
             return;
         }
 
@@ -421,7 +419,7 @@ class VisualDashboard extends Component
 
         app(WineContainerStockService::class)->recordTransfer($transfer);
 
-        $this->toastSuccess('Trasvase registrado correctamente.');
+        $this->toastSuccess(__('Trasvase registrado correctamente.'));
         $this->modalTransfer = false;
     }
 
@@ -440,8 +438,8 @@ class VisualDashboard extends Component
             'wine_name' => ['required', 'string', 'max:200'],
             'wine_type' => ['required', 'in:' . implode(',', array_keys(Wine::WINE_TYPES))],
         ], [
-            'wine_name.required' => 'El nombre es obligatorio.',
-            'wine_type.required' => 'Selecciona el tipo de vino.',
+            'wine_name.required' => __('El nombre es obligatorio.'),
+            'wine_type.required' => __('Selecciona el tipo de vino.'),
         ]);
 
         Wine::create([
@@ -474,10 +472,10 @@ class VisualDashboard extends Component
             'cont_capacity' => ['required', 'numeric', 'min:1'],
             'cont_unit'     => ['required', 'in:kg,litros'],
         ], [
-            'cont_name.required'     => 'El nombre es obligatorio.',
-            'cont_typeId.required'   => 'Selecciona el tipo.',
-            'cont_capacity.required' => 'La capacidad es obligatoria.',
-            'cont_capacity.min'      => 'La capacidad debe ser al menos 1.',
+            'cont_name.required'     => __('El nombre es obligatorio.'),
+            'cont_typeId.required'   => __('Selecciona el tipo.'),
+            'cont_capacity.required' => __('La capacidad es obligatoria.'),
+            'cont_capacity.min'      => __('La capacidad debe ser al menos 1.'),
         ]);
 
         Container::create([
@@ -792,7 +790,7 @@ class VisualDashboard extends Component
             'modalUnits'               => $modalUnits,
             'wineTypes'                => Wine::WINE_TYPES,
             'transferTypes'            => WineTransfer::TRANSFER_TYPES,
-        ])->layout('layouts.app', ['title' => 'Vista Visual — Agro365']);
+        ])->layout('layouts.app', ['title' => __('Vista Visual — Agro365')]);
     }
 
     private function parseWktToLatLng(?string $wkt): array

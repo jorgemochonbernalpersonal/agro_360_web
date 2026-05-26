@@ -111,7 +111,7 @@ class Index extends Component
         $this->validate([
             'linkSelectedId' => ['required', 'integer'],
         ], [
-            'linkSelectedId.required' => 'Selecciona un viticultor de los resultados.',
+            'linkSelectedId.required' => __('Selecciona un viticultor de los resultados.'),
         ]);
 
         $doId = Auth::id();
@@ -161,10 +161,10 @@ class Index extends Component
             'createDni'   => ['nullable', 'string', 'max:20', Rule::unique('users', 'dni')],
             'createPhone' => ['nullable', 'string', 'max:20'],
         ], [
-            'createName.required'  => 'El nombre es obligatorio.',
-            'createEmail.email'    => 'El email no es válido.',
-            'createEmail.unique'   => 'Ya existe un usuario con este email.',
-            'createDni.unique'     => 'Ya existe un usuario activo con este DNI.',
+            'createName.required'  => __('El nombre es obligatorio.'),
+            'createEmail.email'    => __('El email no es válido.'),
+            'createEmail.unique'   => __('Ya existe un usuario con este email.'),
+            'createDni.unique'     => __('Ya existe un usuario activo con este DNI.'),
         ]);
 
         $viticulturist = User::create([
@@ -214,8 +214,8 @@ class Index extends Component
         $this->validate([
             'inviteEmail' => ['required', 'email', 'max:255'],
         ], [
-            'inviteEmail.required' => 'Introduce el email del viticultor.',
-            'inviteEmail.email'    => 'El email no es válido.',
+            'inviteEmail.required' => __('Introduce el email del viticultor.'),
+            'inviteEmail.email'    => __('El email no es válido.'),
         ]);
 
         $grower = User::where('id', $this->inviteGrowerId)
@@ -229,7 +229,7 @@ class Index extends Component
 
         // Rate limit: 1 per hour
         if ($grower->invitation_sent_at?->isAfter(now()->subHour())) {
-            $this->toastError('Invitación enviada hace menos de 1 hora. Espera antes de reenviar.');
+            $this->toastError(__('Invitación enviada hace menos de 1 hora. Espera antes de reenviar.'));
             return;
         }
 
@@ -238,7 +238,7 @@ class Index extends Component
             ->exists();
 
         if ($emailTaken) {
-            $this->addError('inviteEmail', 'Este email ya está registrado en el sistema.');
+            $this->addError('inviteEmail', __('Este email ya está registrado en el sistema.'));
             return;
         }
 
@@ -276,7 +276,7 @@ class Index extends Component
             'invitation_sent_at'    => null,
         ]);
 
-        $this->toastSuccess('Invitación revocada.');
+        $this->toastSuccess(__('Invitación revocada.'));
     }
 
     // ── Remove grower from pool ───────────────────────────────────────────────
@@ -304,7 +304,7 @@ class Index extends Component
 
         $relation->delete();
 
-        $this->toastSuccess(($grower?->name ?? 'El viticultor') . ' eliminado del pool de la denominación.');
+        $this->toastSuccess(__(':name eliminado del pool de la denominación.', ['name' => $grower?->name ?? __('El viticultor')]));
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────

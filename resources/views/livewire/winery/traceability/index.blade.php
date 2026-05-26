@@ -1,25 +1,25 @@
 <div class="space-y-6 animate-fade-in">
     <x-agro.page-header
-        title="Trazabilidad"
-        description="Consulta el historial completo de cada vino desde la uva hasta la etiqueta."
+        title="{{ __('Trazabilidad') }}"
+        :description="__('Consulta el historial completo de cada vino desde la uva hasta la etiqueta.')"
     />
 
     <x-agro.filter-bar>
-        <x-agro.filter-input wire:model.live.debounce.300ms="search" placeholder="Buscar vino o código..." />
+        <x-agro.filter-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar vino o código...')" />
         <x-agro.filter-select wire:model.live="vintageFilter" size="sm" class="min-w-32">
-            <flux:select.option value="">Todas las añadas</flux:select.option>
+            <flux:select.option value="">{{ __('Todas las añadas') }}</flux:select.option>
             @foreach($vintages as $v)
                 <flux:select.option value="{{ $v }}">{{ $v }}</flux:select.option>
             @endforeach
         </x-agro.filter-select>
         <x-agro.filter-select wire:model.live="statusFilter" size="sm" class="min-w-40">
-            <flux:select.option value="">Todos los estados</flux:select.option>
+            <flux:select.option value="">{{ __('Todos los estados') }}</flux:select.option>
             @foreach($statuses as $key => $label)
                 <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
             @endforeach
         </x-agro.filter-select>
         @if($search || $vintageFilter || $statusFilter)
-            <flux:button wire:click="resetFilters" variant="ghost" size="sm" icon="x-mark">Limpiar</flux:button>
+            <flux:button wire:click="resetFilters" variant="ghost" size="sm" icon="x-mark">{{ __('Limpiar') }}</flux:button>
         @endif
     </x-agro.filter-bar>
 
@@ -61,22 +61,22 @@
                         <div class="flex-1 space-y-4">
                             <div class="grid grid-cols-2 gap-2">
                                 <div class="bg-agro-50 rounded-xl p-3">
-                                    <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Añada</p>
+                                    <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">{{ __('Añada') }}</p>
                                     <p class="text-2xl font-bold text-agro-700 leading-none">{{ $wine->vintage ?? '—' }}</p>
                                 </div>
                                 <div class="bg-agro-50 rounded-xl p-3">
-                                    <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Orígenes</p>
+                                    <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">{{ __('Orígenes') }}</p>
                                     <p class="text-2xl font-bold text-agro-700 leading-none">{{ $wine->wineHarvests->count() }}</p>
                                 </div>
                             </div>
 
                             <div class="space-y-2 text-sm">
                                 <div class="flex items-center justify-between">
-                                    <span class="text-zinc-400">Procesos</span>
+                                    <span class="text-zinc-400">{{ __('Procesos') }}</span>
                                     <span class="text-zinc-700 font-medium">{{ $wine->processDetails->count() }}</span>
                                 </div>
                                 <div class="flex items-center justify-between">
-                                    <span class="text-zinc-400">Embotellados</span>
+                                    <span class="text-zinc-400">{{ __('Embotellados') }}</span>
                                     <span class="text-zinc-700 font-medium">{{ $wine->bottlings->count() }}</span>
                                 </div>
                             </div>
@@ -84,9 +84,9 @@
 
                         <x-slot:footer>
                             <div class="flex items-center justify-end gap-0.5">
-                                <x-agro.action-button variant="view" href="{{ roleRoute('wines.show', $wine) }}" wire:navigate title="Ver vino" />
+                                <x-agro.action-button variant="view" href="{{ roleRoute('wines.show', $wine) }}" wire:navigate title="{{ __('Ver vino') }}" />
                                 @if($wine->trace_token)
-                                    <x-agro.action-button icon="arrow-down-tray" variant="default" href="{{ roleRoute('wines.traceability-pdf', $wine) }}" target="_blank" title="Descargar PDF" />
+                                    <x-agro.action-button icon="arrow-down-tray" variant="default" href="{{ roleRoute('wines.traceability-pdf', $wine) }}" target="_blank" title="{{ __('Descargar PDF') }}" />
                                 @endif
                             </div>
                         </x-slot:footer>
@@ -98,12 +98,12 @@
         @else
             <x-agro.empty-state
                 icon="magnifying-glass-circle"
-                title="No se encontraron vinos"
+                title="{{ __('No se encontraron vinos') }}"
                 :description="$search || $vintageFilter || $statusFilter ? 'Ningún vino coincide con los filtros actuales.' : 'Cuando registres vinos aparecerán aquí con su trazabilidad completa.'"
             >
                 @if($search || $vintageFilter || $statusFilter)
                     <x-slot:action>
-                        <flux:button wire:click="resetFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
+                        <flux:button wire:click="resetFilters" variant="outline" icon="x-mark">{{ __('Limpiar filtros') }}</flux:button>
                     </x-slot:action>
                 @endif
             </x-agro.empty-state>

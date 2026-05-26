@@ -144,13 +144,13 @@ class Edit extends Component
         $lot = ProductLot::where('user_id', Auth::id())->find($this->selectedLotId);
 
         if (!$lot) {
-            $this->toastError('Lote no encontrado.');
+            $this->toastError(__('Lote no encontrado.'));
             return;
         }
 
         foreach ($this->items as $item) {
             if (isset($item['wine_lot_id']) && (int) $item['wine_lot_id'] === $lot->id) {
-                $this->toastError('Este lote ya está en la factura.');
+                $this->toastError(__('Este lote ya está en la factura.'));
                 return;
             }
         }
@@ -169,7 +169,7 @@ class Edit extends Component
         ];
 
         $this->selectedLotId = '';
-        $this->toastSuccess('Producto añadido.');
+        $this->toastSuccess(__('Producto añadido.'));
     }
 
     public function addItem(): void
@@ -199,7 +199,7 @@ class Edit extends Component
     public function saveStatuses(): void
     {
         if ($this->invoice->status === 'cancelled') {
-            $this->toastError('No se puede modificar una factura cancelada.');
+            $this->toastError(__('No se puede modificar una factura cancelada.'));
             return;
         }
 
@@ -227,7 +227,7 @@ class Edit extends Component
     {
         $this->validate(
             ['payment_date' => 'required|date'],
-            ['payment_date.required' => 'La fecha de pago es obligatoria.']
+            ['payment_date.required' => __('La fecha de pago es obligatoria.')]
         );
 
         $this->showPaymentDateModal = false;
@@ -293,7 +293,7 @@ class Edit extends Component
                 'invoice_id' => $this->invoice->id,
                 'user_id'    => Auth::id(),
             ]);
-            $this->toastError($e instanceof \RuntimeException ? $e->getMessage() : 'Error al actualizar el estado de entrega.');
+            $this->toastError($e instanceof \RuntimeException ? $e->getMessage()  : __('Error al actualizar el estado de entrega.'));
             $this->closeDeliveryModal();
         }
     }
@@ -307,7 +307,7 @@ class Edit extends Component
             'payment_date'    => $this->payment_status === 'paid' ? ($this->payment_date ?: null) : null,
         ]);
         $this->invoice->refresh();
-        $this->toastSuccess('Estados actualizados correctamente.');
+        $this->toastSuccess(__('Estados actualizados correctamente.'));
     }
 
     private function persistPaymentStatus(): void
@@ -374,7 +374,7 @@ class Edit extends Component
         $this->validate();
 
         if ($this->isLocked) {
-            $this->toastError('Esta factura no se puede modificar.');
+            $this->toastError(__('Esta factura no se puede modificar.'));
             return;
         }
 
@@ -476,7 +476,7 @@ class Edit extends Component
                 });
             });
 
-            $this->toastSuccess('Factura actualizada correctamente.');
+            $this->toastSuccess(__('Factura actualizada correctamente.'));
             return $this->roleRedirect('invoices.products.index');
 
         } catch (\Exception $e) {
@@ -485,7 +485,7 @@ class Edit extends Component
                 'user_id'    => Auth::id(),
                 'exception'  => $e,
             ]);
-            $this->toastError($e instanceof \RuntimeException ? $e->getMessage() : 'Error al guardar los cambios.');
+            $this->toastError($e instanceof \RuntimeException ? $e->getMessage()  : __('Error al guardar los cambios.'));
         }
     }
 

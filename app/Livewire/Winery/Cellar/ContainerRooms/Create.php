@@ -41,7 +41,7 @@ class Create extends Component
             'humidity'    => $this->humidity ?: null,
         ]);
 
-        $this->toastSuccess('Sala de bodega creada correctamente.');
+        $this->toastSuccess(__('Sala de bodega creada correctamente.'));
         $this->redirect(roleRoute('container-rooms.index'), navigate: true);
     }
 

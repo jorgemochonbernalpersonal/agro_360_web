@@ -49,9 +49,9 @@ class Show extends Component
         $this->validate([
             'disputeNote' => ['required', 'string', 'min:10', 'max:1000'],
         ], [
-            'disputeNote.required' => 'Explica el motivo de la reclamación.',
-            'disputeNote.min'      => 'La nota debe tener al menos 10 caracteres.',
-            'disputeNote.max'      => 'La nota no puede superar los 1000 caracteres.',
+            'disputeNote.required' => __('Explica el motivo de la reclamación.'),
+            'disputeNote.min'      => __('La nota debe tener al menos 10 caracteres.'),
+            'disputeNote.max'      => __('La nota no puede superar los 1000 caracteres.'),
         ]);
 
         $delivery = HarvestDelivery::where('viticulturist_id', Auth::id())
@@ -78,9 +78,7 @@ class Show extends Component
         $this->disputeNote = '';
 
         $this->toastSuccess($notified
-            ? 'Reclamación enviada. La bodega recibirá una notificación.'
-            : 'Reclamación registrada. No se pudo notificar a la bodega porque la entrega no está vinculada a una recepción.'
-        );
+            ? __('Reclamación enviada. La bodega recibirá una notificación.') : __('Reclamación registrada. No se pudo notificar a la bodega porque la entrega no está vinculada a una recepción.'));
     }
 
     public function render()
@@ -137,8 +135,8 @@ class Show extends Component
             'cupoPct'            => $cupoPct,
             'cupoExceeded'       => $cupoExceeded,
         ])->layout('layouts.app', [
-            'title'       => 'Detalle de cosecha — ' . ($this->planting->grapeVariety?->name ?? $this->planting->name) . ' · ' . $this->vintageYear,
-            'description' => 'Detalle de registros de cosecha, recepciones de bodega y entregas declaradas.',
+            'title'       => __('Detalle de cosecha — ') . ($this->planting->grapeVariety?->name ?? $this->planting->name) . ' · ' . $this->vintageYear,
+            'description' => __('Detalle de registros de cosecha, recepciones de bodega y entregas declaradas.'),
         ]);
     }
 }

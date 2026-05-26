@@ -105,7 +105,7 @@ class Create extends Component
             ->exists();
 
         if (!$belongs) {
-            $this->addError('viticulturist_id', 'El viticultor no pertenece a tu bodega.');
+            $this->addError('viticulturist_id', __('El viticultor no pertenece a tu bodega.'));
             return;
         }
 
@@ -231,7 +231,7 @@ class Create extends Component
                 'user_id'   => Auth::id(),
                 'exception' => $e,
             ]);
-            $this->toastError($e instanceof \RuntimeException ? $e->getMessage() : 'Error al crear la liquidación. Inténtalo de nuevo.');
+            $this->toastError($e instanceof \RuntimeException ? $e->getMessage()  : __('Error al crear la liquidación. Inténtalo de nuevo.'));
         }
     }
 

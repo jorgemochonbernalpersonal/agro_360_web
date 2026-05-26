@@ -1,8 +1,8 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="Previsiones de Vendimia"
-        description="Gestiona los aforos de uva por viticultor y plantación antes de la vendimia."
+        title="{{ __('Previsiones de Vendimia') }}"
+        :description="__('Gestiona los aforos de uva por viticultor y plantación antes de la vendimia.')"
     />
 
     {{-- Nav vendimia --}}
@@ -18,7 +18,7 @@
         <div class="flex items-center gap-3">
 
             {{-- Search --}}
-            <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar viticultor, parcela, variedad..." />
+            <x-agro.search-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar viticultor, parcela, variedad...')" />
 
             {{-- Filtros --}}
             <button @click="filtersOpen = !filtersOpen"
@@ -47,38 +47,36 @@
             class="bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm">
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                    <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Campaña</label>
+                    <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Campaña') }}</label>
                     <flux:select wire:model.live="campaignFilter">
-                        <option value="">Todas las campañas</option>
+                        <option value="">{{ __('Todas las campañas') }}</option>
                         @foreach($campaigns as $campaign)
                             <option value="{{ $campaign->id }}">{{ $campaign->year }}</option>
                         @endforeach
                     </flux:select>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Viticultor</label>
+                    <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Viticultor') }}</label>
                     <flux:select wire:model.live="viticulturistFilter">
-                        <option value="">Todos los viticultores</option>
+                        <option value="">{{ __('Todos los viticultores') }}</option>
                         @foreach($linkedViticulturists as $v)
                             <option value="{{ $v->id }}">{{ $v->name }}</option>
                         @endforeach
                     </flux:select>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Estado</label>
+                    <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Estado') }}</label>
                     <flux:select wire:model.live="statusFilter">
-                        <option value="">Todos</option>
-                        <option value="confirmed">Confirmadas</option>
-                        <option value="draft">Borradores</option>
+                        <option value="">{{ __('Todos') }}</option>
+                        <option value="confirmed">{{ __('Confirmadas') }}</option>
+                        <option value="draft">{{ __('Borradores') }}</option>
                     </flux:select>
                 </div>
             </div>
             @if($filterCount > 0)
                 <div class="mt-3 pt-3 border-t border-zinc-100">
                     <button wire:click="$set('search', ''); $set('campaignFilter', ''); $set('viticulturistFilter', ''); $set('statusFilter', '')"
-                        class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">
-                        Limpiar filtros
-                    </button>
+                        class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">{{ __('Limpiar filtros') }}</button>
                 </div>
             @endif
         </div>
@@ -100,9 +98,7 @@
                 <x-agro.filter-chip icon="funnel" :label="$statusLabel" wireRemove="$set('statusFilter', '')" />
             @endif
             <button wire:click="$set('search', ''); $set('campaignFilter', ''); $set('viticulturistFilter', ''); $set('statusFilter', '')"
-                class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">
-                Limpiar todo
-            </button>
+                class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">{{ __('Limpiar todo') }}</button>
         </div>
     @endif
 
@@ -136,8 +132,8 @@
         @if($forecasts->isEmpty())
             <x-agro.empty-state
                 icon="clipboard-document-list"
-                title="No hay previsiones"
-                description="Crea el aforo previo a la vendimia para planificar las recepciones."
+                title="{{ __('No hay previsiones') }}"
+                :description="__('Crea el aforo previo a la vendimia para planificar las recepciones.')"
             >
                 <x-slot:action>
                     <flux:button variant="primary" icon="plus" href="{{ roleRoute('harvest-forecasts.create') }}" wire:navigate>
@@ -175,9 +171,9 @@
                                 radius="xl"
                             >
                                 @if($isConfirmed)
-                                    <x-agro.status-badge color="green" label="Confirmada" />
+                                    <x-agro.status-badge color="green" :label="__('Confirmada')" />
                                 @else
-                                    <x-agro.status-badge color="amber" label="Borrador" />
+                                    <x-agro.status-badge color="amber" :label="__('Borrador')" />
                                 @endif
                             </x-agro.card-item-header>
                         </x-slot:header>
@@ -201,7 +197,7 @@
                             {{-- Stats: Previsto / Recibido --}}
                             <div class="grid grid-cols-2 gap-3">
                                 <div class="bg-agro-50 rounded-xl p-3">
-                                    <p class="text-[10px] font-semibold text-agro-600 uppercase tracking-wide mb-0.5">Previsto</p>
+                                    <p class="text-[10px] font-semibold text-agro-600 uppercase tracking-wide mb-0.5">{{ __('Previsto') }}</p>
                                     <p class="text-sm font-bold text-agro-700">{{ number_format($estimated, 0) }} kg</p>
                                 </div>
                                 <div class="rounded-xl p-3 {{ $exceeded ? 'bg-red-50' : 'bg-zinc-50' }}">
@@ -216,7 +212,7 @@
                             @if($estimated > 0)
                                 <div class="space-y-1.5">
                                     <div class="flex items-center justify-between">
-                                        <span class="text-xs text-zinc-500">Ejecución</span>
+                                        <span class="text-xs text-zinc-500">{{ __('Ejecución') }}</span>
                                         <span class="text-xs font-semibold {{ $exceeded ? 'text-red-600' : 'text-zinc-700' }}">
                                             {{ $pct }}%@if($exceeded) ⚠@endif
                                         </span>
@@ -227,7 +223,7 @@
                                     />
                                 </div>
                             @else
-                                <p class="text-xs text-zinc-400 italic">Sin recepciones registradas</p>
+                                <p class="text-xs text-zinc-400 italic">{{ __('Sin recepciones registradas') }}</p>
                             @endif
 
                         </div>
@@ -238,7 +234,7 @@
                                     @if(!$isConfirmed)
                                         <flux:button size="sm" variant="ghost" icon="check"
                                             wire:click="confirm({{ $forecast->id }})"
-                                            wire:confirm="¿Confirmar esta previsión? Pasará a ser el límite operativo de las recepciones.">
+                                            wire:confirm="{{ __('¿Confirmar esta previsión? Pasará a ser el límite operativo de las recepciones.') }}">
                                             Confirmar
                                         </flux:button>
                                     @endif
@@ -249,7 +245,7 @@
                                     <flux:button size="sm" variant="ghost" icon="trash" class="text-red-500"
                                         wire:click="delete({{ $forecast->id }})"
                                         wire:loading.attr="disabled"
-                                        wire:confirm="¿Eliminar esta previsión? Esta acción no se puede deshacer." />
+                                        wire:confirm="{{ __('¿Eliminar esta previsión? Esta acción no se puede deshacer.') }}" />
                                 </div>
                             </div>
                         </x-slot:footer>

@@ -1,15 +1,15 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="Negocio DO"
-        description="Suscripciones de viticultores y actividad económica de bodegas adscritas."
+        title="{{ __('Negocio DO') }}"
+        :description="__('Suscripciones de viticultores y actividad económica de bodegas adscritas.')"
     />
 
     {{-- Stats --}}
     <x-agro.stats-section key="supervisor-finance" columns="3">
-        <x-agro.stat-card label="Suscripciones activas" :value="$activeSubscriptions" icon="credit-card" color="agro" />
-        <x-agro.stat-card label="Ingresos mensuales (€)" :value="number_format($monthlyRevenue, 2, ',', '.')" icon="banknotes" color="blue" description="Planes mensuales activos" />
-        <x-agro.stat-card label="Ingresos anuales (€)" :value="number_format($yearlyRevenue, 2, ',', '.')" icon="banknotes" color="yellow" description="Planes anuales activos" />
+        <x-agro.stat-card :label="__('Suscripciones activas')" :value="$activeSubscriptions" icon="credit-card" color="agro" />
+        <x-agro.stat-card :label="__('Ingresos mensuales (€)')" :value="number_format($monthlyRevenue, 2, ',', '.')" icon="banknotes" color="blue" :description="__('Planes mensuales activos')" />
+        <x-agro.stat-card :label="__('Ingresos anuales (€)')" :value="number_format($yearlyRevenue, 2, ',', '.')" icon="banknotes" color="yellow" :description="__('Planes anuales activos')" />
     </x-agro.stats-section>
 
     {{-- Tabs --}}
@@ -58,20 +58,20 @@
                             <div class="flex-1 space-y-3">
                                 <div class="grid grid-cols-2 gap-2">
                                     <div class="bg-blue-50 rounded-lg p-2 text-center">
-                                        <p class="text-[9px] text-blue-400 uppercase tracking-wide mb-0.5">Plan</p>
+                                        <p class="text-[9px] text-blue-400 uppercase tracking-wide mb-0.5">{{ __('Plan') }}</p>
                                         <p class="text-sm font-bold text-blue-700 capitalize">{{ $sub->plan_type }}</p>
                                     </div>
                                     <div class="bg-emerald-50 rounded-lg p-2 text-center">
-                                        <p class="text-[9px] text-emerald-400 uppercase tracking-wide mb-0.5">Importe</p>
+                                        <p class="text-[9px] text-emerald-400 uppercase tracking-wide mb-0.5">{{ __('Importe') }}</p>
                                         <p class="text-sm font-bold text-emerald-700">
                                             {{ number_format($sub->amount, 2, ',', '.') }}
-                                            <span class="text-[9px] font-normal text-emerald-400">EUR</span>
+                                            <span class="text-[9px] font-normal text-emerald-400">{{ __('EUR') }}</span>
                                         </p>
                                     </div>
                                 </div>
 
                                 <div class="flex items-center justify-between text-sm">
-                                    <span class="text-zinc-400">Válida hasta</span>
+                                    <span class="text-zinc-400">{{ __('Válida hasta') }}</span>
                                     <span class="text-zinc-700 font-medium">{{ $sub->ends_at?->format('d/m/Y') ?? '—' }}</span>
                                 </div>
                             </div>
@@ -83,8 +83,8 @@
             @else
                 <x-agro.empty-state
                     icon="credit-card"
-                    title="Sin suscripciones"
-                    description="No hay suscripciones de viticultores DO."
+                    title="{{ __('Sin suscripciones') }}"
+                    :description="__('No hay suscripciones de viticultores DO.')"
                 />
             @endif
 
@@ -118,17 +118,17 @@
                             <div class="flex-1 space-y-3">
                                 <div class="grid grid-cols-2 gap-2">
                                     <div class="bg-amber-50 rounded-lg p-2 text-center">
-                                        <p class="text-[9px] text-amber-400 uppercase tracking-wide mb-0.5">Uva (kg)</p>
+                                        <p class="text-[9px] text-amber-400 uppercase tracking-wide mb-0.5">{{ __('Uva (kg)') }}</p>
                                         <p class="text-sm font-bold text-amber-700">
                                             {{ number_format($row->total_kg, 0, ',', '.') }}
                                         </p>
                                     </div>
                                     <div class="bg-emerald-50 rounded-lg p-2 text-center">
-                                        <p class="text-[9px] text-emerald-400 uppercase tracking-wide mb-0.5">Valor</p>
+                                        <p class="text-[9px] text-emerald-400 uppercase tracking-wide mb-0.5">{{ __('Valor') }}</p>
                                         <p class="text-sm font-bold text-emerald-700">
                                             @if($row->total_value > 0)
                                                 {{ number_format($row->total_value, 2, ',', '.') }}
-                                                <span class="text-[9px] font-normal text-emerald-400">EUR</span>
+                                                <span class="text-[9px] font-normal text-emerald-400">{{ __('EUR') }}</span>
                                             @else
                                                 —
                                             @endif
@@ -142,8 +142,8 @@
             @else
                 <x-agro.empty-state
                     icon="building-office-2"
-                    title="Sin datos"
-                    description="No hay datos de recepciones para el año actual."
+                    title="{{ __('Sin datos') }}"
+                    :description="__('No hay datos de recepciones para el año actual.')"
                 />
             @endif
         @endif

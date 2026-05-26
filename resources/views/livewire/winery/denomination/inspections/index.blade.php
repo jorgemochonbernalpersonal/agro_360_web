@@ -2,8 +2,8 @@
 
     @if(!$embedded)
     <x-agro.page-header
-        title="Inspecciones DO"
-        description="Inspecciones realizadas por tu Denominación de Origen sobre esta bodega."
+        title="{{ __('Inspecciones DO') }}"
+        :description="__('Inspecciones realizadas por tu Denominación de Origen sobre esta bodega.')"
         icon="shield-check"
     />
     @endif
@@ -11,7 +11,7 @@
     {{-- Filtro estado --}}
     <div class="flex flex-wrap gap-3">
         <flux:select wire:model.live="statusFilter">
-            <flux:select.option value="">Todos los estados</flux:select.option>
+            <flux:select.option value="">{{ __('Todos los estados') }}</flux:select.option>
             @foreach($statusLabels as $key => $label)
                 <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
             @endforeach
@@ -67,8 +67,8 @@
         @empty
             <x-agro.empty-state
                 icon="shield-check"
-                title="Sin inspecciones"
-                description="Tu denominación de origen aún no ha registrado inspecciones para esta bodega."
+                title="{{ __('Sin inspecciones') }}"
+                :description="__('Tu denominación de origen aún no ha registrado inspecciones para esta bodega.')"
             />
         @endforelse
     </x-agro.card>

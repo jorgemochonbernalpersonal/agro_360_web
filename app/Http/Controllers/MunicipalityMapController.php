@@ -27,7 +27,7 @@ class MunicipalityMapController extends Controller
         if ($plotIds->isEmpty()) {
             return redirect()
                 ->route('sigpac.codes')
-                ->with('error', 'No tienes parcelas registradas.');
+                ->with('error', __('No tienes parcelas registradas.'));
         }
 
         // Obtener todas las geometrías del municipio con caché
@@ -100,7 +100,7 @@ class MunicipalityMapController extends Controller
         if ($plotGeometries->isEmpty()) {
             return redirect()
                 ->route('sigpac.codes')
-                ->with('warning', "No hay mapas generados para {$municipality->name}. Usa el botón 'Generar Todos los Mapas' primero.");
+                ->with('warning', __("No hay mapas generados para :name. Usa el botón 'Generar Todos los Mapas' primero.", ['name' => $municipality->name]));
         }
 
         return view('sigpac.municipality-map', compact('municipality', 'plotGeometries'));

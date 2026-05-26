@@ -115,7 +115,7 @@ class SmapSoilCard extends Component
 
             $this->dispatch('notify', [
                 'type'    => 'success',
-                'message' => 'Datos de humedad actualizados',
+                'message' => __('Datos de humedad actualizados'),
             ]);
 
         } catch (\Exception $e) {
@@ -123,7 +123,7 @@ class SmapSoilCard extends Component
 
             $this->dispatch('notify', [
                 'type'    => 'error',
-                'message' => 'Error al actualizar datos de humedad',
+                'message' => __('Error al actualizar datos de humedad'),
             ]);
         } finally {
             $this->loading = false;

@@ -56,9 +56,9 @@ class Index extends Component
             'type'       => 'required|in:info,warning,success,danger',
             'expires_at' => 'nullable|date|after:today',
         ], [
-            'title.required'      => 'El título es obligatorio.',
-            'message.required'    => 'El mensaje es obligatorio.',
-            'expires_at.after'    => 'La fecha de expiración debe ser futura.',
+            'title.required'      => __('El título es obligatorio.'),
+            'message.required'    => __('El mensaje es obligatorio.'),
+            'expires_at.after'    => __('La fecha de expiración debe ser futura.'),
         ]);
 
         $data = [
@@ -72,11 +72,11 @@ class Index extends Component
 
         if ($this->editingId) {
             AdminAnnouncement::findOrFail($this->editingId)->update($data);
-            $this->toastSuccess('Anuncio actualizado.');
+            $this->toastSuccess(__('Anuncio actualizado.'));
         } else {
             AdminAnnouncement::create($data);
             SecurityLogger::logSecurityEvent('announcement_created', ['admin_id' => Auth::id(), 'title' => $this->title]);
-            $this->toastSuccess('Anuncio publicado.');
+            $this->toastSuccess(__('Anuncio publicado.'));
         }
 
         $this->closeModal();
@@ -86,13 +86,13 @@ class Index extends Component
     {
         $ann = AdminAnnouncement::findOrFail($id);
         $ann->update(['is_active' => !$ann->is_active]);
-        $this->toastSuccess($ann->is_active ? 'Anuncio activado.' : 'Anuncio desactivado.');
+        $this->toastSuccess($ann->is_active ? __('Anuncio activado.') : __('Anuncio desactivado.'));
     }
 
     public function delete(int $id): void
     {
         AdminAnnouncement::findOrFail($id)->delete();
-        $this->toastSuccess('Anuncio eliminado.');
+        $this->toastSuccess(__('Anuncio eliminado.'));
     }
 
     public function render()
@@ -105,8 +105,8 @@ class Index extends Component
 
         return view('livewire.admin.announcements.index', compact('announcements', 'activeCount'))
             ->layout('layouts.app', [
-                'title'       => 'Anuncios - Admin - Agro365',
-                'description' => 'Gestiona los banners de anuncio visibles para los usuarios',
+                'title'       => __('Anuncios - Admin - Agro365'),
+                'description' => __('Gestiona los banners de anuncio visibles para los usuarios'),
             ]);
     }
 }

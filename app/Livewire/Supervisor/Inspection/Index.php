@@ -70,7 +70,7 @@ class Index extends Component
         Gate::authorize('create', DoInspection::class);
 
         if (!RateLimiter::attempt('inspection-save:' . Auth::id(), 20, fn() => null, 60)) {
-            $this->toastError('Demasiadas solicitudes. Espera un minuto antes de continuar.');
+            $this->toastError(__('Demasiadas solicitudes. Espera un minuto antes de continuar.'));
             return;
         }
 
@@ -95,7 +95,7 @@ class Index extends Component
 
         $this->reset(['subject_id', 'notes', 'reference_number']);
         $this->showCreate = false;
-        $this->toastSuccess('Inspección programada correctamente.');
+        $this->toastSuccess(__('Inspección programada correctamente.'));
     }
 
     public function openEdit(int $inspectionId): void
@@ -142,7 +142,7 @@ class Index extends Component
         ]);
 
         $this->closeEdit();
-        $this->toastSuccess('Inspección actualizada.');
+        $this->toastSuccess(__('Inspección actualizada.'));
     }
 
     public function updateStatus(int $inspectionId, string $status): void
@@ -150,7 +150,7 @@ class Index extends Component
         $inspection = DoInspection::forSupervisor(Auth::id())->findOrFail($inspectionId);
         Gate::authorize('update', $inspection);
         $inspection->update(['status' => $status]);
-        $this->toastSuccess('Estado actualizado.');
+        $this->toastSuccess(__('Estado actualizado.'));
     }
 
     public function delete(int $inspectionId): void
@@ -158,7 +158,7 @@ class Index extends Component
         $inspection = DoInspection::forSupervisor(Auth::id())->findOrFail($inspectionId);
         Gate::authorize('delete', $inspection);
         $inspection->delete();
-        $this->toastSuccess('Inspección eliminada.');
+        $this->toastSuccess(__('Inspección eliminada.'));
     }
 
     public function createNonconformityFromInspection(int $inspectionId): void
@@ -174,7 +174,7 @@ class Index extends Component
             'winery_id'     => $inspection->subject_id,
             'type'          => SupervisorRequest::TYPE_NONCONFORMITY,
             'status'        => SupervisorRequest::STATUS_DRAFT,
-            'title'         => 'No conformidad — ' . ($inspection->reference_number ?? $inspection->inspection_date->format('d/m/Y')),
+            'title'         => __('No conformidad — ') . ($inspection->reference_number ?? $inspection->inspection_date->format('d/m/Y')),
             'notes'         => $inspection->findings ?: null,
         ]);
 
@@ -225,10 +225,10 @@ class Index extends Component
             )->orderBy('name')->get(['id', 'name']);
 
         $tabs = [
-            'all'         => ['label' => 'Todas',       'count' => $counts['all']],
-            'scheduled'   => ['label' => 'Programadas', 'count' => $counts['scheduled']],
-            'in_progress' => ['label' => 'En curso',    'count' => $counts['in_progress']],
-            'completed'   => ['label' => 'Completadas', 'count' => $counts['completed']],
+            'all'         => ['label' => __('Todas'),       'count' => $counts['all']],
+            'scheduled'   => ['label' => __('Programadas'), 'count' => $counts['scheduled']],
+            'in_progress' => ['label' => __('En curso'),    'count' => $counts['in_progress']],
+            'completed'   => ['label' => __('Completadas'), 'count' => $counts['completed']],
         ];
 
         return view('livewire.supervisor.inspection.index', [

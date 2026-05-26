@@ -66,7 +66,7 @@ class Edit extends Component
             'notes'                  => $this->notes ?: null,
         ]);
 
-        $this->toastSuccess('Insumo actualizado correctamente.');
+        $this->toastSuccess(__('Insumo actualizado correctamente.'));
         $this->redirect(roleRoute('winery-supplies.index'), navigate: true);
     }
 

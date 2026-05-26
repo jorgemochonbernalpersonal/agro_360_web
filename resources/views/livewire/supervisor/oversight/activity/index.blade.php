@@ -1,20 +1,20 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="Stream de actividad DO"
-        description="Actividades del cuaderno de campo de los viticultores con acceso concedido."
+        title="{{ __('Stream de actividad DO') }}"
+        :description="__('Actividades del cuaderno de campo de los viticultores con acceso concedido.')"
     />
 
     {{-- Stats --}}
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <x-agro.stat-card
-            label="Viticultores con acceso"
+            :label="__('Viticultores con acceso')"
             :value="$totalWithAccess . ' / ' . $totalDo"
             icon="book-open"
             color="agro"
         />
         <x-agro.stat-card
-            label="Registros encontrados"
+            :label="__('Registros encontrados')"
             :value="$activities->total()"
             icon="clipboard-document-list"
             color="blue"
@@ -29,12 +29,12 @@
     @if($totalWithAccess === 0)
         <x-agro.empty-state
             icon="book-open"
-            title="Sin acceso al cuaderno"
-            description="Ningún viticultor tiene acceso al cuaderno concedido."
+            title="{{ __('Sin acceso al cuaderno') }}"
+            :description="__('Ningún viticultor tiene acceso al cuaderno concedido.')"
         >
             <x-slot name="action">
                 <a href="{{ route('supervisor.notebook.index') }}" wire:navigate>
-                    <flux:button variant="primary" size="sm" icon="key">Gestionar accesos</flux:button>
+                    <flux:button variant="primary" size="sm" icon="key">{{ __('Gestionar accesos') }}</flux:button>
                 </a>
             </x-slot>
         </x-agro.empty-state>
@@ -42,15 +42,15 @@
 
         {{-- Filtros --}}
         <x-agro.filter-bar>
-            <x-agro.filter-select wire:model.live="filterVit" label="Viticultor">
-                <option value="">Todos</option>
+            <x-agro.filter-select wire:model.live="filterVit" :label="__('Viticultor')">
+                <option value="">{{ __('Todos') }}</option>
                 @foreach($viticulturists as $vit)
                     <option value="{{ $vit->id }}">{{ $vit->name }}</option>
                 @endforeach
             </x-agro.filter-select>
 
-            <x-agro.filter-select wire:model.live="filterType" label="Tipo de actividad">
-                <option value="">Todos los tipos</option>
+            <x-agro.filter-select wire:model.live="filterType" :label="__('Tipo de actividad')">
+                <option value="">{{ __('Todos los tipos') }}</option>
                 @foreach($activityTypes as $key => $label)
                     <option value="{{ $key }}">{{ $label }}</option>
                 @endforeach
@@ -66,12 +66,10 @@
 
             <label class="flex items-center gap-2 cursor-pointer">
                 <input type="checkbox" wire:model.live="onlyAlerts" class="rounded border-zinc-300 text-emerald-600 focus:ring-emerald-300" />
-                <span class="text-sm text-zinc-600">Solo alertas</span>
+                <span class="text-sm text-zinc-600">{{ __('Solo alertas') }}</span>
             </label>
 
-            <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 transition px-2 py-1.5">
-                Limpiar
-            </button>
+            <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 transition px-2 py-1.5">{{ __('Limpiar') }}</button>
         </x-agro.filter-bar>
 
         {{-- Stream de actividades --}}
@@ -153,8 +151,8 @@
             @empty
                 <x-agro.empty-state
                     icon="clipboard-document-list"
-                    title="Sin actividades"
-                    description="No hay actividades registradas con los filtros actuales."
+                    title="{{ __('Sin actividades') }}"
+                    :description="__('No hay actividades registradas con los filtros actuales.')"
                 />
             @endforelse
         </div>

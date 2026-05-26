@@ -106,7 +106,7 @@ class Edit extends Component
                 $path = $this->profile_image->store('profile-images', 'public');
 
                 if (!$path) {
-                    throw new \Exception('No se pudo guardar la imagen. Verifica los permisos del directorio.');
+                    throw new \Exception(__('No se pudo guardar la imagen. Verifica los permisos del directorio.'));
                 }
 
                 // Actualizar o crear perfil con la imagen
@@ -135,12 +135,12 @@ class Edit extends Component
                     'user_id' => $user->id,
                     'exception' => $e
                 ]);
-                $this->addError('profile_image', 'Error al guardar la imagen: ' . $e->getMessage());
+                $this->addError('profile_image', __('Error al guardar la imagen: :message', ['message' => $e->getMessage()]));
                 return;
             }
         }
 
-        $this->toastSuccess('Información personal actualizada correctamente.');
+        $this->toastSuccess(__('Información personal actualizada correctamente.'));
 
         // Solo disparar evento de recarga si no se actualizó la imagen
         if (!$imageUpdated) {
@@ -154,11 +154,11 @@ class Edit extends Component
             'current_password' => ['required', 'current_password'],
             'password' => ['required', 'confirmed', Password::defaults()],
         ], [
-            'current_password.required' => 'El campo contraseña actual es obligatorio.',
-            'current_password.current_password' => 'La contraseña actual no es correcta.',
-            'password.required' => 'El campo nueva contraseña es obligatorio.',
-            'password.confirmed' => 'Las contraseñas no coinciden. Por favor, verifica que ambas contraseñas sean iguales.',
-            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
+            'current_password.required' => __('El campo contraseña actual es obligatorio.'),
+            'current_password.current_password' => __('La contraseña actual no es correcta.'),
+            'password.required' => __('El campo nueva contraseña es obligatorio.'),
+            'password.confirmed' => __('Las contraseñas no coinciden. Por favor, verifica que ambas contraseñas sean iguales.'),
+            'password.min' => __('La contraseña debe tener al menos 8 caracteres.'),
         ]);
 
         $user = Auth::user();
@@ -170,7 +170,7 @@ class Edit extends Component
         $this->password = '';
         $this->password_confirmation = '';
 
-        $this->toastSuccess('Contraseña actualizada correctamente.');
+        $this->toastSuccess(__('Contraseña actualizada correctamente.'));
     }
 
     public function updateContactInfo()
@@ -192,12 +192,12 @@ class Edit extends Component
                 'city' => $this->city,
                 'postal_code' => $this->postal_code,
                 'province_id' => $this->province_id,
-                'country' => 'España',  // Siempre España
+                'country' => __('España'),  // Siempre España
                 'phone' => $this->phone,
             ]
         );
 
-        $this->toastSuccess('Información de contacto actualizada correctamente.');
+        $this->toastSuccess(__('Información de contacto actualizada correctamente.'));
     }
 
     public function setActiveTab($tab)

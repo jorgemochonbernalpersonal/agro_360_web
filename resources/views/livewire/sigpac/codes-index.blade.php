@@ -1,8 +1,8 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="Códigos SIGPAC"
-        description="Gestiona los códigos de identificación SIGPAC de tus parcelas"
+        title="{{ __('Códigos SIGPAC') }}"
+        :description="__('Gestiona los códigos de identificación SIGPAC de tus parcelas')"
     />
 
     {{-- Toolbar --}}
@@ -16,7 +16,7 @@
                 <input
                     wire:model.live.debounce.300ms="search"
                     type="text"
-                    placeholder="Buscar por código..."
+                    placeholder="{{ __('Buscar por código...') }}"
                     class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
                 />
             </div>
@@ -50,7 +50,7 @@
         {{-- Active filter chips --}}
         @if($search || $filterAutonomousCommunity || $filterProvince || $filterMunicipality)
             <div class="flex flex-wrap items-center gap-2">
-                <span class="text-xs text-zinc-400">Filtros activos:</span>
+                <span class="text-xs text-zinc-400">{{ __('Filtros activos:') }}</span>
 
                 @if($search)
                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
@@ -89,9 +89,7 @@
                     </span>
                 @endif
 
-                <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 underline">
-                    Limpiar todo
-                </button>
+                <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 underline">{{ __('Limpiar todo') }}</button>
             </div>
         @endif
     </div>
@@ -119,8 +117,8 @@
                         size="sm"
                         icon="map"
                     >
-                        <span wire:loading.remove wire:target="generateAllMapsForMunicipality">Generar todos los mapas</span>
-                        <span wire:loading wire:target="generateAllMapsForMunicipality">Generando...</span>
+                        <span wire:loading.remove wire:target="generateAllMapsForMunicipality">{{ __('Generar todos los mapas') }}</span>
+                        <span wire:loading wire:target="generateAllMapsForMunicipality">{{ __('Generando...') }}</span>
                     </flux:button>
 
                     @php
@@ -193,13 +191,9 @@
                                 </p>
                             </div>
                             @if($hasGeometry)
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-agro-100 text-agro-700 shrink-0">
-                                    Con mapa
-                                </span>
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-agro-100 text-agro-700 shrink-0">{{ __('Con mapa') }}</span>
                             @else
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-zinc-100 text-zinc-500 shrink-0">
-                                    Sin mapa
-                                </span>
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-zinc-100 text-zinc-500 shrink-0">{{ __('Sin mapa') }}</span>
                             @endif
                         </div>
                     </x-slot:header>
@@ -238,8 +232,8 @@
                     <x-slot:footer>
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-1">
-                                <x-agro.action-button variant="view" href="{{ route('plots.index', ['sigpac_code' => $code->id]) }}" title="Ver parcelas" />
-                                <x-agro.action-button variant="edit" href="{{ route('sigpac.codes.edit', $code->id) }}" title="Editar" />
+                                <x-agro.action-button variant="view" href="{{ route('plots.index', ['sigpac_code' => $code->id]) }}" title="{{ __('Ver parcelas') }}" />
+                                <x-agro.action-button variant="edit" href="{{ route('sigpac.codes.edit', $code->id) }}" title="{{ __('Editar') }}" />
                             </div>
 
                             @if($firstPlot)
@@ -273,12 +267,12 @@
     @else
         <x-agro.empty-state
             icon="map"
-            message="No se encontraron códigos SIGPAC"
+            :message="__('No se encontraron códigos SIGPAC')"
             description="{{ $search || $filterAutonomousCommunity || $filterProvince || $filterMunicipality ? 'Ningún código coincide con los filtros aplicados.' : 'No hay códigos SIGPAC registrados.' }}"
         >
             @if($search || $filterAutonomousCommunity || $filterProvince || $filterMunicipality)
                 <x-slot:action>
-                    <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
+                    <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">{{ __('Limpiar filtros') }}</flux:button>
                 </x-slot:action>
             @else
                 <x-slot:action>
@@ -298,21 +292,21 @@
                     <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
                         <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
                     </div>
-                    <h3 class="text-base font-semibold text-zinc-900">Filtros</h3>
+                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Filtros') }}</h3>
                 </div>
                 <flux:button x-on:click="$dispatch('close-modal', 'sigpac-filters')" variant="ghost" size="sm" icon="x-mark" />
             </div>
         </div>
 
         <div class="px-6 py-5 space-y-4">
-            <x-agro.filter-select label="Comunidad Autónoma" wire:model.live="filterAutonomousCommunity" placeholder="Todas las Comunidades">
+            <x-agro.filter-select :label="__('Comunidad Autónoma')" wire:model.live="filterAutonomousCommunity" :placeholder="__('Todas las Comunidades')">
                 @foreach($this->autonomousCommunities as $id => $name)
                     <flux:select.option value="{{ $id }}">{{ $name }}</flux:select.option>
                 @endforeach
             </x-agro.filter-select>
 
             @if($filterAutonomousCommunity)
-                <x-agro.filter-select label="Provincia" wire:model.live="filterProvince" placeholder="Todas las Provincias">
+                <x-agro.filter-select :label="__('Provincia')" wire:model.live="filterProvince" :placeholder="__('Todas las Provincias')">
                     @foreach($this->provinces as $id => $name)
                         <flux:select.option value="{{ $id }}">{{ $name }}</flux:select.option>
                     @endforeach
@@ -320,7 +314,7 @@
             @endif
 
             @if($filterProvince)
-                <x-agro.filter-select label="Municipio" wire:model.live="filterMunicipality" placeholder="Todos los Municipios">
+                <x-agro.filter-select :label="__('Municipio')" wire:model.live="filterMunicipality" :placeholder="__('Todos los Municipios')">
                     @foreach($this->municipalities as $id => $name)
                         <flux:select.option value="{{ $id }}">{{ $name }}</flux:select.option>
                     @endforeach
@@ -330,12 +324,8 @@
 
         <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between rounded-b-2xl">
             <button wire:click="clearFilters" x-on:click="$dispatch('close-modal', 'sigpac-filters')"
-                    class="text-sm text-zinc-500 hover:text-zinc-700 transition-colors">
-                Limpiar filtros
-            </button>
-            <flux:button x-on:click="$dispatch('close-modal', 'sigpac-filters')" variant="primary" size="sm">
-                Aplicar
-            </flux:button>
+                    class="text-sm text-zinc-500 hover:text-zinc-700 transition-colors">{{ __('Limpiar filtros') }}</button>
+            <flux:button x-on:click="$dispatch('close-modal', 'sigpac-filters')" variant="primary" size="sm">{{ __('Aplicar') }}</flux:button>
         </div>
     </x-agro.modal>
 

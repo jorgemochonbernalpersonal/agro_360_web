@@ -72,7 +72,7 @@
                 @if(in_array($material_id, [1, 2, 3]))
                     <flux:field>
                         <flux:label>{{ __('Tipo de Roble') }}</flux:label>
-                        <flux:input wire:model="oak_type" type="text" id="oak_type" placeholder="Ej: Quercus Petraea" />
+                        <flux:input wire:model="oak_type" type="text" id="oak_type" :placeholder="__('Ej: Quercus Petraea')" />
                         <flux:error name="oak_type" />
                     </flux:field>
 

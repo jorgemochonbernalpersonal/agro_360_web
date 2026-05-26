@@ -127,10 +127,10 @@ class Index extends Component
                 },
             ],
         ], [
-            'name.required' => 'El nombre es obligatorio.',
-            'type.required' => 'El tipo es obligatorio.',
-            'email.email'   => 'El email no tiene un formato válido.',
-            'website.url'   => 'La URL no tiene un formato válido (debe incluir https://).',
+            'name.required' => __('El nombre es obligatorio.'),
+            'type.required' => __('El tipo es obligatorio.'),
+            'email.email'   => __('El email no tiene un formato válido.'),
+            'website.url'   => __('La URL no tiene un formato válido (debe incluir https://).'),
         ]);
 
         $newOwnerId = $this->owner_user_id ?: null;
@@ -184,7 +184,7 @@ class Index extends Component
                 'changes'         => $org->getChanges(),
             ]);
 
-            $this->toastSuccess('Organización actualizada correctamente.');
+            $this->toastSuccess(__('Organización actualizada correctamente.'));
         } else {
             $data['slug'] = $this->uniqueSlug($this->name);
             $org = Organization::create($data);
@@ -205,7 +205,7 @@ class Index extends Component
                 'type'            => $org->type,
             ]);
 
-            $this->toastSuccess('Organización creada correctamente.');
+            $this->toastSuccess(__('Organización creada correctamente.'));
         }
 
         $this->closeModal();
@@ -230,7 +230,7 @@ class Index extends Component
             'members_unlinked' => $memberCount,
         ]);
 
-        $this->toastSuccess('Organización eliminada.');
+        $this->toastSuccess(__('Organización eliminada.'));
     }
 
     // ── Render ────────────────────────────────────────────────────────────────
@@ -274,8 +274,8 @@ class Index extends Component
         return view('livewire.admin.organizations.index',
             compact('organizations', 'stats', 'ownerUsers', 'denominations', 'provinces')
         )->layout('layouts.app', [
-            'title'       => 'Organizaciones - Agro365',
-            'description' => 'Gestiona las organizaciones del sistema (bodegas y DOs).',
+            'title'       => __('Organizaciones - Agro365'),
+            'description' => __('Gestiona las organizaciones del sistema (bodegas y DOs).'),
         ]);
     }
 

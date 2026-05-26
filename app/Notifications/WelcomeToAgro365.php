@@ -57,25 +57,25 @@ class WelcomeToAgro365 extends Notification implements ShouldQueue
             ];
 
         $message = (new MailMessage)
-            ->subject('Tu cuenta de Agro365 ya está activa')
-            ->greeting("Hola {$notifiable->name},")
-            ->line('Tu email ha sido verificado y tu cuenta está completamente activa.')
-            ->line('Tienes **3 meses de acceso completo gratuito** para explorar todas las funcionalidades.')
-            ->line('**Primeros pasos recomendados:**');
+            ->subject(__('Tu cuenta de Agro365 ya está activa'))
+            ->greeting(__('Hola :name,', ['name' => $notifiable->name]))
+            ->line(__('Tu email ha sido verificado y tu cuenta está completamente activa.'))
+            ->line(__('Tienes **3 meses de acceso completo gratuito** para explorar todas las funcionalidades.'))
+            ->line(__('**Primeros pasos recomendados:**'));
 
         foreach ($nextSteps as $step) {
             $message->line($step);
         }
 
         return $message
-            ->action('Ir al Dashboard', $dashboardUrl)
-            ->line('---')
-            ->line('**Tus datos de acceso:**')
-            ->line("Email: **{$notifiable->email}**")
-            ->line('Contraseña: la que elegiste al registrarte.')
-            ->line('Si no la recuerdas, usa "¿Olvidaste tu contraseña?" en la pantalla de inicio de sesión.')
-            ->line('Si necesitas ayuda, contáctanos en info@agro365.es')
-            ->salutation('Saludos, El equipo de Agro365');
+            ->action(__('Ir al Dashboard'), $dashboardUrl)
+            ->line(__('---'))
+            ->line(__('**Tus datos de acceso:**'))
+            ->line(__('Email: **:email**', ['email' => $notifiable->email]))
+            ->line(__('Contraseña: la que elegiste al registrarte.'))
+            ->line(__('Si no la recuerdas, usa "¿Olvidaste tu contraseña?" en la pantalla de inicio de sesión.'))
+            ->line(__('Si necesitas ayuda, contáctanos en info@agro365.es'))
+            ->salutation(__('Saludos, El equipo de Agro365'));
     }
 
     /**

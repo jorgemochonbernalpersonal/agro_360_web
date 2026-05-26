@@ -52,7 +52,7 @@
                 <div class="flex items-center gap-3">
                     <a href="{{ url('/') }}" class="flex items-center gap-3">
                         <img src="{{ asset('images/logo.png') }}" alt="Agro365" width="120" height="40" loading="eager" fetchpriority="high" decoding="async" class="h-10 w-auto">
-                        <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">Agro365</span>
+                        <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Agro365') }}</span>
                     </a>
                 </div>
                 <div class="flex items-center gap-4">
@@ -81,13 +81,13 @@
                 <ol class="flex items-center space-x-2">
                     <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
                         <a href="{{ url('/') }}" class="hover:text-[var(--color-agro-green)]" itemprop="item">
-                            <span itemprop="name">Inicio</span>
+                            <span itemprop="name">{{ __('Inicio') }}</span>
                         </a>
                         <meta itemprop="position" content="1" />
                     </li>
                     <span class="mx-2">/</span>
                     <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                        <span class="text-gray-900" itemprop="name">Cuaderno de Campo Digital 2027</span>
+                        <span class="text-gray-900" itemprop="name">{{ __('Cuaderno de Campo Digital 2027') }}</span>
                         <meta itemprop="position" content="2" />
                     </li>
                 </ol>
@@ -97,103 +97,91 @@
             <div class="mb-12">
                 <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-100 border border-red-300 mb-4">
                     <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
-                    <span class="text-sm font-semibold text-red-700">OBLIGATORIO DESDE 2027</span>
+                    <span class="text-sm font-semibold text-red-700">{{ __('OBLIGATORIO DESDE 2027') }}</span>
                 </div>
-                <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">
-                    Cuaderno de Campo Digital Obligatorio 2027
-                </h1>
+                <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">{{ __('Cuaderno de Campo Digital Obligatorio 2027') }}</h1>
                 <p class="text-xl text-gray-600 leading-relaxed">
-                    Guía completa sobre la <strong>normativa del cuaderno de campo digital obligatorio desde 2027</strong>. Requisitos legales, cómo cumplir y por qué Agro365 es la solución perfecta para viticultores profesionales.
+                    Guía completa sobre la <strong>{{ __('normativa del cuaderno de campo digital obligatorio desde 2027') }}</strong>. Requisitos legales, cómo cumplir y por qué Agro365 es la solución perfecta para viticultores profesionales.
                 </p>
             </div>
 
             <!-- Content -->
             <article class="prose prose-lg max-w-none">
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">¿Es Obligatorio el Cuaderno de Campo Digital?</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('¿Es Obligatorio el Cuaderno de Campo Digital?') }}</h2>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        <strong>Sí, el cuaderno de campo digital es obligatorio</strong> en España desde 2023 para explotaciones profesionales, y desde <strong>2027 DEBE estar completamente digitalizado</strong> según la normativa europea.
+                        <strong>{{ __('Sí, el cuaderno de campo digital es obligatorio') }}</strong> en España desde 2023 para explotaciones profesionales, y desde <strong>{{ __('2027 DEBE estar completamente digitalizado') }}</strong> según la normativa europea.
                     </p>
                     <div class="bg-red-50 border-l-4 border-red-500 p-6 rounded-r-lg mb-6">
-                        <p class="text-red-800 font-semibold mb-2">⚠️ Importante:</p>
-                        <p class="text-red-700">
-                            A partir de 2027, el cuaderno de campo en papel NO será válido. Todas las explotaciones agrícolas profesionales deben tener un cuaderno de campo digital que cumpla con los requisitos normativos europeos.
-                        </p>
+                        <p class="text-red-800 font-semibold mb-2">{{ __('⚠️ Importante:') }}</p>
+                        <p class="text-red-700">{{ __('A partir de 2027, el cuaderno de campo en papel NO será válido. Todas las explotaciones agrícolas profesionales deben tener un cuaderno de campo digital que cumpla con los requisitos normativos europeos.') }}</p>
                     </div>
-                    <p class="text-gray-700 leading-relaxed mb-4">
-                        Esta obligatoriedad afecta a:
-                    </p>
+                    <p class="text-gray-700 leading-relaxed mb-4">{{ __('Esta obligatoriedad afecta a:') }}</p>
                     <ul class="list-disc list-inside space-y-2 text-gray-700 mb-6 ml-4">
-                        <li>Viticultores profesionales</li>
-                        <li>Explotaciones que reciben ayudas PAC</li>
-                        <li>Todas las explotaciones agrícolas con actividad comercial</li>
-                        <li>Explotaciones que aplican tratamientos fitosanitarios</li>
+                        <li>{{ __('Viticultores profesionales') }}</li>
+                        <li>{{ __('Explotaciones que reciben ayudas PAC') }}</li>
+                        <li>{{ __('Todas las explotaciones agrícolas con actividad comercial') }}</li>
+                        <li>{{ __('Explotaciones que aplican tratamientos fitosanitarios') }}</li>
                     </ul>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">¿Qué Debe Incluir el Cuaderno de Campo Digital?</h2>
-                    <p class="text-gray-700 leading-relaxed mb-4">
-                        Según la normativa europea y española, el cuaderno de campo digital debe registrar obligatoriamente:
-                    </p>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('¿Qué Debe Incluir el Cuaderno de Campo Digital?') }}</h2>
+                    <p class="text-gray-700 leading-relaxed mb-4">{{ __('Según la normativa europea y española, el cuaderno de campo digital debe registrar obligatoriamente:') }}</p>
                     <div class="grid md:grid-cols-2 gap-6 mb-6">
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">🌿 Tratamientos Fitosanitarios</h3>
-                            <p class="text-gray-700">Producto utilizado, dosis, fecha, parcela, condiciones meteorológicas y plazo de seguridad.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('🌿 Tratamientos Fitosanitarios') }}</h3>
+                            <p class="text-gray-700">{{ __('Producto utilizado, dosis, fecha, parcela, condiciones meteorológicas y plazo de seguridad.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">💧 Riegos</h3>
-                            <p class="text-gray-700">Fecha, cantidad de agua, método de riego, parcela y condiciones aplicadas.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('💧 Riegos') }}</h3>
+                            <p class="text-gray-700">{{ __('Fecha, cantidad de agua, método de riego, parcela y condiciones aplicadas.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">🌱 Fertilizaciones</h3>
-                            <p class="text-gray-700">Tipo de fertilizante, dosis, fecha, parcela y método de aplicación.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('🌱 Fertilizaciones') }}</h3>
+                            <p class="text-gray-700">{{ __('Tipo de fertilizante, dosis, fecha, parcela y método de aplicación.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">🔧 Labores Culturales</h3>
-                            <p class="text-gray-700">Tipo de labor, fecha, parcela, maquinaria utilizada y cuadrilla responsable.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('🔧 Labores Culturales') }}</h3>
+                            <p class="text-gray-700">{{ __('Tipo de labor, fecha, parcela, maquinaria utilizada y cuadrilla responsable.') }}</p>
                         </div>
                     </div>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        Además, el cuaderno debe estar <strong>asociado a códigos SIGPAC</strong> y permitir la generación de <strong>informes oficiales con firma electrónica</strong> para inspecciones.
+                        Además, el cuaderno debe estar <strong>{{ __('asociado a códigos SIGPAC') }}</strong> y permitir la generación de <strong>{{ __('informes oficiales con firma electrónica') }}</strong> para inspecciones.
                     </p>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Requisitos Legales del Cuaderno Digital</h2>
-                    <p class="text-gray-700 leading-relaxed mb-4">
-                        Para cumplir con la normativa, tu cuaderno de campo digital debe cumplir estos requisitos:
-                    </p>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Requisitos Legales del Cuaderno Digital') }}</h2>
+                    <p class="text-gray-700 leading-relaxed mb-4">{{ __('Para cumplir con la normativa, tu cuaderno de campo digital debe cumplir estos requisitos:') }}</p>
                     <ul class="list-disc list-inside space-y-3 text-gray-700 mb-6 ml-4">
-                        <li><strong>Registro en tiempo real:</strong> Las actividades deben registrarse inmediatamente después de realizarse</li>
-                        <li><strong>Asociación SIGPAC:</strong> Cada actividad debe estar asociada a un código SIGPAC válido</li>
-                        <li><strong>Inmutabilidad:</strong> Los registros no pueden modificarse una vez guardados (solo añadir correcciones)</li>
-                        <li><strong>Firma electrónica:</strong> Los informes oficiales deben incluir firma electrónica SHA-256</li>
-                        <li><strong>Trazabilidad completa:</strong> Desde la parcela hasta la cosecha y facturación</li>
-                        <li><strong>Acceso para inspecciones:</strong> Debe poder generarse un informe oficial en cualquier momento</li>
-                        <li><strong>Almacenamiento seguro:</strong> Los datos deben estar protegidos y respaldados</li>
+                        <li><strong>{{ __('Registro en tiempo real:') }}</strong> Las actividades deben registrarse inmediatamente después de realizarse</li>
+                        <li><strong>{{ __('Asociación SIGPAC:') }}</strong> Cada actividad debe estar asociada a un código SIGPAC válido</li>
+                        <li><strong>{{ __('Inmutabilidad:') }}</strong> Los registros no pueden modificarse una vez guardados (solo añadir correcciones)</li>
+                        <li><strong>{{ __('Firma electrónica:') }}</strong> Los informes oficiales deben incluir firma electrónica SHA-256</li>
+                        <li><strong>{{ __('Trazabilidad completa:') }}</strong> Desde la parcela hasta la cosecha y facturación</li>
+                        <li><strong>{{ __('Acceso para inspecciones:') }}</strong> Debe poder generarse un informe oficial en cualquier momento</li>
+                        <li><strong>{{ __('Almacenamiento seguro:') }}</strong> Los datos deben estar protegidos y respaldados</li>
                     </ul>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">¿Qué Pasa si No Cumplo con el Cuaderno Digital?</h2>
-                    <p class="text-gray-700 leading-relaxed mb-4">
-                        El incumplimiento del cuaderno de campo digital puede resultar en:
-                    </p>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('¿Qué Pasa si No Cumplo con el Cuaderno Digital?') }}</h2>
+                    <p class="text-gray-700 leading-relaxed mb-4">{{ __('El incumplimiento del cuaderno de campo digital puede resultar en:') }}</p>
                     <div class="bg-amber-50 border-l-4 border-amber-500 p-6 rounded-r-lg mb-6">
                         <ul class="list-disc list-inside space-y-2 text-amber-800 ml-4">
-                            <li><strong>Multas:</strong> Sanciones económicas por incumplimiento normativo</li>
-                            <li><strong>Pérdida de ayudas PAC:</strong> Puedes perder el derecho a recibir ayudas de la PAC</li>
-                            <li><strong>Problemas en inspecciones:</strong> Las inspecciones pueden resultar en sanciones adicionales</li>
-                            <li><strong>Problemas de trazabilidad:</strong> Imposibilidad de demostrar el origen y tratamiento de tus productos</li>
+                            <li><strong>{{ __('Multas:') }}</strong> Sanciones económicas por incumplimiento normativo</li>
+                            <li><strong>{{ __('Pérdida de ayudas PAC:') }}</strong> Puedes perder el derecho a recibir ayudas de la PAC</li>
+                            <li><strong>{{ __('Problemas en inspecciones:') }}</strong> Las inspecciones pueden resultar en sanciones adicionales</li>
+                            <li><strong>{{ __('Problemas de trazabilidad:') }}</strong> Imposibilidad de demostrar el origen y tratamiento de tus productos</li>
                         </ul>
                     </div>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Cómo Cumple Agro365 con la Normativa 2027</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Cómo Cumple Agro365 con la Normativa 2027') }}</h2>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        <strong>Agro365</strong> está diseñado específicamente para cumplir con todos los requisitos del cuaderno de campo digital obligatorio. Especialmente para <a href="{{ content_route('content.software-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">viticultores profesionales</a>, nuestro <a href="{{ content_route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">cuaderno digital para viticultores</a> incluye:
+                        <strong>{{ __('Agro365') }}</strong> está diseñado específicamente para cumplir con todos los requisitos del cuaderno de campo digital obligatorio. Especialmente para <a href="{{ content_route('content.software-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">viticultores profesionales</a>, nuestro <a href="{{ content_route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">cuaderno digital para viticultores</a> incluye:
                     </p>
                     <div class="bg-gradient-to-r from-[var(--color-agro-green-bg)] to-[var(--color-agro-green-light)]/30 p-8 rounded-xl border border-[var(--color-agro-green)]/20 mb-6">
                         <ul class="space-y-4 text-gray-800">
@@ -201,56 +189,56 @@
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Registro en tiempo real:</strong> Registra actividades desde el móvil directamente en el viñedo</span>
+                                <span><strong>{{ __('Registro en tiempo real:') }}</strong> Registra actividades desde el móvil directamente en el viñedo</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Integración SIGPAC completa:</strong> Asocia automáticamente actividades a códigos SIGPAC</span>
+                                <span><strong>{{ __('Integración SIGPAC completa:') }}</strong> Asocia automáticamente actividades a códigos SIGPAC</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Informes oficiales con firma SHA-256:</strong> Genera informes certificados listos para inspecciones</span>
+                                <span><strong>{{ __('Informes oficiales con firma SHA-256:') }}</strong> Genera informes certificados listos para inspecciones</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Dashboard de cumplimiento PAC:</strong> Detecta automáticamente errores y te prepara para inspecciones</span>
+                                <span><strong>{{ __('Dashboard de cumplimiento PAC:') }}</strong> Detecta automáticamente errores y te prepara para inspecciones</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Registros inmutables:</strong> Los datos no pueden modificarse, solo añadir correcciones documentadas</span>
+                                <span><strong>{{ __('Registros inmutables:') }}</strong> Los datos no pueden modificarse, solo añadir correcciones documentadas</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Almacenamiento seguro:</strong> Datos cifrados y respaldados automáticamente</span>
+                                <span><strong>{{ __('Almacenamiento seguro:') }}</strong> Datos cifrados y respaldados automáticamente</span>
                             </li>
                         </ul>
                     </div>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Preguntas Frecuentes</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Preguntas Frecuentes') }}</h2>
                     <div class="space-y-6">
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Cuándo entra en vigor la obligatoriedad?</h3>
-                            <p class="text-gray-700">Desde 2023 es obligatorio para explotaciones profesionales. Desde 2027 DEBE estar completamente digitalizado según normativa europea.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Cuándo entra en vigor la obligatoriedad?') }}</h3>
+                            <p class="text-gray-700">{{ __('Desde 2023 es obligatorio para explotaciones profesionales. Desde 2027 DEBE estar completamente digitalizado según normativa europea.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Puedo seguir usando papel?</h3>
-                            <p class="text-gray-700">No, desde 2027 el cuaderno en papel no será válido. Debes tener un cuaderno de campo digital que cumpla con los requisitos normativos.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Puedo seguir usando papel?') }}</h3>
+                            <p class="text-gray-700">{{ __('No, desde 2027 el cuaderno en papel no será válido. Debes tener un cuaderno de campo digital que cumpla con los requisitos normativos.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Qué pasa si tengo un cuaderno digital pero no cumple todos los requisitos?</h3>
-                            <p class="text-gray-700">Si tu cuaderno digital no cumple con todos los requisitos (SIGPAC, firma electrónica, etc.), puede no ser válido en inspecciones y resultar en sanciones.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Qué pasa si tengo un cuaderno digital pero no cumple todos los requisitos?') }}</h3>
+                            <p class="text-gray-700">{{ __('Si tu cuaderno digital no cumple con todos los requisitos (SIGPAC, firma electrónica, etc.), puede no ser válido en inspecciones y resultar en sanciones.') }}</p>
                         </div>
                     </div>
                 </section>
@@ -258,12 +246,8 @@
 
             <!-- CTA Section -->
             <div class="mt-16 pt-12 border-t border-gray-200 text-center">
-                <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">
-                    Cumple con la Normativa 2027 desde Hoy
-                </h2>
-                <p class="text-gray-600 mb-8 text-lg">
-                    Agro365 cumple 100% con todos los requisitos del cuaderno de campo digital obligatorio. Prueba gratis 3 meses.
-                </p>
+                <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Cumple con la Normativa 2027 desde Hoy') }}</h2>
+                <p class="text-gray-600 mb-8 text-lg">{{ __('Agro365 cumple 100% con todos los requisitos del cuaderno de campo digital obligatorio. Prueba gratis 3 meses.') }}</p>
                 <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-lg">
                     Comenzar Gratis
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

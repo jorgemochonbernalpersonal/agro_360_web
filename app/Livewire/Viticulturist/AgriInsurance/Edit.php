@@ -89,7 +89,7 @@ class Edit extends Component
             'notes'             => $this->notes ?: null,
         ]);
 
-        $this->toastSuccess('Seguro actualizado correctamente.');
+        $this->toastSuccess(__('Seguro actualizado correctamente.'));
 
         return $this->viticulturistRoleRedirect('agri-insurance.index');
     }

@@ -117,7 +117,7 @@ class PlantingsDashboard extends Component
                         'type' => 'error',
                         'planting' => $planting->name ?: $planting->grapeVariety->name ?? 'Sin nombre',
                         'plot' => $planting->plot->name,
-                        'message' => 'Falta autorización de plantación (obligatorio post-2016)',
+                        'message' => __('Falta autorización de plantación (obligatorio post-2016)'),
                     ];
                 }
             }

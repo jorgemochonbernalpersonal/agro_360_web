@@ -1,7 +1,7 @@
 <div class="space-y-6 animate-fade-in">
     <x-agro.page-header
-        title="Asignar a Contenedor"
-        description="Asigna esta recepción de uva a un depósito o barrica"
+        title="{{ __('Asignar a Contenedor') }}"
+        :description="__('Asigna esta recepción de uva a un depósito o barrica')"
     >
         <x-slot:actions>
             <flux:button href="{{ roleRoute('grape-reception.index') }}" variant="ghost" icon="arrow-left">
@@ -25,26 +25,26 @@
                 <div class="p-1.5 rounded-lg bg-agro-50">
                     <flux:icon icon="scale" class="size-4 text-agro-600" />
                 </div>
-                <span class="font-semibold text-zinc-900 text-sm">Recepción</span>
+                <span class="font-semibold text-zinc-900 text-sm">{{ __('Recepción') }}</span>
             </div>
         </x-slot:header>
 
         <div class="grid grid-cols-2 gap-4 text-sm">
             <div>
-                <p class="text-xs text-zinc-500 mb-0.5">Fecha</p>
+                <p class="text-xs text-zinc-500 mb-0.5">{{ __('Fecha') }}</p>
                 <p class="font-medium text-zinc-900">{{ $harvest->harvest_start_date?->format('d/m/Y') ?? '—' }}</p>
             </div>
             <div>
-                <p class="text-xs text-zinc-500 mb-0.5">Viticultor</p>
+                <p class="text-xs text-zinc-500 mb-0.5">{{ __('Viticultor') }}</p>
                 <p class="font-medium text-zinc-900">{{ $vitic?->name ?? '—' }}</p>
             </div>
             <div>
-                <p class="text-xs text-zinc-500 mb-0.5">Parcela / Variedad</p>
+                <p class="text-xs text-zinc-500 mb-0.5">{{ __('Parcela / Variedad') }}</p>
                 <p class="font-medium text-zinc-900">{{ $variety }}</p>
                 <p class="text-xs text-zinc-500">{{ $plotName }}</p>
             </div>
             <div>
-                <p class="text-xs text-zinc-500 mb-0.5">Kg recibidos</p>
+                <p class="text-xs text-zinc-500 mb-0.5">{{ __('Kg recibidos') }}</p>
                 <p class="font-bold text-agro-700 text-lg">{{ number_format($harvest->total_weight, 0) }} kg</p>
             </div>
         </div>
@@ -61,12 +61,12 @@
 
     {{-- Selector de contenedor --}}
     <form wire:submit="save" class="space-y-8">
-        <x-agro.form-section title="Seleccionar Contenedor">
+        <x-agro.form-section title="{{ __('Seleccionar Contenedor') }}">
             @if($availableContainers->isEmpty())
                 <x-agro.empty-state
                     icon="cube"
-                    title="Sin contenedores activos"
-                    description="Crea un contenedor antes de asignar recepciones."
+                    title="{{ __('Sin contenedores activos') }}"
+                    :description="__('Crea un contenedor antes de asignar recepciones.')"
                 >
                     <x-slot:action>
                         <flux:button href="{{ roleRoute('containers.create') }}" variant="ghost" size="sm" icon="plus">
@@ -76,9 +76,9 @@
                 </x-agro.empty-state>
             @else
                 <flux:field>
-                    <flux:label>Contenedor destino</flux:label>
+                    <flux:label>{{ __('Contenedor destino') }}</flux:label>
                     <flux:select wire:model="container_id">
-                        <flux:select.option value="">Selecciona un contenedor...</flux:select.option>
+                        <flux:select.option value="">{{ __('Selecciona un contenedor...') }}</flux:select.option>
                         @foreach($availableContainers as $c)
                             @php
                                 $available = $c->getAvailableCapacity();
@@ -120,13 +120,13 @@
                                 $willExceed = $newUsed > $selected->capacity;
                             @endphp
                             <div class="flex items-center gap-2 text-xs">
-                                <span class="text-zinc-500">Tras asignar esta recepción:</span>
+                                <span class="text-zinc-500">{{ __('Tras asignar esta recepción:') }}</span>
                                 <span class="font-bold {{ $willExceed ? 'text-red-700' : 'text-agro-700' }}">
                                     {{ number_format($newUsed, 0) }} / {{ number_format($selected->capacity, 0) }} kg
                                     ({{ $newPct }}%)
                                 </span>
                                 @if($willExceed)
-                                    <flux:badge color="red" size="sm">Excede capacidad</flux:badge>
+                                    <flux:badge color="red" size="sm">{{ __('Excede capacidad') }}</flux:badge>
                                 @endif
                             </div>
                         </div>
@@ -137,7 +137,7 @@
 
         <x-agro.form-actions
             :cancel-url="roleRoute('grape-reception.index')"
-            submit-label="Asignar Contenedor"
+            submit-:label="__('Asignar Contenedor')"
         />
     </form>
 </div>

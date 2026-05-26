@@ -40,7 +40,7 @@ class ResetPassword extends Component
             // Validar que el email existe
             $user = User::where('email', $this->email)->first();
             if (!$user) {
-                $this->toastError('El email proporcionado no existe en nuestro sistema.');
+                $this->toastError(__('El email proporcionado no existe en nuestro sistema.'));
                 return $this->redirect(route('password.request'), navigate: true);
             }
             
@@ -54,7 +54,7 @@ class ResetPassword extends Component
             
             if (!$resetRecord) {
                 $this->tokenValid = false;
-                $this->toastError('No se encontró una solicitud de restablecimiento para este email. Por favor, solicita uno nuevo.');
+                $this->toastError(__('No se encontró una solicitud de restablecimiento para este email. Por favor, solicita uno nuevo.'));
             } else {
                 // Verificar si el token ha expirado
                 $createdAt = \Carbon\Carbon::parse($resetRecord->created_at);
@@ -62,7 +62,7 @@ class ResetPassword extends Component
                 
                 if (now()->greaterThan($expireTime)) {
                     $this->tokenValid = false;
-                    $this->toastError('El enlace de restablecimiento ha expirado. Por favor, solicita uno nuevo.');
+                    $this->toastError(__('El enlace de restablecimiento ha expirado. Por favor, solicita uno nuevo.'));
                 } else {
                     // El token existe y no ha expirado
                     // La validación final del token se hará cuando se envíe el formulario
@@ -83,11 +83,11 @@ class ResetPassword extends Component
     protected function messages(): array
     {
         return [
-            'email.required' => 'El campo email es obligatorio.',
-            'email.email' => 'El email debe ser una dirección de correo válida.',
-            'password.required' => 'El campo contraseña es obligatorio.',
-            'password.confirmed' => 'Las contraseñas no coinciden. Por favor, verifica que ambas contraseñas sean iguales.',
-            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
+            'email.required' => __('El campo email es obligatorio.'),
+            'email.email' => __('El email debe ser una dirección de correo válida.'),
+            'password.required' => __('El campo contraseña es obligatorio.'),
+            'password.confirmed' => __('Las contraseñas no coinciden. Por favor, verifica que ambas contraseñas sean iguales.'),
+            'password.min' => __('La contraseña debe tener al menos 8 caracteres.'),
         ];
     }
 
@@ -127,11 +127,11 @@ class ResetPassword extends Component
             if ($this->platform === 'mobile') {
                 return redirect()->route('password.reset.mobile-success');
             }
-            $this->toastSuccess('Tu contraseña ha sido restablecida correctamente. Ya puedes iniciar sesión.');
+            $this->toastSuccess(__('Tu contraseña ha sido restablecida correctamente. Ya puedes iniciar sesión.'));
             return $this->redirect(route('login') . '?reset_email=' . urlencode($this->email), navigate: true);
         } else {
             throw ValidationException::withMessages([
-                'email' => 'El enlace de restablecimiento no es válido o ha expirado. Por favor, solicita uno nuevo.',
+                'email' => __('El enlace de restablecimiento no es válido o ha expirado. Por favor, solicita uno nuevo.'),
             ]);
         }
     }

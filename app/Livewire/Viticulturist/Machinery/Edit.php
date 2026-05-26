@@ -39,7 +39,7 @@ class Edit extends Component
     {
         // Validar autorización
         if (!Auth::user()->can('update', $machinery)) {
-            abort(403, 'No tienes permiso para editar esta maquinaria.');
+            abort(403, __('No tienes permiso para editar esta maquinaria.'));
         }
 
         $this->machinery = $machinery;
@@ -129,7 +129,7 @@ class Edit extends Component
                 ]);
             });
 
-            $this->toastSuccess('Maquinaria actualizada correctamente.');
+            $this->toastSuccess(__('Maquinaria actualizada correctamente.'));
             return $this->viticulturistRoleRedirect('machinery.index');
         } catch (\Exception $e) {
             \Log::error('Error al actualizar maquinaria', [
@@ -139,7 +139,7 @@ class Edit extends Component
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            $this->toastError('Error al actualizar la maquinaria. Por favor, intenta de nuevo.');
+            $this->toastError(__('Error al actualizar la maquinaria. Por favor, intenta de nuevo.'));
             return;
         }
     }

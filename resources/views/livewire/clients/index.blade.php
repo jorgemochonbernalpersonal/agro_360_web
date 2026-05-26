@@ -1,8 +1,8 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="Clientes"
-        description="Gestiona tus clientes y analiza tu cartera"
+        title="{{ __('Clientes') }}"
+        :description="__('Gestiona tus clientes y analiza tu cartera')"
     />
 
     {{-- Stats --}}
@@ -17,7 +17,7 @@
             @click="toggle()"
             class="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-widest hover:text-zinc-600 transition-colors mb-3"
         >
-            <span>Estadísticas</span>
+            <span>{{ __('Estadísticas') }}</span>
             <flux:icon icon="chevron-up" class="size-3.5 transition-transform duration-200" ::class="{ 'rotate-180': !open }" />
         </button>
         <div
@@ -31,30 +31,30 @@
         >
             <div class="grid grid-cols-2 gap-4">
                 <x-agro.stat-card
-                    label="Total clientes"
+                    :label="__('Total clientes')"
                     :value="$stats['total']"
-                    description="Cartera total"
+                    :description="__('Cartera total')"
                     icon="user-group"
                     color="agro"
                 />
                 <x-agro.stat-card
-                    label="Activos"
+                    :label="__('Activos')"
                     :value="$stats['active']"
-                    description="Clientes activos"
+                    :description="__('Clientes activos')"
                     icon="check-circle"
                     color="agro"
                 />
                 <x-agro.stat-card
-                    label="Inactivos"
+                    :label="__('Inactivos')"
                     :value="$stats['inactive']"
                     :description="$stats['inactive'] > 0 ? 'Clientes archivados' : 'Todos activos'"
                     icon="archive-box"
                     color="zinc"
                 />
                 <x-agro.stat-card
-                    label="Alta este año"
+                    :label="__('Alta este año')"
                     :value="\App\Models\Client::where('user_id', auth()->id())->whereYear('created_at', date('Y'))->count()"
-                    description="Nuevos este año"
+                    :description="__('Nuevos este año')"
                     icon="user-plus"
                     color="blue"
                 />
@@ -82,7 +82,7 @@
                 <input
                     wire:model.live.debounce.300ms="search"
                     type="text"
-                    placeholder="Buscar por nombre, email, teléfono o documento..."
+                    placeholder="{{ __('Buscar por nombre, email, teléfono o documento...') }}"
                     class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
                 />
             </div>
@@ -116,7 +116,7 @@
         {{-- Active filter chips --}}
         @if($search || $filterType)
             <div class="flex flex-wrap items-center gap-2">
-                <span class="text-xs text-zinc-400">Filtros activos:</span>
+                <span class="text-xs text-zinc-400">{{ __('Filtros activos:') }}</span>
 
                 @if($search)
                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
@@ -137,9 +137,7 @@
                     </span>
                 @endif
 
-                <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 underline">
-                    Limpiar todo
-                </button>
+                <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 underline">{{ __('Limpiar todo') }}</button>
             </div>
         @endif
     </div>
@@ -195,14 +193,14 @@
                             </div>
                         @endif
                         @if(!$client->email && !$client->phone)
-                            <p class="text-xs text-zinc-400 italic">Sin datos de contacto</p>
+                            <p class="text-xs text-zinc-400 italic">{{ __('Sin datos de contacto') }}</p>
                         @endif
                     </div>
 
                     {{-- Dirección + Facturas --}}
                     <div class="grid grid-cols-2 gap-2">
                         <div class="bg-zinc-50 rounded-xl p-2.5">
-                            <p class="text-[10px] text-zinc-500 font-medium uppercase tracking-wide mb-0.5">Ubicación</p>
+                            <p class="text-[10px] text-zinc-500 font-medium uppercase tracking-wide mb-0.5">{{ __('Ubicación') }}</p>
                             @if($defaultAddress)
                                 <p class="text-xs font-semibold text-zinc-700 truncate">
                                     {{ $defaultAddress->municipality?->name ?? $defaultAddress->address }}
@@ -211,11 +209,11 @@
                                     <p class="text-[10px] text-zinc-400 truncate">{{ $defaultAddress->province->name }}</p>
                                 @endif
                             @else
-                                <p class="text-xs text-zinc-400 italic">Sin dirección</p>
+                                <p class="text-xs text-zinc-400 italic">{{ __('Sin dirección') }}</p>
                             @endif
                         </div>
                         <div class="bg-agro-50 rounded-xl p-2.5">
-                            <p class="text-[10px] text-agro-600 font-medium uppercase tracking-wide mb-0.5">Facturas</p>
+                            <p class="text-[10px] text-agro-600 font-medium uppercase tracking-wide mb-0.5">{{ __('Facturas') }}</p>
                             <p class="text-sm font-bold text-agro-700">{{ $client->invoices->count() }}</p>
                         </div>
                     </div>
@@ -223,13 +221,13 @@
                     <x-slot:footer>
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-1">
-                                <x-agro.action-button variant="edit" href="{{ roleRoute('clients.edit', $client->id) }}" wire:navigate title="Editar" />
+                                <x-agro.action-button variant="edit" href="{{ roleRoute('clients.edit', $client->id) }}" wire:navigate title="{{ __('Editar') }}" />
                             </div>
                             <div class="flex items-center gap-1">
                                 @if($client->active)
-                                    <x-agro.action-button variant="deactivate" wire:click="toggleActive({{ $client->id }})" wire:loading.attr="disabled" title="Desactivar" />
+                                    <x-agro.action-button variant="deactivate" wire:click="toggleActive({{ $client->id }})" wire:loading.attr="disabled" title="{{ __('Desactivar') }}" />
                                 @else
-                                    <x-agro.action-button variant="activate" wire:click="toggleActive({{ $client->id }})" wire:loading.attr="disabled" title="Activar" />
+                                    <x-agro.action-button variant="activate" wire:click="toggleActive({{ $client->id }})" wire:loading.attr="disabled" title="{{ __('Activar') }}" />
                                 @endif
                             </div>
                         </div>
@@ -248,7 +246,7 @@
         >
             @if($search || $filterType)
                 <x-slot:action>
-                    <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
+                    <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">{{ __('Limpiar filtros') }}</flux:button>
                 </x-slot:action>
             @elseif($currentTab === 'active')
                 <x-slot:action>
@@ -268,27 +266,23 @@
                     <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
                         <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
                     </div>
-                    <h3 class="text-base font-semibold text-zinc-900">Filtros</h3>
+                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Filtros') }}</h3>
                 </div>
                 <flux:button x-on:click="$dispatch('close-modal', 'client-filters')" variant="ghost" size="sm" icon="x-mark" />
             </div>
         </div>
 
         <div class="px-6 py-5">
-            <x-agro.filter-select label="Tipo de cliente" wire:model.live="filterType" placeholder="Todos los tipos">
-                <flux:select.option value="individual">Particular</flux:select.option>
-                <flux:select.option value="company">Empresa</flux:select.option>
+            <x-agro.filter-select :label="__('Tipo de cliente')" wire:model.live="filterType" :placeholder="__('Todos los tipos')">
+                <flux:select.option value="individual">{{ __('Particular') }}</flux:select.option>
+                <flux:select.option value="company">{{ __('Empresa') }}</flux:select.option>
             </x-agro.filter-select>
         </div>
 
         <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between rounded-b-2xl">
             <button wire:click="clearFilters" x-on:click="$dispatch('close-modal', 'client-filters')"
-                    class="text-sm text-zinc-500 hover:text-zinc-700 transition-colors">
-                Limpiar filtros
-            </button>
-            <flux:button x-on:click="$dispatch('close-modal', 'client-filters')" variant="primary" size="sm">
-                Aplicar
-            </flux:button>
+                    class="text-sm text-zinc-500 hover:text-zinc-700 transition-colors">{{ __('Limpiar filtros') }}</button>
+            <flux:button x-on:click="$dispatch('close-modal', 'client-filters')" variant="primary" size="sm">{{ __('Aplicar') }}</flux:button>
         </div>
     </x-agro.modal>
 

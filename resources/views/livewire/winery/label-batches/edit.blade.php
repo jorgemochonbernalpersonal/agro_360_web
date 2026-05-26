@@ -1,6 +1,6 @@
 <x-agro.form-card
     title="Editar Lote · {{ $batch->name }}"
-    description="Modifica los datos y registra mermas del lote."
+    :description="__('Modifica los datos y registra mermas del lote.')"
     icon="tag"
     icon-color="from-violet-500 to-violet-700"
     :back-url="roleRoute('label-batches.index')"
@@ -11,39 +11,39 @@
             $pct = $batch->usage_percent;
         @endphp
         <div class="bg-zinc-50 rounded-xl p-4 text-center border border-zinc-200">
-            <p class="text-xs text-zinc-400 uppercase tracking-wide mb-1">Total</p>
+            <p class="text-xs text-zinc-400 uppercase tracking-wide mb-1">{{ __('Total') }}</p>
             <p class="text-2xl font-bold text-zinc-700">{{ number_format($batch->total_quantity) }}</p>
             <p class="text-xs text-zinc-400">{{ number_format($batch->start_number) }} – {{ number_format($batch->end_number) }}</p>
         </div>
         <div class="bg-agro-50 rounded-xl p-4 text-center border border-agro-100">
-            <p class="text-xs text-agro-400 uppercase tracking-wide mb-1">Disponibles</p>
+            <p class="text-xs text-agro-400 uppercase tracking-wide mb-1">{{ __('Disponibles') }}</p>
             <p class="text-2xl font-bold text-agro-700">{{ number_format($batch->available_quantity) }}</p>
         </div>
         <div class="bg-blue-50 rounded-xl p-4 text-center border border-blue-100">
-            <p class="text-xs text-blue-400 uppercase tracking-wide mb-1">Usadas</p>
+            <p class="text-xs text-blue-400 uppercase tracking-wide mb-1">{{ __('Usadas') }}</p>
             <p class="text-2xl font-bold text-blue-700">{{ number_format($batch->used_quantity) }}</p>
         </div>
         <div class="bg-orange-50 rounded-xl p-4 text-center border border-orange-100">
-            <p class="text-xs text-orange-400 uppercase tracking-wide mb-1">Mermas</p>
+            <p class="text-xs text-orange-400 uppercase tracking-wide mb-1">{{ __('Mermas') }}</p>
             <p class="text-2xl font-bold text-orange-600">{{ number_format($batch->wasted_quantity) }}</p>
         </div>
     </div>
 
     <form wire:submit="save" class="space-y-8">
 
-        <x-agro.form-section title="Datos del lote" color="violet">
+        <x-agro.form-section title="{{ __('Datos del lote') }}" color="violet">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
                 <flux:field class="lg:col-span-2">
-                    <flux:label required>Nombre / descripción</flux:label>
+                    <flux:label required>{{ __('Nombre / descripción') }}</flux:label>
                     <flux:input wire:model="name" required />
                     <flux:error name="name" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Vino asociado</flux:label>
+                    <flux:label>{{ __('Vino asociado') }}</flux:label>
                     <flux:select wire:model="wine_id">
-                        <flux:select.option value="">Sin vino específico</flux:select.option>
+                        <flux:select.option value="">{{ __('Sin vino específico') }}</flux:select.option>
                         @foreach($wines as $wine)
                             <flux:select.option value="{{ $wine->id }}">
                                 {{ $wine->name }}{{ $wine->vintage ? ' · ' . $wine->vintage : '' }}
@@ -54,7 +54,7 @@
                 </flux:field>
 
                 <flux:field>
-                    <flux:label required>Origen</flux:label>
+                    <flux:label required>{{ __('Origen') }}</flux:label>
                     <flux:select wire:model="source" required>
                         @foreach($sources as $key => $label)
                             <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
@@ -66,21 +66,21 @@
             </div>
         </x-agro.form-section>
 
-        <x-agro.form-section title="Notas" color="zinc">
+        <x-agro.form-section title="{{ __('Notas') }}" color="zinc">
             <flux:field>
-                <flux:label>Observaciones</flux:label>
+                <flux:label>{{ __('Observaciones') }}</flux:label>
                 <flux:textarea wire:model="notes" rows="2" />
                 <flux:error name="notes" />
             </flux:field>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="roleRoute('label-batches.index')" submit-label="Guardar cambios" />
+        <x-agro.form-actions :back-url="roleRoute('label-batches.index')" submit-:label="__('Guardar cambios')" />
     </form>
 
     {{-- ── Mermas ──────────────────────────────────────────────────────────── --}}
     <div class="mt-10 space-y-4">
         <div class="flex items-center justify-between">
-            <h3 class="text-base font-semibold text-zinc-900">Mermas registradas</h3>
+            <h3 class="text-base font-semibold text-zinc-900">{{ __('Mermas registradas') }}</h3>
             @if($batch->available_quantity > 0)
                 <flux:button wire:click="toggleWasteForm" variant="ghost" icon="plus" size="sm">
                     {{ $showWasteForm ? 'Cancelar' : 'Registrar merma' }}
@@ -94,34 +94,34 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <flux:field>
-                        <flux:label required>Cantidad</flux:label>
+                        <flux:label required>{{ __('Cantidad') }}</flux:label>
                         <flux:input wire:model="waste_quantity" type="number" min="1" step="1" placeholder="0" />
                         <flux:error name="waste_quantity" />
                     </flux:field>
                     <flux:field>
-                        <flux:label>Nº inicial</flux:label>
-                        <flux:input wire:model="waste_from" type="number" min="1" step="1" placeholder="Opcional" />
+                        <flux:label>{{ __('Nº inicial') }}</flux:label>
+                        <flux:input wire:model="waste_from" type="number" min="1" step="1" :placeholder="__('Opcional')" />
                         <flux:error name="waste_from" />
                     </flux:field>
                     <flux:field>
-                        <flux:label>Nº final</flux:label>
-                        <flux:input wire:model="waste_to" type="number" min="1" step="1" placeholder="Opcional" />
+                        <flux:label>{{ __('Nº final') }}</flux:label>
+                        <flux:input wire:model="waste_to" type="number" min="1" step="1" :placeholder="__('Opcional')" />
                         <flux:error name="waste_to" />
                     </flux:field>
                     <flux:field>
-                        <flux:label required>Fecha</flux:label>
+                        <flux:label required>{{ __('Fecha') }}</flux:label>
                         <flux:input wire:model="waste_date" type="date" required />
                         <flux:error name="waste_date" />
                     </flux:field>
                 </div>
                 <flux:field>
-                    <flux:label>Motivo</flux:label>
-                    <flux:textarea wire:model="waste_reason" rows="2" placeholder="Daño en almacén, error de impresión..." />
+                    <flux:label>{{ __('Motivo') }}</flux:label>
+                    <flux:textarea wire:model="waste_reason" rows="2" :placeholder="__('Daño en almacén, error de impresión...')" />
                     <flux:error name="waste_reason" />
                 </flux:field>
                 <div class="flex gap-3">
-                    <flux:button wire:click="saveWaste" variant="primary" size="sm">Guardar merma</flux:button>
-                    <flux:button wire:click="toggleWasteForm" variant="ghost" size="sm">Cancelar</flux:button>
+                    <flux:button wire:click="saveWaste" variant="primary" size="sm">{{ __('Guardar merma') }}</flux:button>
+                    <flux:button wire:click="toggleWasteForm" variant="ghost" size="sm">{{ __('Cancelar') }}</flux:button>
                 </div>
             </div>
         @endif
@@ -131,10 +131,10 @@
                 <table class="w-full text-sm">
                     <thead class="bg-zinc-50 border-b border-zinc-200">
                         <tr>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wide">Fecha</th>
-                            <th class="px-4 py-3 text-right text-xs font-semibold text-zinc-500 uppercase tracking-wide">Cantidad</th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wide">Rango</th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wide">Motivo</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wide">{{ __('Fecha') }}</th>
+                            <th class="px-4 py-3 text-right text-xs font-semibold text-zinc-500 uppercase tracking-wide">{{ __('Cantidad') }}</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wide">{{ __('Rango') }}</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wide">{{ __('Motivo') }}</th>
                             <th class="px-4 py-3"></th>
                         </tr>
                     </thead>
@@ -154,8 +154,8 @@
                                 <td class="px-4 py-3">
                                     <button
                                         wire:click="deleteWaste({{ $waste->id }})"
-                                        wire:confirm="¿Eliminar esta merma?"
-                                        title="Eliminar"
+                                        wire:confirm="{{ __('¿Eliminar esta merma?') }}"
+                                        title="{{ __('Eliminar') }}"
                                         class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-600 hover:bg-red-50 transition-colors">
                                         <flux:icon icon="trash" class="size-4" />
                                     </button>
@@ -166,7 +166,7 @@
                 </table>
             </div>
         @else
-            <p class="text-sm text-zinc-400 py-2">No hay mermas registradas en este lote.</p>
+            <p class="text-sm text-zinc-400 py-2">{{ __('No hay mermas registradas en este lote.') }}</p>
         @endif
     </div>
 </x-agro.form-card>

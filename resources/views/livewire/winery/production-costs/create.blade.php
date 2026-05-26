@@ -1,8 +1,8 @@
 <div class="space-y-6 animate-fade-in max-w-2xl">
 
     <x-agro.page-header
-        title="Añadir coste de producción"
-        description="Registra un coste asociado a un vino para calcular su coste total por litro."
+        title="{{ __('Añadir coste de producción') }}"
+        :description="__('Registra un coste asociado a un vino para calcular su coste total por litro.')"
         icon="currency-euro"
     />
 
@@ -11,9 +11,9 @@
 
             {{-- Vino --}}
             <div>
-                <flux:label>Vino <span class="text-red-500">*</span></flux:label>
+                <flux:label>{{ __('Vino') }} <span class="text-red-500">*</span></flux:label>
                 <flux:select wire:model="wine_id">
-                    <flux:select.option value="">Selecciona un vino...</flux:select.option>
+                    <flux:select.option value="">{{ __('Selecciona un vino...') }}</flux:select.option>
                     @foreach($wines as $wine)
                         <flux:select.option value="{{ $wine->id }}">{{ $wine->name }} — Añada {{ $wine->vintage }}</flux:select.option>
                     @endforeach
@@ -24,9 +24,9 @@
             {{-- Categoría + Descripción --}}
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                    <flux:label>Categoría <span class="text-red-500">*</span></flux:label>
+                    <flux:label>{{ __('Categoría') }} <span class="text-red-500">*</span></flux:label>
                     <flux:select wire:model="category">
-                        <flux:select.option value="">Selecciona categoría...</flux:select.option>
+                        <flux:select.option value="">{{ __('Selecciona categoría...') }}</flux:select.option>
                         @foreach($categories as $key => $label)
                             <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
                         @endforeach
@@ -35,8 +35,8 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-zinc-700 mb-1">Descripción <span class="text-red-500">*</span></label>
-                    <input type="text" wire:model="description" placeholder="Ej: Bentonita para clarificación"
+                    <label class="block text-sm font-medium text-zinc-700 mb-1">{{ __('Descripción') }} <span class="text-red-500">*</span></label>
+                    <input type="text" wire:model="description" placeholder="{{ __('Ej: Bentonita para clarificación') }}"
                            class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" />
                     @error('description') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
@@ -45,14 +45,14 @@
             {{-- Importe + Fecha --}}
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-zinc-700 mb-1">Importe (€) <span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-medium text-zinc-700 mb-1">{{ __('Importe (€)') }} <span class="text-red-500">*</span></label>
                     <input type="number" step="0.01" min="0.01" wire:model="amount" placeholder="0.00"
                            class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" />
                     @error('amount') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-zinc-700 mb-1">Fecha <span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-medium text-zinc-700 mb-1">{{ __('Fecha') }} <span class="text-red-500">*</span></label>
                     <input type="date" wire:model="cost_date"
                            class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" />
                     @error('cost_date') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
@@ -62,15 +62,15 @@
             {{-- Proveedor + Referencia --}}
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-zinc-700 mb-1">Proveedor</label>
-                    <input type="text" wire:model="supplier" placeholder="Nombre del proveedor"
+                    <label class="block text-sm font-medium text-zinc-700 mb-1">{{ __('Proveedor') }}</label>
+                    <input type="text" wire:model="supplier" placeholder="{{ __('Nombre del proveedor') }}"
                            class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" />
                     @error('supplier') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-zinc-700 mb-1">Referencia factura</label>
-                    <input type="text" wire:model="invoice_reference" placeholder="Nº de factura o albarán"
+                    <label class="block text-sm font-medium text-zinc-700 mb-1">{{ __('Referencia factura') }}</label>
+                    <input type="text" wire:model="invoice_reference" placeholder="{{ __('Nº de factura o albarán') }}"
                            class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" />
                     @error('invoice_reference') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
@@ -78,17 +78,15 @@
 
             {{-- Notas --}}
             <div>
-                <label class="block text-sm font-medium text-zinc-700 mb-1">Notas</label>
-                <textarea wire:model="notes" rows="3" placeholder="Información adicional..."
+                <label class="block text-sm font-medium text-zinc-700 mb-1">{{ __('Notas') }}</label>
+                <textarea wire:model="notes" rows="3" placeholder="{{ __('Información adicional...') }}"
                           class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300"></textarea>
                 @error('notes') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
             </div>
 
             {{-- Acciones --}}
             <div class="flex items-center gap-3 pt-2 border-t border-zinc-100">
-                <flux:button type="submit" variant="primary" wire:loading.attr="disabled">
-                    Guardar coste
-                </flux:button>
+                <flux:button type="submit" variant="primary" wire:loading.attr="disabled">{{ __('Guardar coste') }}</flux:button>
                 <a href="{{ roleRoute('production-costs.index') }}" wire:navigate
                    class="text-sm text-zinc-500 hover:text-zinc-700">Cancelar</a>
             </div>

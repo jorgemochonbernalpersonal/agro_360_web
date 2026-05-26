@@ -157,7 +157,7 @@
                         wire:model="ticket_number"
                         type="text"
                         id="ticket_number"
-                        placeholder="Ej: 2026-00123"
+                        placeholder="{{ __('Ej: 2026-00123') }}"
                         maxlength="100"
                     />
                     <flux:description>{{ __('Número asignado por el comprador en báscula. Se usa para cruzar automáticamente con la recepción de bodega.') }}</flux:description>
@@ -170,7 +170,7 @@
                         wire:model="destination_rega_code"
                         type="text"
                         id="destination_rega_code"
-                        placeholder="Ej: ES12345678"
+                        placeholder="{{ __('Ej: ES12345678') }}"
                         maxlength="20"
                     />
                     <flux:description>{{ __('Código de registro de la instalación de destino (PAC)') }}</flux:description>
@@ -183,7 +183,7 @@
                         wire:model="vehicle_plate"
                         type="text"
                         id="vehicle_plate"
-                        placeholder="Ej: 1234-ABC"
+                        placeholder="{{ __('Ej: 1234-ABC') }}"
                         maxlength="20"
                     />
                     <flux:error name="vehicle_plate" />
@@ -199,31 +199,31 @@
 
                 <flux:field>
                     <flux:label>{{ __('Baumé (°Bé)') }}</flux:label>
-                    <flux:input wire:model="baume_degree" type="number" step="0.1" min="0" max="20" id="baume_degree" placeholder="0–20" />
+                    <flux:input wire:model="baume_degree" type="number" step="0.1" min="0" max="20" id="baume_degree" :placeholder="__('0–20')" />
                     <flux:error name="baume_degree" />
                 </flux:field>
 
                 <flux:field>
                     <flux:label>{{ __('Brix (°Bx)') }}</flux:label>
-                    <flux:input wire:model="brix_degree" type="number" step="0.1" min="0" max="40" id="brix_degree" placeholder="0–40" />
+                    <flux:input wire:model="brix_degree" type="number" step="0.1" min="0" max="40" id="brix_degree" :placeholder="__('0–40')" />
                     <flux:error name="brix_degree" />
                 </flux:field>
 
                 <flux:field>
                     <flux:label>{{ __('Alc. potencial (%vol)') }}</flux:label>
-                    <flux:input wire:model="potential_alcohol" type="number" step="0.01" min="0" max="25" id="potential_alcohol" placeholder="0–25" />
+                    <flux:input wire:model="potential_alcohol" type="number" step="0.01" min="0" max="25" id="potential_alcohol" :placeholder="__('0–25')" />
                     <flux:error name="potential_alcohol" />
                 </flux:field>
 
                 <flux:field>
                     <flux:label>{{ __('Acidez (g/L)') }}</flux:label>
-                    <flux:input wire:model="acidity_level" type="number" step="0.1" min="0" max="20" id="acidity_level" placeholder="0–20" />
+                    <flux:input wire:model="acidity_level" type="number" step="0.1" min="0" max="20" id="acidity_level" :placeholder="__('0–20')" />
                     <flux:error name="acidity_level" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>pH</flux:label>
-                    <flux:input wire:model="ph_level" type="number" step="0.01" min="0" max="14" id="ph_level" placeholder="0–14" />
+                    <flux:label>{{ __('pH') }}</flux:label>
+                    <flux:input wire:model="ph_level" type="number" step="0.01" min="0" max="14" id="ph_level" :placeholder="__('0–14')" />
                     <flux:error name="ph_level" />
                 </flux:field>
 

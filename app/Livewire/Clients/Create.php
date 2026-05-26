@@ -198,11 +198,11 @@ class Create extends Component
                 }
             });
 
-            $this->toastSuccess('Cliente creado correctamente.');
+            $this->toastSuccess(__('Cliente creado correctamente.'));
             return $this->redirect(roleRoute('clients.index'), navigate: true);
 
         } catch (\Exception $e) {
-            $this->toastError('Error al crear el cliente: ' . $e->getMessage());
+            $this->toastError(__('Error al crear el cliente: :error', ['error' => $e->getMessage()]));
         }
     }
 

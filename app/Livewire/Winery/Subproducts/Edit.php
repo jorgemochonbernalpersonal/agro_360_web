@@ -78,10 +78,10 @@ class Edit extends Component
     protected function messages(): array
     {
         return [
-            'type.required'        => 'Debes seleccionar el tipo de subproducto.',
-            'quantity.required'    => 'Indica la cantidad generada.',
-            'quantity.min'         => 'La cantidad debe ser mayor que cero.',
-            'destination.required' => 'Debes indicar el destino.',
+            'type.required'        => __('Debes seleccionar el tipo de subproducto.'),
+            'quantity.required'    => __('Indica la cantidad generada.'),
+            'quantity.min'         => __('La cantidad debe ser mayor que cero.'),
+            'destination.required' => __('Debes indicar el destino.'),
         ];
     }
 
@@ -105,7 +105,7 @@ class Edit extends Component
             'notes'                  => $data['notes'] ?: null,
         ]);
 
-        $this->toastSuccess('Subproducto actualizado correctamente.');
+        $this->toastSuccess(__('Subproducto actualizado correctamente.'));
         $this->roleRedirect('subproducts.index');
     }
 

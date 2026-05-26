@@ -1,21 +1,19 @@
 <div class="space-y-6 animate-fade-in">
     <x-agro.page-header
-        title="Log de Seguridad"
-        description="Historial de eventos de seguridad del sistema"
+        title="{{ __('Log de Seguridad') }}"
+        :description="__('Historial de eventos de seguridad del sistema')"
     >
         <x-slot:actions>
-            <flux:button wire:click="resetFilters" variant="ghost" icon="arrow-path">
-                Resetear filtros
-            </flux:button>
+            <flux:button wire:click="resetFilters" variant="ghost" icon="arrow-path">{{ __('Resetear filtros') }}</flux:button>
         </x-slot:actions>
     </x-agro.page-header>
 
     {{-- Stats --}}
     <div class="grid grid-cols-2 gap-4">
-        <x-agro.stat-card label="Entradas"  :value="$stats['total']"    icon="list-bullet"          color="blue"   />
-        <x-agro.stat-card label="Info"      :value="$stats['info']"     icon="information-circle"   color="agro"   />
-        <x-agro.stat-card label="Avisos"    :value="$stats['warnings']" icon="exclamation-triangle" color="orange" />
-        <x-agro.stat-card label="Alertas"   :value="$stats['alerts']"   icon="exclamation-circle"   color="red"    />
+        <x-agro.stat-card :label="__('Entradas')"  :value="$stats['total']"    icon="list-bullet"          color="blue"   />
+        <x-agro.stat-card :label="__('Info')"      :value="$stats['info']"     icon="information-circle"   color="agro"   />
+        <x-agro.stat-card :label="__('Avisos')"    :value="$stats['warnings']" icon="exclamation-triangle" color="orange" />
+        <x-agro.stat-card :label="__('Alertas')"   :value="$stats['alerts']"   icon="exclamation-circle"   color="red"    />
     </div>
 
     {{-- Filtros --}}
@@ -36,31 +34,31 @@
         </div>
 
         <x-agro.filter-select wire:model.live="filterLevel">
-            <option value="">Todos los niveles</option>
-            <option value="info">Info</option>
-            <option value="notice">Notice</option>
-            <option value="warning">Warning</option>
-            <option value="alert">Alert</option>
-            <option value="error">Error</option>
-            <option value="critical">Critical</option>
+            <option value="">{{ __('Todos los niveles') }}</option>
+            <option value="info">{{ __('Info') }}</option>
+            <option value="notice">{{ __('Notice') }}</option>
+            <option value="warning">{{ __('Warning') }}</option>
+            <option value="alert">{{ __('Alert') }}</option>
+            <option value="error">{{ __('Error') }}</option>
+            <option value="critical">{{ __('Critical') }}</option>
         </x-agro.filter-select>
 
         <x-agro.filter-select wire:model.live="filterEvent">
-            <option value="">Todos los eventos</option>
-            <option value="failed_login">Login fallido</option>
-            <option value="rate_limit_reached">Rate limit</option>
-            <option value="user_impersonation">Impersonación</option>
-            <option value="access_denied">Acceso denegado</option>
-            <option value="account_locked">Cuenta bloqueada</option>
-            <option value="user_created">Usuario creado</option>
-            <option value="user_deleted">Usuario eliminado</option>
-            <option value="user_edited">Usuario editado</option>
-            <option value="beta_toggled">Beta toggled</option>
-            <option value="settings_">Configuración</option>
-            <option value="organization_">Organización</option>
+            <option value="">{{ __('Todos los eventos') }}</option>
+            <option value="failed_login">{{ __('Login fallido') }}</option>
+            <option value="rate_limit_reached">{{ __('Rate limit') }}</option>
+            <option value="user_impersonation">{{ __('Impersonación') }}</option>
+            <option value="access_denied">{{ __('Acceso denegado') }}</option>
+            <option value="account_locked">{{ __('Cuenta bloqueada') }}</option>
+            <option value="user_created">{{ __('Usuario creado') }}</option>
+            <option value="user_deleted">{{ __('Usuario eliminado') }}</option>
+            <option value="user_edited">{{ __('Usuario editado') }}</option>
+            <option value="beta_toggled">{{ __('Beta toggled') }}</option>
+            <option value="settings_">{{ __('Configuración') }}</option>
+            <option value="organization_">{{ __('Organización') }}</option>
         </x-agro.filter-select>
 
-        <x-agro.filter-input wire:model.live="search" placeholder="Buscar IP, email, evento..." />
+        <x-agro.filter-input wire:model.live="search" :placeholder="__('Buscar IP, email, evento...')" />
         <flux:button
             wire:click="toggleInternal"
             variant="ghost"
@@ -77,8 +75,8 @@
     @if($showInternal)
     <div class="flex items-center gap-2 rounded-lg bg-amber-50 border border-amber-200 px-4 py-2.5 text-sm text-amber-800">
         <flux:icon icon="bug-ant" class="size-4 flex-shrink-0" />
-        <span>Mostrando también eventos de cuentas internas (demo / test). Las estadísticas incluyen estos eventos.</span>
-        <button wire:click="toggleInternal" class="ml-auto text-amber-600 hover:text-amber-800 font-medium text-xs">Ocultar</button>
+        <span>{{ __('Mostrando también eventos de cuentas internas (demo / test). Las estadísticas incluyen estos eventos.') }}</span>
+        <button wire:click="toggleInternal" class="ml-auto text-amber-600 hover:text-amber-800 font-medium text-xs">{{ __('Ocultar') }}</button>
     </div>
     @endif
 
@@ -87,19 +85,19 @@
         @if($entries->isEmpty())
             <x-agro.empty-state
                 icon="list-bullet"
-                message="Sin entradas"
-                description="No hay eventos de seguridad para los filtros seleccionados"
+                :message="__('Sin entradas')"
+                :description="__('No hay eventos de seguridad para los filtros seleccionados')"
             />
         @else
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-zinc-200">
                     <thead class="bg-zinc-50">
                         <tr>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-zinc-600 uppercase tracking-wider w-40">Timestamp</th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-zinc-600 uppercase tracking-wider w-20">Nivel</th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-zinc-600 uppercase tracking-wider">Evento / Mensaje</th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-zinc-600 uppercase tracking-wider w-32">IP</th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-zinc-600 uppercase tracking-wider">Contexto</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-zinc-600 uppercase tracking-wider w-40">{{ __('Timestamp') }}</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-zinc-600 uppercase tracking-wider w-20">{{ __('Nivel') }}</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-zinc-600 uppercase tracking-wider">{{ __('Evento / Mensaje') }}</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-zinc-600 uppercase tracking-wider w-32">{{ __('IP') }}</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-zinc-600 uppercase tracking-wider">{{ __('Contexto') }}</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-zinc-100 text-xs font-mono">

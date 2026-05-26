@@ -120,10 +120,10 @@ class Show extends Component
             'editEmail' => ['required', 'email', Rule::unique('users', 'email')->ignore($this->user->id)],
             'editRole'  => 'required|in:admin,supervisor,winery,viticulturist,producer',
         ], [
-            'editName.required'  => 'El nombre es obligatorio.',
-            'editEmail.required' => 'El email es obligatorio.',
-            'editEmail.unique'   => 'Ya existe un usuario con este email.',
-            'editRole.required'  => 'El rol es obligatorio.',
+            'editName.required'  => __('El nombre es obligatorio.'),
+            'editEmail.required' => __('El email es obligatorio.'),
+            'editEmail.unique'   => __('Ya existe un usuario con este email.'),
+            'editRole.required'  => __('El rol es obligatorio.'),
         ]);
 
         $emailChanged = $this->editEmail !== $this->user->email;
@@ -148,7 +148,7 @@ class Show extends Component
         $this->loadStats();
         $this->loadHierarchy();
         $this->closeEditModal();
-        $this->toastSuccess('Usuario actualizado correctamente.');
+        $this->toastSuccess(__('Usuario actualizado correctamente.'));
     }
 
     // ─── Delete ───────────────────────────────────────────────────────────────
@@ -156,12 +156,12 @@ class Show extends Component
     public function deleteUser()
     {
         if ($this->user->isAdmin()) {
-            $this->toastError('No puedes eliminar a un administrador.');
+            $this->toastError(__('No puedes eliminar a un administrador.'));
             return;
         }
 
         if ($this->user->id === Auth::id()) {
-            $this->toastError('No puedes eliminarte a ti mismo.');
+            $this->toastError(__('No puedes eliminarte a ti mismo.'));
             return;
         }
 
@@ -185,9 +185,9 @@ class Show extends Component
         $status = Password::sendResetLink(['email' => $this->user->email]);
 
         if ($status === Password::RESET_LINK_SENT) {
-            $this->toastSuccess('Email de restablecimiento enviado a ' . $this->user->email . '.');
+            $this->toastSuccess(__('Email de restablecimiento enviado a :email.', ['email' => $this->user->email]));
         } else {
-            $this->toastError('No se pudo enviar el email. Verifica que el email existe y es válido.');
+            $this->toastError(__('No se pudo enviar el email. Verifica que el email existe y es válido.'));
         }
     }
 
@@ -196,7 +196,7 @@ class Show extends Component
     public function verifyEmailManually()
     {
         if ($this->user->email_verified_at) {
-            $this->toastError('El email ya está verificado.');
+            $this->toastError(__('El email ya está verificado.'));
             return;
         }
 
@@ -210,7 +210,7 @@ class Show extends Component
         ]);
 
         $this->loadStats();
-        $this->toastSuccess('Email verificado manualmente.');
+        $this->toastSuccess(__('Email verificado manualmente.'));
     }
 
     // ─── Toggle active ────────────────────────────────────────────────────────
@@ -218,7 +218,7 @@ class Show extends Component
     public function toggleActive()
     {
         if ($this->user->isAdmin() && $this->user->id !== Auth::id()) {
-            $this->toastError('No puedes desactivar a otro administrador.');
+            $this->toastError(__('No puedes desactivar a otro administrador.'));
             return;
         }
 
@@ -256,17 +256,17 @@ class Show extends Component
     public function impersonate()
     {
         if (!Auth::user()->isAdmin()) {
-            $this->toastError('No tienes permiso para impersonar usuarios.');
+            $this->toastError(__('No tienes permiso para impersonar usuarios.'));
             return;
         }
 
         if ($this->user->isAdmin()) {
-            $this->toastError('No puedes impersonar a otro administrador por razones de seguridad.');
+            $this->toastError(__('No puedes impersonar a otro administrador por razones de seguridad.'));
             return;
         }
 
         if (!$this->user->can_login) {
-            $this->toastError('No puedes impersonar usuarios inactivos. Activa el usuario primero.');
+            $this->toastError(__('No puedes impersonar usuarios inactivos. Activa el usuario primero.'));
             return;
         }
 
@@ -300,12 +300,12 @@ class Show extends Component
         if ($this->isReadOnly()) return;
 
         if (!$this->user->isAdmin()) {
-            $this->toastError('Solo aplica a administradores.');
+            $this->toastError(__('Solo aplica a administradores.'));
             return;
         }
 
         if ($this->user->id === Auth::id()) {
-            $this->toastError('No puedes cambiarte a ti mismo a solo lectura.');
+            $this->toastError(__('No puedes cambiarte a ti mismo a solo lectura.'));
             return;
         }
 
@@ -519,12 +519,12 @@ class Show extends Component
     public function addNote(): void
     {
         $this->validate(['newNote' => 'required|string|min:3|max:1000'], [
-            'newNote.required' => 'La nota no puede estar vacía.',
-            'newNote.min'      => 'La nota debe tener al menos 3 caracteres.',
+            'newNote.required' => __('La nota no puede estar vacía.'),
+            'newNote.min'      => __('La nota debe tener al menos 3 caracteres.'),
         ]);
 
         if (!\Illuminate\Support\Facades\Schema::hasTable('admin_notes')) {
-            $this->toastError('Ejecuta las migraciones pendientes primero.');
+            $this->toastError(__('Ejecuta las migraciones pendientes primero.'));
             return;
         }
         AdminNote::create([
@@ -534,7 +534,7 @@ class Show extends Component
         ]);
 
         $this->newNote = '';
-        $this->toastSuccess('Nota añadida.');
+        $this->toastSuccess(__('Nota añadida.'));
     }
 
     public function deleteNote(int $id): void
@@ -542,7 +542,7 @@ class Show extends Component
         $note = AdminNote::findOrFail($id);
         if ($note->user_id !== $this->user->id) return;
         $note->delete();
-        $this->toastSuccess('Nota eliminada.');
+        $this->toastSuccess(__('Nota eliminada.'));
     }
 
     // ─── User history ─────────────────────────────────────────────────────────
@@ -588,7 +588,7 @@ class Show extends Component
                 : collect(),
         ])->layout('layouts.app', [
             'title'       => $this->user->name . ' - Usuario - Agro365',
-            'description' => 'Detalles del usuario ' . $this->user->name . '. Información, estadísticas y actividad.',
+            'description' => __('Detalles del usuario ') . $this->user->name . '. Información, estadísticas y actividad.',
         ]);
     }
 }

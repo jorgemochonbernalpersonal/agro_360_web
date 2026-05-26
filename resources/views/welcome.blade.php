@@ -429,7 +429,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
                 <!-- Logo -->
-                <a href="{{ url('/') }}" class="flex items-center" aria-label="Agro365 - Ir a inicio">
+                <a href="{{ url('/') }}" class="flex items-center" aria-:label="__('Agro365 - Ir a inicio')">
                     <img 
                         src="{{ asset('images/logo.png') }}" 
                         alt="Agro365 - Software de gestión agrícola para viñedos y bodegas" 
@@ -465,7 +465,7 @@
                     <div class="flex flex-wrap gap-2">
                         <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--color-agro-green-bg)] border border-[var(--color-agro-green-light)]/30">
                             <span class="w-2 h-2 rounded-full bg-[var(--color-agro-green-light)] animate-pulse"></span>
-                            <span class="text-sm font-semibold text-[var(--color-agro-green-dark)]">Viticultor básico gratis · Completo desde 9€/mes</span>
+                            <span class="text-sm font-semibold text-[var(--color-agro-green-dark)]">{{ __('Viticultor básico gratis · Completo desde 9€/mes') }}</span>
                         </div>
                         <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-50 border border-amber-300">
                             <svg class="w-3.5 h-3.5 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
@@ -476,16 +476,16 @@
                     </div>
                     
                     <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] leading-tight">
-                        <span class="block">Cuaderno de Campo Digital</span>
-                        <span class="block text-3xl lg:text-4xl text-[var(--color-agro-green)] mt-2">Para viticultores, bodegas y Denominaciones de Origen</span>
-                        <span class="block text-lg lg:text-xl font-normal text-gray-500 mt-3">Del viñedo a la botella — cumple normativa, gestiona parcelas y lleva la trazabilidad completa. Sin papel.</span>
+                        <span class="block">{{ __('Cuaderno de Campo Digital') }}</span>
+                        <span class="block text-3xl lg:text-4xl text-[var(--color-agro-green)] mt-2">{{ __('Para viticultores, bodegas y Denominaciones de Origen') }}</span>
+                        <span class="block text-lg lg:text-xl font-normal text-gray-500 mt-3">{{ __('Del viñedo a la botella — cumple normativa, gestiona parcelas y lleva la trazabilidad completa. Sin papel.') }}</span>
                     </h1>
 
                     <p class="text-xl text-gray-600 leading-relaxed">
                         Cumple con la normativa <a href="{{ content_route('content.normativa-pac') }}" class="text-[var(--color-agro-green)] hover:underline">PAC</a>,
                         gestiona tus parcelas <a href="{{ content_route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a>
                         y lleva la trazabilidad completa desde el viñedo hasta la bodega.
-                        <strong>Sin papel. Sin Excel. Todo en un solo sitio.</strong>
+                        <strong>{{ __('Sin papel. Sin Excel. Todo en un solo sitio.') }}</strong>
                     </p>
                     
                     <!-- CTAs por rol -->
@@ -503,7 +503,7 @@
                             <span>🌿🍷</span> Soy Productor
                         </a>
                         <a href="#ecosistema" class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl border-2 border-[var(--color-agro-green-light)]/60 text-[var(--color-agro-green-dark)] hover:border-[var(--color-agro-green-dark)] transition-all duration-300 font-semibold text-base">
-                            <span>🏛️</span> Soy DO
+                            <span>{{ __('🏛️') }}</span> Soy DO
                         </a>
                     </div>
 
@@ -512,19 +512,19 @@
                             <svg class="w-4 h-4 text-[var(--color-agro-green)]" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                             </svg>
-                            <span class="text-gray-600 text-sm font-medium">3 meses gratis al registrarse</span>
+                            <span class="text-gray-600 text-sm font-medium">{{ __('3 meses gratis al registrarse') }}</span>
                         </div>
                         <div class="flex items-center gap-1.5">
                             <svg class="w-4 h-4 text-[var(--color-agro-green)]" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                             </svg>
-                            <span class="text-gray-600 text-sm font-medium">Sin tarjeta de crédito</span>
+                            <span class="text-gray-600 text-sm font-medium">{{ __('Sin tarjeta de crédito') }}</span>
                         </div>
                         <div class="flex items-center gap-1.5">
                             <svg class="w-4 h-4 text-[var(--color-agro-green)]" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                             </svg>
-                            <span class="text-gray-600 text-sm font-medium">Cancela cuando quieras</span>
+                            <span class="text-gray-600 text-sm font-medium">{{ __('Cancela cuando quieras') }}</span>
                         </div>
                     </div>
                 </div>
@@ -538,21 +538,15 @@
                         <!-- Fase 1 -->
                         <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5">
                             <div class="text-amber-700 font-bold text-sm mb-2">📅 Enero 2027 — Fase 1</div>
-                            <p class="text-gray-700 text-sm leading-relaxed">
-                                Obligatorio el registro digital de tratamientos fitosanitarios. Agro365 te cubre desde hoy.
-                            </p>
+                            <p class="text-gray-700 text-sm leading-relaxed">{{ __('Obligatorio el registro digital de tratamientos fitosanitarios. Agro365 te cubre desde hoy.') }}</p>
                         </div>
                         <!-- Fase 2 -->
                         <div class="bg-[var(--color-agro-green-bg)] border border-[var(--color-agro-green-light)]/40 rounded-2xl p-5">
                             <div class="text-[var(--color-agro-green-dark)] font-bold text-sm mb-2">📅 Enero 2028 — Fase 2</div>
-                            <p class="text-gray-700 text-sm leading-relaxed">
-                                Entra en vigor el cuaderno completo según el Reglamento (UE) 2022/1441. Parcelas, riegos, fertilización y maquinaria — todo en digital.
-                            </p>
+                            <p class="text-gray-700 text-sm leading-relaxed">{{ __('Entra en vigor el cuaderno completo según el Reglamento (UE) 2022/1441. Parcelas, riegos, fertilización y maquinaria — todo en digital.') }}</p>
                         </div>
                     </div>
-                    <p class="text-center text-sm font-semibold text-[var(--color-agro-green-dark)] bg-[var(--color-agro-green-bg)] rounded-xl px-4 py-3 border border-[var(--color-agro-green-light)]/30">
-                        Agro365 cubre ambas fases. Empieza gratis hoy y llega a 2027 sin estrés.
-                    </p>
+                    <p class="text-center text-sm font-semibold text-[var(--color-agro-green-dark)] bg-[var(--color-agro-green-bg)] rounded-xl px-4 py-3 border border-[var(--color-agro-green-light)]/30">{{ __('Agro365 cubre ambas fases. Empieza gratis hoy y llega a 2027 sin estrés.') }}</p>
                 </div>
             </div>
         </div>
@@ -562,34 +556,26 @@
     <section class="py-20 bg-gray-50 border-t border-gray-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
-                <h2 class="text-3xl lg:text-4xl font-bold text-[var(--color-agro-green-dark)]">
-                    Empieza en 5 minutos. Sin papel. Sin complicaciones.
-                </h2>
+                <h2 class="text-3xl lg:text-4xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Empieza en 5 minutos. Sin papel. Sin complicaciones.') }}</h2>
             </div>
             <div class="grid md:grid-cols-3 gap-8 mb-12">
                 <!-- Paso 1 -->
                 <div class="bg-white rounded-2xl p-7 border border-gray-100 shadow-sm">
                     <div class="w-10 h-10 rounded-full bg-[var(--color-agro-green-dark)] text-white flex items-center justify-center font-bold text-lg mb-5">1</div>
-                    <h3 class="text-lg font-bold text-[var(--color-agro-green-dark)] mb-2">Crea tu cuenta gratis</h3>
-                    <p class="text-gray-600 text-sm leading-relaxed">
-                        Sin tarjeta, sin llamadas. Regístrate como viticultor, productor, bodega o DO y accede al panel en segundos.
-                    </p>
+                    <h3 class="text-lg font-bold text-[var(--color-agro-green-dark)] mb-2">{{ __('Crea tu cuenta gratis') }}</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">{{ __('Sin tarjeta, sin llamadas. Regístrate como viticultor, productor, bodega o DO y accede al panel en segundos.') }}</p>
                 </div>
                 <!-- Paso 2 -->
                 <div class="bg-white rounded-2xl p-7 border border-gray-100 shadow-sm">
                     <div class="w-10 h-10 rounded-full bg-[var(--color-agro-green-dark)] text-white flex items-center justify-center font-bold text-lg mb-5">2</div>
-                    <h3 class="text-lg font-bold text-[var(--color-agro-green-dark)] mb-2">Importa tus parcelas SIGPAC</h3>
-                    <p class="text-gray-600 text-sm leading-relaxed">
-                        Introduce tu NIF y tus parcelas se importan automáticamente desde el Ministerio. Sin introducir datos a mano.
-                    </p>
+                    <h3 class="text-lg font-bold text-[var(--color-agro-green-dark)] mb-2">{{ __('Importa tus parcelas SIGPAC') }}</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">{{ __('Introduce tu NIF y tus parcelas se importan automáticamente desde el Ministerio. Sin introducir datos a mano.') }}</p>
                 </div>
                 <!-- Paso 3 -->
                 <div class="bg-white rounded-2xl p-7 border border-gray-100 shadow-sm">
                     <div class="w-10 h-10 rounded-full bg-[var(--color-agro-green-dark)] text-white flex items-center justify-center font-bold text-lg mb-5">3</div>
-                    <h3 class="text-lg font-bold text-[var(--color-agro-green-dark)] mb-2">Registra desde el móvil</h3>
-                    <p class="text-gray-600 text-sm leading-relaxed">
-                        Anota tratamientos, riegos y labores desde cualquier dispositivo. La web está optimizada para móvil — sin instalar nada.
-                    </p>
+                    <h3 class="text-lg font-bold text-[var(--color-agro-green-dark)] mb-2">{{ __('Registra desde el móvil') }}</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">{{ __('Anota tratamientos, riegos y labores desde cualquier dispositivo. La web está optimizada para móvil — sin instalar nada.') }}</p>
                 </div>
             </div>
             <div class="text-center">
@@ -607,13 +593,11 @@
     <section id="ecosistema" class="py-20 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16 space-y-4">
-                <h2 class="text-4xl lg:text-5xl font-bold text-[var(--color-agro-green-dark)]">
-                    Una sola plataforma. Cuatro roles. Todo conectado.
-                </h2>
+                <h2 class="text-4xl lg:text-5xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Una sola plataforma. Cuatro roles. Todo conectado.') }}</h2>
                 <p class="text-xl text-zinc-600 max-w-3xl mx-auto">
                     Agro365 es la plataforma española que conecta toda la cadena del vino en un ecosistema compartido.
                     Cada actor ve solo lo que le corresponde. Los datos fluyen solos.
-                    <strong>Sin Excel. Sin papel. Sin duplicidades.</strong>
+                    <strong>{{ __('Sin Excel. Sin papel. Sin duplicidades.') }}</strong>
                 </p>
             </div>
 
@@ -627,8 +611,8 @@
                             <div class="font-bold text-amber-900 text-lg">Denominación de Origen</div>
                             <div class="text-amber-700 text-sm mt-1">Supervisa bodegas y cumplimiento normativo</div>
                             <div class="mt-3 flex justify-center gap-2 flex-wrap">
-                                <span class="bg-amber-200/60 text-amber-800 text-xs px-2 py-0.5 rounded-full font-medium">Panel centralizado</span>
-                                <span class="bg-amber-200/60 text-amber-800 text-xs px-2 py-0.5 rounded-full font-medium">Trazabilidad DO</span>
+                                <span class="bg-amber-200/60 text-amber-800 text-xs px-2 py-0.5 rounded-full font-medium">{{ __('Panel centralizado') }}</span>
+                                <span class="bg-amber-200/60 text-amber-800 text-xs px-2 py-0.5 rounded-full font-medium">{{ __('Trazabilidad DO') }}</span>
                             </div>
                         </div>
                     </div>
@@ -691,7 +675,7 @@
                             <div class="font-semibold text-blue-700 text-xs">Viticultor independiente</div>
                         </div>
                     </div>
-                    <p class="text-center text-xs text-zinc-400 mt-4">El viticultor independiente no necesita bodega ni DO para empezar</p>
+                    <p class="text-center text-xs text-zinc-400 mt-4">{{ __('El viticultor independiente no necesita bodega ni DO para empezar') }}</p>
 
                     <!-- Productor: nodo standalone separado -->
                     <div class="mt-6 flex flex-col items-center">
@@ -701,15 +685,15 @@
                             <div class="font-bold text-violet-900">Productor</div>
                             <div class="text-violet-700 text-xs mt-1">Viñedo propio · Elaboración propia</div>
                             <div class="mt-2">
-                                <span class="bg-violet-200/60 text-violet-800 text-xs px-2 py-0.5 rounded-full font-medium">Viticultor + Bodega en uno</span>
+                                <span class="bg-violet-200/60 text-violet-800 text-xs px-2 py-0.5 rounded-full font-medium">{{ __('Viticultor + Bodega en uno') }}</span>
                             </div>
                         </div>
-                        <p class="text-center text-xs text-zinc-400 mt-2">Un solo panel · Una sola cuenta · Un precio bundle</p>
+                        <p class="text-center text-xs text-zinc-400 mt-2">{{ __('Un solo panel · Una sola cuenta · Un precio bundle') }}</p>
                     </div>
                 </div>
             </div>
 
-            <p class="text-center text-sm text-zinc-400 -mt-8 mb-16">Una bodega puede gestionar múltiples viticultores. Un viticultor puede trabajar con varias bodegas.</p>
+            <p class="text-center text-sm text-zinc-400 -mt-8 mb-16">{{ __('Una bodega puede gestionar múltiples viticultores. Un viticultor puede trabajar con varias bodegas.') }}</p>
 
             <!-- Cuatro cards de rol -->
             <div class="grid sm:grid-cols-2 xl:grid-cols-4 gap-8">
@@ -718,12 +702,12 @@
                     <div class="w-14 h-14 rounded-xl bg-[var(--color-agro-green-bg)] flex items-center justify-center mb-5 text-3xl">
                         🌿
                     </div>
-                    <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-3">Viticultor</h3>
-                    <p class="text-zinc-600 text-sm mb-2 font-semibold">Tu cuaderno, tus datos, siempre tuyos</p>
+                    <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-3">{{ __('Viticultor') }}</h3>
+                    <p class="text-zinc-600 text-sm mb-2 font-semibold">{{ __('Tu cuaderno, tus datos, siempre tuyos') }}</p>
                     <p class="text-zinc-600 text-sm mb-5">
                         Registra tratamientos, riegos y labores desde el móvil.
                         Trabaja de forma independiente o comparte tu cuaderno con una o varias bodegas.
-                        <strong>Aunque cambies de bodega, tus datos siguen siendo tuyos.</strong>
+                        <strong>{{ __('Aunque cambies de bodega, tus datos siguen siendo tuyos.') }}</strong>
                     </p>
                     <a href="{{ route('register') }}" rel="nofollow" class="inline-flex items-center gap-1.5 text-[var(--color-agro-green)] font-semibold text-sm hover:underline">
                         Empezar gratis — sin tarjeta
@@ -738,11 +722,11 @@
                     <div class="w-14 h-14 rounded-xl bg-red-50 flex items-center justify-center mb-5 text-3xl">
                         🍷
                     </div>
-                    <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-3">Bodega</h3>
-                    <p class="text-zinc-600 text-sm mb-2 font-semibold">Trazabilidad completa desde la cepa</p>
+                    <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-3">{{ __('Bodega') }}</h3>
+                    <p class="text-zinc-600 text-sm mb-2 font-semibold">{{ __('Trazabilidad completa desde la cepa') }}</p>
                     <p class="text-zinc-600 text-sm mb-5">
                         Conecta con tus viticultores y recibe sus cuadernos en tiempo real. Gestiona vendimia,
-                        producciones y facturación. <strong>Invita a tus viticultores</strong> — acceden en modo básico gratis
+                        producciones y facturación. <strong>{{ __('Invita a tus viticultores') }}</strong> — acceden en modo básico gratis
                         o completo por 9€/mes.
                     </p>
                     <a href="{{ content_route('content.bodegas') }}" class="inline-flex items-center gap-1.5 text-red-600 font-semibold text-sm hover:underline">
@@ -758,11 +742,11 @@
                     <div class="w-14 h-14 rounded-xl bg-violet-50 flex items-center justify-center mb-5 text-3xl">
                         🌿🍷
                     </div>
-                    <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-3">Productor</h3>
-                    <p class="text-zinc-600 text-sm mb-2 font-semibold">Viticultor y bodega en uno solo</p>
+                    <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-3">{{ __('Productor') }}</h3>
+                    <p class="text-zinc-600 text-sm mb-2 font-semibold">{{ __('Viticultor y bodega en uno solo') }}</p>
                     <p class="text-zinc-600 text-sm mb-5">
                         Cultivas tus propias uvas y elaboras tu vino. Un solo panel con contexto campo y bodega.
-                        <strong>Gestiona viñedo, vendimia y elaboración sin duplicar cuentas ni pagar dos planes separados.</strong>
+                        <strong>{{ __('Gestiona viñedo, vendimia y elaboración sin duplicar cuentas ni pagar dos planes separados.') }}</strong>
                     </p>
                     <a href="{{ route('register') }}" rel="nofollow" class="inline-flex items-center gap-1.5 text-violet-600 font-semibold text-sm hover:underline">
                         Empezar gratis — sin tarjeta
@@ -777,11 +761,11 @@
                     <div class="w-14 h-14 rounded-xl bg-amber-50 flex items-center justify-center mb-5 text-3xl">
                         🏛️
                     </div>
-                    <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-3">Denominación de Origen</h3>
-                    <p class="text-zinc-600 text-sm mb-2 font-semibold">Control total de tu ecosistema</p>
+                    <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-3">{{ __('Denominación de Origen') }}</h3>
+                    <p class="text-zinc-600 text-sm mb-2 font-semibold">{{ __('Control total de tu ecosistema') }}</p>
                     <p class="text-zinc-600 text-sm mb-5">
                         Registra tus bodegas adscritas y supervisa su actividad y cumplimiento normativo
-                        desde un panel centralizado. <strong>Tus bodegas acceden gratis incluidas en tu plan.</strong>
+                        desde un panel centralizado. <strong>{{ __('Tus bodegas acceden gratis incluidas en tu plan.') }}</strong>
                         Solo pagas tú por toda la red.
                     </p>
                     <div class="flex flex-col gap-2">
@@ -803,9 +787,7 @@
     <section class="py-20 bg-gray-50 border-y border-gray-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
-                <h2 class="text-3xl lg:text-4xl font-bold text-[var(--color-agro-green-dark)]">
-                    Todo lo que incluye el plan Viticultor
-                </h2>
+                <h2 class="text-3xl lg:text-4xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Todo lo que incluye el plan Viticultor') }}</h2>
                 <div class="w-20 h-1 bg-[var(--color-agro-green-light)] mx-auto mt-4 rounded-full"></div>
             </div>
             
@@ -817,8 +799,8 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                         </svg>
                     </div>
-                    <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">Cuaderno de Campo</h3>
-                    <p class="text-gray-600 text-sm leading-relaxed mb-4">Registro oficial de tratamientos, riegos y fertilización 100% conforme con la normativa 2027.</p>
+                    <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('Cuaderno de Campo') }}</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-4">{{ __('Registro oficial de tratamientos, riegos y fertilización 100% conforme con la normativa 2027.') }}</p>
                     <span class="text-[var(--color-agro-green)] text-sm font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
                         Saber más
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -832,8 +814,8 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
                         </svg>
                     </div>
-                    <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">Gestión SIGPAC</h3>
-                    <p class="text-gray-600 text-sm leading-relaxed mb-4">Control de parcelas, mapas interactivos y códigos oficiales del ministerio integrados.</p>
+                    <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('Gestión SIGPAC') }}</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-4">{{ __('Control de parcelas, mapas interactivos y códigos oficiales del ministerio integrados.') }}</p>
                     <span class="text-[var(--color-agro-green)] text-sm font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
                         Saber más
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -847,8 +829,8 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                         </svg>
                     </div>
-                    <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">Teledetección NDVI</h3>
-                    <p class="text-gray-600 text-sm leading-relaxed mb-4">Análisis satelital de vigor y estrés hídrico de tus parcelas en tiempo real sin sensores.</p>
+                    <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('Teledetección NDVI') }}</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-4">{{ __('Análisis satelital de vigor y estrés hídrico de tus parcelas en tiempo real sin sensores.') }}</p>
                     <span class="text-[var(--color-agro-green)] text-sm font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
                         Saber más
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -862,8 +844,8 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                         </svg>
                     </div>
-                    <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">Facturación Agrícola</h3>
-                    <p class="text-gray-600 text-sm leading-relaxed mb-4">De la vendimia a la factura en un clic. Gestión de entregas, cosechas y clientes integrada.</p>
+                    <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('Facturación Agrícola') }}</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-4">{{ __('De la vendimia a la factura en un clic. Gestión de entregas, cosechas y clientes integrada.') }}</p>
                     <span class="text-[var(--color-agro-green)] text-sm font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
                         Saber más
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -877,8 +859,8 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
                         </svg>
                     </div>
-                    <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">Gestión de Vendimia</h3>
-                    <p class="text-gray-600 text-sm leading-relaxed mb-4">Control de cosecha por parcela y viticultor, pesaje, calidades y entrega directa a bodega.</p>
+                    <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('Gestión de Vendimia') }}</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-4">{{ __('Control de cosecha por parcela y viticultor, pesaje, calidades y entrega directa a bodega.') }}</p>
                     <span class="text-[var(--color-agro-green)] text-sm font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
                         Saber más
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -892,8 +874,8 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
                         </svg>
                     </div>
-                    <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">Trazabilidad Completa</h3>
-                    <p class="text-gray-600 text-sm leading-relaxed mb-4">Desde la parcela hasta la entrega. Cada lote documentado para auditorías y DO.</p>
+                    <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('Trazabilidad Completa') }}</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-4">{{ __('Desde la parcela hasta la entrega. Cada lote documentado para auditorías y DO.') }}</p>
                     <span class="text-[var(--color-agro-green)] text-sm font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
                         Saber más
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -906,7 +888,7 @@
     <!-- Bodega & DO Bridge Section -->
     <section class="py-16 bg-gradient-to-b from-zinc-50 to-white border-t border-zinc-100">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <p class="text-center text-zinc-400 text-sm font-semibold uppercase tracking-widest mb-8">¿No eres viticultor?</p>
+            <p class="text-center text-zinc-400 text-sm font-semibold uppercase tracking-widest mb-8">{{ __('¿No eres viticultor?') }}</p>
             <div class="grid md:grid-cols-3 gap-6">
 
                 <!-- Bodega -->
@@ -914,8 +896,8 @@
                     <div class="flex items-center gap-3 mb-4">
                         <span class="text-3xl">🍷</span>
                         <div>
-                            <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)]">¿Eres una bodega?</h3>
-                            <p class="text-xs text-red-600 font-semibold">Gratis si estás en una DO · 14€/mes independiente</p>
+                            <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)]">{{ __('¿Eres una bodega?') }}</h3>
+                            <p class="text-xs text-red-600 font-semibold">{{ __('Gratis si estás en una DO · 14€/mes independiente') }}</p>
                         </div>
                     </div>
                     <ul class="space-y-2 text-sm text-zinc-600 mb-6">
@@ -942,8 +924,8 @@
                     <div class="flex items-center gap-3 mb-4">
                         <span class="text-3xl">🌿🍷</span>
                         <div>
-                            <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)]">¿Cultivas y elaboras?</h3>
-                            <p class="text-xs text-violet-700 font-semibold">19€/mes · <span class="line-through text-zinc-400">28€/mes</span> por separado</p>
+                            <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)]">{{ __('¿Cultivas y elaboras?') }}</h3>
+                            <p class="text-xs text-violet-700 font-semibold">19€/mes · <span class="line-through text-zinc-400">{{ __('28€/mes') }}</span> por separado</p>
                         </div>
                     </div>
                     <ul class="space-y-2 text-sm text-zinc-600 mb-6">
@@ -960,10 +942,10 @@
                 <!-- DO -->
                 <div class="bg-white rounded-2xl p-8 border-2 border-amber-100 hover:border-amber-300 transition-all duration-300 shadow-sm">
                     <div class="flex items-center gap-3 mb-4">
-                        <span class="text-3xl">🏛️</span>
+                        <span class="text-3xl">{{ __('🏛️') }}</span>
                         <div>
-                            <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)]">¿Gestionas una DO?</h3>
-                            <p class="text-xs text-amber-700 font-semibold">Desde 149€/mes · Todas tus bodegas incluidas gratis</p>
+                            <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)]">{{ __('¿Gestionas una DO?') }}</h3>
+                            <p class="text-xs text-amber-700 font-semibold">{{ __('Desde 149€/mes · Todas tus bodegas incluidas gratis') }}</p>
                         </div>
                     </div>
                     <ul class="space-y-2 text-sm text-zinc-600 mb-6">
@@ -991,21 +973,17 @@
     <section id="solutions" class="py-20 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12 space-y-4">
-                <h2 class="text-4xl lg:text-5xl font-bold text-[var(--color-agro-green-dark)]">
-                    Diseñado para los cuatro roles del vino
-                </h2>
-                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-                    Un ecosistema conectado. Cada rol ve lo que necesita, cuando lo necesita.
-                </p>
+                <h2 class="text-4xl lg:text-5xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Diseñado para los cuatro roles del vino') }}</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">{{ __('Un ecosistema conectado. Cada rol ve lo que necesita, cuando lo necesita.') }}</p>
             </div>
 
             <div class="grid sm:grid-cols-2 xl:grid-cols-4 gap-8">
                 <!-- Viticultor -->
                 <a href="{{ content_route('content.viticultores') }}" class="group glass-card rounded-2xl p-8 hover-lift border-2 border-[var(--color-agro-green-light)]/30 hover:border-[var(--color-agro-green-light)] transition-all duration-300">
                     <div class="text-4xl mb-5">🌿</div>
-                    <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)] mb-2">Viticultor</h3>
-                    <p class="text-zinc-500 text-xs font-semibold mb-3 uppercase tracking-wide">Básico gratis · Completo 9€ · Independiente 14€</p>
-                    <p class="text-gray-600 text-sm mb-5 leading-relaxed">Cuaderno de campo digital, SIGPAC, teledetección NDVI, PAC, vendimia y facturación. Tus datos son siempre tuyos aunque cambies de bodega.</p>
+                    <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)] mb-2">{{ __('Viticultor') }}</h3>
+                    <p class="text-zinc-500 text-xs font-semibold mb-3 uppercase tracking-wide">{{ __('Básico gratis · Completo 9€ · Independiente 14€') }}</p>
+                    <p class="text-gray-600 text-sm mb-5 leading-relaxed">{{ __('Cuaderno de campo digital, SIGPAC, teledetección NDVI, PAC, vendimia y facturación. Tus datos son siempre tuyos aunque cambies de bodega.') }}</p>
                     <ul class="space-y-1.5 text-xs text-zinc-500 mb-5">
                         <li class="flex items-center gap-1.5"><span class="text-[var(--color-agro-green)]">✓</span> Cuaderno obligatorio 2027</li>
                         <li class="flex items-center gap-1.5"><span class="text-[var(--color-agro-green)]">✓</span> SIGPAC y parcelas</li>
@@ -1021,9 +999,9 @@
                 <!-- Bodega -->
                 <a href="{{ url('/software-bodegas') }}" class="group glass-card rounded-2xl p-8 hover-lift border-2 border-red-200/50 hover:border-red-300 transition-all duration-300">
                     <div class="text-4xl mb-5">🍷</div>
-                    <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)] mb-2">Bodega</h3>
-                    <p class="text-zinc-500 text-xs font-semibold mb-3 uppercase tracking-wide">Gratis en DO · 14€/mes independiente</p>
-                    <p class="text-gray-600 text-sm mb-5 leading-relaxed">Recepción de uva, depósitos, elaboración, aditivos, informes AICA/INFOVI y facturación. Conecta con tus viticultores proveedores en un clic.</p>
+                    <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)] mb-2">{{ __('Bodega') }}</h3>
+                    <p class="text-zinc-500 text-xs font-semibold mb-3 uppercase tracking-wide">{{ __('Gratis en DO · 14€/mes independiente') }}</p>
+                    <p class="text-gray-600 text-sm mb-5 leading-relaxed">{{ __('Recepción de uva, depósitos, elaboración, aditivos, informes AICA/INFOVI y facturación. Conecta con tus viticultores proveedores en un clic.') }}</p>
                     <ul class="space-y-1.5 text-xs text-zinc-500 mb-5">
                         <li class="flex items-center gap-1.5"><span class="text-red-500">✓</span> Recepción y pesaje</li>
                         <li class="flex items-center gap-1.5"><span class="text-red-500">✓</span> Gestión de depósitos</li>
@@ -1039,9 +1017,9 @@
                 <!-- Productor -->
                 <a href="#precios" class="group glass-card rounded-2xl p-8 hover-lift border-2 border-violet-200/50 hover:border-violet-400 transition-all duration-300">
                     <div class="text-4xl mb-5">🌿🍷</div>
-                    <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)] mb-2">Productor</h3>
-                    <p class="text-zinc-500 text-xs font-semibold mb-3 uppercase tracking-wide">19€/mes · Bundle Viticultor + Bodega</p>
-                    <p class="text-gray-600 text-sm mb-5 leading-relaxed">Viñedo propio, elaboración propia. Un solo panel con contexto campo y bodega. Sin duplicar cuentas ni pagar dos planes por separado.</p>
+                    <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)] mb-2">{{ __('Productor') }}</h3>
+                    <p class="text-zinc-500 text-xs font-semibold mb-3 uppercase tracking-wide">{{ __('19€/mes · Bundle Viticultor + Bodega') }}</p>
+                    <p class="text-gray-600 text-sm mb-5 leading-relaxed">{{ __('Viñedo propio, elaboración propia. Un solo panel con contexto campo y bodega. Sin duplicar cuentas ni pagar dos planes por separado.') }}</p>
                     <ul class="space-y-1.5 text-xs text-zinc-500 mb-5">
                         <li class="flex items-center gap-1.5"><span class="text-violet-500">✓</span> Cuaderno de campo completo</li>
                         <li class="flex items-center gap-1.5"><span class="text-violet-500">✓</span> Gestión de vendimia propia</li>
@@ -1057,9 +1035,9 @@
                 <!-- DO -->
                 <a href="#precios" class="group glass-card rounded-2xl p-8 hover-lift border-2 border-amber-200/50 hover:border-amber-300 transition-all duration-300">
                     <div class="text-4xl mb-5">🏛️</div>
-                    <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)] mb-2">Denominación de Origen</h3>
-                    <p class="text-zinc-500 text-xs font-semibold mb-3 uppercase tracking-wide">Desde 149€/mes · Bodegas incluidas gratis</p>
-                    <p class="text-gray-600 text-sm mb-5 leading-relaxed">Panel centralizado de supervisión. Registra bodegas adscritas, controla cumplimiento normativo y accede a informes consolidados de toda tu red. Tus bodegas acceden sin coste adicional.</p>
+                    <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)] mb-2">{{ __('Denominación de Origen') }}</h3>
+                    <p class="text-zinc-500 text-xs font-semibold mb-3 uppercase tracking-wide">{{ __('Desde 149€/mes · Bodegas incluidas gratis') }}</p>
+                    <p class="text-gray-600 text-sm mb-5 leading-relaxed">{{ __('Panel centralizado de supervisión. Registra bodegas adscritas, controla cumplimiento normativo y accede a informes consolidados de toda tu red. Tus bodegas acceden sin coste adicional.') }}</p>
                     <ul class="space-y-1.5 text-xs text-zinc-500 mb-5">
                         <li class="flex items-center gap-1.5"><span class="text-amber-600">✓</span> Panel de supervisión centralizado</li>
                         <li class="flex items-center gap-1.5"><span class="text-amber-600">✓</span> Alertas de incumplimiento</li>
@@ -1079,9 +1057,7 @@
     <section class="py-20 bg-gradient-to-br from-[var(--color-agro-green-bg)] to-white/50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
-                <h2 class="text-4xl lg:text-5xl font-bold text-[var(--color-agro-green-dark)] mb-4">
-                    ¿Por qué elegir Agro365?
-                </h2>
+                <h2 class="text-4xl lg:text-5xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('¿Por qué elegir Agro365?') }}</h2>
             </div>
             
             <div class="grid md:grid-cols-3 gap-8">
@@ -1092,8 +1068,8 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-2">Ahorra Tiempo</h3>
-                    <p class="text-gray-600">Registra un tratamiento en menos de 2 minutos desde el móvil. Sin papel, sin Excel, sin volver a la oficina.</p>
+                    <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-2">{{ __('Ahorra Tiempo') }}</h3>
+                    <p class="text-gray-600">{{ __('Registra un tratamiento en menos de 2 minutos desde el móvil. Sin papel, sin Excel, sin volver a la oficina.') }}</p>
                 </div>
                 
                 <!-- Beneficio 2 -->
@@ -1103,8 +1079,8 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-2">Cumplimiento Normativo</h3>
-                    <p class="text-gray-600">El cuaderno genera automáticamente los informes exigidos por PAC y la normativa 2027. Sin errores de formato, sin campos olvidados.</p>
+                    <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-2">{{ __('Cumplimiento Normativo') }}</h3>
+                    <p class="text-gray-600">{{ __('El cuaderno genera automáticamente los informes exigidos por PAC y la normativa 2027. Sin errores de formato, sin campos olvidados.') }}</p>
                 </div>
                 
                 <!-- Beneficio 3 -->
@@ -1114,8 +1090,8 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-2">Mejora Rentabilidad</h3>
-                    <p class="text-gray-600">Ve qué parcelas rinden más, qué costes se disparan y qué vendimias han sido más rentables. Decisiones con datos, no con intuición.</p>
+                    <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-2">{{ __('Mejora Rentabilidad') }}</h3>
+                    <p class="text-gray-600">{{ __('Ve qué parcelas rinden más, qué costes se disparan y qué vendimias han sido más rentables. Decisiones con datos, no con intuición.') }}</p>
                 </div>
             </div>
         </div>
@@ -1125,12 +1101,8 @@
     <section id="precios" class="py-20 bg-zinc-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16 space-y-4">
-                <h2 class="text-4xl lg:text-5xl font-bold text-[var(--color-agro-green-dark)]">
-                    Precio justo para cada perfil
-                </h2>
-                <p class="text-xl text-zinc-600 max-w-2xl mx-auto">
-                    Desde gratis para el viticultor básico hasta planes escalados para Denominaciones de Origen. Sin sorpresas.
-                </p>
+                <h2 class="text-4xl lg:text-5xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Precio justo para cada perfil') }}</h2>
+                <p class="text-xl text-zinc-600 max-w-2xl mx-auto">{{ __('Desde gratis para el viticultor básico hasta planes escalados para Denominaciones de Origen. Sin sorpresas.') }}</p>
             </div>
 
             <div class="grid sm:grid-cols-2 xl:grid-cols-4 gap-8 max-w-7xl mx-auto">
@@ -1144,34 +1116,34 @@
                     </div>
                     <div class="mb-5 pt-6">
                         <div class="text-3xl mb-2">🌿</div>
-                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)]">Viticultor</h3>
-                        <p class="text-zinc-500 text-sm mt-1">Autoservicio · Sin llamadas · Cancela cuando quieras</p>
+                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Viticultor') }}</h3>
+                        <p class="text-zinc-500 text-sm mt-1">{{ __('Autoservicio · Sin llamadas · Cancela cuando quieras') }}</p>
                     </div>
                     <div class="mb-6 space-y-2">
                         <!-- Tier básico gratuito -->
                         <div class="p-3 bg-zinc-50 rounded-xl border border-zinc-200">
                             <div class="flex items-center justify-between">
-                                <span class="text-xs font-semibold text-zinc-600">Básico (invitado por bodega)</span>
-                                <span class="text-base font-bold text-zinc-800">Gratis</span>
+                                <span class="text-xs font-semibold text-zinc-600">{{ __('Básico (invitado por bodega)') }}</span>
+                                <span class="text-base font-bold text-zinc-800">{{ __('Gratis') }}</span>
                             </div>
-                            <p class="text-xs text-zinc-400 mt-0.5">Cuaderno de campo básico</p>
+                            <p class="text-xs text-zinc-400 mt-0.5">{{ __('Cuaderno de campo básico') }}</p>
                         </div>
                         <!-- Tier completo invitado -->
                         <div class="p-3 bg-[var(--color-agro-green-bg)] rounded-xl border border-[var(--color-agro-green-light)]/40">
                             <div class="flex items-center justify-between">
-                                <span class="text-xs font-semibold text-[var(--color-agro-green-dark)]">Completo — Lo pagas tú o te lo cubre tu bodega</span>
-                                <span class="text-base font-bold text-[var(--color-agro-green-dark)]">9€/mes</span>
+                                <span class="text-xs font-semibold text-[var(--color-agro-green-dark)]">{{ __('Completo — Lo pagas tú o te lo cubre tu bodega') }}</span>
+                                <span class="text-base font-bold text-[var(--color-agro-green-dark)]">{{ __('9€/mes') }}</span>
                             </div>
-                            <p class="text-xs text-zinc-500 mt-0.5">o 85€/año — SIGPAC, PAC, teledetección...</p>
+                            <p class="text-xs text-zinc-500 mt-0.5">{{ __('o 85€/año — SIGPAC, PAC, teledetección...') }}</p>
                         </div>
                         <!-- Tier independiente -->
                         <div class="p-3 bg-[var(--color-agro-green-bg)] rounded-xl border-2 border-[var(--color-agro-green)]">
                             <div class="flex items-center justify-between">
-                                <span class="text-xs font-bold text-[var(--color-agro-green-dark)]">Independiente (sin bodega)</span>
-                                <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">14€/mes</span>
+                                <span class="text-xs font-bold text-[var(--color-agro-green-dark)]">{{ __('Independiente (sin bodega)') }}</span>
+                                <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">{{ __('14€/mes') }}</span>
                             </div>
-                            <p class="text-xs text-zinc-500 mt-0.5">o 130€/año — acceso completo</p>
-                            <p class="text-xs font-semibold text-[var(--color-agro-green-dark)] mt-1">✦ 3 meses gratis al registrarte</p>
+                            <p class="text-xs text-zinc-500 mt-0.5">{{ __('o 130€/año — acceso completo') }}</p>
+                            <p class="text-xs font-semibold text-[var(--color-agro-green-dark)] mt-1">{{ __('✦ 3 meses gratis al registrarte') }}</p>
                         </div>
                     </div>
                     <ul class="space-y-3 mb-8 text-sm">
@@ -1187,33 +1159,33 @@
                     <a href="{{ route('register') }}" class="block w-full text-center px-6 py-4 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg font-semibold">
                         Comenzar Gratis
                     </a>
-                    <p class="text-center text-xs text-zinc-400 mt-3">Básico gratis siempre · 3 meses gratis en planes de pago · Sin tarjeta</p>
+                    <p class="text-center text-xs text-zinc-400 mt-3">{{ __('Básico gratis siempre · 3 meses gratis en planes de pago · Sin tarjeta') }}</p>
                 </div>
 
                 <!-- Bodega -->
                 <div class="glass-card rounded-2xl p-8 hover-lift border-2 border-red-200 hover:border-red-400 transition-all duration-300">
                     <div class="mb-5">
                         <div class="text-3xl mb-2">🍷</div>
-                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)]">Bodega</h3>
-                        <p class="text-zinc-500 text-sm mt-1">Demo gratuita · Onboarding incluido</p>
+                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Bodega') }}</h3>
+                        <p class="text-zinc-500 text-sm mt-1">{{ __('Demo gratuita · Onboarding incluido') }}</p>
                     </div>
                     <div class="mb-6 space-y-2">
                         <!-- Bodega en DO -->
                         <div class="p-3 bg-zinc-50 rounded-xl border border-zinc-200">
                             <div class="flex items-center justify-between">
-                                <span class="text-xs font-semibold text-zinc-600">Dentro de una Denominación de Origen</span>
-                                <span class="text-base font-bold text-zinc-800">Gratis</span>
+                                <span class="text-xs font-semibold text-zinc-600">{{ __('Dentro de una Denominación de Origen') }}</span>
+                                <span class="text-base font-bold text-zinc-800">{{ __('Gratis') }}</span>
                             </div>
-                            <p class="text-xs text-zinc-400 mt-0.5">Cubierta por el paquete de la DO</p>
+                            <p class="text-xs text-zinc-400 mt-0.5">{{ __('Cubierta por el paquete de la DO') }}</p>
                         </div>
                         <!-- Bodega independiente -->
                         <div class="p-3 bg-red-50 rounded-xl border-2 border-red-400">
                             <div class="flex items-center justify-between">
-                                <span class="text-xs font-bold text-red-700">Independiente (sin DO)</span>
-                                <span class="text-xl font-bold text-red-700">14€/mes</span>
+                                <span class="text-xs font-bold text-red-700">{{ __('Independiente (sin DO)') }}</span>
+                                <span class="text-xl font-bold text-red-700">{{ __('14€/mes') }}</span>
                             </div>
-                            <p class="text-xs text-zinc-500 mt-0.5">o 130€/año · Onboarding incluido + migración gratuita</p>
-                            <p class="text-xs font-semibold text-red-700 mt-1">✦ 3 meses gratis al registrarte</p>
+                            <p class="text-xs text-zinc-500 mt-0.5">{{ __('o 130€/año · Onboarding incluido + migración gratuita') }}</p>
+                            <p class="text-xs font-semibold text-red-700 mt-1">{{ __('✦ 3 meses gratis al registrarte') }}</p>
                         </div>
                     </div>
                     <ul class="space-y-3 mb-8 text-sm">
@@ -1229,7 +1201,7 @@
                     <a href="{{ route('register') }}" class="block w-full text-center px-6 py-4 rounded-xl bg-gradient-to-r from-red-600 to-red-500 text-white hover:from-red-700 hover:to-red-600 transition-all duration-300 shadow-lg font-semibold">
                         Comenzar Gratis
                     </a>
-                    <p class="text-center text-xs text-zinc-400 mt-3">3 meses gratis · Sin tarjeta requerida</p>
+                    <p class="text-center text-xs text-zinc-400 mt-3">{{ __('3 meses gratis · Sin tarjeta requerida') }}</p>
                 </div>
 
                 <!-- Productor -->
@@ -1241,23 +1213,23 @@
                     </div>
                     <div class="mb-5 pt-6">
                         <div class="text-3xl mb-2">🌿🍷</div>
-                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)]">Productor</h3>
-                        <p class="text-zinc-500 text-sm mt-1">Cultivas y elaboras tu propio vino</p>
+                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Productor') }}</h3>
+                        <p class="text-zinc-500 text-sm mt-1">{{ __('Cultivas y elaboras tu propio vino') }}</p>
                     </div>
                     <div class="mb-6 space-y-2">
                         <!-- Precio bundle -->
                         <div class="p-3 bg-violet-50 rounded-xl border-2 border-violet-400">
                             <div class="flex items-center justify-between">
-                                <span class="text-xs font-bold text-violet-700">Viticultor + Bodega</span>
-                                <span class="text-xl font-bold text-violet-700">19€/mes</span>
+                                <span class="text-xs font-bold text-violet-700">{{ __('Viticultor + Bodega') }}</span>
+                                <span class="text-xl font-bold text-violet-700">{{ __('19€/mes') }}</span>
                             </div>
-                            <p class="text-xs text-zinc-500 mt-0.5">o 175€/año — ~14,5€/mes</p>
-                            <p class="text-xs font-semibold text-violet-700 mt-1">✦ 3 meses gratis al registrarte</p>
+                            <p class="text-xs text-zinc-500 mt-0.5">{{ __('o 175€/año — ~14,5€/mes') }}</p>
+                            <p class="text-xs font-semibold text-violet-700 mt-1">{{ __('✦ 3 meses gratis al registrarte') }}</p>
                         </div>
                         <!-- Ahorro -->
                         <div class="p-3 bg-zinc-50 rounded-xl border border-zinc-200 text-center">
-                            <p class="text-xs text-zinc-500">Por separado: <span class="line-through text-zinc-400 font-semibold">28€/mes</span></p>
-                            <p class="text-xs font-semibold text-violet-600 mt-0.5">Ahorras 9€/mes · 32% de descuento</p>
+                            <p class="text-xs text-zinc-500">Por separado: <span class="line-through text-zinc-400 font-semibold">{{ __('28€/mes') }}</span></p>
+                            <p class="text-xs font-semibold text-violet-600 mt-0.5">{{ __('Ahorras 9€/mes · 32% de descuento') }}</p>
                         </div>
                     </div>
                     <ul class="space-y-3 mb-8 text-sm">
@@ -1273,34 +1245,34 @@
                     <a href="{{ route('register') }}" class="block w-full text-center px-6 py-4 rounded-xl bg-gradient-to-r from-violet-600 to-violet-500 text-white hover:from-violet-700 hover:to-violet-600 transition-all duration-300 shadow-lg font-semibold">
                         Comenzar Gratis
                     </a>
-                    <p class="text-center text-xs text-zinc-400 mt-3">3 meses gratis · Sin tarjeta requerida</p>
+                    <p class="text-center text-xs text-zinc-400 mt-3">{{ __('3 meses gratis · Sin tarjeta requerida') }}</p>
                 </div>
 
                 <!-- DO -->
                 <div class="glass-card rounded-2xl p-8 hover-lift border-2 border-amber-200 hover:border-amber-400 transition-all duration-300">
                     <div class="mb-5">
                         <div class="text-3xl mb-2">🏛️</div>
-                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)]">Denominación de Origen</h3>
-                        <p class="text-zinc-500 text-sm mt-1">Solución a medida · Contrato anual</p>
+                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Denominación de Origen') }}</h3>
+                        <p class="text-zinc-500 text-sm mt-1">{{ __('Solución a medida · Contrato anual') }}</p>
                     </div>
                     <div class="mb-6 rounded-xl border border-amber-200 overflow-hidden">
                         <table class="w-full text-xs">
                             <thead>
                                 <tr class="bg-amber-50 border-b border-amber-200">
-                                    <th class="text-left px-3 py-2 font-semibold text-amber-800">Bodegas</th>
-                                    <th class="text-right px-3 py-2 font-semibold text-amber-800">Mensual</th>
-                                    <th class="text-right px-3 py-2 font-semibold text-amber-800">Anual</th>
+                                    <th class="text-left px-3 py-2 font-semibold text-amber-800">{{ __('Bodegas') }}</th>
+                                    <th class="text-right px-3 py-2 font-semibold text-amber-800">{{ __('Mensual') }}</th>
+                                    <th class="text-right px-3 py-2 font-semibold text-amber-800">{{ __('Anual') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-amber-100 bg-white">
-                                <tr><td class="px-3 py-1.5 text-zinc-700">Hasta 25</td><td class="px-3 py-1.5 text-right font-semibold text-amber-800">149€</td><td class="px-3 py-1.5 text-right text-zinc-500">1.400€/año</td></tr>
-                                <tr><td class="px-3 py-1.5 text-zinc-700">26 – 50</td><td class="px-3 py-1.5 text-right font-semibold text-amber-800">249€</td><td class="px-3 py-1.5 text-right text-zinc-500">2.350€/año</td></tr>
-                                <tr><td class="px-3 py-1.5 text-zinc-700">51 – 75</td><td class="px-3 py-1.5 text-right font-semibold text-amber-800">349€</td><td class="px-3 py-1.5 text-right text-zinc-500">3.300€/año</td></tr>
-                                <tr><td class="px-3 py-1.5 text-zinc-700">76 – 100</td><td class="px-3 py-1.5 text-right font-semibold text-amber-800">449€</td><td class="px-3 py-1.5 text-right text-zinc-500">4.250€/año</td></tr>
-                                <tr><td class="px-3 py-1.5 text-zinc-700">+100</td><td class="px-3 py-1.5 text-right font-semibold text-amber-800" colspan="2">A negociar</td></tr>
+                                <tr><td class="px-3 py-1.5 text-zinc-700">{{ __('Hasta 25') }}</td><td class="px-3 py-1.5 text-right font-semibold text-amber-800">149€</td><td class="px-3 py-1.5 text-right text-zinc-500">{{ __('1.400€/año') }}</td></tr>
+                                <tr><td class="px-3 py-1.5 text-zinc-700">26 – 50</td><td class="px-3 py-1.5 text-right font-semibold text-amber-800">249€</td><td class="px-3 py-1.5 text-right text-zinc-500">{{ __('2.350€/año') }}</td></tr>
+                                <tr><td class="px-3 py-1.5 text-zinc-700">51 – 75</td><td class="px-3 py-1.5 text-right font-semibold text-amber-800">349€</td><td class="px-3 py-1.5 text-right text-zinc-500">{{ __('3.300€/año') }}</td></tr>
+                                <tr><td class="px-3 py-1.5 text-zinc-700">76 – 100</td><td class="px-3 py-1.5 text-right font-semibold text-amber-800">449€</td><td class="px-3 py-1.5 text-right text-zinc-500">{{ __('4.250€/año') }}</td></tr>
+                                <tr><td class="px-3 py-1.5 text-zinc-700">+100</td><td class="px-3 py-1.5 text-right font-semibold text-amber-800" colspan="2">{{ __('A negociar') }}</td></tr>
                             </tbody>
                         </table>
-                        <p class="text-xs text-zinc-400 text-center py-2 bg-amber-50 border-t border-amber-100">Bodegas adscritas sin coste adicional</p>
+                        <p class="text-xs text-zinc-400 text-center py-2 bg-amber-50 border-t border-amber-100">{{ __('Bodegas adscritas sin coste adicional') }}</p>
                     </div>
                     <ul class="space-y-3 mb-8 text-sm">
                         @foreach(['Todo del plan Bodega', 'Alta y gestión de bodegas adscritas', 'Panel de supervisión centralizado', 'Alertas automáticas de incumplimiento', 'Informes consolidados por denominación', 'Firma electrónica SHA-256', 'API para integración con sistemas actuales', 'Account manager dedicado', 'SLA 99,9% uptime garantizado'] as $feature)
@@ -1320,7 +1292,7 @@
                         <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                         Enviar un email
                     </a>
-                    <p class="text-center text-xs text-zinc-400 mt-3">Propuesta sin compromiso en 24h</p>
+                    <p class="text-center text-xs text-zinc-400 mt-3">{{ __('Propuesta sin compromiso en 24h') }}</p>
                 </div>
             </div>
 
@@ -1328,16 +1300,16 @@
             <div class="mt-10 max-w-4xl mx-auto grid sm:grid-cols-2 gap-4">
                 <div class="text-center p-5 bg-[var(--color-agro-green-bg)] rounded-2xl border border-[var(--color-agro-green-light)]/30">
                     <p class="text-zinc-700 text-sm">
-                        <strong>Cómo funciona con viticultores invitados:</strong> la bodega invita a sus proveedores.
-                        El viticultor accede en modo <strong>básico gratis</strong> o activa el <strong>plan completo por 9€/mes</strong>
+                        <strong>{{ __('Cómo funciona con viticultores invitados:') }}</strong> la bodega invita a sus proveedores.
+                        El viticultor accede en modo <strong>{{ __('básico gratis') }}</strong> o activa el <strong>{{ __('plan completo por 9€/mes') }}</strong>
                         (SIGPAC, teledetección, PAC, facturación...). La bodega no paga por ello — el viticultor decide.
                     </p>
                 </div>
                 <div class="text-center p-5 bg-violet-50 rounded-2xl border border-violet-200">
                     <p class="text-zinc-700 text-sm">
-                        <strong>¿Eres viticultor y bodega a la vez?</strong> El plan Productor incluye
-                        <strong>todo el cuaderno de campo más toda la gestión de bodega</strong> en una sola cuenta.
-                        <span class="text-violet-700 font-semibold">19€/mes</span> frente a los 28€/mes que costaría contratar los dos planes por separado.
+                        <strong>{{ __('¿Eres viticultor y bodega a la vez?') }}</strong> El plan Productor incluye
+                        <strong>{{ __('todo el cuaderno de campo más toda la gestión de bodega') }}</strong> en una sola cuenta.
+                        <span class="text-violet-700 font-semibold">{{ __('19€/mes') }}</span> frente a los 28€/mes que costaría contratar los dos planes por separado.
                     </p>
                 </div>
             </div>
@@ -1353,10 +1325,8 @@
     <section class="py-20 bg-white">
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
-                <h2 class="text-3xl lg:text-4xl font-bold text-[var(--color-agro-green-dark)]">
-                    Preguntas frecuentes
-                </h2>
-                <p class="text-zinc-500 mt-3">Las dudas más habituales antes de empezar</p>
+                <h2 class="text-3xl lg:text-4xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Preguntas frecuentes') }}</h2>
+                <p class="text-zinc-500 mt-3">{{ __('Las dudas más habituales antes de empezar') }}</p>
             </div>
             <div class="space-y-3" itemscope itemtype="https://schema.org/FAQPage">
                 @php
@@ -1432,10 +1402,8 @@
             <h2 class="text-4xl lg:text-5xl font-bold text-white mb-4">
                 La normativa no espera.<br>Tu viñedo tampoco.
             </h2>
-            <p class="text-green-100 text-xl mb-10 max-w-2xl mx-auto">
-                Cuaderno básico obligatorio en 2027, completo en 2028.
-                Viticultor básico gratis · Bodega 14€/mes · Productor 19€/mes · DO desde 149€/mes.
-            </p>
+            <p class="text-green-100 text-xl mb-10 max-w-2xl mx-auto">{{ __('Cuaderno básico obligatorio en 2027, completo en 2028.
+                Viticultor básico gratis · Bodega 14€/mes · Productor 19€/mes · DO desde 149€/mes.') }}</p>
             <div class="flex flex-wrap gap-4 justify-center">
                 <a href="{{ route('register') }}" rel="nofollow" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-white text-[var(--color-agro-green-dark)] hover:bg-green-50 transition-all font-bold text-lg shadow-lg">
                     🌿 Empezar como Viticultor — Gratis
@@ -1450,9 +1418,7 @@
                     🏛️ Solicitar Demo — DO
                 </a>
             </div>
-            <p class="text-green-200/70 text-sm mt-8">
-                Sin tarjeta requerida · Configuración en 5 minutos · Soporte en español
-            </p>
+            <p class="text-green-200/70 text-sm mt-8">{{ __('Sin tarjeta requerida · Configuración en 5 minutos · Soporte en español') }}</p>
         </div>
     </section>
 

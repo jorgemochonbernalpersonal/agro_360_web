@@ -66,7 +66,7 @@
             <div class="flex justify-between items-center h-16">
                 <a href="{{ url('/') }}" class="flex items-center gap-3">
                     <img src="{{ asset('images/logo.png') }}" alt="Agro365" class="h-10 w-auto">
-                    <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">Agro365</span>
+                    <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Agro365') }}</span>
                 </a>
                 @guest
                     <a href="{{ route('register') }}" class="px-4 py-2 rounded-lg bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white">Comenzar Gratis</a>
@@ -80,12 +80,8 @@
     <div class="min-h-screen bg-gradient-to-b from-white to-gray-50 py-20">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="mb-12 text-center">
-                <h1 class="text-5xl font-bold text-[var(--color-agro-green-dark)] mb-4">
-                    Blog Agro365
-                </h1>
-                <p class="text-xl text-gray-600">
-                    Noticias, consejos y novedades para viticultores profesionales
-                </p>
+                <h1 class="text-5xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Blog Agro365') }}</h1>
+                <p class="text-xl text-gray-600">{{ __('Noticias, consejos y novedades para viticultores profesionales') }}</p>
             </div>
 
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -101,9 +97,7 @@
                                 Novedades PAC 2025: Lo que necesitas saber
                             </a>
                         </h2>
-                        <p class="text-gray-600 text-sm mb-4">
-                            Las principales novedades de la PAC para 2025: cuaderno digital obligatorio, condicionalidad reforzada y nuevos requisitos.
-                        </p>
+                        <p class="text-gray-600 text-sm mb-4">{{ __('Las principales novedades de la PAC para 2025: cuaderno digital obligatorio, condicionalidad reforzada y nuevos requisitos.') }}</p>
                         <a href="{{ url('/blog/novedades-pac-2025') }}" class="text-[var(--color-agro-green)] font-semibold text-sm hover:underline">
                             Leer más →
                         </a>
@@ -122,9 +116,7 @@
                                 5 Errores Comunes en el Cuaderno de Campo
                             </a>
                         </h2>
-                        <p class="text-gray-600 text-sm mb-4">
-                            Evita sanciones: los errores más frecuentes que cometen los viticultores al llevar el cuaderno de campo digital.
-                        </p>
+                        <p class="text-gray-600 text-sm mb-4">{{ __('Evita sanciones: los errores más frecuentes que cometen los viticultores al llevar el cuaderno de campo digital.') }}</p>
                         <a href="{{ url('/blog/errores-cuaderno-campo') }}" class="text-[var(--color-agro-green)] font-semibold text-sm hover:underline">
                             Leer más →
                         </a>
@@ -143,9 +135,7 @@
                                 Calendario Vitícola 2025: Mes a Mes
                             </a>
                         </h2>
-                        <p class="text-gray-600 text-sm mb-4">
-                            Planifica tu campaña 2025: todas las labores del viñedo organizadas por mes con fechas orientativas.
-                        </p>
+                        <p class="text-gray-600 text-sm mb-4">{{ __('Planifica tu campaña 2025: todas las labores del viñedo organizadas por mes con fechas orientativas.') }}</p>
                         <a href="{{ url('/blog/calendario-viticola-2025') }}" class="text-[var(--color-agro-green)] font-semibold text-sm hover:underline">
                             Leer más →
                         </a>
@@ -155,8 +145,8 @@
 
             <div class="mt-16 text-center">
                 <div class="bg-gradient-to-r from-[var(--color-agro-green-bg)] to-[var(--color-agro-green-light)]/30 p-8 rounded-xl border border-[var(--color-agro-green)]/20 inline-block">
-                    <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-4">📧 Suscríbete al Newsletter</h3>
-                    <p class="text-gray-700 mb-4">Recibe las últimas noticias y consejos en tu email.</p>
+                    <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('📧 Suscríbete al Newsletter') }}</h3>
+                    <p class="text-gray-700 mb-4">{{ __('Recibe las últimas noticias y consejos en tu email.') }}</p>
                     @guest
                         <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:shadow-lg transition-all font-semibold">
                             Comenzar Gratis

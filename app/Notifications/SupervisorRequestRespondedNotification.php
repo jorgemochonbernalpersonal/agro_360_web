@@ -43,15 +43,15 @@ class SupervisorRequestRespondedNotification extends Notification implements Sho
         }
 
         return (new MailMessage)
-            ->subject('Respuesta recibida de ' . $winery->name . ' — ' . $typeLabel)
-            ->greeting('Hola ' . ($notifiable->name ?: ''))
-            ->line('La bodega **' . $winery->name . '** ha respondido a tu solicitud.')
+            ->subject(__('Respuesta recibida de :winery — :type', ['winery' => $winery->name, 'type' => $typeLabel]))
+            ->greeting(__('Hola :name', ['name' => $notifiable->name ?: '']))
+            ->line(__('La bodega **:winery** ha respondido a tu solicitud.', ['winery' => $winery->name]))
             ->line('**Tipo:** ' . $typeLabel)
             ->when($req->title, fn ($m) => $m->line('**Asunto:** ' . $req->title))
             ->when($req->response_notes, fn ($m) => $m->line('**Respuesta:** ' . $req->response_notes))
-            ->action('Ver solicitudes', $url)
-            ->line('La solicitud queda en estado "En revisión". Puedes aprobarla o rechazarla desde tu panel.')
-            ->salutation("Saludos,\nAgro365");
+            ->action(__('Ver solicitudes'), $url)
+            ->line(__('La solicitud queda en estado "En revisión". Puedes aprobarla o rechazarla desde tu panel.'))
+            ->salutation(__('Saludos,\nAgro365'));
     }
 
     public function toArray(object $notifiable): array

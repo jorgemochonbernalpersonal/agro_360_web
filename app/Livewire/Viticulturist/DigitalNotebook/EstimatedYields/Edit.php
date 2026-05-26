@@ -233,7 +233,7 @@ class Edit extends Component
         })->find($this->plot_planting_id);
 
         if (!$planting) {
-            $this->toastError('La plantación seleccionada no es válida.');
+            $this->toastError(__('La plantación seleccionada no es válida.'));
             return;
         }
 
@@ -275,13 +275,13 @@ class Edit extends Component
                 ]);
             });
 
-            $this->toastSuccess('Rendimiento estimado actualizado exitosamente.');
+            $this->toastSuccess(__('Rendimiento estimado actualizado exitosamente.'));
             $route = Auth::user()->isProducer()
                 ? route('producer.digital-notebook.estimated-yields.index')
                 : route('viticulturist.digital-notebook.estimated-yields.index');
             return $this->redirect($route, navigate: true);
         } catch (\Exception $e) {
-            $this->toastError($e instanceof RuntimeException ? $e->getMessage() : 'Error al actualizar el rendimiento estimado. Inténtalo de nuevo.');
+            $this->toastError($e instanceof RuntimeException ? $e->getMessage()  : __('Error al actualizar el rendimiento estimado. Inténtalo de nuevo.'));
         }
     }
 

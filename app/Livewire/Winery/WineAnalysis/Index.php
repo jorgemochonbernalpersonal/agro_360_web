@@ -40,7 +40,7 @@ class Index extends AbstractIndex
     {
         $analysis = WineAnalysis::where('user_id', $this->wineryId())->findOrFail($id);
         $analysis->delete();
-        $this->toastSuccess('Análisis eliminado.');
+        $this->toastSuccess(__('Análisis eliminado.'));
     }
 
     protected function baseQuery(): Builder

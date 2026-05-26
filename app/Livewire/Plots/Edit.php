@@ -155,8 +155,8 @@ class Edit extends Component
     protected function messages(): array
     {
         return [
-            'pac_eligible_area.lte' => 'La superficie admisible PAC no puede superar la superficie total de la parcela.',
-            'non_eligible_area.lte' => 'La superficie no admisible no puede superar la superficie total de la parcela.',
+            'pac_eligible_area.lte' => __('La superficie admisible PAC no puede superar la superficie total de la parcela.'),
+            'non_eligible_area.lte' => __('La superficie no admisible no puede superar la superficie total de la parcela.'),
         ];
     }
 
@@ -228,7 +228,7 @@ class Edit extends Component
 
             if (!$canAssign) {
                 throw ValidationException::withMessages([
-                    'viticulturist_id' => 'Solo puedes asignar parcelas a viticultores que has creado.',
+                    'viticulturist_id' => __('Solo puedes asignar parcelas a viticultores que has creado.'),
                 ]);
             }
 
@@ -276,7 +276,7 @@ class Edit extends Component
 
             DB::commit();
 
-            $this->toastSuccess('Parcela actualizada correctamente.');
+            $this->toastSuccess(__('Parcela actualizada correctamente.'));
             $indexRoute = $user->isProducer() ? 'producer.plots.index' : 'plots.index';
             return $this->redirect(route($indexRoute), navigate: true);
         } catch (\Exception $e) {
@@ -289,7 +289,7 @@ class Edit extends Component
             ]);
             
             throw ValidationException::withMessages([
-                'general' => 'Error al actualizar la parcela. Por favor, intenta de nuevo.',
+                'general' => __('Error al actualizar la parcela. Por favor, intenta de nuevo.'),
             ]);
         }
     }

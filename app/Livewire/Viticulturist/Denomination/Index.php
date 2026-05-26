@@ -25,7 +25,7 @@ class Index extends Component
             ->first();
 
         if (!$relation) {
-            $this->toastError('No tienes acceso al cuaderno concedido a tu DO.');
+            $this->toastError(__('No tienes acceso al cuaderno concedido a tu DO.'));
             return;
         }
 
@@ -45,7 +45,7 @@ class Index extends Component
 
         Cache::forget("nav_badge_notebook_access_{$viticulturistId}");
 
-        $this->toastSuccess('Acceso al cuaderno revocado. Tu denominación ya no puede ver tus anotaciones.');
+        $this->toastSuccess(__('Acceso al cuaderno revocado. Tu denominación ya no puede ver tus anotaciones.'));
     }
 
     #[Layout('layouts.app')]

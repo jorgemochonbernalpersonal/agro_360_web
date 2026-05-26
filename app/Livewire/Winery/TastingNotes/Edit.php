@@ -124,7 +124,7 @@ class Edit extends Component
             'notes'              => $data['notes'] ?: null,
         ]);
 
-        $this->toastSuccess('Nota de cata actualizada correctamente.');
+        $this->toastSuccess(__('Nota de cata actualizada correctamente.'));
         $this->roleRedirect('tasting-notes.index');
     }
 

@@ -71,18 +71,18 @@ class Register extends Component
     protected function messages(): array
     {
         return [
-            'name.required' => 'El campo nombre es obligatorio.',
-            'name.max' => 'El nombre no puede tener más de 255 caracteres.',
-            'email.required' => 'El campo email es obligatorio.',
-            'email.email' => 'El email debe ser una dirección de correo válida.',
-            'email.max' => 'El email no puede tener más de 255 caracteres.',
-            'password.required' => 'El campo contraseña es obligatorio.',
-            'password.confirmed' => 'Las contraseñas no coinciden. Por favor, verifica que ambas contraseñas sean iguales.',
-            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
-            'role.required' => 'Debes seleccionar un rol.',
-            'role.in'       => 'El rol seleccionado no es válido.',
-            'dni.max'       => 'El DNI no puede tener más de 20 caracteres.',
-            'dni.regex'     => 'El DNI solo puede contener letras, números y guiones.',
+            'name.required' => __('El campo nombre es obligatorio.'),
+            'name.max' => __('El nombre no puede tener más de 255 caracteres.'),
+            'email.required' => __('El campo email es obligatorio.'),
+            'email.email' => __('El email debe ser una dirección de correo válida.'),
+            'email.max' => __('El email no puede tener más de 255 caracteres.'),
+            'password.required' => __('El campo contraseña es obligatorio.'),
+            'password.confirmed' => __('Las contraseñas no coinciden. Por favor, verifica que ambas contraseñas sean iguales.'),
+            'password.min' => __('La contraseña debe tener al menos 8 caracteres.'),
+            'role.required' => __('Debes seleccionar un rol.'),
+            'role.in'       => __('El rol seleccionado no es válido.'),
+            'dni.max'       => __('El DNI no puede tener más de 20 caracteres.'),
+            'dni.regex'     => __('El DNI solo puede contener letras, números y guiones.'),
         ];
     }
 
@@ -113,7 +113,7 @@ class Register extends Component
             
             // Simular éxito para confundir al bot
             sleep(2);
-            $this->toastSuccess('Registro completado. Revisa tu email para verificar tu cuenta.');
+            $this->toastSuccess(__('Registro completado. Revisa tu email para verificar tu cuenta.'));
             return;
         }
         
@@ -154,13 +154,13 @@ class Register extends Component
                     Auth::login($existing->fresh());
                     session()->regenerate();
 
-                    $this->toastSuccess('Cuenta activada correctamente. ¡Bienvenido a Agro365!');
+                    $this->toastSuccess(__('Cuenta activada correctamente. ¡Bienvenido a Agro365!'));
 
                     return $this->redirect(route('viticulturist.dashboard'), navigate: true);
                 }
 
                 // Cualquier otro caso: email ya usado por una cuenta activa
-                $this->addError('email', 'Este email ya está registrado.');
+                $this->addError('email', __('Este email ya está registrado.'));
                 return;
             }
 
@@ -171,7 +171,7 @@ class Register extends Component
                     return $this->redirect(route('viticulturist.dashboard'), navigate: true);
                 }
                 if ($merged === 'email_taken') {
-                    $this->addError('email', 'Este email ya está registrado.');
+                    $this->addError('email', __('Este email ya está registrado.'));
                     return;
                 }
                 // null → no ghost found, continue with normal registration
@@ -181,14 +181,14 @@ class Register extends Component
             if ($normalizedDni) {
                 $dniTaken = User::where('dni', $normalizedDni)->where('can_login', true)->exists();
                 if ($dniTaken) {
-                    $this->addError('dni', 'Este DNI ya está registrado en el sistema.');
+                    $this->addError('dni', __('Este DNI ya está registrado en el sistema.'));
                     return;
                 }
             }
         } else {
             // Creación interna (admin/supervisor/winery/viticultor): no permitir reutilizar emails
             if ($existing) {
-                $this->addError('email', 'Este email ya está registrado.');
+                $this->addError('email', __('Este email ya está registrado.'));
                 return;
             }
         }
@@ -262,11 +262,11 @@ class Register extends Component
             });
         } catch (QueryException $e) {
             if (str_contains($e->getMessage(), 'users_email_unique')) {
-                $this->addError('email', 'Este email ya está registrado.');
+                $this->addError('email', __('Este email ya está registrado.'));
                 return;
             }
             if (str_contains($e->getMessage(), 'users_dni_unique')) {
-                $this->addError('dni', 'Este DNI ya está registrado en el sistema.');
+                $this->addError('dni', __('Este DNI ya está registrado en el sistema.'));
                 return;
             }
             throw $e;
@@ -295,7 +295,7 @@ class Register extends Component
                 // Enviar email con PDF adjunto
                 $user->notify(new \App\Notifications\TemporaryPasswordNotification($temporaryPassword, $pdfPath));
                 
-                $this->toastSuccess('Viticultor creado correctamente. Se ha enviado un email con las credenciales de acceso.');
+                $this->toastSuccess(__('Viticultor creado correctamente. Se ha enviado un email con las credenciales de acceso.'));
                 session()->flash('pdf_download', base64_encode($pdf->output()));
                 session()->flash('pdf_filename', 'credenciales_' . str_replace(['@', '.'], '_', $user->email) . '.pdf');
                 
@@ -308,7 +308,7 @@ class Register extends Component
             } else {
                 // Enviar email de verificación tradicional
                 $user->sendEmailVerificationNotification();
-                $this->toastSuccess('Usuario creado correctamente. Se ha enviado un email de verificación.');
+                $this->toastSuccess(__('Usuario creado correctamente. Se ha enviado un email de verificación.'));
             }
 
             return $this->redirect(route($this->getRedirectRoute()), navigate: true);
@@ -323,7 +323,7 @@ class Register extends Component
 
         Auth::login($user);
         session()->regenerate();
-        $this->toastSuccess('¡Bienvenido a Agro365! Revisa tu email para verificar tu cuenta.');
+        $this->toastSuccess(__('¡Bienvenido a Agro365! Revisa tu email para verificar tu cuenta.'));
 
         return $this->redirect(route($this->getDashboardRoute()), navigate: true);
     }
@@ -410,7 +410,7 @@ class Register extends Component
         Auth::login($freshGhost);
         session()->regenerate();
 
-        $this->toastSuccess('¡Cuenta vinculada! Tu bodega ya tenía tus datos registrados. Bienvenido a Agro365.');
+        $this->toastSuccess(__('¡Cuenta vinculada! Tu bodega ya tenía tus datos registrados. Bienvenido a Agro365.'));
 
         return true;
     }

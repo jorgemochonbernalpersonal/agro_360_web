@@ -77,16 +77,16 @@
     <table>
         <thead>
             <tr>
-                <th>Viticultor</th>
-                <th>Parcela / Variedad</th>
-                <th>Fecha</th>
-                <th>Ticket</th>
-                <th>Kg recibidos</th>
-                <th>Kg/ha</th>
-                <th>Alc. %</th>
-                <th>Baumé</th>
-                <th>Depósito</th>
-                <th>Estado</th>
+                <th>{{ __('Viticultor') }}</th>
+                <th>{{ __('Parcela / Variedad') }}</th>
+                <th>{{ __('Fecha') }}</th>
+                <th>{{ __('Ticket') }}</th>
+                <th>{{ __('Kg recibidos') }}</th>
+                <th>{{ __('Kg/ha') }}</th>
+                <th>{{ __('Alc. %') }}</th>
+                <th>{{ __('Baumé') }}</th>
+                <th>{{ __('Depósito') }}</th>
+                <th>{{ __('Estado') }}</th>
             </tr>
         </thead>
         <tbody>
@@ -111,16 +111,16 @@
                     <td>{{ $harvest->container?->name ?? '—' }}</td>
                     <td>
                         @if($isCancelled)
-                            <span class="badge badge-zinc">Anulada</span>
+                            <span class="badge badge-zinc">{{ __('Anulada') }}</span>
                         @elseif($harvest->disqualified)
-                            <span class="badge badge-red">Descartada</span>
+                            <span class="badge badge-red">{{ __('Descartada') }}</span>
                         @else
-                            <span class="badge badge-green">Activa</span>
+                            <span class="badge badge-green">{{ __('Activa') }}</span>
                         @endif
                     </td>
                 </tr>
             @empty
-                <tr><td colspan="10" style="text-align:center;color:#9ca3af;padding:12pt;">Sin recepciones</td></tr>
+                <tr><td colspan="10" style="text-align:center;color:#9ca3af;padding:12pt;">{{ __('Sin recepciones') }}</td></tr>
             @endforelse
         </tbody>
     </table>

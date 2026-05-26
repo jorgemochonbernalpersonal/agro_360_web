@@ -38,7 +38,7 @@ class Index extends Component
             'email' => $this->email,
         ]);
 
-        $this->toastSuccess('Perfil actualizado correctamente.');
+        $this->toastSuccess(__('Perfil actualizado correctamente.'));
     }
 
     public function updatePassword(): void
@@ -50,14 +50,14 @@ class Index extends Component
         ]);
 
         if (!Hash::check($this->current_password, Auth::user()->password)) {
-            $this->addError('current_password', 'La contraseña actual no es correcta.');
+            $this->addError('current_password', __('La contraseña actual no es correcta.'));
             return;
         }
 
         Auth::user()->update(['password' => Hash::make($this->new_password)]);
 
         $this->reset(['current_password', 'new_password', 'confirm_password']);
-        $this->toastSuccess('Contraseña actualizada correctamente.');
+        $this->toastSuccess(__('Contraseña actualizada correctamente.'));
     }
 
     #[Layout('layouts.app')]

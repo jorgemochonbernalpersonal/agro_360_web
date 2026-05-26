@@ -49,7 +49,7 @@ class ImpersonationTimeout
             session()->forget(['impersonating', 'admin_id', 'admin_name', 'impersonation_started_at']);
 
             return redirect()->route('admin.users.index')
-                ->with('warning', 'La sesión de impersonación ha expirado tras ' . self::TIMEOUT_MINUTES . ' minutos.');
+                ->with('warning', __('La sesión de impersonación ha expirado tras :minutes minutos.', ['minutes' => self::TIMEOUT_MINUTES]));
         }
 
         return $next($request);

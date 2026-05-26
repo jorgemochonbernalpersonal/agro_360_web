@@ -78,11 +78,11 @@ class CreatePruning extends AbstractActivityForm
                 ]);
             });
 
-            $this->toastSuccess('Poda registrada correctamente.');
+            $this->toastSuccess(__('Poda registrada correctamente.'));
             return $this->viticulturistRoleRedirect('digital-notebook.pruning.index');
         } catch (\Exception $e) {
             \Log::error('Error al registrar poda', ['error' => $e->getMessage(), 'user_id' => Auth::id()]);
-            $this->toastError('Error al registrar la poda. Por favor, intenta de nuevo.');
+            $this->toastError(__('Error al registrar la poda. Por favor, intenta de nuevo.'));
         }
     }
 
@@ -91,6 +91,6 @@ class CreatePruning extends AbstractActivityForm
     public function render()
     {
         return view('livewire.viticulturist.digital-notebook.create-pruning', $this->renderData())
-            ->layout('layouts.app', ['title' => 'Registrar Poda - Agro365']);
+            ->layout('layouts.app', ['title' => __('Registrar Poda - Agro365')]);
     }
 }

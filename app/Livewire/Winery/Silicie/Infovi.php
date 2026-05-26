@@ -25,22 +25,22 @@ class Infovi extends Component
 
     // INFOVI wine type codes (AICA nomenclature)
     const WINE_CATEGORIES = [
-        'red'        => 'Vino tinto tranquilo',
-        'white'      => 'Vino blanco tranquilo',
-        'rose'       => 'Vino rosado tranquilo',
-        'sparkling'  => 'Vino espumoso',
-        'fortified'  => 'Vino licoroso / generoso',
-        'sweet'      => 'Vino dulce natural',
-        'semi_sweet' => 'Vino semidulce',
-        'other'      => 'Otros vinos',
+        'red'        => __('Vino tinto tranquilo'),
+        'white'      => __('Vino blanco tranquilo'),
+        'rose'       => __('Vino rosado tranquilo'),
+        'sparkling'  => __('Vino espumoso'),
+        'fortified'  => __('Vino licoroso / generoso'),
+        'sweet'      => __('Vino dulce natural'),
+        'semi_sweet' => __('Vino semidulce'),
+        'other'      => __('Otros vinos'),
     ];
 
     // INFOVI category breakdown — three buckets as declared in AICA forms
     // Maps to wines.category (VdM | IGP | DO | DOCa | vino_de_pago)
     const PROTECTION_LEVELS = [
-        'DO'  => 'Denominación de Origen (DO/DOCa/Pago)',
-        'IGP' => 'Indicación Geográfica Protegida (IGP)',
-        'VdM' => 'Vino de Mesa / Sin indicación geográfica',
+        'DO'  => __('Denominación de Origen (DO/DOCa/Pago)'),
+        'IGP' => __('Indicación Geográfica Protegida (IGP)'),
+        'VdM' => __('Vino de Mesa / Sin indicación geográfica'),
     ];
 
     // Map wines.category values → INFOVI bucket
@@ -164,7 +164,7 @@ class Infovi extends Component
             // Monthly: 1st–19th of each month for previous month's data
             $nextMonth = $now->copy()->addMonth()->startOfMonth();
             $deadlines[] = [
-                'label' => 'Declaración mensual ' . $nextMonth->translatedFormat('F Y'),
+                'label' => __('Declaración mensual ') . $nextMonth->translatedFormat('F Y'),
                 'date'  => $nextMonth->copy()->setDay(19)->toDateString(),
                 'type'  => 'monthly',
             ];
@@ -182,7 +182,7 @@ class Infovi extends Component
                     $date  = \Carbon\Carbon::parse($d);
                     $month = $date->month === 12 ? 'noviembre' : 'julio';
                     $deadlines[] = [
-                        'label' => 'Declaración ampliada ' . $month . ' ' . $date->year,
+                        'label' => __('Declaración ampliada ') . $month . ' ' . $date->year,
                         'date'  => $d,
                         'type'  => 'semi_annual',
                     ];

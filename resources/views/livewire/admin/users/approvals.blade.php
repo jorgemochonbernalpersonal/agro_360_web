@@ -1,7 +1,7 @@
 <div class="space-y-6 animate-fade-in">
     <x-agro.page-header
-        title="Cola de Aprobación"
-        description="Usuarios con email verificado pendientes de activación manual"
+        title="{{ __('Cola de Aprobación') }}"
+        :description="__('Usuarios con email verificado pendientes de activación manual')"
     >
         <x-slot:actions>
             @if($total > 0)
@@ -11,15 +11,15 @@
     </x-agro.page-header>
 
     <x-agro.filter-bar>
-        <x-agro.filter-input wire:model.live="search" placeholder="Buscar por nombre o email..." />
+        <x-agro.filter-input wire:model.live="search" :placeholder="__('Buscar por nombre o email...')" />
     </x-agro.filter-bar>
 
     <x-agro.card :padding="false">
         @if($pending->isEmpty())
             <x-agro.empty-state
                 icon="check-circle"
-                message="Cola vacía"
-                description="No hay usuarios verificados pendientes de activación"
+                :message="__('Cola vacía')"
+                :description="__('No hay usuarios verificados pendientes de activación')"
             />
         @else
             <div class="divide-y divide-zinc-100 dark:divide-zinc-700/50">
@@ -33,10 +33,10 @@
                             <p class="text-xs text-zinc-400">{{ $user->email }} · {{ $user->role }} · Verificado {{ $user->email_verified_at->diffForHumans() }}</p>
                         </div>
                         <div class="flex items-center gap-2 flex-shrink-0">
-                            <flux:button wire:click="approve({{ $user->id }})" variant="primary" size="sm" icon="check">Aprobar</flux:button>
+                            <flux:button wire:click="approve({{ $user->id }})" variant="primary" size="sm" icon="check">{{ __('Aprobar') }}</flux:button>
                             <flux:button
                                 wire:click="reject({{ $user->id }})"
-                                wire:confirm="¿Rechazar y eliminar la cuenta de '{{ addslashes($user->name) }}'?"
+                                wire:confirm="{{ __('¿Rechazar y eliminar la cuenta de \':name\'?', ['name' => $user->name]) }}"
                                 variant="danger"
                                 size="sm"
                                 icon="x-mark"

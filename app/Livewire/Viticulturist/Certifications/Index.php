@@ -35,19 +35,19 @@ class Index extends AbstractIndex
     public function archive(int $id): void
     {
         $this->findOwned(Certification::class, $id)->update(['active' => false]);
-        $this->toastSuccess('Certificación archivada.');
+        $this->toastSuccess(__('Certificación archivada.'));
     }
 
     public function unarchive(int $id): void
     {
         $this->findOwned(Certification::class, $id)->update(['active' => true]);
-        $this->toastSuccess('Certificación restaurada.');
+        $this->toastSuccess(__('Certificación restaurada.'));
     }
 
     public function delete(int $id): void
     {
         $this->findOwned(Certification::class, $id)->delete();
-        $this->toastSuccess('Certificación eliminada.');
+        $this->toastSuccess(__('Certificación eliminada.'));
     }
 
     protected function baseQuery(): Builder

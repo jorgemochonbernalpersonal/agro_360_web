@@ -1,8 +1,8 @@
 <div class="space-y-6 animate-fade-in">
 
 <x-agro.page-header
-    title="Estadísticas Financieras de Bodega"
-    description="KPIs, tendencias y comparativas económicas de tu bodega."
+    title="{{ __('Estadísticas Financieras de Bodega') }}"
+    :description="__('KPIs, tendencias y comparativas económicas de tu bodega.')"
     icon="presentation-chart-line"
 >
     <x-slot:actions>
@@ -19,7 +19,7 @@
     <x-agro.card class="border-l-4 border-l-green-500">
         <div class="flex items-start justify-between">
             <div>
-                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">Ingresos cobrados</p>
+                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">{{ __('Ingresos cobrados') }}</p>
                 <p class="text-2xl font-bold text-green-600 leading-none mt-1">{{ number_format($totalRevenue, 0, ',', '.') }} &euro;</p>
                 <p class="text-xs text-zinc-400 mt-1">{{ $paidCount }} de {{ $invoiceCount }} facturas</p>
             </div>
@@ -39,7 +39,7 @@
     <x-agro.card class="border-l-4 border-l-red-400">
         <div class="flex items-start justify-between">
             <div>
-                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">Costes totales</p>
+                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">{{ __('Costes totales') }}</p>
                 <p class="text-2xl font-bold text-red-500 leading-none mt-1">{{ number_format($totalCosts, 0, ',', '.') }} &euro;</p>
                 <p class="text-xs text-zinc-400 mt-1">Uva {{ number_format($grapeCost, 0, ',', '.') }} + Mant. {{ number_format($maintenanceCost, 0, ',', '.') }}</p>
             </div>
@@ -59,7 +59,7 @@
     <x-agro.card class="border-l-4 {{ $grossMargin >= 0 ? 'border-l-indigo-500' : 'border-l-red-500' }}">
         <div class="flex items-start justify-between">
             <div>
-                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">Margen bruto</p>
+                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">{{ __('Margen bruto') }}</p>
                 <p class="text-2xl font-bold {{ $grossMargin >= 0 ? 'text-indigo-600' : 'text-red-500' }} leading-none mt-1">
                     {{ number_format($grossMargin, 0, ',', '.') }} &euro;
                 </p>
@@ -74,7 +74,7 @@
     <x-agro.card class="border-l-4 border-l-amber-400">
         <div class="flex items-start justify-between">
             <div>
-                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">Pendiente</p>
+                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">{{ __('Pendiente') }}</p>
                 <p class="text-2xl font-bold text-amber-500 leading-none mt-1">{{ number_format($pendingRevenue, 0, ',', '.') }} &euro;</p>
                 <p class="text-xs text-zinc-400 mt-1">
                     @if($overdueCount > 0)
@@ -93,10 +93,10 @@
 
 {{-- ── KPIs secundarios ────────────────────────────────────────────── --}}
 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-    <x-agro.stat-card label="Factura media" :value="number_format($averageInvoice, 0, ',', '.') . ' €'" icon="document-text" color="blue" />
-    <x-agro.stat-card label="Tasa de cobro" :value="number_format($collectionRate, 0) . '%'" icon="check-circle" :color="$collectionRate >= 80 ? 'green' : ($collectionRate >= 50 ? 'orange' : 'red')" />
+    <x-agro.stat-card :label="__('Factura media')" :value="number_format($averageInvoice, 0, ',', '.') . ' €'" icon="document-text" color="blue" />
+    <x-agro.stat-card :label="__('Tasa de cobro')" :value="number_format($collectionRate, 0) . '%'" icon="check-circle" :color="$collectionRate >= 80 ? 'green' : ($collectionRate >= 50 ? 'orange' : 'red')" />
     <x-agro.stat-card label="Facturas {{ $year }}" :value="(string) $invoiceCount" :description="$prevInvoiceCount . ' en ' . ($year - 1)" icon="document-duplicate" color="purple" />
-    <x-agro.stat-card label="Ingresos {{ $year - 1 }}" :value="number_format($prevRevenue, 0, ',', '.') . ' €'" description="referencia" icon="arrow-path" color="zinc" />
+    <x-agro.stat-card label="Ingresos {{ $year - 1 }}" :value="number_format($prevRevenue, 0, ',', '.') . ' €'" :description="__('referencia')" icon="arrow-path" color="zinc" />
 </div>
 
 {{-- ── Evolución mensual ───────────────────────────────────────────── --}}
@@ -160,7 +160,7 @@
                 <div class="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center">
                     <flux:icon icon="beaker" class="size-4 text-purple-600" />
                 </div>
-                <span class="font-semibold text-zinc-900">Ingresos por tipo de vino</span>
+                <span class="font-semibold text-zinc-900">{{ __('Ingresos por tipo de vino') }}</span>
             </div>
         </x-slot:header>
 
@@ -202,7 +202,7 @@
                 <div class="w-8 h-8 rounded-lg bg-violet-50 flex items-center justify-center">
                     <flux:icon icon="archive-box" class="size-4 text-violet-600" />
                 </div>
-                <span class="font-semibold text-zinc-900">Stock de productos por tipo</span>
+                <span class="font-semibold text-zinc-900">{{ __('Stock de productos por tipo') }}</span>
             </div>
         </x-slot:header>
 
@@ -230,15 +230,15 @@
                         </div>
                         <div class="grid grid-cols-3 gap-2 text-xs mb-2">
                             <div>
-                                <span class="text-zinc-500">Disponible</span>
+                                <span class="text-zinc-500">{{ __('Disponible') }}</span>
                                 <p class="font-bold text-green-600">{{ number_format($ps->available) }}</p>
                             </div>
                             <div>
-                                <span class="text-zinc-500">Reservado</span>
+                                <span class="text-zinc-500">{{ __('Reservado') }}</span>
                                 <p class="font-bold text-amber-600">{{ number_format($ps->reserved) }}</p>
                             </div>
                             <div>
-                                <span class="text-zinc-500">Vendido</span>
+                                <span class="text-zinc-500">{{ __('Vendido') }}</span>
                                 <p class="font-bold text-blue-600">{{ number_format($ps->sold) }}</p>
                             </div>
                         </div>
@@ -251,7 +251,7 @@
                 @endforeach
             </div>
         @else
-            <p class="text-sm text-zinc-400 py-4 text-center">Sin productos en stock.</p>
+            <p class="text-sm text-zinc-400 py-4 text-center">{{ __('Sin productos en stock.') }}</p>
         @endif
     </x-agro.card>
 </div>
@@ -342,7 +342,7 @@
                 <div class="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
                     <flux:icon icon="clock" class="size-4 text-amber-600" />
                 </div>
-                <span class="font-semibold text-zinc-900">Facturas pendientes de cobro</span>
+                <span class="font-semibold text-zinc-900">{{ __('Facturas pendientes de cobro') }}</span>
                 <flux:badge size="sm" color="amber">{{ $pendingInvoices->count() }}</flux:badge>
             </div>
         </x-slot:header>
@@ -351,11 +351,11 @@
             <table class="w-full text-sm">
                 <thead>
                     <tr class="bg-zinc-50 text-zinc-500 text-xs uppercase">
-                        <th class="text-left px-3 py-2">Factura</th>
-                        <th class="text-left px-3 py-2">Cliente</th>
-                        <th class="text-left px-3 py-2">Fecha</th>
-                        <th class="text-left px-3 py-2">Estado</th>
-                        <th class="text-right px-3 py-2">Importe</th>
+                        <th class="text-left px-3 py-2">{{ __('Factura') }}</th>
+                        <th class="text-left px-3 py-2">{{ __('Cliente') }}</th>
+                        <th class="text-left px-3 py-2">{{ __('Fecha') }}</th>
+                        <th class="text-left px-3 py-2">{{ __('Estado') }}</th>
+                        <th class="text-right px-3 py-2">{{ __('Importe') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-zinc-100">

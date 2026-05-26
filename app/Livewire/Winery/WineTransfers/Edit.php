@@ -83,7 +83,7 @@ class Edit extends Component
                 $oldQty = (float) ($this->oldData['to_container_id'] == $this->to_container_id ? $this->oldData['quantity'] : 0);
                 $available = $dest->getAvailableCapacity() + $oldQty;
                 if ($available < (float) $this->quantity) {
-                    $this->addError('quantity', 'El contenedor destino no tiene capacidad suficiente (' . number_format($available, 1) . ' L disponibles).');
+                    $this->addError('quantity', __('El contenedor destino no tiene capacidad suficiente (:available L disponibles).', ['available' => number_format($available, 1)]));
                     return;
                 }
             }
@@ -104,7 +104,7 @@ class Edit extends Component
         $this->transfer->refresh();
         app(WineContainerStockService::class)->updateTransfer($this->transfer, $this->oldData);
 
-        $this->toastSuccess('Trasvase actualizado.');
+        $this->toastSuccess(__('Trasvase actualizado.'));
         $this->redirect(roleRoute('wine-transfers.index'), navigate: true);
     }
 

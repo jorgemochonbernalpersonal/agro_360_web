@@ -210,7 +210,7 @@
                 <img src="{{ public_path('images/logo.png') }}" style="height: 45px; width: auto;" alt="Agro365 Logo">
             @endif
             <div style="flex: 1;">
-                <h1>📔 CUADERNO DIGITAL COMPLETO</h1>
+                <h1>{{ __('📔 CUADERNO DIGITAL COMPLETO') }}</h1>
                 <div class="subtitle">Informe Oficial - Campaña {{ $campaign->name }} ({{ $campaign->year }})</div>
             </div>
         </div>
@@ -218,18 +218,18 @@
 
     {{-- Datos de la Explotación --}}
     <div class="info-box">
-        <h3>DATOS DE LA EXPLOTACIÓN</h3>
+        <h3>{{ __('DATOS DE LA EXPLOTACIÓN') }}</h3>
         <div class="info-grid">
             <div class="info-row">
-                <span class="info-label">Titular:</span>
+                <span class="info-label">{{ __('Titular:') }}</span>
                 <span class="info-value">{{ $user->name }}</span>
             </div>
             <div class="info-row">
-                <span class="info-label">NIF/CIF:</span>
+                <span class="info-label">{{ __('NIF/CIF:') }}</span>
                 <span class="info-value">{{ $profile->nif ?? 'No especificado' }}</span>
             </div>
             <div class="info-row">
-                <span class="info-label">Domicilio:</span>
+                <span class="info-label">{{ __('Domicilio:') }}</span>
                 <span class="info-value">
                     {{ $profile->address ?? '' }}
                     @if($profile && $profile->municipality)
@@ -241,7 +241,7 @@
                 </span>
             </div>
             <div class="info-row">
-                <span class="info-label">Email:</span>
+                <span class="info-label">{{ __('Email:') }}</span>
                 <span class="info-value">{{ $user->email }}</span>
             </div>
         </div>
@@ -249,19 +249,19 @@
 
     {{-- Información de la Campaña --}}
     <div class="info-box">
-        <h3>INFORMACIÓN DE LA CAMPAÑA</h3>
+        <h3>{{ __('INFORMACIÓN DE LA CAMPAÑA') }}</h3>
         <div class="info-grid">
             <div class="info-row">
-                <span class="info-label">Campaña:</span>
+                <span class="info-label">{{ __('Campaña:') }}</span>
                 <span class="info-value">{{ $campaign->name }} ({{ $campaign->year }})</span>
             </div>
             <div class="info-row">
-                <span class="info-label">Periodo:</span>
+                <span class="info-label">{{ __('Periodo:') }}</span>
                 <span class="info-value">{{ $period_start->format('d/m/Y') }} - {{ $period_end->format('d/m/Y') }}</span>
             </div>
             @if($campaign->description)
             <div class="info-row">
-                <span class="info-label">Descripción:</span>
+                <span class="info-label">{{ __('Descripción:') }}</span>
                 <span class="info-value">{{ $campaign->description }}</span>
             </div>
             @endif
@@ -272,31 +272,31 @@
     <div class="stats-grid">
         <div class="stats-item">
             <strong>{{ $stats['total_activities'] }}</strong>
-            <span>Total Actividades</span>
+            <span>{{ __('Total Actividades') }}</span>
         </div>
         <div class="stats-item">
             <strong>{{ $stats['phytosanitary_count'] }}</strong>
-            <span>Tratamientos</span>
+            <span>{{ __('Tratamientos') }}</span>
         </div>
         <div class="stats-item">
             <strong>{{ $stats['fertilization_count'] }}</strong>
-            <span>Fertilizaciones</span>
+            <span>{{ __('Fertilizaciones') }}</span>
         </div>
         <div class="stats-item">
             <strong>{{ $stats['irrigation_count'] }}</strong>
-            <span>Riegos</span>
+            <span>{{ __('Riegos') }}</span>
         </div>
         <div class="stats-item">
             <strong>{{ $stats['cultural_count'] }}</strong>
-            <span>Labores</span>
+            <span>{{ __('Labores') }}</span>
         </div>
         <div class="stats-item">
             <strong>{{ $stats['observation_count'] }}</strong>
-            <span>Observaciones</span>
+            <span>{{ __('Observaciones') }}</span>
         </div>
         <div class="stats-item">
             <strong>{{ $stats['harvest_count'] }}</strong>
-            <span>Cosechas</span>
+            <span>{{ __('Cosechas') }}</span>
         </div>
     </div>
 
@@ -313,20 +313,20 @@
     {{-- Tratamientos Fitosanitarios --}}
     @if($activitiesByType->has('phytosanitary') && $activitiesByType->get('phytosanitary')->isNotEmpty())
     <div class="activity-section">
-        <h4>🧪 TRATAMIENTOS FITOSANITARIOS</h4>
+        <h4>{{ __('🧪 TRATAMIENTOS FITOSANITARIOS') }}</h4>
         <table>
             <thead>
                 <tr>
-                    <th style="width: 8%;">Fecha</th>
-                    <th style="width: 12%;">Parcela</th>
-                    <th style="width: 15%;">Producto</th>
-                    <th style="width: 8%;">Dosis/ha</th>
-                    <th style="width: 7%;">Área</th>
-                    <th style="width: 12%;">Plaga</th>
-                    <th style="width: 12%;">Aplicador</th>
-                    <th style="width: 10%;">Condiciones</th>
-                    <th style="width: 7%;">Plazo</th>
-                    <th style="width: 9%;">F. Segura</th>
+                    <th style="width: 8%;">{{ __('Fecha') }}</th>
+                    <th style="width: 12%;">{{ __('Parcela') }}</th>
+                    <th style="width: 15%;">{{ __('Producto') }}</th>
+                    <th style="width: 8%;">{{ __('Dosis/ha') }}</th>
+                    <th style="width: 7%;">{{ __('Área') }}</th>
+                    <th style="width: 12%;">{{ __('Plaga') }}</th>
+                    <th style="width: 12%;">{{ __('Aplicador') }}</th>
+                    <th style="width: 10%;">{{ __('Condiciones') }}</th>
+                    <th style="width: 7%;">{{ __('Plazo') }}</th>
+                    <th style="width: 9%;">{{ __('F. Segura') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -382,17 +382,17 @@
     {{-- Fertilizaciones --}}
     @if($activitiesByType->has('fertilization') && $activitiesByType->get('fertilization')->isNotEmpty())
     <div class="activity-section">
-        <h4>🌱 FERTILIZACIONES</h4>
+        <h4>{{ __('🌱 FERTILIZACIONES') }}</h4>
         <table>
             <thead>
                 <tr>
-                    <th style="width: 10%;">Fecha</th>
-                    <th style="width: 15%;">Parcela</th>
-                    <th style="width: 20%;">Fertilizante</th>
-                    <th style="width: 10%;">Cantidad</th>
-                    <th style="width: 10%;">Método</th>
-                    <th style="width: 15%;">Aplicador</th>
-                    <th style="width: 20%;">Notas</th>
+                    <th style="width: 10%;">{{ __('Fecha') }}</th>
+                    <th style="width: 15%;">{{ __('Parcela') }}</th>
+                    <th style="width: 20%;">{{ __('Fertilizante') }}</th>
+                    <th style="width: 10%;">{{ __('Cantidad') }}</th>
+                    <th style="width: 10%;">{{ __('Método') }}</th>
+                    <th style="width: 15%;">{{ __('Aplicador') }}</th>
+                    <th style="width: 20%;">{{ __('Notas') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -425,17 +425,17 @@
     {{-- Riegos --}}
     @if($activitiesByType->has('irrigation') && $activitiesByType->get('irrigation')->isNotEmpty())
     <div class="activity-section">
-        <h4>💧 RIEGOS</h4>
+        <h4>{{ __('💧 RIEGOS') }}</h4>
         <table>
             <thead>
                 <tr>
-                    <th style="width: 10%;">Fecha</th>
-                    <th style="width: 15%;">Parcela</th>
-                    <th style="width: 12%;">Volumen</th>
-                    <th style="width: 12%;">Duración</th>
-                    <th style="width: 15%;">Método</th>
-                    <th style="width: 15%;">Aplicador</th>
-                    <th style="width: 21%;">Notas</th>
+                    <th style="width: 10%;">{{ __('Fecha') }}</th>
+                    <th style="width: 15%;">{{ __('Parcela') }}</th>
+                    <th style="width: 12%;">{{ __('Volumen') }}</th>
+                    <th style="width: 12%;">{{ __('Duración') }}</th>
+                    <th style="width: 15%;">{{ __('Método') }}</th>
+                    <th style="width: 15%;">{{ __('Aplicador') }}</th>
+                    <th style="width: 21%;">{{ __('Notas') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -468,16 +468,16 @@
     {{-- Labores Culturales --}}
     @if($activitiesByType->has('cultural') && $activitiesByType->get('cultural')->isNotEmpty())
     <div class="activity-section">
-        <h4>🔧 LABORES CULTURALES</h4>
+        <h4>{{ __('🔧 LABORES CULTURALES') }}</h4>
         <table>
             <thead>
                 <tr>
-                    <th style="width: 10%;">Fecha</th>
-                    <th style="width: 15%;">Parcela</th>
-                    <th style="width: 20%;">Tipo de Labor</th>
-                    <th style="width: 15%;">Maquinaria</th>
-                    <th style="width: 15%;">Aplicador</th>
-                    <th style="width: 25%;">Notas</th>
+                    <th style="width: 10%;">{{ __('Fecha') }}</th>
+                    <th style="width: 15%;">{{ __('Parcela') }}</th>
+                    <th style="width: 20%;">{{ __('Tipo de Labor') }}</th>
+                    <th style="width: 15%;">{{ __('Maquinaria') }}</th>
+                    <th style="width: 15%;">{{ __('Aplicador') }}</th>
+                    <th style="width: 25%;">{{ __('Notas') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -515,15 +515,15 @@
     {{-- Observaciones --}}
     @if($activitiesByType->has('observation') && $activitiesByType->get('observation')->isNotEmpty())
     <div class="activity-section">
-        <h4>👁️ OBSERVACIONES</h4>
+        <h4>{{ __('👁️ OBSERVACIONES') }}</h4>
         <table>
             <thead>
                 <tr>
-                    <th style="width: 10%;">Fecha</th>
-                    <th style="width: 15%;">Parcela</th>
-                    <th style="width: 20%;">Tipo</th>
-                    <th style="width: 15%;">Severidad</th>
-                    <th style="width: 40%;">Descripción</th>
+                    <th style="width: 10%;">{{ __('Fecha') }}</th>
+                    <th style="width: 15%;">{{ __('Parcela') }}</th>
+                    <th style="width: 20%;">{{ __('Tipo') }}</th>
+                    <th style="width: 15%;">{{ __('Severidad') }}</th>
+                    <th style="width: 40%;">{{ __('Descripción') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -547,19 +547,19 @@
     {{-- Cosechas --}}
     @if($activitiesByType->has('harvest') && $activitiesByType->get('harvest')->isNotEmpty())
     <div class="activity-section">
-        <h4>🍇 COSECHAS</h4>
+        <h4>{{ __('🍇 COSECHAS') }}</h4>
         <table>
             <thead>
                 <tr>
-                    <th style="width: 8%;">Fecha</th>
-                    <th style="width: 12%;">Parcela</th>
-                    <th style="width: 10%;">Peso Total</th>
-                    <th style="width: 10%;">Rendimiento</th>
-                    <th style="width: 8%;">Grado</th>
-                    <th style="width: 10%;">Estado</th>
-                    <th style="width: 12%;">Destino</th>
-                    <th style="width: 15%;">Comprador</th>
-                    <th style="width: 15%;">Valor</th>
+                    <th style="width: 8%;">{{ __('Fecha') }}</th>
+                    <th style="width: 12%;">{{ __('Parcela') }}</th>
+                    <th style="width: 10%;">{{ __('Peso Total') }}</th>
+                    <th style="width: 10%;">{{ __('Rendimiento') }}</th>
+                    <th style="width: 8%;">{{ __('Grado') }}</th>
+                    <th style="width: 10%;">{{ __('Estado') }}</th>
+                    <th style="width: 12%;">{{ __('Destino') }}</th>
+                    <th style="width: 15%;">{{ __('Comprador') }}</th>
+                    <th style="width: 15%;">{{ __('Valor') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -598,32 +598,32 @@
 
     {{-- Sección de Firma y Verificación --}}
     <div class="signature-section">
-        <h3>🔐 FIRMA ELECTRÓNICA Y VERIFICACIÓN</h3>
+        <h3>{{ __('🔐 FIRMA ELECTRÓNICA Y VERIFICACIÓN') }}</h3>
         <div class="info-grid mb-10">
             <div class="info-row">
-                <span class="info-label">Firmado por:</span>
+                <span class="info-label">{{ __('Firmado por:') }}</span>
                 <span class="info-value">{{ $user->name }}</span>
             </div>
             <div class="info-row">
-                <span class="info-label">Email:</span>
+                <span class="info-label">{{ __('Email:') }}</span>
                 <span class="info-value">{{ $user->email }}</span>
             </div>
             <div class="info-row">
-                <span class="info-label">Fecha de firma:</span>
+                <span class="info-label">{{ __('Fecha de firma:') }}</span>
                 <span class="info-value">{{ $generated_at->format('d/m/Y H:i:s') }}</span>
             </div>
             <div class="info-row">
-                <span class="info-label">Hash de firma:</span>
+                <span class="info-label">{{ __('Hash de firma:') }}</span>
                 <span class="info-value"><span class="hash-code">{{ $signature_hash }}</span></span>
             </div>
             <div class="info-row">
-                <span class="info-label">Código de verificación:</span>
+                <span class="info-label">{{ __('Código de verificación:') }}</span>
                 <span class="info-value"><span class="hash-code">{{ $verification_code }}</span></span>
             </div>
         </div>
 
         <div class="qr-container">
-            <p style="margin-bottom: 8px; font-weight: bold; font-size: 9pt;">Escanea para verificar autenticidad:</p>
+            <p style="margin-bottom: 8px; font-weight: bold; font-size: 9pt;">{{ __('Escanea para verificar autenticidad:') }}</p>
             <img src="{{ $qr_code_url }}" alt="QR Code de Verificación" width="150" height="150">
             <p style="margin-top: 8px; font-size: 7pt; color: #666;">
                 O accede manualmente a:<br>
@@ -635,13 +635,11 @@
     {{-- Pie de Página Legal --}}
     <div style="margin-top: 20px; padding: 10px; background: #f5f5f5; border-radius: 4px; font-size: 7pt; color: #666;">
         <p style="margin-bottom: 5px;">
-            <strong>IMPORTANTE:</strong> Este documento ha sido generado automáticamente por el sistema certificado Agro365 
+            <strong>{{ __('IMPORTANTE:') }}</strong> Este documento ha sido generado automáticamente por el sistema certificado Agro365 
             y firmado electrónicamente conforme al Real Decreto 1311/2012 sobre uso sostenible de productos fitosanitarios.
         </p>
-        <p>
-            La autenticidad de este documento puede ser verificada escaneando el código QR o accediendo al enlace de verificación proporcionado.
-            Cualquier modificación del contenido invalidará la firma electrónica.
-        </p>
+        <p>{{ __('La autenticidad de este documento puede ser verificada escaneando el código QR o accediendo al enlace de verificación proporcionado.
+            Cualquier modificación del contenido invalidará la firma electrónica.') }}</p>
     </div>
 
     {{-- Footer --}}

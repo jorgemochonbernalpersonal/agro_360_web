@@ -40,7 +40,7 @@
             <div class="flex justify-between items-center h-16">
                 <a href="{{ url('/') }}" class="flex items-center gap-3">
                     <img src="{{ asset('images/logo.png') }}" alt="Agro365" width="120" height="40" loading="eager" class="h-10 w-auto">
-                    <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">Agro365</span>
+                    <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Agro365') }}</span>
                 </a>
                 <div class="flex items-center gap-4">
                     <a href="{{ url('/') }}" class="text-gray-600 hover:text-[var(--color-agro-green)]">Inicio</a>
@@ -59,12 +59,12 @@
             <nav class="mb-8 text-sm text-gray-600" itemscope itemtype="https://schema.org/BreadcrumbList">
                 <ol class="flex items-center space-x-2">
                     <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                        <a href="{{ url('/') }}" class="hover:text-[var(--color-agro-green)]" itemprop="item"><span itemprop="name">Inicio</span></a>
+                        <a href="{{ url('/') }}" class="hover:text-[var(--color-agro-green)]" itemprop="item"><span itemprop="name">{{ __('Inicio') }}</span></a>
                         <meta itemprop="position" content="1" />
                     </li>
                     <span class="mx-2">/</span>
                     <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                        <span class="text-gray-900" itemprop="name">Registro de Fitosanitarios</span>
+                        <span class="text-gray-900" itemprop="name">{{ __('Registro de Fitosanitarios') }}</span>
                         <meta itemprop="position" content="2" />
                     </li>
                 </ol>
@@ -74,137 +74,129 @@
             <div class="mb-12">
                 <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-100 border border-red-300 mb-6">
                     <span class="text-lg">⚠️</span>
-                    <span class="text-sm font-semibold text-red-800">Registro Obligatorio</span>
+                    <span class="text-sm font-semibold text-red-800">{{ __('Registro Obligatorio') }}</span>
                 </div>
-                <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">
-                    Registro de Productos Fitosanitarios: Guía Completa
-                </h1>
+                <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">{{ __('Registro de Productos Fitosanitarios: Guía Completa') }}</h1>
                 <p class="text-xl text-gray-600 leading-relaxed">
-                    El <strong>registro de tratamientos fitosanitarios</strong> es obligatorio para todos los agricultores. Conoce la normativa, qué datos debes registrar y cómo cumplir automáticamente con Agro365.
+                    El <strong>{{ __('registro de tratamientos fitosanitarios') }}</strong> es obligatorio para todos los agricultores. Conoce la normativa, qué datos debes registrar y cómo cumplir automáticamente con Agro365.
                 </p>
             </div>
 
             <!-- Content -->
             <article class="prose prose-lg max-w-none">
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">¿Por Qué es Obligatorio el Registro de Fitosanitarios?</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('¿Por Qué es Obligatorio el Registro de Fitosanitarios?') }}</h2>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        La <strong>normativa europea</strong> y española obliga a todos los agricultores a mantener un registro detallado de todos los <strong>productos fitosanitarios</strong> aplicados en sus parcelas. Este registro es parte esencial del <a href="{{ content_route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">cuaderno de campo digital</a>.
+                        La <strong>{{ __('normativa europea') }}</strong> y española obliga a todos los agricultores a mantener un registro detallado de todos los <strong>{{ __('productos fitosanitarios') }}</strong> aplicados en sus parcelas. Este registro es parte esencial del <a href="{{ content_route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">cuaderno de campo digital</a>.
                     </p>
                     <div class="bg-red-50 border-l-4 border-red-500 p-6 rounded-r-lg mb-6">
-                        <p class="text-gray-800 font-semibold mb-2">⚠️ Importante:</p>
-                        <p class="text-gray-700">El incumplimiento del registro de fitosanitarios puede suponer sanciones de hasta 60.000€ y la pérdida de ayudas PAC.</p>
+                        <p class="text-gray-800 font-semibold mb-2">{{ __('⚠️ Importante:') }}</p>
+                        <p class="text-gray-700">{{ __('El incumplimiento del registro de fitosanitarios puede suponer sanciones de hasta 60.000€ y la pérdida de ayudas PAC.') }}</p>
                     </div>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Datos Obligatorios en el Registro de Tratamientos</h2>
-                    <p class="text-gray-700 leading-relaxed mb-4">
-                        Cada aplicación de productos fitosanitarios debe incluir:
-                    </p>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Datos Obligatorios en el Registro de Tratamientos') }}</h2>
+                    <p class="text-gray-700 leading-relaxed mb-4">{{ __('Cada aplicación de productos fitosanitarios debe incluir:') }}</p>
                     <div class="grid md:grid-cols-2 gap-4 mb-6">
                         <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-2">📅 Datos del Tratamiento</h3>
+                            <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-2">{{ __('📅 Datos del Tratamiento') }}</h3>
                             <ul class="text-gray-700 text-sm space-y-1">
-                                <li>• Fecha y hora de aplicación</li>
+                                <li>{{ __('• Fecha y hora de aplicación') }}</li>
                                 <li>• Parcela tratada (código <a href="{{ content_route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)]">SIGPAC</a>)</li>
-                                <li>• Superficie tratada (ha)</li>
-                                <li>• Plaga, enfermedad o mala hierba</li>
+                                <li>{{ __('• Superficie tratada (ha)') }}</li>
+                                <li>{{ __('• Plaga, enfermedad o mala hierba') }}</li>
                             </ul>
                         </div>
                         <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-2">🧪 Datos del Producto</h3>
+                            <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-2">{{ __('🧪 Datos del Producto') }}</h3>
                             <ul class="text-gray-700 text-sm space-y-1">
-                                <li>• Nombre comercial del producto</li>
-                                <li>• Número de registro fitosanitario</li>
-                                <li>• Dosis aplicada (l/ha o kg/ha)</li>
-                                <li>• Volumen total de caldo</li>
+                                <li>{{ __('• Nombre comercial del producto') }}</li>
+                                <li>{{ __('• Número de registro fitosanitario') }}</li>
+                                <li>{{ __('• Dosis aplicada (l/ha o kg/ha)') }}</li>
+                                <li>{{ __('• Volumen total de caldo') }}</li>
                             </ul>
                         </div>
                         <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-2">👤 Datos del Aplicador</h3>
+                            <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-2">{{ __('👤 Datos del Aplicador') }}</h3>
                             <ul class="text-gray-700 text-sm space-y-1">
-                                <li>• Nombre del aplicador</li>
-                                <li>• Número de carnet ROPO</li>
-                                <li>• Nivel de cualificación</li>
-                                <li>• Empresa aplicadora (si aplica)</li>
+                                <li>{{ __('• Nombre del aplicador') }}</li>
+                                <li>{{ __('• Número de carnet ROPO') }}</li>
+                                <li>{{ __('• Nivel de cualificación') }}</li>
+                                <li>{{ __('• Empresa aplicadora (si aplica)') }}</li>
                             </ul>
                         </div>
                         <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-2">⏰ Plazos de Seguridad</h3>
+                            <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-2">{{ __('⏰ Plazos de Seguridad') }}</h3>
                             <ul class="text-gray-700 text-sm space-y-1">
-                                <li>• Plazo de seguridad (días)</li>
-                                <li>• Plazo de reentrada</li>
-                                <li>• Fecha límite de recolección</li>
-                                <li>• Condiciones meteorológicas</li>
+                                <li>{{ __('• Plazo de seguridad (días)') }}</li>
+                                <li>{{ __('• Plazo de reentrada') }}</li>
+                                <li>{{ __('• Fecha límite de recolección') }}</li>
+                                <li>{{ __('• Condiciones meteorológicas') }}</li>
                             </ul>
                         </div>
                     </div>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">¿Qué es el ROPO?</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('¿Qué es el ROPO?') }}</h2>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        El <strong>ROPO</strong> (Registro Oficial de Productores y Operadores de medios de defensa fitosanitaria) es el registro obligatorio para:
+                        El <strong>{{ __('ROPO') }}</strong> (Registro Oficial de Productores y Operadores de medios de defensa fitosanitaria) es el registro obligatorio para:
                     </p>
                     <ul class="list-disc list-inside space-y-2 text-gray-700 mb-6 ml-4">
-                        <li><strong>Agricultores:</strong> Usuarios profesionales de productos fitosanitarios</li>
-                        <li><strong>Aplicadores:</strong> Personal que realiza tratamientos fitosanitarios</li>
-                        <li><strong>Distribuidores:</strong> Empresas que venden productos fitosanitarios</li>
-                        <li><strong>Asesores:</strong> Técnicos que recomiendan tratamientos</li>
+                        <li><strong>{{ __('Agricultores:') }}</strong> Usuarios profesionales de productos fitosanitarios</li>
+                        <li><strong>{{ __('Aplicadores:') }}</strong> Personal que realiza tratamientos fitosanitarios</li>
+                        <li><strong>{{ __('Distribuidores:') }}</strong> Empresas que venden productos fitosanitarios</li>
+                        <li><strong>{{ __('Asesores:') }}</strong> Técnicos que recomiendan tratamientos</li>
                     </ul>
-                    <p class="text-gray-700 leading-relaxed mb-4">
-                        En Agro365, puedes registrar el número ROPO de cada operario y el sistema valida automáticamente que todos los tratamientos tengan un aplicador autorizado.
-                    </p>
+                    <p class="text-gray-700 leading-relaxed mb-4">{{ __('En Agro365, puedes registrar el número ROPO de cada operario y el sistema valida automáticamente que todos los tratamientos tengan un aplicador autorizado.') }}</p>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Cómo Cumplir con Agro365</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Cómo Cumplir con Agro365') }}</h2>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        Con Agro365, el registro de fitosanitarios es <strong>automático y sin errores</strong>:
+                        Con Agro365, el registro de fitosanitarios es <strong>{{ __('automático y sin errores') }}</strong>:
                     </p>
                     <div class="grid md:grid-cols-2 gap-6 mb-6">
                         <div class="bg-green-50 p-6 rounded-lg border border-green-200">
                             <div class="text-3xl mb-3">📋</div>
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">Base de Datos de Productos</h3>
-                            <p class="text-gray-700">Base de datos actualizada de productos fitosanitarios autorizados con dosis y plazos.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('Base de Datos de Productos') }}</h3>
+                            <p class="text-gray-700">{{ __('Base de datos actualizada de productos fitosanitarios autorizados con dosis y plazos.') }}</p>
                         </div>
                         <div class="bg-green-50 p-6 rounded-lg border border-green-200">
                             <div class="text-3xl mb-3">⚠️</div>
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">Alertas Automáticas</h3>
-                            <p class="text-gray-700">Alertas de plazo de seguridad antes de cosechar. Aviso si falta algún dato obligatorio.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('Alertas Automáticas') }}</h3>
+                            <p class="text-gray-700">{{ __('Alertas de plazo de seguridad antes de cosechar. Aviso si falta algún dato obligatorio.') }}</p>
                         </div>
                         <div class="bg-green-50 p-6 rounded-lg border border-green-200">
                             <div class="text-3xl mb-3">📱</div>
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">Registro desde Campo</h3>
-                            <p class="text-gray-700">Registra tratamientos desde el móvil mientras estás en la parcela.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('Registro desde Campo') }}</h3>
+                            <p class="text-gray-700">{{ __('Registra tratamientos desde el móvil mientras estás en la parcela.') }}</p>
                         </div>
                         <div class="bg-green-50 p-6 rounded-lg border border-green-200">
                             <div class="text-3xl mb-3">📄</div>
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">Informes Oficiales</h3>
-                            <p class="text-gray-700">Genera informes de tratamientos con firma digital para inspecciones.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('Informes Oficiales') }}</h3>
+                            <p class="text-gray-700">{{ __('Genera informes de tratamientos con firma digital para inspecciones.') }}</p>
                         </div>
                     </div>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Sanciones por Incumplimiento</h2>
-                    <p class="text-gray-700 leading-relaxed mb-4">
-                        Las sanciones por no llevar el registro de fitosanitarios correctamente pueden ser:
-                    </p>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Sanciones por Incumplimiento') }}</h2>
+                    <p class="text-gray-700 leading-relaxed mb-4">{{ __('Las sanciones por no llevar el registro de fitosanitarios correctamente pueden ser:') }}</p>
                     <div class="bg-red-50 p-6 rounded-lg border border-red-200 mb-6">
                         <ul class="space-y-3 text-gray-700">
                             <li class="flex items-center gap-3">
-                                <span class="font-bold text-red-600">Leve:</span> 
-                                <span>Multa de 1.001€ a 10.000€</span>
+                                <span class="font-bold text-red-600">{{ __('Leve:') }}</span> 
+                                <span>{{ __('Multa de 1.001€ a 10.000€') }}</span>
                             </li>
                             <li class="flex items-center gap-3">
-                                <span class="font-bold text-red-600">Grave:</span> 
-                                <span>Multa de 10.001€ a 60.000€</span>
+                                <span class="font-bold text-red-600">{{ __('Grave:') }}</span> 
+                                <span>{{ __('Multa de 10.001€ a 60.000€') }}</span>
                             </li>
                             <li class="flex items-center gap-3">
-                                <span class="font-bold text-red-600">Muy Grave:</span> 
-                                <span>Multa de 60.001€ a 600.000€ + pérdida PAC</span>
+                                <span class="font-bold text-red-600">{{ __('Muy Grave:') }}</span> 
+                                <span>{{ __('Multa de 60.001€ a 600.000€ + pérdida PAC') }}</span>
                             </li>
                         </ul>
                     </div>
@@ -212,9 +204,9 @@
 
                 <section class="mb-12">
                     <div class="bg-gradient-to-r from-[var(--color-agro-green-bg)] to-[var(--color-agro-green-light)]/30 p-8 rounded-xl border border-[var(--color-agro-green)]/20">
-                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">🛡️ Cumple con la Normativa Fácilmente</h3>
+                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('🛡️ Cumple con la Normativa Fácilmente') }}</h3>
                         <p class="text-gray-700 mb-6">
-                            Registra todos tus tratamientos fitosanitarios con Agro365. Base de datos actualizada, alertas automáticas y <strong>3 meses gratis</strong>.
+                            Registra todos tus tratamientos fitosanitarios con Agro365. Base de datos actualizada, alertas automáticas y <strong>{{ __('3 meses gratis') }}</strong>.
                         </p>
                         <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:shadow-lg transition-all font-semibold">
                             Comenzar Gratis

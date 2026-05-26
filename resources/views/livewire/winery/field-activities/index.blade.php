@@ -2,7 +2,7 @@
 
     {{-- Header --}}
     <x-agro.page-header
-        title="Actividades de Campo"
+        title="{{ __('Actividades de Campo') }}"
         :description="$isViticulturistOnly
             ? 'Registro consolidado de todas tus actividades agrícolas'
             : 'Registro de actividades agrícolas de tus viticultores vinculados (solo lectura)'"
@@ -11,19 +11,19 @@
     {{-- KPIs --}}
     <x-agro.stats-section key="field-activities" :columns="3">
         <x-agro.stat-card
-            label="Total actividades"
+            :label="__('Total actividades')"
             :value="$stats['total']"
             icon="clipboard-document-list"
             color="zinc"
         />
         <x-agro.stat-card
-            label="Vendimias"
+            :label="__('Vendimias')"
             :value="$stats['harvest']"
             icon="sparkles"
             color="agro"
         />
         <x-agro.stat-card
-            label="Fitosanitarios"
+            :label="__('Fitosanitarios')"
             :value="$stats['phyto']"
             icon="beaker"
             color="amber"
@@ -85,9 +85,7 @@
                 <x-agro.filter-chip icon="map" :label="$plotLabel" wireRemove="$set('plotFilter', '')" />
             @endif
             <button wire:click="$set('viticulturistFilter', ''); $set('activityTypeFilter', ''); $set('campaignFilter', ''); $set('plotFilter', '')"
-                class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">
-                Limpiar todo
-            </button>
+                class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">{{ __('Limpiar todo') }}</button>
         </div>
     @endif
 
@@ -99,7 +97,7 @@
         @if($activities->isEmpty())
             <x-agro.empty-state
                 icon="clipboard-document-list"
-                title="Sin actividades registradas"
+                title="{{ __('Sin actividades registradas') }}"
                 :description="$isViticulturistOnly
                     ? 'Aún no has registrado actividades en tu cuaderno de campo.'
                     : 'Tus viticultores vinculados aún no han registrado actividades que coincidan con los filtros aplicados.'"
@@ -202,7 +200,7 @@
                     <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
                         <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
                     </div>
-                    <h3 class="text-base font-semibold text-zinc-900">Filtros</h3>
+                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Filtros') }}</h3>
                 </div>
                 <flux:button x-on:click="$dispatch('close-modal', 'field-activities-filters')" variant="ghost" size="sm" icon="x-mark" />
             </div>
@@ -211,9 +209,9 @@
         <div class="px-6 py-5 space-y-5">
             @if(!$isViticulturistOnly)
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Viticultor</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Viticultor') }}</label>
                 <flux:select wire:model.live="viticulturistFilter">
-                    <option value="">Todos</option>
+                    <option value="">{{ __('Todos') }}</option>
                     @foreach($linkedViticulturists as $v)
                         <option value="{{ $v->id }}">{{ $v->name }}</option>
                     @endforeach
@@ -221,27 +219,27 @@
             </div>
             @endif
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Tipo de actividad</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Tipo de actividad') }}</label>
                 <flux:select wire:model.live="activityTypeFilter">
-                    <option value="">Todos los tipos</option>
+                    <option value="">{{ __('Todos los tipos') }}</option>
                     @foreach($activityTypes as $key => $label)
                         <option value="{{ $key }}">{{ $label }}</option>
                     @endforeach
                 </flux:select>
             </div>
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Campaña</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Campaña') }}</label>
                 <flux:select wire:model.live="campaignFilter">
-                    <option value="">Todas</option>
+                    <option value="">{{ __('Todas') }}</option>
                     @foreach($campaigns as $c)
                         <option value="{{ $c->id }}">{{ $c->year }}</option>
                     @endforeach
                 </flux:select>
             </div>
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Parcela</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Parcela') }}</label>
                 <flux:select wire:model.live="plotFilter">
-                    <option value="">Todas</option>
+                    <option value="">{{ __('Todas') }}</option>
                     @foreach($plots as $plot)
                         <option value="{{ $plot->id }}">{{ $plot->name }}</option>
                     @endforeach
@@ -252,15 +250,11 @@
         <div class="px-6 py-4 border-t border-zinc-200 flex items-center justify-between">
             @if($filterCount > 0)
                 <button wire:click="$set('viticulturistFilter', ''); $set('activityTypeFilter', ''); $set('campaignFilter', ''); $set('plotFilter', '')"
-                    class="text-sm text-zinc-400 hover:text-zinc-600 transition-colors">
-                    Limpiar filtros
-                </button>
+                    class="text-sm text-zinc-400 hover:text-zinc-600 transition-colors">{{ __('Limpiar filtros') }}</button>
             @else
                 <span></span>
             @endif
-            <flux:button x-on:click="$dispatch('close-modal', 'field-activities-filters')" variant="primary">
-                Aplicar
-            </flux:button>
+            <flux:button x-on:click="$dispatch('close-modal', 'field-activities-filters')" variant="primary">{{ __('Aplicar') }}</flux:button>
         </div>
     </x-agro.modal>
 

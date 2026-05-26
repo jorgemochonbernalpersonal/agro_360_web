@@ -109,7 +109,7 @@
             <a href="{{ route('remote-sensing.dashboard') }}" wire:navigate class="bg-gradient-to-br from-green-50 to-emerald-100 rounded-xl shadow-lg border-2 border-green-200 p-5 hover:shadow-xl hover:border-green-300 transition-all" data-cy="kpi-remote-sensing">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-green-700">NDVI</p>
+                        <p class="text-sm font-medium text-green-700">{{ __('NDVI') }}</p>
                         <p class="text-3xl font-bold {{ $ndvi['ndvi'] >= 0.5 ? 'text-green-700' : ($ndvi['ndvi'] >= 0.35 ? 'text-amber-600' : 'text-red-600') }}">{{ number_format($ndvi['ndvi'], 2) }}</p>
                         <p class="text-xs text-green-600 truncate">{{ $ndvi['plotName'] }}</p>
                     </div>
@@ -338,7 +338,7 @@
                     </svg>
                 </div>
                 <div class="flex-1 min-w-0">
-                    <p class="font-semibold text-zinc-900">PAC</p>
+                    <p class="font-semibold text-zinc-900">{{ __('PAC') }}</p>
                     <p class="text-xs text-zinc-500">{{ __('Cumplimiento normativo') }}</p>
                 </div>
                 @if(!$this->hasActiveAccess)

@@ -52,7 +52,7 @@ class Taxes extends Component
                 }
             }
 
-            $this->toastInfo('Impuesto desactivado.');
+            $this->toastInfo(__('Impuesto desactivado.'));
         } else {
             // Habilitar
             UserTax::firstOrCreate(
@@ -67,7 +67,7 @@ class Taxes extends Component
                 return;
             }
 
-            $this->toastSuccess('Impuesto activado.');
+            $this->toastSuccess(__('Impuesto activado.'));
         }
     }
 

@@ -82,8 +82,8 @@ class CodesIndex extends Component
         return view('livewire.sigpac.codes-index', [
             'codes' => $codes,
         ])->layout('layouts.app', [
-            'title' => 'Códigos SIGPAC - Agro365',
-            'description' => 'Gestiona los códigos de identificación SIGPAC de tus parcelas. Integración completa con el sistema SIGPAC para cumplimiento normativo.',
+            'title' => __('Códigos SIGPAC - Agro365'),
+            'description' => __('Gestiona los códigos de identificación SIGPAC de tus parcelas. Integración completa con el sistema SIGPAC para cumplimiento normativo.'),
         ]);
     }
 
@@ -93,14 +93,14 @@ class CodesIndex extends Component
         $sigpacCode = SigpacCode::findOrFail($sigpacCodeId);
 
         if (!Auth::user()->can('update', $plot)) {
-            $this->toastError('No tienes permiso para modificar esta parcela.');
+            $this->toastError(__('No tienes permiso para modificar esta parcela.'));
             return;
         }
 
         $sigpacCodes = $plot->sigpacCodes->where('id', $sigpacCodeId);
 
         if ($sigpacCodes->isEmpty()) {
-            $this->toastError('Este código SIGPAC no está asociado a esta parcela.');
+            $this->toastError(__('Este código SIGPAC no está asociado a esta parcela.'));
             return;
         }
 
@@ -149,7 +149,7 @@ class CodesIndex extends Component
             }
 
             DB::commit();
-            $this->toastSuccess('Mapa generado correctamente.');
+            $this->toastSuccess(__('Mapa generado correctamente.'));
             // Forzar recarga de la vista
             $this->dispatch('$refresh');
         } catch (\Exception $e) {
@@ -159,7 +159,7 @@ class CodesIndex extends Component
                 'sigpac_code_id' => $sigpacCodeId,
                 'error' => $e->getMessage(),
             ]);
-            $this->toastError('Error al generar el mapa. Por favor, intenta de nuevo.');
+            $this->toastError(__('Error al generar el mapa. Por favor, intenta de nuevo.'));
         }
     }
 
@@ -335,7 +335,7 @@ class CodesIndex extends Component
     public function generateAllMapsForMunicipality()
     {
         if (!$this->filterMunicipality) {
-            $this->toastError('Debes seleccionar un municipio primero.');
+            $this->toastError(__('Debes seleccionar un municipio primero.'));
             return;
         }
 
@@ -368,7 +368,7 @@ class CodesIndex extends Component
             });
 
         if ($codesWithoutGeometry->isEmpty()) {
-            $this->toastInfo('Todos los códigos de este municipio ya tienen mapas generados.');
+            $this->toastInfo(__('Todos los códigos de este municipio ya tienen mapas generados.'));
             return;
         }
 

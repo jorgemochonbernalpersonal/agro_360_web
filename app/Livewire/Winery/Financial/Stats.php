@@ -277,8 +277,8 @@ class Stats extends Component
             // Stock
             'productStock'      => $productStock,
         ])->layout('layouts.app', [
-            'title'       => 'Estadísticas Financieras de Bodega',
-            'description' => 'KPIs, tendencias y comparativas económicas de tu bodega',
+            'title'       => __('Estadísticas Financieras de Bodega'),
+            'description' => __('KPIs, tendencias y comparativas económicas de tu bodega'),
         ]);
     }
 }

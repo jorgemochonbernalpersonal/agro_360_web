@@ -52,12 +52,12 @@ class Create extends Component
     }
 
     protected $messages = [
-        'reportType.required' => 'Selecciona el tipo de informe.',
-        'startDate.required_if' => 'La fecha de inicio es obligatoria.',
-        'endDate.required_if' => 'La fecha de fin es obligatoria.',
-        'endDate.after_or_equal' => 'La fecha fin debe ser posterior o igual a la fecha inicio.',
-        'campaignId.required_if' => 'Selecciona una campaña.',
-        'password.required' => 'La contraseña de firma digital es obligatoria.',
+        'reportType.required' => __('Selecciona el tipo de informe.'),
+        'startDate.required_if' => __('La fecha de inicio es obligatoria.'),
+        'endDate.required_if' => __('La fecha de fin es obligatoria.'),
+        'endDate.after_or_equal' => __('La fecha fin debe ser posterior o igual a la fecha inicio.'),
+        'campaignId.required_if' => __('Selecciona una campaña.'),
+        'password.required' => __('La contraseña de firma digital es obligatoria.'),
     ];
 
     // Listeners para sincronización con otros componentes
@@ -211,12 +211,12 @@ class Create extends Component
 
                 // LÍMITE: Máximo 150 tratamientos
                 if ($totalTreatments > 150) {
-                    $this->addError('generation', "Demasiados tratamientos ($totalTreatments). El límite es 150. Reduce el periodo o contacta con soporte.");
+                    $this->addError('generation', __('Demasiados tratamientos (:count). El límite es 150. Reduce el periodo o contacta con soporte.', ['count' => $totalTreatments]));
                     return;
                 }
 
                 if ($totalTreatments === 0) {
-                    $this->addError('generation', 'No hay tratamientos fitosanitarios en este periodo.');
+                    $this->addError('generation', __('No hay tratamientos fitosanitarios en este periodo.'));
                     return;
                 }
 
@@ -237,9 +237,7 @@ class Create extends Component
                 // Si hay errores críticos PAC, no permitir generar
                 if (!$validation['is_compliant']) {
                     $errorCount = count($validation['errors']);
-                    $this->addError('generation', 
-                        "⚠️ El informe contiene {$errorCount} error(es) PAC que deben corregirse antes de generar (RD 1311/2012)."
-                    );
+                    $this->addError('generation', __('⚠️ El informe contiene :count error(es) PAC que deben corregirse antes de generar (RD 1311/2012).', ['count' => $errorCount]));
                     
                     // Mostrar los primeros 3 errores específicos
                     $errorMessages = [];
@@ -283,7 +281,7 @@ class Create extends Component
                 $totalActivities = $activities->count();
 
                 if ($totalActivities === 0) {
-                    $this->addError('generation', 'No hay actividades registradas en esta campaña.');
+                    $this->addError('generation', __('No hay actividades registradas en esta campaña.'));
                     return;
                 }
 
@@ -323,7 +321,7 @@ class Create extends Component
             // Mostrar modal de resumen
             $this->showSummaryModal = true;
         } catch (\Exception $e) {
-            $this->addError('generation', 'Error al calcular resumen: ' . $e->getMessage());
+            $this->addError('generation', __('Error al calcular resumen: :message', ['message' => $e->getMessage()]));
         }
     }
 
@@ -336,8 +334,8 @@ class Create extends Component
         $this->hasDigitalSignature = \App\Models\DigitalSignature::forUser(auth()->id()) !== null;
 
         if (!$this->hasDigitalSignature) {
-            $this->addError('generation', 'No tienes una contraseña de firma digital configurada. Por favor, créala en Configuración → Firma Digital.');
-            $this->toastError('Debes configurar tu contraseña de firma digital primero.');
+            $this->addError('generation', __('No tienes una contraseña de firma digital configurada. Por favor, créala en Configuración → Firma Digital.'));
+            $this->toastError(__('Debes configurar tu contraseña de firma digital primero.'));
             return;
         }
 
@@ -345,21 +343,21 @@ class Create extends Component
         $this->validate([
             'password' => 'required|string',
         ], [
-            'password.required' => 'La contraseña de firma digital es obligatoria.',
+            'password.required' => __('La contraseña de firma digital es obligatoria.'),
         ]);
 
         // Verificar que la contraseña sea correcta ANTES de generar el informe
         $digitalSignature = \App\Models\DigitalSignature::forUser(auth()->id());
         if (!$digitalSignature) {
             \Log::error('No se encontró firma digital para el usuario', ['user_id' => auth()->id()]);
-            $this->addError('generation', 'Error al verificar la contraseña. Por favor, intenta de nuevo.');
-            $this->toastError('Error al verificar la contraseña.');
+            $this->addError('generation', __('Error al verificar la contraseña. Por favor, intenta de nuevo.'));
+            $this->toastError(__('Error al verificar la contraseña.'));
             return;
         }
 
         if (!$digitalSignature->verifyPassword($this->password)) {
-            $this->addError('password', 'Contraseña de firma digital incorrecta. Recuerda: es la contraseña que configuraste en Configuración → Firma Digital, NO tu contraseña de login. ¿La olvidaste?');
-            $this->toastError('Contraseña de firma incorrecta. No uses tu contraseña de login, usa la de Configuración → Firma Digital.');
+            $this->addError('password', __('Contraseña de firma digital incorrecta. Recuerda: es la contraseña que configuraste en Configuración → Firma Digital, NO tu contraseña de login. ¿La olvidaste?'));
+            $this->toastError(__('Contraseña de firma incorrecta. No uses tu contraseña de login, usa la de Configuración → Firma Digital.'));
             return;
         }
 
@@ -393,7 +391,7 @@ class Create extends Component
                 'verification_code' => \App\Models\OfficialReport::generateVerificationCode(),
                 'is_valid' => true,
                 'processing_status' => 'pending',
-                'signature_hash' => 'TEMP_' . uniqid() . '_' . time(),  // Hash temporal único
+                'signature_hash' => __('TEMP_') . uniqid() . '_' . time(),  // Hash temporal único
                 'signed_at' => now(),
                 'signed_ip' => request()->ip(),
             ]);
@@ -413,7 +411,7 @@ class Create extends Component
 
             // Limpiar y notificar
             $this->password = '';
-            $this->toastSuccess('✅ Informe en proceso. Te avisaremos por email cuando esté listo (1-5 min).');
+            $this->toastSuccess(__('✅ Informe en proceso. Te avisaremos por email cuando esté listo (1-5 min).'));
 
             // Redirigir
             return $this->viticulturistRoleRedirect('official-reports.index');
@@ -426,7 +424,7 @@ class Create extends Component
             // Re-abrir el modal de resumen para mostrar el error
             $this->showSummaryModal = true;
             $this->addError('generation', $e->getMessage());
-            $this->toastError($e instanceof RuntimeException ? $e->getMessage() : 'Error al generar el informe. Inténtalo de nuevo.');
+            $this->toastError($e instanceof RuntimeException ? $e->getMessage()  : __('Error al generar el informe. Inténtalo de nuevo.'));
         }
     }
 
@@ -552,8 +550,8 @@ class Create extends Component
         $this->hasDigitalSignature = \App\Models\DigitalSignature::forUser(auth()->id()) !== null;
 
         if (!$this->hasDigitalSignature) {
-            $this->addError('generation', 'No tienes una contraseña de firma digital configurada. Por favor, créala en Configuración → Firma Digital.');
-            $this->toastError('Debes configurar tu contraseña de firma digital primero.');
+            $this->addError('generation', __('No tienes una contraseña de firma digital configurada. Por favor, créala en Configuración → Firma Digital.'));
+            $this->toastError(__('Debes configurar tu contraseña de firma digital primero.'));
             return;
         }
 
@@ -561,21 +559,21 @@ class Create extends Component
         $this->validate([
             'password' => 'required|string',
         ], [
-            'password.required' => 'La contraseña de firma digital es obligatoria.',
+            'password.required' => __('La contraseña de firma digital es obligatoria.'),
         ]);
 
         // Verificar que la contraseña sea correcta
         $digitalSignature = \App\Models\DigitalSignature::forUser(auth()->id());
         if (!$digitalSignature) {
             \Log::error('No se encontró firma digital para el usuario', ['user_id' => auth()->id()]);
-            $this->addError('generation', 'Error al verificar la contraseña. Por favor, intenta de nuevo.');
-            $this->toastError('Error al verificar la contraseña.');
+            $this->addError('generation', __('Error al verificar la contraseña. Por favor, intenta de nuevo.'));
+            $this->toastError(__('Error al verificar la contraseña.'));
             return;
         }
 
         if (!$digitalSignature->verifyPassword($this->password)) {
-            $this->addError('password', 'Contraseña de firma digital incorrecta.');
-            $this->toastError('Contraseña de firma incorrecta.');
+            $this->addError('password', __('Contraseña de firma digital incorrecta.'));
+            $this->toastError(__('Contraseña de firma incorrecta.'));
             return;
         }
 
@@ -600,7 +598,7 @@ class Create extends Component
                     ],
                     'verification_code' => \App\Models\OfficialReport::generateVerificationCode(),
                     'processing_status' => 'pending',
-                    'signature_hash' => 'TEMP_' . uniqid() . '_' . time(),
+                    'signature_hash' => __('TEMP_') . uniqid() . '_' . time(),
                     'signed_at' => now(),
                     'signed_ip' => request()->ip(),
                 ]);
@@ -633,8 +631,8 @@ class Create extends Component
             $this->toastSuccess("✅ Se generarán {$generatedCount} informes en lotes. Te avisaremos por email cuando estén listos (5-10 min por lote).");
             return $this->viticulturistRoleRedirect('official-reports.index');
         } else {
-            $this->addError('generation', 'Error al generar informes: ' . implode(', ', $errors));
-            $this->toastError('Error al generar informes por lotes.');
+            $this->addError('generation', __('Error al generar informes: :list', ['list' => implode(', ', $errors)]));
+            $this->toastError(__('Error al generar informes por lotes.'));
         }
     }
 
@@ -666,13 +664,13 @@ class Create extends Component
         }
 
         $messages = [
-            'reportType.required' => 'Selecciona el tipo de informe.',
-            'startDate.required' => 'La fecha de inicio es obligatoria.',
-            'endDate.required' => 'La fecha de fin es obligatoria.',
-            'endDate.after_or_equal' => 'La fecha fin debe ser posterior o igual a la fecha inicio.',
-            'campaignId.required' => 'Selecciona una campaña.',
-            'campaignId.exists' => 'La campaña seleccionada no existe.',
-            'password.required' => 'La contraseña de firma digital es obligatoria.',
+            'reportType.required' => __('Selecciona el tipo de informe.'),
+            'startDate.required' => __('La fecha de inicio es obligatoria.'),
+            'endDate.required' => __('La fecha de fin es obligatoria.'),
+            'endDate.after_or_equal' => __('La fecha fin debe ser posterior o igual a la fecha inicio.'),
+            'campaignId.required' => __('Selecciona una campaña.'),
+            'campaignId.exists' => __('La campaña seleccionada no existe.'),
+            'password.required' => __('La contraseña de firma digital es obligatoria.'),
         ];
 
         $this->validate($rules, $messages);
@@ -699,7 +697,7 @@ class Create extends Component
 
             // Verificar que el informe se creó correctamente
             if (!$this->generatedReport || !$this->generatedReport->id) {
-                throw new \Exception('El informe se generó pero no se pudo recuperar correctamente.');
+                throw new \Exception(__('El informe se generó pero no se pudo recuperar correctamente.'));
             }
 
             // Enviar email automático de notificación
@@ -713,7 +711,7 @@ class Create extends Component
             // Limpiar contraseña y abrir modal de éxito
             $this->password = '';
             $this->showSuccessModal = true;
-            $this->toastSuccess('Informe generado y firmado correctamente.');
+            $this->toastSuccess(__('Informe generado y firmado correctamente.'));
         } catch (\Exception $e) {
             \Log::error('Error al generar informe oficial', [
                 'user_id' => auth()->id(),
@@ -724,7 +722,7 @@ class Create extends Component
             ]);
 
             $this->addError('generation', $e->getMessage());
-            $this->toastError($e instanceof RuntimeException ? $e->getMessage() : 'Error al generar el informe. Inténtalo de nuevo.');
+            $this->toastError($e instanceof RuntimeException ? $e->getMessage()  : __('Error al generar el informe. Inténtalo de nuevo.'));
             $this->showSummaryModal = true;
         }
     }

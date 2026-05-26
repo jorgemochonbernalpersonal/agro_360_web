@@ -79,7 +79,7 @@ class Create extends Component
             'notes'            => $this->notes ?: null,
         ]);
 
-        $this->toastSuccess('Subcontratación registrada correctamente.');
+        $this->toastSuccess(__('Subcontratación registrada correctamente.'));
 
         return $this->viticulturistRoleRedirect('subcontracting.index');
     }

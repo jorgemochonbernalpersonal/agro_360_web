@@ -80,7 +80,7 @@ class Edit extends Component
                 $oldQty = (float) ($this->oldLossData['container_id'] == $this->container_id ? $this->oldLossData['quantity'] : 0);
                 $available = $container->wine_volume_liters + $oldQty;
                 if ($available < (float) $this->quantity) {
-                    $this->addError('quantity', 'El contenedor solo tiene ' . number_format($available, 1) . ' L de vino disponibles.');
+                    $this->addError('quantity', __('El depósito solo tiene :volume L disponibles para embotellar.', ['volume' => number_format($available, 1)]));
                     return;
                 }
             }
@@ -101,7 +101,7 @@ class Edit extends Component
         $this->loss->refresh();
         app(WineContainerStockService::class)->updateLoss($this->loss, $this->oldLossData);
 
-        $this->toastSuccess('Merma actualizada.');
+        $this->toastSuccess(__('Merma actualizada.'));
         $this->redirect(roleRoute('wine-losses.index'), navigate: true);
     }
 

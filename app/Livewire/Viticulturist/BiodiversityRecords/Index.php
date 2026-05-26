@@ -40,7 +40,7 @@ class Index extends AbstractIndex
     public function delete(int $id): void
     {
         $this->findOwned(BiodiversityRecord::class, $id)->delete();
-        $this->toastSuccess('Registro eliminado.');
+        $this->toastSuccess(__('Registro eliminado.'));
     }
 
     protected function baseQuery(): Builder

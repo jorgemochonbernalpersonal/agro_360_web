@@ -112,7 +112,7 @@ class CreateHarvest extends Component
         $campaign = Campaign::getOrCreateActiveForYear($user->id);
         
         if (!$campaign) {
-            $this->toastError('No se pudo obtener la campaña activa.');
+            $this->toastError(__('No se pudo obtener la campaña activa.'));
             return $this->viticulturistRoleRedirect('campaign.create');
         }
         
@@ -433,17 +433,17 @@ class CreateHarvest extends Component
 
         // Validar workType
         if (!$this->workType) {
-            $this->addError('workType', 'Debes seleccionar quién realizó el trabajo.');
+            $this->addError('workType', __('Debes seleccionar quién realizó el trabajo.'));
             return;
         }
 
         if ($this->workType === 'crew' && !$this->crew_id) {
-            $this->addError('crew_id', 'Debes seleccionar un equipo.');
+            $this->addError('crew_id', __('Debes seleccionar un equipo.'));
             return;
         }
 
         if ($this->workType === 'individual' && !$this->crew_member_id) {
-            $this->addError('crew_member_id', 'Debes seleccionar un viticultor.');
+            $this->addError('crew_member_id', __('Debes seleccionar un viticultor.'));
             return;
         }
 
@@ -454,15 +454,11 @@ class CreateHarvest extends Component
         if ($this->container_id) {
             $container = Container::find($this->container_id);
             if (!$container) {
-                $this->addError('container_id', 'El contenedor seleccionado no existe.');
+                $this->addError('container_id', __('El contenedor seleccionado no existe.'));
                 return;
             }
             if (!$container->hasAvailableCapacity($this->total_weight)) {
-                $this->addError('container_id', sprintf(
-                    'El contenedor no tiene capacidad suficiente. Disponible: %.2f kg, Requerido: %.2f kg',
-                    $container->getAvailableCapacity(),
-                    $this->total_weight
-                ));
+                $this->addError('container_id', __('Capacidad insuficiente. Disponible: :available kg, Necesario: :required kg.', ['available' => number_format($container->getAvailableCapacity(), 2), 'required' => number_format($this->total_weight, 2)]));
                 return;
             }
         }
@@ -568,7 +564,7 @@ class CreateHarvest extends Component
                 // - Registrar en ContainerHistory
             });
 
-            $this->toastSuccess('Cosecha registrada correctamente.');
+            $this->toastSuccess(__('Cosecha registrada correctamente.'));
             return $this->viticulturistRoleRedirect('harvests.index');
         } catch (\Exception $e) {
             \Log::error('Error al registrar cosecha', [
@@ -578,7 +574,7 @@ class CreateHarvest extends Component
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            $this->toastError('Error al registrar la cosecha. Por favor, intenta de nuevo.');
+            $this->toastError(__('Error al registrar la cosecha. Por favor, intenta de nuevo.'));
             return;
         }
     }

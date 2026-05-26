@@ -36,7 +36,7 @@ class Index extends AbstractIndex
 
         app(WineContainerStockService::class)->revertLoss($loss);
         $loss->delete();
-        $this->toastSuccess('Merma eliminada y stock restaurado.');
+        $this->toastSuccess(__('Merma eliminada y stock restaurado.'));
     }
 
     protected function baseQuery(): Builder

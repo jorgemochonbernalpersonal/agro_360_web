@@ -141,7 +141,7 @@ class Edit extends Component
     public function save()
     {
         if ($this->isLocked) {
-            $this->toastError('Esta factura no se puede editar.');
+            $this->toastError(__('Esta factura no se puede editar.'));
             return;
         }
 
@@ -249,7 +249,7 @@ class Edit extends Component
                 }
             });
 
-            $this->toastSuccess('Factura actualizada correctamente.');
+            $this->toastSuccess(__('Factura actualizada correctamente.'));
             return $this->viticulturistRoleRedirect('invoices.harvest-sale.index');
 
         } catch (\Exception $e) {
@@ -257,7 +257,7 @@ class Edit extends Component
                 'invoice_id' => $this->invoice->id,
                 'user_id'    => Auth::id(),
             ]);
-            $this->toastError($e instanceof \RuntimeException ? $e->getMessage() : 'Error al guardar los cambios.');
+            $this->toastError($e instanceof \RuntimeException ? $e->getMessage()  : __('Error al guardar los cambios.'));
         }
     }
 

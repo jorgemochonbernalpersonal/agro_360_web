@@ -62,7 +62,7 @@ class Create extends Component
             'campaign_id'      => $this->campaign_id ?: null,
         ]);
 
-        $this->toastSuccess('Coste registrado correctamente.');
+        $this->toastSuccess(__('Coste registrado correctamente.'));
 
         return $this->viticulturistRoleRedirect('plot-costs.index');
     }

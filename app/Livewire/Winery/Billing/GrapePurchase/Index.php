@@ -40,12 +40,12 @@ class Index extends AbstractIndex
         if (!$invoice) return;
 
         if ($invoice->status === 'cancelled') {
-            $this->toastError('Esta liquidación ya está cancelada.');
+            $this->toastError(__('Esta liquidación ya está cancelada.'));
             return;
         }
 
         if ($invoice->payment_status === 'paid') {
-            $this->toastError('No se puede cancelar una liquidación ya pagada.');
+            $this->toastError(__('No se puede cancelar una liquidación ya pagada.'));
             return;
         }
 
@@ -54,7 +54,7 @@ class Index extends AbstractIndex
             'status'          => 'cancelled',
             'delivery_status' => 'cancelled',
         ]);
-        $this->toastSuccess('Liquidación cancelada. Las recepciones quedan disponibles para una nueva liquidación.');
+        $this->toastSuccess(__('Liquidación cancelada. Las recepciones quedan disponibles para una nueva liquidación.'));
     }
 
     protected function getEmailRecipient(Invoice $invoice): ?string

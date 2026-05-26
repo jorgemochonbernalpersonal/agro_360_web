@@ -44,12 +44,12 @@ class Index extends AbstractIndex
             ->findOrFail($campaignId);
 
         if ($campaign->activities_count > 0) {
-            $this->toastError('No se puede eliminar una campaña con recepciones registradas.');
+            $this->toastError(__('No se puede eliminar una campaña con recepciones registradas.'));
             return;
         }
 
         $campaign->delete();
-        $this->toastSuccess('Campaña eliminada correctamente.');
+        $this->toastSuccess(__('Campaña eliminada correctamente.'));
     }
 
     protected function baseQuery(): Builder

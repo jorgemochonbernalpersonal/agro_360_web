@@ -17,7 +17,7 @@
 
     <flux:field>
         <flux:label>{{ __('Matrícula / Número de serie') }}</flux:label>
-        <flux:input wire:model="registration_number" type="text" placeholder="Ej: 1234-ABB" />
+        <flux:input wire:model="registration_number" type="text" :placeholder="__('Ej: 1234-ABB')" />
         <flux:error name="registration_number" />
     </flux:field>
 

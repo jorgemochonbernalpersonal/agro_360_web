@@ -1,15 +1,15 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="Territorio"
-        description="Distribución geográfica de parcelas y variedades en la denominación de origen."
+        title="{{ __('Territorio') }}"
+        :description="__('Distribución geográfica de parcelas y variedades en la denominación de origen.')"
     />
 
     {{-- Stats --}}
     <x-agro.stats-section key="supervisor-territory" columns="3">
-        <x-agro.stat-card label="Parcelas activas" :value="$totalPlots" icon="map" color="blue" />
-        <x-agro.stat-card label="Superficie total (ha)" :value="number_format($totalArea, 2)" icon="square-3-stack-3d" color="agro" />
-        <x-agro.stat-card label="Parcelas ecológicas" :value="$organicPlots" icon="sparkles" color="agro" description="Certificadas ecológico" />
+        <x-agro.stat-card :label="__('Parcelas activas')" :value="$totalPlots" icon="map" color="blue" />
+        <x-agro.stat-card :label="__('Superficie total (ha)')" :value="number_format($totalArea, 2)" icon="square-3-stack-3d" color="agro" />
+        <x-agro.stat-card :label="__('Parcelas ecológicas')" :value="$organicPlots" icon="sparkles" color="agro" :description="__('Certificadas ecológico')" />
     </x-agro.stats-section>
 
     {{-- Tabs --}}
@@ -51,18 +51,18 @@
                             <div class="flex-1 space-y-3">
                                 <div class="grid grid-cols-3 gap-2">
                                     <div class="bg-blue-50 rounded-lg p-2 text-center">
-                                        <p class="text-[9px] text-blue-400 uppercase tracking-wide mb-0.5">Parcelas</p>
+                                        <p class="text-[9px] text-blue-400 uppercase tracking-wide mb-0.5">{{ __('Parcelas') }}</p>
                                         <p class="text-sm font-bold text-blue-700">{{ $row->plot_count }}</p>
                                     </div>
                                     <div class="bg-emerald-50 rounded-lg p-2 text-center">
-                                        <p class="text-[9px] text-emerald-400 uppercase tracking-wide mb-0.5">Superficie</p>
+                                        <p class="text-[9px] text-emerald-400 uppercase tracking-wide mb-0.5">{{ __('Superficie') }}</p>
                                         <p class="text-sm font-bold text-emerald-700">
                                             {{ number_format($row->total_area, 2) }}
                                             <span class="text-[9px] font-normal text-emerald-400">ha</span>
                                         </p>
                                     </div>
                                     <div class="bg-green-50 rounded-lg p-2 text-center">
-                                        <p class="text-[9px] text-green-400 uppercase tracking-wide mb-0.5">Ecológicas</p>
+                                        <p class="text-[9px] text-green-400 uppercase tracking-wide mb-0.5">{{ __('Ecológicas') }}</p>
                                         <p class="text-sm font-bold text-green-700">{{ $row->organic_count }}</p>
                                     </div>
                                 </div>
@@ -71,7 +71,7 @@
                     @endforeach
                 </div>
             @else
-                <x-agro.empty-state icon="map-pin" title="Sin datos" description="No hay parcelas registradas." />
+                <x-agro.empty-state icon="map-pin" title="{{ __('Sin datos') }}" :description="__('No hay parcelas registradas.')" />
             @endif
 
         @elseif($activeTab === 'varieties')
@@ -110,11 +110,11 @@
                             <div class="flex-1 space-y-3">
                                 <div class="grid grid-cols-2 gap-2">
                                     <div class="bg-violet-50 rounded-lg p-2 text-center">
-                                        <p class="text-[9px] text-violet-400 uppercase tracking-wide mb-0.5">Parcelas</p>
+                                        <p class="text-[9px] text-violet-400 uppercase tracking-wide mb-0.5">{{ __('Parcelas') }}</p>
                                         <p class="text-sm font-bold text-violet-700">{{ $row->plot_count }}</p>
                                     </div>
                                     <div class="bg-emerald-50 rounded-lg p-2 text-center">
-                                        <p class="text-[9px] text-emerald-400 uppercase tracking-wide mb-0.5">Superficie</p>
+                                        <p class="text-[9px] text-emerald-400 uppercase tracking-wide mb-0.5">{{ __('Superficie') }}</p>
                                         <p class="text-sm font-bold text-emerald-700">
                                             {{ number_format($row->planted_area, 2) }}
                                             <span class="text-[9px] font-normal text-emerald-400">ha</span>
@@ -126,7 +126,7 @@
                     @endforeach
                 </div>
             @else
-                <x-agro.empty-state icon="sparkles" title="Sin plantaciones" description="No hay plantaciones activas." />
+                <x-agro.empty-state icon="sparkles" title="{{ __('Sin plantaciones') }}" :description="__('No hay plantaciones activas.')" />
             @endif
 
         @else
@@ -159,11 +159,11 @@
                             <div class="flex-1 space-y-3">
                                 <div class="grid grid-cols-2 gap-2">
                                     <div class="bg-amber-50 rounded-lg p-2 text-center">
-                                        <p class="text-[9px] text-amber-400 uppercase tracking-wide mb-0.5">Parcelas</p>
+                                        <p class="text-[9px] text-amber-400 uppercase tracking-wide mb-0.5">{{ __('Parcelas') }}</p>
                                         <p class="text-sm font-bold text-amber-700">{{ $row->plot_count }}</p>
                                     </div>
                                     <div class="bg-emerald-50 rounded-lg p-2 text-center">
-                                        <p class="text-[9px] text-emerald-400 uppercase tracking-wide mb-0.5">Superficie</p>
+                                        <p class="text-[9px] text-emerald-400 uppercase tracking-wide mb-0.5">{{ __('Superficie') }}</p>
                                         <p class="text-sm font-bold text-emerald-700">
                                             {{ number_format($row->total_area, 2) }}
                                             <span class="text-[9px] font-normal text-emerald-400">ha</span>
@@ -175,7 +175,7 @@
                     @endforeach
                 </div>
             @else
-                <x-agro.empty-state icon="building-office" title="Sin municipios" description="No hay municipios con parcelas." />
+                <x-agro.empty-state icon="building-office" title="{{ __('Sin municipios') }}" :description="__('No hay municipios con parcelas.')" />
             @endif
         @endif
     </div>

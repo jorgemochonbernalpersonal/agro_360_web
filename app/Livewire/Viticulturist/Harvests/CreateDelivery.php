@@ -162,11 +162,11 @@ class CreateDelivery extends Component
         }
 
         if ($linkedStatus === 'disputed') {
-            $this->toastWarning('Entrega registrada. La bodega ya tiene una recepción con diferencia de cantidad — revisa el detalle.');
+            $this->toastWarning(__('Entrega registrada. La bodega ya tiene una recepción con diferencia de cantidad — revisa el detalle.'));
         } elseif ($linkedStatus === 'matched') {
-            $this->toastSuccess('Entrega registrada y confirmada automáticamente por la recepción de bodega.');
+            $this->toastSuccess(__('Entrega registrada y confirmada automáticamente por la recepción de bodega.'));
         } else {
-            $this->toastSuccess('Entrega registrada correctamente.');
+            $this->toastSuccess(__('Entrega registrada correctamente.'));
         }
 
         return $this->viticulturistRoleRedirect('harvests.index');
@@ -254,6 +254,6 @@ class CreateDelivery extends Component
         return view('livewire.viticulturist.harvests.create-delivery', [
             'plots'              => $plots,
             'availablePlantings' => $availablePlantings,
-        ])->layout('layouts.app', ['title' => 'Registrar entrega - Agro365']);
+        ])->layout('layouts.app', ['title' => __('Registrar entrega - Agro365')]);
     }
 }

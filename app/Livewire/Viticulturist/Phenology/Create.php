@@ -97,9 +97,7 @@ class Create extends Component
 
         $this->toastSuccess(
             $existing
-                ? 'Registro actualizado — ya existía un estadio para esta plantación y campaña.'
-                : 'Observación fenológica guardada correctamente.'
-        );
+                ? __('Registro actualizado — ya existía un estadio para esta plantación y campaña.') : __('Observación fenológica guardada correctamente.'));
 
         return $this->viticulturistRoleRedirect('phenology.index', $this->plot_planting_id ? ['filter_planting_id' => $this->plot_planting_id] : []);
     }

@@ -1,8 +1,8 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="Recepción de Uva"
-        description="Registro de entradas de uva por viticultor, parcela y variedad"
+        title="{{ __('Recepción de Uva') }}"
+        :description="__('Registro de entradas de uva por viticultor, parcela y variedad')"
     />
 
     {{-- Nav vendimia --}}
@@ -11,12 +11,12 @@
     {{-- Stat-bar --}}
     <div class="grid grid-cols-2 gap-4">
         <x-agro.stat-card
-            label="Total recibido"
+            :label="__('Total recibido')"
             :value="number_format($stats['total_kg'], 0) . ' kg'"
             color="agro"
         />
         <x-agro.stat-card
-            label="Entradas"
+            :label="__('Entradas')"
             :value="$stats['total_count']"
             :description="$stats['viticulturists'] . ' viticultores'"
             color="zinc"
@@ -29,7 +29,7 @@
             </p>
         </div>
         <x-agro.stat-card
-            label="Neto válido"
+            :label="__('Neto válido')"
             :value="number_format(max(0, $stats['total_kg'] - $stats['disqualified_kg']), 0) . ' kg'"
             color="agro"
         />
@@ -43,7 +43,7 @@
     <div class="flex items-center gap-3">
 
         {{-- Search --}}
-        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar viticultor, variedad, parcela o ticket..." />
+        <x-agro.search-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar viticultor, variedad, parcela o ticket...')" />
 
         {{-- Filtros --}}
         <x-agro.filter-button modal="reception-filters" :count="$filterCount" />
@@ -55,7 +55,7 @@
         <a href="{{ roleRoute('grape-reception.export-pdf', array_filter(['campaign' => $campaignFilter, 'viticulturist' => $viticulturistFilter, 'disqualified' => $disqualifiedFilter])) }}"
            target="_blank"
            class="inline-flex items-center gap-2 px-3 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors"
-           title="Exportar PDF">
+           title="{{ __('Exportar PDF') }}">
             <flux:icon icon="document-arrow-down" class="size-4 text-zinc-500" />
             PDF
         </a>
@@ -63,7 +63,7 @@
         {{-- Exportar Excel --}}
         <a href="{{ roleRoute('grape-reception.export-excel', array_filter(['campaign' => $campaignFilter, 'viticulturist' => $viticulturistFilter, 'disqualified' => $disqualifiedFilter])) }}"
            class="inline-flex items-center gap-2 px-3 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors"
-           title="Exportar Excel">
+           title="{{ __('Exportar Excel') }}">
             <flux:icon icon="table-cells" class="size-4 text-zinc-500" />
             Excel
         </a>
@@ -92,9 +92,7 @@
                 @php $disqLabel = $disqualifiedFilter === '1' ? 'Solo descartadas' : 'Solo válidas'; @endphp
                 <x-agro.filter-chip icon="funnel" :label="$disqLabel" wireRemove="$set('disqualifiedFilter', '')" />
             @endif
-            <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">
-                Limpiar todo
-            </button>
+            <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">{{ __('Limpiar todo') }}</button>
         </div>
     @endif
 
@@ -134,9 +132,9 @@
                                         <span class="text-sm font-bold text-agro-700">{{ $year }}</span>
                                     @endif
                                     @if($isCancelled)
-                                        <flux:badge color="zinc" size="sm">Anulada</flux:badge>
+                                        <flux:badge color="zinc" size="sm">{{ __('Anulada') }}</flux:badge>
                                     @elseif($reception->disqualified)
-                                        <flux:badge color="red" size="sm">Descartada</flux:badge>
+                                        <flux:badge color="red" size="sm">{{ __('Descartada') }}</flux:badge>
                                     @endif
                                 </div>
                             </div>
@@ -147,14 +145,14 @@
                             {{-- Stats principales --}}
                             <div class="grid grid-cols-2 gap-3">
                                 <div class="bg-agro-50 rounded-xl p-3">
-                                    <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-1">Kg recibidos</p>
+                                    <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-1">{{ __('Kg recibidos') }}</p>
                                     <p class="text-2xl font-bold text-agro-700 leading-none">
                                         {{ number_format($reception->total_weight, 0) }}
                                         <span class="text-xs font-medium text-zinc-400 ml-0.5">kg</span>
                                     </p>
                                 </div>
                                 <div class="bg-zinc-50 rounded-xl p-3">
-                                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">Fecha</p>
+                                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">{{ __('Fecha') }}</p>
                                     @if($reception->harvest_start_date)
                                         <p class="text-base font-bold text-zinc-700 leading-none">
                                             {{ $reception->harvest_start_date->format('d/m') }}
@@ -175,14 +173,14 @@
 
                                 @if($reception->yield_per_hectare)
                                     <div class="flex items-center justify-between text-xs">
-                                        <span class="text-zinc-400">Rendimiento</span>
+                                        <span class="text-zinc-400">{{ __('Rendimiento') }}</span>
                                         <span class="text-zinc-600">{{ number_format($reception->yield_per_hectare, 0) }} kg/ha</span>
                                     </div>
                                 @endif
 
                                 @if($reception->baume_degree || $reception->potential_alcohol)
                                     <div class="flex items-center justify-between text-xs">
-                                        <span class="text-zinc-400">Calidad</span>
+                                        <span class="text-zinc-400">{{ __('Calidad') }}</span>
                                         <span class="text-zinc-600">
                                             @if($reception->potential_alcohol) {{ $reception->potential_alcohol }}% alc. @endif
                                             @if($reception->baume_degree) {{ $reception->baume_degree }}°Bé @endif
@@ -192,7 +190,7 @@
 
                                 @if($reception->harvest_ticket_number)
                                     <div class="flex items-center justify-between text-xs">
-                                        <span class="text-zinc-400">Ticket</span>
+                                        <span class="text-zinc-400">{{ __('Ticket') }}</span>
                                         <span class="font-mono text-zinc-600">{{ $reception->harvest_ticket_number }}</span>
                                     </div>
                                 @endif
@@ -200,28 +198,28 @@
                                 {{-- Estado declaración viticultor --}}
                                 @php $delivery = $reception->delivery; @endphp
                                 <div class="flex items-center justify-between text-xs">
-                                    <span class="text-zinc-400">Declaración vitic.</span>
+                                    <span class="text-zinc-400">{{ __('Declaración vitic.') }}</span>
                                     @if(!$delivery)
-                                        <flux:badge color="zinc" size="sm">Sin declarar</flux:badge>
+                                        <flux:badge color="zinc" size="sm">{{ __('Sin declarar') }}</flux:badge>
                                     @elseif($delivery->status === 'matched')
-                                        <flux:badge color="green" size="sm">Coincide</flux:badge>
+                                        <flux:badge color="green" size="sm">{{ __('Coincide') }}</flux:badge>
                                     @elseif($delivery->status === 'resolved')
-                                        <flux:badge color="blue" size="sm">Resuelta</flux:badge>
+                                        <flux:badge color="blue" size="sm">{{ __('Resuelta') }}</flux:badge>
                                     @elseif($delivery->status === 'disputed')
                                         <flux:badge color="amber" size="sm">
                                             Dif. {{ number_format($delivery->discrepancy_kg, 0) }} kg
                                         </flux:badge>
                                     @else
-                                        <flux:badge color="zinc" size="sm">Pendiente</flux:badge>
+                                        <flux:badge color="zinc" size="sm">{{ __('Pendiente') }}</flux:badge>
                                     @endif
                                 </div>
 
                                 <div class="flex items-center justify-between text-xs">
-                                    <span class="text-zinc-400">Contenedor</span>
+                                    <span class="text-zinc-400">{{ __('Contenedor') }}</span>
                                     @if($reception->container_id)
                                         <flux:badge color="green" size="sm">{{ $reception->container?->name ?? '—' }}</flux:badge>
                                     @else
-                                        <flux:badge color="zinc" size="sm">Sin asignar</flux:badge>
+                                        <flux:badge color="zinc" size="sm">{{ __('Sin asignar') }}</flux:badge>
                                     @endif
                                 </div>
                             </div>
@@ -232,7 +230,7 @@
                                 {{-- Grupo izquierdo: anular --}}
                                 <div class="flex items-center gap-0.5">
                                     @if(!$isCancelled)
-                                        <x-agro.action-button icon="x-circle" variant="danger" wire:click="cancelReception({{ $reception->id }})" wire:confirm="¿Anular esta recepción? Esta acción no se puede deshacer." title="Anular recepción" />
+                                        <x-agro.action-button icon="x-circle" variant="danger" wire:click="cancelReception({{ $reception->id }})" wire:confirm="{{ __('¿Anular esta recepción? Esta acción no se puede deshacer.') }}" title="{{ __('Anular recepción') }}" />
                                     @endif
                                 </div>
 
@@ -241,9 +239,9 @@
 
                                 {{-- Grupo derecho: ver + editar --}}
                                 <div class="flex items-center gap-0.5">
-                                    <x-agro.action-button variant="view" href="{{ roleRoute('grape-reception.show', $reception) }}" wire:navigate title="Ver detalle" />
+                                    <x-agro.action-button variant="view" href="{{ roleRoute('grape-reception.show', $reception) }}" wire:navigate title="{{ __('Ver detalle') }}" />
                                     @if(!$isCancelled)
-                                        <x-agro.action-button variant="edit" href="{{ roleRoute('grape-reception.edit', $reception) }}" wire:navigate title="Editar recepción" />
+                                        <x-agro.action-button variant="edit" href="{{ roleRoute('grape-reception.edit', $reception) }}" wire:navigate title="{{ __('Editar recepción') }}" />
                                     @endif
                                 </div>
                             </div>
@@ -256,8 +254,8 @@
         @else
             <x-agro.empty-state
                 icon="scale"
-                title="No hay recepciones registradas"
-                description="Registra la primera entrada de uva para esta campaña"
+                title="{{ __('No hay recepciones registradas') }}"
+                :description="__('Registra la primera entrada de uva para esta campaña')"
             >
                 <x-slot:action>
                     <flux:button href="{{ roleRoute('grape-reception.create') }}" wire:navigate variant="primary" icon="plus">
@@ -276,7 +274,7 @@
                     <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
                         <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
                     </div>
-                    <h3 class="text-base font-semibold text-zinc-900">Filtros</h3>
+                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Filtros') }}</h3>
                 </div>
                 <flux:button x-on:click="$dispatch('close-modal', 'reception-filters')" variant="ghost" size="sm" icon="x-mark" />
             </div>
@@ -284,9 +282,9 @@
 
         <div class="px-6 py-5 space-y-5">
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Añada</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Añada') }}</label>
                 <flux:select wire:model.live="campaignFilter">
-                    <option value="">Todas las añadas</option>
+                    <option value="">{{ __('Todas las añadas') }}</option>
                     @foreach($campaigns as $c)
                         <option value="{{ $c->id }}">{{ $c->year }}{{ $c->active ? ' (activa)' : '' }}</option>
                     @endforeach
@@ -294,9 +292,9 @@
             </div>
 
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Viticultor</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Viticultor') }}</label>
                 <flux:select wire:model.live="viticulturistFilter">
-                    <option value="">Todos los viticultores</option>
+                    <option value="">{{ __('Todos los viticultores') }}</option>
                     @foreach($linkedViticulturists as $v)
                         <option value="{{ $v->id }}">{{ $v->name }}</option>
                     @endforeach
@@ -304,26 +302,22 @@
             </div>
 
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Estado</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Estado') }}</label>
                 <flux:select wire:model.live="disqualifiedFilter">
-                    <option value="">Todas</option>
-                    <option value="0">Solo válidas</option>
-                    <option value="1">Solo descartadas</option>
+                    <option value="">{{ __('Todas') }}</option>
+                    <option value="0">{{ __('Solo válidas') }}</option>
+                    <option value="1">{{ __('Solo descartadas') }}</option>
                 </flux:select>
             </div>
         </div>
 
         <div class="px-6 py-4 border-t border-zinc-200 flex items-center justify-between">
             @if($filterCount > 0)
-                <button wire:click="clearFilters" class="text-sm text-zinc-400 hover:text-zinc-600 transition-colors">
-                    Limpiar filtros
-                </button>
+                <button wire:click="clearFilters" class="text-sm text-zinc-400 hover:text-zinc-600 transition-colors">{{ __('Limpiar filtros') }}</button>
             @else
                 <span></span>
             @endif
-            <flux:button x-on:click="$dispatch('close-modal', 'reception-filters')" variant="primary">
-                Aplicar
-            </flux:button>
+            <flux:button x-on:click="$dispatch('close-modal', 'reception-filters')" variant="primary">{{ __('Aplicar') }}</flux:button>
         </div>
     </x-agro.modal>
 

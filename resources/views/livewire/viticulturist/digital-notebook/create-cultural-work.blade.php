@@ -94,8 +94,8 @@
                         <flux:label>{{ __('Tipo de Poda') }}</flux:label>
                         <flux:select wire:model="pruning_type" id="pruning_type" data-cy="pruning-type-select">
                             <option value="">{{ __('Selecciona un tipo') }}</option>
-                            <option value="guyot">Guyot</option>
-                            <option value="doble_guyot">Doble Guyot</option>
+                            <option value="guyot">{{ __('Guyot') }}</option>
+                            <option value="doble_guyot">{{ __('Doble Guyot') }}</option>
                             <option value="vaso">{{ __('Vaso') }}</option>
                             <option value="cordon">{{ __('Cordón') }}</option>
                             <option value="other">{{ __('Otro') }}</option>

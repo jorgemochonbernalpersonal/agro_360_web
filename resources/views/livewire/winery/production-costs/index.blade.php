@@ -1,8 +1,8 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="Costes de Producción"
-        description="Seguimiento del coste por vino y margen de producción."
+        title="{{ __('Costes de Producción') }}"
+        :description="__('Seguimiento del coste por vino y margen de producción.')"
         icon="currency-euro"
     >
         <x-slot:actions>
@@ -19,7 +19,7 @@
                 <flux:icon icon="beaker" class="size-5 text-green-600" />
             </div>
             <div>
-                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">Vinos en seguimiento</p>
+                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">{{ __('Vinos en seguimiento') }}</p>
                 <p class="text-2xl font-bold text-zinc-900 leading-none">{{ $wines->total() }}</p>
             </div>
         </x-agro.card>
@@ -28,7 +28,7 @@
                 <flux:icon icon="currency-euro" class="size-5 text-violet-600" />
             </div>
             <div>
-                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">Costes extras registrados</p>
+                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">{{ __('Costes extras registrados') }}</p>
                 <p class="text-2xl font-bold text-zinc-900 leading-none">{{ number_format($totalManualCost, 2, ',', '.') }} €</p>
             </div>
         </x-agro.card>
@@ -37,14 +37,14 @@
     {{-- Filtros --}}
     <div class="flex flex-wrap gap-3">
         <flux:select wire:model.live="vintageFilter">
-            <flux:select.option value="">Todas las añadas</flux:select.option>
+            <flux:select.option value="">{{ __('Todas las añadas') }}</flux:select.option>
             @foreach($availableVintages as $v)
                 <flux:select.option value="{{ $v }}">{{ $v }}</flux:select.option>
             @endforeach
         </flux:select>
 
         <flux:select wire:model.live="statusFilter">
-            <flux:select.option value="">Todos los estados</flux:select.option>
+            <flux:select.option value="">{{ __('Todos los estados') }}</flux:select.option>
             @foreach($statuses as $key => $label)
                 <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
             @endforeach
@@ -56,21 +56,21 @@
         @if($wines->isEmpty())
             <x-agro.empty-state
                 icon="beaker"
-                title="Sin vinos registrados"
-                description="Crea vinos en el módulo de Vinificación para ver sus costes aquí."
+                title="{{ __('Sin vinos registrados') }}"
+                :description="__('Crea vinos en el módulo de Vinificación para ver sus costes aquí.')"
             />
         @else
             <div class="overflow-x-auto">
                 <table class="w-full text-sm">
                     <thead>
                         <tr class="border-b border-zinc-100">
-                            <th class="text-left py-3 px-4 text-xs font-semibold text-zinc-400 uppercase tracking-wide">Vino</th>
-                            <th class="text-right py-3 px-4 text-xs font-semibold text-zinc-400 uppercase tracking-wide">Coste uva</th>
-                            <th class="text-right py-3 px-4 text-xs font-semibold text-zinc-400 uppercase tracking-wide">Costes extras</th>
-                            <th class="text-right py-3 px-4 text-xs font-semibold text-zinc-400 uppercase tracking-wide">Total</th>
-                            <th class="text-right py-3 px-4 text-xs font-semibold text-zinc-400 uppercase tracking-wide">Volumen</th>
-                            <th class="text-right py-3 px-4 text-xs font-semibold text-zinc-400 uppercase tracking-wide">€ / L</th>
-                            <th class="text-right py-3 px-4 text-xs font-semibold text-zinc-400 uppercase tracking-wide">PVP / ud</th>
+                            <th class="text-left py-3 px-4 text-xs font-semibold text-zinc-400 uppercase tracking-wide">{{ __('Vino') }}</th>
+                            <th class="text-right py-3 px-4 text-xs font-semibold text-zinc-400 uppercase tracking-wide">{{ __('Coste uva') }}</th>
+                            <th class="text-right py-3 px-4 text-xs font-semibold text-zinc-400 uppercase tracking-wide">{{ __('Costes extras') }}</th>
+                            <th class="text-right py-3 px-4 text-xs font-semibold text-zinc-400 uppercase tracking-wide">{{ __('Total') }}</th>
+                            <th class="text-right py-3 px-4 text-xs font-semibold text-zinc-400 uppercase tracking-wide">{{ __('Volumen') }}</th>
+                            <th class="text-right py-3 px-4 text-xs font-semibold text-zinc-400 uppercase tracking-wide">{{ __('€ / L') }}</th>
+                            <th class="text-right py-3 px-4 text-xs font-semibold text-zinc-400 uppercase tracking-wide">{{ __('PVP / ud') }}</th>
                             <th class="py-3 px-4"></th>
                         </tr>
                     </thead>

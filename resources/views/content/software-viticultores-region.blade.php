@@ -50,7 +50,7 @@
                 <div class="flex items-center gap-3">
                     <a href="{{ url('/') }}" class="flex items-center gap-3">
                         <img src="{{ asset('images/logo.png') }}" alt="Agro365" class="h-10 w-auto" loading="eager">
-                        <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">Agro365</span>
+                        <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Agro365') }}</span>
                     </a>
                 </div>
                 <div class="flex items-center gap-4">
@@ -79,12 +79,12 @@
                 <nav class="mb-8 text-sm text-zinc-500" itemscope itemtype="https://schema.org/BreadcrumbList">
                     <ol class="flex items-center flex-wrap gap-1">
                         <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                            <a href="{{ url('/') }}" class="hover:text-[var(--color-agro-green)]" itemprop="item"><span itemprop="name">Inicio</span></a>
+                            <a href="{{ url('/') }}" class="hover:text-[var(--color-agro-green)]" itemprop="item"><span itemprop="name">{{ __('Inicio') }}</span></a>
                             <meta itemprop="position" content="1" />
                         </li>
                         <span class="mx-1">/</span>
                         <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                            <a href="{{ url('/software-para-viticultores') }}" class="hover:text-[var(--color-agro-green)]" itemprop="item"><span itemprop="name">Software Viticultores</span></a>
+                            <a href="{{ url('/software-para-viticultores') }}" class="hover:text-[var(--color-agro-green)]" itemprop="item"><span itemprop="name">{{ __('Software Viticultores') }}</span></a>
                             <meta itemprop="position" content="2" />
                         </li>
                         <span class="mx-1">/</span>
@@ -132,20 +132,20 @@
                     <div class="bg-white p-6 rounded-xl border border-zinc-200 shadow-sm">
                         <h2 class="font-bold text-xl text-[var(--color-agro-green-dark)] mb-4">📊 Datos de la {{ $region['do_type'] }}</h2>
                         <ul class="space-y-2 text-zinc-700 text-sm">
-                            <li><strong>Denominación:</strong> {{ $region['name'] }}</li>
-                            <li><strong>Provincia / Comunidad:</strong> {{ $region['province'] }}</li>
-                            <li><strong>Superficie:</strong> {{ $region['hectares'] }} hectáreas</li>
-                            <li><strong>Viticultores:</strong> {{ $region['viticultores'] }}</li>
-                            <li><strong>Bodegas:</strong> {{ $region['bodegas'] }}</li>
+                            <li><strong>{{ __('Denominación:') }}</strong> {{ $region['name'] }}</li>
+                            <li><strong>{{ __('Provincia / Comunidad:') }}</strong> {{ $region['province'] }}</li>
+                            <li><strong>{{ __('Superficie:') }}</strong> {{ $region['hectares'] }} hectáreas</li>
+                            <li><strong>{{ __('Viticultores:') }}</strong> {{ $region['viticultores'] }}</li>
+                            <li><strong>{{ __('Bodegas:') }}</strong> {{ $region['bodegas'] }}</li>
                             @if($region['rendimiento'])
-                            <li><strong>Rendimiento máximo:</strong> {{ $region['rendimiento'] }}</li>
+                            <li><strong>{{ __('Rendimiento máximo:') }}</strong> {{ $region['rendimiento'] }}</li>
                             @endif
                         </ul>
                     </div>
 
                     <!-- Variedades -->
                     <div class="bg-white p-6 rounded-xl border border-zinc-200 shadow-sm">
-                        <h2 class="font-bold text-xl text-[var(--color-agro-green-dark)] mb-4">🍇 Variedades Autorizadas</h2>
+                        <h2 class="font-bold text-xl text-[var(--color-agro-green-dark)] mb-4">{{ __('🍇 Variedades Autorizadas') }}</h2>
                         <ul class="space-y-2">
                             @foreach($region['varieties'] as $variety)
                             <li class="flex items-center gap-2 text-sm text-zinc-700">
@@ -160,11 +160,11 @@
                 <!-- Clima y desafío principal -->
                 <div class="mb-12 space-y-4">
                     <div class="bg-blue-50 border-l-4 border-blue-400 p-5 rounded-r-xl">
-                        <p class="font-semibold text-blue-800 mb-1">🌤 Clima</p>
+                        <p class="font-semibold text-blue-800 mb-1">{{ __('🌤 Clima') }}</p>
                         <p class="text-zinc-700 text-sm leading-relaxed">{{ $region['climate'] }}</p>
                     </div>
                     <div class="bg-amber-50 border-l-4 border-amber-400 p-5 rounded-r-xl">
-                        <p class="font-semibold text-amber-800 mb-1">⚠️ Desafío principal de la zona</p>
+                        <p class="font-semibold text-amber-800 mb-1">{{ __('⚠️ Desafío principal de la zona') }}</p>
                         <p class="text-zinc-700 text-sm leading-relaxed">{{ $region['challenge'] }}</p>
                     </div>
                 </div>
@@ -195,47 +195,47 @@
                 <!-- Precio -->
                 <div class="mb-12">
                     <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-2">Precios para Viticultores de {{ $region['short'] }}</h2>
-                    <p class="text-zinc-500 mb-6 text-sm">Sin permanencia. Sin tarjeta para empezar.</p>
+                    <p class="text-zinc-500 mb-6 text-sm">{{ __('Sin permanencia. Sin tarjeta para empezar.') }}</p>
                     <div class="grid md:grid-cols-3 gap-4">
 
                         <!-- Básico gratis -->
                         <div class="bg-zinc-50 rounded-xl p-5 border border-zinc-200">
-                            <p class="font-bold text-zinc-700 mb-1">Básico</p>
-                            <p class="text-xs text-zinc-500 mb-3">Si tu bodega ya está en Agro365 y te invita</p>
-                            <p class="text-2xl font-bold text-zinc-800 mb-2">Gratis</p>
+                            <p class="font-bold text-zinc-700 mb-1">{{ __('Básico') }}</p>
+                            <p class="text-xs text-zinc-500 mb-3">{{ __('Si tu bodega ya está en Agro365 y te invita') }}</p>
+                            <p class="text-2xl font-bold text-zinc-800 mb-2">{{ __('Gratis') }}</p>
                             <ul class="text-xs text-zinc-600 space-y-1">
-                                <li>✅ Cuaderno de campo básico</li>
-                                <li>✅ SIGPAC y parcelas</li>
-                                <li>✅ Plantaciones y cultivos</li>
+                                <li>{{ __('✅ Cuaderno de campo básico') }}</li>
+                                <li>{{ __('✅ SIGPAC y parcelas') }}</li>
+                                <li>{{ __('✅ Plantaciones y cultivos') }}</li>
                             </ul>
                         </div>
 
                         <!-- Completo invitado -->
                         <div class="bg-[var(--color-agro-green-bg)] rounded-xl p-5 border border-[var(--color-agro-green-light)]/40">
-                            <p class="font-bold text-[var(--color-agro-green-dark)] mb-1">Completo (invitado)</p>
-                            <p class="text-xs text-zinc-500 mb-3">Con bodega en Agro365, funciones avanzadas</p>
+                            <p class="font-bold text-[var(--color-agro-green-dark)] mb-1">{{ __('Completo (invitado)') }}</p>
+                            <p class="text-xs text-zinc-500 mb-3">{{ __('Con bodega en Agro365, funciones avanzadas') }}</p>
                             <p class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-1">9€<span class="text-sm font-normal text-zinc-500">/mes</span></p>
-                            <p class="text-xs text-zinc-500 mb-2">o 85€/año</p>
+                            <p class="text-xs text-zinc-500 mb-2">{{ __('o 85€/año') }}</p>
                             <ul class="text-xs text-zinc-600 space-y-1">
-                                <li>✅ Todo lo básico</li>
-                                <li>✅ Teledetección NDVI</li>
-                                <li>✅ PAC y normativa</li>
-                                <li>✅ Facturación + Verifactu</li>
+                                <li>{{ __('✅ Todo lo básico') }}</li>
+                                <li>{{ __('✅ Teledetección NDVI') }}</li>
+                                <li>{{ __('✅ PAC y normativa') }}</li>
+                                <li>{{ __('✅ Facturación + Verifactu') }}</li>
                             </ul>
                         </div>
 
                         <!-- Independiente -->
                         <div class="bg-[var(--color-agro-green-bg)] rounded-xl p-5 border-2 border-[var(--color-agro-green)]">
                             <div class="inline-block px-2 py-0.5 bg-[var(--color-agro-green)] text-white rounded text-xs font-bold mb-2">INDEPENDIENTE</div>
-                            <p class="font-bold text-[var(--color-agro-green-dark)] mb-1">Sin bodega asociada</p>
-                            <p class="text-xs text-zinc-500 mb-3">Acceso completo por tu cuenta</p>
+                            <p class="font-bold text-[var(--color-agro-green-dark)] mb-1">{{ __('Sin bodega asociada') }}</p>
+                            <p class="text-xs text-zinc-500 mb-3">{{ __('Acceso completo por tu cuenta') }}</p>
                             <p class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-1">14€<span class="text-sm font-normal text-zinc-500">/mes</span></p>
-                            <p class="text-xs text-zinc-500 mb-2">o 130€/año</p>
+                            <p class="text-xs text-zinc-500 mb-2">{{ __('o 130€/año') }}</p>
                             <ul class="text-xs text-zinc-600 space-y-1">
-                                <li>✅ Todo incluido</li>
-                                <li>✅ Vendimias y procesos</li>
-                                <li>✅ App móvil sin conexión</li>
-                                <li>✅ Soporte email 48h</li>
+                                <li>{{ __('✅ Todo incluido') }}</li>
+                                <li>{{ __('✅ Vendimias y procesos') }}</li>
+                                <li>{{ __('✅ App móvil sin conexión') }}</li>
+                                <li>{{ __('✅ Soporte email 48h') }}</li>
                             </ul>
                         </div>
 
@@ -255,10 +255,8 @@
                 <h2 class="text-3xl lg:text-4xl font-bold text-white mb-4">
                     Gestiona tu viñedo en {{ $region['short'] }} con Agro365
                 </h2>
-                <p class="text-green-100 text-lg mb-8">
-                    Cuaderno de campo digital, control PAC y cumplimiento del Consejo Regulador.
-                    Básico obligatorio desde 2027 · Completo desde 2028.
-                </p>
+                <p class="text-green-100 text-lg mb-8">{{ __('Cuaderno de campo digital, control PAC y cumplimiento del Consejo Regulador.
+                    Básico obligatorio desde 2027 · Completo desde 2028.') }}</p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
                     <a href="{{ route('register') }}" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-white text-[var(--color-agro-green-dark)] hover:bg-green-50 transition-all font-bold text-lg shadow-lg">
                         Comenzar Gratis
@@ -267,14 +265,14 @@
                         Ver preguntas frecuentes
                     </a>
                 </div>
-                <p class="text-green-200/70 text-sm mt-6">Sin tarjeta requerida · Configuración en 5 minutos · Soporte en español</p>
+                <p class="text-green-200/70 text-sm mt-6">{{ __('Sin tarjeta requerida · Configuración en 5 minutos · Soporte en español') }}</p>
             </div>
         </section>
 
         <!-- Otras regiones -->
         <section class="py-12 bg-zinc-50">
             <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 class="text-xl font-bold text-zinc-700 mb-6">Software para viticultores en otras denominaciones</h2>
+                <h2 class="text-xl font-bold text-zinc-700 mb-6">{{ __('Software para viticultores en otras denominaciones') }}</h2>
                 @php
                 $allRegions = [
                     ['DOCa Rioja', '/software-viticultores-rioja'],

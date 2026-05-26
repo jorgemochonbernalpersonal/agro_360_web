@@ -48,11 +48,11 @@ class Index extends Component
     protected function messages(): array
     {
         return [
-            'year.required'         => 'El año es obligatorio.',
-            'payment_type.required' => 'El tipo de pago es obligatorio.',
-            'amount.required'       => 'El importe es obligatorio.',
-            'amount.min'            => 'El importe debe ser mayor que 0.',
-            'payment_date.required' => 'La fecha es obligatoria.',
+            'year.required'         => __('El año es obligatorio.'),
+            'payment_type.required' => __('El tipo de pago es obligatorio.'),
+            'amount.required'       => __('El importe es obligatorio.'),
+            'amount.min'            => __('El importe debe ser mayor que 0.'),
+            'payment_date.required' => __('La fecha es obligatoria.'),
         ];
     }
 
@@ -96,10 +96,10 @@ class Index extends Component
 
         if ($this->editingId) {
             PacPayment::forViticulturist(Auth::id())->findOrFail($this->editingId)->update($data);
-            $this->toastSuccess('Pago actualizado.');
+            $this->toastSuccess(__('Pago actualizado.'));
         } else {
             PacPayment::create($data);
-            $this->toastSuccess('Pago registrado.');
+            $this->toastSuccess(__('Pago registrado.'));
         }
 
         $this->resetForm();
@@ -109,7 +109,7 @@ class Index extends Component
     public function delete(int $id): void
     {
         PacPayment::forViticulturist(Auth::id())->findOrFail($id)->delete();
-        $this->toastSuccess('Pago eliminado.');
+        $this->toastSuccess(__('Pago eliminado.'));
     }
 
     public function cancel(): void

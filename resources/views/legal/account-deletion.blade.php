@@ -39,122 +39,114 @@
                     </svg>
                     Volver a Inicio
                 </a>
-                <h1 class="text-4xl font-bold text-gray-900">Eliminación de Cuenta</h1>
-                <p class="mt-2 text-gray-600">Agro365 - Software de Gestión Agrícola</p>
+                <h1 class="text-4xl font-bold text-gray-900">{{ __('Eliminación de Cuenta') }}</h1>
+                <p class="mt-2 text-gray-600">{{ __('Agro365 - Software de Gestión Agrícola') }}</p>
             </div>
 
             <!-- Content -->
             <div class="bg-white rounded-lg shadow-sm p-8 space-y-8">
 
                 <section>
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">1. Cómo solicitar la eliminación de tu cuenta</h2>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">{{ __('1. Cómo solicitar la eliminación de tu cuenta') }}</h2>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        En <strong>Agro365</strong> puedes solicitar la eliminación completa de tu cuenta y datos asociados de las siguientes maneras:
+                        En <strong>{{ __('Agro365') }}</strong> puedes solicitar la eliminación completa de tu cuenta y datos asociados de las siguientes maneras:
                     </p>
 
                     <div class="space-y-6">
                         <div class="bg-green-50 border border-green-200 rounded-lg p-6">
-                            <h3 class="font-semibold text-lg text-green-800 mb-2">Opción A: Desde la aplicación móvil</h3>
+                            <h3 class="font-semibold text-lg text-green-800 mb-2">{{ __('Opción A: Desde la aplicación móvil') }}</h3>
                             <ol class="list-decimal list-inside space-y-2 text-gray-700 ml-2">
-                                <li>Abre la app <strong>Agro365</strong> e inicia sesión con tu cuenta.</li>
-                                <li>Ve a <strong>Perfil</strong> (icono de usuario en la barra inferior).</li>
-                                <li>Pulsa en <strong>"Eliminar cuenta"</strong>.</li>
-                                <li>Introduce tu contraseña actual para confirmar tu identidad.</li>
-                                <li>Confirma la eliminación. Tu cuenta y datos se eliminarán de forma permanente.</li>
+                                <li>Abre la app <strong>{{ __('Agro365') }}</strong> e inicia sesión con tu cuenta.</li>
+                                <li>Ve a <strong>{{ __('Perfil') }}</strong> (icono de usuario en la barra inferior).</li>
+                                <li>Pulsa en <strong>{{ __('"Eliminar cuenta"') }}</strong>.</li>
+                                <li>{{ __('Introduce tu contraseña actual para confirmar tu identidad.') }}</li>
+                                <li>{{ __('Confirma la eliminación. Tu cuenta y datos se eliminarán de forma permanente.') }}</li>
                             </ol>
                         </div>
 
                         <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
-                            <h3 class="font-semibold text-lg text-blue-800 mb-2">Opción B: Por correo electrónico</h3>
+                            <h3 class="font-semibold text-lg text-blue-800 mb-2">{{ __('Opción B: Por correo electrónico') }}</h3>
                             <ol class="list-decimal list-inside space-y-2 text-gray-700 ml-2">
-                                <li>Envía un correo a <a href="mailto:info@agro365.es" class="text-[var(--color-agro-green-dark)] font-semibold hover:underline">info@agro365.es</a> con el asunto <strong>"Solicitud de eliminación de cuenta"</strong>.</li>
-                                <li>Incluye la dirección de correo electrónico asociada a tu cuenta.</li>
-                                <li>Verificaremos tu identidad y procesaremos la solicitud en un plazo máximo de <strong>30 días</strong>, conforme al RGPD.</li>
+                                <li>Envía un correo a <a href="mailto:info@agro365.es" class="text-[var(--color-agro-green-dark)] font-semibold hover:underline">info@agro365.es</a> con el asunto <strong>{{ __('"Solicitud de eliminación de cuenta"') }}</strong>.</li>
+                                <li>{{ __('Incluye la dirección de correo electrónico asociada a tu cuenta.') }}</li>
+                                <li>Verificaremos tu identidad y procesaremos la solicitud en un plazo máximo de <strong>{{ __('30 días') }}</strong>, conforme al RGPD.</li>
                             </ol>
                         </div>
                     </div>
                 </section>
 
                 <section>
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">2. Datos que se eliminan</h2>
-                    <p class="text-gray-700 leading-relaxed mb-4">
-                        Al eliminar tu cuenta, se borran de forma permanente e irreversible los siguientes datos:
-                    </p>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">{{ __('2. Datos que se eliminan') }}</h2>
+                    <p class="text-gray-700 leading-relaxed mb-4">{{ __('Al eliminar tu cuenta, se borran de forma permanente e irreversible los siguientes datos:') }}</p>
                     <ul class="list-disc list-inside space-y-2 text-gray-700 ml-4">
-                        <li><strong>Datos de cuenta:</strong> nombre, correo electrónico, contraseña, DNI/NIF, rol, imagen de perfil y preferencias.</li>
-                        <li><strong>Datos de perfil:</strong> dirección, ciudad, código postal, provincia, teléfono.</li>
-                        <li><strong>Datos agrícolas:</strong> parcelas, actividades del cuaderno de campo (tratamientos, riegos, labores culturales, fertilizaciones, observaciones, podas, vendimias), rendimientos estimados.</li>
-                        <li><strong>Datos de bodega:</strong> contenedores, lotes de vino, transferencias, historial de operaciones.</li>
-                        <li><strong>Facturas y documentos:</strong> facturas, informes oficiales, certificaciones.</li>
-                        <li><strong>Tokens de acceso:</strong> todos los tokens de sesión y API se revocan inmediatamente.</li>
+                        <li><strong>{{ __('Datos de cuenta:') }}</strong> nombre, correo electrónico, contraseña, DNI/NIF, rol, imagen de perfil y preferencias.</li>
+                        <li><strong>{{ __('Datos de perfil:') }}</strong> dirección, ciudad, código postal, provincia, teléfono.</li>
+                        <li><strong>{{ __('Datos agrícolas:') }}</strong> parcelas, actividades del cuaderno de campo (tratamientos, riegos, labores culturales, fertilizaciones, observaciones, podas, vendimias), rendimientos estimados.</li>
+                        <li><strong>{{ __('Datos de bodega:') }}</strong> contenedores, lotes de vino, transferencias, historial de operaciones.</li>
+                        <li><strong>{{ __('Facturas y documentos:') }}</strong> facturas, informes oficiales, certificaciones.</li>
+                        <li><strong>{{ __('Tokens de acceso:') }}</strong> todos los tokens de sesión y API se revocan inmediatamente.</li>
                     </ul>
                 </section>
 
                 <section>
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">3. Datos que pueden conservarse</h2>
-                    <p class="text-gray-700 leading-relaxed mb-4">
-                        De acuerdo con la legislación vigente, podemos retener cierta información limitada durante los periodos legalmente establecidos:
-                    </p>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">{{ __('3. Datos que pueden conservarse') }}</h2>
+                    <p class="text-gray-700 leading-relaxed mb-4">{{ __('De acuerdo con la legislación vigente, podemos retener cierta información limitada durante los periodos legalmente establecidos:') }}</p>
                     <div class="overflow-x-auto">
                         <table class="w-full border-collapse border border-gray-200 text-sm">
                             <thead>
                                 <tr class="bg-gray-100">
-                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold text-gray-900">Tipo de dato</th>
-                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold text-gray-900">Periodo de retención</th>
-                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold text-gray-900">Base legal</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold text-gray-900">{{ __('Tipo de dato') }}</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold text-gray-900">{{ __('Periodo de retención') }}</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold text-gray-900">{{ __('Base legal') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td class="border border-gray-200 px-4 py-3 text-gray-700">Registros de facturación</td>
-                                    <td class="border border-gray-200 px-4 py-3 text-gray-700">4 años</td>
-                                    <td class="border border-gray-200 px-4 py-3 text-gray-700">Ley General Tributaria (art. 66)</td>
+                                    <td class="border border-gray-200 px-4 py-3 text-gray-700">{{ __('Registros de facturación') }}</td>
+                                    <td class="border border-gray-200 px-4 py-3 text-gray-700">{{ __('4 años') }}</td>
+                                    <td class="border border-gray-200 px-4 py-3 text-gray-700">{{ __('Ley General Tributaria (art. 66)') }}</td>
                                 </tr>
                                 <tr class="bg-gray-50">
-                                    <td class="border border-gray-200 px-4 py-3 text-gray-700">Logs de seguridad (anonimizados)</td>
-                                    <td class="border border-gray-200 px-4 py-3 text-gray-700">12 meses</td>
-                                    <td class="border border-gray-200 px-4 py-3 text-gray-700">Ley 34/2002 (LSSI-CE, art. 12)</td>
+                                    <td class="border border-gray-200 px-4 py-3 text-gray-700">{{ __('Logs de seguridad (anonimizados)') }}</td>
+                                    <td class="border border-gray-200 px-4 py-3 text-gray-700">{{ __('12 meses') }}</td>
+                                    <td class="border border-gray-200 px-4 py-3 text-gray-700">{{ __('Ley 34/2002 (LSSI-CE, art. 12)') }}</td>
                                 </tr>
                                 <tr>
-                                    <td class="border border-gray-200 px-4 py-3 text-gray-700">Cuaderno de campo digital</td>
-                                    <td class="border border-gray-200 px-4 py-3 text-gray-700">3 años</td>
-                                    <td class="border border-gray-200 px-4 py-3 text-gray-700">Normativa PAC / Reglamento (UE) 2021/2116</td>
+                                    <td class="border border-gray-200 px-4 py-3 text-gray-700">{{ __('Cuaderno de campo digital') }}</td>
+                                    <td class="border border-gray-200 px-4 py-3 text-gray-700">{{ __('3 años') }}</td>
+                                    <td class="border border-gray-200 px-4 py-3 text-gray-700">{{ __('Normativa PAC / Reglamento (UE) 2021/2116') }}</td>
                                 </tr>
                                 <tr class="bg-gray-50">
-                                    <td class="border border-gray-200 px-4 py-3 text-gray-700">Registros SILICIE / INFOVI</td>
-                                    <td class="border border-gray-200 px-4 py-3 text-gray-700">5 años</td>
-                                    <td class="border border-gray-200 px-4 py-3 text-gray-700">Normativa vitivinícola estatal</td>
+                                    <td class="border border-gray-200 px-4 py-3 text-gray-700">{{ __('Registros SILICIE / INFOVI') }}</td>
+                                    <td class="border border-gray-200 px-4 py-3 text-gray-700">{{ __('5 años') }}</td>
+                                    <td class="border border-gray-200 px-4 py-3 text-gray-700">{{ __('Normativa vitivinícola estatal') }}</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
-                    <p class="text-gray-600 text-sm mt-3">
-                        Los datos retenidos por obligación legal se conservan de forma anonimizada o seudonimizada y no se utilizan para ningún otro fin. Una vez transcurrido el periodo de retención, se eliminan automáticamente.
-                    </p>
+                    <p class="text-gray-600 text-sm mt-3">{{ __('Los datos retenidos por obligación legal se conservan de forma anonimizada o seudonimizada y no se utilizan para ningún otro fin. Una vez transcurrido el periodo de retención, se eliminan automáticamente.') }}</p>
                 </section>
 
                 <section>
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">4. Consecuencias de la eliminación</h2>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">{{ __('4. Consecuencias de la eliminación') }}</h2>
                     <ul class="list-disc list-inside space-y-2 text-gray-700 ml-4">
-                        <li>La eliminación es <strong>permanente e irreversible</strong>. No podremos recuperar tu cuenta ni tus datos una vez completada.</li>
-                        <li>Perderás acceso a todas las funcionalidades de la plataforma.</li>
-                        <li>Si eres viticultor vinculado a una bodega, se eliminará la asociación.</li>
-                        <li>Podrás crear una nueva cuenta con el mismo correo electrónico en el futuro.</li>
+                        <li>La eliminación es <strong>{{ __('permanente e irreversible') }}</strong>. No podremos recuperar tu cuenta ni tus datos una vez completada.</li>
+                        <li>{{ __('Perderás acceso a todas las funcionalidades de la plataforma.') }}</li>
+                        <li>{{ __('Si eres viticultor vinculado a una bodega, se eliminará la asociación.') }}</li>
+                        <li>{{ __('Podrás crear una nueva cuenta con el mismo correo electrónico en el futuro.') }}</li>
                     </ul>
                 </section>
 
                 <section>
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">5. Tus derechos (RGPD)</h2>
-                    <p class="text-gray-700 leading-relaxed mb-4">
-                        Conforme al Reglamento General de Protección de Datos (UE) 2016/679, tienes derecho a:
-                    </p>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">{{ __('5. Tus derechos (RGPD)') }}</h2>
+                    <p class="text-gray-700 leading-relaxed mb-4">{{ __('Conforme al Reglamento General de Protección de Datos (UE) 2016/679, tienes derecho a:') }}</p>
                     <ul class="list-disc list-inside space-y-2 text-gray-700 ml-4">
-                        <li><strong>Acceso:</strong> solicitar una copia de tus datos personales.</li>
-                        <li><strong>Rectificación:</strong> corregir datos inexactos o incompletos.</li>
-                        <li><strong>Supresión:</strong> solicitar la eliminación de tus datos (derecho al olvido).</li>
-                        <li><strong>Portabilidad:</strong> recibir tus datos en un formato estructurado y legible.</li>
-                        <li><strong>Oposición:</strong> oponerte al tratamiento de tus datos.</li>
-                        <li><strong>Limitación:</strong> solicitar la restricción del tratamiento.</li>
+                        <li><strong>{{ __('Acceso:') }}</strong> solicitar una copia de tus datos personales.</li>
+                        <li><strong>{{ __('Rectificación:') }}</strong> corregir datos inexactos o incompletos.</li>
+                        <li><strong>{{ __('Supresión:') }}</strong> solicitar la eliminación de tus datos (derecho al olvido).</li>
+                        <li><strong>{{ __('Portabilidad:') }}</strong> recibir tus datos en un formato estructurado y legible.</li>
+                        <li><strong>{{ __('Oposición:') }}</strong> oponerte al tratamiento de tus datos.</li>
+                        <li><strong>{{ __('Limitación:') }}</strong> solicitar la restricción del tratamiento.</li>
                     </ul>
                     <p class="text-gray-700 leading-relaxed mt-4">
                         Para ejercer cualquiera de estos derechos, contacta con nosotros en
@@ -163,13 +155,13 @@
                 </section>
 
                 <section class="border-t border-gray-200 pt-6">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">6. Contacto</h2>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">{{ __('6. Contacto') }}</h2>
                     <ul class="space-y-2 text-gray-700">
-                        <li><strong>Email:</strong> <a href="mailto:info@agro365.es" class="text-[var(--color-agro-green-dark)] hover:underline">info@agro365.es</a></li>
-                        <li><strong>Aplicación:</strong> Agro365</li>
-                        <li><strong>Desarrollador:</strong> Agro365</li>
+                        <li><strong>{{ __('Email:') }}</strong> <a href="mailto:info@agro365.es" class="text-[var(--color-agro-green-dark)] hover:underline">info@agro365.es</a></li>
+                        <li><strong>{{ __('Aplicación:') }}</strong> Agro365</li>
+                        <li><strong>{{ __('Desarrollador:') }}</strong> Agro365</li>
                     </ul>
-                    <p class="text-gray-500 text-sm mt-4">Última actualización: abril 2026</p>
+                    <p class="text-gray-500 text-sm mt-4">{{ __('Última actualización: abril 2026') }}</p>
                 </section>
 
             </div>

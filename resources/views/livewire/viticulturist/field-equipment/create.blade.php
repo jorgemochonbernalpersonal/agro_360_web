@@ -25,7 +25,7 @@
 
                 <flux:field>
                     <flux:label>{{ __('Número de matrícula/registro') }}</flux:label>
-                    <flux:input wire:model="registration_number" type="text" placeholder="Ej: ITB-2024-001" />
+                    <flux:input wire:model="registration_number" type="text" :placeholder="__('Ej: ITB-2024-001')" />
                     <flux:error name="registration_number" />
                 </flux:field>
 

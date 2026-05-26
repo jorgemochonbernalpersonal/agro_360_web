@@ -22,7 +22,7 @@
             <div class="flex justify-between items-center h-16">
                 <a href="{{ url('/') }}" class="flex items-center gap-3">
                     <img src="{{ asset('images/logo.png') }}" alt="Agro365" class="h-10 w-auto">
-                    <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">Agro365</span>
+                    <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Agro365') }}</span>
                 </a>
                 @guest
                     <a href="{{ route('register') }}" class="px-4 py-2 rounded-lg bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white">Comenzar Gratis</a>
@@ -37,62 +37,60 @@
             <nav class="text-sm text-gray-500 mb-6">
                 <a href="{{ url('/') }}" class="hover:text-[var(--color-agro-green)]">Inicio</a> → 
                 <a href="{{ content_route('content.software-viticultores') }}" class="hover:text-[var(--color-agro-green)]">Software Viticultores</a> → 
-                <span class="text-gray-700">Rioja</span>
+                <span class="text-gray-700">{{ __('Rioja') }}</span>
             </nav>
 
             <div class="mb-12">
                 <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-100 border border-red-300 mb-6">
                     <span class="text-lg">🍷</span>
-                    <span class="text-sm font-semibold text-red-800">DOCa Rioja</span>
+                    <span class="text-sm font-semibold text-red-800">{{ __('DOCa Rioja') }}</span>
                 </div>
-                <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">
-                    Software para Viticultores en La Rioja
-                </h1>
+                <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">{{ __('Software para Viticultores en La Rioja') }}</h1>
                 <p class="text-xl text-gray-600 leading-relaxed">
-                    Gestión agrícola <strong>especializada para DOCa Rioja</strong>. Control de variedades autóctonas, rendimientos máximos permitidos y cumplimiento normativo específico de la denominación.
+                    Gestión agrícola <strong>{{ __('especializada para DOCa Rioja') }}</strong>. Control de variedades autóctonas, rendimientos máximos permitidos y cumplimiento normativo específico de la denominación.
                 </p>
             </div>
 
             <article class="prose prose-lg max-w-none">
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Variedades de La Rioja</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Variedades de La Rioja') }}</h2>
                     <div class="grid md:grid-cols-2 gap-6 mb-6">
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-red-700 mb-2">🔴 Tintas</h3>
+                            <h3 class="font-bold text-lg text-red-700 mb-2">{{ __('🔴 Tintas') }}</h3>
                             <ul class="text-gray-700 text-sm space-y-1">
-                                <li>• <strong>Tempranillo</strong> (Tinta del País)</li>
-                                <li>• Garnacha Tinta</li>
-                                <li>• Graciano</li>
-                                <li>• Mazuelo (Cariñena)</li>
-                                <li>• Maturana Tinta</li>
+                                <li>• <strong>{{ __('Tempranillo') }}</strong> (Tinta del País)</li>
+                                <li>{{ __('• Garnacha Tinta') }}</li>
+                                <li>{{ __('• Graciano') }}</li>
+                                <li>{{ __('• Mazuelo (Cariñena)') }}</li>
+                                <li>{{ __('• Maturana Tinta') }}</li>
                             </ul>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-amber-700 mb-2">⚪ Blancas</h3>
+                            <h3 class="font-bold text-lg text-amber-700 mb-2">{{ __('⚪ Blancas') }}</h3>
                             <ul class="text-gray-700 text-sm space-y-1">
-                                <li>• <strong>Viura</strong> (Macabeo)</li>
-                                <li>• Malvasía</li>
-                                <li>• Garnacha Blanca</li>
-                                <li>• Tempranillo Blanco</li>
-                                <li>• Maturana Blanca</li>
+                                <li>• <strong>{{ __('Viura') }}</strong> (Macabeo)</li>
+                                <li>{{ __('• Malvasía') }}</li>
+                                <li>{{ __('• Garnacha Blanca') }}</li>
+                                <li>{{ __('• Tempranillo Blanco') }}</li>
+                                <li>{{ __('• Maturana Blanca') }}</li>
                             </ul>
                         </div>
                     </div>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Rendimientos DOCa Rioja</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Rendimientos DOCa Rioja') }}</h2>
                     <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-6">
                         <table class="w-full text-sm">
                             <thead>
                                 <tr class="border-b">
-                                    <th class="text-left py-2 text-[var(--color-agro-green-dark)]">Tipo</th>
-                                    <th class="text-right py-2 text-[var(--color-agro-green-dark)]">Límite kg/ha</th>
+                                    <th class="text-left py-2 text-[var(--color-agro-green-dark)]">{{ __('Tipo') }}</th>
+                                    <th class="text-right py-2 text-[var(--color-agro-green-dark)]">{{ __('Límite kg/ha') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="text-gray-700">
-                                <tr class="border-b"><td class="py-2">Variedades tintas</td><td class="text-right font-bold">6.500 kg/ha</td></tr>
-                                <tr><td class="py-2">Variedades blancas</td><td class="text-right font-bold">9.000 kg/ha</td></tr>
+                                <tr class="border-b"><td class="py-2">{{ __('Variedades tintas') }}</td><td class="text-right font-bold">{{ __('6.500 kg/ha') }}</td></tr>
+                                <tr><td class="py-2">{{ __('Variedades blancas') }}</td><td class="text-right font-bold">{{ __('9.000 kg/ha') }}</td></tr>
                             </tbody>
                         </table>
                         <p class="text-gray-600 text-sm mt-4">Agro365 calcula automáticamente tus <a href="{{ url('/rendimientos-cosecha-viñedo') }}" class="text-[var(--color-agro-green)] hover:underline">rendimientos</a> y te alerta si superas los límites.</p>
@@ -100,7 +98,7 @@
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Funcionalidades para Rioja</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Funcionalidades para Rioja') }}</h2>
                     <ul class="list-disc list-inside space-y-3 text-gray-700 mb-6 ml-4">
                         <li><a href="{{ content_route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">Cuaderno de campo digital</a> adaptado a normativa DOCa</li>
                         <li>Control de <a href="{{ url('/registro-fitosanitarios') }}" class="text-[var(--color-agro-green)] hover:underline">tratamientos fitosanitarios</a></li>
@@ -112,9 +110,9 @@
 
                 <section class="mb-12">
                     <div class="bg-gradient-to-r from-red-50 to-red-100/30 p-8 rounded-xl border border-red-200">
-                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">🍷 Gestiona tu Viñedo en Rioja</h3>
+                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('🍷 Gestiona tu Viñedo en Rioja') }}</h3>
                         <p class="text-gray-700 mb-6">
-                            Software especializado para viticultores de DOCa Rioja. Cumple con la normativa del Consejo Regulador. <strong>3 meses gratis</strong>.
+                            Software especializado para viticultores de DOCa Rioja. Cumple con la normativa del Consejo Regulador. <strong>{{ __('3 meses gratis') }}</strong>.
                         </p>
                         <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:shadow-lg transition-all font-semibold">
                             Comenzar Gratis

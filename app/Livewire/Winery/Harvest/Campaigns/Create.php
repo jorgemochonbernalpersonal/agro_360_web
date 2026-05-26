@@ -39,9 +39,9 @@ class Create extends Component
     protected function messages(): array
     {
         return [
-            'name.required'        => 'El nombre es obligatorio.',
-            'year.required'        => 'El año es obligatorio.',
-            'end_date.after_or_equal' => 'La fecha de fin debe ser posterior a la de inicio.',
+            'name.required'        => __('El nombre es obligatorio.'),
+            'year.required'        => __('El año es obligatorio.'),
+            'end_date.after_or_equal' => __('La fecha de fin debe ser posterior a la de inicio.'),
         ];
     }
 
@@ -56,7 +56,7 @@ class Create extends Component
             ->exists();
 
         if ($exists) {
-            $this->addError('year', 'Ya existe una campaña para el año ' . $this->year . '.');
+            $this->addError('year', __('Ya existe una campaña para el año :year.', ['year' => $this->year]));
             return;
         }
 

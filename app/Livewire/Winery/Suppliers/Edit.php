@@ -65,7 +65,7 @@ class Edit extends Component
             'notes'          => $this->notes ?: null,
         ]);
 
-        $this->toastSuccess('Proveedor actualizado correctamente.');
+        $this->toastSuccess(__('Proveedor actualizado correctamente.'));
         $this->redirect(roleRoute('suppliers.index'), navigate: true);
     }
 

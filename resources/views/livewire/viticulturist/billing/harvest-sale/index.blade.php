@@ -1,5 +1,5 @@
 <div class="space-y-6 animate-fade-in">
-    <x-agro.page-header title="Facturación de Vendimia" description="Facturas emitidas por la venta de tu cosecha">
+    <x-agro.page-header title="{{ __('Facturación de Vendimia') }}" :description="__('Facturas emitidas por la venta de tu cosecha')">
         <x-slot:actions>
             <flux:button href="{{ roleRoute('viticulturist.invoices.harvest-sale.create') }}" wire:navigate variant="primary" icon="plus">
                 Nueva Factura
@@ -10,23 +10,21 @@
     <x-agro.filter-bar>
         <x-agro.filter-input
             wire:model.live.debounce.300ms="search"
-            placeholder="Buscar por nº, ref. o comprador..."
+            placeholder="{{ __('Buscar por nº, ref. o comprador...') }}"
         />
         <flux:select wire:model.live="buyerFilter" size="sm" class="w-52">
-            <flux:select.option value="">Todos los compradores</flux:select.option>
+            <flux:select.option value="">{{ __('Todos los compradores') }}</flux:select.option>
             @foreach ($buyers as $buyer)
                 <flux:select.option value="{{ $buyer }}">{{ $buyer }}</flux:select.option>
             @endforeach
         </flux:select>
         <flux:select wire:model.live="paymentFilter" size="sm" class="w-44">
-            <flux:select.option value="">Todos los pagos</flux:select.option>
-            <flux:select.option value="unpaid">Pendiente</flux:select.option>
-            <flux:select.option value="paid">Pagada</flux:select.option>
+            <flux:select.option value="">{{ __('Todos los pagos') }}</flux:select.option>
+            <flux:select.option value="unpaid">{{ __('Pendiente') }}</flux:select.option>
+            <flux:select.option value="paid">{{ __('Pagada') }}</flux:select.option>
         </flux:select>
         @if ($search || $buyerFilter || $paymentFilter)
-            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">
-                Limpiar
-            </flux:button>
+            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">{{ __('Limpiar') }}</flux:button>
         @endif
     </x-agro.filter-bar>
 
@@ -45,8 +43,8 @@
                                 <flux:icon icon="document-text" class="size-5 text-agro-600" />
                             </div>
                             <div class="flex-1 min-w-0">
-                                <h3 class="font-mono font-bold text-zinc-900 truncate" title="{{ $invoice->invoice_number ?? 'Sin código de factura' }}">
-                                    {{ $invoice->invoice_number ?? 'Sin código de factura' }}
+                                <h3 class="font-mono font-bold text-zinc-900 truncate" title="{{ $invoice->invoice_number ?? __('Sin código de factura') }}">
+                                    {{ $invoice->invoice_number ?? __('Sin código de factura') }}
                                 </h3>
                                 @if ($invoice->delivery_note_code)
                                     <p class="text-xs text-zinc-400 font-mono truncate" title="{{ $invoice->delivery_note_code }}">{{ $invoice->delivery_note_code }}</p>
@@ -58,18 +56,18 @@
                             </div>
                             <div class="flex flex-col items-end gap-1 shrink-0">
                                 @if ($invoice->status === 'cancelled')
-                                    <flux:badge color="red" size="sm">Cancelada</flux:badge>
+                                    <flux:badge color="red" size="sm">{{ __('Cancelada') }}</flux:badge>
                                 @elseif ($invoice->payment_status === 'paid')
-                                    <flux:badge color="green" size="sm">Pagada</flux:badge>
+                                    <flux:badge color="green" size="sm">{{ __('Pagada') }}</flux:badge>
                                 @else
-                                    <flux:badge color="orange" size="sm">Pendiente</flux:badge>
+                                    <flux:badge color="orange" size="sm">{{ __('Pendiente') }}</flux:badge>
                                 @endif
                                 @if ($invoice->delivery_status === 'delivered')
-                                    <flux:badge color="green" size="sm">Entregada</flux:badge>
+                                    <flux:badge color="green" size="sm">{{ __('Entregada') }}</flux:badge>
                                 @elseif ($invoice->delivery_status === 'cancelled')
-                                    <flux:badge color="red" size="sm">Cancelada</flux:badge>
+                                    <flux:badge color="red" size="sm">{{ __('Cancelada') }}</flux:badge>
                                 @else
-                                    <flux:badge color="amber" size="sm">Pendiente entrega</flux:badge>
+                                    <flux:badge color="amber" size="sm">{{ __('Pendiente entrega') }}</flux:badge>
                                 @endif
                             </div>
                         </div>
@@ -82,14 +80,14 @@
                         </div>
 
                         <div class="flex items-center justify-between">
-                            <span class="text-zinc-400">Fecha</span>
+                            <span class="text-zinc-400">{{ __('Fecha') }}</span>
                             <span class="text-zinc-700">
                                 {{ \Carbon\Carbon::parse($invoice->invoice_date)->format('d/m/Y') }}
                             </span>
                         </div>
 
                         <div class="flex items-center justify-between">
-                            <span class="text-zinc-400">Importe</span>
+                            <span class="text-zinc-400">{{ __('Importe') }}</span>
                             <span class="text-lg font-bold text-zinc-900">
                                 {{ number_format($invoice->total_amount, 2) }} €
                             </span>
@@ -105,14 +103,14 @@
                                     icon="document-text"
                                     variant="default"
                                     href="{{ roleRoute('viticulturist.invoices.harvest-sale.pdf', $invoice->id) }}"
-                                    title="Descargar Factura"
+                                    title="{{ __('Descargar Factura') }}"
                                 />
 
                                 <x-agro.action-button
                                     icon="document-arrow-down"
                                     variant="default"
                                     href="{{ roleRoute('viticulturist.invoices.harvest-sale.delivery-note-pdf', $invoice->id) }}"
-                                    title="Descargar Albarán"
+                                    title="{{ __('Descargar Albarán') }}"
                                 />
 
                                 @if ($invoice->status !== 'cancelled' && $invoice->billing_email)
@@ -121,7 +119,7 @@
                                         variant="primary"
                                         wire:click="sendEmail({{ $invoice->id }})"
                                         wire:loading.attr="disabled"
-                                        title="Enviar al comprador"
+                                        title="{{ __('Enviar al comprador') }}"
                                     />
                                 @endif
                             </div>
@@ -137,7 +135,7 @@
                                         variant="edit"
                                         href="{{ roleRoute('viticulturist.invoices.harvest-sale.edit', $invoice->id) }}"
                                         wire:navigate
-                                        title="Editar"
+                                        title="{{ __('Editar') }}"
                                     />
 
                                     @if ($invoice->delivery_status !== 'delivered')
@@ -145,24 +143,24 @@
                                             icon="truck"
                                             variant="success"
                                             wire:click="markDelivered({{ $invoice->id }})"
-                                            wire:confirm="¿Marcar esta factura como entregada? El stock pasará a vendido."
-                                            title="Marcar como entregada"
+                                            wire:confirm="{{ __('¿Marcar esta factura como entregada? El stock pasará a vendido.') }}"
+                                            title="{{ __('Marcar como entregada') }}"
                                         />
                                     @endif
 
                                     <x-agro.action-button
                                         variant="activate"
                                         wire:click="markPaid({{ $invoice->id }})"
-                                        wire:confirm="¿Marcar esta factura como pagada?"
-                                        title="Marcar como pagada"
+                                        wire:confirm="{{ __('¿Marcar esta factura como pagada?') }}"
+                                        title="{{ __('Marcar como pagada') }}"
                                     />
 
                                     <x-agro.action-button
                                         icon="x-mark"
                                         variant="danger"
                                         wire:click="cancel({{ $invoice->id }})"
-                                        wire:confirm="¿Cancelar esta factura? Los kg quedarán disponibles de nuevo."
-                                        title="Cancelar"
+                                        wire:confirm="{{ __('¿Cancelar esta factura? Los kg quedarán disponibles de nuevo.') }}"
+                                        title="{{ __('Cancelar') }}"
                                     />
                                 @endif
                             </div>
@@ -177,8 +175,8 @@
     @else
         <x-agro.empty-state
             icon="document-text"
-            message="No hay facturas de vendimia registradas"
-            description="Crea tu primera factura para cobrar por la uva entregada"
+            :message="__('No hay facturas de vendimia registradas')"
+            :description="__('Crea tu primera factura para cobrar por la uva entregada')"
         >
             <x-slot:action>
                 <flux:button href="{{ roleRoute('viticulturist.invoices.harvest-sale.create') }}" wire:navigate variant="primary" icon="plus">

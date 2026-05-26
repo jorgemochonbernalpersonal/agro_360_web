@@ -1,32 +1,30 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="Auditoría de stock"
-        description="Verificación y reconstrucción de stock por movimientos registrados"
+        title="{{ __('Auditoría de stock') }}"
+        :description="__('Verificación y reconstrucción de stock por movimientos registrados')"
     >
         <x-slot:actions>
-            <flux:button :href="roleRoute('product-lots.index')" icon="arrow-left" variant="ghost" wire:navigate>
-                Volver a productos
-            </flux:button>
+            <flux:button :href="roleRoute('product-lots.index')" icon="arrow-left" variant="ghost" wire:navigate>{{ __('Volver a productos') }}</flux:button>
         </x-slot:actions>
     </x-agro.page-header>
 
     {{-- KPIs --}}
     <div class="grid grid-cols-3 gap-4">
         <x-agro.stat-card
-            label="Total lotes"
+            :label="__('Total lotes')"
             :value="$stats['total']"
             icon="archive-box"
             color="zinc"
         />
         <x-agro.stat-card
-            label="Sin discrepancias"
+            :label="__('Sin discrepancias')"
             :value="$stats['ok']"
             icon="check-circle"
             color="green"
         />
         <x-agro.stat-card
-            label="Con discrepancias"
+            :label="__('Con discrepancias')"
             :value="$stats['drifted']"
             icon="exclamation-triangle"
             color="{{ $stats['drifted'] > 0 ? 'red' : 'green' }}"
@@ -45,7 +43,7 @@
             <flux:button
                 wire:click="recalculateAll"
                 wire:loading.attr="disabled"
-                wire:confirm="¿Recalcular los {{ $stats['drifted'] }} lotes con discrepancias? Se sobreescribirán sus cantidades actuales con los valores reconstruidos desde los movimientos."
+                wire:confirm="{{ __('¿Recalcular los :count lotes con discrepancias? Se sobreescribirán sus cantidades actuales con los valores reconstruidos desde los movimientos.', ['count' => $stats['drifted']]) }}"
                 variant="danger"
                 icon="arrow-path"
                 size="sm"
@@ -59,8 +57,8 @@
     @if($rows->isEmpty())
         <x-agro.empty-state
             icon="check-circle"
-            title="Todo en orden"
-            description="No hay discrepancias de stock en ningún lote."
+            title="{{ __('Todo en orden') }}"
+            :description="__('No hay discrepancias de stock en ningún lote.')"
         />
     @else
         <x-agro.card>
@@ -162,7 +160,7 @@
                                     <flux:button
                                         wire:click="recalculate({{ $lot->id }})"
                                         wire:loading.attr="disabled"
-                                        wire:confirm="¿Recalcular stock de «{{ $lot->name }}»? Se sobreescribirán las cantidades actuales con los valores reconstruidos desde los movimientos."
+                                        wire:confirm="{{ __('¿Recalcular stock de «:name»? Se sobreescribirán las cantidades actuales con los valores reconstruidos desde los movimientos.', ['name' => $lot->name]) }}"
                                         variant="ghost"
                                         icon="arrow-path"
                                         size="xs"
@@ -175,7 +173,7 @@
                                     variant="ghost"
                                     icon="pencil-square"
                                     size="xs"
-                                    title="Ajuste manual"
+                                    title="{{ __('Ajuste manual') }}"
                                 />
                             </div>
                         </x-agro.table-cell>
@@ -189,10 +187,10 @@
     {{-- Nota informativa --}}
     <flux:callout variant="info" icon="information-circle">
         <p class="text-sm">
-            La columna <strong>Esperado</strong> replica todos los movimientos registrados desde el stock inicial del lote.
+            La columna <strong>{{ __('Esperado') }}</strong> replica todos los movimientos registrados desde el stock inicial del lote.
             Si hay discrepancia, significa que alguna cantidad fue modificada manualmente o que ocurrió un error en una transacción.
-            <strong>Recalcular</strong> sobreescribe los valores con los reconstruidos desde movimientos.
-            <strong>Ajuste manual</strong> permite corregir directamente con justificación auditada.
+            <strong>{{ __('Recalcular') }}</strong> sobreescribe los valores con los reconstruidos desde movimientos.
+            <strong>{{ __('Ajuste manual') }}</strong> permite corregir directamente con justificación auditada.
         </p>
     </flux:callout>
 
@@ -200,7 +198,7 @@
     <x-agro.modal name="manual-adjustment" max-width="lg">
         <div class="p-6 space-y-5">
             <div>
-                <flux:heading size="lg">Ajuste manual de stock</flux:heading>
+                <flux:heading size="lg">{{ __('Ajuste manual de stock') }}</flux:heading>
                 <flux:subheading>{{ $adjustingLotName }}</flux:subheading>
             </div>
 
@@ -213,36 +211,32 @@
 
             <div class="grid grid-cols-3 gap-4">
                 <flux:field>
-                    <flux:label>Disponible</flux:label>
+                    <flux:label>{{ __('Disponible') }}</flux:label>
                     <flux:input wire:model="manualAvailable" type="number" step="0.001" min="0" />
                     <flux:error name="manualAvailable" />
                 </flux:field>
                 <flux:field>
-                    <flux:label>Reservado</flux:label>
+                    <flux:label>{{ __('Reservado') }}</flux:label>
                     <flux:input wire:model="manualReserved" type="number" step="0.001" min="0" />
                     <flux:error name="manualReserved" />
                 </flux:field>
                 <flux:field>
-                    <flux:label>Vendido</flux:label>
+                    <flux:label>{{ __('Vendido') }}</flux:label>
                     <flux:input wire:model="manualSold" type="number" step="0.001" min="0" />
                     <flux:error name="manualSold" />
                 </flux:field>
             </div>
 
             <flux:field>
-                <flux:label>Justificación <span class="text-red-500">*</span></flux:label>
+                <flux:label>{{ __('Justificación') }} <span class="text-red-500">*</span></flux:label>
                 <flux:textarea wire:model="adjustmentNote" rows="3"
-                    placeholder="Explica el motivo del ajuste (error en transacción, corrección de inventario físico...)" />
+                    placeholder="{{ __('Explica el motivo del ajuste (error en transacción, corrección de inventario físico...)') }}" />
                 <flux:error name="adjustmentNote" />
             </flux:field>
 
             <div class="flex justify-end gap-3 pt-2">
-                <flux:button x-on:click="$dispatch('close-modal', { name: 'manual-adjustment' })" variant="ghost">
-                    Cancelar
-                </flux:button>
-                <flux:button wire:click="saveManualAdjustment" wire:loading.attr="disabled" variant="primary" icon="check">
-                    Guardar ajuste
-                </flux:button>
+                <flux:button x-on:click="$dispatch('close-modal', { name: 'manual-adjustment' })" variant="ghost">{{ __('Cancelar') }}</flux:button>
+                <flux:button wire:click="saveManualAdjustment" wire:loading.attr="disabled" variant="primary" icon="check">{{ __('Guardar ajuste') }}</flux:button>
             </div>
         </div>
     </x-agro.modal>

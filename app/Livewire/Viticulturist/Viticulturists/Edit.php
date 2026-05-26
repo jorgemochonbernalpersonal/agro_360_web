@@ -47,10 +47,10 @@ class Edit extends Component
     protected function messages(): array
     {
         return [
-            'name.required'  => 'El nombre es obligatorio.',
-            'email.required' => 'El email es obligatorio.',
-            'email.email'    => 'El email debe ser una dirección válida.',
-            'email.unique'   => 'Este email ya está en uso por otra cuenta.',
+            'name.required'  => __('El nombre es obligatorio.'),
+            'email.required' => __('El email es obligatorio.'),
+            'email.email'    => __('El email debe ser una dirección válida.'),
+            'email.unique'   => __('Este email ya está en uso por otra cuenta.'),
         ];
     }
 
@@ -63,7 +63,7 @@ class Edit extends Component
             'email' => $this->email,
         ]);
 
-        $this->toastSuccess('Viticultor actualizado correctamente.');
+        $this->toastSuccess(__('Viticultor actualizado correctamente.'));
         $this->viticulturistRoleRedirect('personal.index', ['viewMode' => 'personal']);
     }
 

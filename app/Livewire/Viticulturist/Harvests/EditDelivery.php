@@ -222,7 +222,7 @@ class EditDelivery extends Component
             ));
         }
 
-        $this->toastSuccess('Entrega eliminada.');
+        $this->toastSuccess(__('Entrega eliminada.'));
 
         return $this->viticulturistRoleRedirect('harvests.index');
     }
@@ -248,6 +248,6 @@ class EditDelivery extends Component
         return view('livewire.viticulturist.harvests.edit-delivery', [
             'plots'              => $plots,
             'availablePlantings' => $availablePlantings,
-        ])->layout('layouts.app', ['title' => 'Editar entrega - Agro365']);
+        ])->layout('layouts.app', ['title' => __('Editar entrega - Agro365')]);
     }
 }

@@ -74,7 +74,7 @@ class Invite extends Component
             ->exists();
 
         if ($alreadyLinked) {
-            $this->toastError('Este viticultor ya está vinculado a tu bodega.');
+            $this->toastError(__('Este viticultor ya está vinculado a tu bodega.'));
             $this->confirmingId = null;
             return null;
         }
@@ -85,7 +85,7 @@ class Invite extends Component
             ->exists();
 
         if ($alreadyLinkedOtherWinery) {
-            $this->toastError('Este viticultor ya está vinculado a otra bodega.');
+            $this->toastError(__('Este viticultor ya está vinculado a otra bodega.'));
             $this->confirmingId = null;
             return null;
         }

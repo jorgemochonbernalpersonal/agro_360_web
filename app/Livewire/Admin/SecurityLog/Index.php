@@ -122,8 +122,8 @@ class Index extends Component
             'entries' => $entries,
             'stats'   => $stats,
         ])->layout('layouts.app', [
-            'title'       => 'Log de Seguridad - Admin - Agro365',
-            'description' => 'Historial de eventos de seguridad del sistema',
+            'title'       => __('Log de Seguridad - Admin - Agro365'),
+            'description' => __('Historial de eventos de seguridad del sistema'),
         ]);
     }
 }

@@ -24,7 +24,7 @@ class Edit extends Component
     public function mount(Crew $crew)
     {
         if (!Auth::user()->can('update', $crew)) {
-            abort(403, 'No tienes permiso para editar esta cuadrilla.');
+            abort(403, __('No tienes permiso para editar esta cuadrilla.'));
         }
 
         $this->crew = $crew;
@@ -72,7 +72,7 @@ class Edit extends Component
                 ]);
             });
 
-            $this->toastSuccess('Cuadrilla actualizada correctamente.');
+            $this->toastSuccess(__('Cuadrilla actualizada correctamente.'));
             return $this->viticulturistRoleRedirect('personal.show', $this->crew);
         } catch (\Exception $e) {
             Log::error('Error al actualizar cuadrilla', [
@@ -82,7 +82,7 @@ class Edit extends Component
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            $this->toastError('Error al actualizar la cuadrilla. Por favor, intenta de nuevo.');
+            $this->toastError(__('Error al actualizar la cuadrilla. Por favor, intenta de nuevo.'));
             return;
         }
     }

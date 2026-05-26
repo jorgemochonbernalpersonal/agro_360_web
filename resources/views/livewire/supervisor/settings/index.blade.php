@@ -1,8 +1,8 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="Sistema"
-        description="Configuración de perfil de la denominación de origen."
+        title="{{ __('Sistema') }}"
+        :description="__('Configuración de perfil de la denominación de origen.')"
     />
 
     {{-- Profile --}}
@@ -13,22 +13,20 @@
         </h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-                <flux:label>Nombre</flux:label>
+                <flux:label>{{ __('Nombre') }}</flux:label>
                 <flux:input type="text" wire:model="name"
                     />
                 <flux:error name="name" />
             </div>
             <div>
-                <flux:label>Email de contacto</flux:label>
+                <flux:label>{{ __('Email de contacto') }}</flux:label>
                 <flux:input type="email" wire:model="email"
                     />
                 <flux:error name="email" />
             </div>
         </div>
         <div class="mt-4">
-            <flux:button wire:click="updateProfile" variant="primary">
-                Guardar cambios
-            </flux:button>
+            <flux:button wire:click="updateProfile" variant="primary">{{ __('Guardar cambios') }}</flux:button>
         </div>
     </x-agro.card>
 
@@ -40,27 +38,25 @@
         </h3>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-                <flux:label>Contraseña actual</flux:label>
+                <flux:label>{{ __('Contraseña actual') }}</flux:label>
                 <flux:input type="password" wire:model="current_password"
                     />
                 <flux:error name="current_password" />
             </div>
             <div>
-                <flux:label>Nueva contraseña</flux:label>
+                <flux:label>{{ __('Nueva contraseña') }}</flux:label>
                 <flux:input type="password" wire:model="new_password"
                     />
                 <flux:error name="new_password" />
             </div>
             <div>
-                <flux:label>Confirmar contraseña</flux:label>
+                <flux:label>{{ __('Confirmar contraseña') }}</flux:label>
                 <flux:input type="password" wire:model="confirm_password"
                     />
             </div>
         </div>
         <div class="mt-4">
-            <flux:button wire:click="updatePassword" variant="primary">
-                Cambiar contraseña
-            </flux:button>
+            <flux:button wire:click="updatePassword" variant="primary">{{ __('Cambiar contraseña') }}</flux:button>
         </div>
     </x-agro.card>
 

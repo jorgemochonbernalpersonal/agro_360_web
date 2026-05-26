@@ -248,9 +248,9 @@
         <div class="doc-title">ALBARÁN</div>
         <div class="doc-code">{{ $code }}</div>
         <div class="doc-meta">
-            <strong>Fecha:</strong> {{ ($invoice->delivery_note_date ?? $invoice->invoice_date)?->format('d/m/Y') ?? now()->format('d/m/Y') }}<br>
+            <strong>{{ __('Fecha:') }}</strong> {{ ($invoice->delivery_note_date ?? $invoice->invoice_date)?->format('d/m/Y') ?? now()->format('d/m/Y') }}<br>
             @if($invoice->invoice_number && $invoice->delivery_note_code)
-                <strong>Ref. factura:</strong> {{ $invoice->invoice_number }}<br>
+                <strong>{{ __('Ref. factura:') }}</strong> {{ $invoice->invoice_number }}<br>
             @endif
         </div>
     </div>
@@ -307,10 +307,10 @@
 <table class="items">
     <thead>
         <tr>
-            <th style="width:5%">#</th>
-            <th style="width:{{ $isGrape ? '45%' : '50%' }}">Producto / Descripción</th>
-            <th style="width:20%">SKU / Ref.</th>
-            <th class="right" style="width:{{ $isGrape ? '30%' : '25%' }}">Cantidad</th>
+            <th style="width:5%">{{ __('#') }}</th>
+            <th style="width:{{ $isGrape ? '45%' : '50%' }}">{{ __('Producto / Descripción') }}</th>
+            <th style="width:20%">{{ __('SKU / Ref.') }}</th>
+            <th class="right" style="width:{{ $isGrape ? '30%' : '25%' }}">{{ __('Cantidad') }}</th>
         </tr>
     </thead>
     <tbody>
@@ -342,13 +342,13 @@
             </tr>
         @empty
             <tr>
-                <td colspan="4" style="text-align:center; color:#9ca3af; padding:18pt;">Sin líneas</td>
+                <td colspan="4" style="text-align:center; color:#9ca3af; padding:18pt;">{{ __('Sin líneas') }}</td>
             </tr>
         @endforelse
 
         @if($invoice->items->count() > 0)
             <tr class="total-qty-row">
-                <td colspan="3" style="text-align:right;">Total</td>
+                <td colspan="3" style="text-align:right;">{{ __('Total') }}</td>
                 <td class="right">
                     {{ number_format($totalQty, $isGrape ? 3 : 2, ',', '.') }}
                     <span style="font-size:7.5pt; font-weight:normal;">{{ $qtyUnit }}</span>

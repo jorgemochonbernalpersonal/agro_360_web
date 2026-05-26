@@ -29,7 +29,7 @@ class Index extends Component
                 ->first();
 
             if (!$relation) {
-                $this->toastError('No se encontró la relación con esta denominación de origen.');
+                $this->toastError(__('No se encontró la relación con esta denominación de origen.'));
                 return;
             }
 
@@ -40,7 +40,7 @@ class Index extends Component
                 ->first();
 
             if (!$relation) {
-                $this->toastError('No se encontró la relación con esta bodega.');
+                $this->toastError(__('No se encontró la relación con esta bodega.'));
                 return;
             }
 
@@ -114,12 +114,12 @@ class Index extends Component
             );
         }
 
-        $this->toastSuccess('Acceso al cuaderno revocado.');
+        $this->toastSuccess(__('Acceso al cuaderno revocado.'));
     }
 
     #[Layout('layouts.app', [
-        'title'       => 'Notebook Access - Agro365',
-        'description' => 'Gestiona qué bodegas y denominaciones de origen pueden ver tu cuaderno de campo digital.',
+        'title'       => __('Notebook Access - Agro365'),
+        'description' => __('Gestiona qué bodegas y denominaciones de origen pueden ver tu cuaderno de campo digital.'),
     ])]
     public function render()
     {

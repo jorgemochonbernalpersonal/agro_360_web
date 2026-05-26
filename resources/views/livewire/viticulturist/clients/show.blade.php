@@ -73,7 +73,7 @@
             @endif
             @if($client->has_cae && $client->cae_number)
                 <div>
-                    <p class="text-sm text-zinc-500">CAE</p>
+                    <p class="text-sm text-zinc-500">{{ __('CAE') }}</p>
                     <p class="font-semibold">{{ $client->cae_number }}</p>
                 </div>
             @endif

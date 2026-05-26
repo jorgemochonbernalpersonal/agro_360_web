@@ -46,8 +46,8 @@ class Disputes extends Component
             'disputes'     => $disputes,
             'vintageYears' => $vintageYears,
         ])->layout('layouts.app', [
-            'title'       => 'Disputas abiertas - Agro365',
-            'description' => 'Entregas con diferencias pendientes de resolver.',
+            'title'       => __('Disputas abiertas - Agro365'),
+            'description' => __('Entregas con diferencias pendientes de resolver.'),
         ]);
     }
 }

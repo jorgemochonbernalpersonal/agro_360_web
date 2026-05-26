@@ -65,7 +65,7 @@ class Edit extends Component
             'notes'                => $this->notes ?: null,
         ]);
 
-        $this->toastSuccess('Registro sanitario actualizado correctamente.');
+        $this->toastSuccess(__('Registro sanitario actualizado correctamente.'));
         $this->redirect(roleRoute('sanitary-registrations.index'), navigate: true);
     }
 

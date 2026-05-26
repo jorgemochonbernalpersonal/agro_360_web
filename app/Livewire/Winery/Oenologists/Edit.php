@@ -59,7 +59,7 @@ class Edit extends Component
             'notes'          => $this->notes ?: null,
         ]);
 
-        $this->toastSuccess('Enólogo actualizado correctamente.');
+        $this->toastSuccess(__('Enólogo actualizado correctamente.'));
         return $this->roleRedirect('oenologists.index');
     }
 

@@ -4,42 +4,40 @@
             <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-purple-100 to-pink-100 rounded-full mb-4">
                 <span class="text-4xl">⏰</span>
             </div>
-            <h1 class="text-3xl font-bold text-zinc-900 mb-2">Tu período de beta ha finalizado</h1>
-            <p class="text-zinc-600">Gracias por probar Agro365 durante la fase beta</p>
+            <h1 class="text-3xl font-bold text-zinc-900 mb-2">{{ __('Tu período de beta ha finalizado') }}</h1>
+            <p class="text-zinc-600">{{ __('Gracias por probar Agro365 durante la fase beta') }}</p>
         </div>
 
         <div class="bg-white rounded-2xl shadow-xl p-8 mb-6">
-            <h2 class="text-xl font-bold text-zinc-900 mb-4">
-                ¡No pierdas acceso a tus datos!
-            </h2>
+            <h2 class="text-xl font-bold text-zinc-900 mb-4">{{ __('¡No pierdas acceso a tus datos!') }}</h2>
             
             <div class="space-y-4 mb-6">
                 <div class="flex items-start gap-3 p-4 bg-blue-50 rounded-lg">
                     <flux:icon icon="check-circle" class="size-6 text-blue-600 flex-shrink-0 mt-0.5" />
                     <div>
-                        <p class="font-semibold text-blue-900">Tus datos están seguros</p>
-                        <p class="text-sm text-blue-700">Todas tus parcelas, cosechas, facturas y clientes están guardados y esperándote</p>
+                        <p class="font-semibold text-blue-900">{{ __('Tus datos están seguros') }}</p>
+                        <p class="text-sm text-blue-700">{{ __('Todas tus parcelas, cosechas, facturas y clientes están guardados y esperándote') }}</p>
                     </div>
                 </div>
 
                 <div class="flex items-start gap-3 p-4 bg-green-50 rounded-lg">
                     <flux:icon icon="clock" class="size-6 text-green-600 flex-shrink-0 mt-0.5" />
                     <div>
-                        <p class="font-semibold text-green-900">Acceso inmediato al renovar</p>
-                        <p class="text-sm text-green-700">Activa tu suscripción y continúa donde lo dejaste, sin perder nada</p>
+                        <p class="font-semibold text-green-900">{{ __('Acceso inmediato al renovar') }}</p>
+                        <p class="text-sm text-green-700">{{ __('Activa tu suscripción y continúa donde lo dejaste, sin perder nada') }}</p>
                     </div>
                 </div>
             </div>
 
             <div class="border-t pt-6">
                 <div class="text-center mb-6">
-                    <p class="text-sm text-zinc-600 mb-2">Plan Completo desde:</p>
+                    <p class="text-sm text-zinc-600 mb-2">{{ __('Plan Completo desde:') }}</p>
                     <div class="flex items-baseline justify-center gap-2">
                         <span class="text-4xl font-bold text-agro-700">{{ number_format($monthlyPrice, 0) }}€</span>
                         <span class="text-zinc-600">/mes</span>
                     </div>
                     @if($isWineryLinked)
-                        <p class="text-xs text-green-600 font-semibold mt-1">Precio especial por estar vinculado a bodega</p>
+                        <p class="text-xs text-green-600 font-semibold mt-1">{{ __('Precio especial por estar vinculado a bodega') }}</p>
                     @else
                         <p class="text-xs text-zinc-500 mt-1">o {{ number_format($yearlyPrice, 0) }}€/año</p>
                     @endif

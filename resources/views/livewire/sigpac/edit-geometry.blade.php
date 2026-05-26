@@ -1,7 +1,7 @@
 ﻿<div class="space-y-6 animate-fade-in">
     <!-- Header -->
     <x-agro.page-header
-        title="Editar Geometría SIGPAC"
+        title="{{ __('Editar Geometría SIGPAC') }}"
         :description="'Código: ' . $sigpac->full_code"
     />
 
@@ -13,10 +13,10 @@
                     <div class="p-1.5 rounded-lg bg-agro-50">
                         <flux:icon icon="map" class="size-4 text-agro-600" />
                     </div>
-                    <span class="font-semibold text-zinc-900 text-sm">Seleccionar Parcela</span>
+                    <span class="font-semibold text-zinc-900 text-sm">{{ __('Seleccionar Parcela') }}</span>
                 </div>
             </x-slot:header>
-            <p class="text-sm text-zinc-600 mb-4">Selecciona una parcela para crear o editar su geometría:</p>
+            <p class="text-sm text-zinc-600 mb-4">{{ __('Selecciona una parcela para crear o editar su geometría:') }}</p>
 
             @if($availablePlots->count() > 0)
                 <div class="space-y-2">
@@ -31,7 +31,7 @@
                     @endforeach
                 </div>
             @else
-                <x-agro.empty-state icon="map" message="No hay parcelas disponibles con este código SIGPAC" />
+                <x-agro.empty-state icon="map" :message="__('No hay parcelas disponibles con este código SIGPAC')" />
             @endif
         </x-agro.card>
     @else
@@ -50,7 +50,7 @@
                         @if($geometryId)
                             <flux:button
                                 wire:click="delete"
-                                wire:confirm="¿Estás seguro de eliminar esta geometría?"
+                                wire:confirm="{{ __('¿Estás seguro de eliminar esta geometría?') }}"
                                 variant="danger"
                                 size="sm"
                             >
@@ -64,8 +64,8 @@
                                 variant="primary"
                                 size="sm"
                             >
-                                <span wire:loading.remove wire:target="generateMapFromSigpac">Generar desde SIGPAC</span>
-                                <span wire:loading wire:target="generateMapFromSigpac">Generando...</span>
+                                <span wire:loading.remove wire:target="generateMapFromSigpac">{{ __('Generar desde SIGPAC') }}</span>
+                                <span wire:loading wire:target="generateMapFromSigpac">{{ __('Generando...') }}</span>
                             </flux:button>
                         @endif
                         <flux:button
@@ -91,7 +91,7 @@
             @if($showMap && !$viewOnly)
                 <flux:callout variant="info" class="mb-4">
                     <flux:callout.text>
-                        <strong>Instrucciones:</strong> Haz clic en el mapa para añadir puntos. Haz clic en "Guardar" cuando termines.
+                        <strong>{{ __('Instrucciones:') }}</strong> Haz clic en el mapa para añadir puntos. Haz clic en "Guardar" cuando termines.
                     </flux:callout.text>
                 </flux:callout>
 
@@ -103,16 +103,12 @@
                         wire:click="$set('showMap', false)"
                         variant="outline"
                         size="sm"
-                    >
-                        Cancelar
-                    </flux:button>
+                    >{{ __('Cancelar') }}</flux:button>
                     <flux:button
                         wire:click="save"
                         variant="primary"
                         size="sm"
-                    >
-                        Guardar Geometría
-                    </flux:button>
+                    >{{ __('Guardar Geometría') }}</flux:button>
                 </div>
             @elseif($geometryId && !empty($coordinates))
                 <!-- Mostrar mapa existente (solo lectura o modo edición) -->
@@ -129,13 +125,11 @@
                             wire:click="$set('showMap', true)"
                             variant="primary"
                             size="sm"
-                        >
-                            Editar Geometría
-                        </flux:button>
+                        >{{ __('Editar Geometría') }}</flux:button>
                     </div>
                 @endif
             @else
-                <p class="text-sm text-zinc-500 text-center py-8">No hay geometría guardada. Haz clic en "Crear Mapa" para añadir una.</p>
+                <p class="text-sm text-zinc-500 text-center py-8">{{ __('No hay geometría guardada. Haz clic en "Crear Mapa" para añadir una.') }}</p>
             @endif
         </x-agro.card>
     @endif

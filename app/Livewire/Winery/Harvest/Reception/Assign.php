@@ -41,14 +41,14 @@ class Assign extends Component
         $this->validate([
             'container_id' => ['required', Rule::exists('containers', 'id')->where('user_id', Auth::id())->where('unit', 'kg')],
         ], [
-            'container_id.required' => 'Selecciona un contenedor.',
+            'container_id.required' => __('Selecciona un contenedor.'),
         ]);
 
         $wineryId  = Auth::id();
         $container = Container::where('user_id', $wineryId)->findOrFail((int) $this->container_id);
 
         if ($this->harvest->container_id === $container->id) {
-            $this->toastError('Este contenedor ya está asignado a esta recepción.');
+            $this->toastError(__('Este contenedor ya está asignado a esta recepción.'));
             return null;
         }
 
@@ -57,7 +57,7 @@ class Assign extends Component
         if (!$container->hasAvailableCapacity($weight)) {
             $available = number_format($container->getAvailableCapacity(), 0);
             $required  = number_format($weight, 0);
-            $this->addError('container_id', "Capacidad insuficiente. Disponible: {$available} kg, Necesario: {$required} kg.");
+            $this->addError('container_id', __('Capacidad insuficiente. Disponible: :available kg, Necesario: :required kg.', ['available' => $available, 'required' => $required]));
             return null;
         }
 

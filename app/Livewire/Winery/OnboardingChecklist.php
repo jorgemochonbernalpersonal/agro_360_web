@@ -71,7 +71,7 @@ class OnboardingChecklist extends Component
             }
         }
         $this->show = false;
-        $this->toastInfo('Tour saltado. Puedes reactivarlo desde el dashboard.');
+        $this->toastInfo(__('Tour saltado. Puedes reactivarlo desde el dashboard.'));
     }
 
     public function resetOnboarding(): void
@@ -80,7 +80,7 @@ class OnboardingChecklist extends Component
             ->whereIn('step', OnboardingProgress::WINERY_STEPS)
             ->delete();
         $this->loadProgress();
-        $this->toastSuccess('Tour reiniciado.');
+        $this->toastSuccess(__('Tour reiniciado.'));
     }
 
     private function autoCompleteExistingData(int $userId): void

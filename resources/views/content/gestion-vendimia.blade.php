@@ -51,7 +51,7 @@
                 <div class="flex items-center gap-3">
                     <a href="{{ url('/') }}" class="flex items-center gap-3">
                         <img src="{{ asset('images/logo.png') }}" alt="Agro365" width="120" height="40" loading="eager" class="h-10 w-auto">
-                        <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">Agro365</span>
+                        <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Agro365') }}</span>
                     </a>
                 </div>
                 <div class="flex items-center gap-4">
@@ -80,13 +80,13 @@
                 <ol class="flex items-center space-x-2">
                     <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
                         <a href="{{ url('/') }}" class="hover:text-[var(--color-agro-green)]" itemprop="item">
-                            <span itemprop="name">Inicio</span>
+                            <span itemprop="name">{{ __('Inicio') }}</span>
                         </a>
                         <meta itemprop="position" content="1" />
                     </li>
                     <span class="mx-2">/</span>
                     <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                        <span class="text-gray-900" itemprop="name">Gestión de Vendimia</span>
+                        <span class="text-gray-900" itemprop="name">{{ __('Gestión de Vendimia') }}</span>
                         <meta itemprop="position" content="2" />
                     </li>
                 </ol>
@@ -96,90 +96,86 @@
             <div class="mb-12">
                 <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-100 border border-amber-300 mb-6">
                     <span class="text-lg">🍇</span>
-                    <span class="text-sm font-semibold text-amber-800">Vendimia 2024 - Control Total</span>
+                    <span class="text-sm font-semibold text-amber-800">{{ __('Vendimia 2024 - Control Total') }}</span>
                 </div>
-                <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">
-                    Gestión de Vendimia Digital para Viticultores
-                </h1>
+                <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">{{ __('Gestión de Vendimia Digital para Viticultores') }}</h1>
                 <p class="text-xl text-gray-600 leading-relaxed">
-                    <strong>Control completo de tu vendimia</strong> desde la parcela hasta la factura. Registra contenedores, compara rendimientos reales vs estimados por parcela, y genera facturas automáticamente. Todo con <strong>trazabilidad total</strong> para cumplir con la normativa.
+                    <strong>{{ __('Control completo de tu vendimia') }}</strong> desde la parcela hasta la factura. Registra contenedores, compara rendimientos reales vs estimados por parcela, y genera facturas automáticamente. Todo con <strong>{{ __('trazabilidad total') }}</strong> para cumplir con la normativa.
                 </p>
             </div>
 
             <!-- Content -->
             <article class="prose prose-lg max-w-none">
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">¿Por Qué Digitalizar la Gestión de Vendimia?</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('¿Por Qué Digitalizar la Gestión de Vendimia?') }}</h2>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        La <strong>vendimia</strong> es el momento más crítico del año para cualquier viticultor. Sin un sistema adecuado de control, es fácil perder el rastro de qué uva viene de qué parcela, cuántos kilos se han recogido, y a qué precio se ha vendido.
+                        La <strong>{{ __('vendimia') }}</strong> es el momento más crítico del año para cualquier viticultor. Sin un sistema adecuado de control, es fácil perder el rastro de qué uva viene de qué parcela, cuántos kilos se han recogido, y a qué precio se ha vendido.
                     </p>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        Un <strong>software de gestión de vendimia</strong> como Agro365 te permite:
+                        Un <strong>{{ __('software de gestión de vendimia') }}</strong> como Agro365 te permite:
                     </p>
                     <ul class="list-disc list-inside space-y-2 text-gray-700 mb-6 ml-4">
-                        <li><strong>Registrar cada contenedor</strong> con parcela, variedad, peso y fecha</li>
-                        <li><strong>Comparar rendimientos</strong> reales vs estimados por parcela</li>
-                        <li><strong>Trazabilidad completa</strong> desde viña hasta factura</li>
-                        <li><strong>Generar facturas automáticamente</strong> desde la cosecha registrada</li>
-                        <li><strong>Cumplir normativa</strong> con informes oficiales de cosecha</li>
+                        <li><strong>{{ __('Registrar cada contenedor') }}</strong> con parcela, variedad, peso y fecha</li>
+                        <li><strong>{{ __('Comparar rendimientos') }}</strong> reales vs estimados por parcela</li>
+                        <li><strong>{{ __('Trazabilidad completa') }}</strong> desde viña hasta factura</li>
+                        <li><strong>{{ __('Generar facturas automáticamente') }}</strong> desde la cosecha registrada</li>
+                        <li><strong>{{ __('Cumplir normativa') }}</strong> con informes oficiales de cosecha</li>
                     </ul>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Funcionalidades de Gestión de Vendimia en Agro365</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Funcionalidades de Gestión de Vendimia en Agro365') }}</h2>
                     
                     <div class="grid md:grid-cols-2 gap-6 mb-6">
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                             <div class="text-3xl mb-3">📦</div>
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">Registro de Contenedores</h3>
-                            <p class="text-gray-700">Registra cada contenedor individual con peso, parcela de origen, variedad de uva, grado baumé y observaciones.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('Registro de Contenedores') }}</h3>
+                            <p class="text-gray-700">{{ __('Registra cada contenedor individual con peso, parcela de origen, variedad de uva, grado baumé y observaciones.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                             <div class="text-3xl mb-3">📊</div>
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">Rendimientos por Parcela</h3>
-                            <p class="text-gray-700">Compara el rendimiento real de cada parcela con el rendimiento estimado. Identifica parcelas de alto y bajo rendimiento.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('Rendimientos por Parcela') }}</h3>
+                            <p class="text-gray-700">{{ __('Compara el rendimiento real de cada parcela con el rendimiento estimado. Identifica parcelas de alto y bajo rendimiento.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                             <div class="text-3xl mb-3">🔗</div>
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">Trazabilidad Completa</h3>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('Trazabilidad Completa') }}</h3>
                             <p class="text-gray-700">Desde el recinto <a href="{{ content_route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a> hasta la factura final. Cada kilo de uva está identificado.</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                             <div class="text-3xl mb-3">💰</div>
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">Facturación Automática</h3>
-                            <p class="text-gray-700">Genera facturas directamente desde los contenedores registrados. Sin duplicar datos, sin errores.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('Facturación Automática') }}</h3>
+                            <p class="text-gray-700">{{ __('Genera facturas directamente desde los contenedores registrados. Sin duplicar datos, sin errores.') }}</p>
                         </div>
                     </div>
 
                     <div class="bg-amber-50 border-l-4 border-amber-500 p-6 rounded-r-lg mb-6">
-                        <p class="text-gray-800 font-semibold mb-2">🍷 Ejemplo Práctico:</p>
-                        <p class="text-gray-700">
-                            Registras 50 contenedores de Tempranillo de la parcela "La Viña Alta" → El sistema calcula 15.000 kg totales → Comparas con el estimado de 14.500 kg → Generas factura a la bodega con 1 clic.
-                        </p>
+                        <p class="text-gray-800 font-semibold mb-2">{{ __('🍷 Ejemplo Práctico:') }}</p>
+                        <p class="text-gray-700">{{ __('Registras 50 contenedores de Tempranillo de la parcela "La Viña Alta" → El sistema calcula 15.000 kg totales → Comparas con el estimado de 14.500 kg → Generas factura a la bodega con 1 clic.') }}</p>
                     </div>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Control de Contenedores y Stock</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Control de Contenedores y Stock') }}</h2>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        El sistema de <strong>gestión de contenedores</strong> de Agro365 está diseñado específicamente para viticultores profesionales:
+                        El sistema de <strong>{{ __('gestión de contenedores') }}</strong> de Agro365 está diseñado específicamente para viticultores profesionales:
                     </p>
                     <ul class="list-disc list-inside space-y-3 text-gray-700 mb-6 ml-4">
-                        <li><strong>Estados de contenedor:</strong> Vacío, En Campo, En Transporte, Entregado, Facturado</li>
-                        <li><strong>Historial completo:</strong> Cada contenedor mantiene su historial de movimientos</li>
-                        <li><strong>Control de stock:</strong> Sabe cuántos contenedores tienes disponibles en cada momento</li>
-                        <li><strong>Asociación a parcelas:</strong> Cada contenedor se vincula a su <a href="{{ content_route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">código SIGPAC</a> de origen</li>
-                        <li><strong>Datos de calidad:</strong> Registra grado baumé, estado sanitario y observaciones</li>
+                        <li><strong>{{ __('Estados de contenedor:') }}</strong> Vacío, En Campo, En Transporte, Entregado, Facturado</li>
+                        <li><strong>{{ __('Historial completo:') }}</strong> Cada contenedor mantiene su historial de movimientos</li>
+                        <li><strong>{{ __('Control de stock:') }}</strong> Sabe cuántos contenedores tienes disponibles en cada momento</li>
+                        <li><strong>{{ __('Asociación a parcelas:') }}</strong> Cada contenedor se vincula a su <a href="{{ content_route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">código SIGPAC</a> de origen</li>
+                        <li><strong>{{ __('Datos de calidad:') }}</strong> Registra grado baumé, estado sanitario y observaciones</li>
                     </ul>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Análisis de Rendimientos y Producción</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Análisis de Rendimientos y Producción') }}</h2>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        Una de las funciones más potentes es el <strong>análisis de rendimientos</strong>:
+                        Una de las funciones más potentes es el <strong>{{ __('análisis de rendimientos') }}</strong>:
                     </p>
                     <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-6">
-                        <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-4">📈 Métricas de Rendimiento Disponibles</h3>
+                        <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-4">{{ __('📈 Métricas de Rendimiento Disponibles') }}</h3>
                         <div class="grid md:grid-cols-3 gap-4 text-center">
                             <div>
                                 <div class="text-2xl font-bold text-[var(--color-agro-green)]">kg/ha</div>
@@ -196,49 +192,47 @@
                         </div>
                     </div>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        Obtén informes de producción por <strong>parcela, variedad, cliente y campaña</strong>. Histórico de campañas anteriores para análisis interanual.
+                        Obtén informes de producción por <strong>{{ __('parcela, variedad, cliente y campaña') }}</strong>. Histórico de campañas anteriores para análisis interanual.
                     </p>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Integración con Cuaderno de Campo y PAC</h2>
-                    <p class="text-gray-700 leading-relaxed mb-4">
-                        La gestión de vendimia se integra perfectamente con el resto del sistema:
-                    </p>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Integración con Cuaderno de Campo y PAC') }}</h2>
+                    <p class="text-gray-700 leading-relaxed mb-4">{{ __('La gestión de vendimia se integra perfectamente con el resto del sistema:') }}</p>
                     <ul class="list-disc list-inside space-y-3 text-gray-700 mb-6 ml-4">
                         <li><strong><a href="{{ content_route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">Cuaderno de Campo Digital</a>:</strong> Los tratamientos aplicados se vinculan a la cosecha</li>
                         <li><strong><a href="{{ content_route('content.normativa-pac') }}" class="text-[var(--color-agro-green)] hover:underline">Cumplimiento PAC</a>:</strong> Los rendimientos se validan contra los límites de producción</li>
-                        <li><strong>Informes Oficiales:</strong> Genera informes de cosecha certificados con firma digital</li>
-                        <li><strong>Facturación:</strong> De vendimia a factura en un solo clic</li>
+                        <li><strong>{{ __('Informes Oficiales:') }}</strong> Genera informes de cosecha certificados con firma digital</li>
+                        <li><strong>{{ __('Facturación:') }}</strong> De vendimia a factura en un solo clic</li>
                     </ul>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Beneficios de Digitalizar la Vendimia</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Beneficios de Digitalizar la Vendimia') }}</h2>
                     <div class="grid md:grid-cols-3 gap-6 mb-6">
                         <div class="text-center bg-green-50 p-6 rounded-lg border border-green-200">
                             <div class="text-4xl mb-3">⏱️</div>
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">70% Menos Tiempo</h3>
-                            <p class="text-gray-700 text-sm">Reduce el tiempo de administración de la vendimia</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('70% Menos Tiempo') }}</h3>
+                            <p class="text-gray-700 text-sm">{{ __('Reduce el tiempo de administración de la vendimia') }}</p>
                         </div>
                         <div class="text-center bg-blue-50 p-6 rounded-lg border border-blue-200">
                             <div class="text-4xl mb-3">📋</div>
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">0 Errores</h3>
-                            <p class="text-gray-700 text-sm">Sin errores de transcripción o pérdida de datos</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('0 Errores') }}</h3>
+                            <p class="text-gray-700 text-sm">{{ __('Sin errores de transcripción o pérdida de datos') }}</p>
                         </div>
                         <div class="text-center bg-amber-50 p-6 rounded-lg border border-amber-200">
                             <div class="text-4xl mb-3">💶</div>
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">Control Total</h3>
-                            <p class="text-gray-700 text-sm">Máximo control sobre ingresos y rendimientos</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('Control Total') }}</h3>
+                            <p class="text-gray-700 text-sm">{{ __('Máximo control sobre ingresos y rendimientos') }}</p>
                         </div>
                     </div>
                 </section>
 
                 <section class="mb-12">
                     <div class="bg-gradient-to-r from-[var(--color-agro-green-bg)] to-[var(--color-agro-green-light)]/30 p-8 rounded-xl border border-[var(--color-agro-green)]/20">
-                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">🍇 ¿Listo para Digitalizar tu Vendimia?</h3>
+                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('🍇 ¿Listo para Digitalizar tu Vendimia?') }}</h3>
                         <p class="text-gray-700 mb-6">
-                            Prepárate para la próxima vendimia con Agro365. <strong>3 meses gratis</strong> al registrarte. Control total de contenedores, rendimientos y facturación.
+                            Prepárate para la próxima vendimia con Agro365. <strong>{{ __('3 meses gratis') }}</strong> al registrarte. Control total de contenedores, rendimientos y facturación.
                         </p>
                         <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:shadow-lg transition-all font-semibold">
                             Comenzar Gratis
@@ -250,19 +244,19 @@
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Preguntas Frecuentes sobre Gestión de Vendimia</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Preguntas Frecuentes sobre Gestión de Vendimia') }}</h2>
                     <div class="space-y-6">
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Puedo registrar contenedores desde el móvil?</h3>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Puedo registrar contenedores desde el móvil?') }}</h3>
                             <p class="text-gray-700">Sí, la <a href="{{ content_route('content.app-agricultura') }}" class="text-[var(--color-agro-green)] hover:underline">app de Agro365</a> está optimizada para uso en campo. Registra contenedores directamente desde tu smartphone.</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Se puede facturar directamente a varias bodegas?</h3>
-                            <p class="text-gray-700">Sí, gestiona múltiples clientes (bodegas) y genera facturas separadas por cliente desde los mismos contenedores.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Se puede facturar directamente a varias bodegas?') }}</h3>
+                            <p class="text-gray-700">{{ __('Sí, gestiona múltiples clientes (bodegas) y genera facturas separadas por cliente desde los mismos contenedores.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Cómo se compara con el rendimiento estimado?</h3>
-                            <p class="text-gray-700">Introduces el rendimiento estimado por parcela al inicio de campaña. El sistema compara automáticamente con los kilos reales cosechados.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Cómo se compara con el rendimiento estimado?') }}</h3>
+                            <p class="text-gray-700">{{ __('Introduces el rendimiento estimado por parcela al inicio de campaña. El sistema compara automáticamente con los kilos reales cosechados.') }}</p>
                         </div>
                     </div>
                 </section>
@@ -270,12 +264,8 @@
 
             <!-- CTA Section -->
             <div class="mt-16 pt-12 border-t border-gray-200 text-center">
-                <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">
-                    Gestiona tu Vendimia con Agro365
-                </h2>
-                <p class="text-gray-600 mb-8 text-lg">
-                    Software profesional de gestión de vendimia con control de contenedores, rendimientos y facturación automática.
-                </p>
+                <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Gestiona tu Vendimia con Agro365') }}</h2>
+                <p class="text-gray-600 mb-8 text-lg">{{ __('Software profesional de gestión de vendimia con control de contenedores, rendimientos y facturación automática.') }}</p>
                 <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-lg">
                     Comenzar Gratis
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

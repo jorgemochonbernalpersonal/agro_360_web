@@ -93,7 +93,7 @@
 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
     <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-5 border border-green-200">
         <div class="flex items-center justify-between mb-2">
-            <span class="text-sm font-semibold text-zinc-600">NDVI</span>
+            <span class="text-sm font-semibold text-zinc-600">{{ __('NDVI') }}</span>
             <span class="text-2xl">{{ $ndviData?->health_emoji ?? '❓' }}</span>
         </div>
         <div class="text-4xl font-bold text-green-700 mb-2">{{ number_format($ndviData?->ndvi_mean ?? 0, 2) }}</div>
@@ -150,7 +150,7 @@
 {{-- Fuente y calidad --}}
 @if($ndviData && ($ndviData->ndvi_mean ?? 0) > 0)
     <div class="mt-4 bg-zinc-50 rounded-lg p-3 text-sm text-zinc-600 flex flex-wrap gap-4 items-center">
-        <span>📡 NASA MODIS</span>
+        <span>{{ __('📡 NASA MODIS') }}</span>
         <span>📅 {{ $ndviData?->image_date?->format('d/m/Y') ?? 'N/A' }}</span>
         <span class="flex items-center gap-1 {{ $ndviData->hasHighCloudCoverage() ? 'text-orange-600 font-semibold' : '' }}">
             <flux:icon icon="cloud" variant="micro" class="{{ $ndviData->hasHighCloudCoverage() ? 'text-orange-500' : 'text-zinc-400' }}" />

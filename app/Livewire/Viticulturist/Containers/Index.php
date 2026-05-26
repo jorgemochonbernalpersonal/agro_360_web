@@ -44,12 +44,12 @@ class Index extends Component
         $container = Container::where('user_id', Auth::id())->findOrFail($containerId);
 
         if (!$container->isEmpty()) {
-            $this->toastError('No puedes archivar un contenedor que tiene contenido.');
+            $this->toastError(__('No puedes archivar un contenedor que tiene contenido.'));
             return;
         }
 
         $container->update(['archived' => true]);
-        $this->toastSuccess('Contenedor archivado correctamente.');
+        $this->toastSuccess(__('Contenedor archivado correctamente.'));
 
         if ($this->currentTab === 'active') {
             $this->currentTab = 'archived';
@@ -60,7 +60,7 @@ class Index extends Component
     {
         $container = Container::where('user_id', Auth::id())->findOrFail($containerId);
         $container->update(['archived' => false]);
-        $this->toastSuccess('Contenedor restaurado correctamente.');
+        $this->toastSuccess(__('Contenedor restaurado correctamente.'));
 
         if ($this->currentTab === 'archived') {
             $this->currentTab = 'active';
@@ -72,17 +72,17 @@ class Index extends Component
         $container = Container::where('user_id', Auth::id())->findOrFail($containerId);
 
         if (!$container->isEmpty()) {
-            $this->toastError('No puedes eliminar un contenedor que tiene contenido.');
+            $this->toastError(__('No puedes eliminar un contenedor que tiene contenido.'));
             return;
         }
 
         if ($container->harvests()->count() > 0) {
-            $this->toastError('No puedes eliminar un contenedor con historial de vendimias. Archívalo en su lugar.');
+            $this->toastError(__('No puedes eliminar un contenedor con historial de vendimias. Archívalo en su lugar.'));
             return;
         }
 
         $container->delete();
-        $this->toastSuccess('Contenedor eliminado correctamente.');
+        $this->toastSuccess(__('Contenedor eliminado correctamente.'));
     }
 
     public function render()

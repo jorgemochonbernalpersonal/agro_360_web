@@ -30,7 +30,7 @@ class Index extends Component
 
         $this->labelBatch->decrement('wasted_quantity', $qty);
 
-        $this->toastSuccess('Merma eliminada correctamente.');
+        $this->toastSuccess(__('Merma eliminada correctamente.'));
     }
 
     public function render()

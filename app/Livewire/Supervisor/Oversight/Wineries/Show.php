@@ -80,7 +80,7 @@ class Show extends Component
             $viticulturist->notify(new ViticulturistAssignedToWineryNotification($this->winery, Auth::user()));
         }
 
-        $this->dispatch('toast', message: 'Viticultor asignado a la bodega.', type: 'success');
+        $this->dispatch('toast', message: __('Viticultor asignado a la bodega.'), type: 'success');
     }
 
     public function unassignViticulturist(int $viticulturistId): void
@@ -92,7 +92,7 @@ class Show extends Component
             ->firstOrFail()
             ->delete();
 
-        $this->dispatch('toast', message: 'Viticultor retirado de la bodega.', type: 'warning');
+        $this->dispatch('toast', message: __('Viticultor retirado de la bodega.'), type: 'warning');
     }
 
     public function toggleAbility(int $abilityId): void
@@ -111,7 +111,7 @@ class Show extends Component
         if ($existing) {
             $existing->delete();
             $this->winery->notify(new WineryAbilityChangedNotification($ability, false, Auth::user()->name));
-            $this->dispatch('toast', message: "Módulo «{$ability->name}» desactivado.", type: 'warning');
+            $this->dispatch('toast', message: __('Módulo «:name» desactivado.', ['name' => $ability->name]), type: 'warning');
         } else {
             UserAbility::create([
                 'user_id'    => $this->winery->id,
@@ -120,7 +120,7 @@ class Show extends Component
                 'granted_at' => now(),
             ]);
             $this->winery->notify(new WineryAbilityChangedNotification($ability, true, Auth::user()->name));
-            $this->dispatch('toast', message: "Módulo «{$ability->name}» activado.", type: 'success');
+            $this->dispatch('toast', message: __('Módulo «:name» activado.', ['name' => $ability->name]), type: 'success');
         }
 
         Cache::forget("winery:{$this->winery->id}:granted_abilities");
@@ -174,7 +174,7 @@ class Show extends Component
         ]);
 
         $this->showNoteForm = false;
-        $this->dispatch('toast', message: 'Nota añadida al cuaderno.', type: 'success');
+        $this->dispatch('toast', message: __('Nota añadida al cuaderno.'), type: 'success');
     }
 
     public function openEditNote(int $noteId): void
@@ -214,7 +214,7 @@ class Show extends Component
             ]);
 
         $this->editNoteId = null;
-        $this->dispatch('toast', message: 'Nota actualizada.', type: 'success');
+        $this->dispatch('toast', message: __('Nota actualizada.'), type: 'success');
     }
 
     public function deleteNote(int $noteId): void
@@ -224,7 +224,7 @@ class Show extends Component
             ->findOrFail($noteId)
             ->delete();
 
-        $this->dispatch('toast', message: 'Nota eliminada.', type: 'success');
+        $this->dispatch('toast', message: __('Nota eliminada.'), type: 'success');
     }
 
     public function toggleAccess(): void

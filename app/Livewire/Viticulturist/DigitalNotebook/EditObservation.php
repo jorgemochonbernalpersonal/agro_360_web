@@ -86,11 +86,11 @@ class EditObservation extends AbstractActivityForm
                 ]);
             });
 
-            $this->toastSuccess('Observación actualizada correctamente.');
+            $this->toastSuccess(__('Observación actualizada correctamente.'));
             return $this->viticulturistRoleRedirect('digital-notebook.observation.index');
         } catch (\Exception $e) {
             \Log::error('Error al actualizar observación', ['error' => $e->getMessage(), 'user_id' => Auth::id(), 'activity_id' => $this->activity->id]);
-            $this->toastError('Error al actualizar la observación. Por favor, intenta de nuevo.');
+            $this->toastError(__('Error al actualizar la observación. Por favor, intenta de nuevo.'));
         }
     }
 
@@ -99,6 +99,6 @@ class EditObservation extends AbstractActivityForm
     public function render()
     {
         return view('livewire.viticulturist.digital-notebook.edit-observation', $this->renderData())
-            ->layout('layouts.app', ['title' => 'Editar Observación - Agro365']);
+            ->layout('layouts.app', ['title' => __('Editar Observación - Agro365')]);
     }
 }

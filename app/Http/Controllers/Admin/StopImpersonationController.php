@@ -39,6 +39,6 @@ class StopImpersonationController extends Controller
         session()->forget(['impersonating', 'admin_id', 'admin_name', 'impersonation_started_at']);
 
         return redirect()->route('admin.users.index')
-            ->with('success', 'Has vuelto a tu sesión de administrador.');
+            ->with('success', __('Has vuelto a tu sesión de administrador.'));
     }
 }

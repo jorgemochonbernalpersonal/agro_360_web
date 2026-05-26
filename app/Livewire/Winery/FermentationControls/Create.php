@@ -64,7 +64,7 @@ class Create extends Component
             'created_by'       => Auth::id(),
         ]);
 
-        $this->toastSuccess('Control de fermentación registrado.');
+        $this->toastSuccess(__('Control de fermentación registrado.'));
         $this->redirect(roleRoute('fermentation-controls.index'), navigate: true);
     }
 

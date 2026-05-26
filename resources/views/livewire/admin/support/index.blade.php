@@ -1,12 +1,10 @@
 <div class="space-y-6 animate-fade-in">
     <x-agro.page-header
-        title="Tickets de Soporte"
-        description="Gestiona todos los tickets de soporte del sistema"
+        title="{{ __('Tickets de Soporte') }}"
+        :description="__('Gestiona todos los tickets de soporte del sistema')"
     >
         <x-slot:actions>
-            <flux:button wire:click="exportCsv" variant="ghost" icon="arrow-down-tray">
-                Exportar CSV
-            </flux:button>
+            <flux:button wire:click="exportCsv" variant="ghost" icon="arrow-down-tray">{{ __('Exportar CSV') }}</flux:button>
         </x-slot:actions>
     </x-agro.page-header>
 
@@ -22,7 +20,7 @@
             @click="toggle()"
             class="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-widest hover:text-zinc-600 transition-colors mb-3"
         >
-            <span>Estadísticas</span>
+            <span>{{ __('Estadísticas') }}</span>
             <flux:icon icon="chevron-up" class="size-3.5 transition-transform duration-200" ::class="{ 'rotate-180': !open }" />
         </button>
         <div
@@ -35,11 +33,11 @@
             x-transition:leave-end="opacity-0 -translate-y-1"
         >
         <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-            <x-agro.stat-card label="Total"       :value="$stats['total']"       icon="inbox"          color="agro"   />
-            <x-agro.stat-card label="Abiertos"    :value="$stats['open']"        icon="envelope-open"  color="blue"   />
-            <x-agro.stat-card label="En Progreso" :value="$stats['in_progress']" icon="clock"          color="yellow" />
-            <x-agro.stat-card label="Resueltos"   :value="$stats['resolved']"    icon="check-circle"   color="agro"   />
-            <x-agro.stat-card label="Cerrados"    :value="$stats['closed']"      icon="archive-box"    color="purple" />
+            <x-agro.stat-card :label="__('Total')"       :value="$stats['total']"       icon="inbox"          color="agro"   />
+            <x-agro.stat-card :label="__('Abiertos')"    :value="$stats['open']"        icon="envelope-open"  color="blue"   />
+            <x-agro.stat-card :label="__('En Progreso')" :value="$stats['in_progress']" icon="clock"          color="yellow" />
+            <x-agro.stat-card :label="__('Resueltos')"   :value="$stats['resolved']"    icon="check-circle"   color="agro"   />
+            <x-agro.stat-card :label="__('Cerrados')"    :value="$stats['closed']"      icon="archive-box"    color="purple" />
         </div>
         </div>
     </div>
@@ -48,28 +46,28 @@
     <x-agro.filter-bar>
         <x-agro.filter-input
             wire:model.live="search"
-            placeholder="Buscar por título, descripción, nombre o email..."
+            placeholder="{{ __('Buscar por título, descripción, nombre o email...') }}"
         />
         <x-agro.filter-select wire:model.live="filterStatus">
-            <option value="all">Todos los estados</option>
-            <option value="open">Abiertos</option>
-            <option value="in_progress">En Progreso</option>
-            <option value="resolved">Resueltos</option>
-            <option value="closed">Cerrados</option>
+            <option value="all">{{ __('Todos los estados') }}</option>
+            <option value="open">{{ __('Abiertos') }}</option>
+            <option value="in_progress">{{ __('En Progreso') }}</option>
+            <option value="resolved">{{ __('Resueltos') }}</option>
+            <option value="closed">{{ __('Cerrados') }}</option>
         </x-agro.filter-select>
         <x-agro.filter-select wire:model.live="filterType">
-            <option value="all">Todos los tipos</option>
-            <option value="bug">Bugs</option>
-            <option value="feature">Nuevas Funcionalidades</option>
-            <option value="improvement">Mejoras</option>
-            <option value="question">Preguntas</option>
+            <option value="all">{{ __('Todos los tipos') }}</option>
+            <option value="bug">{{ __('Bugs') }}</option>
+            <option value="feature">{{ __('Nuevas Funcionalidades') }}</option>
+            <option value="improvement">{{ __('Mejoras') }}</option>
+            <option value="question">{{ __('Preguntas') }}</option>
         </x-agro.filter-select>
         <x-agro.filter-select wire:model.live="filterPriority">
-            <option value="all">Todas las prioridades</option>
-            <option value="low">Baja</option>
-            <option value="medium">Media</option>
-            <option value="high">Alta</option>
-            <option value="critical">Crítica</option>
+            <option value="all">{{ __('Todas las prioridades') }}</option>
+            <option value="low">{{ __('Baja') }}</option>
+            <option value="medium">{{ __('Media') }}</option>
+            <option value="high">{{ __('Alta') }}</option>
+            <option value="critical">{{ __('Crítica') }}</option>
         </x-agro.filter-select>
         <flux:button
             wire:click="toggleInternal"
@@ -87,16 +85,16 @@
     @if($showInternal)
     <div class="flex items-center gap-2 rounded-lg bg-amber-50 border border-amber-200 px-4 py-2.5 text-sm text-amber-800">
         <flux:icon icon="bug-ant" class="size-4 flex-shrink-0" />
-        <span>Mostrando también tickets de cuentas internas (demo / test / maestro). Las estadísticas siempre reflejan solo datos reales.</span>
-        <button wire:click="toggleInternal" class="ml-auto text-amber-600 hover:text-amber-800 font-medium text-xs">Ocultar</button>
+        <span>{{ __('Mostrando también tickets de cuentas internas (demo / test / maestro). Las estadísticas siempre reflejan solo datos reales.') }}</span>
+        <button wire:click="toggleInternal" class="ml-auto text-amber-600 hover:text-amber-800 font-medium text-xs">{{ __('Ocultar') }}</button>
     </div>
     @endif
 
     {{-- Tabla de Tickets --}}
     <x-agro.data-table
         :headers="['Título', 'Usuario', 'Estado', 'Prioridad', 'Tipo', 'Fecha', 'Acciones']"
-        empty-message="No hay tickets que mostrar"
-        empty-description="No hay tickets con los filtros seleccionados"
+        empty-:message="__('No hay tickets que mostrar')"
+        empty-:description="__('No hay tickets con los filtros seleccionados')"
         empty-icon="inbox"
     >
         @if($tickets->count() > 0)
@@ -154,7 +152,7 @@
                             @if($slaBreached)
                                 <flux:badge color="red" size="sm">SLA +{{ $overDays }}d</flux:badge>
                             @elseif($slaWarning)
-                                <flux:badge color="yellow" size="sm">SLA riesgo</flux:badge>
+                                <flux:badge color="yellow" size="sm">{{ __('SLA riesgo') }}</flux:badge>
                             @endif
                         @endif
                     </x-agro.table-cell>
@@ -174,7 +172,7 @@
                                 icon="trash"
                                 class="text-red-400 hover:text-red-600"
                                 wire:click.stop="deleteTicket({{ $ticket->id }})"
-                                wire:confirm="¿Eliminar el ticket '{{ $ticket->title }}'? Esta acción no se puede deshacer."
+                                wire:confirm="{{ __('¿Eliminar el ticket \':title\'? Esta acción no se puede deshacer.', ['title' => $ticket->title]) }}"
                                 tooltip="Eliminar ticket"
                             />
                         </div>
@@ -226,7 +224,7 @@
 
                     {{-- Descripción --}}
                     <div>
-                        <p class="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-2">Descripción</p>
+                        <p class="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-2">{{ __('Descripción') }}</p>
                         <p class="text-sm text-zinc-700 whitespace-pre-wrap">{{ $selectedTicket->description }}</p>
 
                         @if(!empty($selectedTicket->image_urls))
@@ -251,17 +249,15 @@
 
                     {{-- Asignación --}}
                     <div class="bg-zinc-50 rounded-lg p-4 space-y-3">
-                        <p class="text-xs font-semibold text-zinc-500 uppercase tracking-wide">Asignación</p>
+                        <p class="text-xs font-semibold text-zinc-500 uppercase tracking-wide">{{ __('Asignación') }}</p>
                         <div class="flex items-center gap-3">
                             <flux:select wire:model="assignTo">
-                                <option value="">Sin asignar</option>
+                                <option value="">{{ __('Sin asignar') }}</option>
                                 @foreach(\App\Models\User::where('role', 'admin')->get() as $admin)
                                     <option value="{{ $admin->id }}">{{ $admin->name }}</option>
                                 @endforeach
                             </flux:select>
-                            <flux:button wire:click="assignTicket" variant="primary" size="sm">
-                                Asignar
-                            </flux:button>
+                            <flux:button wire:click="assignTicket" variant="primary" size="sm">{{ __('Asignar') }}</flux:button>
                         </div>
                         @if($selectedTicket->assignedTo)
                             <p class="text-sm text-zinc-600">
@@ -272,12 +268,12 @@
 
                     {{-- Cambiar Estado --}}
                     <div class="bg-zinc-50 rounded-lg p-4 space-y-3">
-                        <p class="text-xs font-semibold text-zinc-500 uppercase tracking-wide">Cambiar Estado</p>
+                        <p class="text-xs font-semibold text-zinc-500 uppercase tracking-wide">{{ __('Cambiar Estado') }}</p>
                         <div class="flex gap-2 flex-wrap">
-                            <flux:button wire:click="changeStatus('open')"        variant="outline" size="sm">Abrir</flux:button>
-                            <flux:button wire:click="changeStatus('in_progress')" variant="outline" size="sm">En Progreso</flux:button>
-                            <flux:button wire:click="changeStatus('resolved')"    variant="primary" size="sm">Resolver</flux:button>
-                            <flux:button wire:click="changeStatus('closed')"      variant="outline" size="sm">Cerrar</flux:button>
+                            <flux:button wire:click="changeStatus('open')"        variant="outline" size="sm">{{ __('Abrir') }}</flux:button>
+                            <flux:button wire:click="changeStatus('in_progress')" variant="outline" size="sm">{{ __('En Progreso') }}</flux:button>
+                            <flux:button wire:click="changeStatus('resolved')"    variant="primary" size="sm">{{ __('Resolver') }}</flux:button>
+                            <flux:button wire:click="changeStatus('closed')"      variant="outline" size="sm">{{ __('Cerrar') }}</flux:button>
                         </div>
                     </div>
 
@@ -302,7 +298,7 @@
                                             <div class="flex items-center justify-between mb-1">
                                                 <div class="flex items-center gap-2">
                                                     <span class="text-sm font-semibold text-zinc-900">{{ $comment->user->name }}</span>
-                                                    <flux:badge color="yellow" size="sm">Nota interna</flux:badge>
+                                                    <flux:badge color="yellow" size="sm">{{ __('Nota interna') }}</flux:badge>
                                                 </div>
                                                 <span class="text-xs text-zinc-400">{{ $comment->created_at->diffForHumans() }}</span>
                                             </div>
@@ -325,7 +321,7 @@
                     {{-- Añadir Comentario --}}
                     <div>
                         <div class="flex items-center justify-between mb-2">
-                            <p class="text-xs font-semibold text-zinc-500 uppercase tracking-wide">Añadir Comentario</p>
+                            <p class="text-xs font-semibold text-zinc-500 uppercase tracking-wide">{{ __('Añadir Comentario') }}</p>
                             @if($cannedResponses->isNotEmpty())
                                 <div x-data="{ open: false }" class="relative">
                                     <button @click="open = !open" class="flex items-center gap-1 text-xs text-zinc-500 hover:text-zinc-700 border border-zinc-200 rounded-md px-2 py-1">
@@ -376,7 +372,7 @@
                                     wire:model.live="isInternal"
                                     class="rounded border-zinc-300 text-amber-500 focus:ring-amber-400"
                                 />
-                                <span class="text-xs text-zinc-600">Nota interna <span class="text-zinc-400">(solo admins)</span></span>
+                                <span class="text-xs text-zinc-600">Nota interna <span class="text-zinc-400">{{ __('(solo admins)') }}</span></span>
                             </label>
                         </div>
                     </div>
@@ -384,9 +380,7 @@
 
                 {{-- Footer --}}
                 <div class="px-6 py-3 border-t border-zinc-200 bg-zinc-50 flex justify-end">
-                    <flux:button wire:click="closeTicketDetail" variant="outline">
-                        Cerrar
-                    </flux:button>
+                    <flux:button wire:click="closeTicketDetail" variant="outline">{{ __('Cerrar') }}</flux:button>
                 </div>
             </div>
         </div>

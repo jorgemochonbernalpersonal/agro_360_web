@@ -46,7 +46,7 @@ class Create extends Component
             'active'         => true,
         ]);
 
-        $this->toastSuccess('Enólogo creado correctamente.');
+        $this->toastSuccess(__('Enólogo creado correctamente.'));
         return $this->roleRedirect('oenologists.index');
     }
 

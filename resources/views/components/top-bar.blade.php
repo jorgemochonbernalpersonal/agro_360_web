@@ -9,7 +9,7 @@
 <header class="fixed top-0 right-0 left-0 lg:left-16 h-16 bg-white/80 backdrop-blur-md border-b border-zinc-200/80 shadow-xs z-30 transition-all duration-300" id="top-bar">
     <div class="h-full flex items-center justify-between px-4 lg:px-8">
         {{-- Mobile menu --}}
-        <button onclick="toggleSidebar()" class="lg:hidden p-2 rounded-lg text-zinc-600 hover:bg-zinc-100 transition" aria-label="Toggle menu">
+        <button onclick="toggleSidebar()" class="lg:hidden p-2 rounded-lg text-zinc-600 hover:bg-zinc-100 transition" aria-:label="__('Toggle menu')">
             <flux:icon icon="bars-3" />
         </button>
 

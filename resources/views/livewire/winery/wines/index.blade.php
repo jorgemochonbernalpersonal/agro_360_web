@@ -1,13 +1,13 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="Vinos en elaboración"
-        description="Pipeline de vinificación — seguimiento de vinos desde recepción hasta embotellado."
+        title="{{ __('Vinos en elaboración') }}"
+        :description="__('Pipeline de vinificación — seguimiento de vinos desde recepción hasta embotellado.')"
     />
 
     {{-- Toolbar --}}
     <div class="flex items-center gap-3">
-        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar por nombre, variedad, código..." />
+        <x-agro.search-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar por nombre, variedad, código...')" />
 
         @php $filterCount = ($typeFilter ? 1 : 0) + ($statusFilter ? 1 : 0) + ($vintageFilter ? 1 : 0); @endphp
         <x-agro.filter-button modal="wine-filters" :count="$filterCount" />
@@ -22,7 +22,7 @@
     {{-- Filter chips --}}
     @if($typeFilter || $statusFilter || $vintageFilter)
         <div class="flex flex-wrap items-center gap-2">
-            <span class="text-xs text-zinc-400">Filtros activos:</span>
+            <span class="text-xs text-zinc-400">{{ __('Filtros activos:') }}</span>
 
             @if($typeFilter)
                 <x-agro.filter-chip :label="$types[$typeFilter] ?? $typeFilter" wireRemove="$set('typeFilter', '')" />
@@ -36,7 +36,7 @@
                 <x-agro.filter-chip :label="'Añada ' . $vintageFilter" wireRemove="$set('vintageFilter', '')" />
             @endif
 
-            <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">Limpiar todo</button>
+            <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">{{ __('Limpiar todo') }}</button>
         </div>
     @endif
 
@@ -95,13 +95,13 @@
                         <div class="flex-1 space-y-4">
                             <div class="grid grid-cols-2 gap-2 text-center">
                                 <div class="bg-purple-50 rounded-xl p-2">
-                                    <p class="text-[10px] text-purple-400 uppercase tracking-wide mb-0.5">Volumen</p>
+                                    <p class="text-[10px] text-purple-400 uppercase tracking-wide mb-0.5">{{ __('Volumen') }}</p>
                                     <p class="text-sm font-bold text-purple-700">
                                         {{ $wine->volume_liters ? number_format($wine->volume_liters, 0) . ' L' : '—' }}
                                     </p>
                                 </div>
                                 <div class="bg-zinc-50 rounded-xl p-2">
-                                    <p class="text-[10px] text-zinc-400 uppercase tracking-wide mb-0.5">Operaciones</p>
+                                    <p class="text-[10px] text-zinc-400 uppercase tracking-wide mb-0.5">{{ __('Operaciones') }}</p>
                                     <p class="text-sm font-bold text-zinc-700">{{ $wine->process_details_count ?: '—' }}</p>
                                 </div>
                             </div>
@@ -122,10 +122,10 @@
                                 @if($wine->is_organic || $wine->is_must)
                                     <div class="flex flex-wrap gap-1.5 mt-1">
                                         @if($wine->is_organic)
-                                            <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-medium bg-agro-50 text-agro-700 border border-agro-200">Ecológico</span>
+                                            <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-medium bg-agro-50 text-agro-700 border border-agro-200">{{ __('Ecológico') }}</span>
                                         @endif
                                         @if($wine->is_must)
-                                            <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-50 text-amber-700 border border-amber-200">Mosto</span>
+                                            <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-50 text-amber-700 border border-amber-200">{{ __('Mosto') }}</span>
                                         @endif
                                     </div>
                                 @endif
@@ -135,14 +135,14 @@
                         <x-slot:footer>
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-0.5">
-                                    <x-agro.action-button variant="view" href="{{ roleRoute('wines.show', $wine) }}" wire:navigate title="Ver detalle" />
-                                    <x-agro.action-button variant="edit" href="{{ roleRoute('wines.edit', $wine) }}" wire:navigate title="Editar" />
+                                    <x-agro.action-button variant="view" href="{{ roleRoute('wines.show', $wine) }}" wire:navigate title="{{ __('Ver detalle') }}" />
+                                    <x-agro.action-button variant="edit" href="{{ roleRoute('wines.edit', $wine) }}" wire:navigate title="{{ __('Editar') }}" />
                                 </div>
 
                                 <div class="w-px h-5 bg-zinc-200 mx-1"></div>
 
                                 <div class="flex items-center gap-0.5">
-                                    <x-agro.action-button variant="delete" wire:click="delete({{ $wine->id }})" wire:loading.attr="disabled" wire:confirm="¿Eliminar este vino y todas sus operaciones?" title="Eliminar" />
+                                    <x-agro.action-button variant="delete" wire:click="delete({{ $wine->id }})" wire:loading.attr="disabled" wire:confirm="{{ __('¿Eliminar este vino y todas sus operaciones?') }}" title="{{ __('Eliminar') }}" />
                                 </div>
                             </div>
                         </x-slot:footer>
@@ -154,7 +154,7 @@
         @else
             <x-agro.empty-state
                 icon="beaker"
-                title="Sin vinos registrados"
+                title="{{ __('Sin vinos registrados') }}"
                 :description="$search || $typeFilter || $statusFilter || $vintageFilter
                     ? 'Ningún vino coincide con los filtros aplicados.'
                     : 'Crea un vino para comenzar el seguimiento de su proceso de elaboración.'"
@@ -178,7 +178,7 @@
                     <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
                         <flux:icon icon="adjustments-horizontal" class="size-4 text-purple-600" />
                     </div>
-                    <h3 class="text-base font-semibold text-zinc-900">Filtros</h3>
+                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Filtros') }}</h3>
                 </div>
                 <flux:button x-on:click="$dispatch('close-modal', 'wine-filters')" variant="ghost" size="sm" icon="x-mark" />
             </div>
@@ -186,27 +186,27 @@
 
         <div class="px-6 py-5 space-y-5">
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Tipo de vino</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Tipo de vino') }}</label>
                 <flux:select wire:model.live="typeFilter">
-                    <flux:select.option value="">Todos los tipos</flux:select.option>
+                    <flux:select.option value="">{{ __('Todos los tipos') }}</flux:select.option>
                     @foreach($types as $key => $label)
                         <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
                     @endforeach
                 </flux:select>
             </div>
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Estado</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Estado') }}</label>
                 <flux:select wire:model.live="statusFilter">
-                    <flux:select.option value="">Todos los estados</flux:select.option>
+                    <flux:select.option value="">{{ __('Todos los estados') }}</flux:select.option>
                     @foreach($statuses as $key => $label)
                         <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
                     @endforeach
                 </flux:select>
             </div>
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Añada</label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Añada') }}</label>
                 <flux:select wire:model.live="vintageFilter">
-                    <flux:select.option value="">Todas las añadas</flux:select.option>
+                    <flux:select.option value="">{{ __('Todas las añadas') }}</flux:select.option>
                     @foreach($vintages as $v)
                         <flux:select.option value="{{ $v }}">{{ $v }}</flux:select.option>
                     @endforeach
@@ -216,15 +216,11 @@
 
         <div class="px-6 py-4 border-t border-zinc-200 flex items-center justify-between">
             @if($typeFilter || $statusFilter || $vintageFilter)
-                <flux:button wire:click="clearFilters" x-on:click="$dispatch('close-modal', 'wine-filters')" variant="ghost" size="sm">
-                    Limpiar filtros
-                </flux:button>
+                <flux:button wire:click="clearFilters" x-on:click="$dispatch('close-modal', 'wine-filters')" variant="ghost" size="sm">{{ __('Limpiar filtros') }}</flux:button>
             @else
                 <span></span>
             @endif
-            <flux:button x-on:click="$dispatch('close-modal', 'wine-filters')" variant="primary" size="sm">
-                Aplicar
-            </flux:button>
+            <flux:button x-on:click="$dispatch('close-modal', 'wine-filters')" variant="primary" size="sm">{{ __('Aplicar') }}</flux:button>
         </div>
     </x-agro.modal>
 

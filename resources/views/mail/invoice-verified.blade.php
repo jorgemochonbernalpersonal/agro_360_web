@@ -25,35 +25,33 @@
 <div class="wrap">
     <div class="header">
         <h1>{{ config('app.name') }}</h1>
-        <p>Facturación electrónica — Verifactu</p>
+        <p>{{ __('Facturación electrónica — Verifactu') }}</p>
     </div>
     <div class="body">
-        <div class="badge">✓ Factura verificada por la AEAT</div>
+        <div class="badge">✓ {{ __('Factura verificada por la AEAT') }}</div>
 
         <p style="font-size:15px; margin-bottom:8px;">
-            Hola{{ $invoice->billing_first_name ? ', '.$invoice->billing_first_name : '' }},
+            {{ __('Hola') }}{{ $invoice->billing_first_name ? ', '.$invoice->billing_first_name : '' }},
         </p>
-        <p style="font-size:14px; color:#4b5563; margin-bottom:20px;">
-            Tu factura ha sido registrada correctamente en el sistema Verifactu de la Agencia Tributaria.
-            Puedes comprobar su autenticidad en la sede electrónica de la AEAT.
-        </p>
+        <p style="font-size:14px; color:#4b5563; margin-bottom:20px;">{{ __('Tu factura ha sido registrada correctamente en el sistema Verifactu de la Agencia Tributaria.
+            Puedes comprobar su autenticidad en la sede electrónica de la AEAT.') }}</p>
 
         <div class="info">
             <table>
                 <tr>
-                    <td>Número de factura</td>
+                    <td>{{ __('Número de factura') }}</td>
                     <td>{{ $invoice->invoice_number }}</td>
                 </tr>
                 <tr>
-                    <td>Fecha</td>
+                    <td>{{ __('Fecha') }}</td>
                     <td>{{ $invoice->invoice_date?->format('d/m/Y') }}</td>
                 </tr>
                 <tr>
-                    <td>Importe total</td>
+                    <td>{{ __('Importe total') }}</td>
                     <td>{{ number_format($invoice->total_amount, 2, ',', '.') }} €</td>
                 </tr>
                 <tr>
-                    <td>Emisor</td>
+                    <td>{{ __('Emisor') }}</td>
                     <td>{{ $invoice->user->name }}</td>
                 </tr>
             </table>
@@ -61,18 +59,16 @@
 
         @if($invoice->sif_uuid)
         <div class="csv">
-            <p>Código Seguro de Verificación (CSV)</p>
+            <p>{{ __('Código Seguro de Verificación (CSV)') }}</p>
             <code>{{ $invoice->sif_uuid }}</code>
         </div>
         @endif
 
-        <p style="font-size:13px; color:#6b7280;">
-            Si tienes cualquier duda sobre esta factura, contacta directamente con el emisor.
-        </p>
+        <p style="font-size:13px; color:#6b7280;">{{ __('Si tienes cualquier duda sobre esta factura, contacta directamente con el emisor.') }}</p>
     </div>
     <div class="footer">
-        Este mensaje ha sido enviado automáticamente por {{ config('app.name') }}.
-        No respondas a este correo.
+        {{ __('Este mensaje ha sido enviado automáticamente por :app.', ['app' => config('app.name')]) }}
+        {{ __('No respondas a este correo.') }}
     </div>
 </div>
 </body>

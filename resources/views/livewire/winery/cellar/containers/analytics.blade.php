@@ -1,13 +1,11 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="Analítica de Contenedores"
-        description="Visión global del inventario: ocupación, distribución y estado"
+        title="{{ __('Analítica de Contenedores') }}"
+        :description="__('Visión global del inventario: ocupación, distribución y estado')"
     >
         <x-slot:actions>
-            <flux:button wire:click="exportCsv" variant="ghost" icon="arrow-down-tray">
-                Exportar CSV
-            </flux:button>
+            <flux:button wire:click="exportCsv" variant="ghost" icon="arrow-down-tray">{{ __('Exportar CSV') }}</flux:button>
             <flux:button href="{{ roleRoute('containers.index') }}" variant="outline" icon="beaker">
                 Ver contenedores
             </flux:button>
@@ -17,13 +15,13 @@
     {{-- Filtros --}}
     <x-agro.filter-bar>
         <flux:select wire:model.live="typeFilter" size="sm" class="w-44">
-            <flux:select.option value="">Todos los tipos</flux:select.option>
+            <flux:select.option value="">{{ __('Todos los tipos') }}</flux:select.option>
             @foreach($types as $t)
                 <flux:select.option value="{{ $t->id }}">{{ $t->name }}</flux:select.option>
             @endforeach
         </flux:select>
         <flux:select wire:model.live="roomFilter" size="sm" class="w-44">
-            <flux:select.option value="">Todas las salas</flux:select.option>
+            <flux:select.option value="">{{ __('Todas las salas') }}</flux:select.option>
             @foreach($rooms as $r)
                 <flux:select.option value="{{ $r->id }}">{{ $r->name }}</flux:select.option>
             @endforeach
@@ -32,33 +30,33 @@
 
     {{-- ── KPIs ─────────────────────────────────────────────────────────── --}}
     <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        <x-agro.stat-card label="Total depósitos"    :value="$total"        icon="cube"                color="zinc" />
-        <x-agro.stat-card label="Con vino"           :value="$withWine"     icon="beaker"              color="violet" />
-        <x-agro.stat-card label="Con uva/cosecha"    :value="$withHarvest"  icon="scale"               color="amber" />
-        <x-agro.stat-card label="Ambos contenidos"   :value="$bothContent"  icon="arrows-right-left"   color="blue" />
-        <x-agro.stat-card label="Vacíos"             :value="$empty"        icon="cube"                color="agro" />
-        <x-agro.stat-card label="Ocupación global"   :value="$globalPct . '%'" icon="chart-bar"        color="{{ $globalPct > 85 ? 'red' : ($globalPct > 60 ? 'amber' : 'agro') }}" />
+        <x-agro.stat-card :label="__('Total depósitos')"    :value="$total"        icon="cube"                color="zinc" />
+        <x-agro.stat-card :label="__('Con vino')"           :value="$withWine"     icon="beaker"              color="violet" />
+        <x-agro.stat-card :label="__('Con uva/cosecha')"    :value="$withHarvest"  icon="scale"               color="amber" />
+        <x-agro.stat-card :label="__('Ambos contenidos')"   :value="$bothContent"  icon="arrows-right-left"   color="blue" />
+        <x-agro.stat-card :label="__('Vacíos')"             :value="$empty"        icon="cube"                color="agro" />
+        <x-agro.stat-card :label="__('Ocupación global')"   :value="$globalPct . '%'" icon="chart-bar"        color="{{ $globalPct > 85 ? 'red' : ($globalPct > 60 ? 'amber' : 'agro') }}" />
     </div>
 
     {{-- Capacidad global --}}
     <x-agro.card>
         <div class="grid grid-cols-3 gap-6 text-center">
             <div>
-                <p class="text-xs text-zinc-400 uppercase tracking-wide mb-1">Capacidad total</p>
+                <p class="text-xs text-zinc-400 uppercase tracking-wide mb-1">{{ __('Capacidad total') }}</p>
                 <p class="text-2xl font-bold text-zinc-700">{{ number_format($totalCapacity, 0) }} <span class="text-sm font-normal text-zinc-400">kg</span></p>
             </div>
             <div>
-                <p class="text-xs text-amber-400 uppercase tracking-wide mb-1">Uva en depósitos</p>
+                <p class="text-xs text-amber-400 uppercase tracking-wide mb-1">{{ __('Uva en depósitos') }}</p>
                 <p class="text-2xl font-bold text-amber-600">{{ number_format($usedHarvest, 0) }} <span class="text-sm font-normal text-amber-400">kg</span></p>
             </div>
             <div>
-                <p class="text-xs text-violet-400 uppercase tracking-wide mb-1">Vino elaborado</p>
+                <p class="text-xs text-violet-400 uppercase tracking-wide mb-1">{{ __('Vino elaborado') }}</p>
                 <p class="text-2xl font-bold text-violet-600">{{ number_format($usedWine, 1) }} <span class="text-sm font-normal text-violet-400">L</span></p>
             </div>
         </div>
         <div class="mt-4">
             <div class="flex justify-between text-xs text-zinc-400 mb-1">
-                <span>Ocupación global</span>
+                <span>{{ __('Ocupación global') }}</span>
                 <span class="font-semibold text-zinc-600">{{ $globalPct }}%</span>
             </div>
             <div class="w-full h-3 bg-zinc-100 rounded-full overflow-hidden flex">
@@ -78,7 +76,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
         {{-- ── Buckets de utilización ──────────────────────────────────── --}}
-        <x-agro.card title="Distribución por ocupación">
+        <x-agro.card title="{{ __('Distribución por ocupación') }}">
             @php
                 $bucketColors = [
                     '0-20'   => 'bg-agro-400',
@@ -113,7 +111,7 @@
         </x-agro.card>
 
         {{-- ── Por tipo ──────────────────────────────────────────────── --}}
-        <x-agro.card title="Por tipo de contenedor">
+        <x-agro.card title="{{ __('Por tipo de contenedor') }}">
             @if($byType->count())
             <div class="space-y-3">
                 @foreach($byType as $row)
@@ -134,12 +132,12 @@
                 @endforeach
             </div>
             @else
-                <p class="text-sm text-zinc-400 text-center py-4">Sin datos</p>
+                <p class="text-sm text-zinc-400 text-center py-4">{{ __('Sin datos') }}</p>
             @endif
         </x-agro.card>
 
         {{-- ── Por sala ──────────────────────────────────────────────── --}}
-        <x-agro.card title="Por sala / ubicación">
+        <x-agro.card title="{{ __('Por sala / ubicación') }}">
             @if($byRoom->count())
             <div class="space-y-3">
                 @foreach($byRoom as $row)
@@ -160,12 +158,12 @@
                 @endforeach
             </div>
             @else
-                <p class="text-sm text-zinc-400 text-center py-4">Sin salas configuradas</p>
+                <p class="text-sm text-zinc-400 text-center py-4">{{ __('Sin salas configuradas') }}</p>
             @endif
         </x-agro.card>
 
         {{-- ── Top 5 más llenos ──────────────────────────────────────── --}}
-        <x-agro.card title="Top 5 más llenos">
+        <x-agro.card title="{{ __('Top 5 más llenos') }}">
             @forelse($topFilled as $c)
             @php
                 $used = $c->used_capacity + $c->wine_volume_liters;
@@ -182,14 +180,14 @@
                 </div>
             </div>
             @empty
-                <p class="text-sm text-zinc-400 text-center py-4">Sin contenedores con contenido</p>
+                <p class="text-sm text-zinc-400 text-center py-4">{{ __('Sin contenedores con contenido') }}</p>
             @endforelse
         </x-agro.card>
 
     </div>
 
     {{-- ── Top 5 más vacíos ──────────────────────────────────────────────── --}}
-    <x-agro.card title="Top 5 con mayor capacidad libre">
+    <x-agro.card title="{{ __('Top 5 con mayor capacidad libre') }}">
         <div class="grid grid-cols-1 sm:grid-cols-5 gap-4">
             @forelse($topEmpty as $c)
             @php
@@ -202,11 +200,11 @@
                 <flux:icon icon="cube" class="size-6 text-agro-400 mx-auto mb-2" />
                 <p class="font-semibold text-zinc-700 text-sm truncate">{{ $c->name }}</p>
                 <p class="text-xs text-zinc-400 mb-2">{{ $c->containerType?->name ?? '' }}</p>
-                <p class="text-lg font-bold text-agro-600">{{ number_format($free, 0) }}<span class="text-xs font-normal text-agro-400"> kg libre</span></p>
+                <p class="text-lg font-bold text-agro-600">{{ number_format($free, 0) }}<span class="text-xs font-normal text-agro-400">{{ __('kg libre') }}</span></p>
                 <p class="text-xs text-zinc-400">{{ $pct }}% ocupado</p>
             </a>
             @empty
-                <p class="text-sm text-zinc-400 col-span-5 text-center py-4">Sin datos</p>
+                <p class="text-sm text-zinc-400 col-span-5 text-center py-4">{{ __('Sin datos') }}</p>
             @endforelse
         </div>
     </x-agro.card>

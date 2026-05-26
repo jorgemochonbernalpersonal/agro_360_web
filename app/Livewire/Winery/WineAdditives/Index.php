@@ -30,7 +30,7 @@ class Index extends AbstractIndex
         WineAdditive::whereHas('wine', fn($q) => $q->where('user_id', $this->wineryId()))
             ->findOrFail($id)
             ->delete();
-        $this->toastSuccess('Aditivo eliminado.');
+        $this->toastSuccess(__('Aditivo eliminado.'));
     }
 
     protected function baseQuery(): Builder

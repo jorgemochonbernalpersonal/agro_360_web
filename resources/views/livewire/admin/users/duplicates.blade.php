@@ -1,12 +1,12 @@
 <div class="space-y-6 animate-fade-in">
     <x-agro.page-header
-        title="Detección de Duplicados"
-        description="Cuentas con email o nombre idéntico — posibles registros duplicados"
+        title="{{ __('Detección de Duplicados') }}"
+        :description="__('Cuentas con email o nombre idéntico — posibles registros duplicados')"
     >
         <x-slot:actions>
             <div class="flex gap-2">
-                <flux:button wire:click="$set('mode','email')" :variant="$mode === 'email' ? 'primary' : 'ghost'" size="sm">Por email</flux:button>
-                <flux:button wire:click="$set('mode','name')"  :variant="$mode === 'name'  ? 'primary' : 'ghost'" size="sm">Por nombre</flux:button>
+                <flux:button wire:click="$set('mode','email')" :variant="$mode === 'email' ? 'primary' : 'ghost'" size="sm">{{ __('Por email') }}</flux:button>
+                <flux:button wire:click="$set('mode','name')"  :variant="$mode === 'name'  ? 'primary' : 'ghost'" size="sm">{{ __('Por nombre') }}</flux:button>
             </div>
         </x-slot:actions>
     </x-agro.page-header>
@@ -14,7 +14,7 @@
     @if($groups->isEmpty())
         <x-agro.empty-state
             icon="check-circle"
-            message="Sin duplicados detectados"
+            :message="__('Sin duplicados detectados')"
             description="No hay cuentas con {{ $mode === 'email' ? 'el mismo email normalizado' : 'el mismo nombre' }}"
         />
     @else
@@ -34,15 +34,15 @@
                                     <div class="flex items-center gap-2 flex-wrap">
                                         <a href="{{ route('admin.users.show', $u->id) }}" class="text-sm font-semibold text-zinc-900 hover:text-agro-600">{{ $u->name }}</a>
                                         <flux:badge color="{{ $u->can_login ? 'green' : 'zinc' }}" size="sm">{{ $u->can_login ? 'Activo' : 'Inactivo' }}</flux:badge>
-                                        @if($u->email_verified_at) <flux:badge color="blue" size="sm">Verificado</flux:badge> @endif
-                                        @if($i === 0) <flux:badge color="agro" size="sm">Conservar</flux:badge> @endif
+                                        @if($u->email_verified_at) <flux:badge color="blue" size="sm">{{ __('Verificado') }}</flux:badge> @endif
+                                        @if($i === 0) <flux:badge color="agro" size="sm">{{ __('Conservar') }}</flux:badge> @endif
                                     </div>
                                     <p class="text-xs text-zinc-400 mt-0.5">{{ $u->email }} · {{ $u->role }} · Registro: {{ $u->created_at->format('d/m/Y') }}</p>
                                 </div>
                                 @if($i > 0)
                                     <flux:button
                                         wire:click="merge({{ $group[0]->id }}, {{ $u->id }})"
-                                        wire:confirm="¿Fusionar '{{ addslashes($u->name) }}' en '{{ addslashes($group[0]->name) }}'? Se reasignarán sus parcelas, tickets e historial. La cuenta '{{ addslashes($u->name) }}' será eliminada."
+                                        wire:confirm="{{ __('¿Fusionar \':name\' en \':target\'? Se reasignarán sus parcelas, tickets e historial. La cuenta \':name\' será eliminada.', ['name' => $u->name, 'target' => $group[0]->name]) }}"
                                         variant="danger"
                                         size="sm"
                                         icon="arrow-path"

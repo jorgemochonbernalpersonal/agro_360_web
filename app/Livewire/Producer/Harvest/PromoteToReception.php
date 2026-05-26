@@ -74,7 +74,7 @@ class PromoteToReception extends Component
 
         // Evitar doble-promoción
         if ($notebookHarvest->grapeReception()->exists()) {
-            $this->toastError('Esta cosecha ya fue registrada como recepción de bodega.');
+            $this->toastError(__('Esta cosecha ya fue registrada como recepción de bodega.'));
             $this->redirect(
                 route('producer.grape-reception.show', $notebookHarvest->grapeReception->id),
                 navigate: true
@@ -136,10 +136,10 @@ class PromoteToReception extends Component
     protected function messages(): array
     {
         return [
-            'container_id.required'      => 'Selecciona el depósito de destino.',
-            'harvest_start_date.required' => 'La fecha de recepción es obligatoria.',
-            'total_weight.required'       => 'El peso es obligatorio.',
-            'total_weight.min'            => 'El peso debe ser mayor que 0.',
+            'container_id.required'      => __('Selecciona el depósito de destino.'),
+            'harvest_start_date.required' => __('La fecha de recepción es obligatoria.'),
+            'total_weight.required'       => __('El peso es obligatorio.'),
+            'total_weight.min'            => __('El peso debe ser mayor que 0.'),
         ];
     }
 
@@ -154,10 +154,7 @@ class PromoteToReception extends Component
         // Capacidad disponible
         if (! $container->hasAvailableCapacity($weight)) {
             $available = number_format($container->getAvailableCapacity(), 0);
-            $this->addError('container_id',
-                "El contenedor «{$container->name}» no tiene capacidad suficiente. " .
-                "Disponible: {$available} kg."
-            );
+            $this->addError('container_id', __('El contenedor «:name» no tiene capacidad suficiente. Disponible: :available kg.', ['name' => $container->name, 'available' => $available]));
             return null;
         }
 
@@ -172,7 +169,7 @@ class PromoteToReception extends Component
             ->first();
 
         if ($existingBatch && $existingBatch->status === 'closed') {
-            $this->toastError('El lote de esta plantación está cerrado. Réabrelo desde el Cuadro de Mando.');
+            $this->toastError(__('El lote de esta plantación está cerrado. Réabrelo desde el Cuadro de Mando.'));
             return null;
         }
 
@@ -232,7 +229,7 @@ class PromoteToReception extends Component
                 return $reception;
             });
 
-            $this->toastSuccess('Cosecha registrada en bodega correctamente.');
+            $this->toastSuccess(__('Cosecha registrada en bodega correctamente.'));
             return $this->roleRedirect('grape-reception.show', $reception);
 
         } catch (\Exception $e) {
@@ -240,7 +237,7 @@ class PromoteToReception extends Component
                 'notebook_harvest_id' => $this->notebookHarvest->id,
                 'error'               => $e->getMessage(),
             ]);
-            $this->toastError('Error al registrar la recepción: ' . $e->getMessage());
+            $this->toastError(__('Error al registrar la recepción: :error', ['error' => $e->getMessage()]));
         }
 
         return null;

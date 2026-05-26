@@ -27,7 +27,7 @@ class Show extends Component
         if (!$this->declaration->isDraft()) return;
 
         if ($this->declaration->items()->count() === 0) {
-            $this->toastError('No hay parcelas en la declaración.');
+            $this->toastError(__('No hay parcelas en la declaración.'));
             return;
         }
 

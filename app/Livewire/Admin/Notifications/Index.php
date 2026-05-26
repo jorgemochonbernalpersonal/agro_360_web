@@ -59,10 +59,10 @@ class Index extends Component
             'subject' => 'required|string|min:3|max:200',
             'message' => 'required|string|min:10',
         ], [
-            'subject.required' => 'El asunto es obligatorio.',
-            'subject.min'      => 'El asunto debe tener al menos 3 caracteres.',
-            'message.required' => 'El mensaje es obligatorio.',
-            'message.min'      => 'El mensaje debe tener al menos 10 caracteres.',
+            'subject.required' => __('El asunto es obligatorio.'),
+            'subject.min'      => __('El asunto debe tener al menos 3 caracteres.'),
+            'message.required' => __('El mensaje es obligatorio.'),
+            'message.min'      => __('El mensaje debe tener al menos 10 caracteres.'),
         ]);
 
         $this->showPreviewModal = true;
@@ -81,17 +81,17 @@ class Index extends Component
             'subject' => 'required|string|min:3|max:200',
             'message' => 'required|string|min:10',
         ], [
-            'subject.required' => 'El asunto es obligatorio.',
-            'subject.min'      => 'El asunto debe tener al menos 3 caracteres.',
-            'message.required' => 'El mensaje es obligatorio.',
-            'message.min'      => 'El mensaje debe tener al menos 10 caracteres.',
+            'subject.required' => __('El asunto es obligatorio.'),
+            'subject.min'      => __('El asunto debe tener al menos 3 caracteres.'),
+            'message.required' => __('El mensaje es obligatorio.'),
+            'message.min'      => __('El mensaje debe tener al menos 10 caracteres.'),
         ]);
 
         $users = $this->recipients->get(['id', 'name', 'email']);
         $count = $users->count();
 
         if ($count === 0) {
-            $this->toastError('No hay destinatarios con los filtros seleccionados.');
+            $this->toastError(__('No hay destinatarios con los filtros seleccionados.'));
             return;
         }
 
@@ -137,8 +137,8 @@ class Index extends Component
             'previewUsers'   => $previewUsers,
             'history'        => $history,
         ])->layout('layouts.app', [
-            'title'       => 'Notificaciones - Admin - Agro365',
-            'description' => 'Envía comunicaciones a los usuarios del sistema',
+            'title'       => __('Notificaciones - Admin - Agro365'),
+            'description' => __('Envía comunicaciones a los usuarios del sistema'),
         ]);
     }
 }

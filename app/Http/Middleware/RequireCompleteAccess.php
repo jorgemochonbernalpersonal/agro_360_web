@@ -38,6 +38,6 @@ class RequireCompleteAccess
 
         // Sin acceso en absoluto → página de precios
         return redirect()->route('pricing')
-            ->with('error', 'Necesitas una suscripción para acceder a esta funcionalidad.');
+            ->with('error', __('Necesitas una suscripción para acceder a esta funcionalidad.'));
     }
 }

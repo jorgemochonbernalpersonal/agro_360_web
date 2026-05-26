@@ -52,14 +52,14 @@ class Show extends Component
         $this->validate([
             'inviteEmail' => ['required', 'email', 'max:255'],
         ], [
-            'inviteEmail.required' => 'Introduce el email del viticultor.',
-            'inviteEmail.email'    => 'El email no es válido.',
+            'inviteEmail.required' => __('Introduce el email del viticultor.'),
+            'inviteEmail.email'    => __('El email no es válido.'),
         ]);
 
         // Rate limit: max 1 envío por hora
         if ($this->viticulturist->invitation_sent_at
             && $this->viticulturist->invitation_sent_at->isAfter(now()->subHour())) {
-            $this->toastError('Invitación enviada hace menos de 1 hora. Espera antes de reenviar.');
+            $this->toastError(__('Invitación enviada hace menos de 1 hora. Espera antes de reenviar.'));
             return;
         }
 
@@ -68,7 +68,7 @@ class Show extends Component
             ->exists();
 
         if ($emailTaken) {
-            $this->addError('inviteEmail', 'Este email ya está registrado en el sistema.');
+            $this->addError('inviteEmail', __('Este email ya está registrado en el sistema.'));
             return;
         }
 
@@ -100,7 +100,7 @@ class Show extends Component
             'invitation_expires_at' => null,
             'invitation_sent_at'    => null,
         ]);
-        $this->toastSuccess('Invitación revocada.');
+        $this->toastSuccess(__('Invitación revocada.'));
     }
 
     // ── Field notebook access ─────────────────────────────────────────────────
@@ -112,12 +112,12 @@ class Show extends Component
             ->first();
 
         if ($existing && $existing->isPending()) {
-            $this->toastInfo('Ya tienes una solicitud pendiente de respuesta.');
+            $this->toastInfo(__('Ya tienes una solicitud pendiente de respuesta.'));
             return;
         }
 
         if ($this->relation->notebook_access) {
-            $this->toastInfo('Esta bodega ya tiene acceso al cuaderno.');
+            $this->toastInfo(__('Esta bodega ya tiene acceso al cuaderno.'));
             return;
         }
 
@@ -137,7 +137,7 @@ class Show extends Component
 
         Cache::forget("nav_badge_notebook_access_{$this->viticulturist->id}");
 
-        $this->toastSuccess('Solicitud enviada. El viticultor recibirá una notificación para aprobarla.');
+        $this->toastSuccess(__('Solicitud enviada. El viticultor recibirá una notificación para aprobarla.'));
     }
 
     public function cancelAccessRequest(): void
@@ -147,7 +147,7 @@ class Show extends Component
             ->where('status', NotebookAccessRequest::STATUS_PENDING)
             ->delete();
 
-        $this->toastSuccess('Solicitud cancelada.');
+        $this->toastSuccess(__('Solicitud cancelada.'));
     }
 
     // ── Render ───────────────────────────────────────────────────────────────

@@ -37,7 +37,7 @@ class Index extends Component
         $count = SigpacCode::doesntHave('plots')->count();
 
         if ($count === 0) {
-            $this->toastError('No hay códigos SIGPAC huérfanos.');
+            $this->toastError(__('No hay códigos SIGPAC huérfanos.'));
             return;
         }
 
@@ -111,8 +111,8 @@ class Index extends Component
             'sigpacs' => $sigpacs,
             'stats'   => $stats,
         ])->layout('layouts.app', [
-            'title'       => 'SIGPACs - Admin - Agro365',
-            'description' => 'Visualiza todos los códigos SIGPAC del sistema',
+            'title'       => __('SIGPACs - Admin - Agro365'),
+            'description' => __('Visualiza todos los códigos SIGPAC del sistema'),
         ]);
     }
 }

@@ -1,13 +1,13 @@
 <div class="space-y-6 animate-fade-in">
     <x-agro.page-header
-        title="Jobs Fallidos"
-        description="Monitor y gestión de trabajos fallidos en la cola"
+        title="{{ __('Jobs Fallidos') }}"
+        :description="__('Monitor y gestión de trabajos fallidos en la cola')"
     >
         <x-slot:actions>
             @if($totalCount > 0)
                 <flux:button
                     wire:click="retryAll"
-                    wire:confirm="¿Reencolar los {{ $totalCount }} job(s) fallidos? Volverán a ejecutarse."
+                    wire:confirm="{{ __('¿Reencolar los :count job(s) fallidos? Volverán a ejecutarse.', ['count' => $totalCount]) }}"
                     variant="ghost"
                     icon="arrow-path"
                 >
@@ -15,7 +15,7 @@
                 </flux:button>
                 <flux:button
                     wire:click="deleteAll"
-                    wire:confirm="¿Eliminar permanentemente los {{ $totalCount }} job(s) fallidos? Esta acción no se puede deshacer."
+                    wire:confirm="{{ __('¿Eliminar permanentemente los :count job(s) fallidos? Esta acción no se puede deshacer.', ['count' => $totalCount]) }}"
                     variant="danger"
                     icon="trash"
                 >
@@ -28,13 +28,13 @@
     {{-- Stats --}}
     <div class="grid grid-cols-2 gap-4">
         <x-agro.stat-card
-            label="Jobs fallidos"
+            :label="__('Jobs fallidos')"
             :value="$totalCount"
             :icon="$totalCount > 0 ? 'exclamation-circle' : 'check-circle'"
             :color="$totalCount > 0 ? 'red' : 'agro'"
         />
         <x-agro.stat-card
-            label="Mostrando"
+            :label="__('Mostrando')"
             :value="$jobs->total()"
             icon="list-bullet"
             color="blue"
@@ -45,7 +45,7 @@
     <x-agro.filter-bar>
         <x-agro.filter-input
             wire:model.live="search"
-            placeholder="Buscar por cola, clase o excepción..."
+            placeholder="{{ __('Buscar por cola, clase o excepción...') }}"
         />
     </x-agro.filter-bar>
 
@@ -54,8 +54,8 @@
         @if($jobs->isEmpty())
             <x-agro.empty-state
                 icon="check-circle"
-                message="Sin jobs fallidos"
-                description="La cola de trabajos está limpia — no hay errores pendientes"
+                :message="__('Sin jobs fallidos')"
+                :description="__('La cola de trabajos está limpia — no hay errores pendientes')"
             />
         @else
             <div class="divide-y divide-zinc-100 dark:divide-zinc-700/50">
@@ -94,7 +94,7 @@
                             <div class="flex items-center gap-1 flex-shrink-0">
                                 <flux:button
                                     wire:click="retryJob({{ $job->id }})"
-                                    wire:confirm="¿Reencolar este job?"
+                                    wire:confirm="{{ __('¿Reencolar este job?') }}"
                                     variant="ghost"
                                     size="sm"
                                     icon="arrow-path"
@@ -102,7 +102,7 @@
                                 />
                                 <flux:button
                                     wire:click="deleteJob({{ $job->id }})"
-                                    wire:confirm="¿Eliminar este job definitivamente?"
+                                    wire:confirm="{{ __('¿Eliminar este job definitivamente?') }}"
                                     variant="ghost"
                                     size="sm"
                                     icon="trash"

@@ -333,7 +333,7 @@
                 <img src="{{ public_path('images/logo.png') }}" style="height: 50px; width: auto;" alt="Agro365 Logo">
             @endif
             <div style="flex: 1;">
-                <h1>INFORME OFICIAL DE TRATAMIENTOS FITOSANITARIOS</h1>
+                <h1>{{ __('INFORME OFICIAL DE TRATAMIENTOS FITOSANITARIOS') }}</h1>
                 <div class="subtitle">Cuaderno Digital Agrícola - Sistema Certificado Agro365</div>
             </div>
         </div>
@@ -342,18 +342,18 @@
     <div class="container">
         {{-- Datos de la Explotación --}}
         <div class="info-box">
-            <h3>• DATOS DE LA EXPLOTACIÓN</h3>
+            <h3>{{ __('• DATOS DE LA EXPLOTACIÓN') }}</h3>
             <div class="info-grid">
                 <div class="info-row">
-                    <span class="info-label">Titular:</span>
+                    <span class="info-label">{{ __('Titular:') }}</span>
                     <span class="info-value">{{ $user->name }}</span>
                 </div>
                 <div class="info-row">
-                    <span class="info-label">NIF/CIF:</span>
+                    <span class="info-label">{{ __('NIF/CIF:') }}</span>
                     <span class="info-value">{{ $profile->nif ?? 'No especificado' }}</span>
                 </div>
                 <div class="info-row">
-                    <span class="info-label">Domicilio:</span>
+                    <span class="info-label">{{ __('Domicilio:') }}</span>
                     <span class="info-value">
                         {{ $profile->address ?? '' }}
                         @if($profile && $profile->city)
@@ -365,11 +365,11 @@
                     </span>
                 </div>
                 <div class="info-row">
-                    <span class="info-label">Teléfono:</span>
+                    <span class="info-label">{{ __('Teléfono:') }}</span>
                     <span class="info-value">{{ $profile->phone ?? 'No especificado' }}</span>
                 </div>
                 <div class="info-row">
-                    <span class="info-label">Email:</span>
+                    <span class="info-label">{{ __('Email:') }}</span>
                     <span class="info-value">{{ $user->email }}</span>
                 </div>
             </div>
@@ -377,27 +377,27 @@
 
         {{-- Periodo del Informe --}}
         <div class="info-box">
-            <h3>• PERIODO DEL INFORME</h3>
+            <h3>{{ __('• PERIODO DEL INFORME') }}</h3>
             <div class="info-grid">
                 <div class="info-row">
-                    <span class="info-label">Fecha inicio:</span>
+                    <span class="info-label">{{ __('Fecha inicio:') }}</span>
                     <span class="info-value"><strong>{{ $period_start->format('d/m/Y') }}</strong></span>
                 </div>
                 <div class="info-row">
-                    <span class="info-label">Fecha fin:</span>
+                    <span class="info-label">{{ __('Fecha fin:') }}</span>
                     <span class="info-value"><strong>{{ $period_end->format('d/m/Y') }}</strong></span>
                 </div>
                 <div class="info-row">
-                    <span class="info-label">Total tratamientos:</span>
+                    <span class="info-label">{{ __('Total tratamientos:') }}</span>
                     <span class="info-value"><strong>{{ $stats['total_treatments'] }}</strong></span>
                 </div>
                 <div class="info-row">
-                    <span class="info-label">Superficie tratada total:</span>
+                    <span class="info-label">{{ __('Superficie tratada total:') }}</span>
                     <span class="info-value"><strong>{{ number_format($stats['total_area_treated'], 2, ',', '.') }} ha</strong></span>
                 </div>
                 @if(isset($stats['plots_affected']))
                 <div class="info-row">
-                    <span class="info-label">Parcelas afectadas:</span>
+                    <span class="info-label">{{ __('Parcelas afectadas:') }}</span>
                     <span class="info-value"><strong>{{ $stats['plots_affected'] }}</strong></span>
                 </div>
                 @endif
@@ -409,22 +409,22 @@
         </div>
 
         {{-- Tabla de Tratamientos --}}
-        <h3 class="section-title">📊 Detalle de Tratamientos Realizados</h3>
+        <h3 class="section-title">{{ __('📊 Detalle de Tratamientos Realizados') }}</h3>
         
         <table>
             <thead>
                 <tr>
-                    <th style="width: 7%;">Fecha</th>
-                    <th style="width: 11%;">Parcela</th>
-                    <th style="width: 14%;">Producto</th>
-                    <th style="width: 9%;">Nº Registro</th>
-                    <th style="width: 7%;">Dosis/ha</th>
-                    <th style="width: 6%;">Área</th>
-                    <th style="width: 10%;">Plaga</th>
-                    <th style="width: 11%;">Aplicador</th>
-                    <th style="width: 9%;">Condiciones</th>
-                    <th style="width: 7%;">Plazo</th>
-                    <th style="width: 9%;">F. Segura</th>
+                    <th style="width: 7%;">{{ __('Fecha') }}</th>
+                    <th style="width: 11%;">{{ __('Parcela') }}</th>
+                    <th style="width: 14%;">{{ __('Producto') }}</th>
+                    <th style="width: 9%;">{{ __('Nº Registro') }}</th>
+                    <th style="width: 7%;">{{ __('Dosis/ha') }}</th>
+                    <th style="width: 6%;">{{ __('Área') }}</th>
+                    <th style="width: 10%;">{{ __('Plaga') }}</th>
+                    <th style="width: 11%;">{{ __('Aplicador') }}</th>
+                    <th style="width: 9%;">{{ __('Condiciones') }}</th>
+                    <th style="width: 7%;">{{ __('Plazo') }}</th>
+                    <th style="width: 9%;">{{ __('F. Segura') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -470,9 +470,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="11" style="text-align: center; padding: 20px; color: #999;">
-                            No se registraron tratamientos fitosanitarios en el periodo seleccionado.
-                        </td>
+                        <td colspan="11" style="text-align: center; padding: 20px; color: #999;">{{ __('No se registraron tratamientos fitosanitarios en el periodo seleccionado.') }}</td>
                     </tr>
                 @endforelse
             </tbody>
@@ -480,32 +478,32 @@
 
         {{-- Sección de Firma y Verificación Mejorada --}}
         <div class="signature-section">
-            <h3>🔐 Firma Electrónica y Verificación</h3>
+            <h3>{{ __('🔐 Firma Electrónica y Verificación') }}</h3>
             <div class="info-grid mb-15">
                 <div class="info-row">
-                    <span class="info-label">Firmado por:</span>
+                    <span class="info-label">{{ __('Firmado por:') }}</span>
                     <span class="info-value"><strong>{{ $user->name }}</strong></span>
                 </div>
                 <div class="info-row">
-                    <span class="info-label">Email:</span>
+                    <span class="info-label">{{ __('Email:') }}</span>
                     <span class="info-value">{{ $user->email }}</span>
                 </div>
                 <div class="info-row">
-                    <span class="info-label">Fecha de firma:</span>
+                    <span class="info-label">{{ __('Fecha de firma:') }}</span>
                     <span class="info-value"><strong>{{ $generated_at->format('d/m/Y H:i:s') }}</strong></span>
                 </div>
                 <div class="info-row">
-                    <span class="info-label">Hash de firma:</span>
+                    <span class="info-label">{{ __('Hash de firma:') }}</span>
                     <span class="info-value"><span class="hash-code">{{ $signature_hash }}</span></span>
                 </div>
                 <div class="info-row">
-                    <span class="info-label">Código de verificación:</span>
+                    <span class="info-label">{{ __('Código de verificación:') }}</span>
                     <span class="info-value"><span class="hash-code">{{ $verification_code }}</span></span>
                 </div>
             </div>
 
             <div class="qr-container">
-                <p>Escanea para verificar autenticidad</p>
+                <p>{{ __('Escanea para verificar autenticidad') }}</p>
                 <img src="{{ $qr_code_url }}" alt="QR Code de Verificación" style="width: 150px; height: 150px;">
                 <small>
                     O accede manualmente a:<br>
@@ -517,24 +515,22 @@
         {{-- Pie de Página Legal Mejorado --}}
         <div class="legal-footer">
             <p style="margin-bottom: 8px;">
-                <strong>⚠️ IMPORTANTE:</strong> Este documento ha sido generado automáticamente por el sistema certificado Agro365 
+                <strong>{{ __('⚠️ IMPORTANTE:') }}</strong> Este documento ha sido generado automáticamente por el sistema certificado Agro365 
                 y firmado electrónicamente conforme al Real Decreto 1311/2012 sobre uso sostenible de productos fitosanitarios.
             </p>
-            <p>
-                La autenticidad de este documento puede ser verificada escaneando el código QR o accediendo al enlace de verificación proporcionado.
-                Cualquier modificación del contenido invalidará la firma electrónica.
-            </p>
+            <p>{{ __('La autenticidad de este documento puede ser verificada escaneando el código QR o accediendo al enlace de verificación proporcionado.
+                Cualquier modificación del contenido invalidará la firma electrónica.') }}</p>
         </div>
     </div>
 
     {{-- Footer --}}
     <div class="footer">
         <div style="float: left;">
-            <strong>Agro365</strong> - Sistema de Gestión Agrícola Certificado<br>
+            <strong>{{ __('Agro365') }}</strong> - Sistema de Gestión Agrícola Certificado<br>
             Documento generado el {{ now()->format('d/m/Y H:i:s') }}
         </div>
         <div style="float: right; text-align: right;">
-            <strong>Página {PAGE_NUM} de {PAGE_COUNT}</strong>
+            <strong>{{ __('Página {PAGE_NUM} de {PAGE_COUNT}') }}</strong>
         </div>
         <div style="clear: both;"></div>
     </div>

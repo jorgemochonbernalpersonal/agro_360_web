@@ -10,6 +10,8 @@ use Symfony\Component\HttpFoundation\Response;
 class SetLocale
 {
     private const SUPPORTED = ['es', 'en', 'ca', 'eu', 'gl'];
+    private const COOKIE_NAME = 'app_locale';
+    private const COOKIE_DAYS = 365;
 
     public function handle(Request $request, Closure $next): Response
     {
@@ -18,7 +20,12 @@ class SetLocale
         App::setLocale($locale);
         session(['locale' => $locale]);
 
-        return $next($request);
+        $response = $next($request);
+
+        // Persistir en cookie para sobrevivir expiración de sesión y wire:navigate
+        $response->cookie(self::COOKIE_NAME, $locale, 60 * 24 * self::COOKIE_DAYS, '/', null, null, false);
+
+        return $response;
     }
 
     private function resolveLocale(Request $request): string
@@ -27,29 +34,33 @@ class SetLocale
         if ($request->has('lang')) {
             $lang = $request->query('lang');
             if (in_array($lang, self::SUPPORTED, true)) {
-                // Guardar en sesión Y BD (la sesión tiene prioridad en siguiente request)
                 session(['locale' => $lang]);
                 if (auth()->check()) {
-                    // Usar forceUpdate para evitar problemas con observers
                     auth()->user()->forceUpdate(['locale' => $lang]);
                 }
                 return $lang;
             }
         }
 
-        // 2. Sesión (preservada entre solicitudes de Livewire) — PRIMERA PRIORIDAD
+        // 2. Sesión
         if (session()->has('locale') && in_array(session('locale'), self::SUPPORTED, true)) {
             return session('locale');
         }
 
-        // 3. Preferencia guardada del usuario autenticado
+        // 3. Cookie (sobrevive expiración de sesión y recargas de wire:navigate)
+        $cookie = $request->cookie(self::COOKIE_NAME);
+        if ($cookie && in_array($cookie, self::SUPPORTED, true)) {
+            session(['locale' => $cookie]);
+            return $cookie;
+        }
+
+        // 4. Preferencia guardada del usuario autenticado
         if (auth()->check() && auth()->user()->locale && in_array(auth()->user()->locale, self::SUPPORTED, true)) {
-            // Sincronizar a sesión para próximas solicitudes
             session(['locale' => auth()->user()->locale]);
             return auth()->user()->locale;
         }
 
-        // 4. Fallback al español
+        // 5. Fallback al español
         return 'es';
     }
 }

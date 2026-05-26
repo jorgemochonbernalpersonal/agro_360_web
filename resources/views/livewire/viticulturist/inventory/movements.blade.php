@@ -1,7 +1,7 @@
 <div class="space-y-6 animate-fade-in">
     <!-- Header -->
     <x-agro.page-header
-        title="Historial de Movimientos"
+        title="{{ __('Historial de Movimientos') }}"
         :description="'Movimientos de stock para: ' . $stock->product->name"
     >
         <x-slot:actions>
@@ -18,23 +18,23 @@
                 <div class="p-1.5 rounded-lg bg-agro-50">
                     <flux:icon icon="archive-box" class="size-4 text-agro-600" />
                 </div>
-                <span class="font-semibold text-zinc-900 text-sm">Datos del Stock</span>
+                <span class="font-semibold text-zinc-900 text-sm">{{ __('Datos del Stock') }}</span>
             </div>
         </x-slot:header>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
             <div>
-                <span class="text-zinc-500">Cantidad Actual:</span>
+                <span class="text-zinc-500">{{ __('Cantidad Actual:') }}</span>
                 <span class="font-semibold text-zinc-900 ml-2">{{ number_format($stock->getAvailableQuantity(), 3) }} {{ $stock->unit }}</span>
             </div>
             @if($stock->warehouse)
                 <div>
-                    <span class="text-zinc-500">Almacén:</span>
+                    <span class="text-zinc-500">{{ __('Almacén:') }}</span>
                     <span class="font-semibold text-zinc-900 ml-2">{{ $stock->warehouse->name }}</span>
                 </div>
             @endif
             @if($stock->batch_number)
                 <div>
-                    <span class="text-zinc-500">Lote:</span>
+                    <span class="text-zinc-500">{{ __('Lote:') }}</span>
                     <span class="font-semibold text-zinc-900 ml-2">{{ $stock->batch_number }}</span>
                 </div>
             @endif
@@ -44,11 +44,11 @@
     {{-- Filtros --}}
     <x-agro.filter-bar>
         <flux:field>
-            <flux:label>Desde</flux:label>
+            <flux:label>{{ __('Desde') }}</flux:label>
             <flux:input wire:model.live="dateFrom" type="date" id="dateFrom" />
         </flux:field>
         <flux:field>
-            <flux:label>Hasta</flux:label>
+            <flux:label>{{ __('Hasta') }}</flux:label>
             <flux:input wire:model.live="dateTo" type="date" id="dateTo" />
         </flux:field>
     </x-agro.filter-bar>
@@ -56,7 +56,7 @@
     {{-- Tabla de Movimientos --}}
     <x-agro.data-table
         :headers="['Fecha', 'Tipo', 'Cantidad', 'Stock Antes', 'Stock Después', 'Tratamiento', 'Notas']"
-        empty-message="No hay movimientos registrados"
+        empty-:message="__('No hay movimientos registrados')"
     >
         @forelse($movements as $movement)
             <x-agro.table-row>

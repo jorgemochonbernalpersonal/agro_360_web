@@ -36,7 +36,7 @@ class Create extends Component
     {
         // Validar autorización
         if (!Auth::user()->can('create', Machinery::class)) {
-            abort(403, 'No tienes permiso para crear maquinaria.');
+            abort(403, __('No tienes permiso para crear maquinaria.'));
         }
     }
 
@@ -106,7 +106,7 @@ class Create extends Component
                 ]);
             });
 
-            $this->toastSuccess('Maquinaria creada correctamente.');
+            $this->toastSuccess(__('Maquinaria creada correctamente.'));
             return $this->viticulturistRoleRedirect('machinery.index');
         } catch (\Exception $e) {
             \Log::error('Error al crear maquinaria', [
@@ -115,7 +115,7 @@ class Create extends Component
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            $this->toastError('Error al crear la maquinaria. Por favor, intenta de nuevo.');
+            $this->toastError(__('Error al crear la maquinaria. Por favor, intenta de nuevo.'));
             return;
         }
     }

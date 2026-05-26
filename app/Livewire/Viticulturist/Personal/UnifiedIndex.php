@@ -66,7 +66,7 @@ class UnifiedIndex extends Component
     public function assignToCrew(int $viticulturistId): void
     {
         if (empty($viticulturistId) || empty($this->assignToCrewId)) {
-            $this->toastError('Debes seleccionar un equipo.');
+            $this->toastError(__('Debes seleccionar un equipo.'));
             return;
         }
 
@@ -78,7 +78,7 @@ class UnifiedIndex extends Component
             ->exists();
 
         if (! $canEdit) {
-            $this->toastError('No tienes permiso para gestionar este viticultor.');
+            $this->toastError(__('No tienes permiso para gestionar este viticultor.'));
             return;
         }
 
@@ -88,7 +88,7 @@ class UnifiedIndex extends Component
             ->first();
 
         if (! $crew) {
-            $this->toastError('No tienes permiso para gestionar este equipo.');
+            $this->toastError(__('No tienes permiso para gestionar este equipo.'));
             return;
         }
 
@@ -96,7 +96,7 @@ class UnifiedIndex extends Component
         $member = CrewMember::where('viticulturist_id', $viticulturistId)->first();
 
         if ($member && $member->crew_id === $crew->id) {
-            $this->toastError('Este viticultor ya forma parte de este equipo.');
+            $this->toastError(__('Este viticultor ya forma parte de este equipo.'));
             return;
         }
 
@@ -118,7 +118,7 @@ class UnifiedIndex extends Component
 
             $this->assignToCrewId = '';
 
-            $this->toastSuccess('Viticultor asignado al equipo correctamente.');
+            $this->toastSuccess(__('Viticultor asignado al equipo correctamente.'));
         } catch (\Exception $e) {
             Log::error('Error al asignar viticultor a equipo', [
                 'error' => $e->getMessage(),
@@ -127,7 +127,7 @@ class UnifiedIndex extends Component
                 'user_id' => $user->id,
             ]);
 
-            $this->toastError('Error al asignar el viticultor al equipo. Por favor, intenta de nuevo.');
+            $this->toastError(__('Error al asignar el viticultor al equipo. Por favor, intenta de nuevo.'));
         }
     }
 
@@ -141,7 +141,7 @@ class UnifiedIndex extends Component
             ->exists();
 
         if (! $canEdit) {
-            $this->toastError('No tienes permiso para gestionar este viticultor.');
+            $this->toastError(__('No tienes permiso para gestionar este viticultor.'));
             return;
         }
 
@@ -154,23 +154,23 @@ class UnifiedIndex extends Component
                 'crew_id' => null,
                 'assigned_by' => $user->id,
             ]);
-            $this->toastSuccess('Viticultor marcado como sin equipo.');
+            $this->toastSuccess(__('Viticultor marcado como sin equipo.'));
         } else {
             // Convertir a sin equipo
             $member->update(['crew_id' => null]);
-            $this->toastSuccess('Viticultor convertido a sin equipo.');
+            $this->toastSuccess(__('Viticultor convertido a sin equipo.'));
         }
     }
 
     public function deleteCrew(Crew $crew)
     {
         if (!Auth::user()->can('delete', $crew)) {
-            $this->toastError('No tienes permiso para eliminar este equipo.');
+            $this->toastError(__('No tienes permiso para eliminar este equipo.'));
             return;
         }
 
         if ($crew->activities()->exists()) {
-            $this->toastError('No se puede eliminar un equipo con actividades asociadas.');
+            $this->toastError(__('No se puede eliminar un equipo con actividades asociadas.'));
             return;
         }
 
@@ -181,7 +181,7 @@ class UnifiedIndex extends Component
                 $crew->delete();
             });
             
-            $this->toastSuccess('Equipo eliminado correctamente.');
+            $this->toastSuccess(__('Equipo eliminado correctamente.'));
         } catch (\Exception $e) {
             Log::error('Error deleting crew', [
                 'crew_id' => $crew->id,
@@ -189,7 +189,7 @@ class UnifiedIndex extends Component
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
-            $this->toastError('Hubo un error al eliminar el equipo. Por favor, inténtalo de nuevo.');
+            $this->toastError(__('Hubo un error al eliminar el equipo. Por favor, inténtalo de nuevo.'));
         }
     }
 
@@ -203,26 +203,26 @@ class UnifiedIndex extends Component
             ->exists();
 
         if (!$canEdit) {
-            $this->toastError('No tienes permiso para gestionar este viticultor.');
+            $this->toastError(__('No tienes permiso para gestionar este viticultor.'));
             return;
         }
 
         $viticulturist = User::find($viticulturistId);
 
         if (!$viticulturist) {
-            $this->toastError('Viticultor no encontrado.');
+            $this->toastError(__('Viticultor no encontrado.'));
             return;
         }
 
         // Verificar que no se haya enviado ya la invitación
         if ($viticulturist->invitation_sent_at !== null) {
-            $this->toastError('La invitación ya fue enviada anteriormente.');
+            $this->toastError(__('La invitación ya fue enviada anteriormente.'));
             return;
         }
 
         // Verificar que el viticultor aún no puede hacer login (estado inicial)
         if ($viticulturist->can_login) {
-            $this->toastError('Este viticultor ya puede iniciar sesión. No es necesario enviar invitación.');
+            $this->toastError(__('Este viticultor ya puede iniciar sesión. No es necesario enviar invitación.'));
             return;
         }
 
@@ -235,7 +235,7 @@ class UnifiedIndex extends Component
                 'invitation_sent_at' => now(),
             ]);
 
-            $this->toastSuccess('Invitación enviada correctamente por email.');
+            $this->toastSuccess(__('Invitación enviada correctamente por email.'));
         } catch (\Exception $e) {
             Log::error('Error al enviar invitación', [
                 'error' => $e->getMessage(),
@@ -243,7 +243,7 @@ class UnifiedIndex extends Component
                 'user_id' => $user->id,
             ]);
 
-            $this->toastError('Error al enviar la invitación. Por favor, intenta de nuevo.');
+            $this->toastError(__('Error al enviar la invitación. Por favor, intenta de nuevo.'));
         }
     }
 
@@ -257,7 +257,7 @@ class UnifiedIndex extends Component
             ->first();
 
         if (!$relation) {
-            $this->toastError('No tienes permiso para eliminar este viticultor.');
+            $this->toastError(__('No tienes permiso para eliminar este viticultor.'));
             return;
         }
 
@@ -277,26 +277,26 @@ class UnifiedIndex extends Component
             ->exists();
 
         if ($hasPlots || $hasCampaigns || $hasCrews || $hasSubs || $hasPayments || $hasWineryRelations) {
-            $this->toastError('No se puede eliminar el viticultor porque tiene datos relacionados.');
+            $this->toastError(__('No se puede eliminar el viticultor porque tiene datos relacionados.'));
             return;
         }
 
         $vit = User::find($viticulturistId);
         if (!$vit) {
-            $this->toastError('Viticultor no encontrado.');
+            $this->toastError(__('Viticultor no encontrado.'));
             return;
         }
 
         try {
             $vit->delete();
-            $this->toastSuccess('Viticultor eliminado correctamente.');
+            $this->toastSuccess(__('Viticultor eliminado correctamente.'));
         } catch (\Exception $e) {
             Log::error('Error al eliminar viticultor', [
                 'error' => $e->getMessage(),
                 'viticulturist_id' => $viticulturistId,
                 'user_id' => $user->id,
             ]);
-            $this->toastError('Error al eliminar el viticultor. Por favor, intenta de nuevo.');
+            $this->toastError(__('Error al eliminar el viticultor. Por favor, intenta de nuevo.'));
         }
     }
 
@@ -425,15 +425,15 @@ class UnifiedIndex extends Component
             'crewsCount' => $crewsCount,
             'wineriesByViticulturist' => $wineriesByViticulturist,
         ])->layout('layouts.app', [
-            'title' => 'Personal y Equipos - Agro365',
-            'description' => 'Gestiona tu equipo de trabajo: viticultores, cuadrillas y asignaciones. Organiza tu personal para optimizar las labores del viñedo.',
+            'title' => __('Personal y Equipos - Agro365'),
+            'description' => __('Gestiona tu equipo de trabajo: viticultores, cuadrillas y asignaciones. Organiza tu personal para optimizar las labores del viñedo.'),
         ]);
     }
 
     private function renderCrewsView($user, $wineries)
     {
         if (!$user->can('viewAny', Crew::class)) {
-            abort(403, 'No tienes permiso para ver equipos.');
+            abort(403, __('No tienes permiso para ver equipos.'));
         }
 
         $query = Crew::forViticulturist($user->id)
@@ -472,8 +472,8 @@ class UnifiedIndex extends Component
             'viticulturistsCount' => $allViticulturists,
             'crewsCount' => $crewsCount,
         ])->layout('layouts.app', [
-            'title' => 'Personal y Equipos - Agro365',
-            'description' => 'Gestiona tu equipo de trabajo: viticultores, cuadrillas y asignaciones. Organiza tu personal para optimizar las labores del viñedo.',
+            'title' => __('Personal y Equipos - Agro365'),
+            'description' => __('Gestiona tu equipo de trabajo: viticultores, cuadrillas y asignaciones. Organiza tu personal para optimizar las labores del viñedo.'),
         ]);
     }
 }

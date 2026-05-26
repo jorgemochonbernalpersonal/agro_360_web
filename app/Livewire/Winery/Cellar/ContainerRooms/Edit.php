@@ -54,7 +54,7 @@ class Edit extends Component
             'humidity'    => $this->humidity ?: null,
         ]);
 
-        $this->toastSuccess('Sala actualizada correctamente.');
+        $this->toastSuccess(__('Sala actualizada correctamente.'));
         $this->redirect(roleRoute('container-rooms.index'), navigate: true);
     }
 

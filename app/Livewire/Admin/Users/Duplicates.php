@@ -19,7 +19,7 @@ class Duplicates extends Component
         $delete = User::findOrFail($deleteId);
 
         if ($keep->isAdmin() || $delete->isAdmin()) {
-            $this->toastError('No se pueden fusionar cuentas de administrador.');
+            $this->toastError(__('No se pueden fusionar cuentas de administrador.'));
             return;
         }
 
@@ -73,8 +73,8 @@ class Duplicates extends Component
 
         return view('livewire.admin.users.duplicates', compact('groups'))
             ->layout('layouts.app', [
-                'title'       => 'Duplicados - Admin - Agro365',
-                'description' => 'Detección y fusión de cuentas duplicadas',
+                'title'       => __('Duplicados - Admin - Agro365'),
+                'description' => __('Detección y fusión de cuentas duplicadas'),
             ]);
     }
 }

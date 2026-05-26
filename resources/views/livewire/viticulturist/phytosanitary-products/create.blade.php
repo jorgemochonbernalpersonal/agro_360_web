@@ -12,7 +12,7 @@
         <x-agro.form-section :title="__('Datos Básicos')" color="green">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <flux:field>
-                        <flux:label for="name" badge="Obligatorio">{{ __('Nombre comercial') }}</flux:label>
+                        <flux:label for="name" :badge="__('Obligatorio')">{{ __('Nombre comercial') }}</flux:label>
                         <flux:input
                             wire:model="name"
                             type="text"
@@ -86,7 +86,7 @@
         <x-agro.form-section :title="__('Información Regulatoria (PAC)')" color="amber">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <flux:field>
-                        <flux:label for="registration_number" badge="Obligatorio">
+                        <flux:label for="registration_number" :badge="__('Obligatorio')">
                             <span class="flex items-center gap-2">
                                 {{ __('Nº de Registro MAPA') }}
                                 <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
@@ -99,14 +99,14 @@
                             type="text"
                             id="registration_number"
                             data-cy="product-registration-number-input"
-                            placeholder="ES-12345678"
+                            placeholder="{{ __('ES-12345678') }}"
                             required
                         />
                         <flux:error name="registration_number" />
                         <p class="mt-1 text-xs text-zinc-500">{{ __('Formato: ES-00000000 (ES seguido de 8 dígitos)') }}</p>
                     </flux:field>
                     <flux:field>
-                        <flux:label for="withdrawal_period_days" badge="Obligatorio">
+                        <flux:label for="withdrawal_period_days" :badge="__('Obligatorio')">
                             <span class="flex items-center gap-2">
                                 {{ __('Plazo de Seguridad (días)') }}
                                 <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
@@ -130,7 +130,7 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                     <flux:field>
-                        <flux:label for="registration_status" badge="Obligatorio">{{ __('Estado del Registro') }}</flux:label>
+                        <flux:label for="registration_status" :badge="__('Obligatorio')">{{ __('Estado del Registro') }}</flux:label>
                         <flux:select
                             wire:model="registration_status"
                             id="registration_status"

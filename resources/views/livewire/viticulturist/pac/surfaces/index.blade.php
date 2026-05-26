@@ -48,7 +48,7 @@
                                     <p class="text-xs text-zinc-500">{{ $plot->municipality?->name ?? __('Sin municipio') }}</p>
                                 </div>
                                 @if($hasPac)
-                                    <flux:badge color="green" size="sm" class="shrink-0">PAC</flux:badge>
+                                    <flux:badge color="green" size="sm" class="shrink-0">{{ __('PAC') }}</flux:badge>
                                 @else
                                     <flux:badge color="amber" size="sm" class="shrink-0">{{ __('Sin PAC') }}</flux:badge>
                                 @endif

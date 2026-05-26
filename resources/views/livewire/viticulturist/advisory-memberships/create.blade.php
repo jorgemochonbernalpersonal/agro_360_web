@@ -15,7 +15,7 @@
 
                 <flux:field>
                     <flux:label required>{{ __('Número de licencia') }}</flux:label>
-                    <flux:input wire:model="license_number" type="text" placeholder="Ej: ROPO-12345" />
+                    <flux:input wire:model="license_number" type="text" :placeholder="__('Ej: ROPO-12345')" />
                     <flux:error name="license_number" />
                 </flux:field>
 

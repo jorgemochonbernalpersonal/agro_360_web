@@ -47,7 +47,7 @@ class Index extends Component
     {
         $grape = ExternalGrape::where('user_id', Auth::id())->findOrFail($id);
         $grape->update(['status' => 'archived']);
-        $this->toastSuccess('Partida archivada.');
+        $this->toastSuccess(__('Partida archivada.'));
     }
 
     public function render()

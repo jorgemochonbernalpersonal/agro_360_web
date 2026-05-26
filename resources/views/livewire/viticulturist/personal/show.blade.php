@@ -138,7 +138,7 @@
 
     <!-- Actividades Recientes -->
     @if($crew->activities->count() > 0)
-    <x-agro.data-table :headers="[__('Fecha'), __('Tipo'), __('Parcela')]" :empty-message="__('Sin actividades')">
+    <x-agro.data-table :headers="[__('Fecha'), __('Tipo'), __('Parcela')]" :empty-:message="__('__(\'Sin actividades\')')">
         <x-slot:header>
             <div class="flex items-center gap-2">
                 <div class="p-1.5 rounded-lg bg-agro-50">

@@ -203,7 +203,7 @@ class Edit extends Component
             
             // Verificar permisos
             if (!Auth::user()->can('update', $plot)) {
-                throw new \Exception('No tienes permisos para modificar códigos SIGPAC de esta parcela.');
+                throw new \Exception(__('No tienes permisos para modificar códigos SIGPAC de esta parcela.'));
             }
             
             $sigpacData = $this->sigpacCodes[0];
@@ -245,12 +245,12 @@ class Edit extends Component
             
             DB::commit();
             
-            $this->toastSuccess('Código SIGPAC actualizado correctamente.');
+            $this->toastSuccess(__('Código SIGPAC actualizado correctamente.'));
             return $this->redirect(route('sigpac.codes'));
             
         } catch (\Exception $e) {
             DB::rollBack();
-            $this->toastError('Error: ' . $e->getMessage());
+            $this->toastError(__('Error: :error', ['error' => $e->getMessage()]));
         }
     }
 

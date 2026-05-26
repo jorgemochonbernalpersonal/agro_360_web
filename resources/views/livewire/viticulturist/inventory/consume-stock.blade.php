@@ -1,7 +1,7 @@
 <div class="space-y-6 animate-fade-in">
     <x-agro.page-header
-        title="Registrar Consumo Manual"
-        description="Registra consumo de stock sin tratamiento asociado"
+        title="{{ __('Registrar Consumo Manual') }}"
+        :description="__('Registra consumo de stock sin tratamiento asociado')"
     >
         <x-slot:actions>
             <flux:button href="{{ roleRoute('viticulturist.warehouse.index', ['tab' => 'fitosanitarios']) }}" variant="ghost" icon="arrow-left">
@@ -34,7 +34,7 @@
 
         <form wire:submit="consume" class="space-y-6">
             <flux:field>
-                <flux:label required>Cantidad a Consumir</flux:label>
+                <flux:label required>{{ __('Cantidad a Consumir') }}</flux:label>
                 <div class="flex gap-2">
                     <flux:input
                         wire:model="quantity"
@@ -51,13 +51,13 @@
             </flux:field>
 
             <flux:field>
-                <flux:label required>Motivo del Consumo</flux:label>
+                <flux:label required>{{ __('Motivo del Consumo') }}</flux:label>
                 <flux:select wire:model.live="reason" id="reason" required>
-                    <option value="loss">Pérdida/Derrame</option>
-                    <option value="expired">Producto Caducado</option>
-                    <option value="donation">Donación</option>
-                    <option value="adjustment">Ajuste de Inventario</option>
-                    <option value="other">Otro (especificar)</option>
+                    <option value="loss">{{ __('Pérdida/Derrame') }}</option>
+                    <option value="expired">{{ __('Producto Caducado') }}</option>
+                    <option value="donation">{{ __('Donación') }}</option>
+                    <option value="adjustment">{{ __('Ajuste de Inventario') }}</option>
+                    <option value="other">{{ __('Otro (especificar)') }}</option>
                 </flux:select>
                 <flux:error name="reason" />
             </flux:field>
@@ -81,7 +81,7 @@
                     <div class="flex items-start gap-3">
                         <flux:icon icon="exclamation-triangle" class="text-orange-600 mt-0.5 flex-shrink-0" />
                         <div>
-                            <p class="text-sm font-semibold text-orange-900">Confirma la operación</p>
+                            <p class="text-sm font-semibold text-orange-900">{{ __('Confirma la operación') }}</p>
                             <p class="text-sm text-orange-700 mt-1">
                                 Se darán de baja <strong>{{ number_format($quantity, 3) }} {{ $stock->unit }}</strong>.
                                 Stock resultante: <strong>{{ number_format(max(0, $maxQuantity - $quantity), 3) }} {{ $stock->unit }}</strong>
@@ -92,14 +92,13 @@
             @endif
 
             <div class="flex items-center justify-end gap-3 pt-4 border-t border-zinc-100">
-                <flux:button href="{{ roleRoute('viticulturist.warehouse.index', ['tab' => 'fitosanitarios']) }}" variant="ghost">Cancelar</flux:button>
+                <flux:button href="{{ roleRoute('viticulturist.warehouse.index', ['tab' => 'fitosanitarios']) }}" variant="ghost">{{ __('Cancelar') }}</flux:button>
                 <flux:button
                     type="submit"
                     variant="primary"
-                    :disabled="$quantity <= 0 || $quantity > $maxQuantity"
+                    :disabled="$quantity <= 0 || $quantity >{{ __('$maxQuantity"
                 >
-                    Registrar Consumo
-                </flux:button>
+                    Registrar Consumo') }}</flux:button>
             </div>
         </form>
     </x-agro.card>

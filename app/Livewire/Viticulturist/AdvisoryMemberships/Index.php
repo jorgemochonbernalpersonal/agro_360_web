@@ -20,7 +20,7 @@ class Index extends AbstractIndex
     public function deactivate(int $id): void
     {
         $this->findOwned(AdvisoryMembership::class, $id)->update(['active' => false]);
-        $this->toastSuccess('Asesor desactivado.');
+        $this->toastSuccess(__('Asesor desactivado.'));
     }
 
     protected function baseQuery(): Builder

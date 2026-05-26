@@ -75,7 +75,7 @@ class Edit extends Component
             'notes'             => $this->notes ?: null,
         ]);
 
-        $this->toastSuccess('Coste actualizado correctamente.');
+        $this->toastSuccess(__('Coste actualizado correctamente.'));
 
         return $this->viticulturistRoleRedirect('plot-costs.index');
     }

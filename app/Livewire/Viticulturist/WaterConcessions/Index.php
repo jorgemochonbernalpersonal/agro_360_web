@@ -35,19 +35,19 @@ class Index extends AbstractIndex
     public function archive(int $id): void
     {
         $this->findOwned(WaterConcession::class, $id)->update(['active' => false]);
-        $this->toastSuccess('Concesión archivada.');
+        $this->toastSuccess(__('Concesión archivada.'));
     }
 
     public function unarchive(int $id): void
     {
         $this->findOwned(WaterConcession::class, $id)->update(['active' => true]);
-        $this->toastSuccess('Concesión restaurada.');
+        $this->toastSuccess(__('Concesión restaurada.'));
     }
 
     public function delete(int $id): void
     {
         $this->findOwned(WaterConcession::class, $id)->delete();
-        $this->toastSuccess('Concesión eliminada.');
+        $this->toastSuccess(__('Concesión eliminada.'));
     }
 
     protected function baseQuery(): Builder

@@ -81,17 +81,17 @@ class Index extends AbstractIndex
             ->findOrFail($containerId);
 
         if ($container->harvests_count > 0) {
-            $this->toastError('No se puede eliminar un contenedor con recepciones asignadas.');
+            $this->toastError(__('No se puede eliminar un contenedor con recepciones asignadas.'));
             return;
         }
 
         if ((float) $container->wine_volume_liters > 0) {
-            $this->toastError('No se puede eliminar un contenedor con vino elaborado. Vacíalo primero.');
+            $this->toastError(__('No se puede eliminar un contenedor con vino elaborado. Vacíalo primero.'));
             return;
         }
 
         $container->delete();
-        $this->toastSuccess('Contenedor eliminado.');
+        $this->toastSuccess(__('Contenedor eliminado.'));
     }
 
     protected function baseQuery(): Builder

@@ -2,8 +2,8 @@
 
     {{-- Header --}}
     <x-agro.page-header
-        title="Trasvases y Coupage"
-        description="Registro de trasiegos, mezclas y movimientos de vino entre depósitos"
+        title="{{ __('Trasvases y Coupage') }}"
+        :description="__('Registro de trasiegos, mezclas y movimientos de vino entre depósitos')"
         icon="arrows-right-left"
     >
         <x-slot:actions>
@@ -17,25 +17,25 @@
     <x-agro.stats-section key="wine-transfers">
         <div class="grid grid-cols-2 gap-4">
             <x-agro.stat-card
-                label="Total trasvases"
+                :label="__('Total trasvases')"
                 :value="$stats['total']"
                 icon="arrows-right-left"
                 color="zinc"
             />
             <x-agro.stat-card
-                label="Este año"
+                :label="__('Este año')"
                 :value="$stats['this_year']"
                 icon="calendar-days"
                 color="agro"
             />
             <x-agro.stat-card
-                label="Trasiegos"
+                :label="__('Trasiegos')"
                 :value="$stats['rackings']"
                 icon="arrow-right"
                 color="zinc"
             />
             <x-agro.stat-card
-                label="Coupages"
+                :label="__('Coupages')"
                 :value="$stats['blendings']"
                 icon="beaker"
                 color="amber"
@@ -45,26 +45,24 @@
 
     {{-- Toolbar --}}
     <div class="flex items-center gap-3">
-        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar por vino..." />
+        <x-agro.search-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar por vino...')" />
 
         <flux:select wire:model.live="wineFilter" class="w-44">
-            <flux:select.option value="">Todos los vinos</flux:select.option>
+            <flux:select.option value="">{{ __('Todos los vinos') }}</flux:select.option>
             @foreach($wines as $wine)
                 <flux:select.option value="{{ $wine->id }}">{{ $wine->name }}{{ $wine->vintage ? ' (' . $wine->vintage . ')' : '' }}</flux:select.option>
             @endforeach
         </flux:select>
 
         <flux:select wire:model.live="typeFilter" class="w-44">
-            <flux:select.option value="">Todos los tipos</flux:select.option>
+            <flux:select.option value="">{{ __('Todos los tipos') }}</flux:select.option>
             @foreach($types as $key => $label)
                 <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
             @endforeach
         </flux:select>
 
         @if($search || $wineFilter || $typeFilter)
-            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">
-                Limpiar
-            </flux:button>
+            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">{{ __('Limpiar') }}</flux:button>
         @endif
     </div>
 
@@ -117,7 +115,7 @@
                         <div class="flex-1 space-y-4">
                             {{-- Cantidad --}}
                             <div class="bg-agro-50 rounded-xl p-3">
-                                <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Cantidad transferida</p>
+                                <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">{{ __('Cantidad transferida') }}</p>
                                 <p class="text-2xl font-bold text-agro-700 leading-none">
                                     {{ number_format($transfer->quantity, 2) }}
                                     <span class="text-sm font-normal text-agro-500">{{ $transfer->unitOfMeasurement?->symbol ?? '' }}</span>
@@ -127,12 +125,12 @@
                             {{-- Origen → Destino --}}
                             <div class="flex items-center gap-2 text-sm">
                                 <div class="flex-1 min-w-0 bg-zinc-50 rounded-lg px-3 py-2">
-                                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">Origen</p>
+                                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">{{ __('Origen') }}</p>
                                     <p class="font-medium text-zinc-700 truncate">{{ $transfer->fromContainer?->name ?? '—' }}</p>
                                 </div>
                                 <flux:icon icon="arrow-right" class="size-4 text-zinc-300 shrink-0" />
                                 <div class="flex-1 min-w-0 bg-zinc-50 rounded-lg px-3 py-2">
-                                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">Destino</p>
+                                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">{{ __('Destino') }}</p>
                                     <p class="font-medium text-zinc-700 truncate">{{ $transfer->toContainer?->name ?? '—' }}</p>
                                 </div>
                             </div>
@@ -145,8 +143,8 @@
 
                         <x-slot:footer>
                             <div class="flex items-center justify-end gap-0.5">
-                                <x-agro.action-button variant="edit" href="{{ roleRoute('wine-transfers.edit', $transfer) }}" wire:navigate title="Editar trasvase" />
-                                <x-agro.action-button variant="delete" wire:click="delete({{ $transfer->id }})" wire:confirm="¿Eliminar este trasvase?" wire:loading.attr="disabled" title="Eliminar trasvase" />
+                                <x-agro.action-button variant="edit" href="{{ roleRoute('wine-transfers.edit', $transfer) }}" wire:navigate title="{{ __('Editar trasvase') }}" />
+                                <x-agro.action-button variant="delete" wire:click="delete({{ $transfer->id }})" wire:confirm="{{ __('¿Eliminar este trasvase?') }}" wire:loading.attr="disabled" title="{{ __('Eliminar trasvase') }}" />
                             </div>
                         </x-slot:footer>
                     </x-agro.card>
@@ -162,9 +160,7 @@
             >
                 @if($search || $wineFilter || $typeFilter)
                     <x-slot:action>
-                        <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">
-                            Limpiar filtros
-                        </flux:button>
+                        <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">{{ __('Limpiar filtros') }}</flux:button>
                     </x-slot:action>
                 @else
                     <x-slot:action>

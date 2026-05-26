@@ -11,13 +11,13 @@
             </div>
             <div>
                 <p class="text-sm font-semibold text-zinc-800">{{ $title }}</p>
-                <p class="text-xs text-zinc-400">Denominación de Origen · En desarrollo</p>
+                <p class="text-xs text-zinc-400">{{ __('Denominación de Origen · En desarrollo') }}</p>
             </div>
-            <span class="ml-auto px-2.5 py-1 text-[10px] font-bold bg-amber-100 text-amber-700 rounded-full uppercase tracking-wide">Próximamente</span>
+            <span class="ml-auto px-2.5 py-1 text-[10px] font-bold bg-amber-100 text-amber-700 rounded-full uppercase tracking-wide">{{ __('Próximamente') }}</span>
         </div>
 
         <div class="px-6 py-5">
-            <p class="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-3">Funciones de este módulo</p>
+            <p class="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-3">{{ __('Funciones de este módulo') }}</p>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 @foreach($items as $item)
                     <div class="flex items-center gap-2.5 text-sm text-zinc-500">

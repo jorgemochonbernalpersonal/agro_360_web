@@ -248,8 +248,8 @@ class Index extends Component
             'campaignYears' => $campaignYears,
             'vintageYear'   => $vintageYear,
         ])->layout('layouts.app', [
-            'title'       => 'Mis cosechas - Agro365',
-            'description' => 'Gestiona tus cosechas y entregas de uva.',
+            'title'       => __('Mis cosechas - Agro365'),
+            'description' => __('Gestiona tus cosechas y entregas de uva.'),
         ]);
     }
 }

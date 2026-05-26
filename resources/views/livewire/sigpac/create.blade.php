@@ -1,7 +1,7 @@
 ﻿<div class="space-y-6">
     <x-agro.page-header
         title="SIGPAC"
-        description="Crear Códigos SIGPAC - Añade códigos SIGPAC a la parcela. Completa cada campo según el formato SIGPAC."
+        :description="__('Crear Códigos SIGPAC - Añade códigos SIGPAC a la parcela. Completa cada campo según el formato SIGPAC.')"
     >
         <x-slot:actions>
             <flux:button href="{{ route('sigpac.codes') }}" variant="outline" icon="arrow-left" data-cy="back-button">
@@ -13,16 +13,16 @@
     <x-agro.card>
         <form wire:submit.prevent="save" class="space-y-8">
             <!-- Parcela OBLIGATORIA -->
-            <x-agro.form-section title="Parcela">
+            <x-agro.form-section title="{{ __('Parcela') }}">
                 <flux:field>
-                    <flux:label for="plot_id">Parcela *</flux:label>
+                    <flux:label for="plot_id">{{ __('Parcela *') }}</flux:label>
                     <flux:select
                         wire:model.live="plot_id"
                         id="plot_id"
                         required
                         :disabled="!!request('plot_id')"
                     >
-                        <option value="">Seleccionar parcela</option>
+                        <option value="">{{ __('Seleccionar parcela') }}</option>
                         @foreach ($plots as $plot)
                             <option value="{{ $plot->id }}">
                                 {{ $plot->name }} - {{ $plot->name }},
@@ -39,18 +39,16 @@
                         @endforeach
                     </flux:select>
                     @if(request('plot_id'))
-                        <p class="mt-1 text-xs text-zinc-500">
-                            Parcela pre-seleccionada desde la vista de detalle
-                        </p>
+                        <p class="mt-1 text-xs text-zinc-500">{{ __('Parcela pre-seleccionada desde la vista de detalle') }}</p>
                     @endif
                     <flux:error name="plot_id" />
                 </flux:field>
             </x-agro.form-section>
 
             <!-- Usos SIGPAC de la parcela -->
-            <x-agro.form-section title="Usos SIGPAC">
+            <x-agro.form-section title="{{ __('Usos SIGPAC') }}">
                 <flux:field>
-                    <flux:label for="sigpac_use">Usos de la Parcela</flux:label>
+                    <flux:label for="sigpac_use">{{ __('Usos de la Parcela') }}</flux:label>
                     <flux:select wire:model="sigpac_use" id="sigpac_use" multiple size="5">
                         @foreach ($sigpacUses as $use)
                             <option value="{{ $use->id }}">{{ $use->code }} - {{ $use->description }}</option>
@@ -64,7 +62,7 @@
             <!-- Códigos SIGPAC dinámicos con cajitas por campo -->
             <div class="space-y-6">
                 <div class="flex items-center justify-between">
-                    <h2 class="text-xl font-bold text-zinc-800">Códigos SIGPAC</h2>
+                    <h2 class="text-xl font-bold text-zinc-800">{{ __('Códigos SIGPAC') }}</h2>
                     <span class="text-sm text-zinc-500">
                         {{ count($sigpacCodes) }} {{ count($sigpacCodes) === 1 ? 'código' : 'códigos' }}
                     </span>
@@ -174,7 +172,7 @@
                                             <flux:icon icon="x-circle" class="size-4" /> Revisa los campos
                                         </p>
                                     @else
-                                        <p class="text-xs text-zinc-500 mt-0.5">Completa los campos o pega la referencia SIGPAC</p>
+                                        <p class="text-xs text-zinc-500 mt-0.5">{{ __('Completa los campos o pega la referencia SIGPAC') }}</p>
                                     @endif
                                 </div>
                             </div>
@@ -189,13 +187,13 @@
                                 <div class="flex-1">
                                     <label class="text-xs font-medium text-zinc-500 mb-1 block">
                                         Pegar referencia SIGPAC completa
-                                        <span class="text-zinc-400 font-normal">(ej: 28-079-000-000-012-00045-003)</span>
+                                        <span class="text-zinc-400 font-normal">{{ __('(ej: 28-079-000-000-012-00045-003)') }}</span>
                                     </label>
                                     <input
                                         type="text"
                                         x-model="pasteRef"
                                         x-on:keydown.enter.prevent="parsePaste({{ $index }})"
-                                        placeholder="PP-MMM-AAA-ZZZ-PPP-PPPPP-EEE"
+                                        placeholder="{{ __('PP-MMM-AAA-ZZZ-PPP-PPPPP-EEE') }}"
                                         class="w-full font-mono text-sm border border-zinc-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-agro-500"
                                     >
                                 </div>
@@ -208,7 +206,7 @@
 
                         <!-- Separador -->
                         <div class="mx-6 mt-4 mb-0 border-t border-dashed border-zinc-200 flex items-center justify-center">
-                            <span class="bg-white px-3 -mt-2.5 text-xs text-zinc-400">o rellena campo a campo</span>
+                            <span class="bg-white px-3 -mt-2.5 text-xs text-zinc-400">{{ __('o rellena campo a campo') }}</span>
                         </div>
 
                         <!-- Campos individuales -->
@@ -260,7 +258,7 @@
                                 <div class="mt-4 p-4 bg-green-50 border border-green-300 rounded-xl flex items-center gap-3">
                                     <flux:icon icon="check-circle" class="size-5 text-green-600 shrink-0" />
                                     <div>
-                                        <p class="text-xs text-green-700 font-medium">Código generado</p>
+                                        <p class="text-xs text-green-700 font-medium">{{ __('Código generado') }}</p>
                                         <p class="text-base font-mono font-bold text-green-900 tracking-widest">{{ $formattedCode }}</p>
                                     </div>
                                 </div>
@@ -270,7 +268,7 @@
                                 <div class="mt-4 p-4 bg-red-50 border border-red-300 rounded-xl flex items-center gap-3">
                                     <flux:icon icon="x-circle" class="size-5 text-red-600 shrink-0" />
                                     <p class="text-sm text-red-700">
-                                        <strong>Duplicado:</strong> Polígono, Parcela y Recinto coinciden con otro código del formulario.
+                                        <strong>{{ __('Duplicado:') }}</strong> Polígono, Parcela y Recinto coinciden con otro código del formulario.
                                     </p>
                                 </div>
                             @endif

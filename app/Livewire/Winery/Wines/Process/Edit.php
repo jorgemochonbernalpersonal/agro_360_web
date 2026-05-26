@@ -102,7 +102,7 @@ class Edit extends Component
         }
         $this->process->containers()->sync($sync);
 
-        $this->toastSuccess('Operación de vinificación actualizada correctamente.');
+        $this->toastSuccess(__('Operación de vinificación actualizada correctamente.'));
         $this->redirect(roleRoute('wines.edit', $this->wine), navigate: true);
     }
 

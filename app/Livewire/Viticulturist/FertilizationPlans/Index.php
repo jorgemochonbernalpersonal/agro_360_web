@@ -39,24 +39,24 @@ class Index extends AbstractIndex
     public function activate(int $id): void
     {
         $this->findOwned(FertilizationPlan::class, $id)->update(['status' => 'active']);
-        $this->toastSuccess('Plan activado.');
+        $this->toastSuccess(__('Plan activado.'));
     }
 
     public function archive(int $id): void
     {
         $this->findOwned(FertilizationPlan::class, $id)->update(['status' => 'archived']);
-        $this->toastSuccess('Plan archivado.');
+        $this->toastSuccess(__('Plan archivado.'));
     }
 
     public function delete(int $id): void
     {
         $record = $this->findOwned(FertilizationPlan::class, $id);
         if (!$record->isDraft()) {
-            $this->toastError('Solo se pueden eliminar planes en borrador.');
+            $this->toastError(__('Solo se pueden eliminar planes en borrador.'));
             return;
         }
         $record->delete();
-        $this->toastSuccess('Plan eliminado.');
+        $this->toastSuccess(__('Plan eliminado.'));
     }
 
     protected function baseQuery(): Builder

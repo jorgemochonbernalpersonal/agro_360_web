@@ -64,7 +64,7 @@ class Index extends Component
         Gate::authorize('create', DoLabel::class);
 
         if (!RateLimiter::attempt('label-save:' . Auth::id(), 20, fn() => null, 60)) {
-            $this->toastError('Demasiadas solicitudes. Espera un minuto antes de continuar.');
+            $this->toastError(__('Demasiadas solicitudes. Espera un minuto antes de continuar.'));
             return;
         }
 
@@ -91,13 +91,13 @@ class Index extends Component
 
         $this->reset(['batch_number', 'quantity_requested', 'notes', 'fromRequestId']);
         $this->showCreate = false;
-        $this->toastSuccess('Solicitud de contraetiquetas registrada.');
+        $this->toastSuccess(__('Solicitud de contraetiquetas registrada.'));
     }
 
     public function issue(int $labelId): void
     {
         if (!RateLimiter::attempt('label-issue:' . Auth::id(), 10, fn() => null, 60)) {
-            $this->toastError('Demasiadas emisiones. Espera un minuto antes de continuar.');
+            $this->toastError(__('Demasiadas emisiones. Espera un minuto antes de continuar.'));
             return;
         }
 
@@ -105,7 +105,7 @@ class Index extends Component
         Gate::authorize('update', $label);
 
         if (!in_array($label->status, [DoLabel::STATUS_PENDING, DoLabel::STATUS_APPROVED])) {
-            $this->toastError('Solo se pueden emitir solicitudes pendientes o aprobadas.');
+            $this->toastError(__('Solo se pueden emitir solicitudes pendientes o aprobadas.'));
             return;
         }
 
@@ -117,33 +117,33 @@ class Index extends Component
             'issued_by'         => Auth::id(),
         ]);
 
-        $this->toastSuccess('Contraetiquetas emitidas correctamente.');
+        $this->toastSuccess(__('Contraetiquetas emitidas correctamente.'));
     }
 
     public function approve(int $labelId): void
     {
         if (!RateLimiter::attempt('label-approve:' . Auth::id(), 30, fn() => null, 60)) {
-            $this->toastError('Demasiadas solicitudes. Espera un minuto antes de continuar.');
+            $this->toastError(__('Demasiadas solicitudes. Espera un minuto antes de continuar.'));
             return;
         }
 
         $label = DoLabel::forSupervisor(Auth::id())->findOrFail($labelId);
         Gate::authorize('update', $label);
         $label->update(['status' => DoLabel::STATUS_APPROVED]);
-        $this->toastSuccess('Solicitud aprobada.');
+        $this->toastSuccess(__('Solicitud aprobada.'));
     }
 
     public function cancel(int $labelId): void
     {
         if (!RateLimiter::attempt('label-cancel:' . Auth::id(), 30, fn() => null, 60)) {
-            $this->toastError('Demasiadas solicitudes. Espera un minuto antes de continuar.');
+            $this->toastError(__('Demasiadas solicitudes. Espera un minuto antes de continuar.'));
             return;
         }
 
         $label = DoLabel::forSupervisor(Auth::id())->findOrFail($labelId);
         Gate::authorize('update', $label);
         $label->update(['status' => DoLabel::STATUS_CANCELLED]);
-        $this->toastSuccess('Solicitud cancelada.');
+        $this->toastSuccess(__('Solicitud cancelada.'));
     }
 
     #[Layout('layouts.app')]
@@ -188,10 +188,10 @@ class Index extends Component
             ->sum('quantity_issued');
 
         $tabs = [
-            'all'      => ['label' => 'Todas',      'count' => $counts['all']],
-            'pending'  => ['label' => 'Pendientes', 'count' => $counts['pending']],
-            'approved' => ['label' => 'Aprobadas',  'count' => $counts['approved']],
-            'issued'   => ['label' => 'Emitidas',   'count' => $counts['issued']],
+            'all'      => ['label' => __('Todas'),      'count' => $counts['all']],
+            'pending'  => ['label' => __('Pendientes'), 'count' => $counts['pending']],
+            'approved' => ['label' => __('Aprobadas'),  'count' => $counts['approved']],
+            'issued'   => ['label' => __('Emitidas'),   'count' => $counts['issued']],
         ];
 
         return view('livewire.supervisor.labels.index', [

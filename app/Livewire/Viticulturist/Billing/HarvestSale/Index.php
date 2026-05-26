@@ -51,11 +51,11 @@ class Index extends AbstractIndex
         if (!$invoice) return;
 
         if ($invoice->status === 'cancelled') {
-            $this->toastError('No se puede marcar como entregada una factura cancelada.');
+            $this->toastError(__('No se puede marcar como entregada una factura cancelada.'));
             return;
         }
         if ($invoice->delivery_status === 'delivered') {
-            $this->toastError('Esta factura ya está marcada como entregada.');
+            $this->toastError(__('Esta factura ya está marcada como entregada.'));
             return;
         }
 
@@ -74,10 +74,10 @@ class Index extends AbstractIndex
                 $invoice->update(['delivery_status' => 'delivered']);
             });
 
-            $this->toastSuccess('Factura marcada como entregada.');
+            $this->toastSuccess(__('Factura marcada como entregada.'));
         } catch (\Exception $e) {
             Log::error('Error al marcar entrega de factura vendimia: ' . $e->getMessage());
-            $this->toastError($e instanceof \RuntimeException ? $e->getMessage() : 'Error al marcar como entregada.');
+            $this->toastError($e instanceof \RuntimeException ? $e->getMessage()  : __('Error al marcar como entregada.'));
         }
     }
 
@@ -87,11 +87,11 @@ class Index extends AbstractIndex
         if (!$invoice) return;
 
         if ($invoice->status === 'cancelled') {
-            $this->toastError('Esta factura ya está cancelada.');
+            $this->toastError(__('Esta factura ya está cancelada.'));
             return;
         }
         if ($invoice->payment_status === 'paid') {
-            $this->toastError('No se puede cancelar una factura ya pagada.');
+            $this->toastError(__('No se puede cancelar una factura ya pagada.'));
             return;
         }
 
@@ -116,10 +116,10 @@ class Index extends AbstractIndex
                 $invoice->update(['status' => 'cancelled', 'delivery_status' => 'cancelled']);
             });
 
-            $this->toastSuccess('Factura cancelada. Los kg quedan disponibles de nuevo.');
+            $this->toastSuccess(__('Factura cancelada. Los kg quedan disponibles de nuevo.'));
         } catch (\Exception $e) {
             Log::error('Error al cancelar factura vendimia: ' . $e->getMessage());
-            $this->toastError('Error al cancelar la factura.');
+            $this->toastError(__('Error al cancelar la factura.'));
         }
     }
 

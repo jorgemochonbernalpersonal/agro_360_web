@@ -95,16 +95,16 @@
     <table>
         <thead>
             <tr>
-                <th>Variedad</th>
-                <th>Parcela</th>
-                <th class="right">Ha</th>
-                <th class="right">Cuaderno (kg)</th>
-                <th class="right">Declarado (kg)</th>
-                <th class="right">Bodega (kg)</th>
-                <th class="right">Cupo PAC (kg)</th>
-                <th class="right">% Cupo</th>
-                <th class="right">Diferencia</th>
-                <th class="center">Estado</th>
+                <th>{{ __('Variedad') }}</th>
+                <th>{{ __('Parcela') }}</th>
+                <th class="right">{{ __('Ha') }}</th>
+                <th class="right">{{ __('Cuaderno (kg)') }}</th>
+                <th class="right">{{ __('Declarado (kg)') }}</th>
+                <th class="right">{{ __('Bodega (kg)') }}</th>
+                <th class="right">{{ __('Cupo PAC (kg)') }}</th>
+                <th class="right">{{ __('% Cupo') }}</th>
+                <th class="right">{{ __('Diferencia') }}</th>
+                <th class="center">{{ __('Estado') }}</th>
             </tr>
         </thead>
         <tbody>
@@ -145,11 +145,11 @@
                     </td>
                     <td class="center">
                         @if($isPending)
-                            <span class="badge badge-zinc">Pendiente</span>
+                            <span class="badge badge-zinc">{{ __('Pendiente') }}</span>
                         @elseif($isOk)
-                            <span class="badge badge-green">Coincide</span>
+                            <span class="badge badge-green">{{ __('Coincide') }}</span>
                         @elseif($hasDiscrepancy)
-                            <span class="badge badge-amber">Diferencia</span>
+                            <span class="badge badge-amber">{{ __('Diferencia') }}</span>
                         @else
                             <span class="badge badge-zinc">—</span>
                         @endif
@@ -174,15 +174,15 @@
         <table class="deliveries-table">
             <thead>
                 <tr>
-                    <th>Variedad · Parcela</th>
-                    <th>Fecha</th>
-                    <th>Comprador</th>
-                    <th>Ticket</th>
-                    <th class="right">Declarado (kg)</th>
-                    <th class="right">Precio/kg</th>
-                    <th class="right">Importe</th>
-                    <th class="right">Diferencia (kg)</th>
-                    <th class="center">Estado</th>
+                    <th>{{ __('Variedad · Parcela') }}</th>
+                    <th>{{ __('Fecha') }}</th>
+                    <th>{{ __('Comprador') }}</th>
+                    <th>{{ __('Ticket') }}</th>
+                    <th class="right">{{ __('Declarado (kg)') }}</th>
+                    <th class="right">{{ __('Precio/kg') }}</th>
+                    <th class="right">{{ __('Importe') }}</th>
+                    <th class="right">{{ __('Diferencia (kg)') }}</th>
+                    <th class="center">{{ __('Estado') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -209,15 +209,15 @@
                         </td>
                         <td class="center">
                             @if($d->disqualified)
-                                <span class="badge badge-red">Descartada</span>
+                                <span class="badge badge-red">{{ __('Descartada') }}</span>
                             @elseif($d->status === 'matched')
-                                <span class="badge badge-green delivery-matched">Confirmada</span>
+                                <span class="badge badge-green delivery-matched">{{ __('Confirmada') }}</span>
                             @elseif($d->status === 'resolved')
-                                <span class="badge badge-green delivery-matched">Resuelta</span>
+                                <span class="badge badge-green delivery-matched">{{ __('Resuelta') }}</span>
                             @elseif($d->status === 'disputed')
-                                <span class="badge badge-amber delivery-disputed">Diferencia</span>
+                                <span class="badge badge-amber delivery-disputed">{{ __('Diferencia') }}</span>
                             @else
-                                <span class="badge badge-zinc delivery-pending">Pendiente</span>
+                                <span class="badge badge-zinc delivery-pending">{{ __('Pendiente') }}</span>
                             @endif
                         </td>
                     </tr>

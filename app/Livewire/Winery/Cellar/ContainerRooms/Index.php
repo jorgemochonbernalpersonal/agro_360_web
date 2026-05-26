@@ -25,12 +25,12 @@ class Index extends Component
         $room = ContainerRoom::where('user_id', Auth::id())->findOrFail($id);
 
         if ($room->containers()->exists()) {
-            $this->toastError('No se puede eliminar una sala que tiene depósitos asignados.');
+            $this->toastError(__('No se puede eliminar una sala que tiene depósitos asignados.'));
             return;
         }
 
         $room->delete();
-        $this->toastSuccess('Sala eliminada correctamente.');
+        $this->toastSuccess(__('Sala eliminada correctamente.'));
     }
 
     public function render()

@@ -20,7 +20,7 @@ class Show extends Component
     public function mount(Crew $crew)
     {
         if (!Auth::user()->can('view', $crew)) {
-            abort(403, 'No tienes permiso para ver esta cuadrilla.');
+            abort(403, __('No tienes permiso para ver esta cuadrilla.'));
         }
 
         $this->crew = $crew->load(['winery', 'viticulturist', 'members.viticulturist', 'activities']);
@@ -38,7 +38,7 @@ class Show extends Component
     public function removeMember(CrewMember $member)
     {
         if ($member->crew_id !== $this->crew->id) {
-            $this->toastError('Miembro no válido.');
+            $this->toastError(__('Miembro no válido.'));
             return;
         }
 
@@ -53,7 +53,7 @@ class Show extends Component
 
             $this->crew->refresh();
             $this->loadStats();
-            $this->toastSuccess('Miembro removido correctamente.');
+            $this->toastSuccess(__('Miembro removido correctamente.'));
         } catch (\Exception $e) {
             Log::error('Error al remover miembro de cuadrilla', [
                 'error' => $e->getMessage(),
@@ -62,7 +62,7 @@ class Show extends Component
                 'user_id' => Auth::id(),
                 'trace' => $e->getTraceAsString(),
             ]);
-            $this->toastError('Error al remover el miembro. Por favor, intenta de nuevo.');
+            $this->toastError(__('Error al remover el miembro. Por favor, intenta de nuevo.'));
         }
     }
 
@@ -72,7 +72,7 @@ class Show extends Component
         
         return view('livewire.viticulturist.personal.show')->layout('layouts.app', [
             'title' => $this->crew->name . ' - Equipo - Agro365',
-            'description' => 'Detalles del equipo ' . $this->crew->name . '. Miembros, actividades realizadas y estadísticas de rendimiento.',
+            'description' => __('Detalles del equipo ') . $this->crew->name . '. Miembros, actividades realizadas y estadísticas de rendimiento.',
         ]);
     }
 }

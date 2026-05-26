@@ -74,29 +74,29 @@ class EditGeometry extends Component
                 'coordinates.*.lat' => 'required|numeric|between:-90,90',
                 'coordinates.*.lng' => 'required|numeric|between:-180,180',
             ], [
-                'coordinates.required' => 'Las coordenadas son obligatorias.',
-                'coordinates.min' => 'Se necesitan al menos 3 puntos para crear un polígono.',
-                'coordinates.*.lat.required' => 'La latitud es obligatoria.',
-                'coordinates.*.lat.numeric' => 'La latitud debe ser un valor numérico.',
-                'coordinates.*.lat.between' => 'La latitud debe estar entre -90 y 90.',
-                'coordinates.*.lng.required' => 'La longitud es obligatoria.',
-                'coordinates.*.lng.numeric' => 'La longitud debe ser un valor numérico.',
-                'coordinates.*.lng.between' => 'La longitud debe estar entre -180 y 180.',
+                'coordinates.required' => __('Las coordenadas son obligatorias.'),
+                'coordinates.min' => __('Se necesitan al menos 3 puntos para crear un polígono.'),
+                'coordinates.*.lat.required' => __('La latitud es obligatoria.'),
+                'coordinates.*.lat.numeric' => __('La latitud debe ser un valor numérico.'),
+                'coordinates.*.lat.between' => __('La latitud debe estar entre -90 y 90.'),
+                'coordinates.*.lng.required' => __('La longitud es obligatoria.'),
+                'coordinates.*.lng.numeric' => __('La longitud debe ser un valor numérico.'),
+                'coordinates.*.lng.between' => __('La longitud debe estar entre -180 y 180.'),
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
-            $this->toastError('Error de validación: ' . $e->validator->errors()->first());
+            $this->toastError(__('Error de validación: :error', ['error' => $e->validator->errors()->first()]));
             return;
         }
 
         if (!$this->plotId) {
-            $this->toastError('Debes seleccionar una parcela.');
+            $this->toastError(__('Debes seleccionar una parcela.'));
             return;
         }
 
         $plot = Plot::findOrFail($this->plotId);
 
         if (!Auth::user()->can('update', $plot)) {
-            $this->toastError('No tienes permiso para modificar esta parcela.');
+            $this->toastError(__('No tienes permiso para modificar esta parcela.'));
             return;
         }
 
@@ -118,7 +118,7 @@ class EditGeometry extends Component
                 $lat = filter_var($point['lat'], FILTER_VALIDATE_FLOAT);
 
                 if ($lng === false || $lat === false) {
-                    throw new \InvalidArgumentException('Coordenadas inválidas: deben ser valores numéricos.');
+                    throw new \InvalidArgumentException(__('Coordenadas inválidas: deben ser valores numéricos.'));
                 }
 
                 return "$lng $lat";
@@ -182,7 +182,7 @@ class EditGeometry extends Component
                 $this->coordinates = $geometry->getCoordinatesAsArray();
             }
 
-            $this->toastSuccess('Geometría guardada correctamente.');
+            $this->toastSuccess(__('Geometría guardada correctamente.'));
             $this->showMap = false;
 
             // Emitir evento para refrescar vista
@@ -201,7 +201,7 @@ class EditGeometry extends Component
                 'trace' => $e->getTraceAsString(),
                 'user_id' => Auth::id(),
             ]);
-            $this->toastError('Error al guardar la geometría. Por favor, intenta de nuevo.');
+            $this->toastError(__('Error al guardar la geometría. Por favor, intenta de nuevo.'));
         }
     }
 
@@ -311,7 +311,7 @@ class EditGeometry extends Component
 
         if (!$this->plotId) {
             Log::warning('generateMapFromSigpac: No hay plotId');
-            $this->toastError('Debes seleccionar una parcela.');
+            $this->toastError(__('Debes seleccionar una parcela.'));
             return;
         }
 
@@ -325,7 +325,7 @@ class EditGeometry extends Component
                 'plotId' => $this->plotId,
                 'error' => $e->getMessage(),
             ]);
-            $this->toastError('Error al buscar la parcela.');
+            $this->toastError(__('Error al buscar la parcela.'));
             return;
         }
 
@@ -334,7 +334,7 @@ class EditGeometry extends Component
                 'user_id' => Auth::id(),
                 'plot_id' => $plot->id,
             ]);
-            $this->toastError('No tienes permiso para modificar esta parcela.');
+            $this->toastError(__('No tienes permiso para modificar esta parcela.'));
             return;
         }
 
@@ -350,7 +350,7 @@ class EditGeometry extends Component
 
         if ($sigpacCodes->isEmpty()) {
             Log::warning('generateMapFromSigpac: No hay códigos SIGPAC');
-            $this->toastError('Esta parcela no tiene códigos SIGPAC asociados.');
+            $this->toastError(__('Esta parcela no tiene códigos SIGPAC asociados.'));
             return;
         }
 
@@ -520,7 +520,7 @@ class EditGeometry extends Component
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
-            $this->toastError('Error al generar los mapas. Por favor, intenta de nuevo.');
+            $this->toastError(__('Error al generar los mapas. Por favor, intenta de nuevo.'));
         }
     }
 
@@ -546,13 +546,13 @@ class EditGeometry extends Component
 
             $this->geometryId = null;
             $this->coordinates = [];
-            $this->toastSuccess('Geometría eliminada correctamente.');
+            $this->toastSuccess(__('Geometría eliminada correctamente.'));
             $this->showMap = false;
 
             $this->dispatch('geometry-deleted');
         } catch (\Exception $e) {
             DB::rollBack();
-            $this->toastError('Error al eliminar la geometría.');
+            $this->toastError(__('Error al eliminar la geometría.'));
         }
     }
 

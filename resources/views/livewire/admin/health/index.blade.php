@@ -1,15 +1,15 @@
 <div class="space-y-6 animate-fade-in">
     <x-agro.page-header
-        title="Salud del Sistema"
-        description="Estado de los servicios y métricas de la plataforma"
+        title="{{ __('Salud del Sistema') }}"
+        :description="__('Estado de los servicios y métricas de la plataforma')"
     >
         <x-slot:actions>
             <span class="text-xs text-zinc-400 self-center">
                 Actualizado {{ $refreshedAt->format('H:i:s') }}
             </span>
             <flux:button wire:click="refresh" variant="ghost" icon="arrow-path" wire:loading.attr="disabled">
-                <span wire:loading.remove wire:target="refresh">Actualizar</span>
-                <span wire:loading wire:target="refresh">Actualizando…</span>
+                <span wire:loading.remove wire:target="refresh">{{ __('Actualizar') }}</span>
+                <span wire:loading wire:target="refresh">{{ __('Actualizando…') }}</span>
             </flux:button>
         </x-slot:actions>
     </x-agro.page-header>
@@ -54,22 +54,22 @@
                         <div class="p-1.5 rounded-lg {{ $statusBg($health['queue']['status']) }}">
                             <flux:icon icon="queue-list" class="size-4 {{ $statusColor($health['queue']['status']) }}" />
                         </div>
-                        <span class="font-semibold text-zinc-900 text-sm">Cola de trabajos</span>
+                        <span class="font-semibold text-zinc-900 text-sm">{{ __('Cola de trabajos') }}</span>
                     </div>
                     <flux:badge :color="$statusBadge($health['queue']['status'])" size="sm">{{ strtoupper($health['queue']['status']) }}</flux:badge>
                 </div>
             </x-slot:header>
             <div class="space-y-3">
                 <div class="flex justify-between items-center">
-                    <span class="text-sm text-zinc-600">Driver</span>
+                    <span class="text-sm text-zinc-600">{{ __('Driver') }}</span>
                     <span class="text-sm font-semibold text-zinc-900 font-mono">{{ $health['app']['queue_driver'] }}</span>
                 </div>
                 <div class="flex justify-between items-center">
-                    <span class="text-sm text-zinc-600">Jobs pendientes</span>
+                    <span class="text-sm text-zinc-600">{{ __('Jobs pendientes') }}</span>
                     <span class="text-sm font-semibold text-zinc-900">{{ $health['queue']['pending'] ?? '—' }}</span>
                 </div>
                 <div class="flex justify-between items-center">
-                    <span class="text-sm text-zinc-600">Jobs fallidos</span>
+                    <span class="text-sm text-zinc-600">{{ __('Jobs fallidos') }}</span>
                     @php $failed = $health['queue']['failed'] ?? 0; @endphp
                     <span class="text-sm font-semibold {{ $failed > 0 ? 'text-red-600' : 'text-zinc-900' }}">{{ $failed }}</span>
                 </div>
@@ -84,26 +84,26 @@
                         <div class="p-1.5 rounded-lg {{ $statusBg($health['database']['status']) }}">
                             <flux:icon icon="circle-stack" class="size-4 {{ $statusColor($health['database']['status']) }}" />
                         </div>
-                        <span class="font-semibold text-zinc-900 text-sm">Base de datos</span>
+                        <span class="font-semibold text-zinc-900 text-sm">{{ __('Base de datos') }}</span>
                     </div>
                     <flux:badge :color="$statusBadge($health['database']['status'])" size="sm">{{ strtoupper($health['database']['status']) }}</flux:badge>
                 </div>
             </x-slot:header>
             <div class="space-y-3">
                 <div class="flex justify-between items-center">
-                    <span class="text-sm text-zinc-600">Estado</span>
+                    <span class="text-sm text-zinc-600">{{ __('Estado') }}</span>
                     <span class="text-sm font-semibold {{ $health['database']['status'] === 'ok' ? 'text-agro-600' : 'text-red-600' }}">
                         {{ $health['database']['status'] === 'error' ? 'Sin conexión' : 'Conectado' }}
                     </span>
                 </div>
                 @if($health['database']['latency'] !== null)
                 <div class="flex justify-between items-center">
-                    <span class="text-sm text-zinc-600">Latencia</span>
+                    <span class="text-sm text-zinc-600">{{ __('Latencia') }}</span>
                     <span class="text-sm font-semibold text-zinc-900 font-mono">{{ $health['database']['latency'] }} ms</span>
                 </div>
                 @endif
                 <div class="flex justify-between items-center">
-                    <span class="text-sm text-zinc-600">Tamaño</span>
+                    <span class="text-sm text-zinc-600">{{ __('Tamaño') }}</span>
                     <span class="text-sm font-semibold text-zinc-900 font-mono">{{ $health['database']['size_mb'] ?? '—' }} MB</span>
                 </div>
             </div>
@@ -117,18 +117,18 @@
                         <div class="p-1.5 rounded-lg {{ $statusBg($health['cache']['status']) }}">
                             <flux:icon icon="bolt" class="size-4 {{ $statusColor($health['cache']['status']) }}" />
                         </div>
-                        <span class="font-semibold text-zinc-900 text-sm">Caché</span>
+                        <span class="font-semibold text-zinc-900 text-sm">{{ __('Caché') }}</span>
                     </div>
                     <flux:badge :color="$statusBadge($health['cache']['status'])" size="sm">{{ strtoupper($health['cache']['status']) }}</flux:badge>
                 </div>
             </x-slot:header>
             <div class="space-y-3">
                 <div class="flex justify-between items-center">
-                    <span class="text-sm text-zinc-600">Driver</span>
+                    <span class="text-sm text-zinc-600">{{ __('Driver') }}</span>
                     <span class="text-sm font-semibold text-zinc-900 font-mono">{{ $health['app']['cache_driver'] }}</span>
                 </div>
                 <div class="flex justify-between items-center">
-                    <span class="text-sm text-zinc-600">Lectura / escritura</span>
+                    <span class="text-sm text-zinc-600">{{ __('Lectura / escritura') }}</span>
                     <span class="text-sm font-semibold {{ $health['cache']['status'] === 'ok' ? 'text-agro-600' : 'text-red-600' }}">
                         {{ $health['cache']['status'] === 'ok' ? 'OK' : 'Fallo' }}
                     </span>
@@ -147,7 +147,7 @@
                         <div class="p-1.5 rounded-lg {{ $statusBg($health['disk']['status']) }}">
                             <flux:icon icon="server-stack" class="size-4 {{ $statusColor($health['disk']['status']) }}" />
                         </div>
-                        <span class="font-semibold text-zinc-900 text-sm">Disco</span>
+                        <span class="font-semibold text-zinc-900 text-sm">{{ __('Disco') }}</span>
                     </div>
                     <flux:badge :color="$statusBadge($health['disk']['status'])" size="sm">{{ strtoupper($health['disk']['status']) }}</flux:badge>
                 </div>
@@ -166,15 +166,15 @@
                     />
                 </div>
                 <div class="flex justify-between items-center">
-                    <span class="text-sm text-zinc-600">Logs</span>
+                    <span class="text-sm text-zinc-600">{{ __('Logs') }}</span>
                     <span class="text-sm font-mono text-zinc-900">{{ $health['disk']['logs_mb'] }} MB</span>
                 </div>
                 <div class="flex justify-between items-center">
-                    <span class="text-sm text-zinc-600">Storage/app</span>
+                    <span class="text-sm text-zinc-600">{{ __('Storage/app') }}</span>
                     <span class="text-sm font-mono text-zinc-900">{{ $health['disk']['app_mb'] }} MB</span>
                 </div>
                 <div class="flex justify-between items-center">
-                    <span class="text-sm text-zinc-600">Libre</span>
+                    <span class="text-sm text-zinc-600">{{ __('Libre') }}</span>
                     <span class="text-sm font-mono text-zinc-900">{{ $health['disk']['free_gb'] }} GB</span>
                 </div>
             </div>
@@ -188,30 +188,30 @@
                         <div class="p-1.5 rounded-lg {{ $statusBg($health['security']['status']) }}">
                             <flux:icon icon="shield-exclamation" class="size-4 {{ $statusColor($health['security']['status']) }}" />
                         </div>
-                        <span class="font-semibold text-zinc-900 text-sm">Seguridad <span class="text-xs text-zinc-400 font-normal">últimas 24h</span></span>
+                        <span class="font-semibold text-zinc-900 text-sm">Seguridad <span class="text-xs text-zinc-400 font-normal">{{ __('últimas 24h') }}</span></span>
                     </div>
                     <flux:badge :color="$statusBadge($health['security']['status'])" size="sm">{{ strtoupper($health['security']['status']) }}</flux:badge>
                 </div>
             </x-slot:header>
             <div class="space-y-3">
                 <div class="flex justify-between items-center">
-                    <span class="text-sm text-zinc-600">Eventos totales</span>
+                    <span class="text-sm text-zinc-600">{{ __('Eventos totales') }}</span>
                     <span class="text-sm font-semibold text-zinc-900">{{ $health['security']['total'] }}</span>
                 </div>
                 <div class="flex justify-between items-center">
-                    <span class="text-sm text-zinc-600">Alertas / Errores</span>
+                    <span class="text-sm text-zinc-600">{{ __('Alertas / Errores') }}</span>
                     <span class="text-sm font-semibold {{ $health['security']['alerts'] > 0 ? 'text-red-600' : 'text-zinc-900' }}">
                         {{ $health['security']['alerts'] }}
                     </span>
                 </div>
                 <div class="flex justify-between items-center">
-                    <span class="text-sm text-zinc-600">Login fallidos</span>
+                    <span class="text-sm text-zinc-600">{{ __('Login fallidos') }}</span>
                     <span class="text-sm font-semibold {{ $health['security']['failed_logins'] > 5 ? 'text-orange-600' : 'text-zinc-900' }}">
                         {{ $health['security']['failed_logins'] }}
                     </span>
                 </div>
                 <div class="flex justify-between items-center">
-                    <span class="text-sm text-zinc-600">Cuentas bloqueadas</span>
+                    <span class="text-sm text-zinc-600">{{ __('Cuentas bloqueadas') }}</span>
                     <span class="text-sm font-semibold {{ $health['security']['locked'] > 0 ? 'text-red-600' : 'text-zinc-900' }}">
                         {{ $health['security']['locked'] }}
                     </span>
@@ -232,25 +232,25 @@
                         <div class="p-1.5 rounded-lg {{ $statusBg($health['email']['status']) }}">
                             <flux:icon icon="envelope" class="size-4 {{ $statusColor($health['email']['status']) }}" />
                         </div>
-                        <span class="font-semibold text-zinc-900 text-sm">Email (SMTP)</span>
+                        <span class="font-semibold text-zinc-900 text-sm">{{ __('Email (SMTP)') }}</span>
                     </div>
                     <flux:badge :color="$statusBadge($health['email']['status'])" size="sm">{{ strtoupper($health['email']['status']) }}</flux:badge>
                 </div>
             </x-slot:header>
             <div class="space-y-3">
                 <div class="flex justify-between items-center">
-                    <span class="text-sm text-zinc-600">Driver</span>
+                    <span class="text-sm text-zinc-600">{{ __('Driver') }}</span>
                     <span class="text-sm font-semibold text-zinc-900 font-mono">{{ $health['email']['driver'] ?? '—' }}</span>
                 </div>
                 @if(isset($health['email']['host']))
                 <div class="flex justify-between items-center">
-                    <span class="text-sm text-zinc-600">Host</span>
+                    <span class="text-sm text-zinc-600">{{ __('Host') }}</span>
                     <span class="text-sm font-semibold text-zinc-900 font-mono truncate max-w-[140px]">{{ $health['email']['host'] }}</span>
                 </div>
                 @endif
                 @if(isset($health['email']['latency']))
                 <div class="flex justify-between items-center">
-                    <span class="text-sm text-zinc-600">Latencia</span>
+                    <span class="text-sm text-zinc-600">{{ __('Latencia') }}</span>
                     <span class="text-sm font-semibold text-zinc-900 font-mono">{{ $health['email']['latency'] }} ms</span>
                 </div>
                 @endif
@@ -271,27 +271,27 @@
                         <div class="p-1.5 rounded-lg {{ $statusBg($health['paypal']['status']) }}">
                             <flux:icon icon="credit-card" class="size-4 {{ $statusColor($health['paypal']['status']) }}" />
                         </div>
-                        <span class="font-semibold text-zinc-900 text-sm">PayPal API</span>
+                        <span class="font-semibold text-zinc-900 text-sm">{{ __('PayPal API') }}</span>
                     </div>
                     <flux:badge :color="$statusBadge($health['paypal']['status'])" size="sm">{{ strtoupper($health['paypal']['status']) }}</flux:badge>
                 </div>
             </x-slot:header>
             <div class="space-y-3">
                 <div class="flex justify-between items-center">
-                    <span class="text-sm text-zinc-600">Modo</span>
+                    <span class="text-sm text-zinc-600">{{ __('Modo') }}</span>
                     <flux:badge :color="($health['paypal']['mode'] ?? '') === 'live' ? 'agro' : 'yellow'" size="sm">
                         {{ $health['paypal']['mode'] ?? '—' }}
                     </flux:badge>
                 </div>
                 @if(isset($health['paypal']['host']))
                 <div class="flex justify-between items-center">
-                    <span class="text-sm text-zinc-600">Endpoint</span>
+                    <span class="text-sm text-zinc-600">{{ __('Endpoint') }}</span>
                     <span class="text-xs font-mono text-zinc-500 truncate max-w-[140px]">{{ $health['paypal']['host'] }}</span>
                 </div>
                 @endif
                 @if(isset($health['paypal']['latency']))
                 <div class="flex justify-between items-center">
-                    <span class="text-sm text-zinc-600">Latencia</span>
+                    <span class="text-sm text-zinc-600">{{ __('Latencia') }}</span>
                     <span class="text-sm font-semibold text-zinc-900 font-mono">{{ $health['paypal']['latency'] }} ms</span>
                 </div>
                 @endif
@@ -308,32 +308,32 @@
                     <div class="p-1.5 rounded-lg bg-zinc-100">
                         <flux:icon icon="information-circle" class="size-4 text-zinc-600" />
                     </div>
-                    <span class="font-semibold text-zinc-900 text-sm">Información</span>
+                    <span class="font-semibold text-zinc-900 text-sm">{{ __('Información') }}</span>
                 </div>
             </x-slot:header>
             <div class="space-y-3">
                 <div class="flex justify-between items-center">
-                    <span class="text-sm text-zinc-600">PHP</span>
+                    <span class="text-sm text-zinc-600">{{ __('PHP') }}</span>
                     <span class="text-sm font-mono text-zinc-900">{{ $health['app']['php_version'] }}</span>
                 </div>
                 <div class="flex justify-between items-center">
-                    <span class="text-sm text-zinc-600">Laravel</span>
+                    <span class="text-sm text-zinc-600">{{ __('Laravel') }}</span>
                     <span class="text-sm font-mono text-zinc-900">{{ $health['app']['laravel_version'] }}</span>
                 </div>
                 <div class="flex justify-between items-center">
-                    <span class="text-sm text-zinc-600">Entorno</span>
+                    <span class="text-sm text-zinc-600">{{ __('Entorno') }}</span>
                     <flux:badge :color="$health['app']['environment'] === 'production' ? 'agro' : 'yellow'" size="sm">
                         {{ $health['app']['environment'] }}
                     </flux:badge>
                 </div>
                 <div class="flex justify-between items-center">
-                    <span class="text-sm text-zinc-600">Debug mode</span>
+                    <span class="text-sm text-zinc-600">{{ __('Debug mode') }}</span>
                     <flux:badge :color="$health['app']['debug'] ? 'red' : 'agro'" size="sm">
                         {{ $health['app']['debug'] ? 'ON' : 'OFF' }}
                     </flux:badge>
                 </div>
                 <div class="flex justify-between items-center">
-                    <span class="text-sm text-zinc-600">Timezone</span>
+                    <span class="text-sm text-zinc-600">{{ __('Timezone') }}</span>
                     <span class="text-sm font-mono text-zinc-900">{{ $health['app']['timezone'] }}</span>
                 </div>
             </div>

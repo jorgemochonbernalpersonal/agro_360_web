@@ -139,7 +139,7 @@
             <div class="welcome">¡Bienvenido a Agro365!</div>
             
             <div class="message">
-                <p>Se ha creado una cuenta para ti en nuestra plataforma. A continuación encontrarás tus credenciales de acceso:</p>
+                <p>{{ __('Se ha creado una cuenta para ti en nuestra plataforma. A continuación encontrarás tus credenciales de acceso:') }}</p>
             </div>
 
             <div class="credentials-box">
@@ -165,17 +165,17 @@
                 <div class="instructions-title">⚠️ Instrucciones Importantes</div>
                 <div class="instructions-text">
                     <ul style="margin-left: 20px; margin-top: 10px;">
-                        <li style="margin-bottom: 8px;">Por seguridad, <strong>deberás cambiar tu contraseña</strong> al iniciar sesión por primera vez.</li>
-                        <li style="margin-bottom: 8px;">Tu email quedará automáticamente verificado al cambiar la contraseña.</li>
-                        <li style="margin-bottom: 8px;">Guarda estas credenciales en un lugar seguro.</li>
-                        <li>Si tienes problemas para acceder, contacta con el administrador.</li>
+                        <li style="margin-bottom: 8px;">Por seguridad, <strong>{{ __('deberás cambiar tu contraseña') }}</strong> al iniciar sesión por primera vez.</li>
+                        <li style="margin-bottom: 8px;">{{ __('Tu email quedará automáticamente verificado al cambiar la contraseña.') }}</li>
+                        <li style="margin-bottom: 8px;">{{ __('Guarda estas credenciales en un lugar seguro.') }}</li>
+                        <li>{{ __('Si tienes problemas para acceder, contacta con el administrador.') }}</li>
                     </ul>
                 </div>
             </div>
         </div>
 
         <div class="footer">
-            <p><strong>Agro365</strong> - Sistema de Gestión Agrícola</p>
+            <p><strong>{{ __('Agro365') }}</strong> - Sistema de Gestión Agrícola</p>
             <p style="margin-top: 5px;">Documento generado el {{ $created_at }}</p>
         </div>
     </div>

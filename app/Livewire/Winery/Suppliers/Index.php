@@ -28,7 +28,7 @@ class Index extends AbstractIndex
     {
         $supplier = Supplier::where('user_id', $this->wineryId())->findOrFail($id);
         $supplier->delete();
-        $this->toastSuccess('Proveedor eliminado.');
+        $this->toastSuccess(__('Proveedor eliminado.'));
     }
 
     protected function baseQuery(): Builder

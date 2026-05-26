@@ -43,12 +43,12 @@ class Index extends Component
     protected function messages(): array
     {
         return [
-            'support_email.required'       => 'El email de soporte es obligatorio.',
-            'support_email.email'          => 'Introduce un email válido.',
-            'beta_end_date.required'       => 'La fecha límite beta es obligatoria.',
-            'beta_end_date.after'          => 'La fecha debe ser posterior a hoy.',
-            'password_min_length.min'      => 'El mínimo permitido es 6 caracteres.',
-            'password_min_length.max'      => 'El máximo permitido es 32 caracteres.',
+            'support_email.required'       => __('El email de soporte es obligatorio.'),
+            'support_email.email'          => __('Introduce un email válido.'),
+            'beta_end_date.required'       => __('La fecha límite beta es obligatoria.'),
+            'beta_end_date.after'          => __('La fecha debe ser posterior a hoy.'),
+            'password_min_length.min'      => __('El mínimo permitido es 6 caracteres.'),
+            'password_min_length.max'      => __('El máximo permitido es 32 caracteres.'),
         ];
     }
 
@@ -97,7 +97,7 @@ class Index extends Component
             ]);
         }
 
-        $this->toastSuccess('Configuración de plataforma guardada.');
+        $this->toastSuccess(__('Configuración de plataforma guardada.'));
     }
 
     public function saveBeta(): void
@@ -117,7 +117,7 @@ class Index extends Component
             ]);
         }
 
-        $this->toastSuccess('Fecha beta actualizada.');
+        $this->toastSuccess(__('Fecha beta actualizada.'));
     }
 
     public function saveSecurity(): void
@@ -148,7 +148,7 @@ class Index extends Component
             ]);
         }
 
-        $this->toastSuccess('Política de contraseñas guardada.');
+        $this->toastSuccess(__('Política de contraseñas guardada.'));
     }
 
     public function saveModules(): void
@@ -177,7 +177,7 @@ class Index extends Component
             ]);
         }
 
-        $this->toastSuccess('Configuración de módulos guardada.');
+        $this->toastSuccess(__('Configuración de módulos guardada.'));
     }
 
     private function lastChangeFor(string $event): ?SecurityEvent
@@ -192,8 +192,8 @@ class Index extends Component
     }
 
     #[Layout('layouts.app', [
-        'title'       => 'Configuración - Agro365',
-        'description' => 'Configuración global del sistema',
+        'title'       => __('Configuración - Agro365'),
+        'description' => __('Configuración global del sistema'),
     ])]
     public function render()
     {

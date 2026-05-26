@@ -67,7 +67,7 @@ class GlobalSearch extends Component
                 'icon'     => 'chat-bubble-left-ellipsis',
                 'color'    => 'red',
                 'title'    => $t->subject,
-                'subtitle' => 'Ticket #' . $t->id . ' · ' . $t->status,
+                'subtitle' => __('Ticket #') . $t->id . ' · ' . $t->status,
                 'url'      => route('admin.support.index'),
             ];
         }

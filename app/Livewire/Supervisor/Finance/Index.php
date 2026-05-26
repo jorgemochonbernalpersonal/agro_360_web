@@ -74,8 +74,8 @@ class Index extends Component
             ->get();
 
         $tabs = [
-            'subscriptions' => ['label' => 'Suscripciones viticultores', 'count' => $viticulturistIds->count()],
-            'wineries'      => ['label' => 'Recepciones bodegas',        'count' => $wineryIds->count()],
+            'subscriptions' => ['label' => __('Suscripciones viticultores'), 'count' => $viticulturistIds->count()],
+            'wineries'      => ['label' => __('Recepciones bodegas'),        'count' => $wineryIds->count()],
         ];
 
         return view('livewire.supervisor.finance.index', [

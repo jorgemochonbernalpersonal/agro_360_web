@@ -128,7 +128,7 @@ class Show extends Component
         );
 
         $this->env_id = $env->id;
-        $this->toastSuccess('Entorno de parcela guardado correctamente.');
+        $this->toastSuccess(__('Entorno de parcela guardado correctamente.'));
     }
 
     public function generateMap($plotId = null, $sigpacCodeId = null)
@@ -137,7 +137,7 @@ class Show extends Component
         $plot = Plot::findOrFail($plotId);
 
         if (!Auth::user()->can('update', $plot)) {
-            $this->toastError('No tienes permiso para modificar esta parcela.');
+            $this->toastError(__('No tienes permiso para modificar esta parcela.'));
             return;
         }
 
@@ -149,7 +149,7 @@ class Show extends Component
         }
 
         if ($sigpacCodes->isEmpty()) {
-            $this->toastError('Esta parcela no tiene códigos SIGPAC asociados.');
+            $this->toastError(__('Esta parcela no tiene códigos SIGPAC asociados.'));
             return;
         }
 
@@ -220,7 +220,7 @@ class Show extends Component
                 'plot_id' => $plotId,
                 'error' => $e->getMessage(),
             ]);
-            $this->toastError('Error al generar los mapas. Por favor, intenta de nuevo.');
+            $this->toastError(__('Error al generar los mapas. Por favor, intenta de nuevo.'));
         }
     }
 
@@ -234,7 +234,7 @@ class Show extends Component
         return view('livewire.plots.show', compact('isViticulturist', 'activeCampaign'))
             ->layout('layouts.app', [
                 'title' => $this->plot->name . ' - Parcela - Agro365',
-                'description' => 'Detalles de la parcela ' . $this->plot->name . '. Información completa, códigos SIGPAC, ubicación y plantaciones asociadas.',
+                'description' => __('Detalles de la parcela ') . $this->plot->name . '. Información completa, códigos SIGPAC, ubicación y plantaciones asociadas.',
             ]);
     }
 }

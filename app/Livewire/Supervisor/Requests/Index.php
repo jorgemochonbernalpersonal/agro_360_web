@@ -84,7 +84,7 @@ class Index extends Component
         ]);
 
         $this->showCreateModal = false;
-        $this->dispatch('toast', message: 'Solicitud creada como borrador.', type: 'success');
+        $this->dispatch('toast', message: __('Solicitud creada como borrador.'), type: 'success');
     }
 
     public function send(int $requestId): void
@@ -97,7 +97,7 @@ class Index extends Component
         Cache::forget("winery:{$request->winery_id}:pending_do_requests");
         Cache::forget("supervisor:{$request->supervisor_id}:inbox_count");
 
-        $this->dispatch('toast', message: 'Solicitud enviada a la bodega.', type: 'success');
+        $this->dispatch('toast', message: __('Solicitud enviada a la bodega.'), type: 'success');
     }
 
     public function approve(int $requestId): void
@@ -110,7 +110,7 @@ class Index extends Component
         Cache::forget("winery:{$request->winery_id}:pending_do_requests");
         Cache::forget("supervisor:{$request->supervisor_id}:inbox_count");
 
-        $this->dispatch('toast', message: 'Solicitud aprobada.', type: 'success');
+        $this->dispatch('toast', message: __('Solicitud aprobada.'), type: 'success');
     }
 
     public function reject(int $requestId): void
@@ -123,7 +123,7 @@ class Index extends Component
         Cache::forget("winery:{$request->winery_id}:pending_do_requests");
         Cache::forget("supervisor:{$request->supervisor_id}:inbox_count");
 
-        $this->dispatch('toast', message: 'Solicitud rechazada.', type: 'warning');
+        $this->dispatch('toast', message: __('Solicitud rechazada.'), type: 'warning');
     }
 
     public function archive(int $requestId): void
@@ -131,7 +131,7 @@ class Index extends Component
         $request = SupervisorRequest::forSupervisor(Auth::id())->findOrFail($requestId);
         $request->archive();
         Cache::forget("winery:{$request->winery_id}:pending_do_requests");
-        $this->dispatch('toast', message: 'Solicitud archivada.', type: 'success');
+        $this->dispatch('toast', message: __('Solicitud archivada.'), type: 'success');
     }
 
     public function bulkArchive(): void
@@ -151,7 +151,7 @@ class Index extends Component
             ->count();
 
         $this->selected = [];
-        $this->dispatch('toast', message: "{$count} solicitudes archivadas.", type: 'success');
+        $this->dispatch('toast', message: __(':count solicitudes archivadas.', ['count' => $count]), type: 'success');
     }
 
     public function deleteDraft(int $requestId): void
@@ -161,7 +161,7 @@ class Index extends Component
             ->findOrFail($requestId);
 
         $request->delete();
-        $this->dispatch('toast', message: 'Borrador eliminado.', type: 'success');
+        $this->dispatch('toast', message: __('Borrador eliminado.'), type: 'success');
     }
 
     #[Layout('layouts.app')]

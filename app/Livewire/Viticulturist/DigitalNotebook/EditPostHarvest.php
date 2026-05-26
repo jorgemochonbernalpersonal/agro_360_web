@@ -97,11 +97,11 @@ class EditPostHarvest extends AbstractActivityForm
                 ]);
             });
 
-            $this->toastSuccess('Tratamiento post-vendimia actualizado correctamente.');
+            $this->toastSuccess(__('Tratamiento post-vendimia actualizado correctamente.'));
             return $this->viticulturistRoleRedirect('digital-notebook.post-harvest.index');
         } catch (\Exception $e) {
             \Log::error('Error al actualizar tratamiento post-vendimia', ['error' => $e->getMessage(), 'user_id' => Auth::id(), 'activity_id' => $this->activity->id]);
-            $this->toastError('Error al actualizar el tratamiento. Por favor, intenta de nuevo.');
+            $this->toastError(__('Error al actualizar el tratamiento. Por favor, intenta de nuevo.'));
         }
     }
 
@@ -112,6 +112,6 @@ class EditPostHarvest extends AbstractActivityForm
         return view('livewire.viticulturist.digital-notebook.edit-post-harvest', $this->renderData([
             'products'         => $this->products,
             'applicationTypes' => PostHarvestTreatment::APPLICATION_TYPES,
-        ]))->layout('layouts.app', ['title' => 'Editar Tratamiento Post-Vendimia - Agro365']);
+        ]))->layout('layouts.app', ['title' => __('Editar Tratamiento Post-Vendimia - Agro365')]);
     }
 }

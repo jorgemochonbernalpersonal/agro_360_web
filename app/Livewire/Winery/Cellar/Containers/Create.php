@@ -43,12 +43,12 @@ class Create extends Component
     protected function messages(): array
     {
         return [
-            'name.required'     => 'El nombre del contenedor es obligatorio.',
-            'type_id.required'  => 'Selecciona el tipo de contenedor.',
-            'capacity.required' => 'La capacidad es obligatoria.',
-            'capacity.min'      => 'La capacidad debe ser mayor que 0.',
-            'unit.required'     => 'Selecciona la unidad de medida.',
-            'unit.in'           => 'Unidad no válida.',
+            'name.required'     => __('El nombre del contenedor es obligatorio.'),
+            'type_id.required'  => __('Selecciona el tipo de contenedor.'),
+            'capacity.required' => __('La capacidad es obligatoria.'),
+            'capacity.min'      => __('La capacidad debe ser mayor que 0.'),
+            'unit.required'     => __('Selecciona la unidad de medida.'),
+            'unit.in'           => __('Unidad no válida.'),
         ];
     }
 

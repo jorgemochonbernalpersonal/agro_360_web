@@ -25,7 +25,7 @@ class Index extends Component
     public function mount(): void
     {
         if (! Auth::user()->hasViticulturistAccess()) {
-            abort(403, 'No tienes permiso para ver productos fitosanitarios.');
+            abort(403, __('No tienes permiso para ver productos fitosanitarios.'));
         }
     }
 
@@ -53,12 +53,12 @@ class Index extends Component
         $product->update(['active' => $newActive]);
 
         if ($newActive) {
-            $this->toastSuccess('Producto activado exitosamente.');
+            $this->toastSuccess(__('Producto activado exitosamente.'));
             if ($this->currentTab === 'inactive') {
                 $this->currentTab = 'active';
             }
         } else {
-            $this->toastSuccess('Producto desactivado exitosamente.');
+            $this->toastSuccess(__('Producto desactivado exitosamente.'));
             if ($this->currentTab === 'active') {
                 $this->currentTab = 'inactive';
             }
@@ -109,8 +109,8 @@ class Index extends Component
             'types'    => $types,
             'stats'    => $stats,
         ])->layout('layouts.app', [
-            'title'       => 'Productos Fitosanitarios - Agro365',
-            'description' => 'Catálogo completo de productos fitosanitarios.',
+            'title'       => __('Productos Fitosanitarios - Agro365'),
+            'description' => __('Catálogo completo de productos fitosanitarios.'),
         ]);
     }
 }

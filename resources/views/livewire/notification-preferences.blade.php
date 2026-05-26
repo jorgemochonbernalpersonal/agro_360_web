@@ -5,8 +5,8 @@
             <div class="flex items-center gap-3">
                 <flux:icon icon="clock" class="size-5 text-agro-600" />
                 <div>
-                    <p class="font-bold text-zinc-900">Modo de entrega</p>
-                    <p class="text-sm text-zinc-500">Elige si recibir emails al instante o un resumen diario</p>
+                    <p class="font-bold text-zinc-900">{{ __('Modo de entrega') }}</p>
+                    <p class="text-sm text-zinc-500">{{ __('Elige si recibir emails al instante o un resumen diario') }}</p>
                 </div>
             </div>
         </x-slot:header>
@@ -15,12 +15,12 @@
             <label class="flex items-center gap-2 cursor-pointer">
                 <input type="radio" wire:model="delivery" value="instant"
                        class="text-agro-600 focus:ring-agro-500">
-                <span class="text-sm text-zinc-700">Instantáneo</span>
+                <span class="text-sm text-zinc-700">{{ __('Instantáneo') }}</span>
             </label>
             <label class="flex items-center gap-2 cursor-pointer">
                 <input type="radio" wire:model="delivery" value="digest"
                        class="text-agro-600 focus:ring-agro-500">
-                <span class="text-sm text-zinc-700">Resumen diario (08:00)</span>
+                <span class="text-sm text-zinc-700">{{ __('Resumen diario (08:00)') }}</span>
             </label>
         </div>
     </x-agro.card>
@@ -47,7 +47,7 @@
 
                         <div class="flex items-center gap-3 flex-shrink-0">
                             {{-- Database (always on, shown as info) --}}
-                            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-zinc-100 text-zinc-500 text-xs" title="Siempre activo en la app">
+                            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-zinc-100 text-zinc-500 text-xs" title="{{ __('Siempre activo en la app') }}">
                                 <flux:icon icon="bell" class="size-3.5" />
                                 App
                             </span>
@@ -75,8 +75,6 @@
 
     {{-- Save button --}}
     <div class="flex justify-end">
-        <flux:button wire:click="save" variant="primary">
-            Guardar preferencias
-        </flux:button>
+        <flux:button wire:click="save" variant="primary">{{ __('Guardar preferencias') }}</flux:button>
     </div>
 </div>

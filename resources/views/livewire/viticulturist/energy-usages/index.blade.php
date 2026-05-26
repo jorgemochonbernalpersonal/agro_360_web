@@ -125,7 +125,7 @@
                             </div>
                             @if($entry->co2_kg_equivalent)
                                 <div class="bg-emerald-50 rounded-xl p-3">
-                                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">CO₂</p>
+                                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">{{ __('CO₂') }}</p>
                                     <p class="text-base font-bold text-emerald-700 leading-none">
                                         {{ number_format($entry->co2_kg_equivalent, 1, ',', '.') }}<span class="text-xs font-normal text-zinc-400 ml-0.5">kg</span>
                                     </p>

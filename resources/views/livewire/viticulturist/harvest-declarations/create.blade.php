@@ -46,7 +46,7 @@
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 p-4 bg-zinc-50 rounded-xl border border-zinc-200" wire:key="line-{{ $i }}">
                         <flux:field>
                             <flux:label>{{ __('Variedad') }}</flux:label>
-                            <flux:input wire:model.live="lines.{{ $i }}.variety" type="text" placeholder="Tempranillo" />
+                            <flux:input wire:model.live="lines.{{ $i }}.variety" type="text" :placeholder="__('Tempranillo')" />
                         </flux:field>
                         <flux:field>
                             <flux:label>{{ __('Parcela / Pago') }}</flux:label>
@@ -66,7 +66,7 @@
                         </flux:field>
                         <flux:field>
                             <flux:label>{{ __('Código REGA destino') }}</flux:label>
-                            <flux:input wire:model.live="lines.{{ $i }}.rega_code" type="text" placeholder="ES-VA-XXXXXX" />
+                            <flux:input wire:model.live="lines.{{ $i }}.rega_code" type="text" :placeholder="__('ES-VA-XXXXXX')" />
                         </flux:field>
                         <flux:field>
                             <flux:label>{{ __('Comprador') }}</flux:label>

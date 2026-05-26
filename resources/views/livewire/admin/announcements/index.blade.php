@@ -1,25 +1,23 @@
 <div class="space-y-6 animate-fade-in">
     <x-agro.page-header
-        title="Anuncios del Sistema"
-        description="Banners visibles para todos los usuarios autenticados"
+        title="{{ __('Anuncios del Sistema') }}"
+        :description="__('Banners visibles para todos los usuarios autenticados')"
     >
         <x-slot:actions>
             @if($activeCount > 0)
                 <flux:badge color="agro">{{ $activeCount }} activo{{ $activeCount > 1 ? 's' : '' }}</flux:badge>
             @endif
-            <flux:button wire:click="openCreate" variant="primary" icon="plus">
-                Nuevo Anuncio
-            </flux:button>
+            <flux:button wire:click="openCreate" variant="primary" icon="plus">{{ __('Nuevo Anuncio') }}</flux:button>
         </x-slot:actions>
     </x-agro.page-header>
 
     <div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 flex items-center gap-2">
         <flux:icon icon="megaphone" class="size-4 flex-shrink-0" />
-        <span>Los anuncios activos aparecen como banner en el panel de todos los usuarios (excluye admins). Se ocultan automáticamente al expirar.</span>
+        <span>{{ __('Los anuncios activos aparecen como banner en el panel de todos los usuarios (excluye admins). Se ocultan automáticamente al expirar.') }}</span>
     </div>
 
     @if($announcements->isEmpty())
-        <x-agro.empty-state icon="megaphone" message="Sin anuncios" description="Crea el primer anuncio para comunicarte con tus usuarios" />
+        <x-agro.empty-state icon="megaphone" :message="__('Sin anuncios')" :description="__('Crea el primer anuncio para comunicarte con tus usuarios')" />
     @else
         <div class="space-y-3">
             @foreach($announcements as $ann)
@@ -37,11 +35,11 @@
                             <div class="flex items-center gap-2 flex-wrap">
                                 <span class="text-sm font-semibold text-zinc-900">{{ $ann->title }}</span>
                                 @if($expired)
-                                    <flux:badge color="zinc" size="sm">Expirado</flux:badge>
+                                    <flux:badge color="zinc" size="sm">{{ __('Expirado') }}</flux:badge>
                                 @elseif($ann->is_active)
-                                    <flux:badge color="green" size="sm">Activo</flux:badge>
+                                    <flux:badge color="green" size="sm">{{ __('Activo') }}</flux:badge>
                                 @else
-                                    <flux:badge color="zinc" size="sm">Inactivo</flux:badge>
+                                    <flux:badge color="zinc" size="sm">{{ __('Inactivo') }}</flux:badge>
                                 @endif
                                 <flux:badge color="{{ $color }}" size="sm">{{ ucfirst($ann->type) }}</flux:badge>
                             </div>
@@ -59,7 +57,7 @@
                             <flux:button wire:click="openEdit({{ $ann->id }})" variant="ghost" size="sm" icon="pencil" tooltip="Editar" />
                             <flux:button
                                 wire:click="delete({{ $ann->id }})"
-                                wire:confirm="¿Eliminar este anuncio?"
+                                wire:confirm="{{ __('¿Eliminar este anuncio?') }}"
                                 variant="ghost" size="sm" icon="trash"
                                 class="text-red-400 hover:text-red-600"
                                 tooltip="Eliminar"
@@ -77,34 +75,34 @@
             <div class="p-6 space-y-4">
                 <h3 class="text-base font-semibold text-zinc-900">{{ $editingId ? 'Editar anuncio' : 'Nuevo anuncio' }}</h3>
 
-                <flux:input wire:model="title" label="Título" placeholder="Breve título del anuncio" />
+                <flux:input wire:model="title" :label="__('Título')" :placeholder="__('Breve título del anuncio')" />
                 @error('title') <p class="text-xs text-red-500">{{ $message }}</p> @enderror
 
-                <flux:textarea wire:model="message" label="Mensaje" rows="3" placeholder="Texto visible para los usuarios..." />
+                <flux:textarea wire:model="message" :label="__('Mensaje')" rows="3" :placeholder="__('Texto visible para los usuarios...')" />
                 @error('message') <p class="text-xs text-red-500">{{ $message }}</p> @enderror
 
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <flux:select wire:model="type" label="Tipo">
-                            <option value="info">ℹ️ Info</option>
-                            <option value="warning">⚠️ Aviso</option>
-                            <option value="success">✅ Éxito</option>
-                            <option value="danger">🚨 Urgente</option>
+                        <flux:select wire:model="type" :label="__('Tipo')">
+                            <option value="info">{{ __('ℹ️ Info') }}</option>
+                            <option value="warning">{{ __('⚠️ Aviso') }}</option>
+                            <option value="success">{{ __('✅ Éxito') }}</option>
+                            <option value="danger">{{ __('🚨 Urgente') }}</option>
                         </flux:select>
                     </div>
                     <div>
-                        <flux:input wire:model="expires_at" type="date" label="Expira el" />
+                        <flux:input wire:model="expires_at" type="date" :label="__('Expira el')" />
                         @error('expires_at') <p class="text-xs text-red-500">{{ $message }}</p> @enderror
                     </div>
                 </div>
 
                 <div class="flex items-center gap-2">
                     <flux:checkbox wire:model="is_active" id="ann-active" />
-                    <label for="ann-active" class="text-sm text-zinc-700 cursor-pointer">Publicar inmediatamente</label>
+                    <label for="ann-active" class="text-sm text-zinc-700 cursor-pointer">{{ __('Publicar inmediatamente') }}</label>
                 </div>
 
                 <div class="flex justify-end gap-3 pt-2">
-                    <flux:button wire:click="closeModal" variant="ghost">Cancelar</flux:button>
+                    <flux:button wire:click="closeModal" variant="ghost">{{ __('Cancelar') }}</flux:button>
                     <flux:button wire:click="save" variant="primary">
                         {{ $editingId ? 'Guardar' : 'Publicar' }}
                     </flux:button>

@@ -50,55 +50,53 @@
                     </svg>
                     Volver a Inicio
                 </a>
-                <h1 class="text-4xl font-bold text-gray-900">Política de Cookies</h1>
-                <p class="mt-2 text-gray-600">Última actualización: 09/03/2026</p>
+                <h1 class="text-4xl font-bold text-gray-900">{{ __('Política de Cookies') }}</h1>
+                <p class="mt-2 text-gray-600">{{ __('Última actualización: 09/03/2026') }}</p>
             </div>
 
             <!-- Content -->
             <div class="bg-white rounded-lg shadow-sm p-8 space-y-6">
 
                 <section>
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">¿Qué son las cookies?</h2>
-                    <p class="text-gray-700 leading-relaxed">
-                        Las cookies son pequeños archivos de texto que los sitios web almacenan en tu dispositivo para que funcionen correctamente. Agro365 utiliza únicamente cookies técnicas estrictamente necesarias.
-                    </p>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">{{ __('¿Qué son las cookies?') }}</h2>
+                    <p class="text-gray-700 leading-relaxed">{{ __('Las cookies son pequeños archivos de texto que los sitios web almacenan en tu dispositivo para que funcionen correctamente. Agro365 utiliza únicamente cookies técnicas estrictamente necesarias.') }}</p>
                 </section>
 
                 <section>
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">¿Qué cookies utiliza Agro365?</h2>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">{{ __('¿Qué cookies utiliza Agro365?') }}</h2>
                     <div class="overflow-x-auto">
                         <table class="min-w-full border border-gray-300 text-sm">
                             <thead class="bg-gray-100">
                                 <tr>
-                                    <th class="border border-gray-300 px-4 py-2 text-left font-semibold">Nombre</th>
-                                    <th class="border border-gray-300 px-4 py-2 text-left font-semibold">Propósito</th>
-                                    <th class="border border-gray-300 px-4 py-2 text-left font-semibold">Duración</th>
-                                    <th class="border border-gray-300 px-4 py-2 text-left font-semibold">Tipo</th>
+                                    <th class="border border-gray-300 px-4 py-2 text-left font-semibold">{{ __('Nombre') }}</th>
+                                    <th class="border border-gray-300 px-4 py-2 text-left font-semibold">{{ __('Propósito') }}</th>
+                                    <th class="border border-gray-300 px-4 py-2 text-left font-semibold">{{ __('Duración') }}</th>
+                                    <th class="border border-gray-300 px-4 py-2 text-left font-semibold">{{ __('Tipo') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td class="border border-gray-300 px-4 py-2 font-mono text-xs">agro365_session</td>
-                                    <td class="border border-gray-300 px-4 py-2">Mantener tu sesión activa</td>
-                                    <td class="border border-gray-300 px-4 py-2">3 horas</td>
+                                    <td class="border border-gray-300 px-4 py-2 font-mono text-xs">{{ __('agro365_session') }}</td>
+                                    <td class="border border-gray-300 px-4 py-2">{{ __('Mantener tu sesión activa') }}</td>
+                                    <td class="border border-gray-300 px-4 py-2">{{ __('3 horas') }}</td>
                                     <td class="border border-gray-300 px-4 py-2">
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">Esencial</span>
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">{{ __('Esencial') }}</span>
                                     </td>
                                 </tr>
                                 <tr class="bg-gray-50">
-                                    <td class="border border-gray-300 px-4 py-2 font-mono text-xs">XSRF-TOKEN</td>
-                                    <td class="border border-gray-300 px-4 py-2">Protección contra ataques CSRF</td>
-                                    <td class="border border-gray-300 px-4 py-2">Sesión del navegador</td>
+                                    <td class="border border-gray-300 px-4 py-2 font-mono text-xs">{{ __('XSRF-TOKEN') }}</td>
+                                    <td class="border border-gray-300 px-4 py-2">{{ __('Protección contra ataques CSRF') }}</td>
+                                    <td class="border border-gray-300 px-4 py-2">{{ __('Sesión del navegador') }}</td>
                                     <td class="border border-gray-300 px-4 py-2">
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">Seguridad</span>
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">{{ __('Seguridad') }}</span>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="border border-gray-300 px-4 py-2 font-mono text-xs">remember_web_*</td>
-                                    <td class="border border-gray-300 px-4 py-2">Recordar sesión (si seleccionas "Recuérdame")</td>
-                                    <td class="border border-gray-300 px-4 py-2">2 semanas</td>
+                                    <td class="border border-gray-300 px-4 py-2 font-mono text-xs">{{ __('remember_web_*') }}</td>
+                                    <td class="border border-gray-300 px-4 py-2">{{ __('Recordar sesión (si seleccionas "Recuérdame")') }}</td>
+                                    <td class="border border-gray-300 px-4 py-2">{{ __('2 semanas') }}</td>
                                     <td class="border border-gray-300 px-4 py-2">
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">Funcional</span>
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">{{ __('Funcional') }}</span>
                                     </td>
                                 </tr>
                             </tbody>
@@ -107,34 +105,30 @@
                 </section>
 
                 <section>
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">¿Necesito aceptar las cookies?</h2>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">{{ __('¿Necesito aceptar las cookies?') }}</h2>
                     <div class="border-l-4 border-[var(--color-agro-green-dark)] bg-[var(--color-agro-green-bg)]/40 p-4 rounded-r-lg">
-                        <p class="font-semibold text-[var(--color-agro-green-dark)]">No.</p>
-                        <p class="text-gray-700 mt-1">
-                            Todas las cookies que utilizamos son estrictamente necesarias para el funcionamiento del servicio y quedan exentas del requisito de consentimiento según el RGPD y la LSSI.
-                        </p>
+                        <p class="font-semibold text-[var(--color-agro-green-dark)]">{{ __('No.') }}</p>
+                        <p class="text-gray-700 mt-1">{{ __('Todas las cookies que utilizamos son estrictamente necesarias para el funcionamiento del servicio y quedan exentas del requisito de consentimiento según el RGPD y la LSSI.') }}</p>
                     </div>
                 </section>
 
                 <section>
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">Cookies que NO utilizamos</h2>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">{{ __('Cookies que NO utilizamos') }}</h2>
                     <ul class="space-y-2 text-gray-700 ml-4">
-                        <li>❌ Cookies de publicidad</li>
-                        <li>❌ Cookies de analítica (Google Analytics u otras)</li>
-                        <li>❌ Cookies de redes sociales</li>
-                        <li>❌ Cookies de terceros para seguimiento</li>
+                        <li>{{ __('❌ Cookies de publicidad') }}</li>
+                        <li>{{ __('❌ Cookies de analítica (Google Analytics u otras)') }}</li>
+                        <li>{{ __('❌ Cookies de redes sociales') }}</li>
+                        <li>{{ __('❌ Cookies de terceros para seguimiento') }}</li>
                     </ul>
                 </section>
 
                 <section>
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">¿Puedo desactivarlas?</h2>
-                    <p class="text-gray-700 leading-relaxed">
-                        Puedes configurar tu navegador para bloquear o eliminar cookies, aunque esto afectará al funcionamiento correcto de la plataforma, ya que las cookies de sesión son necesarias para la autenticación.
-                    </p>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">{{ __('¿Puedo desactivarlas?') }}</h2>
+                    <p class="text-gray-700 leading-relaxed">{{ __('Puedes configurar tu navegador para bloquear o eliminar cookies, aunque esto afectará al funcionamiento correcto de la plataforma, ya que las cookies de sesión son necesarias para la autenticación.') }}</p>
                 </section>
 
                 <section class="bg-gray-50 p-6 rounded-lg">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">Contacto</h2>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">{{ __('Contacto') }}</h2>
                     <p class="text-gray-700">
                         Para cualquier consulta sobre el uso de cookies:
                         📧 <a href="mailto:info@agro365.es" class="text-[var(--color-agro-green-dark)] hover:underline font-semibold">info@agro365.es</a>

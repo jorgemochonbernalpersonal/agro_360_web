@@ -19,8 +19,8 @@ trait HasRecommendations
                 $this->recommendations[] = [
                     'type'  => 'warning',
                     'icon'  => '🌱',
-                    'title' => 'Vigor bajo detectado',
-                    'text'  => 'Revisa posibles deficiencias nutricionales o estrés.',
+                    'title' => __('Vigor bajo detectado'),
+                    'text'  => __('Revisa posibles deficiencias nutricionales o estrés.'),
                 ];
             }
         }
@@ -33,8 +33,8 @@ trait HasRecommendations
             $this->recommendations[] = [
                 'type'  => 'warning',
                 'icon'  => '🔥',
-                'title' => 'Estrés térmico',
-                'text'  => 'Monitoriza riego y estrés hídrico.',
+                'title' => __('Estrés térmico'),
+                'text'  => __('Monitoriza riego y estrés hídrico.'),
             ];
         }
 
@@ -43,8 +43,8 @@ trait HasRecommendations
             $this->recommendations[] = [
                 'type'  => 'warning',
                 'icon'  => '💧',
-                'title' => 'Suelo seco',
-                'text'  => 'Humedad baja (' . round($soilMoisture) . '%). Considera riego.',
+                'title' => __('Suelo seco'),
+                'text'  => __('Humedad baja (') . round($soilMoisture) . '%). Considera riego.',
             ];
         }
 
@@ -53,7 +53,7 @@ trait HasRecommendations
             $this->recommendations[] = [
                 'type'  => 'info',
                 'icon'  => '🌧️',
-                'title' => 'Lluvia prevista',
+                'title' => __('Lluvia prevista'),
                 'text'  => "$rainDays días de lluvia esta semana.",
             ];
         }
@@ -62,8 +62,8 @@ trait HasRecommendations
             $this->recommendations[] = [
                 'type'  => 'success',
                 'icon'  => '✅',
-                'title' => 'Condiciones óptimas',
-                'text'  => 'Todos los indicadores normales.',
+                'title' => __('Condiciones óptimas'),
+                'text'  => __('Todos los indicadores normales.'),
             ];
         }
     }

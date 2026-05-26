@@ -102,21 +102,21 @@ class Invoicing extends Component
         ]);
 
         $this->updatePreviews();
-        $this->toastSuccess('Configuración guardada exitosamente');
+        $this->toastSuccess(__('Configuración guardada exitosamente'));
     }
 
     public function resetInvoiceCounter()
     {
         $this->invoice_counter = 1;
         $this->updatePreviews();
-        $this->toastInfo('Contador de facturas resetado. Haz clic en Guardar para aplicar.');
+        $this->toastInfo(__('Contador de facturas resetado. Haz clic en Guardar para aplicar.'));
     }
 
     public function resetDeliveryNoteCounter()
     {
         $this->delivery_note_counter = 1;
         $this->updatePreviews();
-        $this->toastInfo('Contador de albaranes resetado. Haz clic en Guardar para aplicar.');
+        $this->toastInfo(__('Contador de albaranes resetado. Haz clic en Guardar para aplicar.'));
     }
 
     public function render()

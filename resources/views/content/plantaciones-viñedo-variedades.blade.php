@@ -21,7 +21,7 @@
             <div class="flex justify-between items-center h-16">
                 <a href="{{ url('/') }}" class="flex items-center gap-3">
                     <img src="{{ asset('images/logo.png') }}" alt="Agro365" class="h-10 w-auto">
-                    <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">Agro365</span>
+                    <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Agro365') }}</span>
                 </a>
                 @guest
                     <a href="{{ route('register') }}" class="px-4 py-2 rounded-lg bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white">Comenzar Gratis</a>
@@ -35,82 +35,78 @@
             <div class="mb-12">
                 <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-100 border border-purple-300 mb-6">
                     <span class="text-lg">🍇</span>
-                    <span class="text-sm font-semibold text-purple-800">Variedades y Plantaciones</span>
+                    <span class="text-sm font-semibold text-purple-800">{{ __('Variedades y Plantaciones') }}</span>
                 </div>
-                <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">
-                    Gestión de Plantaciones y Variedades de Viñedo
-                </h1>
+                <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">{{ __('Gestión de Plantaciones y Variedades de Viñedo') }}</h1>
                 <p class="text-xl text-gray-600 leading-relaxed">
-                    <strong>Registra cada plantación</strong> con su variedad, año de plantación, sistema de conducción, marco de plantación y datos agronómicos completos.
+                    <strong>{{ __('Registra cada plantación') }}</strong> con su variedad, año de plantación, sistema de conducción, marco de plantación y datos agronómicos completos.
                 </p>
             </div>
 
             <article class="prose prose-lg max-w-none">
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Datos de Plantación</h2>
-                    <p class="text-gray-700 leading-relaxed mb-4">
-                        Cada parcela puede tener múltiples plantaciones. Registra:
-                    </p>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Datos de Plantación') }}</h2>
+                    <p class="text-gray-700 leading-relaxed mb-4">{{ __('Cada parcela puede tener múltiples plantaciones. Registra:') }}</p>
                     <div class="grid md:grid-cols-2 gap-4 mb-6">
                         <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-2">🍇 Variedad</h3>
+                            <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-2">{{ __('🍇 Variedad') }}</h3>
                             <ul class="text-gray-700 text-sm space-y-1">
-                                <li>• Tempranillo, Garnacha, Viura...</li>
-                                <li>• Clon y portainjerto</li>
-                                <li>• Año de plantación</li>
+                                <li>{{ __('• Tempranillo, Garnacha, Viura...') }}</li>
+                                <li>{{ __('• Clon y portainjerto') }}</li>
+                                <li>{{ __('• Año de plantación') }}</li>
                             </ul>
                         </div>
                         <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-2">📐 Marco de Plantación</h3>
+                            <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-2">{{ __('📐 Marco de Plantación') }}</h3>
                             <ul class="text-gray-700 text-sm space-y-1">
-                                <li>• Distancia entre cepas</li>
-                                <li>• Distancia entre filas</li>
-                                <li>• Densidad (cepas/ha)</li>
+                                <li>{{ __('• Distancia entre cepas') }}</li>
+                                <li>{{ __('• Distancia entre filas') }}</li>
+                                <li>{{ __('• Densidad (cepas/ha)') }}</li>
                             </ul>
                         </div>
                         <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-2">🌱 Sistema de Conducción</h3>
+                            <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-2">{{ __('🌱 Sistema de Conducción') }}</h3>
                             <ul class="text-gray-700 text-sm space-y-1">
-                                <li>• Espaldera, Vaso, Parral</li>
-                                <li>• Tipo de poda</li>
-                                <li>• Orientación de filas</li>
+                                <li>{{ __('• Espaldera, Vaso, Parral') }}</li>
+                                <li>{{ __('• Tipo de poda') }}</li>
+                                <li>{{ __('• Orientación de filas') }}</li>
                             </ul>
                         </div>
                         <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-2">📋 Certificaciones</h3>
+                            <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-2">{{ __('📋 Certificaciones') }}</h3>
                             <ul class="text-gray-700 text-sm space-y-1">
-                                <li>• DO, DOCa, IGP</li>
-                                <li>• Ecológico, Biodinámica</li>
-                                <li>• Certificados origen</li>
+                                <li>{{ __('• DO, DOCa, IGP') }}</li>
+                                <li>{{ __('• Ecológico, Biodinámica') }}</li>
+                                <li>{{ __('• Certificados origen') }}</li>
                             </ul>
                         </div>
                     </div>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Variedades más Comunes en España</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Variedades más Comunes en España') }}</h2>
                     <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-6">
                         <div class="grid md:grid-cols-2 gap-6">
                             <div>
-                                <h3 class="font-bold text-red-600 mb-2">🔴 Tintas</h3>
+                                <h3 class="font-bold text-red-600 mb-2">{{ __('🔴 Tintas') }}</h3>
                                 <ul class="text-gray-700 text-sm space-y-1">
-                                    <li>• Tempranillo (Tinta del País)</li>
-                                    <li>• Garnacha Tinta</li>
-                                    <li>• Bobal</li>
-                                    <li>• Monastrell</li>
-                                    <li>• Mencía</li>
-                                    <li>• Cabernet Sauvignon</li>
+                                    <li>{{ __('• Tempranillo (Tinta del País)') }}</li>
+                                    <li>{{ __('• Garnacha Tinta') }}</li>
+                                    <li>{{ __('• Bobal') }}</li>
+                                    <li>{{ __('• Monastrell') }}</li>
+                                    <li>{{ __('• Mencía') }}</li>
+                                    <li>{{ __('• Cabernet Sauvignon') }}</li>
                                 </ul>
                             </div>
                             <div>
-                                <h3 class="font-bold text-amber-600 mb-2">⚪ Blancas</h3>
+                                <h3 class="font-bold text-amber-600 mb-2">{{ __('⚪ Blancas') }}</h3>
                                 <ul class="text-gray-700 text-sm space-y-1">
-                                    <li>• Airén</li>
-                                    <li>• Viura (Macabeo)</li>
-                                    <li>• Verdejo</li>
-                                    <li>• Albariño</li>
-                                    <li>• Palomino</li>
-                                    <li>• Chardonnay</li>
+                                    <li>{{ __('• Airén') }}</li>
+                                    <li>{{ __('• Viura (Macabeo)') }}</li>
+                                    <li>{{ __('• Verdejo') }}</li>
+                                    <li>{{ __('• Albariño') }}</li>
+                                    <li>{{ __('• Palomino') }}</li>
+                                    <li>{{ __('• Chardonnay') }}</li>
                                 </ul>
                             </div>
                         </div>
@@ -118,13 +114,13 @@
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Integración con SIGPAC</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Integración con SIGPAC') }}</h2>
                     <p class="text-gray-700 leading-relaxed mb-4">
                         Cada plantación se vincula a un recinto <a href="{{ content_route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a>. Los datos de plantación son fundamentales para:
                     </p>
                     <ul class="list-disc list-inside space-y-2 text-gray-700 mb-6 ml-4">
                         <li>Solicitudes de <a href="{{ url('/subvenciones-pac-2024') }}" class="text-[var(--color-agro-green)] hover:underline">ayudas PAC</a></li>
-                        <li>Certificación de Denominación de Origen</li>
+                        <li>{{ __('Certificación de Denominación de Origen') }}</li>
                         <li>Cálculo de <a href="{{ url('/rendimientos-cosecha-viñedo') }}" class="text-[var(--color-agro-green)] hover:underline">rendimientos esperados</a></li>
                         <li>Trazabilidad de <a href="{{ url('/gestion-vendimia') }}" class="text-[var(--color-agro-green)] hover:underline">vendimia</a></li>
                     </ul>
@@ -132,9 +128,9 @@
 
                 <section class="mb-12">
                     <div class="bg-gradient-to-r from-[var(--color-agro-green-bg)] to-[var(--color-agro-green-light)]/30 p-8 rounded-xl border border-[var(--color-agro-green)]/20">
-                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">🍇 Gestiona tus Plantaciones</h3>
+                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('🍇 Gestiona tus Plantaciones') }}</h3>
                         <p class="text-gray-700 mb-6">
-                            Registra variedades, sistemas de conducción y certificaciones. <strong>3 meses gratis</strong>.
+                            Registra variedades, sistemas de conducción y certificaciones. <strong>{{ __('3 meses gratis') }}</strong>.
                         </p>
                         <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:shadow-lg transition-all font-semibold">
                             Comenzar Gratis
@@ -143,27 +139,27 @@
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Preguntas Frecuentes</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Preguntas Frecuentes') }}</h2>
                     <div class="space-y-6">
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Puedo tener varias variedades en la misma parcela?</h3>
-                            <p class="text-gray-700">Sí, cada parcela puede tener múltiples plantaciones con diferentes variedades, sistemas de conducción y años de plantación.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Puedo tener varias variedades en la misma parcela?') }}</h3>
+                            <p class="text-gray-700">{{ __('Sí, cada parcela puede tener múltiples plantaciones con diferentes variedades, sistemas de conducción y años de plantación.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Qué es el marco de plantación?</h3>
-                            <p class="text-gray-700">Es la distancia entre cepas y entre filas que determina la densidad de plantación (cepas por hectárea).</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Qué es el marco de plantación?') }}</h3>
+                            <p class="text-gray-700">{{ __('Es la distancia entre cepas y entre filas que determina la densidad de plantación (cepas por hectárea).') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Cómo registro el sistema de conducción?</h3>
-                            <p class="text-gray-700">Selecciona entre espaldera, vaso, parral u otro, indicando además el tipo de poda y la orientación de las filas.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Cómo registro el sistema de conducción?') }}</h3>
+                            <p class="text-gray-700">{{ __('Selecciona entre espaldera, vaso, parral u otro, indicando además el tipo de poda y la orientación de las filas.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Puedo indicar la DO de cada plantación?</h3>
-                            <p class="text-gray-700">Sí, cada plantación puede tener asociada su certificación de DO, DOCa, IGP o cultivo ecológico.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Puedo indicar la DO de cada plantación?') }}</h3>
+                            <p class="text-gray-700">{{ __('Sí, cada plantación puede tener asociada su certificación de DO, DOCa, IGP o cultivo ecológico.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Se vincula con el código SIGPAC?</h3>
-                            <p class="text-gray-700">Sí, cada plantación está vinculada a un recinto SIGPAC para trazabilidad completa y cumplimiento PAC.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Se vincula con el código SIGPAC?') }}</h3>
+                            <p class="text-gray-700">{{ __('Sí, cada plantación está vinculada a un recinto SIGPAC para trazabilidad completa y cumplimiento PAC.') }}</p>
                         </div>
                     </div>
                 </section>

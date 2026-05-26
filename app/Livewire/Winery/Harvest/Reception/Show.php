@@ -50,9 +50,9 @@ class Show extends Component
         $this->validate([
             'resolutionNote' => ['required', 'string', 'min:5', 'max:1000'],
         ], [
-            'resolutionNote.required' => 'Escribe una respuesta para el viticultor.',
-            'resolutionNote.min'      => 'La respuesta debe tener al menos 5 caracteres.',
-            'resolutionNote.max'      => 'La respuesta no puede superar los 1000 caracteres.',
+            'resolutionNote.required' => __('Escribe una respuesta para el viticultor.'),
+            'resolutionNote.min'      => __('La respuesta debe tener al menos 5 caracteres.'),
+            'resolutionNote.max'      => __('La respuesta no puede superar los 1000 caracteres.'),
         ]);
 
         $delivery = $this->harvest->delivery;

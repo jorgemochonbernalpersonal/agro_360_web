@@ -44,7 +44,7 @@ class Login extends Component
             // Simular error genérico para no revelar el honeypot
             sleep(2); // Delay para confundir al bot
             throw ValidationException::withMessages([
-                'email' => 'Las credenciales no son correctas.',
+                'email' => __('Las credenciales no son correctas.'),
             ]);
         }
         
@@ -65,14 +65,14 @@ class Login extends Component
                 if (empty($this->recaptchaToken)) {
                     SecurityLogger::logCaptchaActivated($this->email);
                     throw ValidationException::withMessages([
-                        'email' => 'Por favor, completa la verificación CAPTCHA.',
+                        'email' => __('Por favor, completa la verificación CAPTCHA.'),
                     ]);
                 }
                 
                 if (!$this->validateRecaptcha($this->recaptchaToken)) {
                     SecurityLogger::logCaptchaValidationFailed($this->email);
                     throw ValidationException::withMessages([
-                        'email' => 'La verificación CAPTCHA falló. Por favor, inténtalo de nuevo.',
+                        'email' => __('La verificación CAPTCHA falló. Por favor, inténtalo de nuevo.'),
                     ]);
                 }
             }
@@ -116,7 +116,7 @@ class Login extends Component
             }
             
             throw ValidationException::withMessages([
-                'email' => 'Las credenciales no son correctas.',
+                'email' => __('Las credenciales no son correctas.'),
             ]);
         }
 
@@ -139,7 +139,7 @@ class Login extends Component
             session()->regenerateToken();
 
             throw ValidationException::withMessages([
-                'email' => 'Tu cuenta aún no está activada. Por favor, contacta con quien te dio de alta o regístrate para activar tu acceso.',
+                'email' => __('Tu cuenta aún no está activada. Por favor, contacta con quien te dio de alta o regístrate para activar tu acceso.'),
             ]);
         }
 
@@ -151,7 +151,7 @@ class Login extends Component
             session()->regenerateToken();
             
             throw ValidationException::withMessages([
-                'email' => 'Debes verificar tu email antes de iniciar sesión. Revisa tu correo electrónico para el enlace de verificación.',
+                'email' => __('Debes verificar tu email antes de iniciar sesión. Revisa tu correo electrónico para el enlace de verificación.'),
             ]);
         }
 

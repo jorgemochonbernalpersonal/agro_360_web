@@ -36,8 +36,8 @@ class Index extends Component
     }
 
     #[Layout('layouts.app', [
-        'title'       => 'Mis albaranes - Agro365',
-        'description' => 'Gestiona tus albaranes y facturas mixtas.',
+        'title'       => __('Mis albaranes - Agro365'),
+        'description' => __('Gestiona tus albaranes y facturas mixtas.'),
     ])]
     public function render()
     {

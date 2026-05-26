@@ -56,7 +56,7 @@ class PlotMapController extends Controller
         if ($plotGeometries->isEmpty()) {
             return redirect()
                 ->route('plots.show', $plot)
-                ->with('error', 'Esta parcela no tiene recintos generados. Genera el mapa primero.');
+                ->with('error', __('Esta parcela no tiene recintos generados. Genera el mapa primero.'));
         }
 
         return view('map', compact('plot', 'plotGeometries', 'showMunicipality'));

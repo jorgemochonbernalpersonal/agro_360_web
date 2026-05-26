@@ -9,7 +9,7 @@
         class="hidden lg:flex items-center gap-2 px-3 py-1.5 text-xs text-zinc-400 bg-zinc-100 hover:bg-zinc-200 rounded-lg transition-colors border border-zinc-200"
     >
         <flux:icon icon="magnifying-glass" class="size-3.5" />
-        <span>Buscar...</span>
+        <span>{{ __('Buscar...') }}</span>
         <span class="ml-1 font-mono text-[10px] bg-white border border-zinc-200 rounded px-1 py-0.5">⌘K</span>
     </button>
 
@@ -32,7 +32,7 @@
                 <input
                     type="text"
                     wire:model.live.debounce.200ms="query"
-                    placeholder="Buscar usuarios, tickets, parcelas..."
+                    placeholder="{{ __('Buscar usuarios, tickets, parcelas...') }}"
                     class="flex-1 text-sm text-zinc-900 placeholder-zinc-400 bg-transparent outline-none"
                     x-init="$el.focus()"
                     @keydown.escape.prevent="$wire.closeModal()"
@@ -90,7 +90,7 @@
                 @else
                     {{-- Estado inicial --}}
                     <div class="py-8 px-4">
-                        <p class="text-xs text-zinc-400 mb-4 text-center">Accesos rápidos</p>
+                        <p class="text-xs text-zinc-400 mb-4 text-center">{{ __('Accesos rápidos') }}</p>
                         <div class="grid grid-cols-2 gap-2">
                             <a href="{{ route('admin.users.index') }}" wire:click="closeModal"
                                class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-zinc-50 transition-colors text-sm text-zinc-700 group">
@@ -131,7 +131,7 @@
             <div class="px-4 py-2 border-t border-zinc-100 bg-zinc-50 flex items-center gap-4 text-[10px] text-zinc-400">
                 <span><kbd class="font-mono bg-white border border-zinc-200 rounded px-1">↵</kbd> abrir</span>
                 <span><kbd class="font-mono bg-white border border-zinc-200 rounded px-1">ESC</kbd> cerrar</span>
-                <span class="ml-auto">⌘K para abrir en cualquier momento</span>
+                <span class="ml-auto">{{ __('⌘K para abrir en cualquier momento') }}</span>
             </div>
         </div>
     </div>

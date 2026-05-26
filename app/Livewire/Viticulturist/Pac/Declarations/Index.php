@@ -18,7 +18,7 @@ class Index extends Component
         if (!$declaration->isDraft()) return;
 
         if ($declaration->items()->count() === 0) {
-            $this->toastError('La declaración no tiene parcelas. Añade al menos una antes de presentarla.');
+            $this->toastError(__('La declaración no tiene parcelas. Añade al menos una antes de presentarla.'));
             return;
         }
 
@@ -35,12 +35,12 @@ class Index extends Component
         $declaration = PacDeclaration::forViticulturist(Auth::id())->findOrFail($id);
 
         if (!$declaration->isDraft()) {
-            $this->toastError('Solo se pueden eliminar declaraciones en borrador.');
+            $this->toastError(__('Solo se pueden eliminar declaraciones en borrador.'));
             return;
         }
 
         $declaration->delete();
-        $this->toastSuccess('Declaración eliminada.');
+        $this->toastSuccess(__('Declaración eliminada.'));
     }
 
     public function render()

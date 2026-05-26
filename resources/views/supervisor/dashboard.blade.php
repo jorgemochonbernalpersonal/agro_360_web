@@ -11,8 +11,8 @@
         <!-- Header Unificado -->
         <x-page-header
             :icon="$headerIcon"
-            title="Dashboard Supervisor"
-            description="Supervisión y control de operaciones"
+            title="{{ __('Dashboard Supervisor') }}"
+            :description="__('Supervisión y control de operaciones')"
             icon-color="from-indigo-500 to-indigo-700"
             :badge-icon="$badgeIcon"
         />
@@ -24,14 +24,12 @@
         >
             <div>
                 <div class="flex items-center gap-3 mb-4">
-                    <span class="text-white/90 text-lg font-medium">Bienvenido,</span>
+                    <span class="text-white/90 text-lg font-medium">{{ __('Bienvenido,') }}</span>
                 </div>
                 <h2 class="text-3xl font-bold text-white mb-3">
                     {{ auth()->user()->name }}
                 </h2>
-                <p class="text-white/90 text-lg">
-                    Supervisa y coordina todas las operaciones desde tu panel de control. ¡Éxito en tu gestión!
-                </p>
+                <p class="text-white/90 text-lg">{{ __('Supervisa y coordina todas las operaciones desde tu panel de control. ¡Éxito en tu gestión!') }}</p>
             </div>
         </x-info-card>
 
@@ -40,16 +38,16 @@
             <x-feature-card
                 href="{{ route('plots.index') }}"
                 :icon="$plotsIcon"
-                title="Parcelas"
-                description="Supervisa parcelas asignadas y su estado actual"
+                title="{{ __('Parcelas') }}"
+                :description="__('Supervisa parcelas asignadas y su estado actual')"
                 icon-gradient="from-[var(--color-agro-green-light)] to-[var(--color-agro-green)]"
             />
 
             <x-feature-card
                 href="{{ route('plots.plantings.index') }}"
                 :icon="$plantingsIcon"
-                title="Plantaciones"
-                description="Analiza las plantaciones de variedades en las parcelas supervisadas"
+                title="{{ __('Plantaciones') }}"
+                :description="__('Analiza las plantaciones de variedades en las parcelas supervisadas')"
                 icon-gradient="from-[var(--color-agro-green-light)] to-[var(--color-agro-green)]"
             />
 
@@ -57,7 +55,7 @@
                 href="{{ route('sigpac.index') }}"
                 :icon="$sigpacIcon"
                 title="SIGPACs"
-                description="Accede a datos SIGPAC y coordenadas geográficas"
+                :description="__('Accede a datos SIGPAC y coordenadas geográficas')"
                 icon-gradient="from-[var(--color-agro-blue)] to-blue-700"
                 hover-border="hover:border-[var(--color-agro-blue)]/50"
                 hover-text="group-hover:text-[var(--color-agro-blue)]"

@@ -66,7 +66,7 @@ class Edit extends Component
             'notes'                  => $this->notes ?: null,
         ]);
 
-        $this->toastSuccess('Aditivo actualizado correctamente.');
+        $this->toastSuccess(__('Aditivo actualizado correctamente.'));
         $this->redirect(roleRoute('containers.additives.index', $this->container), navigate: true);
     }
 

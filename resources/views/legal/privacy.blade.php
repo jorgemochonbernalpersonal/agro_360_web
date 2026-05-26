@@ -51,140 +51,136 @@
                     </svg>
                     Volver a Inicio
                 </a>
-                <h1 class="text-4xl font-bold text-gray-900">Política de Privacidad y Cookies</h1>
-                <p class="mt-2 text-gray-600">Última actualización: 09/03/2026</p>
+                <h1 class="text-4xl font-bold text-gray-900">{{ __('Política de Privacidad y Cookies') }}</h1>
+                <p class="mt-2 text-gray-600">{{ __('Última actualización: 09/03/2026') }}</p>
             </div>
 
             <!-- Content -->
             <div class="bg-white rounded-lg shadow-sm p-8 space-y-6">
 
                 <section>
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">1. Responsable del Tratamiento</h2>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">{{ __('1. Responsable del Tratamiento') }}</h2>
                     <ul class="space-y-2 text-gray-700">
-                        <li><strong>Denominación social:</strong> Agro365</li>
-                        <li><strong>Domicilio:</strong> Calle Toledo 172, Madrid, España</li>
-                        <li><strong>Email:</strong> <a href="mailto:info@agro365.es" class="text-[var(--color-agro-green-dark)] hover:underline">info@agro365.es</a></li>
-                        <li><strong>Actividad:</strong> Software de gestión agrícola</li>
+                        <li><strong>{{ __('Denominación social:') }}</strong> Agro365</li>
+                        <li><strong>{{ __('Domicilio:') }}</strong> Calle Toledo 172, Madrid, España</li>
+                        <li><strong>{{ __('Email:') }}</strong> <a href="mailto:info@agro365.es" class="text-[var(--color-agro-green-dark)] hover:underline">info@agro365.es</a></li>
+                        <li><strong>{{ __('Actividad:') }}</strong> Software de gestión agrícola</li>
                     </ul>
-                    <p class="text-gray-500 text-sm mt-3 italic">(NIF se añadirá al formalizarse el alta)</p>
+                    <p class="text-gray-500 text-sm mt-3 italic">{{ __('(NIF se añadirá al formalizarse el alta)') }}</p>
                 </section>
 
                 <section>
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">2. Información General</h2>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">{{ __('2. Información General') }}</h2>
                     <p class="text-gray-700 leading-relaxed">
-                        En <strong>Agro365</strong> nos tomamos muy en serio la privacidad de nuestros usuarios. Esta política describe cómo recopilamos, usamos y protegemos tu información personal cuando utilizas nuestra plataforma, de conformidad con el Reglamento (UE) 2016/679 (RGPD) y la Ley Orgánica 3/2018 (LOPDGDD).
+                        En <strong>{{ __('Agro365') }}</strong> nos tomamos muy en serio la privacidad de nuestros usuarios. Esta política describe cómo recopilamos, usamos y protegemos tu información personal cuando utilizas nuestra plataforma, de conformidad con el Reglamento (UE) 2016/679 (RGPD) y la Ley Orgánica 3/2018 (LOPDGDD).
                     </p>
                 </section>
 
                 <section>
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">3. Datos que Recopilamos</h2>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">{{ __('3. Datos que Recopilamos') }}</h2>
                     <div class="space-y-4 text-gray-700">
                         <div>
-                            <h3 class="font-semibold text-lg mb-2">3.1 Información de Cuenta</h3>
+                            <h3 class="font-semibold text-lg mb-2">{{ __('3.1 Información de Cuenta') }}</h3>
                             <ul class="list-disc list-inside space-y-1 ml-4">
-                                <li>Nombre y apellidos</li>
-                                <li>Dirección de correo electrónico</li>
-                                <li>Contraseña (almacenada con hash bcrypt, nunca en texto plano)</li>
-                                <li>Rol dentro de la plataforma (viticultor, bodega, DO)</li>
+                                <li>{{ __('Nombre y apellidos') }}</li>
+                                <li>{{ __('Dirección de correo electrónico') }}</li>
+                                <li>{{ __('Contraseña (almacenada con hash bcrypt, nunca en texto plano)') }}</li>
+                                <li>{{ __('Rol dentro de la plataforma (viticultor, bodega, DO)') }}</li>
                             </ul>
                         </div>
                         <div>
-                            <h3 class="font-semibold text-lg mb-2">3.2 Información de Gestión Agrícola</h3>
+                            <h3 class="font-semibold text-lg mb-2">{{ __('3.2 Información de Gestión Agrícola') }}</h3>
                             <ul class="list-disc list-inside space-y-1 ml-4">
-                                <li>Parcelas y ubicaciones SIGPAC</li>
-                                <li>Actividades agrícolas y tratamientos fitosanitarios</li>
-                                <li>Cuadrillas y personal asignado</li>
-                                <li>Maquinaria y productos utilizados</li>
+                                <li>{{ __('Parcelas y ubicaciones SIGPAC') }}</li>
+                                <li>{{ __('Actividades agrícolas y tratamientos fitosanitarios') }}</li>
+                                <li>{{ __('Cuadrillas y personal asignado') }}</li>
+                                <li>{{ __('Maquinaria y productos utilizados') }}</li>
                             </ul>
                         </div>
                         <div>
-                            <h3 class="font-semibold text-lg mb-2">3.3 Información Técnica</h3>
+                            <h3 class="font-semibold text-lg mb-2">{{ __('3.3 Información Técnica') }}</h3>
                             <ul class="list-disc list-inside space-y-1 ml-4">
-                                <li>Dirección IP</li>
-                                <li>Tipo de navegador y dispositivo</li>
-                                <li>Fecha y hora de acceso</li>
-                                <li>Logs de actividad para seguridad del servicio</li>
+                                <li>{{ __('Dirección IP') }}</li>
+                                <li>{{ __('Tipo de navegador y dispositivo') }}</li>
+                                <li>{{ __('Fecha y hora de acceso') }}</li>
+                                <li>{{ __('Logs de actividad para seguridad del servicio') }}</li>
                             </ul>
                         </div>
                         <div>
-                            <h3 class="font-semibold text-lg mb-2">3.4 Permisos de la Aplicación Móvil</h3>
+                            <h3 class="font-semibold text-lg mb-2">{{ __('3.4 Permisos de la Aplicación Móvil') }}</h3>
                             <ul class="list-disc list-inside space-y-1 ml-4">
-                                <li><strong>Ubicación GPS</strong>: usada exclusivamente para centrar el mapa en tu posición actual dentro de la app. No se almacena ni se transmite a nuestros servidores.</li>
-                                <li><strong>Cámara</strong>: usada para adjuntar fotografías en el cuaderno de campo. Las imágenes solo se guardan si el usuario las sube explícitamente.</li>
-                                <li><strong>Biometría</strong> (huella dactilar / Face ID): usada para desbloquear la sesión de forma segura. Los datos biométricos nunca salen del dispositivo; son gestionados exclusivamente por el sistema operativo del dispositivo, no por Agro365.</li>
+                                <li><strong>{{ __('Ubicación GPS') }}</strong>: usada exclusivamente para centrar el mapa en tu posición actual dentro de la app. No se almacena ni se transmite a nuestros servidores.</li>
+                                <li><strong>{{ __('Cámara') }}</strong>: usada para adjuntar fotografías en el cuaderno de campo. Las imágenes solo se guardan si el usuario las sube explícitamente.</li>
+                                <li><strong>{{ __('Biometría') }}</strong> (huella dactilar / Face ID): usada para desbloquear la sesión de forma segura. Los datos biométricos nunca salen del dispositivo; son gestionados exclusivamente por el sistema operativo del dispositivo, no por Agro365.</li>
                             </ul>
                         </div>
                     </div>
                 </section>
 
                 <section>
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">4. Base Legal del Tratamiento</h2>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">{{ __('4. Base Legal del Tratamiento') }}</h2>
                     <ul class="space-y-2 text-gray-700">
-                        <li><strong>Datos de cuenta y gestión agrícola</strong> → Ejecución del contrato (art. 6.1.b RGPD)</li>
-                        <li><strong>Cumplimiento normativo</strong> (cuaderno de campo, PAC, informes) → Obligación legal (art. 6.1.c RGPD)</li>
-                        <li><strong>Datos técnicos</strong> → Interés legítimo (art. 6.1.f RGPD)</li>
+                        <li><strong>{{ __('Datos de cuenta y gestión agrícola') }}</strong> → Ejecución del contrato (art. 6.1.b RGPD)</li>
+                        <li><strong>{{ __('Cumplimiento normativo') }}</strong> (cuaderno de campo, PAC, informes) → Obligación legal (art. 6.1.c RGPD)</li>
+                        <li><strong>{{ __('Datos técnicos') }}</strong> → Interés legítimo (art. 6.1.f RGPD)</li>
                     </ul>
                 </section>
 
                 <section>
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">5. Uso de tus Datos</h2>
-                    <p class="text-gray-700 leading-relaxed mb-3">Utilizamos tu información exclusivamente para:</p>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">{{ __('5. Uso de tus Datos') }}</h2>
+                    <p class="text-gray-700 leading-relaxed mb-3">{{ __('Utilizamos tu información exclusivamente para:') }}</p>
                     <ul class="list-disc list-inside space-y-1 text-gray-700 ml-4">
-                        <li>Proporcionar y mantener el servicio</li>
-                        <li>Gestionar tu cuenta y suscripción</li>
-                        <li>Generar informes oficiales con validez normativa</li>
-                        <li>Enviar notificaciones importantes sobre el servicio</li>
-                        <li>Mejorar la funcionalidad de la plataforma</li>
-                        <li>Cumplir con obligaciones legales agrícolas</li>
+                        <li>{{ __('Proporcionar y mantener el servicio') }}</li>
+                        <li>{{ __('Gestionar tu cuenta y suscripción') }}</li>
+                        <li>{{ __('Generar informes oficiales con validez normativa') }}</li>
+                        <li>{{ __('Enviar notificaciones importantes sobre el servicio') }}</li>
+                        <li>{{ __('Mejorar la funcionalidad de la plataforma') }}</li>
+                        <li>{{ __('Cumplir con obligaciones legales agrícolas') }}</li>
                     </ul>
-                    <p class="text-gray-700 mt-4 font-medium">No cedemos ni vendemos tus datos a terceros con fines comerciales o publicitarios.</p>
+                    <p class="text-gray-700 mt-4 font-medium">{{ __('No cedemos ni vendemos tus datos a terceros con fines comerciales o publicitarios.') }}</p>
                 </section>
 
                 <section>
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">6. Conservación de los Datos</h2>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">{{ __('6. Conservación de los Datos') }}</h2>
                     <p class="text-gray-700 leading-relaxed">
-                        Tus datos se conservarán mientras mantengas tu cuenta activa. Tras la cancelación, se conservarán durante un máximo de <strong>5 años</strong> para el cumplimiento de obligaciones legales, tras lo cual serán eliminados o anonimizados. Puedes exportar tus datos en cualquier momento desde la plataforma.
+                        Tus datos se conservarán mientras mantengas tu cuenta activa. Tras la cancelación, se conservarán durante un máximo de <strong>{{ __('5 años') }}</strong> para el cumplimiento de obligaciones legales, tras lo cual serán eliminados o anonimizados. Puedes exportar tus datos en cualquier momento desde la plataforma.
                     </p>
                 </section>
 
                 <section>
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">7. Transferencias Internacionales</h2>
-                    <p class="text-gray-700 leading-relaxed">
-                        Agro365 utiliza infraestructura alojada en servidores dentro del Espacio Económico Europeo. No realizamos transferencias de datos fuera de la UE/EEE.
-                    </p>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">{{ __('7. Transferencias Internacionales') }}</h2>
+                    <p class="text-gray-700 leading-relaxed">{{ __('Agro365 utiliza infraestructura alojada en servidores dentro del Espacio Económico Europeo. No realizamos transferencias de datos fuera de la UE/EEE.') }}</p>
                 </section>
 
                 <section>
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">8. Seguridad</h2>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">{{ __('8. Seguridad') }}</h2>
                     <ul class="list-disc list-inside space-y-2 text-gray-700 ml-4">
-                        <li>Cifrado SSL/TLS en todas las conexiones</li>
-                        <li>Contraseñas hasheadas con bcrypt</li>
-                        <li>Protección contra CSRF, XSS y clickjacking</li>
-                        <li>Copias de seguridad regulares</li>
-                        <li>Acceso restringido basado en roles</li>
-                        <li>Firma electrónica SHA-256 en documentos oficiales</li>
+                        <li>{{ __('Cifrado SSL/TLS en todas las conexiones') }}</li>
+                        <li>{{ __('Contraseñas hasheadas con bcrypt') }}</li>
+                        <li>{{ __('Protección contra CSRF, XSS y clickjacking') }}</li>
+                        <li>{{ __('Copias de seguridad regulares') }}</li>
+                        <li>{{ __('Acceso restringido basado en roles') }}</li>
+                        <li>{{ __('Firma electrónica SHA-256 en documentos oficiales') }}</li>
                     </ul>
                 </section>
 
                 <section>
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">9. Tus Derechos (RGPD)</h2>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">{{ __('9. Tus Derechos (RGPD)') }}</h2>
                     <p class="text-gray-700 leading-relaxed">
                         Tienes derecho a acceso, rectificación, supresión, portabilidad, oposición y limitación del tratamiento. Para ejercerlos escríbenos a <a href="mailto:info@agro365.es" class="text-[var(--color-agro-green-dark)] hover:underline font-semibold">info@agro365.es</a>. Responderemos en un máximo de 30 días. Si lo consideras necesario, puedes reclamar ante la AEPD en <a href="https://www.aepd.es" target="_blank" rel="noopener noreferrer" class="text-[var(--color-agro-green-dark)] hover:underline">www.aepd.es</a>.
                     </p>
                 </section>
 
                 <section>
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">10. Cambios en esta Política</h2>
-                    <p class="text-gray-700 leading-relaxed">
-                        Te notificaremos cualquier cambio significativo por email o mediante aviso en la plataforma con al menos 15 días de antelación.
-                    </p>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">{{ __('10. Cambios en esta Política') }}</h2>
+                    <p class="text-gray-700 leading-relaxed">{{ __('Te notificaremos cualquier cambio significativo por email o mediante aviso en la plataforma con al menos 15 días de antelación.') }}</p>
                 </section>
 
                 <section class="bg-gray-50 p-6 rounded-lg">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">11. Contacto</h2>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">{{ __('11. Contacto') }}</h2>
                     <p class="text-gray-700">
                         📧 <a href="mailto:info@agro365.es" class="text-[var(--color-agro-green-dark)] hover:underline font-semibold">info@agro365.es</a>
-                        <span class="text-gray-500 text-sm ml-2">— respondemos en menos de 48 horas</span>
+                        <span class="text-gray-500 text-sm ml-2">{{ __('— respondemos en menos de 48 horas') }}</span>
                     </p>
                     <p class="text-gray-600 text-sm mt-3">
                         Para más información sobre el uso de cookies, consulta nuestra

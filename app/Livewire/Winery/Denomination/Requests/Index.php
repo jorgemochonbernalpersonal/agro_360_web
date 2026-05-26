@@ -76,7 +76,7 @@ class Index extends Component
         $this->respondingId  = null;
         $this->responseNotes = '';
 
-        $this->dispatch('toast', message: 'Respuesta enviada a la denominación.', type: 'success');
+        $this->dispatch('toast', message: __('Respuesta enviada a la denominación.'), type: 'success');
     }
 
     // ── Retirar solicitud pendiente ───────────────────────────────────────────
@@ -95,7 +95,7 @@ class Index extends Component
         Cache::forget("winery:{$request->winery_id}:pending_do_requests");
         Cache::forget("supervisor:{$supervisorId}:inbox_count");
 
-        $this->dispatch('toast', message: 'Solicitud retirada.', type: 'success');
+        $this->dispatch('toast', message: __('Solicitud retirada.'), type: 'success');
     }
 
     // ── Crear solicitud ───────────────────────────────────────────────────────
@@ -124,7 +124,7 @@ class Index extends Component
         $supervisorRelation = SupervisorWinery::where('winery_id', $wineryId)->first();
 
         if (! $supervisorRelation) {
-            $this->dispatch('toast', message: 'No tienes una denominación de origen asignada.', type: 'error');
+            $this->dispatch('toast', message: __('No tienes una denominación de origen asignada.'), type: 'error');
             return;
         }
 
@@ -150,7 +150,7 @@ class Index extends Component
         $this->showCreate = false;
         $this->resetPage();
 
-        $this->dispatch('toast', message: 'Solicitud enviada a la denominación.', type: 'success');
+        $this->dispatch('toast', message: __('Solicitud enviada a la denominación.'), type: 'success');
     }
 
     #[Layout('layouts.app')]

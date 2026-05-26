@@ -52,7 +52,7 @@
                 <div class="flex items-center gap-3">
                     <a href="{{ url('/') }}" class="flex items-center gap-3">
                         <img src="{{ asset('images/logo.png') }}" alt="Agro365" width="120" height="40" loading="eager" fetchpriority="high" decoding="async" class="h-10 w-auto">
-                        <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">Agro365</span>
+                        <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Agro365') }}</span>
                     </a>
                 </div>
                 <div class="flex items-center gap-4">
@@ -81,13 +81,13 @@
                 <ol class="flex items-center space-x-2">
                     <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
                         <a href="{{ url('/') }}" class="hover:text-[var(--color-agro-green)]" itemprop="item">
-                            <span itemprop="name">Inicio</span>
+                            <span itemprop="name">{{ __('Inicio') }}</span>
                         </a>
                         <meta itemprop="position" content="1" />
                     </li>
                     <span class="mx-2">/</span>
                     <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                        <span class="text-gray-900" itemprop="name">Trazabilidad Agrícola</span>
+                        <span class="text-gray-900" itemprop="name">{{ __('Trazabilidad Agrícola') }}</span>
                         <meta itemprop="position" content="2" />
                     </li>
                 </ol>
@@ -95,93 +95,91 @@
 
             <!-- Header -->
             <div class="mb-12">
-                <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">
-                    Software de Trazabilidad Agrícola
-                </h1>
+                <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">{{ __('Software de Trazabilidad Agrícola') }}</h1>
                 <p class="text-xl text-gray-600 leading-relaxed">
-                    <strong>Trazabilidad completa</strong> desde la parcela hasta el producto final. Software de trazabilidad agrícola para registrar movimientos, transformaciones y cumplir con todas las normativas de seguridad alimentaria.
+                    <strong>{{ __('Trazabilidad completa') }}</strong> desde la parcela hasta el producto final. Software de trazabilidad agrícola para registrar movimientos, transformaciones y cumplir con todas las normativas de seguridad alimentaria.
                 </p>
             </div>
 
             <!-- Content -->
             <article class="prose prose-lg max-w-none">
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">¿Qué es la Trazabilidad Agrícola?</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('¿Qué es la Trazabilidad Agrícola?') }}</h2>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        La <strong>trazabilidad agrícola</strong> es la capacidad de rastrear un producto desde su origen (la parcela) hasta su destino final (el consumidor). Es obligatoria para cumplir con las normativas de seguridad alimentaria y permite identificar rápidamente el origen de cualquier problema.
+                        La <strong>{{ __('trazabilidad agrícola') }}</strong> es la capacidad de rastrear un producto desde su origen (la parcela) hasta su destino final (el consumidor). Es obligatoria para cumplir con las normativas de seguridad alimentaria y permite identificar rápidamente el origen de cualquier problema.
                     </p>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        Un <strong>software de trazabilidad agrícola</strong> te permite registrar todos los movimientos y transformaciones de tus productos, desde la parcela hasta la venta, cumpliendo con todas las normativas vigentes.
+                        Un <strong>{{ __('software de trazabilidad agrícola') }}</strong> te permite registrar todos los movimientos y transformaciones de tus productos, desde la parcela hasta la venta, cumpliendo con todas las normativas vigentes.
                     </p>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Funcionalidades del Software de Trazabilidad</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Funcionalidades del Software de Trazabilidad') }}</h2>
                     <div class="grid md:grid-cols-2 gap-6 mb-6">
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">🔍 Trazabilidad Completa</h3>
-                            <p class="text-gray-700">Rastrea productos desde la parcela hasta el destino final con registro completo de movimientos.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('🔍 Trazabilidad Completa') }}</h3>
+                            <p class="text-gray-700">{{ __('Rastrea productos desde la parcela hasta el destino final con registro completo de movimientos.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">📦 Registro de Movimientos</h3>
-                            <p class="text-gray-700">Registra todos los movimientos de productos: entrada, salida, transformación y venta.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('📦 Registro de Movimientos') }}</h3>
+                            <p class="text-gray-700">{{ __('Registra todos los movimientos de productos: entrada, salida, transformación y venta.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">🔄 Transformaciones</h3>
-                            <p class="text-gray-700">Registra transformaciones de productos: uva a vino, aceituna a aceite, etc.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('🔄 Transformaciones') }}</h3>
+                            <p class="text-gray-700">{{ __('Registra transformaciones de productos: uva a vino, aceituna a aceite, etc.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">📊 Informes de Trazabilidad</h3>
-                            <p class="text-gray-700">Genera informes de trazabilidad para inspecciones y cumplimiento normativo.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('📊 Informes de Trazabilidad') }}</h3>
+                            <p class="text-gray-700">{{ __('Genera informes de trazabilidad para inspecciones y cumplimiento normativo.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">🔗 Vinculación Parcela</h3>
-                            <p class="text-gray-700">Vincula productos con parcelas SIGPAC para trazabilidad completa desde el origen.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('🔗 Vinculación Parcela') }}</h3>
+                            <p class="text-gray-700">{{ __('Vincula productos con parcelas SIGPAC para trazabilidad completa desde el origen.') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">✅ Cumplimiento Normativo</h3>
-                            <p class="text-gray-700">Cumple con todas las normativas de seguridad alimentaria y trazabilidad.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('✅ Cumplimiento Normativo') }}</h3>
+                            <p class="text-gray-700">{{ __('Cumple con todas las normativas de seguridad alimentaria y trazabilidad.') }}</p>
                         </div>
                     </div>
                 </section>
 
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Agro365: Trazabilidad Agrícola Completa</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Agro365: Trazabilidad Agrícola Completa') }}</h2>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        <strong>Agro365</strong> incluye un módulo completo de <strong>trazabilidad agrícola</strong> que te permite rastrear todos tus productos desde la parcela hasta el destino final, cumpliendo con todas las normativas vigentes.
+                        <strong>{{ __('Agro365') }}</strong> incluye un módulo completo de <strong>{{ __('trazabilidad agrícola') }}</strong> que te permite rastrear todos tus productos desde la parcela hasta el destino final, cumpliendo con todas las normativas vigentes.
                     </p>
                     <div class="bg-gradient-to-r from-[var(--color-agro-green-bg)] to-[var(--color-agro-green-light)]/30 p-8 rounded-xl border border-[var(--color-agro-green)]/20 mb-6">
-                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">Ventajas de la Trazabilidad de Agro365</h3>
+                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Ventajas de la Trazabilidad de Agro365') }}</h3>
                         <ul class="space-y-3 text-gray-800">
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Trazabilidad completa:</strong> Desde la parcela hasta el producto final</span>
+                                <span><strong>{{ __('Trazabilidad completa:') }}</strong> Desde la parcela hasta el producto final</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Registro de movimientos:</strong> Entrada, salida, transformación y venta</span>
+                                <span><strong>{{ __('Registro de movimientos:') }}</strong> Entrada, salida, transformación y venta</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Vinculación parcela:</strong> Vincula productos con parcelas SIGPAC</span>
+                                <span><strong>{{ __('Vinculación parcela:') }}</strong> Vincula productos con parcelas SIGPAC</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Informes oficiales:</strong> Genera informes de trazabilidad para inspecciones</span>
+                                <span><strong>{{ __('Informes oficiales:') }}</strong> Genera informes de trazabilidad para inspecciones</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Cumplimiento normativo:</strong> Cumple con todas las normativas de seguridad alimentaria</span>
+                                <span><strong>{{ __('Cumplimiento normativo:') }}</strong> Cumple con todas las normativas de seguridad alimentaria</span>
                             </li>
                         </ul>
                     </div>
@@ -190,12 +188,8 @@
 
             <!-- CTA Section -->
             <div class="mt-16 pt-12 border-t border-gray-200 text-center">
-                <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">
-                    Software de Trazabilidad Agrícola Profesional
-                </h2>
-                <p class="text-gray-600 mb-8 text-lg">
-                    Trazabilidad completa desde la parcela hasta el producto final con Agro365. Registro de movimientos y cumplimiento normativo. Prueba gratis 3 meses.
-                </p>
+                <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('Software de Trazabilidad Agrícola Profesional') }}</h2>
+                <p class="text-gray-600 mb-8 text-lg">{{ __('Trazabilidad completa desde la parcela hasta el producto final con Agro365. Registro de movimientos y cumplimiento normativo. Prueba gratis 3 meses.') }}</p>
                 <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-lg">
                     Comenzar Gratis
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

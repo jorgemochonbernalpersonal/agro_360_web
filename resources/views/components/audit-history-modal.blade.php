@@ -40,9 +40,7 @@
                 {{-- Header --}}
                 <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
                     <div class="flex items-center justify-between">
-                        <h3 class="text-lg font-semibold text-gray-900">
-                            📋 Historial de Auditoría
-                        </h3>
+                        <h3 class="text-lg font-semibold text-gray-900">{{ __('📋 Historial de Auditoría') }}</h3>
                         <button @click="showAuditModal = false" 
                                 class="text-gray-400 hover:text-gray-500 focus:outline-none">
                             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -74,9 +72,7 @@
                 {{-- Footer --}}
                 <div class="bg-gray-50 px-6 py-3 border-t border-gray-200 flex justify-end">
                     <button @click="showAuditModal = false"
-                            class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
-                        Cerrar
-                    </button>
+                            class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">{{ __('Cerrar') }}</button>
                 </div>
             </div>
         </div>

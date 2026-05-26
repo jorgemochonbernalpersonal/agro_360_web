@@ -1,20 +1,20 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="Supervisión — Viticultores"
-        description="Parcelas, plantaciones y actividad de los viticultores adscritos a la denominación."
+        title="{{ __('Supervisión — Viticultores') }}"
+        :description="__('Parcelas, plantaciones y actividad de los viticultores adscritos a la denominación.')"
     />
 
     {{-- Stats --}}
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <x-agro.stat-card
-            label="Viticultores DO"
+            :label="__('Viticultores DO')"
             :value="$totalGrowers"
             icon="users"
             color="agro"
         />
         <x-agro.stat-card
-            label="Total parcelas"
+            :label="__('Total parcelas')"
             :value="$growers->sum('plots_count')"
             icon="map"
             color="blue"
@@ -23,11 +23,9 @@
 
     {{-- Search --}}
     <div class="flex items-center gap-2">
-        <x-agro.search-input wire:model.live.debounce.300ms="search" placeholder="Buscar viticultor..." />
+        <x-agro.search-input wire:model.live.debounce.300ms="search" :placeholder="__('Buscar viticultor...')" />
         @if($search)
-            <button wire:click="clearSearch" class="text-xs text-zinc-400 hover:text-zinc-600 transition px-2 py-1.5">
-                Limpiar
-            </button>
+            <button wire:click="clearSearch" class="text-xs text-zinc-400 hover:text-zinc-600 transition px-2 py-1.5">{{ __('Limpiar') }}</button>
         @endif
     </div>
 
@@ -66,15 +64,15 @@
                         {{-- Metric boxes --}}
                         <div class="grid grid-cols-3 gap-2">
                             <div class="bg-emerald-50 rounded-lg p-2 text-center">
-                                <p class="text-[9px] text-emerald-400 uppercase tracking-wide mb-0.5">Parcelas</p>
+                                <p class="text-[9px] text-emerald-400 uppercase tracking-wide mb-0.5">{{ __('Parcelas') }}</p>
                                 <p class="text-sm font-bold text-emerald-700">{{ $grower->plots_count }}</p>
                             </div>
                             <div class="bg-blue-50 rounded-lg p-2 text-center">
-                                <p class="text-[9px] text-blue-400 uppercase tracking-wide mb-0.5">Plantaciones</p>
+                                <p class="text-[9px] text-blue-400 uppercase tracking-wide mb-0.5">{{ __('Plantaciones') }}</p>
                                 <p class="text-sm font-bold text-blue-700">{{ $plantingCountByVit[$grower->id] ?? 0 }}</p>
                             </div>
                             <div class="bg-amber-50 rounded-lg p-2 text-center">
-                                <p class="text-[9px] text-amber-400 uppercase tracking-wide mb-0.5">Área (ha)</p>
+                                <p class="text-[9px] text-amber-400 uppercase tracking-wide mb-0.5">{{ __('Área (ha)') }}</p>
                                 <p class="text-sm font-bold text-amber-700">
                                     @if($grower->plots_sum_area)
                                         {{ number_format($grower->plots_sum_area, 2) }}
@@ -87,12 +85,12 @@
 
                         {{-- Last activity --}}
                         <div class="flex items-center justify-between text-sm">
-                            <span class="text-zinc-400">Ultima actividad</span>
+                            <span class="text-zinc-400">{{ __('Ultima actividad') }}</span>
                             <span class="text-zinc-700">
                                 @if(isset($lastActivityByVit[$grower->id]))
                                     {{ \Carbon\Carbon::parse($lastActivityByVit[$grower->id])->format('d/m/Y') }}
                                 @else
-                                    <span class="text-zinc-300">Sin actividad</span>
+                                    <span class="text-zinc-300">{{ __('Sin actividad') }}</span>
                                 @endif
                             </span>
                         </div>
@@ -100,7 +98,7 @@
 
                     <x-slot:footer>
                         <div class="flex items-center justify-end">
-                            <x-agro.action-button icon="eye" variant="success" href="{{ route('supervisor.oversight.growers.show', $grower) }}" wire:navigate title="Ver detalle" />
+                            <x-agro.action-button icon="eye" variant="success" href="{{ route('supervisor.oversight.growers.show', $grower) }}" wire:navigate title="{{ __('Ver detalle') }}" />
                         </div>
                     </x-slot:footer>
                 </x-agro.card>
@@ -111,8 +109,8 @@
     @else
         <x-agro.empty-state
             icon="users"
-            title="No hay viticultores"
-            description="No hay viticultores adscritos a esta denominación."
+            title="{{ __('No hay viticultores') }}"
+            :description="__('No hay viticultores adscritos a esta denominación.')"
         />
     @endif
 

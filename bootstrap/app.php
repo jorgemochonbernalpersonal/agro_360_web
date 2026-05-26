@@ -45,6 +45,10 @@ return Application::configure(basePath: dirname(__DIR__))
             '/__cypress/*',
         ]);
 
+        // La cookie de locale no se cifra para que SetLocale pueda leerla
+        // antes de que EncryptCookies procese el request
+        $middleware->encryptCookies(except: ['app_locale']);
+
         // Timeout automático de impersonación (60 min)
         $middleware->append(\App\Http\Middleware\ImpersonationTimeout::class);
 

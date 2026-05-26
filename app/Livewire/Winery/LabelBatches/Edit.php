@@ -82,7 +82,7 @@ class Edit extends Component
             'notes'   => $data['notes'] ?: null,
         ]);
 
-        $this->toastSuccess('Lote actualizado correctamente.');
+        $this->toastSuccess(__('Lote actualizado correctamente.'));
         $this->roleRedirect('label-batches.index');
     }
 
@@ -144,7 +144,7 @@ class Edit extends Component
         unset($this->wastes);
         $this->showWasteForm = false;
         $this->resetWasteForm();
-        $this->toastSuccess('Merma registrada correctamente.');
+        $this->toastSuccess(__('Merma registrada correctamente.'));
     }
 
     public function deleteWaste(int $wasteId): void
@@ -161,7 +161,7 @@ class Edit extends Component
         });
 
         unset($this->wastes);
-        $this->toastSuccess('Merma eliminada.');
+        $this->toastSuccess(__('Merma eliminada.'));
     }
 
     protected function resetWasteForm(): void

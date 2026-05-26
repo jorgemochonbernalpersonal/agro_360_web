@@ -50,10 +50,10 @@ class NotebookAccessRespondedNotification extends Notification implements Should
 
         return (new MailMessage)
             ->subject($subject)
-            ->greeting('Hola ' . ($notifiable->name ?: ''))
+            ->greeting(__('Hola :name', ['name' => $notifiable->name ?: '']))
             ->line($body)
-            ->action('Ir a mis viticultores', $url)
-            ->salutation("Saludos,\nAgro365");
+            ->action(__('Ir a mis viticultores'), $url)
+            ->salutation(__('Saludos,\nAgro365'));
     }
 
     public function toArray(object $notifiable): array

@@ -1,8 +1,8 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="Coupage / Mezclas"
-        description="Registro de mezclas y ensamblajes de vinos entre depósitos"
+        title="{{ __('Coupage / Mezclas') }}"
+        :description="__('Registro de mezclas y ensamblajes de vinos entre depósitos')"
         icon="funnel"
     >
         <x-slot:actions>
@@ -15,16 +15,14 @@
     {{-- Filtro añada --}}
     <div class="flex items-center gap-3">
         <flux:select wire:model.live="vintageFilter" class="w-44">
-            <flux:select.option value="">Todas las añadas</flux:select.option>
+            <flux:select.option value="">{{ __('Todas las añadas') }}</flux:select.option>
             @foreach($availableVintages as $vintage)
                 <flux:select.option value="{{ $vintage }}">{{ $vintage }}</flux:select.option>
             @endforeach
         </flux:select>
 
         @if($vintageFilter)
-            <flux:button wire:click="$set('vintageFilter', '')" variant="ghost" size="sm" icon="x-mark">
-                Limpiar
-            </flux:button>
+            <flux:button wire:click="$set('vintageFilter', '')" variant="ghost" size="sm" icon="x-mark">{{ __('Limpiar') }}</flux:button>
         @endif
     </div>
 
@@ -33,13 +31,13 @@
             <table class="w-full text-sm">
                 <thead>
                     <tr class="border-b border-zinc-100 bg-zinc-50 text-left text-xs font-semibold text-zinc-400 uppercase tracking-wider">
-                        <th class="px-4 py-3">Fecha</th>
-                        <th class="px-4 py-3">Vino origen</th>
-                        <th class="px-4 py-3">Depósito origen</th>
-                        <th class="px-4 py-3">Vino resultante</th>
-                        <th class="px-4 py-3">Depósito destino</th>
-                        <th class="px-4 py-3 text-right">Cantidad</th>
-                        <th class="px-4 py-3">Enólogo</th>
+                        <th class="px-4 py-3">{{ __('Fecha') }}</th>
+                        <th class="px-4 py-3">{{ __('Vino origen') }}</th>
+                        <th class="px-4 py-3">{{ __('Depósito origen') }}</th>
+                        <th class="px-4 py-3">{{ __('Vino resultante') }}</th>
+                        <th class="px-4 py-3">{{ __('Depósito destino') }}</th>
+                        <th class="px-4 py-3 text-right">{{ __('Cantidad') }}</th>
+                        <th class="px-4 py-3">{{ __('Enólogo') }}</th>
                         <th class="px-4 py-3"></th>
                     </tr>
                 </thead>
@@ -75,9 +73,9 @@
                             <td class="px-4 py-3 text-right">
                                 <button
                                     wire:click="delete({{ $blend->id }})"
-                                    wire:confirm="¿Eliminar este registro de coupage? Se revertirá el movimiento de volumen en los depósitos."
+                                    wire:confirm="{{ __('¿Eliminar este registro de coupage? Se revertirá el movimiento de volumen en los depósitos.') }}"
                                     wire:loading.attr="disabled"
-                                    title="Eliminar"
+                                    title="{{ __('Eliminar') }}"
                                     class="inline-flex items-center justify-center w-7 h-7 rounded-lg text-zinc-300 hover:text-red-500 hover:bg-red-50 transition-colors"
                                 >
                                     <flux:icon icon="trash" class="size-3.5" />
@@ -98,9 +96,7 @@
         >
             <x-slot:action>
                 @if($vintageFilter)
-                    <flux:button wire:click="$set('vintageFilter', '')" variant="outline" icon="x-mark">
-                        Limpiar filtro
-                    </flux:button>
+                    <flux:button wire:click="$set('vintageFilter', '')" variant="outline" icon="x-mark">{{ __('Limpiar filtro') }}</flux:button>
                 @else
                     <flux:button href="{{ roleRoute('coupage.create') }}" wire:navigate variant="primary" icon="plus">
                         Nuevo coupage
