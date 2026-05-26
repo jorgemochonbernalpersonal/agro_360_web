@@ -67,6 +67,16 @@ Route::get('/dusk-env', function () {
     ]);
 })->middleware('throttle:60,1');
 
+// Debug locale (verificar que SetLocale middleware funciona correctamente)
+Route::get('/debug/locale', function () {
+    return response()->json([
+        'app_locale'      => app()->getLocale(),
+        'session_locale'  => session('locale'),
+        'user_locale'     => auth()->user()?->locale,
+        'translated_test' => __('Buscar'),
+    ]);
+})->middleware('auth');
+
 // Health Check Endpoint para UptimeRobot y monitoreo
 Route::get('/health', function () {
     try {
