@@ -27,21 +27,26 @@ class SetLocale
         if ($request->has('lang')) {
             $lang = $request->query('lang');
             if (in_array($lang, self::SUPPORTED, true)) {
+                // Guardar en sesión Y BD (la sesión tiene prioridad en siguiente request)
+                session(['locale' => $lang]);
                 if (auth()->check()) {
-                    auth()->user()->update(['locale' => $lang]);
+                    // Usar forceUpdate para evitar problemas con observers
+                    auth()->user()->forceUpdate(['locale' => $lang]);
                 }
                 return $lang;
             }
         }
 
-        // 2. Preferencia guardada del usuario autenticado
-        if (auth()->check() && in_array(auth()->user()->locale, self::SUPPORTED, true)) {
-            return auth()->user()->locale;
-        }
-
-        // 3. Locale en sesión
+        // 2. Sesión (preservada entre solicitudes de Livewire) — PRIMERA PRIORIDAD
         if (session()->has('locale') && in_array(session('locale'), self::SUPPORTED, true)) {
             return session('locale');
+        }
+
+        // 3. Preferencia guardada del usuario autenticado
+        if (auth()->check() && auth()->user()->locale && in_array(auth()->user()->locale, self::SUPPORTED, true)) {
+            // Sincronizar a sesión para próximas solicitudes
+            session(['locale' => auth()->user()->locale]);
+            return auth()->user()->locale;
         }
 
         // 4. Fallback al español
