@@ -136,7 +136,7 @@ class PhenologyService
     private function estimateHarvestDate(float $currentGdd): string
     {
         $remaining = 2000 - $currentGdd;
-        if ($remaining <= 0) return 'Ahora';
+        if ($remaining <= 0) return __('Ahora');
         
         // Assume avg 10 GDD/day in summer
         $days = $remaining / 10;

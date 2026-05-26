@@ -112,7 +112,7 @@ class Edit extends AbstractEdit
 
     protected function successMessage(): string
     {
-        return 'Declaración actualizada correctamente.';
+        return __('Declaración actualizada correctamente.');
     }
 
     protected function indexRoute(): string

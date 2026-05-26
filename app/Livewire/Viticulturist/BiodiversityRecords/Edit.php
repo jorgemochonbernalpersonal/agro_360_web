@@ -62,7 +62,7 @@ class Edit extends AbstractEdit
         ]);
     }
 
-    protected function successMessage(): string { return 'Registro actualizado correctamente.'; }
+    protected function successMessage(): string { return __('Registro actualizado correctamente.'); }
     protected function indexRoute(): string      { return $this->rolePrefix() . '.biodiversity-records.index'; }
 
     protected function viewData(): array

@@ -310,22 +310,22 @@ class ExecutiveDashboard extends Component
         // Determinar estado basado en NDVI
         if ($ndvi >= 0.7) {
             $status = 'excellent';
-            $label = 'Excelente';
+            $label = __('Excelente');
             $color = 'green';
             $icon = '✅';
         } elseif ($ndvi >= 0.5) {
             $status = 'good';
-            $label = 'Bueno';
+            $label = __('Bueno');
             $color = 'emerald';
             $icon = '✅';
         } elseif ($ndvi >= 0.3) {
             $status = 'moderate';
-            $label = 'Moderado';
+            $label = __('Moderado');
             $color = 'yellow';
             $icon = '⚠️';
         } else {
             $status = 'poor';
-            $label = 'Bajo';
+            $label = __('Bajo');
             $color = 'orange';
             $icon = '⚠️';
         }
@@ -354,22 +354,22 @@ class ExecutiveDashboard extends Component
         // Determinar estado basado en CWSI
         if ($cwsi < 0.2) {
             $status = 'excellent';
-            $label = 'Sin Estrés';
+            $label = __('Sin Estrés');
             $color = 'green';
             $icon = '✅';
         } elseif ($cwsi < 0.4) {
             $status = 'good';
-            $label = 'Leve';
+            $label = __('Leve');
             $color = 'yellow';
             $icon = '⚠️';
         } elseif ($cwsi < 0.6) {
             $status = 'moderate';
-            $label = 'Moderado';
+            $label = __('Moderado');
             $color = 'orange';
             $icon = '⚠️';
         } else {
             $status = 'critical';
-            $label = 'Alto Estrés';
+            $label = __('Alto Estrés');
             $color = 'red';
             $icon = '🚨';
         }
@@ -401,22 +401,22 @@ class ExecutiveDashboard extends Component
 
         if ($lstDay > $threshold + 5) {
             $status = 'critical';
-            $label = 'Estrés Térmico';
+            $label = __('Estrés Térmico');
             $color = 'red';
             $icon = '🔥';
         } elseif ($lstDay > $threshold) {
             $status = 'warning';
-            $label = 'Calor Alto';
+            $label = __('Calor Alto');
             $color = 'orange';
             $icon = '⚠️';
         } elseif ($lstNight !== null && $lstNight < 3 && $month >= 3 && $month <= 5) {
             $status = 'warning';
-            $label = 'Riesgo Helada';
+            $label = __('Riesgo Helada');
             $color = 'blue';
             $icon = '❄️';
         } else {
             $status = 'normal';
-            $label = 'Normal';
+            $label = __('Normal');
             $color = 'green';
             $icon = '✅';
         }
@@ -451,15 +451,15 @@ class ExecutiveDashboard extends Component
         // Determinar confianza
         if ($lai >= 1.5 && $lai <= 3.5) {
             $confidence = 'high';
-            $confidenceLabel = 'Alta';
+            $confidenceLabel = __('Alta');
             $color = 'green';
         } elseif ($lai >= 1.0 && $lai <= 4.5) {
             $confidence = 'medium';
-            $confidenceLabel = 'Media';
+            $confidenceLabel = __('Media');
             $color = 'yellow';
         } else {
             $confidence = 'low';
-            $confidenceLabel = 'Baja';
+            $confidenceLabel = __('Baja');
             $color = 'orange';
         }
 
@@ -487,22 +487,22 @@ class ExecutiveDashboard extends Component
         // Determinar estado nutricional
         if ($gndvi >= 0.6) {
             $status = 'optimal';
-            $label = 'Óptimo';
+            $label = __('Óptimo');
             $color = 'green';
             $icon = '✅';
         } elseif ($gndvi >= 0.5) {
             $status = 'good';
-            $label = 'Bueno';
+            $label = __('Bueno');
             $color = 'emerald';
             $icon = '✅';
         } elseif ($gndvi >= 0.3) {
             $status = 'low';
-            $label = 'Bajo N';
+            $label = __('Bajo N');
             $color = 'yellow';
             $icon = '⚠️';
         } else {
             $status = 'deficient';
-            $label = 'Deficiente';
+            $label = __('Deficiente');
             $color = 'red';
             $icon = '🚨';
         }

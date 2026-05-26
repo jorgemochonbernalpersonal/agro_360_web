@@ -63,7 +63,7 @@ class Create extends AbstractCreate
 
     protected function successMessage(): string
     {
-        return 'Autorización registrada correctamente.';
+        return __('Autorización registrada correctamente.');
     }
 
     protected function indexRoute(): string

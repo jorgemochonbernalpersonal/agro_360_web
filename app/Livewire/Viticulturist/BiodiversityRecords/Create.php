@@ -52,7 +52,7 @@ class Create extends AbstractCreate
         ]);
     }
 
-    protected function successMessage(): string { return 'Registro de biodiversidad creado correctamente.'; }
+    protected function successMessage(): string { return __('Registro de biodiversidad creado correctamente.'); }
     protected function indexRoute(): string      { return $this->rolePrefix() . '.biodiversity-records.index'; }
 
     protected function viewData(): array

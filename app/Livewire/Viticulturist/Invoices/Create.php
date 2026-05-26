@@ -285,7 +285,7 @@ class Create extends Component
                 'required',
                 function ($attribute, $value, $fail) {
                     if ($value && !\App\Models\Client::where('id', $value)->where('user_id', \Illuminate\Support\Facades\Auth::id())->exists()) {
-                        $fail('El cliente seleccionado no es válido.');
+                        $fail(__('El cliente seleccionado no es válido.'));
                     }
                 },
             ],

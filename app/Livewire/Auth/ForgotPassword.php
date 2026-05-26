@@ -45,7 +45,7 @@ class ForgotPassword extends Component
             );
 
             if ($status === Password::RESET_LINK_SENT) {
-                $message = 'Se ha enviado un enlace de restablecimiento de contraseña a tu correo electrónico.';
+                $message = __('Se ha enviado un enlace de restablecimiento de contraseña a tu correo electrónico.');
                 
                 if (app()->environment('local')) {
                     Log::info('Password reset link sent', ['email' => $this->email]);

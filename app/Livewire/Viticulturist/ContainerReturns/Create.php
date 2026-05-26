@@ -83,7 +83,7 @@ class Create extends AbstractCreate
 
     protected function successMessage(): string
     {
-        return 'Entrega de envases registrada correctamente.';
+        return __('Entrega de envases registrada correctamente.');
     }
 
     protected function indexRoute(): string

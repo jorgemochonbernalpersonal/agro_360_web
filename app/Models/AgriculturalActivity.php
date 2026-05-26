@@ -227,7 +227,7 @@ class AgriculturalActivity extends Model
         }
 
         if (!\Illuminate\Support\Facades\Auth::user()?->isAdmin()) {
-            throw new \RuntimeException('Solo los administradores pueden desbloquear actividades.');
+            throw new \RuntimeException(__('Solo los administradores pueden desbloquear actividades.'));
         }
 
         $this->update([

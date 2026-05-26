@@ -84,7 +84,7 @@ class Edit extends AbstractEdit
 
     protected function successMessage(): string
     {
-        return 'Registro actualizado correctamente.';
+        return __('Registro actualizado correctamente.');
     }
 
     protected function indexRoute(): string

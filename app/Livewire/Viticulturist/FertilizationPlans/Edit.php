@@ -108,7 +108,7 @@ class Edit extends AbstractEdit
         ]);
     }
 
-    protected function successMessage(): string { return 'Plan de fertilización actualizado.'; }
+    protected function successMessage(): string { return __('Plan de fertilización actualizado.'); }
     protected function indexRoute(): string      { return 'viticulturist.fertilization-plans.index'; }
 
     protected function viewData(): array

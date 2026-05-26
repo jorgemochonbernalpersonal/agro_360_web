@@ -38,7 +38,7 @@ class PhytosanitaryReportGenerator
         $treatments = $this->fetchTreatments($userId, $startDate, $endDate);
 
         if ($treatments->isEmpty()) {
-            throw new \Exception('No hay tratamientos fitosanitarios registrados en el periodo seleccionado.');
+            throw new \Exception(__('No hay tratamientos fitosanitarios registrados en el periodo seleccionado.'));
         }
 
         // 3. Calcular estadísticas
@@ -98,11 +98,11 @@ class PhytosanitaryReportGenerator
         $digitalSignature = DigitalSignature::forUser($user->id);
 
         if (!$digitalSignature) {
-            throw new \Exception('No tienes una contraseña de firma digital configurada.');
+            throw new \Exception(__('No tienes una contraseña de firma digital configurada.'));
         }
 
         if (!$digitalSignature->verifyPassword($password)) {
-            throw new \Exception('Contraseña de firma digital incorrecta.');
+            throw new \Exception(__('Contraseña de firma digital incorrecta.'));
         }
     }
 

@@ -204,7 +204,7 @@ class RemoteSensingReportService
     public function downloadReport(string $path)
     {
         if (!file_exists($path)) {
-            throw new \Exception('Report file not found');
+            throw new \Exception(__('Report file not found'));
         }
 
         return response()->download($path)->deleteFileAfterSend(true);

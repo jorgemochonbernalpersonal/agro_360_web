@@ -62,7 +62,7 @@ class Create extends AbstractCreate
         ]);
     }
 
-    protected function successMessage(): string { return 'Concesión de agua registrada correctamente.'; }
+    protected function successMessage(): string { return __('Concesión de agua registrada correctamente.'); }
     protected function indexRoute(): string      { return 'viticulturist.water-concessions.index'; }
 
     protected function viewData(): array

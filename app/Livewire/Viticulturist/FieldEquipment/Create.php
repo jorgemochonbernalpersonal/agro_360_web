@@ -47,7 +47,7 @@ class Create extends AbstractCreate
 
     protected function successMessage(): string
     {
-        return 'Equipo registrado correctamente.';
+        return __('Equipo registrado correctamente.');
     }
 
     protected function indexRoute(): string

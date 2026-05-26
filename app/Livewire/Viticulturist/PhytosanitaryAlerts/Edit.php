@@ -64,7 +64,7 @@ class Edit extends AbstractEdit
         ]);
     }
 
-    protected function successMessage(): string { return 'Alerta fitosanitaria actualizada correctamente.'; }
+    protected function successMessage(): string { return __('Alerta fitosanitaria actualizada correctamente.'); }
     protected function indexRoute(): string      { return $this->rolePrefix() . '.phytosanitary-alerts.index'; }
 
     protected function viewData(): array

@@ -60,7 +60,7 @@ class Edit extends AbstractEdit
 
     protected function successMessage(): string
     {
-        return 'Asesor actualizado correctamente.';
+        return __('Asesor actualizado correctamente.');
     }
 
     protected function indexRoute(): string

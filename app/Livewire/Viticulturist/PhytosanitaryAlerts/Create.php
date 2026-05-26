@@ -54,7 +54,7 @@ class Create extends AbstractCreate
         ]);
     }
 
-    protected function successMessage(): string { return 'Alerta fitosanitaria registrada correctamente.'; }
+    protected function successMessage(): string { return __('Alerta fitosanitaria registrada correctamente.'); }
     protected function indexRoute(): string      { return $this->rolePrefix() . '.phytosanitary-alerts.index'; }
 
     protected function viewData(): array

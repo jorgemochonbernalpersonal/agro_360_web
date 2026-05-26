@@ -66,7 +66,7 @@ class Edit extends AbstractEdit
         ]);
     }
 
-    protected function successMessage(): string { return 'Trabajo planificado actualizado correctamente.'; }
+    protected function successMessage(): string { return __('Trabajo planificado actualizado correctamente.'); }
     protected function indexRoute(): string      { return $this->rolePrefix() . '.planned-works.index'; }
 
     protected function viewData(): array

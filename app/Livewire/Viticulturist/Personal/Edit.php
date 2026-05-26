@@ -51,7 +51,7 @@ class Edit extends Component
                             ->exists();
                         
                         if (!$exists) {
-                            $fail('No estás asignado a esta bodega.');
+                            $fail(__('No estás asignado a esta bodega.'));
                         }
                     }
                 },

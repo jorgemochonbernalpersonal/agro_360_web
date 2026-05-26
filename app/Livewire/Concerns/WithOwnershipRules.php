@@ -41,7 +41,7 @@ trait WithOwnershipRules
             $required ? 'required' : 'nullable',
             function ($attribute, $value, $fail) use ($userId) {
                 if ($value && ! Campaign::where('id', $value)->where('viticulturist_id', $userId)->exists()) {
-                    $fail('La campaña seleccionada no es válida.');
+                    $fail(__('La campaña seleccionada no es válida.'));
                 }
             },
         ];
@@ -54,7 +54,7 @@ trait WithOwnershipRules
             $required ? 'required' : 'nullable',
             function ($attribute, $value, $fail) use ($userId) {
                 if ($value && ! Plot::where('id', $value)->where('viticulturist_id', $userId)->exists()) {
-                    $fail('La parcela seleccionada no es válida.');
+                    $fail(__('La parcela seleccionada no es válida.'));
                 }
             },
         ];
@@ -68,7 +68,7 @@ trait WithOwnershipRules
             function ($attribute, $value, $fail) use ($userId) {
                 if ($value && ! PlotPlanting::whereHas('plot', fn ($q) => $q->where('viticulturist_id', $userId))
                     ->where('id', $value)->exists()) {
-                    $fail('La plantación seleccionada no es válida.');
+                    $fail(__('La plantación seleccionada no es válida.'));
                 }
             },
         ];
@@ -81,7 +81,7 @@ trait WithOwnershipRules
             'nullable',
             function ($attribute, $value, $fail) use ($userId) {
                 if ($value && ! \App\Models\Crew::where('id', $value)->where('viticulturist_id', $userId)->exists()) {
-                    $fail('El equipo seleccionado no es válido.');
+                    $fail(__('El equipo seleccionado no es válido.'));
                 }
             },
         ];
@@ -94,7 +94,7 @@ trait WithOwnershipRules
             'nullable',
             function ($attribute, $value, $fail) use ($userId) {
                 if ($value && ! \App\Models\Machinery::where('id', $value)->where('viticulturist_id', $userId)->exists()) {
-                    $fail('La maquinaria seleccionada no es válida.');
+                    $fail(__('La maquinaria seleccionada no es válida.'));
                 }
             },
         ];
@@ -109,7 +109,7 @@ trait WithOwnershipRules
             $required ? 'required' : 'nullable',
             function ($attribute, $value, $fail) use ($userId) {
                 if ($value && ! Wine::where('id', $value)->where('user_id', $userId)->exists()) {
-                    $fail('El vino seleccionado no es válido.');
+                    $fail(__('El vino seleccionado no es válido.'));
                 }
             },
         ];
@@ -122,7 +122,7 @@ trait WithOwnershipRules
             $required ? 'required' : 'nullable',
             function ($attribute, $value, $fail) use ($userId) {
                 if ($value && ! Container::where('id', $value)->where('user_id', $userId)->exists()) {
-                    $fail('El contenedor seleccionado no es válido.');
+                    $fail(__('El contenedor seleccionado no es válido.'));
                 }
             },
         ];
@@ -135,7 +135,7 @@ trait WithOwnershipRules
             'nullable',
             function ($attribute, $value, $fail) use ($userId) {
                 if ($value && ! Oenologist::where('id', $value)->where('user_id', $userId)->exists()) {
-                    $fail('El enólogo seleccionado no es válido.');
+                    $fail(__('El enólogo seleccionado no es válido.'));
                 }
             },
         ];
@@ -148,7 +148,7 @@ trait WithOwnershipRules
             $required ? 'required' : 'nullable',
             function ($attribute, $value, $fail) use ($userId) {
                 if ($value && ! WinerySupply::where('id', $value)->where('user_id', $userId)->exists()) {
-                    $fail('El insumo seleccionado no es válido.');
+                    $fail(__('El insumo seleccionado no es válido.'));
                 }
             },
         ];
@@ -161,7 +161,7 @@ trait WithOwnershipRules
             $required ? 'required' : 'nullable',
             function ($attribute, $value, $fail) use ($userId) {
                 if ($value && ! Harvest::where('id', $value)->where('winery_id', $userId)->exists()) {
-                    $fail('La vendimia seleccionada no es válida.');
+                    $fail(__('La vendimia seleccionada no es válida.'));
                 }
             },
         ];
@@ -176,7 +176,7 @@ trait WithOwnershipRules
                 if ($value && ! WineProcessDetail::where('id', $value)
                     ->whereHas('wine', fn ($q) => $q->where('user_id', $userId))
                     ->exists()) {
-                    $fail('El detalle de proceso seleccionado no es válido.');
+                    $fail(__('El detalle de proceso seleccionado no es válido.'));
                 }
             },
         ];
@@ -197,7 +197,7 @@ trait WithOwnershipRules
                 if ($value && ! WineryViticulturist::where('winery_id', $wineryId)
                     ->where('viticulturist_id', $value)
                     ->exists()) {
-                    $fail('El viticultor seleccionado no está vinculado a tu bodega.');
+                    $fail(__('El viticultor seleccionado no está vinculado a tu bodega.'));
                 }
             },
         ];
@@ -216,7 +216,7 @@ trait WithOwnershipRules
                 $viticulturistIds = WineryViticulturist::where('winery_id', $wineryId)
                     ->pluck('viticulturist_id');
                 if (! Plot::where('id', $value)->whereIn('viticulturist_id', $viticulturistIds)->exists()) {
-                    $fail('La parcela seleccionada no pertenece a un viticultor vinculado.');
+                    $fail(__('La parcela seleccionada no pertenece a un viticultor vinculado.'));
                 }
             },
         ];
@@ -237,7 +237,7 @@ trait WithOwnershipRules
                 if (! PlotPlanting::where('id', $value)
                     ->whereHas('plot', fn ($q) => $q->whereIn('viticulturist_id', $viticulturistIds))
                     ->exists()) {
-                    $fail('La plantación seleccionada no pertenece a un viticultor vinculado.');
+                    $fail(__('La plantación seleccionada no pertenece a un viticultor vinculado.'));
                 }
             },
         ];
@@ -256,7 +256,7 @@ trait WithOwnershipRules
                 $viticulturistIds = WineryViticulturist::where('winery_id', $wineryId)
                     ->pluck('viticulturist_id');
                 if (! Campaign::where('id', $value)->whereIn('viticulturist_id', $viticulturistIds)->exists()) {
-                    $fail('La campaña seleccionada no pertenece a un viticultor vinculado.');
+                    $fail(__('La campaña seleccionada no pertenece a un viticultor vinculado.'));
                 }
             },
         ];
@@ -275,7 +275,7 @@ trait WithOwnershipRules
             function ($attribute, $value, $fail) use ($supervisorId) {
                 if ($value && ! SupervisorWinery::where('supervisor_id', $supervisorId)
                     ->where('winery_id', $value)->exists()) {
-                    $fail('La bodega seleccionada no pertenece a esta denominación.');
+                    $fail(__('La bodega seleccionada no pertenece a esta denominación.'));
                 }
             },
         ];
@@ -292,7 +292,7 @@ trait WithOwnershipRules
             function ($attribute, $value, $fail) use ($supervisorId) {
                 if ($value && ! SupervisorViticulturist::where('supervisor_id', $supervisorId)
                     ->where('viticulturist_id', $value)->exists()) {
-                    $fail('El viticultor seleccionado no pertenece a esta denominación.');
+                    $fail(__('El viticultor seleccionado no pertenece a esta denominación.'));
                 }
             },
         ];
@@ -313,7 +313,7 @@ trait WithOwnershipRules
                     ? SupervisorWinery::where('supervisor_id', $supervisorId)->where('winery_id', $value)->exists()
                     : SupervisorViticulturist::where('supervisor_id', $supervisorId)->where('viticulturist_id', $value)->exists();
                 if (! $exists) {
-                    $fail('El sujeto seleccionado no pertenece a esta denominación.');
+                    $fail(__('El sujeto seleccionado no pertenece a esta denominación.'));
                 }
             },
         ];

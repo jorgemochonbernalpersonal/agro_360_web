@@ -100,7 +100,7 @@ class Create extends AbstractCreate
 
     protected function successMessage(): string
     {
-        return 'Consumo energético registrado.';
+        return __('Consumo energético registrado.');
     }
 
     protected function indexRoute(): string

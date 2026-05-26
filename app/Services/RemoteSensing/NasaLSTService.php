@@ -341,13 +341,13 @@ class NasaLSTService
             
             if ($lstDay > $threshold + 10) {
                 $severity = 'critical';
-                $recommendation = 'Daño por calor inminente - Riego refrigerante urgente';
+                $recommendation = __('Daño por calor inminente - Riego refrigerante urgente');
             } elseif ($lstDay > $threshold + 5) {
                 $severity = 'high';
-                $recommendation = 'Estrés térmico alto - Incrementar riego';
+                $recommendation = __('Estrés térmico alto - Incrementar riego');
             } else {
                 $severity = 'moderate';
-                $recommendation = 'Monitorear temperatura y considerar riego';
+                $recommendation = __('Monitorear temperatura y considerar riego');
             }
             
             return [
@@ -379,11 +379,11 @@ class NasaLSTService
             $severity = $lstNight <= $criticalTemp ? 'critical' : 'high';
 
             if ($lstNight <= $criticalTemp) {
-                $riskLevel = 'Helada confirmada';
+                $riskLevel = __('Helada confirmada');
             } elseif ($lstNight <= 2) {
-                $riskLevel = 'Riesgo muy alto';
+                $riskLevel = __('Riesgo muy alto');
             } else {
-                $riskLevel = 'Riesgo moderado';
+                $riskLevel = __('Riesgo moderado');
             }
 
             $phenologicalRisk = match (true) {

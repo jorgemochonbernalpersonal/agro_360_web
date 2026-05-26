@@ -112,16 +112,16 @@ class NasaETService
         
         if ($percentDiff < 10) {
             $status = 'consistent';
-            $message = 'NASA y Open-Meteo coinciden';
-            $recommendation = 'Ambos datos fiables';
+            $message = __('NASA y Open-Meteo coinciden');
+            $recommendation = __('Ambos datos fiables');
         } elseif ($percentDiff < 20) {
             $status = 'acceptable';
-            $message = 'Ligera diferencia';
-            $recommendation = 'Preferir NASA (más específico para vegetación)';
+            $message = __('Ligera diferencia');
+            $recommendation = __('Preferir NASA (más específico para vegetación)');
         } else {
             $status = 'divergent';
-            $message = 'Gran diferencia';
-            $recommendation = 'Usar NASA ET - más preciso para viñedo';
+            $message = __('Gran diferencia');
+            $recommendation = __('Usar NASA ET - más preciso para viñedo');
         }
 
         return [
@@ -153,20 +153,20 @@ class NasaETService
         // Typical Kc for vineyards: 0.3-0.7
         if ($kc < 0.3) {
             $status = 'low';
-            $label = 'Bajo';
-            $description = 'Planta bajo estrés o dormante';
+            $label = __('Bajo');
+            $description = __('Planta bajo estrés o dormante');
         } elseif ($kc < 0.5) {
             $status = 'moderate';
-            $label = 'Moderado';
-            $description = 'Desarrollo vegetativo moderado';
+            $label = __('Moderado');
+            $description = __('Desarrollo vegetativo moderado');
         } elseif ($kc < 0.7) {
             $status = 'optimal';
-            $label = 'Óptimo';
-            $description = 'Desarrollo vegetativo pleno';
+            $label = __('Óptimo');
+            $description = __('Desarrollo vegetativo pleno');
         } else {
             $status = 'high';
-            $label = 'Alto';
-            $description = 'Posible exceso de vigor';
+            $label = __('Alto');
+            $description = __('Posible exceso de vigor');
         }
 
         return [

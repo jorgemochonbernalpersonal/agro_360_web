@@ -69,7 +69,7 @@ class Create extends AbstractCreate
 
     protected function successMessage(): string
     {
-        return 'Viticultor creado correctamente.';
+        return __('Viticultor creado correctamente.');
     }
 
     protected function indexRoute(): string

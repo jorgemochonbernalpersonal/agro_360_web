@@ -189,7 +189,7 @@ class Create extends Component
                 'required',
                 function ($attribute, $value, $fail) {
                     if ($value && !\App\Models\Client::where('id', $value)->where('user_id', \Illuminate\Support\Facades\Auth::id())->exists()) {
-                        $fail('El cliente seleccionado no es válido.');
+                        $fail(__('El cliente seleccionado no es válido.'));
                     }
                 },
             ],
@@ -197,7 +197,7 @@ class Create extends Component
                 'required',
                 function ($attribute, $value, $fail) {
                     if ($value && $this->client_id && !\App\Models\ClientAddress::where('id', $value)->where('client_id', $this->client_id)->exists()) {
-                        $fail('La dirección seleccionada no pertenece al cliente.');
+                        $fail(__('La dirección seleccionada no pertenece al cliente.'));
                     }
                 },
             ],
@@ -213,7 +213,7 @@ class Create extends Component
                 'nullable',
                 function ($attribute, $value, $fail) {
                     if ($value && !\App\Models\ProductLot::where('id', $value)->where('user_id', \Illuminate\Support\Facades\Auth::id())->where('archived', false)->exists()) {
-                        $fail('El lote de vino seleccionado no es válido.');
+                        $fail(__('El lote de vino seleccionado no es válido.'));
                     }
                 },
             ],

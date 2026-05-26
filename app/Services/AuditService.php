@@ -130,7 +130,7 @@ class AuditService
     public function cleanOldLogs(int $daysToKeep = 365): int
     {
         if ($daysToKeep < 30) {
-            throw new \InvalidArgumentException('No se pueden eliminar logs con menos de 30 días de antigüedad.');
+            throw new \InvalidArgumentException(__('No se pueden eliminar logs con menos de 30 días de antigüedad.'));
         }
 
         $cutoffDate = now()->subDays($daysToKeep);

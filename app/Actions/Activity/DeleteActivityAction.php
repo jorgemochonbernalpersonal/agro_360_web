@@ -15,12 +15,12 @@ class DeleteActivityAction
     {
         // Verificar autorización
         if (!Auth::user()->can('delete', $activity)) {
-            throw new \Exception('No tienes permiso para eliminar esta actividad.');
+            throw new \Exception(__('No tienes permiso para eliminar esta actividad.'));
         }
 
         // Verificar si está bloqueada
         if ($activity->isLocked()) {
-            throw new \Exception('No se puede eliminar una actividad bloqueada.');
+            throw new \Exception(__('No se puede eliminar una actividad bloqueada.'));
         }
 
         try {

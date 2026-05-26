@@ -49,18 +49,18 @@ class Show extends Component
     public function getStatusText()
     {
         if ($this->container->archived) {
-            return 'Archivado';
+            return __('Archivado');
         }
         
         if ($this->container->isFull()) {
-            return 'Lleno';
+            return __('Lleno');
         }
         
         if ($this->container->isEmpty()) {
-            return 'Vacío';
+            return __('Vacío');
         }
         
-        return 'Disponible';
+        return __('Disponible');
     }
 
     public function getMaintenanceWarning()

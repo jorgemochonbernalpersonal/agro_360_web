@@ -56,7 +56,7 @@ class Create extends AbstractCreate
         ]);
     }
 
-    protected function successMessage(): string { return 'Trabajo planificado registrado correctamente.'; }
+    protected function successMessage(): string { return __('Trabajo planificado registrado correctamente.'); }
     protected function indexRoute(): string      { return $this->rolePrefix() . '.planned-works.index'; }
 
     protected function viewData(): array

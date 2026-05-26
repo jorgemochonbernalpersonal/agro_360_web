@@ -63,7 +63,7 @@ class Create extends AbstractCreate
 
     protected function successMessage(): string
     {
-        return 'Análisis registrado correctamente.';
+        return __('Análisis registrado correctamente.');
     }
 
     protected function indexRoute(): string

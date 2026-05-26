@@ -81,7 +81,7 @@ class Create extends AbstractCreate
 
     protected function successMessage(): string
     {
-        return 'Entrega registrada correctamente.';
+        return __('Entrega registrada correctamente.');
     }
 
     protected function indexRoute(): string

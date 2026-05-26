@@ -45,7 +45,7 @@ class Create extends Component
                             ->where('winery_id', $value)
                             ->exists();
                         if (!$exists) {
-                            $fail('No estás asignado a esta bodega.');
+                            $fail(__('No estás asignado a esta bodega.'));
                         }
                     }
                 },

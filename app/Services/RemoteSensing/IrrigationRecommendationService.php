@@ -170,7 +170,7 @@ class IrrigationRecommendationService
     private function formatWaterAmount(float $amount): string
     {
         if ($amount <= 0) {
-            return 'No necesario';
+            return __('No necesario');
         }
 
         return number_format($amount, 1) . ' mm/día';

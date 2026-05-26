@@ -666,7 +666,7 @@ class Edit extends Component
                 'required',
                 function ($attribute, $value, $fail) {
                     if ($value && !\App\Models\Client::where('id', $value)->where('user_id', Auth::id())->exists()) {
-                        $fail('El cliente seleccionado no es válido.');
+                        $fail(__('El cliente seleccionado no es válido.'));
                     }
                 },
             ],

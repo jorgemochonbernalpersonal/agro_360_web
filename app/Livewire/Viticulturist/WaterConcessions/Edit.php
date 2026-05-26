@@ -74,7 +74,7 @@ class Edit extends AbstractEdit
         ]);
     }
 
-    protected function successMessage(): string { return 'Concesión actualizada correctamente.'; }
+    protected function successMessage(): string { return __('Concesión actualizada correctamente.'); }
     protected function indexRoute(): string      { return 'viticulturist.water-concessions.index'; }
 
     protected function viewData(): array

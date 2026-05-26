@@ -80,7 +80,7 @@ class Edit extends AbstractEdit
 
     protected function successMessage(): string
     {
-        return 'Exportación CUE actualizada.';
+        return __('Exportación CUE actualizada.');
     }
 
     protected function indexRoute(): string

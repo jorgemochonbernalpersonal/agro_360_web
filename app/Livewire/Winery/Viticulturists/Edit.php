@@ -92,7 +92,7 @@ class Edit extends AbstractEdit
 
     protected function successMessage(): string
     {
-        return 'Datos del viticultor actualizados.';
+        return __('Datos del viticultor actualizados.');
     }
 
     protected function indexRoute(): string

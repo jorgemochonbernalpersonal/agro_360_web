@@ -329,7 +329,7 @@ class Edit extends Component
                 'required',
                 function ($attribute, $value, $fail) {
                     if ($value && !\App\Models\Client::where('id', $value)->where('user_id', \Illuminate\Support\Facades\Auth::id())->exists()) {
-                        $fail('El cliente seleccionado no es válido.');
+                        $fail(__('El cliente seleccionado no es válido.'));
                     }
                 },
             ],
@@ -343,7 +343,7 @@ class Edit extends Component
                 'nullable',
                 function ($attribute, $value, $fail) {
                     if ($value && !\App\Models\ProductLot::where('id', $value)->where('user_id', \Illuminate\Support\Facades\Auth::id())->exists()) {
-                        $fail('El lote de vino seleccionado no es válido.');
+                        $fail(__('El lote de vino seleccionado no es válido.'));
                     }
                 },
             ],

@@ -133,7 +133,7 @@ class CopernicusSentinel2Service
             $token = $response->json('access_token');
 
             if (!$token) {
-                throw new \RuntimeException('Copernicus auth: response missing access_token');
+                throw new \RuntimeException(__('Copernicus auth: response missing access_token'));
             }
 
             return $token;

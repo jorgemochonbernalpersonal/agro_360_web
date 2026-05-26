@@ -80,11 +80,11 @@ class Edit extends Component
 
         $error = DB::transaction(function () use ($newCapacity, $containerId) {
             $fresh = Container::where('id', $containerId)->where('user_id', Auth::id())->lockForUpdate()->first();
-            if (!$fresh) return 'Contenedor no encontrado.';
+            if (!$fresh) return __('Contenedor no encontrado.');
 
             // No se puede cambiar la unidad si el contenedor tiene contenido
             if ($fresh->getTotalUsed() > 0 && $this->unit !== ($fresh->unit ?? 'kg')) {
-                return 'No se puede cambiar la unidad de un contenedor con contenido.';
+                return __('No se puede cambiar la unidad de un contenedor con contenido.');
             }
 
             $totalUsed = $fresh->getTotalUsed();

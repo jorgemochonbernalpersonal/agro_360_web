@@ -66,10 +66,10 @@ class Create extends Component
                         $fullCode = SigpacCode::buildCodeFromFields($value);
                         $exists = SigpacCode::where('code', $fullCode)->exists();
                         if ($exists) {
-                            $fail('El código SIGPAC completo ya existe en la base de datos.');
+                            $fail(__('El código SIGPAC completo ya existe en la base de datos.'));
                         }
                     } catch (\Exception $e) {
-                        $fail('Error al validar el código: ' . $e->getMessage());
+                        $fail(__('Error al validar el código: :error', ['error' => $e->getMessage()]));
                     }
                 }
             ];

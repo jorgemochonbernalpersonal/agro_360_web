@@ -76,7 +76,7 @@ class Create extends AbstractCreate
         ]);
     }
 
-    protected function successMessage(): string { return 'Análisis de suelo registrado correctamente.'; }
+    protected function successMessage(): string { return __('Análisis de suelo registrado correctamente.'); }
     protected function indexRoute(): string      { return $this->rolePrefix() . '.soil-analyses.index'; }
 
     protected function viewData(): array

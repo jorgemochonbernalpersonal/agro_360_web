@@ -71,7 +71,7 @@ class PaymentService
         $response = $provider->capturePaymentOrder($orderId);
 
         if (!isset($response['status']) || $response['status'] !== 'COMPLETED') {
-            throw new \Exception('El pago no se completó correctamente en PayPal.');
+            throw new \Exception(__('El pago no se completó correctamente en PayPal.'));
         }
 
         return $response;

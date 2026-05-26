@@ -130,7 +130,7 @@ class Index extends AbstractIndex
 
     protected function markPaidSuccessMessage(): string
     {
-        return 'Factura marcada como pagada.';
+        return __('Factura marcada como pagada.');
     }
 
     protected function sendEmailSuccessMessage(string $email): string

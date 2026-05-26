@@ -81,7 +81,7 @@ class Edit extends AbstractEdit
 
     protected function successMessage(): string
     {
-        return 'Gestión de residuos actualizada.';
+        return __('Gestión de residuos actualizada.');
     }
 
     protected function indexRoute(): string

@@ -54,7 +54,7 @@ class Create extends AbstractCreate
         ]);
     }
 
-    protected function successMessage(): string { return 'Subproducto registrado correctamente.'; }
+    protected function successMessage(): string { return __('Subproducto registrado correctamente.'); }
     protected function indexRoute(): string      { return 'viticulturist.harvest-byproducts.index'; }
 
     protected function viewData(): array

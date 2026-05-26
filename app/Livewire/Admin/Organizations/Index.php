@@ -118,11 +118,11 @@ class Index extends Component
                     if (!$value) return;
                     $owner = User::find($value);
                     if (!$owner) {
-                        $fail('El usuario propietario no existe.');
+                        $fail(__('El usuario propietario no existe.'));
                         return;
                     }
                     if (!in_array($owner->role, $validRoles)) {
-                        $fail('El propietario debe ser Bodega, Supervisor o Productor.');
+                        $fail(__('El propietario debe ser Bodega, Supervisor o Productor.'));
                     }
                 },
             ],

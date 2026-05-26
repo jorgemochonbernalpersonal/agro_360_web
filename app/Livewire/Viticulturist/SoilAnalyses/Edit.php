@@ -94,7 +94,7 @@ class Edit extends AbstractEdit
         ]);
     }
 
-    protected function successMessage(): string { return 'Análisis de suelo actualizado correctamente.'; }
+    protected function successMessage(): string { return __('Análisis de suelo actualizado correctamente.'); }
     protected function indexRoute(): string      { return $this->rolePrefix() . '.soil-analyses.index'; }
 
     protected function viewData(): array

@@ -166,9 +166,9 @@ abstract class AbstractActivityForm extends Component
                         $plot = Plot::find($this->plot_id);
                         if ($plot && $plot->plantings()->where('status', 'active')->exists()) {
                             if (!$value) {
-                                $fail('Debes seleccionar una plantación para esta parcela.');
+                                $fail(__('Debes seleccionar una plantación para esta parcela.'));
                             } elseif (!PlotPlanting::where('id', $value)->where('plot_id', $this->plot_id)->exists()) {
-                                $fail('La plantación seleccionada no pertenece a esta parcela.');
+                                $fail(__('La plantación seleccionada no pertenece a esta parcela.'));
                             }
                         }
                     }

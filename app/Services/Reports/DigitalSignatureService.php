@@ -72,18 +72,18 @@ class DigitalSignatureService
         $userAgent = request()->userAgent();
 
         // Detectar navegador
-        $browser = 'Unknown';
-        if (str_contains($userAgent, 'Chrome')) $browser = 'Chrome';
-        elseif (str_contains($userAgent, 'Firefox')) $browser = 'Firefox';
-        elseif (str_contains($userAgent, 'Safari')) $browser = 'Safari';
-        elseif (str_contains($userAgent, 'Edge')) $browser = 'Edge';
+        $browser = __('Unknown');
+        if (str_contains($userAgent, 'Chrome')) $browser = __('Chrome');
+        elseif (str_contains($userAgent, 'Firefox')) $browser = __('Firefox');
+        elseif (str_contains($userAgent, 'Safari')) $browser = __('Safari');
+        elseif (str_contains($userAgent, 'Edge')) $browser = __('Edge');
 
         // Detectar SO
-        $os = 'Unknown';
-        if (str_contains($userAgent, 'Windows')) $os = 'Windows';
+        $os = __('Unknown');
+        if (str_contains($userAgent, 'Windows')) $os = __('Windows');
         elseif (str_contains($userAgent, 'Mac')) $os = 'macOS';
-        elseif (str_contains($userAgent, 'Linux')) $os = 'Linux';
-        elseif (str_contains($userAgent, 'Android')) $os = 'Android';
+        elseif (str_contains($userAgent, 'Linux')) $os = __('Linux');
+        elseif (str_contains($userAgent, 'Android')) $os = __('Android');
         elseif (str_contains($userAgent, 'iOS')) $os = 'iOS';
 
         return [

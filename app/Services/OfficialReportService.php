@@ -65,7 +65,7 @@ class OfficialReportService
     public function downloadReport(OfficialReport $report)
     {
         if (!$report->pdfExists()) {
-            throw new \Exception('El archivo PDF no existe o no se puede encontrar.');
+            throw new \Exception(__('El archivo PDF no existe o no se puede encontrar.'));
         }
 
         $fullPath = $this->getFullPdfPath($report);
@@ -83,7 +83,7 @@ class OfficialReportService
     {
         // Validar formato
         if (!in_array($format, ['pdf', 'csv', 'xml'])) {
-            throw new \Exception('Formato no válido. Usa "pdf", "csv" o "xml".');
+            throw new \Exception(__('Formato no válido. Usa "pdf", "csv" o "xml".'));
         }
 
         // Obtener el path y filename según el formato
@@ -140,15 +140,15 @@ class OfficialReportService
     {
         return match ($format) {
             'pdf' => [
-                $report->pdf_path ?? throw new \Exception('El archivo PDF no existe.'),
+                $report->pdf_path ?? throw new \Exception(__('El archivo PDF no existe.')),
                 $report->pdf_filename ?? 'informe_oficial.pdf'
             ],
             'csv' => [
-                $report->csv_path ?? throw new \Exception('El archivo CSV no está disponible.'),
+                $report->csv_path ?? throw new \Exception(__('El archivo CSV no está disponible.')),
                 basename($report->csv_path)
             ],
             'xml' => [
-                $report->xml_path ?? throw new \Exception('El archivo XML no está disponible.'),
+                $report->xml_path ?? throw new \Exception(__('El archivo XML no está disponible.')),
                 basename($report->xml_path)
             ],
         };

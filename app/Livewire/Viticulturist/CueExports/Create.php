@@ -66,7 +66,7 @@ class Create extends AbstractCreate
 
     protected function successMessage(): string
     {
-        return 'Exportación CUE creada correctamente.';
+        return __('Exportación CUE creada correctamente.');
     }
 
     protected function indexRoute(): string

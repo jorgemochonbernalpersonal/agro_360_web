@@ -74,7 +74,7 @@ class Edit extends AbstractEdit
 
     protected function successMessage(): string
     {
-        return 'Autorización actualizada.';
+        return __('Autorización actualizada.');
     }
 
     protected function indexRoute(): string

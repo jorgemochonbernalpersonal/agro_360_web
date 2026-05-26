@@ -77,7 +77,7 @@ class Create extends Component
                         ->where('viticulturist_id', $value)
                         ->where('source', 'own')
                         ->exists()) {
-                        $fail('El viticultor seleccionado no pertenece a tu bodega.');
+                        $fail(__('El viticultor seleccionado no pertenece a tu bodega.'));
                     }
                 },
             ],

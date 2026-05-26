@@ -415,13 +415,13 @@ class VerifactuService
         }
 
         if (!file_exists($certPath)) {
-            throw new \Exception('Certificado no encontrado en: ' . $certPath);
+            throw new \Exception(__('Certificado no encontrado en: :path', ['path' => $certPath]));
         }
 
         $pkcs12 = file_get_contents($certPath);
         $certs  = [];
         if (!openssl_pkcs12_read($pkcs12, $certs, $certPassword)) {
-            throw new \Exception('No se pudo abrir el certificado PKCS#12. Verifica la contraseña.');
+            throw new \Exception(__('No se pudo abrir el certificado PKCS#12. Verifica la contraseña.'));
         }
 
         $dom       = new \DOMDocument();
@@ -631,7 +631,7 @@ class VerifactuService
             $endpoint = config('services.sif_aeat.endpoint');
 
             if (!file_exists($wsdl)) {
-                throw new \Exception('Fichero WSDL no encontrado: ' . $wsdl);
+                throw new \Exception(__('Fichero WSDL no encontrado: :path', ['path' => $wsdl]));
             }
 
             $client = new \SoapClient($wsdl, [

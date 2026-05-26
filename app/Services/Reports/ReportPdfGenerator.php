@@ -110,7 +110,7 @@ class ReportPdfGenerator
                 'view' => $view,
                 'error' => $viewError->getMessage(),
             ]);
-            throw new \Exception('Error al generar la vista del PDF: ' . $viewError->getMessage());
+            throw new \Exception(__('Error al generar la vista del PDF: :error', ['error' => $viewError->getMessage()]));
         }
 
         // Guardar PDF
@@ -118,13 +118,13 @@ class ReportPdfGenerator
         try {
             $pdfOutput = $pdf->output();
             if (!$pdfOutput) {
-                throw new \Exception('El PDF generado está vacío.');
+                throw new \Exception(__('El PDF generado está vacío.'));
             }
             Storage::disk('local')->put($path, $pdfOutput);
 
             // Verificar que se guardó
             if (!Storage::disk('local')->exists($path)) {
-                throw new \Exception('No se pudo guardar el archivo PDF.');
+                throw new \Exception(__('No se pudo guardar el archivo PDF.'));
             }
         } catch (\Exception $storageError) {
             Log::error('Error al guardar el PDF', [
@@ -132,7 +132,7 @@ class ReportPdfGenerator
                 'path' => $path,
                 'error' => $storageError->getMessage(),
             ]);
-            throw new \Exception('Error al guardar el PDF: ' . $storageError->getMessage());
+            throw new \Exception(__('Error al guardar el PDF: :error', ['error' => $storageError->getMessage()]));
         }
 
         return $path;
@@ -146,7 +146,7 @@ class ReportPdfGenerator
         try {
             $pdfContent = Storage::disk('local')->get($pdfPath);
             if (!$pdfContent) {
-                throw new \Exception('No se pudo leer el contenido del PDF generado.');
+                throw new \Exception(__('No se pudo leer el contenido del PDF generado.'));
             }
             return hash('sha256', $pdfContent);
         } catch (\Exception $e) {
@@ -154,7 +154,7 @@ class ReportPdfGenerator
                 'pdf_path' => $pdfPath,
                 'error' => $e->getMessage(),
             ]);
-            throw new \Exception('Error al procesar el PDF: ' . $e->getMessage());
+            throw new \Exception(__('Error al procesar el PDF: :error', ['error' => $e->getMessage()]));
         }
     }
 

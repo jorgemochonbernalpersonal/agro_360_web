@@ -109,7 +109,7 @@ class Edit extends Component
                         ->where('winery_id', $wineryId)
                         ->whereHas('batch', fn ($q) => $q->where('viticulturist_id', $viticulturistId))
                         ->exists()) {
-                        $fail('La recepción seleccionada no pertenece a esta liquidación.');
+                        $fail(__('La recepción seleccionada no pertenece a esta liquidación.'));
                     }
                 },
             ],

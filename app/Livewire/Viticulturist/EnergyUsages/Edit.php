@@ -111,7 +111,7 @@ class Edit extends AbstractEdit
 
     protected function successMessage(): string
     {
-        return 'Consumo energético actualizado.';
+        return __('Consumo energético actualizado.');
     }
 
     protected function indexRoute(): string

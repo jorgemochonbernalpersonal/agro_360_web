@@ -214,20 +214,20 @@ class NasaLAIService
 
         if ($fpar < 0.3) {
             $status = 'low';
-            $label = 'Baja Absorción';
-            $description = 'Baja capacidad fotosintética';
+            $label = __('Baja Absorción');
+            $description = __('Baja capacidad fotosintética');
         } elseif ($fpar < 0.6) {
             $status = 'moderate';
-            $label = 'Absorción Moderada';
-            $description = 'Capacidad fotosintética normal';
+            $label = __('Absorción Moderada');
+            $description = __('Capacidad fotosintética normal');
         } elseif ($fpar < 0.8) {
             $status = 'high';
-            $label = 'Alta Absorción';
-            $description = 'Óptima capacidad fotosintética';
+            $label = __('Alta Absorción');
+            $description = __('Óptima capacidad fotosintética');
         } else {
             $status = 'very_high';
-            $label = 'Absorción Muy Alta';
-            $description = 'Máxima actividad fotosintética';
+            $label = __('Absorción Muy Alta');
+            $description = __('Máxima actividad fotosintética');
         }
 
         return [

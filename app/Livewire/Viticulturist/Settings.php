@@ -407,12 +407,12 @@ class Settings extends Component
      */
     protected function getBrowserName($userAgent)
     {
-        if (str_contains($userAgent, 'Chrome')) return 'Chrome';
-        if (str_contains($userAgent, 'Firefox')) return 'Firefox';
-        if (str_contains($userAgent, 'Safari')) return 'Safari';
-        if (str_contains($userAgent, 'Edge')) return 'Edge';
-        if (str_contains($userAgent, 'Opera')) return 'Opera';
-        return 'Desconocido';
+        if (str_contains($userAgent, 'Chrome')) return __('Chrome');
+        if (str_contains($userAgent, 'Firefox')) return __('Firefox');
+        if (str_contains($userAgent, 'Safari')) return __('Safari');
+        if (str_contains($userAgent, 'Edge')) return __('Edge');
+        if (str_contains($userAgent, 'Opera')) return __('Opera');
+        return __('Desconocido');
     }
     
     /**
@@ -420,12 +420,12 @@ class Settings extends Component
      */
     protected function getDeviceName($userAgent)
     {
-        if (str_contains($userAgent, 'Mobile')) return 'Móvil';
-        if (str_contains($userAgent, 'Tablet')) return 'Tablet';
-        if (str_contains($userAgent, 'Windows')) return 'Windows PC';
-        if (str_contains($userAgent, 'Macintosh')) return 'Mac';
-        if (str_contains($userAgent, 'Linux')) return 'Linux PC';
-        return 'Escritorio';
+        if (str_contains($userAgent, 'Mobile')) return __('Móvil');
+        if (str_contains($userAgent, 'Tablet')) return __('Tablet');
+        if (str_contains($userAgent, 'Windows')) return __('Windows PC');
+        if (str_contains($userAgent, 'Macintosh')) return __('Mac');
+        if (str_contains($userAgent, 'Linux')) return __('Linux PC');
+        return __('Escritorio');
     }
 
     // ==========================================

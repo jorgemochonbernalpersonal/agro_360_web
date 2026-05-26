@@ -31,7 +31,7 @@ class Edit extends Component
     public $city;
     public $postal_code;
     public $province_id;
-    public $country = 'España';
+    public $country = __('España');
     public $phone;
     // Control de Tabs
     public $activeTab = 'personal';

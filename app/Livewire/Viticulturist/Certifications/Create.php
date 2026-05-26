@@ -51,7 +51,7 @@ class Create extends AbstractCreate
         ]);
     }
 
-    protected function successMessage(): string { return 'Certificación registrada correctamente.'; }
+    protected function successMessage(): string { return __('Certificación registrada correctamente.'); }
     protected function indexRoute(): string      { return 'viticulturist.certifications.index'; }
 
     protected function viewData(): array

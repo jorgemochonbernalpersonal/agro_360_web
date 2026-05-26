@@ -245,7 +245,7 @@ class GenerateOfficialReportJob implements ShouldQueue
                 }
 
                 if ($activities->isEmpty()) {
-                    throw new \Exception('No hay actividades registradas en esta campaña.');
+                    throw new \Exception(__('No hay actividades registradas en esta campaña.'));
                 }
 
                 // Estadísticas
@@ -426,7 +426,7 @@ class GenerateOfficialReportJob implements ShouldQueue
         $stream = fopen($fullPath, 'rb');
 
         if (!$stream) {
-            throw new \Exception('No se pudo abrir el archivo para calcular hash');
+            throw new \Exception(__('No se pudo abrir el archivo para calcular hash'));
         }
 
         // Leer en chunks de 8KB para no cargar todo en memoria

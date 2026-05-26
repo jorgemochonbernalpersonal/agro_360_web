@@ -88,7 +88,7 @@ class Edit extends AbstractEdit
 
     protected function successMessage(): string
     {
-        return 'Entorno de parcela actualizado.';
+        return __('Entorno de parcela actualizado.');
     }
 
     protected function indexRoute(): string

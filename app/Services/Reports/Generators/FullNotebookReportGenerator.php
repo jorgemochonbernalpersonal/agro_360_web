@@ -40,7 +40,7 @@ class FullNotebookReportGenerator
         $activities = $this->fetchActivities($userId, $campaignId);
 
         if ($activities->isEmpty()) {
-            throw new \Exception('No hay actividades registradas en esta campaña.');
+            throw new \Exception(__('No hay actividades registradas en esta campaña.'));
         }
 
         // 4. Calcular estadísticas
@@ -113,11 +113,11 @@ class FullNotebookReportGenerator
         $digitalSignature = DigitalSignature::forUser($user->id);
 
         if (!$digitalSignature) {
-            throw new \Exception('No tienes una contraseña de firma digital configurada.');
+            throw new \Exception(__('No tienes una contraseña de firma digital configurada.'));
         }
 
         if (!$digitalSignature->verifyPassword($password)) {
-            throw new \Exception('Contraseña de firma digital incorrecta.');
+            throw new \Exception(__('Contraseña de firma digital incorrecta.'));
         }
     }
 

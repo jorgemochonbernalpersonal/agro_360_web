@@ -60,7 +60,7 @@ class Edit extends AbstractEdit
         ]);
     }
 
-    protected function successMessage(): string { return 'Certificación actualizada correctamente.'; }
+    protected function successMessage(): string { return __('Certificación actualizada correctamente.'); }
     protected function indexRoute(): string      { return 'viticulturist.certifications.index'; }
 
     protected function viewData(): array

@@ -193,24 +193,24 @@ class NasaSpectralBandsService
         
         if ($gndvi < 0.3) {
             $status = 'deficient';
-            $label = 'Deficiente';
+            $label = __('Deficiente');
             $color = 'red';
-            $recommendation = 'Aplicar fertilizante nitrogenado urgente';
+            $recommendation = __('Aplicar fertilizante nitrogenado urgente');
         } elseif ($gndvi < 0.5) {
             $status = 'low';
-            $label = 'Bajo';
+            $label = __('Bajo');
             $color = 'orange';
-            $recommendation = 'Considerar aplicación de nitrógeno';
+            $recommendation = __('Considerar aplicación de nitrógeno');
         } elseif ($gndvi < 0.7) {
             $status = 'optimal';
-            $label = 'Óptimo';
+            $label = __('Óptimo');
             $color = 'green';
-            $recommendation = 'Mantener manejo actual';
+            $recommendation = __('Mantener manejo actual');
         } else {
             $status = 'excessive';
-            $label = 'Excesivo';
+            $label = __('Excesivo');
             $color = 'blue';
-            $recommendation = 'Posible exceso de vigor - considerar reducir N';
+            $recommendation = __('Posible exceso de vigor - considerar reducir N');
         }
 
         return [

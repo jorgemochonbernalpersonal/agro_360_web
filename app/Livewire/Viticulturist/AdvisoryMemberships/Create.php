@@ -46,7 +46,7 @@ class Create extends AbstractCreate
 
     protected function successMessage(): string
     {
-        return 'Asesor registrado correctamente.';
+        return __('Asesor registrado correctamente.');
     }
 
     protected function indexRoute(): string

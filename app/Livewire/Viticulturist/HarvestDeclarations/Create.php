@@ -112,7 +112,7 @@ class Create extends AbstractCreate
 
     protected function successMessage(): string
     {
-        return 'Declaración de vendimia creada en borrador.';
+        return __('Declaración de vendimia creada en borrador.');
     }
 
     protected function indexRoute(): string

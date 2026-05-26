@@ -74,7 +74,7 @@ class Index extends Component
                     if ($value && ! User::where('id', $value)
                         ->whereIn('role', [User::ROLE_WINERY, User::ROLE_PRODUCER])
                         ->exists()) {
-                        $fail('La bodega seleccionada no es válida.');
+                        $fail(__('La bodega seleccionada no es válida.'));
                     }
                 },
             ],

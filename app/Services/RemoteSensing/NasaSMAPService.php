@@ -107,15 +107,15 @@ class NasaSMAPService
         
         if ($diff < 5) {
             $status = 'consistent';
-            $message = 'Satélite y modelo coinciden';
+            $message = __('Satélite y modelo coinciden');
             $reliability = 'high';
         } elseif ($diff < 10) {
             $status = 'acceptable';
-            $message = 'Ligera diferencia';
+            $message = __('Ligera diferencia');
             $reliability = 'medium';
         } else {
             $status = 'divergent';
-            $message = 'Gran diferencia - revisar';
+            $message = __('Gran diferencia - revisar');
             $reliability = 'low';
         }
 

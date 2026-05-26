@@ -194,16 +194,16 @@ class NasaVIIRSService
         
         if ($diff < 0.05) {
             $status = 'consistent';
-            $message = 'VIIRS y MODIS coinciden';
-            $recommendation = 'Datos fiables';
+            $message = __('VIIRS y MODIS coinciden');
+            $recommendation = __('Datos fiables');
         } elseif ($diff < 0.1) {
             $status = 'acceptable';
-            $message = 'Ligera diferencia entre sensores';
-            $recommendation = 'Verificar nubosidad';
+            $message = __('Ligera diferencia entre sensores');
+            $recommendation = __('Verificar nubosidad');
         } else {
             $status = 'divergent';
-            $message = 'Gran diferencia entre sensores';
-            $recommendation = 'Posible problema de calidad - revisar';
+            $message = __('Gran diferencia entre sensores');
+            $recommendation = __('Posible problema de calidad - revisar');
         }
 
         return [

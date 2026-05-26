@@ -71,7 +71,7 @@ class Create extends AbstractCreate
 
     protected function successMessage(): string
     {
-        return 'Gestión de residuos registrada.';
+        return __('Gestión de residuos registrada.');
     }
 
     protected function indexRoute(): string

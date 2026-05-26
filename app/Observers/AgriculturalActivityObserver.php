@@ -37,7 +37,7 @@ class AgriculturalActivityObserver
     {
         // Si está bloqueada, no permitir modificaciones
         if ($activity->is_locked && !$activity->isDirty('is_locked')) {
-            throw new \Exception('No se puede modificar una actividad bloqueada. Desbloquéala primero.');
+            throw new \Exception(__('No se puede modificar una actividad bloqueada. Desbloquéala primero.'));
         }
 
         return true;
@@ -76,7 +76,7 @@ class AgriculturalActivityObserver
     public function deleting(AgriculturalActivity $activity): bool
     {
         if ($activity->is_locked) {
-            throw new \Exception('No se puede eliminar una actividad bloqueada. Desbloquéala primero.');
+            throw new \Exception(__('No se puede eliminar una actividad bloqueada. Desbloquéala primero.'));
         }
 
         // Registrar la eliminación ANTES de borrar la fila para no violar la FK
