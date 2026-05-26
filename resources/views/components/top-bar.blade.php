@@ -44,6 +44,7 @@
                         <flux:menu.item
                             href="{{ request()->fullUrlWithQuery(['lang' => $code]) }}"
                             class="{{ app()->getLocale() === $code ? 'font-semibold' : '' }}"
+                            @click="window.location.href = '{{ request()->fullUrlWithQuery(['lang' => $code]) }}'"
                         >
                             {{ $label }}
                         </flux:menu.item>
