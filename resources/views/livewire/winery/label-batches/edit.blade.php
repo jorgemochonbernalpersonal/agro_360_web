@@ -1,5 +1,5 @@
 <x-agro.form-card
-    title="Editar Lote · {{ $batch->name }}"
+    :title="__('Editar Lote') . ' · ' . $batch->name"
     :description="__('Modifica los datos y registra mermas del lote.')"
     icon="tag"
     icon-color="from-violet-500 to-violet-700"

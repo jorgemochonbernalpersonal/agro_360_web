@@ -1,7 +1,7 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="Cuadro de Mando — Vendimia {{ $vintageYear }}"
+        :title="__('Cuadro de Mando') . ' — ' . __('Vendimia') . ' ' . $vintageYear"
         :description="__('Comparativa en tiempo real: aforo viticultor · previsión bodega · recibido real.')"
     />
 

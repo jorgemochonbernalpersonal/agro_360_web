@@ -1,5 +1,5 @@
 <x-agro.form-card
-    title="Editar Sala — {{ $room->name }}"
+    :title="__('Editar Sala') . ' — ' . $room->name"
     :description="__('Modifica los datos de la sala de bodega.')"
     icon="building-office"
     icon-color="from-teal-500 to-teal-700"

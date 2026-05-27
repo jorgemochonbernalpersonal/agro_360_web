@@ -1,5 +1,5 @@
 <x-agro.form-card
-    title="Nueva Operación — {{ $wine->name }}"
+    :title="__('Nueva Operación') . ' — ' . $wine->name"
     :description="__('Registra una etapa del proceso de vinificación.')"
     icon="arrow-path"
     icon-color="from-indigo-500 to-indigo-700"

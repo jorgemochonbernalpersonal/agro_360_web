@@ -2,7 +2,7 @@
 
     {{-- Cabecera --}}
     <x-agro.page-header
-        title="{{ $invoice->invoice_number ? 'Factura ' . $invoice->invoice_number : 'Albarán ' . ($invoice->delivery_note_code ?? '') }}"
+        :title="$invoice->invoice_number ? __('Factura') . ' ' . $invoice->invoice_number : __('Albarán') . ' ' . ($invoice->delivery_note_code ?? '')"
         :description="'Alb: ' . ($invoice->delivery_note_code ?? '—') . ' · ' . ($invoice->client?->full_name ?? '')"
     >
         <x-slot:actions>

@@ -1,7 +1,7 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="Mantenimientos — {{ $container->name }}"
+        :title="__('Mantenimientos') . ' — ' . $container->name"
         :description="__('Historial y programación de mantenimientos del contenedor.')"
     >
         <x-slot:actions>

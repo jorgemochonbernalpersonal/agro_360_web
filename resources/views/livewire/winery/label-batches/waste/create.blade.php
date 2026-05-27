@@ -1,5 +1,5 @@
 <x-agro.form-card
-    title="Registrar Merma — {{ $labelBatch->name }}"
+    :title="__('Registrar Merma') . ' — ' . $labelBatch->name"
     :description="__('Registra etiquetas inutilizadas, dañadas o destruidas.')"
     icon="exclamation-triangle"
     icon-color="from-red-500 to-red-700"

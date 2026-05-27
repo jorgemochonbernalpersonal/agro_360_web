@@ -1,6 +1,6 @@
 <div class="space-y-6 animate-fade-in">
     <x-agro.page-header
-        title="Usuario: {{ $user->name }}"
+        :title="__('Usuario') . ': ' . $user->name"
         :description="__('Detalles y estadísticas del usuario')"
     >
         <x-slot:actions>

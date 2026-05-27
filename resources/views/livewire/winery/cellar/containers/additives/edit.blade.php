@@ -1,5 +1,5 @@
 <x-agro.form-card
-    title="Editar Aditivo — {{ $container->name }}"
+    :title="__('Editar Aditivo') . ' — ' . $container->name"
     :description="__('Modifica el aditivo enológico registrado.')"
     icon="beaker"
     icon-color="from-purple-500 to-purple-700"

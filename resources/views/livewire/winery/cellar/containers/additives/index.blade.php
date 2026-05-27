@@ -1,6 +1,6 @@
 <div class="space-y-6 animate-fade-in">
 <x-agro.page-header
-    title="Aditivos — {{ $container->name }}"
+    :title="__('Aditivos') . ' — ' . $container->name"
     :description="__('Registro de aditivos enológicos aplicados al contenido de este depósito.')"
     icon="beaker"
 >
