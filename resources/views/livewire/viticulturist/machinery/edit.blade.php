@@ -5,7 +5,7 @@
     :back-url="roleRoute('viticulturist.machinery.index')"
 >
     <form wire:submit="save" class="space-y-8" enctype="multipart/form-data" data-cy="machinery-edit-form">
-        <x-agro.form-section title="Informacion Basica">
+        <x-agro.form-section :title="__('Información Básica')">
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Nombre -->

@@ -1,11 +1,11 @@
 <x-agro.form-card
-    title="Edit Supply"
+    :title="__('Editar suministro')"
     :description="__('Update the details of this supply')"
     :back-url="roleRoute('viticulturist.warehouse.index', ['tab' => 'insumos'])"
 >
     <form wire:submit="save" class="space-y-6">
 
-        <x-agro.form-section title="Supply Information">
+        <x-agro.form-section :title="__('Información del suministro')">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <flux:field class="md:col-span-2">
                     <flux:label required>{{ __('Name') }}</flux:label>
@@ -47,7 +47,7 @@
             </div>
         </x-agro.form-section>
 
-        <x-agro.form-section title="Stock & Storage">
+        <x-agro.form-section :title="__('Stock y almacenamiento')">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <flux:field>
                     <flux:label>{{ __('Current stock') }}</flux:label>
@@ -82,7 +82,7 @@
             </div>
         </x-agro.form-section>
 
-        <x-agro.form-section title="Notes">
+        <x-agro.form-section :title="__('Notas')">
             <flux:field>
                 <flux:textarea wire:model="notes" rows="3" />
                 <flux:error name="notes" />
