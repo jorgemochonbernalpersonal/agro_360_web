@@ -38,11 +38,11 @@ Todos los seeders solo tienen `es`. Al cambiar de idioma, los campos quedan en b
 - [x] Añadir fallback a `es` en los 4 modelos Spatie para que nunca aparezca un campo vacío
 - [x] Anclar generación de documentos/PDFs/exportaciones al locale `es` independientemente del locale de sesión
 
-### Fase 2 — EN como primer idioma real (próximo sprint)
+### Fase 2 — EN como primer idioma real ✅
 
-- [ ] Seeders: añadir traducción `en` a los 4 modelos de catálogo (Pest, GrapeVariety, MachineryType, ContainerType)
-- [ ] Auditar `en.json`: eliminar entradas donde valor = clave en español (no aportan nada)
-- [ ] Revisar secciones clave de la UI en inglés: dashboard, cuaderno de campo, SILICIE, PAC
+- [x] Seeders: añadir traducción `en` a los 4 modelos de catálogo (Pest, GrapeVariety, MachineryType, ContainerType)
+- [x] Auditar `en.json`: eliminadas 7.062 claves sin traducir (valor = clave en español) — quedan 4.840 traducciones reales
+- [ ] Revisar secciones clave de la UI en inglés (dashboard, cuaderno de campo, SILICIE, PAC): dashboard, cuaderno de campo, SILICIE, PAC
 
 ### Fase 3 — CA como segundo idioma real
 

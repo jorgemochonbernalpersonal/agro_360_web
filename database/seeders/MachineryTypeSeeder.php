@@ -7,32 +7,32 @@ use Illuminate\Database\Seeder;
 
 class MachineryTypeSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $types = [
-            'Tractor',
-            'Pulverizador',
-            'Atomizador',
-            'Vendimiadora',
-            'Abonadora',
-            'Cisterna',
-            'Remolque',
-            'Carretilla elevadora',
-            'Motocultor',
-            'Desbrozadora',
-            'Otro',
+            ['es' => 'Tractor',              'en' => 'Tractor'],
+            ['es' => 'Pulverizador',         'en' => 'Sprayer'],
+            ['es' => 'Atomizador',           'en' => 'Atomiser'],
+            ['es' => 'Vendimiadora',         'en' => 'Grape Harvester'],
+            ['es' => 'Abonadora',            'en' => 'Fertiliser Spreader'],
+            ['es' => 'Cisterna',             'en' => 'Tanker'],
+            ['es' => 'Remolque',             'en' => 'Trailer'],
+            ['es' => 'Carretilla elevadora', 'en' => 'Forklift'],
+            ['es' => 'Motocultor',           'en' => 'Rotary Tiller'],
+            ['es' => 'Desbrozadora',         'en' => 'Brushcutter'],
+            ['es' => 'Otro',                 'en' => 'Other'],
         ];
 
-        foreach ($types as $name) {
-            MachineryType::updateOrCreate(
-                ['name' => $name],
-                ['active' => true]
-            );
+        foreach ($types as $names) {
+            $existing = MachineryType::where('name->es', $names['es'])->first();
+            if ($existing) {
+                $existing->setTranslation('name', 'en', $names['en'])->save();
+            } else {
+                MachineryType::create([
+                    'name'   => $names,
+                    'active' => true,
+                ]);
+            }
         }
     }
 }
-
-

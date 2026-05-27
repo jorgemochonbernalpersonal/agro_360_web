@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder
             TaxSeeder::class,                   // Impuestos (IVA, IGIC)
             UnitSeeder::class,                  // Unidades de medida (L, kg, g...)
             PestSeeder::class,                  // Plagas y enfermedades del viñedo
+            ContainerTypeSeeder::class,         // Tipos de contenedor (bodega)
         ]);
         
         $this->command->info('✅ Seeders completados.');
