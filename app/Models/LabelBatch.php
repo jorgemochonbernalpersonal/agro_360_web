@@ -9,9 +9,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class LabelBatch extends Model
 {
     const SOURCES = [
-        'own'         => __('Propio'),
-        'do_assigned' => __('Asignado por DO'),
-        'other'       => __('Otro'),
+        'own'         => 'Propio',
+        'do_assigned' => 'Asignado por DO',
+        'other'       => 'Otro',
     ];
 
     protected $fillable = [

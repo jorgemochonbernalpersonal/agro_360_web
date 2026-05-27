@@ -33,7 +33,7 @@ class PlotGeometry extends Model
     public function setCoordinatesFromArray(array $points): void
     {
         if (empty($points) || count($points) < 3) {
-            throw new \InvalidArgumentException(__('Se necesitan al menos 3 puntos para crear un polígono.'));
+            throw new \InvalidArgumentException('Se necesitan al menos 3 puntos para crear un polígono.');
         }
 
         // Cerrar el polígono si no está cerrado
@@ -50,7 +50,7 @@ class PlotGeometry extends Model
             $lat = filter_var($point['lat'], FILTER_VALIDATE_FLOAT);
 
             if ($lng === false || $lat === false) {
-                throw new \InvalidArgumentException(__('Coordenadas inválidas: deben ser valores numéricos.'));
+                throw new \InvalidArgumentException('Coordenadas inválidas: deben ser valores numéricos.');
             }
 
             // Validar rangos geográficos válidos

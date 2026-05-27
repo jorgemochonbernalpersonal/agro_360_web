@@ -17,10 +17,10 @@ class Pest extends Model
     const CONTROL_METHOD_TYPES = ['biologico', 'cultural', 'fisico', 'quimico'];
 
     const CONTROL_METHOD_LABELS = [
-        'biologico' => __('Control biológico'),
-        'cultural'  => __('Control cultural'),
-        'fisico'    => __('Control físico'),
-        'quimico'   => __('Control químico'),
+        'biologico' => 'Control biológico',
+        'cultural'  => 'Control cultural',
+        'fisico'    => 'Control físico',
+        'quimico'   => 'Control químico',
     ];
 
     protected $fillable = [

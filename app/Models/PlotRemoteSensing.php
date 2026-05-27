@@ -191,12 +191,12 @@ class PlotRemoteSensing extends Model
     public function getHealthTextAttribute(): string
     {
         return match ($this->health_status) {
-            'excellent' => __('Excelente'),
-            'good' => __('Bueno'),
-            'moderate' => __('Moderado'),
-            'poor' => __('Bajo'),
-            'critical' => __('Crítico'),
-            default => __('Sin datos'),
+            'excellent' => 'Excelente',
+            'good' => 'Bueno',
+            'moderate' => 'Moderado',
+            'poor' => 'Bajo',
+            'critical' => 'Crítico',
+            default => 'Sin datos',
         };
     }
 
@@ -217,10 +217,10 @@ class PlotRemoteSensing extends Model
         $coverage = $this->cloud_coverage ?? 0;
 
         return match (true) {
-            $coverage <= 20 => __('Excelente'),
-            $coverage <= 40 => __('Buena'),
-            $coverage <= 60 => __('Aceptable'),
-            default         => __('Baja calidad'),
+            $coverage <= 20 => 'Excelente',
+            $coverage <= 40 => 'Buena',
+            $coverage <= 60 => 'Aceptable',
+            default         => 'Baja calidad',
         };
     }
 

@@ -356,7 +356,7 @@ class OfficialReport extends Model
     public function getFormattedPdfSizeAttribute(): string
     {
         if (!$this->pdf_size) {
-            return __('N/A');
+            return 'N/A';
         }
 
         $bytes = $this->pdf_size;

@@ -8,12 +8,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class VerifactuRecord extends Model
 {
     const STATUSES = [
-        'pending'   => __('Pendiente'),
-        'queued'    => __('En cola'),
-        'submitted' => __('Enviada'),
-        'accepted'  => __('Aceptada'),
-        'rejected'  => __('Rechazada'),
-        'cancelled' => __('Cancelada'),
+        'pending'   => 'Pendiente',
+        'queued'    => 'En cola',
+        'submitted' => 'Enviada',
+        'accepted'  => 'Aceptada',
+        'rejected'  => 'Rechazada',
+        'cancelled' => 'Cancelada',
     ];
 
     protected $fillable = [

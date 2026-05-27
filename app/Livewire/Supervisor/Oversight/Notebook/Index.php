@@ -94,7 +94,7 @@ class Index extends Component
         $activities = $query->paginate(25);
 
         $totalWithAccess    = $accessibleVitIds->count();
-        $activityTypes      = AgriculturalActivity::ACTIVITY_TYPES;
+        $activityTypes      = AgriculturalActivity::activityTypes();
 
         return view('livewire.supervisor.oversight.notebook.index', [
             'activities'      => $activities,

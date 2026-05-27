@@ -29,16 +29,16 @@ class PlotCost extends Model
     ];
 
     public const CATEGORIES = [
-        'labor'          => __('Mano de obra'),
-        'machinery'      => __('Maquinaria'),
-        'materials'      => __('Materiales'),
-        'phytosanitary'  => __('Fitosanitarios'),
-        'fertilizer'     => __('Abonos y fertilizantes'),
-        'water'          => __('Agua / Riego'),
-        'insurance'      => __('Seguros'),
-        'transport'      => __('Transporte'),
-        'subcontracting' => __('Subcontratación'),
-        'other'          => __('Otros'),
+        'labor'          => 'Mano de obra',
+        'machinery'      => 'Maquinaria',
+        'materials'      => 'Materiales',
+        'phytosanitary'  => 'Fitosanitarios',
+        'fertilizer'     => 'Abonos y fertilizantes',
+        'water'          => 'Agua / Riego',
+        'insurance'      => 'Seguros',
+        'transport'      => 'Transporte',
+        'subcontracting' => 'Subcontratación',
+        'other'          => 'Otros',
     ];
 
     public function viticulturist(): BelongsTo

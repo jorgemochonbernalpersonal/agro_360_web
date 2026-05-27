@@ -13,21 +13,21 @@ class ResidueManagement extends Model
     protected $table = 'residue_managements';
 
     const PRACTICE_TYPES = [
-        'incorporation' => __('Triturado e incorporación al suelo'),
-        'removal'       => __('Retirada de la explotación'),
-        'burning'       => __('Quema (cuando permitido)'),
-        'composting'    => __('Compostaje'),
-        'biogas'        => __('Biogás'),
-        'sale'          => __('Venta'),
-        'other'         => __('Otro'),
+        'incorporation' => 'Triturado e incorporación al suelo',
+        'removal'       => 'Retirada de la explotación',
+        'burning'       => 'Quema (cuando permitido)',
+        'composting'    => 'Compostaje',
+        'biogas'        => 'Biogás',
+        'sale'          => 'Venta',
+        'other'         => 'Otro',
     ];
 
     const MATERIAL_TYPES = [
-        'pruning_wood' => __('Madera/leña de poda'),
-        'grape_marc'   => __('Orujo'),
-        'vine_leaves'  => __('Hojas de vid'),
-        'grass'        => __('Cubierta vegetal'),
-        'other'        => __('Otro'),
+        'pruning_wood' => 'Madera/leña de poda',
+        'grape_marc'   => 'Orujo',
+        'vine_leaves'  => 'Hojas de vid',
+        'grass'        => 'Cubierta vegetal',
+        'other'        => 'Otro',
     ];
 
     protected $fillable = [

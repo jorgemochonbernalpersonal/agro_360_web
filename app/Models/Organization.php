@@ -38,8 +38,8 @@ class Organization extends Model
     public const TYPE_DENOMINATION        = 'denomination_of_origin';
 
     public const TYPES = [
-        self::TYPE_WINERY       => __('Bodega'),
-        self::TYPE_DENOMINATION => __('Denominación de Origen'),
+        self::TYPE_WINERY       => 'Bodega',
+        self::TYPE_DENOMINATION => 'Denominación de Origen',
     ];
 
     // ── Relationships ────────────────────────────────────────────────────────

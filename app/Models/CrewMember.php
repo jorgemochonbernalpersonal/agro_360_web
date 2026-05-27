@@ -92,23 +92,23 @@ class CrewMember extends Model
     public function getLicenseStatusAttribute(): string
     {
         if (!$this->phytosanitary_license_number) {
-            return __('No registrado');
+            return 'No registrado';
         }
         
         if (!$this->license_expiry_date) {
-            return __('Vigente');
+            return 'Vigente';
         }
         
         $expiryDate = \Carbon\Carbon::parse($this->license_expiry_date);
         
         if ($expiryDate->isPast()) {
-            return __('Caducado');
+            return 'Caducado';
         }
         
         if ($expiryDate->diffInDays(now()) <= 30) {
-            return __('Próximo a caducar');
+            return 'Próximo a caducar';
         }
         
-        return __('Vigente');
+        return 'Vigente';
     }
 }

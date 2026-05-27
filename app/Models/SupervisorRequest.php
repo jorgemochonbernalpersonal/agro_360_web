@@ -39,11 +39,11 @@ class SupervisorRequest extends Model
     public const TYPE_CERTIFICATION        = 'certification';
 
     public const TYPE_LABELS = [
-        'label_request'       => __('Solicitud de contraetiquetas'),
-        'qualification'       => __('Calificación de lote'),
-        'nonconformity'       => __('Acta de no conformidad'),
-        'harvest_declaration' => __('Declaración de cosecha'),
-        'certification'       => __('Certificación ecológica / IGP'),
+        'label_request'       => 'Solicitud de contraetiquetas',
+        'qualification'       => 'Calificación de lote',
+        'nonconformity'       => 'Acta de no conformidad',
+        'harvest_declaration' => 'Declaración de cosecha',
+        'certification'       => 'Certificación ecológica / IGP',
     ];
 
     /** Types initiated by the supervisor */
@@ -64,12 +64,12 @@ class SupervisorRequest extends Model
     public const STATUS_ARCHIVED   = 'archived';
 
     public const STATUS_LABELS = [
-        'draft'     => __('Borrador'),
-        'pending'   => __('Pendiente'),
-        'in_review' => __('En revisión'),
-        'approved'  => __('Aprobada'),
-        'rejected'  => __('Rechazada'),
-        'archived'  => __('Archivada'),
+        'draft'     => 'Borrador',
+        'pending'   => 'Pendiente',
+        'in_review' => 'En revisión',
+        'approved'  => 'Aprobada',
+        'rejected'  => 'Rechazada',
+        'archived'  => 'Archivada',
     ];
 
     public const STATUS_COLORS = [

@@ -32,13 +32,13 @@ class PacDeclaration extends Model
     public const STATUS_REJECTED  = 'rejected';
 
     public const ECO_SCHEMES = [
-        'cover_crops'           => __('Cubiertas vegetales'),
-        'no_tillage'            => __('Mínimo/no laboreo'),
-        'organic'               => __('Producción ecológica'),
-        'integrated_pest_mgmt'  => __('Gestión integrada de plagas'),
-        'reduced_phyto'         => __('Reducción de fitosanitarios'),
-        'biodiversity'          => __('Elementos de biodiversidad'),
-        'precision_fertilization' => __('Fertilización de precisión'),
+        'cover_crops'           => 'Cubiertas vegetales',
+        'no_tillage'            => 'Mínimo/no laboreo',
+        'organic'               => 'Producción ecológica',
+        'integrated_pest_mgmt'  => 'Gestión integrada de plagas',
+        'reduced_phyto'         => 'Reducción de fitosanitarios',
+        'biodiversity'          => 'Elementos de biodiversidad',
+        'precision_fertilization' => 'Fertilización de precisión',
     ];
 
     public function viticulturist(): BelongsTo
@@ -67,10 +67,10 @@ class PacDeclaration extends Model
     public function statusLabel(): string
     {
         return match($this->status) {
-            self::STATUS_DRAFT     => __('Borrador'),
-            self::STATUS_SUBMITTED => __('Presentada'),
-            self::STATUS_APPROVED  => __('Aprobada'),
-            self::STATUS_REJECTED  => __('Rechazada'),
+            self::STATUS_DRAFT     => 'Borrador',
+            self::STATUS_SUBMITTED => 'Presentada',
+            self::STATUS_APPROVED  => 'Aprobada',
+            self::STATUS_REJECTED  => 'Rechazada',
             default                => $this->status,
         };
     }

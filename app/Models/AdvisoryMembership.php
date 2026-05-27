@@ -11,11 +11,11 @@ class AdvisoryMembership extends Model
     use HasFactory;
 
     const SPECIALTIES = [
-        'phytosanitary'  => __('Asesor fitosanitario (PI)'),
-        'agronomy'       => __('Agronomía general'),
-        'oenology'       => __('Enología'),
-        'sustainability' => __('Sostenibilidad / Certificaciones'),
-        'other'          => __('Otro'),
+        'phytosanitary'  => 'Asesor fitosanitario (PI)',
+        'agronomy'       => 'Agronomía general',
+        'oenology'       => 'Enología',
+        'sustainability' => 'Sostenibilidad / Certificaciones',
+        'other'          => 'Otro',
     ];
 
     protected $fillable = [

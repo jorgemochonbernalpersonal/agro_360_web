@@ -8,17 +8,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class BottlingAuthorization extends Model
 {
     const AUTHORIZATION_TYPES = [
-        'standard' => __('Estándar'),
-        'export'   => __('Exportación'),
-        'organic'  => __('Ecológico'),
-        'other'    => __('Otro'),
+        'standard' => 'Estándar',
+        'export'   => 'Exportación',
+        'organic'  => 'Ecológico',
+        'other'    => 'Otro',
     ];
 
     const STATUSES = [
-        'active'    => __('Activa'),
-        'used'      => __('Consumida'),
-        'expired'   => __('Caducada'),
-        'cancelled' => __('Anulada'),
+        'active'    => 'Activa',
+        'used'      => 'Consumida',
+        'expired'   => 'Caducada',
+        'cancelled' => 'Anulada',
     ];
 
     protected $fillable = [

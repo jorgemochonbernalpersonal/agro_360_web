@@ -62,9 +62,9 @@ class PlotAuditLog extends Model
     public function getActionDescriptionAttribute(): string
     {
         $descriptions = [
-            'created' => __('Parcela creada'),
-            'updated' => __('Parcela modificada'),
-            'deleted' => __('Parcela eliminada'),
+            'created' => 'Parcela creada',
+            'updated' => 'Parcela modificada',
+            'deleted' => 'Parcela eliminada',
         ];
 
         return $descriptions[$this->action] ?? $this->action;

@@ -8,12 +8,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Supplier extends Model
 {
     const CATEGORIES = [
-        'grape'     => __('Proveedor de uva'),
-        'packaging' => __('Envases y embalaje'),
-        'chemicals' => __('Productos enológicos'),
-        'equipment' => __('Maquinaria y equipos'),
-        'services'  => __('Servicios'),
-        'other'     => __('Otro'),
+        'grape'     => 'Proveedor de uva',
+        'packaging' => 'Envases y embalaje',
+        'chemicals' => 'Productos enológicos',
+        'equipment' => 'Maquinaria y equipos',
+        'services'  => 'Servicios',
+        'other'     => 'Otro',
     ];
 
     protected $fillable = [

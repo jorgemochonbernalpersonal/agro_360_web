@@ -66,7 +66,7 @@ class FieldActivityController extends Controller
                 'per_page'     => $activities->perPage(),
                 'current_page' => $activities->currentPage(),
                 'last_page'    => $activities->lastPage(),
-                'types'        => AgriculturalActivity::ACTIVITY_TYPES,
+                'types'        => AgriculturalActivity::activityTypes(),
             ],
         ]);
     }

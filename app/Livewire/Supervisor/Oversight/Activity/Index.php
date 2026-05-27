@@ -110,7 +110,7 @@ class Index extends Component
 
         $activities = $query->paginate(25);
 
-        $activityTypes      = AgriculturalActivity::ACTIVITY_TYPES;
+        $activityTypes      = AgriculturalActivity::activityTypes();
         $totalWithAccess    = $accessibleVitIds->count();
         $totalDo            = $allVitIds->count();
 

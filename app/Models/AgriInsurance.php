@@ -36,21 +36,21 @@ class AgriInsurance extends Model
     ];
 
     public const COVERAGE_TYPES = [
-        'frost'         => __('Heladas'),
-        'hail'          => __('Pedrisco'),
-        'drought'       => __('Sequía'),
-        'flood'         => __('Inundación'),
-        'fire'          => __('Incendio'),
-        'pest'          => __('Plagas'),
-        'comprehensive' => __('Seguro integral (multirriesgo)'),
-        'other'         => __('Otro'),
+        'frost'         => 'Heladas',
+        'hail'          => 'Pedrisco',
+        'drought'       => 'Sequía',
+        'flood'         => 'Inundación',
+        'fire'          => 'Incendio',
+        'pest'          => 'Plagas',
+        'comprehensive' => 'Seguro integral (multirriesgo)',
+        'other'         => 'Otro',
     ];
 
     public const STATUSES = [
-        'pending'   => __('Pendiente'),
-        'active'    => __('Activo'),
-        'expired'   => __('Vencido'),
-        'cancelled' => __('Cancelado'),
+        'pending'   => 'Pendiente',
+        'active'    => 'Activo',
+        'expired'   => 'Vencido',
+        'cancelled' => 'Cancelado',
     ];
 
     public const STATUS_COLORS = [

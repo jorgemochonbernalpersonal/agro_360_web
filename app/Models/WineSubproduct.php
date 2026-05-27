@@ -8,17 +8,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class WineSubproduct extends Model
 {
     const TYPES = [
-        'pomace'  => __('Orujo'),
-        'lees'   => __('Lías'),
-        'vinasse' => __('Vinaza'),
-        'other'  => __('Otro subproducto'),
+        'pomace'  => 'Orujo',
+        'lees'   => 'Lías',
+        'vinasse' => 'Vinaza',
+        'other'  => 'Otro subproducto',
     ];
 
     const DESTINATIONS = [
-        'distillery'      => __('Destilería'),
-        'authorized_plant'=> __('Planta autorizada'),
-        'own_use'         => __('Uso propio'),
-        'other'           => __('Otro destino'),
+        'distillery'      => 'Destilería',
+        'authorized_plant'=> 'Planta autorizada',
+        'own_use'         => 'Uso propio',
+        'other'           => 'Otro destino',
     ];
 
     protected $fillable = [

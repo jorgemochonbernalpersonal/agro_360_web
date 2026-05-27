@@ -28,10 +28,10 @@ class FieldApplicator extends Model
     ];
 
     public const CATEGORIES = [
-        'basic'     => __('Básico'),
-        'qualified' => __('Cualificado'),
-        'fumigator' => __('Fumigador'),
-        'pilot'     => __('Piloto'),
+        'basic'     => 'Básico',
+        'qualified' => 'Cualificado',
+        'fumigator' => 'Fumigador',
+        'pilot'     => 'Piloto',
     ];
 
     public function viticulturist(): BelongsTo

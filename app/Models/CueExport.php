@@ -11,11 +11,11 @@ class CueExport extends Model
     use HasFactory;
 
     const STATUSES = [
-        'draft'     => __('Borrador'),
-        'generated' => __('Generado'),
-        'sent'      => __('Enviado'),
-        'accepted'  => __('Aceptado'),
-        'rejected'  => __('Rechazado'),
+        'draft'     => 'Borrador',
+        'generated' => 'Generado',
+        'sent'      => 'Enviado',
+        'accepted'  => 'Aceptado',
+        'rejected'  => 'Rechazado',
     ];
 
     const STATUS_COLORS = [

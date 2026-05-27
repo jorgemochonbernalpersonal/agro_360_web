@@ -19,14 +19,14 @@ class BiodiversityRecord extends Model
     ];
 
     public const RECORD_TYPES = [
-        'cubierta_vegetal' => __('Cubierta Vegetal'),
-        'margen'           => __('Margen sin Labrar'),
-        'seto'             => __('Seto Vivo'),
-        'fauna_auxiliar'   => __('Fauna Auxiliar'),
-        'nido'             => __('Nido / Caja Nido'),
-        'hotel_insectos'   => __('Hotel de Insectos'),
-        'charca'           => __('Charca / Punto de Agua'),
-        'otro'             => __('Otro'),
+        'cubierta_vegetal' => 'Cubierta Vegetal',
+        'margen'           => 'Margen sin Labrar',
+        'seto'             => 'Seto Vivo',
+        'fauna_auxiliar'   => 'Fauna Auxiliar',
+        'nido'             => 'Nido / Caja Nido',
+        'hotel_insectos'   => 'Hotel de Insectos',
+        'charca'           => 'Charca / Punto de Agua',
+        'otro'             => 'Otro',
     ];
 
     public const RECORD_TYPE_ICONS = [

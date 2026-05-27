@@ -37,10 +37,10 @@ class DoLabel extends Model
     public const STATUS_CANCELLED = 'cancelled';
 
     public const STATUS_LABELS = [
-        'pending'   => __('Pendiente'),
-        'approved'  => __('Aprobada'),
-        'issued'    => __('Emitida'),
-        'cancelled' => __('Cancelada'),
+        'pending'   => 'Pendiente',
+        'approved'  => 'Aprobada',
+        'issued'    => 'Emitida',
+        'cancelled' => 'Cancelada',
     ];
 
     public const STATUS_COLORS = [

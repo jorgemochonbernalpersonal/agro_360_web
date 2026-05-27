@@ -15,16 +15,31 @@ class AgriculturalActivity extends Model
 
     // Tipos de actividad disponibles
     const ACTIVITY_TYPES = [
-        'phytosanitary' => __('Tratamiento fitosanitario'),
-        'fertilization' => __('Fertilización'),
-        'irrigation'    => __('Riego'),
-        'cultural'      => __('Labor cultural'),
-        'observation'   => __('Observación'),
-        'harvest'       => __('Cosecha'),
-        'pruning'       => __('Poda'),
-        'phenology'     => __('Observación fenológica'),
-        'post_harvest'  => __('Tratamiento post-vendimia'),
+        'phytosanitary' => 'Tratamiento fitosanitario',
+        'fertilization' => 'Fertilización',
+        'irrigation'    => 'Riego',
+        'cultural'      => 'Labor cultural',
+        'observation'   => 'Observación',
+        'harvest'       => 'Cosecha',
+        'pruning'       => 'Poda',
+        'phenology'     => 'Observación fenológica',
+        'post_harvest'  => 'Tratamiento post-vendimia',
     ];
+
+    public static function activityTypes(): array
+    {
+        return [
+            'phytosanitary' => 'Tratamiento fitosanitario',
+            'fertilization' => 'Fertilización',
+            'irrigation'    => 'Riego',
+            'cultural'      => 'Labor cultural',
+            'observation'   => 'Observación',
+            'harvest'       => 'Cosecha',
+            'pruning'       => 'Poda',
+            'phenology'     => 'Observación fenológica',
+            'post_harvest'  => 'Tratamiento post-vendimia',
+        ];
+    }
 
     protected $fillable = [
         'plot_id',
@@ -227,7 +242,7 @@ class AgriculturalActivity extends Model
         }
 
         if (!\Illuminate\Support\Facades\Auth::user()?->isAdmin()) {
-            throw new \RuntimeException(__('Solo los administradores pueden desbloquear actividades.'));
+            throw new \RuntimeException('Solo los administradores pueden desbloquear actividades.');
         }
 
         $this->update([

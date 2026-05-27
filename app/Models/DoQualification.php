@@ -43,9 +43,9 @@ class DoQualification extends Model
     public const RESULT_PENDING      = 'pending';
 
     public const RESULT_LABELS = [
-        'qualified'    => __('Calificado'),
-        'disqualified' => __('Descalificado'),
-        'pending'      => __('Pendiente'),
+        'qualified'    => 'Calificado',
+        'disqualified' => 'Descalificado',
+        'pending'      => 'Pendiente',
     ];
 
     public const RESULT_COLORS = [
@@ -55,12 +55,12 @@ class DoQualification extends Model
     ];
 
     public const COLOR_LABELS = [
-        'tinto'    => __('Tinto'),
-        'blanco'   => __('Blanco'),
-        'rosado'   => __('Rosado'),
-        'espumoso' => __('Espumoso'),
-        'dulce'    => __('Dulce'),
-        'otro'     => __('Otro'),
+        'tinto'    => 'Tinto',
+        'blanco'   => 'Blanco',
+        'rosado'   => 'Rosado',
+        'espumoso' => 'Espumoso',
+        'dulce'    => 'Dulce',
+        'otro'     => 'Otro',
     ];
 
     public function supervisor(): BelongsTo

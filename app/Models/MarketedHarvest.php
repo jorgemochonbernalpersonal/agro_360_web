@@ -12,10 +12,10 @@ class MarketedHarvest extends Model
     use HasFactory;
 
     const DESTINATION_TYPES = [
-        'own_winery'  => __('Bodega propia'),
-        'cooperative' => __('Cooperativa'),
-        'third_party' => __('Terceros'),
-        'other'       => __('Otro'),
+        'own_winery'  => 'Bodega propia',
+        'cooperative' => 'Cooperativa',
+        'third_party' => 'Terceros',
+        'other'       => 'Otro',
     ];
 
     protected $fillable = [

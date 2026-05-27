@@ -31,20 +31,20 @@ class PhenologyObservation extends Model
 
     /** Orden cronológico natural de los estadios */
     public const EVENTS = [
-        'budbreak'     => __('Desborre'),
-        'shoot_growth' => __('Crecimiento del pámpano'),
-        'flowering'    => __('Floración'),
-        'fruit_set'    => __('Cuajado'),
-        'veraison'     => __('Envero'),
-        'pre_harvest'  => __('Pre-vendimia'),
-        'harvest'      => __('Vendimia'),
+        'budbreak'     => 'Desborre',
+        'shoot_growth' => 'Crecimiento del pámpano',
+        'flowering'    => 'Floración',
+        'fruit_set'    => 'Cuajado',
+        'veraison'     => 'Envero',
+        'pre_harvest'  => 'Pre-vendimia',
+        'harvest'      => 'Vendimia',
     ];
 
     public const SOURCES = [
-        'manual' => __('Observación en campo'),
-        'sensor' => __('Sensor IoT'),
-        'model'  => __('Modelo predictivo'),
-        'auto'   => __('Detección automática'),
+        'manual' => 'Observación en campo',
+        'sensor' => 'Sensor IoT',
+        'model'  => 'Modelo predictivo',
+        'auto'   => 'Detección automática',
     ];
 
     /** Códigos BBCH estándar para la vid */

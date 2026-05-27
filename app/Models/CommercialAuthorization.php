@@ -11,12 +11,12 @@ class CommercialAuthorization extends Model
     use HasFactory;
 
     const AUTHORIZATION_TYPES = [
-        'do_registration'       => __('Inscripción Denominación de Origen'),
-        'organic_certification' => __('Certificación Ecológica'),
-        'planting_right'        => __('Derecho de Plantación'),
-        'replanting_right'      => __('Derecho de Replantación'),
-        'integrated_production' => __('Producción Integrada'),
-        'other'                 => __('Otro'),
+        'do_registration'       => 'Inscripción Denominación de Origen',
+        'organic_certification' => 'Certificación Ecológica',
+        'planting_right'        => 'Derecho de Plantación',
+        'replanting_right'      => 'Derecho de Replantación',
+        'integrated_production' => 'Producción Integrada',
+        'other'                 => 'Otro',
     ];
 
     protected $fillable = [

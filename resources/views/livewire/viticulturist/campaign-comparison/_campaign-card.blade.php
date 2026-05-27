@@ -2,7 +2,7 @@
 @php
     $h = $data['harvest'];
     $acts = $data['activityCounts'];
-    $actLabels = \App\Models\AgriculturalActivity::ACTIVITY_TYPES;
+    $actLabels = \App\Models\AgriculturalActivity::activityTypes();
 @endphp
 
 {{-- KPIs de vendimia --}}

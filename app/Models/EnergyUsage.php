@@ -11,17 +11,17 @@ class EnergyUsage extends Model
     use HasFactory;
 
     const ENERGY_TYPES = [
-        'diesel'      => __('Gasóleo agrícola'),
-        'gasoline'    => __('Gasolina'),
-        'electricity' => __('Electricidad'),
-        'lpg'         => __('GLP (Gas licuado del petróleo)'),
-        'natural_gas' => __('Gas natural'),
-        'water_pump'  => __('Bombeo de agua'),
-        'other'       => __('Otro'),
+        'diesel'      => 'Gasóleo agrícola',
+        'gasoline'    => 'Gasolina',
+        'electricity' => 'Electricidad',
+        'lpg'         => 'GLP (Gas licuado del petróleo)',
+        'natural_gas' => 'Gas natural',
+        'water_pump'  => 'Bombeo de agua',
+        'other'       => 'Otro',
     ];
 
     const UNITS = [
-        'liters' => __('Litros (L)'),
+        'liters' => 'Litros (L)',
         'kwh'    => 'kWh',
         'm3'     => 'm³',
         'kg'     => 'kg',

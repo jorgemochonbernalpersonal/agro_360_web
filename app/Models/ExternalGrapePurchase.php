@@ -8,17 +8,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class ExternalGrapePurchase extends Model
 {
     const PRODUCT_TYPES = [
-        'grape'             => __('Uva'),
-        'must'              => __('Mosto'),
-        'concentrated_must' => __('Mosto concentrado'),
-        'rectified_must'    => __('Mosto concentrado rectificado'),
+        'grape'             => 'Uva',
+        'must'              => 'Mosto',
+        'concentrated_must' => 'Mosto concentrado',
+        'rectified_must'    => 'Mosto concentrado rectificado',
     ];
 
     const STATUSES = [
-        'pending'   => __('Pendiente'),
-        'received'  => __('Recibido'),
-        'processed' => __('Procesado'),
-        'rejected'  => __('Rechazado'),
+        'pending'   => 'Pendiente',
+        'received'  => 'Recibido',
+        'processed' => 'Procesado',
+        'rejected'  => 'Rechazado',
     ];
 
     protected $fillable = [

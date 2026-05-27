@@ -30,12 +30,12 @@ class NotificationLog extends Model
     public function audienceLabel(): string
     {
         $roleMap = [
-            'all'           => __('Todos'),
-            'viticulturist' => __('Viticultores'),
-            'winery'        => __('Bodegas'),
-            'supervisor'    => __('Supervisores'),
-            'producer'      => __('Productores'),
-            'admin'         => __('Admins'),
+            'all'           => 'Todos',
+            'viticulturist' => 'Viticultores',
+            'winery'        => 'Bodegas',
+            'supervisor'    => 'Supervisores',
+            'producer'      => 'Productores',
+            'admin'         => 'Admins',
         ];
 
         return $roleMap[$this->audience_role] ?? $this->audience_role;

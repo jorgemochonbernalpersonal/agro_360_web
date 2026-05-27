@@ -200,10 +200,10 @@ class SupportTicket extends Model
     public function getStatusLabel(): string
     {
         return match ($this->status) {
-            'open' => __('Abierto'),
-            'in_progress' => __('En Progreso'),
-            'resolved' => __('Resuelto'),
-            'closed' => __('Cerrado'),
+            'open' => 'Abierto',
+            'in_progress' => 'En Progreso',
+            'resolved' => 'Resuelto',
+            'closed' => 'Cerrado',
             default => $this->status,
         };
     }

@@ -115,7 +115,7 @@ class Index extends Component
             'campaigns'             => $campaigns,
             'plots'                 => $plots,
             'stats'                 => $stats,
-            'activityTypes'         => AgriculturalActivity::ACTIVITY_TYPES,
+            'activityTypes'         => AgriculturalActivity::activityTypes(),
             'withoutCuadernoAccess' => $withoutCuadernoAccess,
             'isViticulturistOnly'   => $isViticulturistOnly,
         ])->layout('layouts.app');

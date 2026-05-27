@@ -27,10 +27,10 @@ class SupervisorWineryNote extends Model
     public const TYPE_NOTE    = 'note';
 
     public const TYPE_LABELS = [
-        'visit'   => __('Visita'),
-        'call'    => __('Llamada'),
-        'warning' => __('Aviso'),
-        'note'    => __('Nota'),
+        'visit'   => 'Visita',
+        'call'    => 'Llamada',
+        'warning' => 'Aviso',
+        'note'    => 'Nota',
     ];
 
     public const TYPE_ICONS = [

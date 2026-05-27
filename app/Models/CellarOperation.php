@@ -8,20 +8,20 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class CellarOperation extends Model
 {
     const OPERATION_TYPES = [
-        'racking'       => __('Trasiego'),
-        'clarification' => __('Clarificación / Colaje'),
-        'filtration'    => __('Filtración'),
-        'stabilization' => __('Estabilización'),
-        'sulfiting'     => __('Sulfitado'),
-        'blending'      => __('Cupaje / Mezcla'),
-        'other'         => __('Otra operación'),
+        'racking'       => 'Trasiego',
+        'clarification' => 'Clarificación / Colaje',
+        'filtration'    => 'Filtración',
+        'stabilization' => 'Estabilización',
+        'sulfiting'     => 'Sulfitado',
+        'blending'      => 'Cupaje / Mezcla',
+        'other'         => 'Otra operación',
     ];
 
     const STATUSES = [
-        'planned'     => __('Planificada'),
-        'in_progress' => __('En curso'),
-        'completed'   => __('Completada'),
-        'cancelled'   => __('Cancelada'),
+        'planned'     => 'Planificada',
+        'in_progress' => 'En curso',
+        'completed'   => 'Completada',
+        'cancelled'   => 'Cancelada',
     ];
 
     protected $fillable = [

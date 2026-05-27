@@ -28,14 +28,14 @@ class FieldEquipment extends Model
     ];
 
     public const TYPES = [
-        'sprayer'    => __('Pulverizador'),
-        'spreader'   => __('Abonadora/Esparcidora'),
-        'irrigation' => __('Equipo de riego'),
-        'tractor'    => __('Tractor'),
-        'harvester'  => __('Vendimidora'),
-        'pruner'     => __('Podadora'),
-        'mower'      => __('Segadora/Trituradora'),
-        'other'      => __('Otro'),
+        'sprayer'    => 'Pulverizador',
+        'spreader'   => 'Abonadora/Esparcidora',
+        'irrigation' => 'Equipo de riego',
+        'tractor'    => 'Tractor',
+        'harvester'  => 'Vendimidora',
+        'pruner'     => 'Podadora',
+        'mower'      => 'Segadora/Trituradora',
+        'other'      => 'Otro',
     ];
 
     public function viticulturist(): BelongsTo

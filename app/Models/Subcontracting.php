@@ -35,15 +35,15 @@ class Subcontracting extends Model
     ];
 
     public const SERVICE_TYPES = [
-        'harvesting'    => __('Vendimia'),
-        'pruning'       => __('Poda'),
-        'treatment'     => __('Tratamientos fitosanitarios'),
-        'fertilization' => __('Abonado / Fertilización'),
-        'irrigation'    => __('Riego'),
-        'soil_work'     => __('Laboreo del suelo'),
-        'transport'     => __('Transporte'),
-        'analysis'      => __('Análisis / Asesoría'),
-        'other'         => __('Otros servicios'),
+        'harvesting'    => 'Vendimia',
+        'pruning'       => 'Poda',
+        'treatment'     => 'Tratamientos fitosanitarios',
+        'fertilization' => 'Abonado / Fertilización',
+        'irrigation'    => 'Riego',
+        'soil_work'     => 'Laboreo del suelo',
+        'transport'     => 'Transporte',
+        'analysis'      => 'Análisis / Asesoría',
+        'other'         => 'Otros servicios',
     ];
 
     public function viticulturist(): BelongsTo

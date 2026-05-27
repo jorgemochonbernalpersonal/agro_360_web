@@ -11,39 +11,39 @@ use Illuminate\Support\Str;
 class Wine extends Model
 {
     const WINE_TYPES = [
-        'red'        => __('Tinto'),
-        'white'      => __('Blanco'),
-        'rose'       => __('Rosado'),
-        'sparkling'  => __('Espumoso'),
-        'fortified'  => __('Generoso / Fortificado'),
-        'sweet'      => __('Dulce'),
-        'semi_sweet' => __('Semidulce'),
-        'other'      => __('Otro'),
+        'red'        => 'Tinto',
+        'white'      => 'Blanco',
+        'rose'       => 'Rosado',
+        'sparkling'  => 'Espumoso',
+        'fortified'  => 'Generoso / Fortificado',
+        'sweet'      => 'Dulce',
+        'semi_sweet' => 'Semidulce',
+        'other'      => 'Otro',
     ];
 
     const STATUSES = [
-        'in_progress' => __('En elaboración'),
-        'aged'        => __('En crianza'),
-        'bottled'     => __('Embotellado'),
-        'sold'        => __('Vendido'),
-        'cancelled'   => __('Cancelado'),
+        'in_progress' => 'En elaboración',
+        'aged'        => 'En crianza',
+        'bottled'     => 'Embotellado',
+        'sold'        => 'Vendido',
+        'cancelled'   => 'Cancelado',
     ];
 
     const AGING_TYPES = [
-        'joven'       => __('Joven'),
-        'roble'       => __('Roble'),
-        'crianza'     => __('Crianza'),
-        'reserva'     => __('Reserva'),
-        'gran_reserva'=> __('Gran Reserva'),
-        'other'       => __('Otro'),
+        'joven'       => 'Joven',
+        'roble'       => 'Roble',
+        'crianza'     => 'Crianza',
+        'reserva'     => 'Reserva',
+        'gran_reserva'=> 'Gran Reserva',
+        'other'       => 'Otro',
     ];
 
     const CATEGORIES = [
-        'VdM'         => __('Vino de Mesa'),
+        'VdM'         => 'Vino de Mesa',
         'IGP'         => 'IGP',
         'DO'          => 'DO',
-        'DOCa'        => __('DOCa'),
-        'vino_de_pago'=> __('Vino de Pago'),
+        'DOCa'        => 'DOCa',
+        'vino_de_pago'=> 'Vino de Pago',
     ];
 
     protected static function booted(): void

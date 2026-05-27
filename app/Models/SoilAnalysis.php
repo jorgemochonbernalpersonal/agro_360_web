@@ -32,21 +32,21 @@ class SoilAnalysis extends Model
     ];
 
     public const TEXTURE_CLASSES = [
-        'arenoso'          => __('Arenoso'),
-        'franco_arenoso'   => __('Franco-Arenoso'),
-        'franco'           => __('Franco'),
-        'franco_arcilloso' => __('Franco-Arcilloso'),
-        'arcilloso'        => __('Arcilloso'),
-        'franco_limoso'    => __('Franco-Limoso'),
-        'limoso'           => __('Limoso'),
+        'arenoso'          => 'Arenoso',
+        'franco_arenoso'   => 'Franco-Arenoso',
+        'franco'           => 'Franco',
+        'franco_arcilloso' => 'Franco-Arcilloso',
+        'arcilloso'        => 'Arcilloso',
+        'franco_limoso'    => 'Franco-Limoso',
+        'limoso'           => 'Limoso',
     ];
 
     public const PH_RANGES = [
-        'muy_acido'      => ['label' => __('Muy ácido'),      'min' => 0,    'max' => 5.5,  'color' => 'red'],
-        'acido'          => ['label' => __('Ácido'),          'min' => 5.5,  'max' => 6.5,  'color' => 'amber'],
-        'neutro'         => ['label' => __('Neutro'),         'min' => 6.5,  'max' => 7.5,  'color' => 'green'],
-        'basico'         => ['label' => __('Básico'),         'min' => 7.5,  'max' => 8.5,  'color' => 'blue'],
-        'muy_basico'     => ['label' => __('Muy básico'),     'min' => 8.5,  'max' => 14,   'color' => 'violet'],
+        'muy_acido'      => ['label' => 'Muy ácido',      'min' => 0,    'max' => 5.5,  'color' => 'red'],
+        'acido'          => ['label' => 'Ácido',          'min' => 5.5,  'max' => 6.5,  'color' => 'amber'],
+        'neutro'         => ['label' => 'Neutro',         'min' => 6.5,  'max' => 7.5,  'color' => 'green'],
+        'basico'         => ['label' => 'Básico',         'min' => 7.5,  'max' => 8.5,  'color' => 'blue'],
+        'muy_basico'     => ['label' => 'Muy básico',     'min' => 8.5,  'max' => 14,   'color' => 'violet'],
     ];
 
     // ── Relaciones ───────────────────────────────────────────────────────────

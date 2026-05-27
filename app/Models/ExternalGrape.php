@@ -37,22 +37,22 @@ class ExternalGrape extends Model
     ];
 
     const TYPES = [
-        'grapes'    => __('Uva'),
-        'must'      => __('Mosto'),
-        'bulk_wine' => __('Vino a granel'),
+        'grapes'    => 'Uva',
+        'must'      => 'Mosto',
+        'bulk_wine' => 'Vino a granel',
     ];
 
     const COLORS = [
-        'white' => __('Blanca'),
-        'red'   => __('Tinta'),
-        'rose'  => __('Rosada'),
-        'other' => __('Otra'),
+        'white' => 'Blanca',
+        'red'   => 'Tinta',
+        'rose'  => 'Rosada',
+        'other' => 'Otra',
     ];
 
     const STATUSES = [
-        'available' => __('Disponible'),
-        'used'      => __('Usado'),
-        'archived'  => __('Archivado'),
+        'available' => 'Disponible',
+        'used'      => 'Usado',
+        'archived'  => 'Archivado',
     ];
 
     public function user(): BelongsTo

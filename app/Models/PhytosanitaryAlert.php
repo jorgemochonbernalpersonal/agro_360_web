@@ -21,26 +21,26 @@ class PhytosanitaryAlert extends Model
 
     public const SOURCES = [
         'mapa'          => 'MAPA',
-        'consejeria'    => __('Consejería Agricultura'),
-        'denominacion'  => __('Denominación de Origen'),
-        'cooperativa'   => __('Cooperativa'),
-        'asesoria'      => __('Asesoría Técnica'),
-        'otro'          => __('Otro'),
+        'consejeria'    => 'Consejería Agricultura',
+        'denominacion'  => 'Denominación de Origen',
+        'cooperativa'   => 'Cooperativa',
+        'asesoria'      => 'Asesoría Técnica',
+        'otro'          => 'Otro',
     ];
 
     public const ALERT_TYPES = [
-        'plaga'         => __('Plaga'),
-        'enfermedad'    => __('Enfermedad'),
-        'climatologica' => __('Climatológica'),
-        'normativa'     => __('Normativa'),
-        'otro'          => __('Otro'),
+        'plaga'         => 'Plaga',
+        'enfermedad'    => 'Enfermedad',
+        'climatologica' => 'Climatológica',
+        'normativa'     => 'Normativa',
+        'otro'          => 'Otro',
     ];
 
     public const SEVERITIES = [
-        'baja'    => __('Baja'),
-        'media'   => __('Media'),
-        'alta'    => __('Alta'),
-        'critica' => __('Crítica'),
+        'baja'    => 'Baja',
+        'media'   => 'Media',
+        'alta'    => 'Alta',
+        'critica' => 'Crítica',
     ];
 
     public const SEVERITY_COLORS = [

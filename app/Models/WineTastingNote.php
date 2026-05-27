@@ -8,44 +8,44 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class WineTastingNote extends Model
 {
     const VISUAL_CLARITY = [
-        'brilliant'     => __('Brillante'),
-        'clear'         => __('Limpio'),
-        'slightly_hazy' => __('Ligeramente turbio'),
-        'hazy'          => __('Turbio'),
+        'brilliant'     => 'Brillante',
+        'clear'         => 'Limpio',
+        'slightly_hazy' => 'Ligeramente turbio',
+        'hazy'          => 'Turbio',
     ];
 
     const VISUAL_INTENSITY = [
-        'pale'      => __('Pálido'),
-        'medium'    => __('Medio'),
-        'deep'      => __('Intenso'),
-        'very_deep' => __('Muy intenso'),
+        'pale'      => 'Pálido',
+        'medium'    => 'Medio',
+        'deep'      => 'Intenso',
+        'very_deep' => 'Muy intenso',
     ];
 
     const AROMA_INTENSITY = [
-        'light'     => __('Ligero'),
-        'medium'    => __('Medio'),
-        'pronounced'=> __('Pronunciado'),
-        'complex'   => __('Complejo'),
+        'light'     => 'Ligero',
+        'medium'    => 'Medio',
+        'pronounced'=> 'Pronunciado',
+        'complex'   => 'Complejo',
     ];
 
     const PALATE_LEVEL = [
-        'low'          => __('Bajo'),
-        'medium_minus' => __('Medio-'),
-        'medium'       => __('Medio'),
-        'medium_plus'  => __('Medio+'),
-        'high'         => __('Alto'),
+        'low'          => 'Bajo',
+        'medium_minus' => 'Medio-',
+        'medium'       => 'Medio',
+        'medium_plus'  => 'Medio+',
+        'high'         => 'Alto',
     ];
 
     const PALATE_BODY = [
-        'light'  => __('Ligero'),
-        'medium' => __('Medio'),
-        'full'   => __('Pleno'),
+        'light'  => 'Ligero',
+        'medium' => 'Medio',
+        'full'   => 'Pleno',
     ];
 
     const PALATE_FINISH = [
-        'short'  => __('Corto'),
-        'medium' => __('Medio'),
-        'long'   => __('Largo'),
+        'short'  => 'Corto',
+        'medium' => 'Medio',
+        'long'   => 'Largo',
     ];
 
     protected $fillable = [

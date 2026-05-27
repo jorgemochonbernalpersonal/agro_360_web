@@ -111,7 +111,7 @@
                         @if($plot->lastAgriculturalActivity)
                             <div class="text-xs text-zinc-400 mt-1.5">
                                 Última actividad: {{ $plot->lastAgriculturalActivity->activity_date->format('d/m/Y') }}
-                                · {{ \App\Models\AgriculturalActivity::ACTIVITY_TYPES[$plot->lastAgriculturalActivity->activity_type] ?? $plot->lastAgriculturalActivity->activity_type }}
+                                · {{ \App\Models\AgriculturalActivity::activityTypes()[$plot->lastAgriculturalActivity->activity_type] ?? $plot->lastAgriculturalActivity->activity_type }}
                             </div>
                         @endif
                     </div>
@@ -143,7 +143,7 @@
                         <div class="px-4 py-2.5 border-b border-zinc-100 last:border-0 flex items-center justify-between gap-4">
                             <div>
                                 <span class="text-sm text-zinc-700">
-                                    {{ \App\Models\AgriculturalActivity::ACTIVITY_TYPES[$activity->activity_type] ?? $activity->activity_type }}
+                                    {{ \App\Models\AgriculturalActivity::activityTypes()[$activity->activity_type] ?? $activity->activity_type }}
                                 </span>
                                 @if($activity->plot_id)
                                     <span class="text-xs text-zinc-400"> · Parcela #{{ $activity->plot_id }}</span>
@@ -186,7 +186,7 @@
                         <span class="font-medium text-zinc-700">Actividad {{ now()->year }}</span>
                     </div>
                 </x-slot>
-                @foreach(\App\Models\AgriculturalActivity::ACTIVITY_TYPES as $type => $label)
+                @foreach(\App\Models\AgriculturalActivity::activityTypes() as $type => $label)
                     @php $count = $activityCounts[$type] ?? 0; @endphp
                     @if($count > 0)
                         <div class="px-4 py-2 flex items-center justify-between border-b border-zinc-50 last:border-0">
