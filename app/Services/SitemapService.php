@@ -83,13 +83,13 @@ class SitemapService
             'images'     => [
                 [
                     'loc'     => $this->getAbsoluteUrl('images/logo.png'),
-                    'caption' => __('Logo de Agro365, software profesional para viñedos y bodegas'),
-                    'title'   => __('Agro365 - Software de Gestión Agrícola'),
+                    'caption' => 'Logo de Agro365, software profesional para viñedos y bodegas',
+                    'title'   => 'Agro365 - Software de Gestión Agrícola',
                 ],
                 [
                     'loc'     => $this->getAbsoluteUrl('images/dashboard-preview.png'),
-                    'caption' => __('Vista del dashboard de gestión agrícola con SIGPAC y cuaderno digital'),
-                    'title'   => __('Dashboard de Agro365'),
+                    'caption' => 'Vista del dashboard de gestión agrícola con SIGPAC y cuaderno digital',
+                    'title'   => 'Dashboard de Agro365',
                 ],
             ],
         ];
