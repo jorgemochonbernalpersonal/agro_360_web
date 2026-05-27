@@ -262,16 +262,16 @@
 
                     <x-agro.table-cell>
                         <flux:badge color="{{ $sub->plan_type === 'yearly' ? 'purple' : 'blue' }}" size="sm">
-                            {{ $sub->plan_type === 'yearly' ? 'Anual' : 'Mensual' }}
+                            {{ $sub->plan_type === 'yearly' ? __('Anual') : __('Mensual') }}
                         </flux:badge>
                     </x-agro.table-cell>
 
                     <x-agro.table-cell>
                         @php
                             $statusMap = [
-                                'active'    => ['label' => 'Activa',    'color' => 'green'],
-                                'cancelled' => ['label' => 'Cancelada', 'color' => 'red'],
-                                'expired'   => ['label' => 'Expirada',  'color' => 'zinc'],
+                                'active'    => ['label' => __('Activa'),    'color' => 'green'],
+                                'cancelled' => ['label' => __('Cancelada'), 'color' => 'red'],
+                                'expired'   => ['label' => __('Expirada'),  'color' => 'zinc'],
                             ];
                             $s = $statusMap[$sub->status] ?? ['label' => $sub->status, 'color' => null];
                         @endphp
@@ -313,7 +313,7 @@
                                 class="text-red-400 hover:text-red-600"
                                 wire:click="cancelSubscription({{ $sub->id }})"
                                 wire:confirm="{{ __('¿Cancelar la suscripción de :name?', ['name' => $sub->user?->name]) }}"
-                                tooltip="Cancelar suscripción"
+                                tooltip="{{ __('Cancelar suscripción') }}"
                             />
                         @endif
                     </x-agro.table-cell>

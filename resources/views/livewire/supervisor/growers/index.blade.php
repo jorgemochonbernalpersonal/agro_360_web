@@ -236,7 +236,7 @@
                 <flux:field>
                     <flux:label>{{ __('Email') }} <span class="text-zinc-400 font-normal text-xs">{{ __('(opcional)') }}</span></flux:label>
                     <flux:input wire:model="createEmail" type="email" placeholder="viticultor@ejemplo.com" />
-                    <flux:description class="text-xs text-zinc-400">Si lo introduces podrás enviarle una invitación directamente.</flux:description>
+                    <flux:description class="text-xs text-zinc-400">{{ __('Si lo introduces podrás enviarle una invitación directamente.') }}</flux:description>
                     <flux:error name="createEmail" />
                 </flux:field>
 

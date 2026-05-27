@@ -60,7 +60,7 @@
                                         {{ in_array('mail', $channels[$catKey] ?? [])
                                             ? 'bg-agro-100 text-agro-700 ring-1 ring-agro-300'
                                             : 'bg-zinc-100 text-zinc-400 hover:bg-zinc-200' }}"
-                                    title="{{ in_array('mail', $channels[$catKey] ?? []) ? 'Desactivar email' : 'Activar email' }}"
+                                    title="{{ in_array('mail', $channels[$catKey] ?? []) ? __('Desactivar email') : __('Activar email') }}"
                                 >
                                     <flux:icon icon="envelope" class="size-3.5" />
                                     Email

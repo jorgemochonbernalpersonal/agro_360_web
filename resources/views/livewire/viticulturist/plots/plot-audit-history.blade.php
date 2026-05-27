@@ -17,12 +17,12 @@
         </x-agro-filter-select>
 
         <div class="flex flex-col gap-1">
-            <x-agro-field-label>Desde</x-agro-field-label>
+            <x-agro-field-label>{{ __('Desde') }}</x-agro-field-label>
             <flux:input type="date" wire:model.live="filterDateFrom" />
         </div>
 
         <div class="flex flex-col gap-1">
-            <x-agro-field-label>Hasta</x-agro-field-label>
+            <x-agro-field-label>{{ __('Hasta') }}</x-agro-field-label>
             <flux:input type="date" wire:model.live="filterDateTo" />
         </div>
 

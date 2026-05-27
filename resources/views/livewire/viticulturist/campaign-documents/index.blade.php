@@ -136,7 +136,7 @@
     <flux:modal wire:model="showModal" class="max-w-xl">
         <div class="p-6 space-y-6">
             <h2 class="text-lg font-semibold text-zinc-900">
-                {{ $editingId ? 'Editar Documento' : 'Subir Documento' }}
+                {{ $editingId ? __('Editar Documento') : __('Subir Documento') }}
             </h2>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -175,7 +175,7 @@
                             accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx"
                             class="block w-full text-sm text-zinc-700 border border-zinc-300 rounded-lg cursor-pointer bg-zinc-50 focus:outline-none p-2"
                         />
-                        <flux:description>PDF, imágenes, Word o Excel. Máx. 20 MB.</flux:description>
+                        <flux:description>{{ __('PDF, imágenes, Word o Excel. Máx. 20 MB.') }}</flux:description>
                         <flux:error name="uploadedFile" />
                         <div wire:loading wire:target="uploadedFile" class="text-sm text-blue-600 mt-1">Subiendo archivo...</div>
                     </flux:field>
@@ -191,7 +191,7 @@
             <div class="flex justify-end gap-3 pt-4 border-t border-zinc-200">
                 <flux:button variant="ghost" wire:click="$set('showModal', false)">{{ __('Cancelar') }}</flux:button>
                 <flux:button variant="primary" wire:click="save" wire:loading.attr="disabled" wire:loading.class="opacity-60 cursor-not-allowed">
-                    <span wire:loading.remove wire:target="save">{{ $editingId ? 'Actualizar' : 'Subir Documento' }}</span>
+                    <span wire:loading.remove wire:target="save">{{ $editingId ? __('Actualizar') : __('Subir Documento') }}</span>
                     <span wire:loading wire:target="save" class="flex items-center gap-2">
                         <flux:icon icon="arrow-path" class="w-4 h-4 animate-spin" />
                         Guardando...

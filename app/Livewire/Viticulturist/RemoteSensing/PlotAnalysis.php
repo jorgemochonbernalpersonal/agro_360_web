@@ -73,7 +73,7 @@ class PlotAnalysis extends Component
             $this->generateRecommendations();
             
         } catch (\Exception $e) {
-            $this->error = 'Error al cargar los datos: ' . $e->getMessage();
+            $this->error = __('Error al cargar los datos') . ': ' . $e->getMessage();
             \Log::error('PlotAnalysis error', [
                 'plot_id' => $this->plot->id,
                 'error' => $e->getMessage(),

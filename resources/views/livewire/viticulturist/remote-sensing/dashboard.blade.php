@@ -98,15 +98,15 @@
         </div>
         <div class="bg-green-50 rounded-xl border border-green-200 p-3 text-center">
             <div class="text-2xl font-bold text-green-600">{{ ($stats['excellent'] ?? 0) + ($stats['good'] ?? 0) }}</div>
-            <div class="text-xs text-zinc-500">Saludables</div>
+            <div class="text-xs text-zinc-500">{{ __('Saludables') }}</div>
         </div>
         <div class="bg-yellow-50 rounded-xl border border-yellow-200 p-3 text-center">
             <div class="text-2xl font-bold text-yellow-600">{{ $stats['moderate'] ?? 0 }}</div>
-            <div class="text-xs text-zinc-500">Moderadas</div>
+            <div class="text-xs text-zinc-500">{{ __('Moderadas') }}</div>
         </div>
         <div class="bg-red-50 rounded-xl border border-red-200 p-3 text-center">
             <div class="text-2xl font-bold text-red-600">{{ $stats['alerts'] ?? 0 }}</div>
-            <div class="text-xs text-zinc-500">Alertas</div>
+            <div class="text-xs text-zinc-500">{{ __('Alertas') }}</div>
         </div>
     </div>
 

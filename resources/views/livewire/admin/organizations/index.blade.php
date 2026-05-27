@@ -32,10 +32,10 @@
                     variant="ghost"
                     size="sm"
                     icon="bug-ant"
-                    tooltip="{{ $showInternal ? 'Ocultar organizaciones internas' : 'Mostrar organizaciones internas (demo/test)' }}"
+                    tooltip="{{ $showInternal ? __('Ocultar organizaciones internas') : __('Mostrar organizaciones internas (demo/test)') }}"
                     @class(['text-amber-500 bg-amber-50' => $showInternal])
                 >
-                    Internos
+                    {{ __('Internos') }}
                 </flux:button>
             </x-agro.filter-bar>
         </div>
@@ -136,7 +136,7 @@
             <div class="p-6 space-y-5">
                 <div>
                     <h3 class="text-base font-semibold text-zinc-900 dark:text-white">
-                        {{ $editingId ? 'Editar organización' : 'Nueva organización' }}
+                        {{ $editingId ? __('Editar organización') : __('Nueva organización') }}
                     </h3>
                 </div>
 
@@ -240,7 +240,7 @@
                 <div class="flex justify-end gap-3 pt-2">
                     <flux:button wire:click="closeModal" variant="ghost">{{ __('Cancelar') }}</flux:button>
                     <flux:button wire:click="save" variant="primary">
-                        {{ $editingId ? 'Guardar cambios' : 'Crear organización' }}
+                        {{ $editingId ? __('Guardar cambios') : __('Crear organización') }}
                     </flux:button>
                 </div>
             </div>

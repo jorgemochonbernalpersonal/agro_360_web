@@ -178,7 +178,7 @@
                 </x-slot:header>
                 <div class="flex flex-wrap gap-2">
                     <flux:badge :color="$machinery->active ? 'green' : null">
-                        {{ $machinery->active ? 'Activa' : 'Inactiva' }}
+                        {{ $machinery->active ? __('Activa') : __('Inactiva') }}
                     </flux:badge>
                     @if($machinery->is_rented)
                         <flux:badge color="blue">{{ __('Alquilada') }}</flux:badge>

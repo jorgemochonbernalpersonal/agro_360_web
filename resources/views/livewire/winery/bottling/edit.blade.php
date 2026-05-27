@@ -62,7 +62,7 @@
                 @if($originContainer)
                     <div class="lg:col-span-3">
                         <flux:callout variant="info" icon="cube">
-                            <flux:callout.heading>Contenedor de origen</flux:callout.heading>
+                            <flux:callout.heading>{{ __('Contenedor de origen') }}</flux:callout.heading>
                             <flux:callout.text>
                                 <strong>{{ $originContainer->name }}</strong>
                                 @if($originContainer->containerType) · {{ $originContainer->containerType->name }}@endif

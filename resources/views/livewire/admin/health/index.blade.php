@@ -93,7 +93,7 @@
                 <div class="flex justify-between items-center">
                     <span class="text-sm text-zinc-600">{{ __('Estado') }}</span>
                     <span class="text-sm font-semibold {{ $health['database']['status'] === 'ok' ? 'text-agro-600' : 'text-red-600' }}">
-                        {{ $health['database']['status'] === 'error' ? 'Sin conexión' : 'Conectado' }}
+                        {{ $health['database']['status'] === 'error' ? __('Sin conexión') : __('Conectado') }}
                     </span>
                 </div>
                 @if($health['database']['latency'] !== null)
@@ -130,7 +130,7 @@
                 <div class="flex justify-between items-center">
                     <span class="text-sm text-zinc-600">{{ __('Lectura / escritura') }}</span>
                     <span class="text-sm font-semibold {{ $health['cache']['status'] === 'ok' ? 'text-agro-600' : 'text-red-600' }}">
-                        {{ $health['cache']['status'] === 'ok' ? 'OK' : 'Fallo' }}
+                        {{ $health['cache']['status'] === 'ok' ? __('OK') : __('Fallo') }}
                     </span>
                 </div>
                 @if(isset($health['cache']['error']))

@@ -11,7 +11,7 @@
                     variant="ghost"
                     icon="arrow-path"
                 >
-                    Reintentar todos ({{ $totalCount }})
+                    {{ __('Reintentar todos') }} ({{ $totalCount }})
                 </flux:button>
                 <flux:button
                     wire:click="deleteAll"

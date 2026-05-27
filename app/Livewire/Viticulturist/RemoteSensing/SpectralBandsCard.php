@@ -62,7 +62,7 @@ class SpectralBandsCard extends Component
             $remoteSensing = $query->orderBy('image_date', 'desc')->first();
 
             if (!$remoteSensing) {
-                $this->error = 'Sin datos para este recinto. Haz clic en "Actualizar Sentinel-2" para cargarlos.';
+                $this->error = __('Sin datos para este recinto. Haz clic en "Actualizar Sentinel-2" para cargarlos.');
                 return;
             }
 
@@ -105,7 +105,7 @@ class SpectralBandsCard extends Component
             ];
 
         } catch (\Exception $e) {
-            $this->error = 'Error al cargar datos espectrales';
+            $this->error = __('Error al cargar datos espectrales');
             logger()->error('Spectral data load failed', [
                 'plot_id' => $this->plot->id,
                 'error' => $e->getMessage(),

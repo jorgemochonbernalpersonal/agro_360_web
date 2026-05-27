@@ -42,7 +42,7 @@
             variant="ghost"
             size="sm"
             icon="bug-ant"
-            tooltip="{{ $showInternal ? 'Ocultar SIGPACs internos' : 'Mostrar SIGPACs internos (demo/test)' }}"
+            tooltip="{{ $showInternal ? __('Ocultar SIGPACs internos') : __('Mostrar SIGPACs internos (demo/test)') }}"
             @class(['text-amber-500 bg-amber-50' => $showInternal])
         >
             Internos

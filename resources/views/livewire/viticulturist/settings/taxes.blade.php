@@ -13,20 +13,20 @@
     {{-- Resumen del estado actual --}}
     @if(count($enabledTaxIds) === 0)
         <flux:callout variant="warning" icon="exclamation-triangle">
-            <flux:callout.heading>Sin impuesto configurado</flux:callout.heading>
+            <flux:callout.heading>{{ __('Sin impuesto configurado') }}</flux:callout.heading>
             <flux:callout.text>
-                Activa al menos un impuesto para poder emitir facturas correctamente.
+                {{ __('Activa al menos un impuesto para poder emitir facturas correctamente.') }}
             </flux:callout.text>
         </flux:callout>
     @else
         @php $defaultTax = $taxes->firstWhere('id', $defaultTaxId); @endphp
         @if($defaultTax)
             <flux:callout variant="success" icon="check-circle">
-                <flux:callout.heading>Impuesto por defecto activo</flux:callout.heading>
+                <flux:callout.heading>{{ __('Impuesto por defecto activo') }}</flux:callout.heading>
                 <flux:callout.text>
                     <strong>{{ $defaultTax->name }}</strong> ({{ $defaultTax->formatted_rate }})
-                    se aplicará automáticamente en los nuevos ítems de factura.
-                    Tienes {{ count($enabledTaxIds) }} {{ count($enabledTaxIds) === 1 ? 'impuesto habilitado' : 'impuestos habilitados' }}.
+                    {{ __('se aplicará automáticamente en los nuevos ítems de factura.') }}
+                    {{ __('Tienes') }} {{ count($enabledTaxIds) }} {{ count($enabledTaxIds) === 1 ? __('impuesto habilitado') : __('impuestos habilitados') }}.
                 </flux:callout.text>
             </flux:callout>
         @endif

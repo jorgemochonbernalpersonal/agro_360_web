@@ -5,7 +5,7 @@
         <div>
             <div class="flex items-center gap-2 text-sm text-zinc-400 mb-1">
                 <a href="{{ route('supervisor.oversight.growers.index') }}" wire:navigate
-                   class="hover:text-zinc-600 transition">Supervisión — Viticultores</a>
+                   class="hover:text-zinc-600 transition">{{ __('Supervisión — Viticultores') }}</a>
                 <flux:icon icon="chevron-right" class="size-3" />
                 <span class="text-zinc-600">{{ $viticulturist->name }}</span>
             </div>
@@ -116,7 +116,7 @@
                         @endif
                     </div>
                 @empty
-                    <div class="px-4 py-8 text-center text-sm text-zinc-400">Sin parcelas activas</div>
+                    <div class="px-4 py-8 text-center text-sm text-zinc-400">{{ __('Sin parcelas activas') }}</div>
                 @endforelse
             </x-agro.card>
 
@@ -134,7 +134,7 @@
                                 wire:confirm="{{ __('¿Revocar el acceso al cuaderno de :name?', ['name' => $viticulturist->name]) }}"
                                 variant="ghost" size="sm" icon="x-mark"
                             >
-                                Revocar acceso
+                                {{ __('Revocar acceso') }}
                             </flux:button>
                         </div>
                     </x-slot>
@@ -196,7 +196,7 @@
                     @endif
                 @endforeach
                 @if($activityCounts->isEmpty())
-                    <div class="px-4 py-4 text-center text-sm text-zinc-400">Sin actividad este año</div>
+                    <div class="px-4 py-4 text-center text-sm text-zinc-400">{{ __('Sin actividad este año') }}</div>
                 @endif
             </x-agro.card>
 
@@ -234,7 +234,7 @@
                         </button>
                     </div>
                 @empty
-                    <div class="px-4 py-4 text-center text-sm text-zinc-400">No asignado a bodegas</div>
+                    <div class="px-4 py-4 text-center text-sm text-zinc-400">{{ __('No asignado a bodegas') }}</div>
                 @endforelse
             </x-agro.card>
 
@@ -260,7 +260,7 @@
                         @endif
                     </div>
                 @empty
-                    <div class="px-4 py-4 text-center text-sm text-zinc-400">Sin certificaciones</div>
+                    <div class="px-4 py-4 text-center text-sm text-zinc-400">{{ __('Sin certificaciones') }}</div>
                 @endforelse
             </x-agro.card>
 

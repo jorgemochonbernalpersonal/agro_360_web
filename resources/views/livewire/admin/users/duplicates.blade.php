@@ -33,7 +33,7 @@
                                 <div class="flex-1 min-w-0">
                                     <div class="flex items-center gap-2 flex-wrap">
                                         <a href="{{ route('admin.users.show', $u->id) }}" class="text-sm font-semibold text-zinc-900 hover:text-agro-600">{{ $u->name }}</a>
-                                        <flux:badge color="{{ $u->can_login ? 'green' : 'zinc' }}" size="sm">{{ $u->can_login ? 'Activo' : 'Inactivo' }}</flux:badge>
+                                        <flux:badge color="{{ $u->can_login ? 'green' : 'zinc' }}" size="sm">{{ $u->can_login ? __('Activo') : __('Inactivo') }}</flux:badge>
                                         @if($u->email_verified_at) <flux:badge color="blue" size="sm">{{ __('Verificado') }}</flux:badge> @endif
                                         @if($i === 0) <flux:badge color="agro" size="sm">{{ __('Conservar') }}</flux:badge> @endif
                                     </div>

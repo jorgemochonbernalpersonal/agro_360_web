@@ -50,7 +50,7 @@ class PlotNdviCard extends Component
                 ])->values()->toArray();
             }
         } catch (\Exception $e) {
-            $this->error = 'Error al cargar datos de teledetección';
+            $this->error = __('Error al cargar datos de teledetección');
             \Log::error('Error loading remote sensing data', [
                 'plot_id' => $this->plot->id,
                 'error' => $e->getMessage(),

@@ -15,7 +15,7 @@
                     variant="ghost"
                     icon="check-badge"
                 >
-                    Verificar Email
+                    {{ __('Verificar Email') }}
                 </flux:button>
             @endif
 
@@ -25,7 +25,7 @@
                 variant="ghost"
                 icon="key"
             >
-                Reset Contraseña
+                {{ __('Reset Contraseña') }}
             </flux:button>
 
             <flux:button
@@ -34,7 +34,7 @@
                 variant="ghost"
                 icon="{{ $user->can_login ? 'lock-closed' : 'lock-open' }}"
             >
-                {{ $user->can_login ? 'Desactivar' : 'Activar' }}
+                {{ $user->can_login ? __('Desactivar') : __('Activar') }}
             </flux:button>
 
             <flux:button
@@ -50,7 +50,7 @@
                     variant="primary"
                     icon="arrow-right-end-on-rectangle"
                 >
-                    Entrar como usuario
+                    {{ __('Entrar como usuario') }}
                 </flux:button>
             @endif
 
@@ -146,13 +146,13 @@
                 <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">{{ __('Compra Uva Externa') }}</p>
                 <div class="flex items-center gap-2 mt-0.5">
                     <x-agro.status-badge :active="$user->compra_uva_externa"
-                        label="{{ $user->compra_uva_externa ? 'Activada' : 'Desactivada' }}" />
+                        label="{{ $user->compra_uva_externa ? __('Activada') : __('Desactivada') }}" />
                     <flux:button
                         wire:click="toggleCompraUvaExterna"
                         variant="ghost"
                         size="xs"
                         icon="{{ $user->compra_uva_externa ? 'x-mark' : 'check' }}"
-                    >{{ $user->compra_uva_externa ? 'Desactivar' : 'Activar' }}</flux:button>
+                    >{{ $user->compra_uva_externa ? __('Desactivar') : __('Activar') }}</flux:button>
                 </div>
                 <p class="text-xs text-zinc-400 mt-1">{{ __('Módulos: viticultores externos, aforos, disputas, facturas de uva') }}</p>
             </div>
@@ -167,7 +167,7 @@
             <div>
                 <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">{{ __('Organización') }}</p>
                 <p class="text-sm font-semibold text-zinc-900 mt-0.5">{{ $user->organization->name }}</p>
-                <p class="text-xs text-zinc-400">{{ $user->organization->type === 'denomination_of_origin' ? 'DO' : 'Bodega' }}</p>
+                <p class="text-xs text-zinc-400">{{ $user->organization->type === 'denomination_of_origin' ? __('DO') : __('Bodega') }}</p>
             </div>
             @endif
             <div>
@@ -620,7 +620,7 @@
                     size="sm"
                     icon="{{ $user->is_readonly_admin ? 'lock-open' : 'lock-closed' }}"
                 >
-                    {{ $user->is_readonly_admin ? 'Dar acceso completo' : 'Restringir a solo lectura' }}
+                    {{ $user->is_readonly_admin ? __('Dar acceso completo') : __('Restringir a solo lectura') }}
                 </flux:button>
             </div>
         </div>

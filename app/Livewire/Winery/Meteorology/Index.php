@@ -43,7 +43,7 @@ class Index extends Component
         $plot = Plot::where('viticulturist_id', Auth::id())->find($this->selectedPlot);
 
         if (! $plot) {
-            $this->error = 'Parcela no encontrada.';
+            $this->error = __('Parcela no encontrada.');
             return;
         }
 
@@ -68,7 +68,7 @@ class Index extends Component
         }
 
         if (empty($this->weather) && empty($this->soil) && empty($this->solar)) {
-            $this->error = 'No se pudieron cargar los datos meteorologicos para esta parcela.';
+            $this->error = __('No se pudieron cargar los datos meteorológicos para esta parcela.');
         }
     }
 

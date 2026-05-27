@@ -23,7 +23,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
                 <p class="text-sm text-zinc-500">{{ __('Tipo') }}</p>
-                <p class="font-semibold">{{ $client->client_type === 'company' ? 'Empresa' : 'Particular' }}</p>
+                <p class="font-semibold">{{ $client->client_type === 'company' ? __('Empresa') : __('Particular') }}</p>
             </div>
             <div>
                 <p class="text-sm text-zinc-500">{{ __('Estado') }}</p>

@@ -66,9 +66,9 @@
                 @endif
             </div>
             <div class="flex gap-4 mt-1.5 text-xs text-zinc-400">
-                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-amber-400 inline-block"></span>Uva</span>
-                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-violet-500 inline-block"></span>Vino</span>
-                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-zinc-200 inline-block"></span>Libre</span>
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-amber-400 inline-block"></span>{{ __('Uva') }}</span>
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-violet-500 inline-block"></span>{{ __('Vino') }}</span>
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-zinc-200 inline-block"></span>{{ __('Libre') }}</span>
             </div>
         </div>
     </x-agro.card>

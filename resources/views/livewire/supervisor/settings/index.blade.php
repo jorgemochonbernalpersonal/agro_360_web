@@ -62,7 +62,7 @@
 
     {{-- Pending --}}
     <flux:callout variant="info" icon="information-circle">
-        <flux:callout.heading>Configuración avanzada en construcción</flux:callout.heading>
+        <flux:callout.heading>{{ __('Configuración avanzada en construcción') }}</flux:callout.heading>
         <flux:callout.text>
             Gestión de usuarios adicionales de la DO, documentos internos y comunicaciones masivas estarán disponibles próximamente.
         </flux:callout.text>

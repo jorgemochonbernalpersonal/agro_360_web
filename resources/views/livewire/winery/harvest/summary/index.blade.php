@@ -122,7 +122,7 @@
                         $initials      = strtoupper(substr($row['viticulturist']?->name ?? '?', 0, 1));
                         $progressColor = $row['exceeded'] || $row['exceeded_pac'] ? 'red' : ($row['at_risk'] ? 'amber' : 'agro');
                         $statusColor   = $row['exceeded'] || $row['exceeded_pac'] ? 'red' : ($row['at_risk'] ? 'amber' : ($row['received_kg'] > 0 ? 'agro' : 'zinc'));
-                        $statusLabel   = $row['exceeded'] || $row['exceeded_pac'] ? '⚠ Superado' : ($row['at_risk'] ? 'En riesgo' : ($row['received_kg'] > 0 ? 'En curso' : ($row['forecast_kg'] !== null ? 'Pendiente' : 'Sin actividad')));
+                        $statusLabel   = $row['exceeded'] || $row['exceeded_pac'] ? __('⚠ Superado') : ($row['at_risk'] ? __('En riesgo') : ($row['received_kg'] > 0 ? __('En curso') : ($row['forecast_kg'] !== null ? __('Pendiente') : __('Sin actividad'))));
                     @endphp
                     <x-agro.card
                         class="animate-fade-in-up flex flex-col hover:-translate-y-1"

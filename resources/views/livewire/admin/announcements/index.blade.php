@@ -52,7 +52,7 @@
                         <div class="flex items-center gap-1 flex-shrink-0">
                             <flux:button wire:click="toggleActive({{ $ann->id }})" variant="ghost" size="sm"
                                 icon="{{ $ann->is_active ? 'eye-slash' : 'eye' }}"
-                                tooltip="{{ $ann->is_active ? 'Desactivar' : 'Activar' }}"
+                                tooltip="{{ $ann->is_active ? __('Desactivar') : __('Activar') }}"
                             />
                             <flux:button wire:click="openEdit({{ $ann->id }})" variant="ghost" size="sm" icon="pencil" tooltip="Editar" />
                             <flux:button
@@ -73,7 +73,7 @@
     @if($showModal)
         <flux:modal name="ann-modal" :show="true" wire:close="closeModal" class="max-w-lg">
             <div class="p-6 space-y-4">
-                <h3 class="text-base font-semibold text-zinc-900">{{ $editingId ? 'Editar anuncio' : 'Nuevo anuncio' }}</h3>
+                <h3 class="text-base font-semibold text-zinc-900">{{ $editingId ? __('Editar anuncio') : __('Nuevo anuncio') }}</h3>
 
                 <flux:input wire:model="title" :label="__('Título')" :placeholder="__('Breve título del anuncio')" />
                 @error('title') <p class="text-xs text-red-500">{{ $message }}</p> @enderror
@@ -104,7 +104,7 @@
                 <div class="flex justify-end gap-3 pt-2">
                     <flux:button wire:click="closeModal" variant="ghost">{{ __('Cancelar') }}</flux:button>
                     <flux:button wire:click="save" variant="primary">
-                        {{ $editingId ? 'Guardar' : 'Publicar' }}
+                        {{ $editingId ? __('Guardar') : __('Publicar') }}
                     </flux:button>
                 </div>
             </div>

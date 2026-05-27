@@ -64,7 +64,7 @@
             variant="ghost"
             size="sm"
             icon="bug-ant"
-            tooltip="{{ $showInternal ? 'Ocultar eventos internos' : 'Mostrar eventos de cuentas internas (demo/test)' }}"
+            tooltip="{{ $showInternal ? __('Ocultar eventos internos') : __('Mostrar eventos de cuentas internas (demo/test)') }}"
             @class(['text-amber-500 bg-amber-50' => $showInternal])
         >
             Internos

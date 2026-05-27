@@ -421,7 +421,7 @@
                     </x-slot:header>
                     <div class="space-y-2">
                         <flux:button href="{{ roleRoute('grape-reception.edit', $harvest) }}" variant="primary" class="w-full" icon="pencil-square">
-                            Editar recepción
+                            {{ __('Editar recepción') }}
                         </flux:button>
                         <flux:button
                             href="{{ roleRoute('grape-reception.assign', $harvest) }}"

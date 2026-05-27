@@ -62,7 +62,7 @@ class VigorMapCard extends Component
             $remoteSensing = $query->orderBy('image_date', 'desc')->first();
 
             if (!$remoteSensing) {
-                $this->error = 'No hay datos de área disponibles para esta fecha. Los datos de área se generan bajo demanda.';
+                $this->error = __('No hay datos de área disponibles para esta fecha. Los datos de área se generan bajo demanda.');
                 return;
             }
 
@@ -74,7 +74,7 @@ class VigorMapCard extends Component
             }
 
         } catch (\Exception $e) {
-            $this->error = 'Error al cargar datos de vigor';
+            $this->error = __('Error al cargar datos de vigor');
             logger()->error('Vigor map load failed', [
                 'plot_id' => $this->plot->id,
                 'error' => $e->getMessage(),
@@ -99,7 +99,7 @@ class VigorMapCard extends Component
             ]);
 
         } catch (\Exception $e) {
-            $this->error = 'Error al solicitar datos de área';
+            $this->error = __('Error al solicitar datos de área');
             
             $this->dispatch('notify', [
                 'type' => 'error',

@@ -111,7 +111,7 @@
                                     size="sm"
                                     icon="arrow-top-right-on-square"
                                 >
-                                    {{ $hasNote ? 'Responder' : 'Ver recepción' }}
+                                    {{ $hasNote ? __('Responder') : __('Ver recepción') }}
                                 </flux:button>
                             @endif
                         </div>

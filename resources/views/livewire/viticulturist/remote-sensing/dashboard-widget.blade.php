@@ -30,13 +30,13 @@
                 </div>
                 <div class="text-center">
                     <div class="text-2xl font-bold text-emerald-600">{{ $stats['healthy_percent'] }}%</div>
-                    <div class="text-xs text-zinc-500">Saludables</div>
+                    <div class="text-xs text-zinc-500">{{ __('Saludables') }}</div>
                 </div>
                 <div class="text-center">
                     <div class="text-2xl font-bold {{ $stats['alerts'] > 0 ? 'text-red-600' : 'text-zinc-400' }}">
                         {{ $stats['alerts'] }}
                     </div>
-                    <div class="text-xs text-zinc-500">Alertas</div>
+                    <div class="text-xs text-zinc-500">{{ __('Alertas') }}</div>
                 </div>
             </div>
 

@@ -30,7 +30,7 @@ class AdvancedAnalysisCard extends Component
             $this->analysis = $service->analyzeAdvanced($this->plot);
 
         } catch (\Exception $e) {
-            $this->error = 'Error al cargar el análisis: ' . $e->getMessage();
+            $this->error = __('Error al cargar el análisis') . ': ' . $e->getMessage();
             logger()->error('Advanced analysis load failed', [
                 'plot_id' => $this->plot->id,
                 'error' => $e->getMessage(),
@@ -59,7 +59,7 @@ class AdvancedAnalysisCard extends Component
             ]);
 
         } catch (\Exception $e) {
-            $this->error = 'Error al actualizar: ' . $e->getMessage();
+            $this->error = __('Error al actualizar') . ': ' . $e->getMessage();
             
             $this->dispatch('notify', [
                 'type' => 'error',

@@ -12,8 +12,8 @@
                     <label class="cursor-pointer">
                         <input type="radio" wire:model="type" value="bug" class="sr-only peer">
                         <div class="p-4 text-center border-2 rounded-lg peer-checked:border-agro-500 peer-checked:bg-agro-50 hover:border-zinc-400 transition">
-                            <div class="text-2xl mb-1">Bug</div>
-                            <div class="text-sm font-medium">Bug</div>
+                            <div class="text-2xl mb-1">{{ __('Bug') }}</div>
+                            <div class="text-sm font-medium">{{ __('Bug') }}</div>
                         </div>
                     </label>
                     <label class="cursor-pointer">

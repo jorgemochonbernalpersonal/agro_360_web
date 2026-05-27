@@ -31,7 +31,7 @@
                                     <div class="flex-1 min-w-0">
                                         <p class="text-sm font-semibold text-zinc-900">{{ $r->title }}</p>
                                         <p class="text-xs text-zinc-500 mt-1 line-clamp-2">{{ $r->body }}</p>
-                                        <p class="text-xs text-zinc-300 mt-1">Orden: {{ $r->sort_order }} · {{ $r->admin?->name ?? 'Admin' }}</p>
+                                        <p class="text-xs text-zinc-300 mt-1">{{ __('Orden') }}: {{ $r->sort_order }} · {{ $r->admin?->name ?? 'Admin' }}</p>
                                     </div>
                                     <div class="flex items-center gap-1 flex-shrink-0">
                                         <flux:button wire:click="openEdit({{ $r->id }})" variant="ghost" size="sm" icon="pencil" />
@@ -55,7 +55,7 @@
     @if($showModal)
         <flux:modal name="cr-modal" :show="true" wire:close="closeModal" class="max-w-lg">
             <div class="p-6 space-y-4">
-                <h3 class="text-base font-semibold text-zinc-900">{{ $editingId ? 'Editar respuesta' : 'Nueva respuesta' }}</h3>
+                <h3 class="text-base font-semibold text-zinc-900">{{ $editingId ? __('Editar respuesta') : __('Nueva respuesta') }}</h3>
 
                 <flux:input wire:model="title" :label="__('Título')" :placeholder="__('Ej: Problema de acceso resuelto')" />
                 @error('title') <p class="text-xs text-red-500">{{ $message }}</p> @enderror
@@ -70,7 +70,7 @@
 
                 <div class="flex justify-end gap-3 pt-2">
                     <flux:button wire:click="closeModal" variant="ghost">{{ __('Cancelar') }}</flux:button>
-                    <flux:button wire:click="save" variant="primary">{{ $editingId ? 'Guardar' : 'Crear' }}</flux:button>
+                    <flux:button wire:click="save" variant="primary">{{ $editingId ? __('Guardar') : __('Crear') }}</flux:button>
                 </div>
             </div>
         </flux:modal>

@@ -246,7 +246,7 @@
                                         @if ($isWineItem && $availableQty !== null && !$locked)
                                             @php $exceedsStock = $qty > $availableQty; @endphp
                                             <p class="mt-1 text-xs {{ $exceedsStock ? 'text-red-600 font-semibold' : 'text-zinc-500' }}">
-                                                Disp: {{ number_format($availableQty, 0) }} ud{{ $exceedsStock ? ' — ¡Supera el stock!' : '' }}
+                                                {{ __('Disp') }}: {{ number_format($availableQty, 0) }} ud{{ $exceedsStock ? ' — ' . __('¡Supera el stock!') : '' }}
                                             </p>
                                         @endif
                                     </flux:field>
@@ -282,15 +282,15 @@
 
                             <div class="mt-3 pt-3 border-t border-zinc-200 bg-zinc-50 -mx-4 -mb-4 px-4 py-2 rounded-b-lg">
                                 <div class="flex flex-wrap gap-x-6 gap-y-1 text-xs">
-                                    <span class="text-zinc-500">Subtotal: <strong class="text-zinc-900">{{ number_format($sub, 2) }} €</strong></span>
+                                    <span class="text-zinc-500">{{ __('Subtotal') }}: <strong class="text-zinc-900">{{ number_format($sub, 2) }} €</strong></span>
                                     @if ($discPct > 0)
-                                        <span class="text-zinc-500">Dto: <strong class="text-red-600">-{{ number_format($discAmt, 2) }} €</strong></span>
-                                        <span class="text-zinc-500">Base: <strong class="text-zinc-900">{{ number_format($base, 2) }} €</strong></span>
+                                        <span class="text-zinc-500">{{ __('Dto') }}: <strong class="text-red-600">-{{ number_format($discAmt, 2) }} €</strong></span>
+                                        <span class="text-zinc-500">{{ __('Base') }}: <strong class="text-zinc-900">{{ number_format($base, 2) }} €</strong></span>
                                     @endif
                                     @if ($taxObj)
                                         <span class="text-zinc-500">{{ $taxObj->name }} ({{ number_format($taxRate, 2) }}%): <strong class="text-zinc-900">{{ number_format($taxAmt, 2) }} €</strong></span>
                                     @endif
-                                    <span class="ml-auto text-zinc-600 font-semibold">Total: <strong class="text-base text-green-600">{{ number_format($total, 2) }} €</strong></span>
+                                    <span class="ml-auto text-zinc-600 font-semibold">{{ __('Total') }}: <strong class="text-base text-green-600">{{ number_format($total, 2) }} €</strong></span>
                                 </div>
                             </div>
                         </div>
@@ -392,7 +392,7 @@
             <div class="bg-white rounded-2xl shadow-xl w-full max-w-md" @click.stop>
                 <div class="px-6 py-4 border-b border-zinc-200 flex items-center justify-between">
                     <h3 class="text-xl font-bold text-zinc-900">
-                        {{ $pendingDeliveryStatus === 'delivered' ? 'Marcar como entregada' : 'Cancelar entrega' }}
+                        {{ $pendingDeliveryStatus === 'delivered' ? __('Marcar como entregada') : __('Cancelar entrega') }}
                     </h3>
                     <flux:button wire:click="closeDeliveryModal" variant="ghost" size="sm" icon="x-mark" />
                 </div>
@@ -413,7 +413,7 @@
                     </div>
                     @if ($pendingDeliveryStatus === 'delivered')
                         <flux:callout variant="warning">
-                            El stock pasará de <strong>{{ __('reservado → vendido') }}</strong>. Esta acción bloquea la edición del contenido.
+                            {{ __('El stock pasará de') }} <strong>{{ __('reservado → vendido') }}</strong>. {{ __('Esta acción bloquea la edición del contenido.') }}
                         </flux:callout>
                     @else
                         <flux:callout variant="danger">

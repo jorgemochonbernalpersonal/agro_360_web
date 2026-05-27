@@ -73,7 +73,7 @@ class SmapSoilCard extends Component
             $remoteSensing = $query->orderBy('image_date', 'desc')->first();
 
             if (!$remoteSensing) {
-                $this->error = 'Sin datos de humedad para este recinto. Pulsa el botón de actualizar.';
+                $this->error = __('Sin datos de humedad para este recinto. Pulsa el botón de actualizar.');
                 return;
             }
 
@@ -90,7 +90,7 @@ class SmapSoilCard extends Component
             ];
 
         } catch (\Exception $e) {
-            $this->error = 'Error al cargar datos de humedad';
+            $this->error = __('Error al cargar datos de humedad');
             logger()->error('SMAP data load failed', [
                 'plot_id'   => $this->plot->id,
                 'sigpac_id' => $this->sigpacId,
@@ -119,7 +119,7 @@ class SmapSoilCard extends Component
             ]);
 
         } catch (\Exception $e) {
-            $this->error = 'Error al actualizar datos de humedad';
+            $this->error = __('Error al actualizar datos de humedad');
 
             $this->dispatch('notify', [
                 'type'    => 'error',

@@ -219,7 +219,7 @@
                     <span class="font-semibold text-zinc-900">{{ __('Pronostico 7 dias') }}</span>
                 </div>
                 <flux:button wire:click="toggleForecast" size="sm" variant="ghost">
-                    {{ $showForecast ? 'Ocultar' : 'Mostrar' }}
+                    {{ $showForecast ? __('Ocultar') : __('Mostrar') }}
                 </flux:button>
             </div>
         </x-slot:header>

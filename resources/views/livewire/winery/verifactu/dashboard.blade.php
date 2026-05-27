@@ -264,7 +264,7 @@
                             <flux:button wire:click="retryInvoice({{ $invoice->id }})"
                                 wire:loading.attr="disabled"
                                 size="sm" variant="primary" icon="arrow-path">
-                                Reintentar
+                                {{ __('Reintentar') }}
                             </flux:button>
                         </div>
                     @endforeach

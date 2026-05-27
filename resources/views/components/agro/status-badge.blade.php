@@ -4,7 +4,7 @@
     if($status !== null) {
         $active = $status;
     }
-    $label = $label ?? ($active ? 'Activa' : 'Inactiva');
+    $label = $label ?? ($active ? __('Activa') : __('Inactiva'));
 @endphp
 
 @if($type === 'default')

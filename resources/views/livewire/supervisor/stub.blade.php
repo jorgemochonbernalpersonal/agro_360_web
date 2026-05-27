@@ -30,7 +30,7 @@
     </div>
 
     <flux:callout variant="info" icon="information-circle">
-        <flux:callout.heading>Módulo en construcción</flux:callout.heading>
+        <flux:callout.heading>{{ __('Módulo en construcción') }}</flux:callout.heading>
         <flux:callout.text>
             Este módulo está en fase de implementación activa. Las funcionalidades se irán activando progresivamente.
         </flux:callout.text>

@@ -65,7 +65,7 @@ class OfficialLaiCard extends Component
             $remoteSensing = $query->orderBy('image_date', 'desc')->first();
 
             if (!$remoteSensing) {
-                $this->error = 'Sin datos para este recinto. Haz clic en "Actualizar Sentinel-2" para cargarlos.';
+                $this->error = __('Sin datos para este recinto. Haz clic en "Actualizar Sentinel-2" para cargarlos.');
                 return;
             }
 
@@ -91,7 +91,7 @@ class OfficialLaiCard extends Component
             $this->fparData = $laiService->analyzeFPAR($fpar);
 
         } catch (\Exception $e) {
-            $this->error = 'Error al cargar datos de LAI';
+            $this->error = __('Error al cargar datos de LAI');
             logger()->error('LAI data load failed', [
                 'plot_id' => $this->plot->id,
                 'error' => $e->getMessage(),

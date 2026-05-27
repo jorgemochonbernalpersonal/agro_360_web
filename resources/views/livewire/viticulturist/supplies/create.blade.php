@@ -52,14 +52,14 @@
                 <flux:field>
                     <flux:label>{{ __('Initial stock') }}</flux:label>
                     <flux:input wire:model="initial_stock" type="number" step="0.001" min="0" placeholder="0.000" />
-                    <flux:description>Quantity available when registering the supply</flux:description>
+                    <flux:description>{{ __('Quantity available when registering the supply') }}</flux:description>
                     <flux:error name="initial_stock" />
                 </flux:field>
 
                 <flux:field>
                     <flux:label>{{ __('Minimum stock alert') }}</flux:label>
                     <flux:input wire:model="min_stock_alert" type="number" step="0.001" min="0" placeholder="0.000" />
-                    <flux:description>Alert when stock drops below this value</flux:description>
+                    <flux:description>{{ __('Alert when stock drops below this value') }}</flux:description>
                     <flux:error name="min_stock_alert" />
                 </flux:field>
 

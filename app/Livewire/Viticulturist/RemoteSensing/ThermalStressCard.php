@@ -75,7 +75,7 @@ class ThermalStressCard extends Component
             $remoteSensing = $query->orderBy('image_date', 'desc')->first();
 
             if (!$remoteSensing) {
-                $this->error = 'Sin datos térmicos para este recinto. Pulsa el botón de actualizar.';
+                $this->error = __('Sin datos térmicos para este recinto. Pulsa el botón de actualizar.');
                 return;
             }
 
@@ -103,7 +103,7 @@ class ThermalStressCard extends Component
             }
 
         } catch (\Exception $e) {
-            $this->error = 'Error al cargar datos térmicos';
+            $this->error = __('Error al cargar datos térmicos');
             logger()->error('LST data load failed', [
                 'plot_id'   => $this->plot->id,
                 'sigpac_id' => $this->sigpacId,
@@ -132,7 +132,7 @@ class ThermalStressCard extends Component
             ]);
 
         } catch (\Exception $e) {
-            $this->error = 'Error al actualizar datos térmicos';
+            $this->error = __('Error al actualizar datos térmicos');
 
             $this->dispatch('notify', [
                 'type'    => 'error',

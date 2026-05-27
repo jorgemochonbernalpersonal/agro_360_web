@@ -74,7 +74,7 @@
             variant="ghost"
             size="sm"
             icon="bug-ant"
-            tooltip="{{ $showInternal ? 'Ocultar tickets internos' : 'Mostrar tickets internos (demo/test)' }}"
+            tooltip="{{ $showInternal ? __('Ocultar tickets internos') : __('Mostrar tickets internos (demo/test)') }}"
             @class(['text-amber-500 bg-amber-50' => $showInternal])
         >
             Internos
@@ -173,7 +173,7 @@
                                 class="text-red-400 hover:text-red-600"
                                 wire:click.stop="deleteTicket({{ $ticket->id }})"
                                 wire:confirm="{{ __('¿Eliminar el ticket \':title\'? Esta acción no se puede deshacer.', ['title' => $ticket->title]) }}"
-                                tooltip="Eliminar ticket"
+                                tooltip="{{ __('Eliminar ticket') }}"
                             />
                         </div>
                     </x-agro.table-cell>
@@ -354,7 +354,7 @@
                         <flux:textarea
                             wire:model="newComment"
                             rows="3"
-                            :placeholder="$isInternal ? 'Nota interna (solo visible para admins)...' : 'Escribe tu comentario...'"
+                            :placeholder="$isInternal ? __('Nota interna (solo visible para admins)...') : __('Escribe tu comentario...')"
                             @class(['border-amber-300 bg-amber-50 focus:ring-amber-400' => $isInternal])
                         />
                         @error('newComment')
@@ -364,7 +364,7 @@
                             <flux:button wire:click="addComment" variant="primary" size="sm"
                                 icon="{{ $isInternal ? 'lock-closed' : 'chat-bubble-left' }}"
                             >
-                                {{ $isInternal ? 'Añadir Nota Interna' : 'Añadir Comentario' }}
+                                {{ $isInternal ? __('Añadir Nota Interna') : __('Añadir Comentario') }}
                             </flux:button>
                             <label class="flex items-center gap-2 cursor-pointer select-none">
                                 <input

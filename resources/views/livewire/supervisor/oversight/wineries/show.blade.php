@@ -5,7 +5,7 @@
         <div>
             <div class="flex items-center gap-2 text-sm text-zinc-400 mb-1">
                 <a href="{{ route('supervisor.oversight.wineries.index') }}" wire:navigate
-                   class="hover:text-zinc-600 transition">Supervisión — Bodegas</a>
+                   class="hover:text-zinc-600 transition">{{ __('Supervisión — Bodegas') }}</a>
                 <flux:icon icon="chevron-right" class="size-3" />
                 <span class="text-zinc-600">{{ $winery->name }}</span>
             </div>
@@ -19,7 +19,7 @@
             @if($winery->can_login)
                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-200">
                     <span class="size-1.5 rounded-full bg-green-500"></span>
-                    Activa
+                    {{ __('Activa') }}
                 </span>
                 <flux:button
                     wire:click="toggleAccess"
@@ -28,12 +28,12 @@
                     size="sm"
                     icon="lock-closed"
                 >
-                    Desactivar acceso
+                    {{ __('Desactivar acceso') }}
                 </flux:button>
             @else
                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-zinc-100 text-zinc-500 border border-zinc-200">
                     <span class="size-1.5 rounded-full bg-zinc-400"></span>
-                    Sin acceso
+                    {{ __('Sin acceso') }}
                 </span>
                 <flux:button
                     wire:click="toggleAccess"
@@ -42,7 +42,7 @@
                     size="sm"
                     icon="lock-open"
                 >
-                    Activar acceso
+                    {{ __('Activar acceso') }}
                 </flux:button>
             @endif
         </div>
@@ -57,13 +57,13 @@
             color="blue"
         />
         <x-agro.stat-card
-            :label="'Uva recibida ' . $currentVintage"
+            :label="__('Uva recibida') . ' ' . $currentVintage"
             :value="number_format($vintageStats->total_kg ?? 0, 0, ',', '.') . ' kg'"
             icon="scale"
             color="agro"
         />
         <x-agro.stat-card
-            :label="'Recepciones ' . $currentVintage"
+            :label="__('Recepciones') . ' ' . $currentVintage"
             :value="$vintageStats->reception_count ?? 0"
             icon="inbox"
             color="yellow"

@@ -83,7 +83,7 @@
             <h3 class="text-base font-semibold text-zinc-900">{{ __('Mermas registradas') }}</h3>
             @if($batch->available_quantity > 0)
                 <flux:button wire:click="toggleWasteForm" variant="ghost" icon="plus" size="sm">
-                    {{ $showWasteForm ? 'Cancelar' : 'Registrar merma' }}
+                    {{ $showWasteForm ? __('Cancelar') : __('Registrar merma') }}
                 </flux:button>
             @endif
         </div>

@@ -83,7 +83,7 @@
             variant="ghost"
             size="sm"
             icon="bug-ant"
-            tooltip="{{ $showInternal ? 'Ocultar parcelas internas' : 'Mostrar parcelas internas (demo/test)' }}"
+            tooltip="{{ $showInternal ? __('Ocultar parcelas internas') : __('Mostrar parcelas internas (demo/test)') }}"
             @class(['text-amber-500 bg-amber-50' => $showInternal])
         >
             Internos
@@ -183,7 +183,7 @@
                                 size="sm"
                                 icon="arrow-path"
                                 wire:click="openReassignModal({{ $plot->id }})"
-                                tooltip="Reasignar viticultor"
+                                tooltip="{{ __('Reasignar viticultor') }}"
                             />
                         </div>
                     </x-agro.table-cell>

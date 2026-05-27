@@ -38,14 +38,14 @@
                 <flux:field>
                     <flux:label>{{ __('Fecha de realización') }}</flux:label>
                     <flux:input wire:model="performed_date" type="date" />
-                    <flux:description>Dejar vacío si aún no se ha realizado</flux:description>
+                    <flux:description>{{ __('Dejar vacío si aún no se ha realizado') }}</flux:description>
                     <flux:error name="performed_date" />
                 </flux:field>
 
                 <flux:field>
                     <flux:label>{{ __('Próximo mantenimiento') }}</flux:label>
                     <flux:input wire:model="next_maintenance_date" type="date" />
-                    <flux:description>Se actualizará en el contenedor al completar</flux:description>
+                    <flux:description>{{ __('Se actualizará en el contenedor al completar') }}</flux:description>
                     <flux:error name="next_maintenance_date" />
                 </flux:field>
 

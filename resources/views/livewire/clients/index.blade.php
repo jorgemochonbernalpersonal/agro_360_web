@@ -47,7 +47,7 @@
                 <x-agro.stat-card
                     :label="__('Inactivos')"
                     :value="$stats['inactive']"
-                    :description="$stats['inactive'] > 0 ? 'Clientes archivados' : 'Todos activos'"
+                    :description="$stats['inactive'] > 0 ? __('Clientes archivados') : __('Todos activos')"
                     icon="archive-box"
                     color="zinc"
                 />
@@ -130,7 +130,7 @@
 
                 @if($filterType)
                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                        {{ $filterType === 'individual' ? 'Particular' : 'Empresa' }}
+                        {{ $filterType === 'individual' ? __('Particular') : __('Empresa') }}
                         <button wire:click="$set('filterType', '')" class="hover:text-agro-900 ml-0.5">
                             <flux:icon icon="x-mark" class="size-3" />
                         </button>
@@ -173,7 +173,7 @@
                                 @endif
                             </div>
                             <flux:badge :color="$isCompany ? 'blue' : null" size="sm" class="shrink-0">
-                                {{ $isCompany ? 'Empresa' : 'Particular' }}
+                                {{ $isCompany ? __('Empresa') : __('Particular') }}
                             </flux:badge>
                         </div>
                     </x-slot:header>
@@ -241,8 +241,8 @@
     @else
         <x-agro.empty-state
             icon="users"
-            message="{{ $currentTab === 'active' ? 'No hay clientes activos' : 'No hay clientes inactivos' }}"
-            description="{{ $search || $filterType ? 'Ningún cliente coincide con los filtros aplicados.' : ($currentTab === 'active' ? 'Crea tu primer cliente para empezar a gestionar tu cartera.' : 'Los clientes desactivados aparecerán aquí.') }}"
+            message="{{ $currentTab === 'active' ? __('No hay clientes activos') : __('No hay clientes inactivos') }}"
+            description="{{ $search || $filterType ? __('Ningún cliente coincide con los filtros aplicados.') : ($currentTab === 'active' ? __('Crea tu primer cliente para empezar a gestionar tu cartera.') : __('Los clientes desactivados aparecerán aquí.')) }}"
         >
             @if($search || $filterType)
                 <x-slot:action>

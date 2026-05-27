@@ -184,7 +184,7 @@
 
         {{-- Referencia de variables --}}
         <flux:callout variant="info" icon="information-circle">
-            <flux:callout.heading>Variables disponibles en los prefijos</flux:callout.heading>
+            <flux:callout.heading>{{ __('Variables disponibles en los prefijos') }}</flux:callout.heading>
             <flux:callout.text>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-2">
                     <div class="bg-white rounded-lg p-3 border border-blue-200">

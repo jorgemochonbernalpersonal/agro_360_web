@@ -97,7 +97,7 @@
                     variant="ghost"
                     size="sm"
                     icon="bug-ant"
-                    tooltip="{{ $showInternal ? 'Ocultar usuarios internos' : 'Mostrar usuarios internos (demo/test)' }}"
+                    tooltip="{{ $showInternal ? __('Ocultar usuarios internos') : __('Mostrar usuarios internos (demo/test)') }}"
                     @class(['text-amber-500 bg-amber-50' => $showInternal])
                 >
                     Internos
@@ -291,7 +291,7 @@
                                             icon="clock"
                                             wire:click="toggleBeta({{ $user->id }})"
                                             wire:confirm="{{ $user->is_beta_user ? __('¿Quitar acceso beta a este usuario?') : __('¿Dar acceso beta a este usuario?') }}"
-                                            tooltip="{{ $user->is_beta_user ? 'Quitar beta' : 'Dar beta' }}"
+                                            tooltip="{{ $user->is_beta_user ? __('Quitar beta') : __('Dar beta') }}"
                                             @class(['text-yellow-500' => $user->is_beta_user])
                                         />
                                     @endif
@@ -303,7 +303,7 @@
                                             icon="arrow-right-end-on-rectangle"
                                             wire:click="impersonate({{ $user->id }})"
                                             wire:confirm="{{ __('¿Entrar como :name? Podrás volver a tu sesión de admin en cualquier momento.', ['name' => $user->name]) }}"
-                                            tooltip="Entrar como este usuario"
+                                            tooltip="{{ __('Entrar como este usuario') }}"
                                         />
                                     @endif
 
@@ -315,7 +315,7 @@
                                             class="text-red-400 hover:text-red-600"
                                             wire:click="deleteUser({{ $user->id }})"
                                             wire:confirm="{{ __('¿Eliminar a :name? Esta acción no se puede deshacer.', ['name' => $user->name]) }}"
-                                            tooltip="Eliminar usuario"
+                                            tooltip="{{ __('Eliminar usuario') }}"
                                         />
                                     @endif
                                 </div>

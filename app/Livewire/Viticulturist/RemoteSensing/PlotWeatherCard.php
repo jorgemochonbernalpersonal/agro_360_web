@@ -66,7 +66,7 @@ class PlotWeatherCard extends Component
         
         // General error state only if everything critical failed or to show a toast
         if (empty($this->weather) && empty($this->soil) && empty($this->solar)) {
-            $this->error = 'No se pudieron cargar los datos meteorológicos.';
+            $this->error = __('No se pudieron cargar los datos meteorológicos.');
         }
 
         $this->isLoading = false;
