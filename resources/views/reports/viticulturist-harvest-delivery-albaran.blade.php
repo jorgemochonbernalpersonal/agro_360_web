@@ -141,7 +141,7 @@
             <div class="party-label">Comprador / Destinatario</div>
             <div class="party-name">{{ $delivery->buyer_name }}</div>
             @if($winery)
-                <div class="party-line" style="color:#7c3aed;">Bodega registrada en Agro365</div>
+                <div class="party-line" style="color:#7c3aed;">{{ __('Bodega registrada en Agro365') }}</div>
             @endif
             @if($delivery->destination_rega_code)
                 <div class="party-line">REGA: {{ $delivery->destination_rega_code }}</div>
@@ -158,7 +158,7 @@
                 <div class="detail-value">{{ $variety }}</div>
             </div>
             <div class="detail-cell">
-                <div class="detail-label">Parcela</div>
+                <div class="detail-label">{{ __('Parcela') }}</div>
                 <div class="detail-value">{{ $plot }}</div>
             </div>
             <div class="detail-cell">

@@ -630,13 +630,13 @@
                     <div class="flex justify-center gap-6 mb-4">
                         <div class="bg-gradient-to-br from-red-50 to-red-100 border-2 border-red-300 rounded-2xl p-4 text-center w-48 shadow-md">
                             <div class="text-2xl mb-1">🍷</div>
-                            <div class="font-bold text-red-900">Bodega</div>
-                            <div class="text-red-700 text-xs mt-1">Vendimia · Depósitos · Facturación</div>
+                            <div class="font-bold text-red-900">{{ __('Bodega') }}</div>
+                            <div class="text-red-700 text-xs mt-1">{{ __('Vendimia · Depósitos · Facturación') }}</div>
                         </div>
                         <div class="bg-gradient-to-br from-red-50 to-red-100 border-2 border-red-300 rounded-2xl p-4 text-center w-48 shadow-md">
                             <div class="text-2xl mb-1">🍷</div>
-                            <div class="font-bold text-red-900">Bodega</div>
-                            <div class="text-red-700 text-xs mt-1">Vendimia · Depósitos · Facturación</div>
+                            <div class="font-bold text-red-900">{{ __('Bodega') }}</div>
+                            <div class="text-red-700 text-xs mt-1">{{ __('Vendimia · Depósitos · Facturación') }}</div>
                         </div>
                     </div>
                     <!-- Conector Bodegas → Viticultores -->

@@ -91,7 +91,7 @@
                                 <flux:checkbox wire:click="toggleHarvest({{ $harvest->id }})" :checked="$selected" />
                                 <div class="flex-1 grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
                                     <span class="font-medium">
-                                        Cosecha #{{ $harvest->id }}
+                                        {{ __('Cosecha #:id', ['id' => $harvest->id]) }}
                                         @if($harvest->activity?->campaign)
                                             <span class="text-zinc-400 font-normal text-xs ml-1">{{ $harvest->activity->campaign->name }}</span>
                                         @endif
@@ -125,7 +125,7 @@
                         @foreach ($lines as $i => $line)
                             <div class="grid grid-cols-12 gap-3 items-end p-4 bg-zinc-50 rounded-lg" wire:key="hs-create-line-{{ $i }}">
                                 <div class="col-span-12 md:col-span-4">
-                                    <p class="text-sm font-medium text-zinc-700">Cosecha #{{ $line['harvest_id'] }}</p>
+                                    <p class="text-sm font-medium text-zinc-700">{{ __('Cosecha #:id', ['id' => $line['harvest_id']]) }}</p>
                                     <p class="text-xs text-zinc-500">{{ $line['quantity'] }} kg</p>
                                 </div>
 

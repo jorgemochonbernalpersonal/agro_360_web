@@ -200,7 +200,7 @@
             </div>
             @if(isset($gdd['estimated_harvest_date']))
             <div class="info-row">
-                <div class="info-label">Vendimia Estimada</div>
+                <div class="info-label">{{ __('Vendimia Estimada') }}</div>
                 <div class="info-value">{{ $gdd['estimated_harvest_date'] }} ({{ $gdd['days_to_harvest'] }} días)</div>
             </div>
             @endif

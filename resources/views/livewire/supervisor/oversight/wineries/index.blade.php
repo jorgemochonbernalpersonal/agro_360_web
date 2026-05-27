@@ -22,14 +22,14 @@
             :value="number_format($harvestStats->sum('total_kg'), 0, ',', '.')"
             icon="scale"
             color="agro"
-            :description="'Vendimia ' . $vintage"
+            :description="__('Vendimia :year', ['year' => $vintage])"
         />
         <x-agro.stat-card
             :label="__('Recepciones de uva')"
             :value="$harvestStats->sum('reception_count')"
             icon="inbox"
             color="yellow"
-            :description="'Vendimia ' . $vintage"
+            :description="__('Vendimia :year', ['year' => $vintage])"
         />
     </x-agro.stats-section>
 
@@ -43,7 +43,7 @@
                 class="text-sm border border-zinc-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-300"
             >
                 @foreach($availableVintages as $v)
-                    <option value="{{ $v }}">Vendimia {{ $v }}</option>
+                    <option value="{{ $v }}">{{ __('Vendimia :year', ['year' => $v]) }}</option>
                 @endforeach
             </select>
         @endif

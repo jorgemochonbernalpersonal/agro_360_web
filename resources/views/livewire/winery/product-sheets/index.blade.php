@@ -90,7 +90,7 @@
                                 </div>
                                 <div class="space-y-1 text-sm">
                                     @if($wine->vintage)
-                                        <p class="text-zinc-500">Cosecha <span class="text-zinc-700 font-medium">{{ $wine->vintage }}</span></p>
+                                        <p class="text-zinc-500">{{ __('Cosecha') }} <span class="text-zinc-700 font-medium">{{ $wine->vintage }}</span></p>
                                     @endif
                                     <p class="text-zinc-500">{{ $wine->type_label }}</p>
                                     @if($wine->aging_type_label)

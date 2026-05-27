@@ -89,11 +89,11 @@
 
     {{-- Contexto --}}
     <div class="section">
-        <div class="section-title">Viticultor y Parcela</div>
+        <div class="section-title">{{ __('Viticultor y Parcela') }}</div>
         <div class="grid">
             <div class="col">
                 <div class="field"><div class="field-label">Viticultor</div><div class="field-value">{{ $harvest->batch?->viticulturist?->name ?? '—' }}</div></div>
-                <div class="field"><div class="field-label">Parcela</div><div class="field-value">{{ $planting?->plot?->name ?? '—' }}</div></div>
+                <div class="field"><div class="field-label">{{ __('Parcela') }}</div><div class="field-value">{{ $planting?->plot?->name ?? '—' }}</div></div>
             </div>
             <div class="col">
                 <div class="field"><div class="field-label">Variedad</div><div class="field-value">{{ $planting?->grapeVariety?->name ?? '—' }}</div></div>
