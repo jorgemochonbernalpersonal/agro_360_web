@@ -11,7 +11,7 @@
         </flux:button>
         <flux:button variant="primary" icon="plus"
             href="{{ roleRoute('containers.additives.create', $container) }}" wire:navigate>
-            Añadir aditivo
+            {{ __('Añadir aditivo') }}
         </flux:button>
     </x-slot:actions>
 </x-agro.page-header>

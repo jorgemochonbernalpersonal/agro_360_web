@@ -361,7 +361,7 @@
 
                 <div>
                     <label class="block text-xs font-medium text-zinc-700 mb-1">{{ __('Email') }}</label>
-                    <flux:input wire:model="createEmail" type="email" placeholder="email@ejemplo.com" />
+                    <flux:input wire:model="createEmail" type="email" :placeholder="__('email@ejemplo.com')" />
                     @error('createEmail') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
 

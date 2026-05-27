@@ -55,7 +55,7 @@
                                     </flux:field>
                                     <flux:field>
                                         <flux:label required>{{ __('Email') }}</flux:label>
-                                        <flux:input wire:model="email" type="email" id="email" placeholder="tu@email.com" required />
+                                        <flux:input wire:model="email" type="email" id="email" :placeholder="__('tu@email.com')" required />
                                         <flux:error name="email" />
                                     </flux:field>
                                 </div>

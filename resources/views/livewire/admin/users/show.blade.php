@@ -649,7 +649,7 @@
 
                 <div>
                     <label class="block text-xs font-medium text-zinc-700 mb-1">{{ __('Email') }}</label>
-                    <flux:input wire:model="editEmail" type="email" placeholder="email@ejemplo.com" />
+                    <flux:input wire:model="editEmail" type="email" :placeholder="__('email@ejemplo.com')" />
                     @error('editEmail') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                     @if($editEmail !== $user->email)
                         <p class="text-xs text-amber-600 mt-1">{{ __('Al cambiar el email, se requerirá nueva verificación.') }}</p>
