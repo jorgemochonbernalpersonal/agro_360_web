@@ -22,6 +22,11 @@ class SetLocale
 
         $response = $next($request);
 
+        // BinaryFileResponse (assets estáticos como Flux JS) no soporta ->cookie()
+        if ($response instanceof \Symfony\Component\HttpFoundation\BinaryFileResponse) {
+            return $response;
+        }
+
         // Persistir en cookie para sobrevivir expiración de sesión y wire:navigate
         $response->cookie(self::COOKIE_NAME, $locale, 60 * 24 * self::COOKIE_DAYS, '/', null, null, false);
 
