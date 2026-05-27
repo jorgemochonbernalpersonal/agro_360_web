@@ -42,7 +42,9 @@ Todos los seeders solo tienen `es`. Al cambiar de idioma, los campos quedan en b
 
 - [x] Seeders: añadir traducción `en` a los 4 modelos de catálogo (Pest, GrapeVariety, MachineryType, ContainerType)
 - [x] Auditar `en.json`: eliminadas 7.062 claves sin traducir (valor = clave en español) — quedan 4.840 traducciones reales
-- [ ] Revisar secciones clave de la UI en inglés (dashboard, cuaderno de campo, SILICIE, PAC): dashboard, cuaderno de campo, SILICIE, PAC
+- [x] Revisar secciones clave de la UI en inglés (dashboard, cuaderno de campo, SILICIE, PAC)
+  - Dashboard, cuaderno de campo y PAC: ✅ sin gaps reales. Acrónimos (NDVI, PAC, SILICIE) son internacionales, no necesitan traducción.
+  - SILICIE e INFOVI: **decisión explícita de no traducir** — son sistemas regulatorios exclusivos de España (Orden HAC/1505/2024, AICA). Un usuario anglófono en España los usa igualmente en contexto español. El trabajo no justifica el beneficio.: dashboard, cuaderno de campo, SILICIE, PAC
 
 ### Fase 3 — CA como segundo idioma real
 
