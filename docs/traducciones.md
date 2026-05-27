@@ -52,10 +52,12 @@ Todos los seeders solo tienen `es`. Al cambiar de idioma, los campos quedan en b
 - [x] Auditar `ca.json`: eliminadas 7.304 claves sin traducir — quedan 4.386 traducciones reales
 - [x] Revisión UI catalán: mismo resultado que EN — secciones principales correctas, SILICIE/INFOVI decisión ya tomada
 
-### Fase 4 — Panel de admin para traducciones de catálogos
+### Fase 4 — Panel de admin para traducciones de catálogos ✅
 
-- [ ] CRUD en el panel admin para editar traducciones `es`/`en`/`ca` de Pest, GrapeVariety, MachineryType, ContainerType
-- [ ] Sin este panel, cada nuevo registro del catálogo requiere tocar código o BD directamente
+- [x] Ruta `admin.catalogs.index` → `/admin/catalogs`
+- [x] Livewire `Admin\Catalogs\Index` con tabs por modelo, tabla ES/EN/CA y modal de edición
+- [x] Entrada en el menú admin con icono `language`
+- [x] Soporta todos los campos de Pest (5 campos), GrapeVariety (2), MachineryType (1), ContainerType (2)
 
 ### Fase 5 — EU / GL (solo si hay demanda real)
 

@@ -126,6 +126,12 @@ class NavigationHelper
                     'active' => request()->routeIs('admin.canned-responses.*'),
                 ],
                 [
+                    'icon'   => 'language',
+                    'label'  => __('Catálogos'),
+                    'route'  => 'admin.catalogs.index',
+                    'active' => request()->routeIs('admin.catalogs.*'),
+                ],
+                [
                     'icon'   => 'cog-6-tooth',
                     'label'  => __('Configuración'),
                     'route'  => 'admin.settings.index',

@@ -72,5 +72,8 @@ Route::middleware(['role:admin'])
         // Configuración global
         Route::get('/settings', \App\Livewire\Admin\Settings\Index::class)->name('settings.index');
 
+        // Catálogos multilingüe
+        Route::get('/catalogs', \App\Livewire\Admin\Catalogs\Index::class)->name('catalogs.index');
+
         // Búsqueda global (componente inline, no necesita ruta propia)
     });
