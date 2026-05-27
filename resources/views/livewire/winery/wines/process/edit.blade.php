@@ -43,7 +43,7 @@
                 <flux:field>
                     <flux:label>{{ __('Fecha de fin') }}</flux:label>
                     <flux:input wire:model="end_date" type="date" />
-                    <flux:description>Dejar vacío si aún está en curso</flux:description>
+                    <flux:description>{{ __('Dejar vacío si aún está en curso') }}</flux:description>
                     <flux:error name="end_date" />
                 </flux:field>
 

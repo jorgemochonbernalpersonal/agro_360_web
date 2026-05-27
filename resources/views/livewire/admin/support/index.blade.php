@@ -164,7 +164,7 @@
                                 size="sm"
                                 icon="eye"
                                 wire:click.stop="selectTicket({{ $ticket->id }})"
-                                tooltip="Ver detalles"
+                                tooltip="{{ __('Ver detalles') }}"
                             />
                             <flux:button
                                 variant="ghost"

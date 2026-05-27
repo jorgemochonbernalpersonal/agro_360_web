@@ -54,13 +54,13 @@
                                 icon="{{ $ann->is_active ? 'eye-slash' : 'eye' }}"
                                 tooltip="{{ $ann->is_active ? __('Desactivar') : __('Activar') }}"
                             />
-                            <flux:button wire:click="openEdit({{ $ann->id }})" variant="ghost" size="sm" icon="pencil" tooltip="Editar" />
+                            <flux:button wire:click="openEdit({{ $ann->id }})" variant="ghost" size="sm" icon="pencil" tooltip="{{ __('Editar') }}" />
                             <flux:button
                                 wire:click="delete({{ $ann->id }})"
                                 wire:confirm="{{ __('¿Eliminar este anuncio?') }}"
                                 variant="ghost" size="sm" icon="trash"
                                 class="text-red-400 hover:text-red-600"
-                                tooltip="Eliminar"
+                                tooltip="{{ __('Eliminar') }}"
                             />
                         </div>
                     </div>

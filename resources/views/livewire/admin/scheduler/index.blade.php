@@ -45,7 +45,7 @@
                         variant="ghost"
                         size="sm"
                         icon="play"
-                        tooltip="Ejecutar ahora"
+                        tooltip="{{ __('Ejecutar ahora') }}"
                     />
                 </div>
             @endforeach

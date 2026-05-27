@@ -185,7 +185,7 @@
                     <flux:field>
                         <flux:label>{{ __('Código REGA destino') }}</flux:label>
                         <flux:input wire:model="destination_rega_code" :placeholder="__('Ej: ES010000001234')" />
-                        <flux:description>Código REGA de tu bodega como destino de la uva.</flux:description>
+                        <flux:description>{{ __('Código REGA de tu bodega como destino de la uva.') }}</flux:description>
                         <flux:error name="destination_rega_code" />
                     </flux:field>
                 </div>
@@ -277,7 +277,7 @@
             <div class="space-y-4">
                 <flux:field>
                     <flux:checkbox wire:model.live="disqualified" :label="__('Uva descartada / no apta para vinificación')" />
-                    <flux:description>Marca esta opción si la uva ha sido rechazada total o parcialmente.</flux:description>
+                    <flux:description>{{ __('Marca esta opción si la uva ha sido rechazada total o parcialmente.') }}</flux:description>
                 </flux:field>
 
                 @if($disqualified)

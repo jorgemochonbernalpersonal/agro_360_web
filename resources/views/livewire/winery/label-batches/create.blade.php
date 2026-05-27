@@ -13,7 +13,7 @@
                 <flux:field class="lg:col-span-2">
                     <flux:label required>{{ __('Nombre / descripción') }}</flux:label>
                     <flux:input wire:model="name" :placeholder="__('Ej: Contraetiqueta DO Rioja 2026 · Lote A')" required />
-                    <flux:description>Identifica el tipo de etiqueta y la campaña.</flux:description>
+                    <flux:description>{{ __('Identifica el tipo de etiqueta y la campaña.') }}</flux:description>
                     <flux:error name="name" />
                 </flux:field>
 
@@ -37,7 +37,7 @@
                             <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
                         @endforeach
                     </flux:select>
-                    <flux:description>«Asignado por DO» para contraetiquetas numeradas oficiales.</flux:description>
+                    <flux:description>{{ __('«Asignado por DO» para contraetiquetas numeradas oficiales.') }}</flux:description>
                     <flux:error name="source" />
                 </flux:field>
 
@@ -70,7 +70,7 @@
                             <span class="text-zinc-400">—</span>
                         @endif
                     </div>
-                    <flux:description>Calculado automáticamente.</flux:description>
+                    <flux:description>{{ __('Calculado automáticamente.') }}</flux:description>
                 </flux:field>
 
             </div>

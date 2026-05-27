@@ -20,9 +20,9 @@
             color="blue"
         />
         <div class="rounded-xl border {{ $activeAlerts > 0 ? 'border-red-200 bg-red-50' : 'border-zinc-100 bg-white' }} p-4">
-            <p class="text-xs {{ $activeAlerts > 0 ? 'text-red-500' : 'text-zinc-400' }}">Alertas activas</p>
+            <p class="text-xs {{ $activeAlerts > 0 ? 'text-red-500' : 'text-zinc-400' }}">{{ __('Alertas activas') }}</p>
             <p class="text-2xl font-bold {{ $activeAlerts > 0 ? 'text-red-600' : 'text-zinc-300' }}">{{ $activeAlerts }}</p>
-            <p class="text-xs {{ $activeAlerts > 0 ? 'text-red-400' : 'text-zinc-400' }}">Umbral superado o seguimiento vencido</p>
+            <p class="text-xs {{ $activeAlerts > 0 ? 'text-red-400' : 'text-zinc-400' }}">{{ __('Umbral superado o seguimiento vencido') }}</p>
         </div>
     </div>
 

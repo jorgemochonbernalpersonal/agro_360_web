@@ -16,7 +16,7 @@
                             <option value="{{ $supply->id }}">{{ $supply->name }}</option>
                         @endforeach
                     </flux:select>
-                    <flux:description>O escribe el nombre libre abajo</flux:description>
+                    <flux:description>{{ __('O escribe el nombre libre abajo') }}</flux:description>
                     <flux:error name="winery_supply_id" />
                 </flux:field>
 

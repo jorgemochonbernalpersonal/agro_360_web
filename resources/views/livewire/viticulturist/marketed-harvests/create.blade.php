@@ -84,7 +84,7 @@
                 <flux:field>
                     <flux:label>{{ __('Valor total (€)') }}</flux:label>
                     <flux:input wire:model="total_value" type="number" step="0.01" min="0" placeholder="0.00" />
-                    <flux:description>Calculado automáticamente</flux:description>
+                    <flux:description>{{ __('Calculado automáticamente') }}</flux:description>
                     <flux:error name="total_value" />
                 </flux:field>
 

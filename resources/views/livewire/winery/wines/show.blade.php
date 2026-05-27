@@ -543,7 +543,7 @@
         <div class="p-6 space-y-5">
             <div>
                 <flux:heading size="lg">{{ __('Control de fermentación') }}</flux:heading>
-                <flux:subheading>Registra la lectura de parámetros del depósito.</flux:subheading>
+                <flux:subheading>{{ __('Registra la lectura de parámetros del depósito.') }}</flux:subheading>
             </div>
 
             <div class="grid grid-cols-2 gap-4">
@@ -612,7 +612,7 @@
         <div class="p-6 space-y-5">
             <div>
                 <flux:heading size="lg">{{ __('Registrar trasvase') }}</flux:heading>
-                <flux:subheading>Movimiento de vino entre contenedores.</flux:subheading>
+                <flux:subheading>{{ __('Movimiento de vino entre contenedores.') }}</flux:subheading>
             </div>
 
             <div class="grid grid-cols-2 gap-4">
@@ -698,7 +698,7 @@
         <div class="p-6 space-y-5">
             <div>
                 <flux:heading size="lg">{{ __('Registrar merma') }}</flux:heading>
-                <flux:subheading>Pérdida de volumen durante la elaboración.</flux:subheading>
+                <flux:subheading>{{ __('Pérdida de volumen durante la elaboración.') }}</flux:subheading>
             </div>
 
             <div class="grid grid-cols-2 gap-4">
@@ -762,7 +762,7 @@
         <div class="p-6 space-y-5">
             <div>
                 <flux:heading size="lg">{{ __('Añadir análisis') }}</flux:heading>
-                <flux:subheading>Registra los parámetros fisicoquímicos del vino.</flux:subheading>
+                <flux:subheading>{{ __('Registra los parámetros fisicoquímicos del vino.') }}</flux:subheading>
             </div>
 
             <div class="grid grid-cols-2 gap-4">
@@ -861,7 +861,7 @@
                 <flux:field>
                     <flux:label>{{ __('Ácido málico (g/L)') }}</flux:label>
                     <flux:input wire:model="an_malic_acid" type="number" step="0.01" placeholder="1.20" />
-                    <flux:description>Seguimiento FML</flux:description>
+                    <flux:description>{{ __('Seguimiento FML') }}</flux:description>
                 </flux:field>
 
                 <flux:field class="col-span-2 md:col-span-4">

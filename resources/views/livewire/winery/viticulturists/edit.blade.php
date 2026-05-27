@@ -16,7 +16,7 @@
                     <flux:field>
                         <flux:label>{{ __('DNI / NIE') }}</flux:label>
                         <flux:input wire:model="dni" id="dni" placeholder="12345678A" />
-                        <flux:description>Clave de fusión con la cuenta pública del viticultor.</flux:description>
+                        <flux:description>{{ __('Clave de fusión con la cuenta pública del viticultor.') }}</flux:description>
                         <flux:error name="dni" />
                     </flux:field>
 

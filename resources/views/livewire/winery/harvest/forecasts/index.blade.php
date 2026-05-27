@@ -201,7 +201,7 @@
                                     <p class="text-sm font-bold text-agro-700">{{ number_format($estimated, 0) }} kg</p>
                                 </div>
                                 <div class="rounded-xl p-3 {{ $exceeded ? 'bg-red-50' : 'bg-zinc-50' }}">
-                                    <p class="text-[10px] font-semibold uppercase tracking-wide mb-0.5 {{ $exceeded ? 'text-red-600' : 'text-zinc-500' }}">Recibido</p>
+                                    <p class="text-[10px] font-semibold uppercase tracking-wide mb-0.5 {{ $exceeded ? 'text-red-600' : 'text-zinc-500' }}">{{ __('Recibido') }}</p>
                                     <p class="text-sm font-bold {{ $exceeded ? 'text-red-700' : 'text-zinc-700' }}">
                                         {{ number_format($received, 0) }} kg
                                     </p>

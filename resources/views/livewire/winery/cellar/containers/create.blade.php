@@ -29,7 +29,7 @@
                         <flux:select.option value="kg">{{ __('Kilogramos (kg) — uva / mosto') }}</flux:select.option>
                         <flux:select.option value="litros">{{ __('Litros (L) — vino elaborado') }}</flux:select.option>
                     </flux:select>
-                    <flux:description>Elige kg para depósitos de vendimia, litros para crianza y embotellado.</flux:description>
+                    <flux:description>{{ __('Elige kg para depósitos de vendimia, litros para crianza y embotellado.') }}</flux:description>
                     <flux:error name="unit" />
                 </flux:field>
 
@@ -48,7 +48,7 @@
                             <flux:select.option value="{{ $room->id }}">{{ $room->name }}</flux:select.option>
                         @endforeach
                     </flux:select>
-                    <flux:description>Opcional. Agrupa el contenedor en una zona de tu bodega.</flux:description>
+                    <flux:description>{{ __('Opcional. Agrupa el contenedor en una zona de tu bodega.') }}</flux:description>
                     <flux:error name="container_room_id" />
                 </flux:field>
 

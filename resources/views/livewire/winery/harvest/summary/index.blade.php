@@ -31,7 +31,7 @@
             @endif
         </div>
         <div class="rounded-2xl p-4 shadow-sm border {{ $stats['at_risk_count'] > 0 ? 'bg-amber-50 border-amber-200' : 'bg-white border-zinc-200' }}">
-            <p class="text-[10px] font-semibold uppercase tracking-widest mb-1 {{ $stats['at_risk_count'] > 0 ? 'text-amber-500' : 'text-zinc-400' }}">En riesgo</p>
+            <p class="text-[10px] font-semibold uppercase tracking-widest mb-1 {{ $stats['at_risk_count'] > 0 ? 'text-amber-500' : 'text-zinc-400' }}">{{ __('En riesgo') }}</p>
             <p class="text-2xl font-bold leading-none {{ $stats['at_risk_count'] > 0 ? 'text-amber-600' : 'text-zinc-300' }}">
                 {{ $stats['at_risk_count'] }}
             </p>

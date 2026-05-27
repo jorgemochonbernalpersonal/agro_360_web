@@ -90,7 +90,7 @@
     <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6">
         <div class="bg-white rounded-xl border border-zinc-200 p-3 text-center">
             <div class="text-2xl font-bold text-zinc-700">{{ $stats['total_plots'] ?? 0 }}</div>
-            <div class="text-xs text-zinc-500">Parcelas</div>
+            <div class="text-xs text-zinc-500">{{ __('Parcelas') }}</div>
         </div>
         <div class="bg-green-50 rounded-xl border border-green-200 p-3 text-center">
             <div class="text-2xl font-bold text-green-600">{{ $stats['average_ndvi'] ?? 0 }}</div>

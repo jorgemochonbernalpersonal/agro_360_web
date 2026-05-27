@@ -99,7 +99,7 @@
                             <option value="draft">{{ __('Borrador') }}</option>
                             <option value="confirmed">{{ __('Confirmada') }}</option>
                         </flux:select>
-                        <flux:description>Solo las confirmadas actúan como límite operativo.</flux:description>
+                        <flux:description>{{ __('Solo las confirmadas actúan como límite operativo.') }}</flux:description>
                     </flux:field>
                 </div>
 

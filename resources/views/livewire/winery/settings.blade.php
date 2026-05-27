@@ -194,7 +194,7 @@
                             <flux:field>
                                 <flux:label>{{ __('Límite kg/ha por defecto') }}</flux:label>
                                 <flux:input wire:model="default_limit_kg_per_ha" type="number" step="0.01" min="0" :placeholder="__('Ej: 8000')" />
-                                <flux:description>Rendimiento máximo para nuevas plantaciones (kg/ha). Se auto-rellena al introducir el área plantada.</flux:description>
+                                <flux:description>{{ __('Rendimiento máximo para nuevas plantaciones (kg/ha). Se auto-rellena al introducir el área plantada.') }}</flux:description>
                                 <flux:error name="default_limit_kg_per_ha" />
                             </flux:field>
                         </div>
@@ -210,10 +210,9 @@
                 <form wire:submit="saveFiscal" class="space-y-6">
                     @if(empty($fiscal_nif))
                         <flux:callout variant="warning" icon="exclamation-triangle">
-                            <flux:callout.heading>NIF/CIF no configurado</flux:callout.heading>
+                            <flux:callout.heading>{{ __('NIF/CIF no configurado') }}</flux:callout.heading>
                             <flux:callout.text>
-                                Tu NIF o CIF es obligatorio para emitir facturas y para el sistema VERI*FACTU (AEAT).
-                                Sin este dato no podrás verificar facturas en la Agencia Tributaria.
+                                {{ __('Tu NIF o CIF es obligatorio para emitir facturas y para el sistema VERI*FACTU (AEAT). Sin este dato no podrás verificar facturas en la Agencia Tributaria.') }}
                             </flux:callout.text>
                         </flux:callout>
                     @endif
@@ -234,18 +233,18 @@
                             <flux:field>
                                 <flux:label>{{ __('NIF / CIF') }} <span class="text-red-500">*</span></flux:label>
                                 <flux:input wire:model="fiscal_nif" :placeholder="__('Ej: B12345678')" maxlength="20" />
-                                <flux:description>Número de Identificación Fiscal de la empresa o autónomo. Obligatorio para Verifactu.</flux:description>
+                                <flux:description>{{ __('Número de Identificación Fiscal de la empresa o autónomo. Obligatorio para Verifactu.') }}</flux:description>
                                 <flux:error name="fiscal_nif" />
                                 <p class="text-[11px] text-zinc-400 mt-1 flex items-center gap-1">
                                     <flux:icon icon="lock-closed" class="size-3 shrink-0" />
-                                    Dato protegido conforme al RGPD. Uso exclusivo para generación de documentos fiscales.
+                                    {{ __('Dato protegido conforme al RGPD. Uso exclusivo para generación de documentos fiscales.') }}
                                 </p>
                             </flux:field>
 
                             <flux:field>
                                 <flux:label>{{ __('Nombre / Razón social fiscal') }}</flux:label>
                                 <flux:input wire:model="fiscal_legal_name" :placeholder="__('Ej: Bodegas Ejemplo, S.L.')" maxlength="150" />
-                                <flux:description>Nombre legal que aparece en facturas. Si se deja vacío se usa el nombre de tu cuenta.</flux:description>
+                                <flux:description>{{ __('Nombre legal que aparece en facturas. Si se deja vacío se usa el nombre de tu cuenta.') }}</flux:description>
                                 <flux:error name="fiscal_legal_name" />
                             </flux:field>
 

@@ -55,7 +55,7 @@
                                 </flux:select.option>
                             @endforeach
                         </flux:select>
-                        <flux:description>Vincula con un paso del proceso de vinificación registrado previamente.</flux:description>
+                        <flux:description>{{ __('Vincula con un paso del proceso de vinificación registrado previamente.') }}</flux:description>
                         <flux:error name="wine_process_detail_id" />
                     </flux:field>
                 @endif
@@ -77,7 +77,7 @@
                                 </flux:select.option>
                             @endforeach
                         </flux:select>
-                        <flux:description>Depósito o barrica del que se extrae el vino. Se descontará la cantidad de litros embotellados.</flux:description>
+                        <flux:description>{{ __('Depósito o barrica del que se extrae el vino. Se descontará la cantidad de litros embotellados.') }}</flux:description>
                         <flux:error name="container_id" />
                     </flux:field>
                 @endif
@@ -116,7 +116,7 @@
                 <flux:field>
                     <flux:label>{{ __('Nº de lote interno') }}</flux:label>
                     <flux:input wire:model="lot_number" type="text" :placeholder="__('Ej: EMB-2026-001')" />
-                    <flux:description>Identificador interno para trazabilidad.</flux:description>
+                    <flux:description>{{ __('Identificador interno para trazabilidad.') }}</flux:description>
                     <flux:error name="lot_number" />
                 </flux:field>
 

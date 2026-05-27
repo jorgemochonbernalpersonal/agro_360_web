@@ -116,7 +116,7 @@
 
     {{-- Información --}}
     <flux:callout variant="info" icon="information-circle">
-        <flux:callout.heading>¿Cómo funciona?</flux:callout.heading>
+        <flux:callout.heading>{{ __('¿Cómo funciona?') }}</flux:callout.heading>
         <flux:callout.text>
             <ul class="mt-1 space-y-1 text-sm">
                 <li><strong>{{ __('Activa') }}</strong> los impuestos que necesitas usar en tus facturas.</li>

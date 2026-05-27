@@ -55,7 +55,7 @@
                             <option value="{{ $container->id }}">{{ $container->name }}</option>
                         @endforeach
                     </flux:select>
-                    <flux:description>Deja vacío si es entrada de uva externa.</flux:description>
+                    <flux:description>{{ __('Deja vacío si es entrada de uva externa.') }}</flux:description>
                     <flux:error name="from_container_id" />
                 </flux:field>
 

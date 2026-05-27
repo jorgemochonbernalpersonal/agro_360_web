@@ -64,15 +64,15 @@
         <x-agro.card>
             <x-agro.data-table>
                 <x-slot:head>
-                    <x-agro.table-cell header>Producto</x-agro.table-cell>
-                    <x-agro.table-cell header align="center">Movimientos</x-agro.table-cell>
-                    <x-agro.table-cell header align="right">Stock actual</x-agro.table-cell>
-                    <x-agro.table-cell header align="right">Esperado (movimientos)</x-agro.table-cell>
-                    <x-agro.table-cell header align="right">Disp. actual / esp.</x-agro.table-cell>
-                    <x-agro.table-cell header align="right">Res. actual / esp.</x-agro.table-cell>
-                    <x-agro.table-cell header align="right">Vend. actual / esp.</x-agro.table-cell>
-                    <x-agro.table-cell header align="center">Estado</x-agro.table-cell>
-                    <x-agro.table-cell header align="center">Acción</x-agro.table-cell>
+                    <x-agro.table-cell header>{{ __('Producto') }}</x-agro.table-cell>
+                    <x-agro.table-cell header align="center">{{ __('Movimientos') }}</x-agro.table-cell>
+                    <x-agro.table-cell header align="right">{{ __('Stock actual') }}</x-agro.table-cell>
+                    <x-agro.table-cell header align="right">{{ __('Esperado (movimientos)') }}</x-agro.table-cell>
+                    <x-agro.table-cell header align="right">{{ __('Disp. actual / esp.') }}</x-agro.table-cell>
+                    <x-agro.table-cell header align="right">{{ __('Res. actual / esp.') }}</x-agro.table-cell>
+                    <x-agro.table-cell header align="right">{{ __('Vend. actual / esp.') }}</x-agro.table-cell>
+                    <x-agro.table-cell header align="center">{{ __('Estado') }}</x-agro.table-cell>
+                    <x-agro.table-cell header align="center">{{ __('Acción') }}</x-agro.table-cell>
                 </x-slot:head>
 
                 @foreach($rows as $row)

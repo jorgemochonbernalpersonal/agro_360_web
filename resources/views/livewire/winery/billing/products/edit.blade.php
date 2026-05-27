@@ -169,11 +169,11 @@
                                 </option>
                             @endforeach
                         </flux:select>
-                        <flux:description>Solo lotes con stock disponible. Ajusta la cantidad en las líneas.</flux:description>
+                        <flux:description>{{ __('Solo lotes con stock disponible. Ajusta la cantidad en las líneas.') }}</flux:description>
                     </flux:field>
 
                     @if ($wineLots->isEmpty())
-                        <flux:callout variant="info" class="mt-2">No hay lotes con stock disponible.</flux:callout>
+                        <flux:callout variant="info" class="mt-2">{{ __('No hay lotes con stock disponible.') }}</flux:callout>
                     @endif
                 </x-agro.form-section>
             @endif
@@ -209,7 +209,7 @@
                                 </div>
                                 @if (!$locked)
                                     <flux:button type="button" wire:click="removeItem({{ $index }})"
-                                        variant="danger" size="sm" icon="trash">Eliminar</flux:button>
+                                        variant="danger" size="sm" icon="trash">{{ __('Eliminar') }}</flux:button>
                                 @endif
                             </div>
 

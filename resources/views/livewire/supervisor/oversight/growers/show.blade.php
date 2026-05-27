@@ -152,7 +152,7 @@
                             <span class="text-xs text-zinc-400 shrink-0">{{ $activity->activity_date->format('d/m/Y') }}</span>
                         </div>
                     @empty
-                        <div class="px-4 py-6 text-center text-sm text-zinc-400">Sin actividades registradas aún.</div>
+                        <div class="px-4 py-6 text-center text-sm text-zinc-400">{{ __('Sin actividades registradas aún.') }}</div>
                     @endforelse
                 </x-agro.card>
             @elseif($pendingNotebookRequest)

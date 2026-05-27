@@ -29,7 +29,7 @@
                     icon="magnifying-glass"
                     autofocus
                 />
-                <flux:description>Solo se muestran viticultores con acceso al sistema que aún no están vinculados a tu bodega.</flux:description>
+                <flux:description>{{ __('Solo se muestran viticultores con acceso al sistema que aún no están vinculados a tu bodega.') }}</flux:description>
             </flux:field>
 
             {{-- Sin búsqueda todavía --}}

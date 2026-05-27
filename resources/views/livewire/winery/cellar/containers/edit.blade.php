@@ -48,7 +48,7 @@
                     <flux:label>{{ __('Unidad de capacidad') }}</flux:label>
                     @if($hasStock)
                         <flux:input value="{{ $unit === 'litros' ? 'Litros (L)' : 'Kilogramos (kg)' }}" disabled />
-                        <flux:description>No se puede cambiar la unidad mientras el contenedor tenga contenido.</flux:description>
+                        <flux:description>{{ __('No se puede cambiar la unidad mientras el contenedor tenga contenido.') }}</flux:description>
                         {{-- campo oculto para que Livewire mantenga el valor --}}
                         <input type="hidden" wire:model="unit" />
                     @else
@@ -79,7 +79,7 @@
                             <flux:select.option value="{{ $room->id }}">{{ $room->name }}</flux:select.option>
                         @endforeach
                     </flux:select>
-                    <flux:description>Opcional. Agrupa el contenedor en una zona de tu bodega.</flux:description>
+                    <flux:description>{{ __('Opcional. Agrupa el contenedor en una zona de tu bodega.') }}</flux:description>
                     <flux:error name="container_room_id" />
                 </flux:field>
 

@@ -5,7 +5,7 @@
     >
         <x-slot:actions>
             <flux:button href="{{ roleRoute('invoices.products.index') }}" variant="outline" icon="arrow-left">
-                Volver
+                {{ __('Volver') }}
             </flux:button>
         </x-slot:actions>
     </x-agro.page-header>
@@ -27,7 +27,7 @@
                         <flux:error name="client_id" />
                         @if ($clients->isEmpty())
                             <p class="mt-1 text-xs text-zinc-400">
-                                <a href="{{ roleRoute('clients.create') }}" class="text-blue-600 underline">Crea tu primer cliente</a>
+                                <a href="{{ roleRoute('clients.create') }}" class="text-blue-600 underline">{{ __('Crea tu primer cliente') }}</a>
                             </p>
                         @endif
                     </flux:field>
@@ -83,7 +83,7 @@
                         <flux:label required>{{ __('Fecha de pedido') }}</flux:label>
                         <flux:input wire:model="order_date" type="date" required />
                         <flux:error name="order_date" />
-                        <flux:description>Fecha en que se realiza el pedido.</flux:description>
+                        <flux:description>{{ __('Fecha en que se realiza el pedido.') }}</flux:description>
                     </flux:field>
 
                     <flux:field>

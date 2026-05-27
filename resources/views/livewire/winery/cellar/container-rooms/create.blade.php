@@ -23,7 +23,7 @@
                 <flux:field>
                     <flux:label>{{ __('Capacidad (número de depósitos)') }}</flux:label>
                     <flux:input wire:model="capacity" type="number" min="1" step="1" placeholder="0" />
-                    <flux:description>Informativo. El sistema no limita los depósitos asignados a esta sala.</flux:description>
+                    <flux:description>{{ __('Informativo. El sistema no limita los depósitos asignados a esta sala.') }}</flux:description>
                     <flux:error name="capacity" />
                 </flux:field>
             </div>

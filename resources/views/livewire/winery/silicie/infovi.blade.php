@@ -95,15 +95,15 @@
 
     {{-- Callout informativo ──────────────────────────────────────────────── --}}
     <flux:callout variant="info" icon="information-circle">
-        <flux:callout.heading>Campaña vitivinícola {{ $campaign }}/{{ $campaign + 1 }}</flux:callout.heading>
+        <flux:callout.heading>{{ __('Campaña vitivinícola') }} {{ $campaign }}/{{ $campaign + 1 }}</flux:callout.heading>
         <flux:callout.text>
-            Los datos corresponden al período
+            {{ __('Los datos corresponden al período') }}
             <strong>{{ \Carbon\Carbon::parse($campaignStart)->translatedFormat('d M Y') }}</strong>
-            al
+            {{ __('al') }}
             <strong>{{ \Carbon\Carbon::parse($campaignEnd)->translatedFormat('d M Y') }}</strong>.
-            La declaración {{ $threshold['is_large'] ? 'mensual' : 'semestral' }} debe realizarse en
+            {{ __('La declaración') }} {{ $threshold['is_large'] ? __('mensual') : __('semestral') }} {{ __('debe realizarse en') }}
             <strong>{{ __('mapa.gob.es/infovi') }}</strong>
-            antes del día 19 del mes siguiente{{ $threshold['is_large'] ? '' : ' (agosto y diciembre)' }}.
+            {{ __('antes del día 19 del mes siguiente') }}{{ $threshold['is_large'] ? '' : ' ' . __('(agosto y diciembre)') }}.
             <x-agro.help-tip
                 title="{{ __('Plazos de declaración INFOVI') }}"
                 text="{{ $threshold['is_large'] ? 'Gran productor (>1.000 HL): declaración mensual. Antes del día 19 del mes siguiente al declarado. Obligatorio todos los meses aunque no haya movimientos.' : 'Pequeño productor (≤1.000 HL): declaración semestral. Plazo 1.º: antes del 31 de agosto (período agosto–julio del año anterior). Plazo 2.º: antes del 31 de enero (período agosto–diciembre).' }}"

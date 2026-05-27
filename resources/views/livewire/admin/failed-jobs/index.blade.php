@@ -98,7 +98,7 @@
                                     variant="ghost"
                                     size="sm"
                                     icon="arrow-path"
-                                    tooltip="Reintentar"
+                                    tooltip="{{ __('Reintentar') }}"
                                 />
                                 <flux:button
                                     wire:click="deleteJob({{ $job->id }})"
@@ -107,7 +107,7 @@
                                     size="sm"
                                     icon="trash"
                                     class="text-red-400 hover:text-red-600"
-                                    tooltip="Eliminar"
+                                    tooltip="{{ __('Eliminar') }}"
                                 />
                             </div>
                         </div>

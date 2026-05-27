@@ -125,7 +125,7 @@
                                 class="text-red-400 hover:text-red-600"
                                 wire:click="deleteSigpac({{ $sigpac->id }})"
                                 wire:confirm="{{ __('¿Eliminar el código SIGPAC :code?', ['code' => $sigpac->code]) }}"
-                                tooltip="Eliminar (huérfano)"
+                                tooltip="{{ __('Eliminar (huérfano)') }}"
                             />
                         @endif
                     </x-agro.table-cell>

@@ -52,14 +52,14 @@
                 <flux:field>
                     <flux:label>{{ __('Current stock') }}</flux:label>
                     <flux:input wire:model="current_stock" type="number" step="0.001" min="0" placeholder="0.000" />
-                    <flux:description>Use "Register purchase" to increase stock</flux:description>
+                    <flux:description>{{ __('Use "Register purchase" to increase stock') }}</flux:description>
                     <flux:error name="current_stock" />
                 </flux:field>
 
                 <flux:field>
                     <flux:label>{{ __('Minimum stock alert') }}</flux:label>
                     <flux:input wire:model="min_stock_alert" type="number" step="0.001" min="0" placeholder="0.000" />
-                    <flux:description>Alert when stock drops below this value</flux:description>
+                    <flux:description>{{ __('Se mostrará alerta cuando el stock sea menor a este valor') }}</flux:description>
                     <flux:error name="min_stock_alert" />
                 </flux:field>
 

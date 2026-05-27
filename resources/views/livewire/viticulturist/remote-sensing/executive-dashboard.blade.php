@@ -92,8 +92,8 @@
                     <span class="flex items-center gap-1.5"><span class="size-3 rounded bg-emerald-400 inline-block"></span>Bueno ≥0.5</span>
                     <span class="flex items-center gap-1.5"><span class="size-3 rounded bg-yellow-400 inline-block"></span>Moderado ≥0.3</span>
                     <span class="flex items-center gap-1.5"><span class="size-3 rounded bg-orange-400 inline-block"></span>Bajo ≥0.15</span>
-                    <span class="flex items-center gap-1.5"><span class="size-3 rounded bg-red-500 inline-block"></span>Crítico</span>
-                    <span class="flex items-center gap-1.5"><span class="size-3 rounded bg-gray-400 inline-block"></span>Sin datos</span>
+                    <span class="flex items-center gap-1.5"><span class="size-3 rounded bg-red-500 inline-block"></span>{{ __('Crítico') }}</span>
+                    <span class="flex items-center gap-1.5"><span class="size-3 rounded bg-gray-400 inline-block"></span>{{ __('Sin datos') }}</span>
                 </div>
             </x-agro.card>
 

@@ -68,7 +68,7 @@
                 <flux:field>
                     <flux:label>{{ __('Alcohol probable (%)') }}</flux:label>
                     <flux:input wire:model="alcohol_pct" type="number" step="0.1" min="0" max="100" placeholder="0.0" />
-                    <flux:description>Solo para mosto / vino a granel</flux:description>
+                    <flux:description>{{ __('Solo para mosto / vino a granel') }}</flux:description>
                     <flux:error name="alcohol_pct" />
                 </flux:field>
             </div>

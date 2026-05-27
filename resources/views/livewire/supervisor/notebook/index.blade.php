@@ -110,7 +110,7 @@
                                     class="text-red-400 hover:text-red-600"
                                     wire:click="revokeAccess({{ $req->id }})"
                                     wire:confirm="{{ __('¿Revocar la solicitud de acceso al cuaderno de :name?', ['name' => $req->viticulturist?->name]) }}"
-                                    tooltip="Revocar acceso"
+                                    tooltip="{{ __('Revocar acceso') }}"
                                 />
                             </div>
                         </x-slot:footer>

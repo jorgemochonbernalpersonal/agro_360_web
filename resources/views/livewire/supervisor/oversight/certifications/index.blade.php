@@ -108,9 +108,9 @@
                                 </p>
                             </div>
                             <div class="rounded-lg p-2 text-center {{ $cert->is_expired ? 'bg-red-50' : ($cert->is_expiring_soon ? 'bg-amber-50' : 'bg-emerald-50') }}">
-                                <p class="text-[9px] uppercase tracking-wide mb-0.5 {{ $cert->is_expired ? 'text-red-400' : ($cert->is_expiring_soon ? 'text-amber-400' : 'text-emerald-400') }}">Vencimiento</p>
+                                <p class="text-[9px] uppercase tracking-wide mb-0.5 {{ $cert->is_expired ? 'text-red-400' : ($cert->is_expiring_soon ? 'text-amber-400' : 'text-emerald-400') }}">{{ __('Vencimiento') }}</p>
                                 <p class="text-sm font-bold {{ $cert->is_expired ? 'text-red-700' : ($cert->is_expiring_soon ? 'text-amber-700' : 'text-emerald-700') }}">
-                                    {{ $cert->expiry_date?->format('d/m/Y') ?? 'Sin caducidad' }}
+                                    {{ $cert->expiry_date?->format('d/m/Y') ?? __('Sin caducidad') }}
                                 </p>
                             </div>
                         </div>

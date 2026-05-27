@@ -77,7 +77,7 @@
                 <x-agro.table-cell class="text-zinc-900 font-medium text-sm">{{ number_format($movement->quantity_after, 3) }}</x-agro.table-cell>
                 <x-agro.table-cell class="text-sm">
                     @if($movement->treatment)
-                        <a href="{{ roleRoute('viticulturist.digital-notebook') }}" class="text-agro-600 hover:underline">Ver tratamiento</a>
+                        <a href="{{ roleRoute('viticulturist.digital-notebook') }}" class="text-agro-600 hover:underline">{{ __('Ver tratamiento') }}</a>
                         @if($movement->treatment->activity->plot)
                             <div class="text-xs text-zinc-400 mt-0.5">{{ $movement->treatment->activity->plot->name }}</div>
                         @endif

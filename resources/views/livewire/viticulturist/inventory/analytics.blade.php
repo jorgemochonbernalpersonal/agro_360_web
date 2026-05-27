@@ -103,7 +103,7 @@
             <x-slot:header>
                 <div>
                     <flux:heading size="lg">{{ __('Productos con Baja Rotación') }}</flux:heading>
-                    <flux:subheading>Productos sin movimiento reciente (posible stock muerto)</flux:subheading>
+                    <flux:subheading>{{ __('Productos sin movimiento reciente (posible stock muerto)') }}</flux:subheading>
                 </div>
             </x-slot:header>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

@@ -211,7 +211,7 @@
                             <span class="text-xl">💧</span>
                         </div>
                         <div class="text-3xl font-bold text-blue-600">{{ $weather['humidity'] ?? '--' }}%</div>
-                        <div class="text-xs text-zinc-500 mt-1">Relativa del aire</div>
+                        <div class="text-xs text-zinc-500 mt-1">{{ __('Relativa del aire') }}</div>
                     </div>
 
                     <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-lg p-4 border border-indigo-200">
@@ -220,7 +220,7 @@
                             <span class="text-xl">{{ __('🌧️') }}</span>
                         </div>
                         <div class="text-3xl font-bold text-indigo-600">{{ $weather['precipitation'] ?? 0 }} mm</div>
-                        <div class="text-xs text-zinc-500 mt-1">Últimas 24h</div>
+                        <div class="text-xs text-zinc-500 mt-1">{{ __('Últimas 24h') }}</div>
                     </div>
 
                     <div class="bg-gradient-to-br from-teal-50 to-emerald-50 rounded-lg p-4 border border-teal-200">
@@ -229,7 +229,7 @@
                             <span class="text-xl">💨</span>
                         </div>
                         <div class="text-3xl font-bold text-teal-600">{{ $weather['wind_speed'] ?? '--' }} km/h</div>
-                        <div class="text-xs text-zinc-500 mt-1">Velocidad media</div>
+                        <div class="text-xs text-zinc-500 mt-1">{{ __('Velocidad media') }}</div>
                     </div>
                 </div>
 

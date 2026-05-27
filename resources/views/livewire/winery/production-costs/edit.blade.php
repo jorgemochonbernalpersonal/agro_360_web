@@ -89,7 +89,7 @@
                 <div class="flex items-center gap-3">
                     <flux:button type="submit" variant="primary" wire:loading.attr="disabled">{{ __('Guardar cambios') }}</flux:button>
                     <a href="{{ roleRoute('production-costs.index') }}" wire:navigate
-                       class="text-sm text-zinc-500 hover:text-zinc-700">Cancelar</a>
+                       class="text-sm text-zinc-500 hover:text-zinc-700">{{ __('Cancelar') }}</a>
                 </div>
                 <flux:button type="button" variant="danger" wire:click="delete"
                              wire:confirm="{{ __('¿Eliminar este coste? Esta acción no se puede deshacer.') }}">

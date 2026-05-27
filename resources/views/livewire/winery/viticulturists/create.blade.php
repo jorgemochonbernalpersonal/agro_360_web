@@ -25,7 +25,7 @@
                             id="dni"
                             placeholder="12345678A"
                         />
-                        <flux:description>Clave de fusión — cuando el viticultor se registre con este DNI, las cuentas se unirán.</flux:description>
+                        <flux:description>{{ __('Clave de fusión — cuando el viticultor se registre con este DNI, las cuentas se unirán.') }}</flux:description>
                         <flux:error name="dni" />
                     </flux:field>
 
@@ -47,7 +47,7 @@
                             type="email"
                             placeholder="viticultor@ejemplo.com"
                         />
-                        <flux:description>Si se indica, el viticultor podrá vincular su cuenta por email además del DNI.</flux:description>
+                        <flux:description>{{ __('Si se indica, el viticultor podrá vincular su cuenta por email además del DNI.') }}</flux:description>
                         <flux:error name="email" />
                     </flux:field>
                 </div>

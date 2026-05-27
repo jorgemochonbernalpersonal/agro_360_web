@@ -8,10 +8,10 @@
     {{-- NIF warning ─────────────────────────────────────────────────────────── --}}
     @if(empty(auth()->user()->dni))
         <flux:callout variant="warning" icon="exclamation-triangle">
-            <flux:callout.heading>NIF/CIF no configurado</flux:callout.heading>
+            <flux:callout.heading>{{ __('NIF/CIF no configurado') }}</flux:callout.heading>
             <flux:callout.text>
-                Sin tu NIF/CIF no es posible generar el XML de Verifactu ni enviarlo a la AEAT.
-                Ve a <a href="{{ route(auth()->user()->role === 'viticulturist' ? 'viticulturist.settings' : 'winery.settings', ['tab' => 'fiscal']) }}" class="font-semibold underline">Configuración → Datos Fiscales</a> y añade tu NIF antes de verificar facturas.
+                {{ __('Sin tu NIF/CIF no es posible generar el XML de Verifactu ni enviarlo a la AEAT.') }}
+                {{ __('Ve a') }} <a href="{{ route(auth()->user()->role === 'viticulturist' ? 'viticulturist.settings' : 'winery.settings', ['tab' => 'fiscal']) }}" class="font-semibold underline">{{ __('Configuración → Datos Fiscales') }}</a> {{ __('y añade tu NIF antes de verificar facturas.') }}
             </flux:callout.text>
         </flux:callout>
     @endif

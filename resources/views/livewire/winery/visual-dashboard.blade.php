@@ -414,7 +414,7 @@
                     <button wire:click="openModalGrapeReception({{ $selectedPlot->viticulturist?->id ?? 'null' }})"
                             class="flex items-center justify-center gap-2 w-full px-3 py-2.5 mb-2 rounded-xl text-sm font-semibold bg-agro-600 text-white hover:bg-agro-700 transition-colors shadow-sm">
                         <flux:icon icon="archive-box-arrow-down" class="size-4 shrink-0" />
-                        Recibir uva
+                        {{ __('Recibir uva') }}
                     </button>
                     @if($selectedPlot->viticulturist)
                     <a href="{{ roleRoute('grape-reception.index', ['viticulturist_id' => $selectedPlot->viticulturist->id]) }}" wire:navigate
@@ -437,7 +437,7 @@
                 <button wire:click="$set('selectedPlotId', null)"
                         class="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-sm text-zinc-400 hover:text-zinc-700 hover:bg-zinc-50 border border-zinc-100 transition-colors">
                     <flux:icon icon="x-mark" class="size-4 shrink-0" />
-                    Cerrar panel
+                    {{ __('Cerrar panel') }}
                 </button>
 
                 {{-- ── Explorar ── --}}
@@ -574,9 +574,9 @@
                     @endif
                 </div>
                 <div class="flex items-center gap-3 mt-1.5 text-[10px] text-zinc-400">
-                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full {{ $barColor }}"></span>Uva</span>
-                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-violet-400"></span>Vino</span>
-                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-zinc-200"></span>Libre</span>
+                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full {{ $barColor }}"></span>{{ __('Uva') }}</span>
+                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-violet-400"></span>{{ __('Vino') }}</span>
+                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-zinc-200"></span>{{ __('Libre') }}</span>
                 </div>
             </div>
             @endif
@@ -747,26 +747,26 @@
                         <a href="{{ roleRoute('containers.show', $selectedContainer) }}?from=visual" wire:navigate
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-agro-50 hover:text-agro-700 transition-colors group">
                             <flux:icon icon="eye" class="size-4 text-zinc-400 group-hover:text-agro-600 shrink-0" />
-                            Ver detalle completo
+                            {{ __('Ver detalle completo') }}
                         </a>
                         <a href="{{ roleRoute('containers.edit', $selectedContainer) }}" wire:navigate
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 transition-colors group">
                             <flux:icon icon="pencil" class="size-4 text-zinc-400 group-hover:text-zinc-600 shrink-0" />
-                            Editar contenedor
+                            {{ __('Editar contenedor') }}
                         </a>
                         @if($selectedContainer->wine_volume_liters > 0)
                         <button wire:click="emptyWine({{ $selectedContainer->id }})"
                                 wire:confirm="{{ __('¿Vaciar el vino de «:name»?', ['name' => $selectedContainer->name]) }}"
                                 class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-orange-50 hover:text-orange-700 transition-colors group">
                             <flux:icon icon="arrow-path" class="size-4 text-zinc-400 group-hover:text-orange-600 shrink-0" />
-                            Vaciar vino elaborado
+                            {{ __('Vaciar vino elaborado') }}
                         </button>
                         @endif
                         <button wire:click="archiveContainer({{ $selectedContainer->id }})"
                                 wire:confirm="{{ __('¿Desactivar «:name»?', ['name' => $selectedContainer->name]) }}"
                                 class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-red-50 hover:text-red-700 transition-colors group">
                             <flux:icon icon="no-symbol" class="size-4 text-zinc-400 group-hover:text-red-600 shrink-0" />
-                            Desactivar contenedor
+                            {{ __('Desactivar contenedor') }}
                         </button>
                     </div>
                 </div>
@@ -780,27 +780,27 @@
                         <button wire:click="openModalFermentation({{ $selectedContainer->id }})"
                                 class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-violet-50 hover:text-violet-700 transition-colors group">
                             <flux:icon icon="beaker" class="size-4 text-zinc-400 group-hover:text-violet-600 shrink-0" />
-                            Nuevo control de fermentación
+                            {{ __('Nuevo control de fermentación') }}
                         </button>
                         <button wire:click="openModalTransfer({{ $selectedContainer->id }})"
                                 class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-blue-50 hover:text-blue-700 transition-colors group">
                             <flux:icon icon="arrows-right-left" class="size-4 text-zinc-400 group-hover:text-blue-600 shrink-0" />
-                            Nuevo trasvase de vino
+                            {{ __('Nuevo trasvase de vino') }}
                         </button>
                         <a href="{{ roleRoute('wine-analysis.create', ['container_id' => $selectedContainer->id]) }}" wire:navigate
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
                             <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400 shrink-0" />
-                            Nuevo análisis de laboratorio
+                            {{ __('Nuevo análisis de laboratorio') }}
                         </a>
                         <a href="{{ roleRoute('containers.maintenance.index', $selectedContainer) }}" wire:navigate
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
                             <flux:icon icon="wrench-screwdriver" class="size-4 text-zinc-400 shrink-0" />
-                            Mantenimientos
+                            {{ __('Mantenimientos') }}
                         </a>
                         <a href="{{ roleRoute('containers.additives.index', $selectedContainer) }}" wire:navigate
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
                             <flux:icon icon="archive-box" class="size-4 text-zinc-400 shrink-0" />
-                            Aditivos
+                            {{ __('Aditivos') }}
                         </a>
                     </div>
                 </div>
@@ -809,7 +809,7 @@
                 <button wire:click="$set('selectedContainerId', null)"
                         class="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-sm text-zinc-400 hover:text-zinc-700 hover:bg-zinc-50 border border-zinc-100 transition-colors">
                     <flux:icon icon="x-mark" class="size-4 shrink-0" />
-                    Cerrar panel
+                    {{ __('Cerrar panel') }}
                 </button>
 
             </div>
@@ -842,22 +842,22 @@
                 <button wire:click="openModalGrapeReception()"
                         class="flex items-center gap-2 px-4 py-2 bg-agro-600 hover:bg-agro-700 text-white text-sm font-semibold rounded-xl shadow-sm transition-colors">
                     <flux:icon icon="archive-box-arrow-down" class="size-4 shrink-0" />
-                    Recibir uva
+                    {{ __('Recibir uva') }}
                 </button>
                 <button wire:click="openModalFermentation()"
                         class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-zinc-50 text-zinc-700 text-sm font-medium rounded-xl border border-zinc-200 shadow-sm transition-colors">
                     <flux:icon icon="beaker" class="size-4 shrink-0 text-violet-500" />
-                    Nuevo control
+                    {{ __('Nuevo control') }}
                 </button>
                 <button wire:click="openModalWine()"
                         class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-zinc-50 text-zinc-700 text-sm font-medium rounded-xl border border-zinc-200 shadow-sm transition-colors">
                     <flux:icon icon="plus" class="size-4 shrink-0 text-agro-500" />
-                    Nuevo vino
+                    {{ __('Nuevo vino') }}
                 </button>
                 <button wire:click="openModalContainer()"
                         class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-zinc-50 text-zinc-700 text-sm font-medium rounded-xl border border-zinc-200 shadow-sm transition-colors">
                     <flux:icon icon="plus" class="size-4 shrink-0 text-zinc-400" />
-                    Nuevo contenedor
+                    {{ __('Nuevo contenedor') }}
                 </button>
             </div>
 
@@ -865,7 +865,7 @@
             <div class="grid grid-cols-3 gap-4">
                 {{-- Kg recibidos --}}
                 <div class="bg-white rounded-2xl border border-zinc-100 shadow-sm p-5">
-                    <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3">Uva recibida {{ $dashboardStats['campaign_year'] }}</p>
+                    <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3">{{ __('Uva recibida') }} {{ $dashboardStats['campaign_year'] }}</p>
                     <p class="text-3xl font-black text-zinc-900 leading-none">
                         @if($dashboardStats['kg_received'] >= 1000)
                             {{ number_format($dashboardStats['kg_received'] / 1000, 1) }}<span class="text-lg font-semibold text-zinc-400 ml-1">t</span>
@@ -877,7 +877,7 @@
                         <div class="w-6 h-6 bg-amber-100 rounded-lg flex items-center justify-center">
                             <flux:icon icon="archive-box-arrow-down" class="size-3.5 text-amber-600" />
                         </div>
-                        <a href="{{ roleRoute('grape-reception.index') }}" wire:navigate class="text-xs text-zinc-400 hover:text-amber-600 transition-colors">Ver recepciones</a>
+                        <a href="{{ roleRoute('grape-reception.index') }}" wire:navigate class="text-xs text-zinc-400 hover:text-amber-600 transition-colors">{{ __('Ver recepciones') }}</a>
                     </div>
                 </div>
 
@@ -892,7 +892,7 @@
                             <flux:icon icon="beaker" class="size-3.5 text-violet-600" />
                         </div>
                         <span class="text-xs text-zinc-400">
-                            <a href="{{ roleRoute('wines.index') }}" wire:navigate class="hover:text-violet-600 transition-colors">Ver todos los vinos</a>
+                            <a href="{{ roleRoute('wines.index') }}" wire:navigate class="hover:text-violet-600 transition-colors">{{ __('Ver todos los vinos') }}</a>
                         </span>
                     </div>
                 </div>
@@ -901,7 +901,7 @@
                 <div class="bg-white rounded-2xl border border-zinc-100 shadow-sm p-5">
                     <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3">{{ __('Fermentaciones activas') }}</p>
                     <p class="text-3xl font-black leading-none {{ $dashboardStats['active_fermentations'] > 0 ? 'text-agro-700' : 'text-zinc-300' }}">
-                        {{ $dashboardStats['active_fermentations'] }}<span class="text-lg font-semibold {{ $dashboardStats['active_fermentations'] > 0 ? 'text-agro-400' : 'text-zinc-300' }} ml-1">activas</span>
+                        {{ $dashboardStats['active_fermentations'] }}<span class="text-lg font-semibold {{ $dashboardStats['active_fermentations'] > 0 ? 'text-agro-400' : 'text-zinc-300' }} ml-1">{{ __('activas') }}</span>
                     </p>
                     <div class="flex items-center gap-1.5 mt-3">
                         <div class="w-6 h-6 bg-agro-100 rounded-lg flex items-center justify-center">
@@ -928,7 +928,7 @@
                         <p class="text-white/50 text-[9px] uppercase tracking-widest font-bold mb-1">{{ __('Depósitos') }}</p>
                         <p class="text-2xl font-black">{{ $dashboardStats['containers_total'] }}</p>
                         @if($dashboardStats['containers_critical'] > 0)
-                        <p class="text-[10px] text-red-300 font-semibold mt-0.5">{{ $dashboardStats['containers_critical'] }} críticos</p>
+                        <p class="text-[10px] text-red-300 font-semibold mt-0.5">{{ $dashboardStats['containers_critical'] }} {{ __('críticos') }}</p>
                         @endif
                     </div>
                     <div>
@@ -955,7 +955,7 @@
                             <p class="text-sm font-bold text-zinc-800">{{ __('Depósitos críticos') }}</p>
                             <span class="text-xs text-zinc-400">{{ __('(≥ 85%)') }}</span>
                         </div>
-                        <a href="{{ roleRoute('containers.index') }}" wire:navigate class="text-xs text-agro-600 hover:text-agro-800 font-medium transition-colors">Ver todos</a>
+                        <a href="{{ roleRoute('containers.index') }}" wire:navigate class="text-xs text-agro-600 hover:text-agro-800 font-medium transition-colors">{{ __('Ver todos') }}</a>
                     </div>
                     @if($criticalContainers->isEmpty())
                     <div class="flex flex-col items-center justify-center py-10 text-zinc-300 gap-2">
@@ -991,7 +991,7 @@
                 <div class="bg-white rounded-2xl border border-zinc-100 shadow-sm overflow-hidden">
                     <div class="flex items-center justify-between px-5 py-4 border-b border-zinc-50">
                         <p class="text-sm font-bold text-zinc-800">{{ __('Últimos controles') }}</p>
-                        <a href="{{ roleRoute('fermentation-controls.index') }}" wire:navigate class="text-xs text-agro-600 hover:text-agro-800 font-medium transition-colors">Ver todos</a>
+                        <a href="{{ roleRoute('fermentation-controls.index') }}" wire:navigate class="text-xs text-agro-600 hover:text-agro-800 font-medium transition-colors">{{ __('Ver todos') }}</a>
                     </div>
                     @if($recentControls->isEmpty())
                     <div class="flex flex-col items-center justify-center py-10 text-zinc-300 gap-2">
@@ -1385,7 +1385,7 @@
                         <flux:label>{{ __('Unidad *') }}</flux:label>
                         <flux:select wire:model="cont_unit">
                             <flux:select.option value="litros">{{ __('Litros') }}</flux:select.option>
-                            <flux:select.option value="kg">Kg</flux:select.option>
+                            <flux:select.option value="kg">{{ __('Kg') }}</flux:select.option>
                         </flux:select>
                     </div>
                 </div>

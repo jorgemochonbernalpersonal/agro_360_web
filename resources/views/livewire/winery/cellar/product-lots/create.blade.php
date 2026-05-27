@@ -43,7 +43,7 @@
                                         </flux:select.option>
                                     @endforeach
                                 </flux:select>
-                                <flux:description>Opcional. Vincula este producto con el vino elaborado en bodega para trazabilidad.</flux:description>
+                                <flux:description>{{ __('Opcional. Vincula este producto con el vino elaborado en bodega para trazabilidad.') }}</flux:description>
                                 <flux:error name="wine_id" />
                             </flux:field>
 
@@ -184,21 +184,21 @@
                             <flux:field>
                                 <flux:label for="available_quantity">{{ __('Disponible para venta *') }}</flux:label>
                                 <flux:input wire:model="available_quantity" type="number" step="0.001" min="0" id="available_quantity" placeholder="0" required />
-                                <flux:description>Por defecto igual a la cantidad total.</flux:description>
+                                <flux:description>{{ __('Por defecto igual a la cantidad total.') }}</flux:description>
                                 <flux:error name="available_quantity" />
                             </flux:field>
 
                             <flux:field>
                                 <flux:label for="price_per_unit">{{ __('Precio de venta / ud (€)') }}</flux:label>
                                 <flux:input wire:model="price_per_unit" type="number" step="0.001" min="0" id="price_per_unit" placeholder="0.000" />
-                                <flux:description>Precio por defecto al facturar.</flux:description>
+                                <flux:description>{{ __('Precio por defecto al facturar.') }}</flux:description>
                                 <flux:error name="price_per_unit" />
                             </flux:field>
 
                             <flux:field>
                                 <flux:label for="cost_price">{{ __('Coste / ud (€)') }}</flux:label>
                                 <flux:input wire:model="cost_price" type="number" step="0.001" min="0" id="cost_price" placeholder="0.000" />
-                                <flux:description>Solo visible internamente.</flux:description>
+                                <flux:description>{{ __('Solo visible internamente.') }}</flux:description>
                                 <flux:error name="cost_price" />
                             </flux:field>
                         </div>
@@ -286,7 +286,7 @@
                             <flux:field>
                                 <flux:label for="tags">{{ __('Etiquetas / Tags') }}</flux:label>
                                 <flux:input wire:model="tags" type="text" id="tags" :placeholder="__('Ej: organico, reserva, DO Rioja')" />
-                                <flux:description>Separa con comas. Útil para búsquedas y filtros.</flux:description>
+                                <flux:description>{{ __('Separa con comas. Útil para búsquedas y filtros.') }}</flux:description>
                                 <flux:error name="tags" />
                             </flux:field>
                         </div>

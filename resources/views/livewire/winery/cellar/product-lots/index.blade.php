@@ -114,9 +114,9 @@
                                         @endif
                                     </div>
                                     <div class="flex gap-3 mt-1.5 text-[10px] text-zinc-400">
-                                        <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-green-500 inline-block"></span>Disp.</span>
-                                        <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-orange-400 inline-block"></span>Res.</span>
-                                        <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-blue-400 inline-block"></span>Vend.</span>
+                                        <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-green-500 inline-block"></span>{{ __('Disp.') }}</span>
+                                        <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-orange-400 inline-block"></span>{{ __('Res.') }}</span>
+                                        <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-blue-400 inline-block"></span>{{ __('Vend.') }}</span>
                                     </div>
                                 </div>
                             @endif

@@ -86,14 +86,14 @@
                         <flux:label>{{ __('Número de etiqueta inicial') }}</flux:label>
                         <flux:input wire:model.live="from_number" type="number" min="1" step="1"
                             placeholder="{{ __('Autocompletado') }}" />
-                        <flux:description>Primer número de la serie utilizado.</flux:description>
+                        <flux:description>{{ __('Primer número de la serie utilizado.') }}</flux:description>
                         <flux:error name="from_number" />
                     </flux:field>
                     <flux:field>
                         <flux:label>{{ __('Número de etiqueta final') }}</flux:label>
                         <flux:input wire:model="to_number" type="number" min="1" step="1"
                             placeholder="{{ __('Autocompletado') }}" />
-                        <flux:description>Último número de la serie utilizado.</flux:description>
+                        <flux:description>{{ __('Último número de la serie utilizado.') }}</flux:description>
                         <flux:error name="to_number" />
                     </flux:field>
                 </div>

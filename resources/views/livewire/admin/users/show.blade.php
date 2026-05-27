@@ -115,7 +115,7 @@
                 @if($user->email_verified_at)
                     <div class="flex items-center gap-1.5 mt-0.5 text-agro-600">
                         <flux:icon icon="check-circle" class="size-4" />
-                        <span class="text-sm font-semibold">Sí</span>
+                        <span class="text-sm font-semibold">{{ __('Sí') }}</span>
                     </div>
                 @else
                     <div class="flex items-center gap-1.5 mt-0.5 text-zinc-400">

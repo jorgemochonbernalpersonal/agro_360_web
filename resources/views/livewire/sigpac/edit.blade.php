@@ -44,7 +44,7 @@
                             <option value="{{ $use->id }}">{{ $use->code }} - {{ $use->description }}</option>
                         @endforeach
                     </flux:select>
-                    <flux:description>Mantén pulsado Ctrl (o Cmd en Mac) para seleccionar varios usos.</flux:description>
+                    <flux:description>{{ __('Mantén pulsado Ctrl (o Cmd en Mac) para seleccionar varios usos.') }}</flux:description>
                     <flux:error name="sigpac_use" />
                 </flux:field>
             </x-agro.form-section>

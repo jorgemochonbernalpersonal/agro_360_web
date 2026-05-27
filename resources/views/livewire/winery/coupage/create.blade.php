@@ -21,7 +21,7 @@
                             </option>
                         @endforeach
                     </flux:select>
-                    <flux:description>El vino que se obtiene como resultado del coupage.</flux:description>
+                    <flux:description>{{ __('El vino que se obtiene como resultado del coupage.') }}</flux:description>
                     <flux:error name="target_wine_id" />
                 </flux:field>
 

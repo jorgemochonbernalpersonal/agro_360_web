@@ -38,7 +38,7 @@
                             </flux:select.option>
                         @endforeach
                     </flux:select>
-                    <flux:description>Vino del que proviene el subproducto.</flux:description>
+                    <flux:description>{{ __('Vino del que proviene el subproducto.') }}</flux:description>
                     <flux:error name="wine_id" />
                 </flux:field>
 
@@ -90,7 +90,7 @@
                 <flux:field>
                     <flux:label>{{ __('Nombre del destino') }}</flux:label>
                     <flux:input wire:model="destination_name" :placeholder="__('Ej: Destilería García S.L.')" />
-                    <flux:description>Nombre de la destilería, planta o entidad receptora.</flux:description>
+                    <flux:description>{{ __('Nombre de la destilería, planta o entidad receptora.') }}</flux:description>
                     <flux:error name="destination_name" />
                 </flux:field>
 

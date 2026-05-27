@@ -44,7 +44,7 @@
                 <flux:field>
                     <flux:label>{{ __('Nombre del catador (externo)') }}</flux:label>
                     <flux:input wire:model="evaluator_name" :placeholder="__('Ej: Juan García')" />
-                    <flux:description>Solo si el catador no es uno de los enólogos registrados.</flux:description>
+                    <flux:description>{{ __('Solo si el catador no es uno de los enólogos registrados.') }}</flux:description>
                     <flux:error name="evaluator_name" />
                 </flux:field>
 
@@ -134,7 +134,7 @@
                             <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
                         @endforeach
                     </flux:select>
-                    <flux:description>Principalmente en tintos y rosados.</flux:description>
+                    <flux:description>{{ __('Principalmente en tintos y rosados.') }}</flux:description>
                     <flux:error name="palate_tannins" />
                 </flux:field>
 
@@ -171,7 +171,7 @@
                     <flux:label>{{ __('Puntuación (0–100)') }}</flux:label>
                     <flux:input wire:model="overall_score" type="number" min="0" max="100" step="0.5"
                         placeholder="{{ __('Ej: 87.5') }}" />
-                    <flux:description>Escala Parker / WSET.</flux:description>
+                    <flux:description>{{ __('Escala Parker / WSET.') }}</flux:description>
                     <flux:error name="overall_score" />
                 </flux:field>
 

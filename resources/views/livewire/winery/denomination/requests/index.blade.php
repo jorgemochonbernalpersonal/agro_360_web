@@ -89,7 +89,7 @@
                                     <h3 class="font-bold text-zinc-900 truncate">{{ $req->title ?: '—' }}</h3>
                                     <p class="text-xs text-zinc-500">
                                         @if(in_array($req->type, \App\Models\SupervisorRequest::WINERY_INITIATED))
-                                            <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-blue-50 text-blue-600 border border-blue-200">Tú</span>
+                                            <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-blue-50 text-blue-600 border border-blue-200">{{ __('Tú') }}</span>
                                         @else
                                             <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-violet-50 text-violet-600 border border-violet-200">DO</span>
                                         @endif

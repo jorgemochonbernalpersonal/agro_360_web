@@ -72,14 +72,14 @@
         <x-agro.card>
             <x-agro.data-table>
                 <x-slot:head>
-                    <x-agro.table-cell header>Fecha</x-agro.table-cell>
-                    <x-agro.table-cell header>Albarán / Factura</x-agro.table-cell>
-                    <x-agro.table-cell header>Cliente</x-agro.table-cell>
-                    <x-agro.table-cell header align="right">Uds.</x-agro.table-cell>
-                    <x-agro.table-cell header align="right">Precio/ud</x-agro.table-cell>
-                    <x-agro.table-cell header align="right">Dto.</x-agro.table-cell>
-                    <x-agro.table-cell header align="right">Total</x-agro.table-cell>
-                    <x-agro.table-cell header align="center">Cobro</x-agro.table-cell>
+                    <x-agro.table-cell header>{{ __('Fecha') }}</x-agro.table-cell>
+                    <x-agro.table-cell header>{{ __('Albarán / Factura') }}</x-agro.table-cell>
+                    <x-agro.table-cell header>{{ __('Cliente') }}</x-agro.table-cell>
+                    <x-agro.table-cell header align="right">{{ __('Uds.') }}</x-agro.table-cell>
+                    <x-agro.table-cell header align="right">{{ __('Precio/ud') }}</x-agro.table-cell>
+                    <x-agro.table-cell header align="right">{{ __('Dto.') }}</x-agro.table-cell>
+                    <x-agro.table-cell header align="right">{{ __('Total') }}</x-agro.table-cell>
+                    <x-agro.table-cell header align="center">{{ __('Cobro') }}</x-agro.table-cell>
                 </x-slot:head>
 
                 @foreach($items as $item)

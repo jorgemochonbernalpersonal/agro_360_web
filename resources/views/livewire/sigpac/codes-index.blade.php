@@ -251,7 +251,7 @@
                                         size="sm"
                                         icon="map"
                                     >
-                                        <span wire:loading.remove wire:target="generateMap({{ $code->id }}, {{ $firstPlot->id }})">Generar mapa</span>
+                                        <span wire:loading.remove wire:target="generateMap({{ $code->id }}, {{ $firstPlot->id }})">{{ __('Generar mapa') }}</span>
                                         <span wire:loading wire:target="generateMap({{ $code->id }}, {{ $firstPlot->id }})">...</span>
                                     </flux:button>
                                 @endif

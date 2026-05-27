@@ -51,13 +51,13 @@
 
         <x-agro.table>
             <x-slot:head>
-                <x-agro.th>Nombre</x-agro.th>
-                <x-agro.th>Tipo</x-agro.th>
-                <x-agro.th>CIF / NIF</x-agro.th>
-                <x-agro.th>Ciudad</x-agro.th>
-                <x-agro.th>Usuario principal</x-agro.th>
-                <x-agro.th>Miembros</x-agro.th>
-                <x-agro.th>Estado</x-agro.th>
+                <x-agro.th>{{ __('Nombre') }}</x-agro.th>
+                <x-agro.th>{{ __('Tipo') }}</x-agro.th>
+                <x-agro.th>{{ __('CIF / NIF') }}</x-agro.th>
+                <x-agro.th>{{ __('Ciudad') }}</x-agro.th>
+                <x-agro.th>{{ __('Usuario principal') }}</x-agro.th>
+                <x-agro.th>{{ __('Miembros') }}</x-agro.th>
+                <x-agro.th>{{ __('Estado') }}</x-agro.th>
                 <x-agro.th></x-agro.th>
             </x-slot:head>
             <x-slot:body>

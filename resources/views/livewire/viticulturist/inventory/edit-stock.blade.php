@@ -37,7 +37,7 @@
                 <flux:field>
                     <flux:label>{{ __('Stock Mínimo (Alerta)') }}</flux:label>
                     <flux:input wire:model="minimum_stock" type="number" step="0.001" id="minimum_stock" />
-                    <flux:description>Se mostrará alerta cuando el stock sea menor a este valor</flux:description>
+                    <flux:description>{{ __('Se mostrará alerta cuando el stock sea menor a este valor') }}</flux:description>
                     <flux:error name="minimum_stock" />
                 </flux:field>
 

@@ -22,7 +22,7 @@
             color="zinc"
         />
         <div class="rounded-2xl p-4 shadow-sm border {{ $stats['disqualified_kg'] > 0 ? 'bg-red-50 border-red-200' : 'bg-white border-zinc-200' }}">
-            <p class="text-[10px] font-semibold uppercase tracking-widest mb-1 {{ $stats['disqualified_kg'] > 0 ? 'text-red-400' : 'text-zinc-400' }}">Descartados</p>
+            <p class="text-[10px] font-semibold uppercase tracking-widest mb-1 {{ $stats['disqualified_kg'] > 0 ? 'text-red-400' : 'text-zinc-400' }}">{{ __('Descartados') }}</p>
             <p class="text-2xl font-bold leading-none {{ $stats['disqualified_kg'] > 0 ? 'text-red-600' : 'text-zinc-300' }}">
                 {{ number_format($stats['disqualified_kg'], 0) }}
                 <span class="text-sm font-medium {{ $stats['disqualified_kg'] > 0 ? 'text-red-400' : 'text-zinc-300' }}">kg</span>

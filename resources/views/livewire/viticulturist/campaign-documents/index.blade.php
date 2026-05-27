@@ -177,7 +177,7 @@
                         />
                         <flux:description>{{ __('PDF, imágenes, Word o Excel. Máx. 20 MB.') }}</flux:description>
                         <flux:error name="uploadedFile" />
-                        <div wire:loading wire:target="uploadedFile" class="text-sm text-blue-600 mt-1">Subiendo archivo...</div>
+                        <div wire:loading wire:target="uploadedFile" class="text-sm text-blue-600 mt-1">{{ __('Subiendo archivo...') }}</div>
                     </flux:field>
                 @endif
 

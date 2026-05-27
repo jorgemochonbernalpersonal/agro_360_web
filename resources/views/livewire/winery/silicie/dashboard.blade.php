@@ -537,11 +537,10 @@
             @if(!$ab['snapshot_date'])
                 <div class="p-4">
                     <flux:callout variant="warning" icon="exclamation-triangle">
-                        <flux:callout.heading>Sin instantánea de existencias disponible</flux:callout.heading>
+                        <flux:callout.heading>{{ __('Sin instantánea de existencias disponible') }}</flux:callout.heading>
                         <flux:callout.text>
-                            No se encontró ninguna instantánea de existencias anterior al 1 de enero de {{ $ab['fiscal_year'] }}.
-                            Registra una instantánea desde el panel SILICIE al cierre del ejercicio anterior
-                            para poder generar los movimientos de apertura A22.
+                            {{ __('No se encontró ninguna instantánea de existencias anterior al 1 de enero de') }} {{ $ab['fiscal_year'] }}.
+                            {{ __('Registra una instantánea desde el panel SILICIE al cierre del ejercicio anterior para poder generar los movimientos de apertura A22.') }}
                         </flux:callout.text>
                     </flux:callout>
                 </div>
