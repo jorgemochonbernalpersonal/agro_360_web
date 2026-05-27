@@ -170,9 +170,10 @@ class InventoryAnalyticsService
             ->where('active', true)
             ->where('quantity', '>', 0)
             ->with('product')
-            ->withCount(['movements as last_movement_days' => function($query) {
-                $query->selectRaw('DATEDIFF(NOW(), MAX(created_at))');
-            }])
+            ->addSelect([
+                'last_movement_days' => ProductStockMovement::selectRaw('DATEDIFF(NOW(), MAX(created_at))')
+                    ->whereColumn('stock_id', 'product_stocks.id'),
+            ])
             ->orderByDesc('last_movement_days')
             ->limit($limit)
             ->get()
@@ -181,7 +182,7 @@ class InventoryAnalyticsService
                     'product' => $stock->product->name,
                     'quantity' => (float) $stock->quantity,
                     'unit' => $stock->unit,
-                    'days_without_movement' => $stock->last_movement_days ?? 0,
+                    'days_without_movement' => (int) ($stock->last_movement_days ?? 0),
                     'value' => (float) $stock->quantity * ($stock->unit_price ?? 0),
                 ];
             })

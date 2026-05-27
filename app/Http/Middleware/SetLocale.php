@@ -41,7 +41,7 @@ class SetLocale
             if (in_array($lang, self::SUPPORTED, true)) {
                 session(['locale' => $lang]);
                 if (auth()->check()) {
-                    auth()->user()->forceUpdate(['locale' => $lang]);
+                    auth()->user()->update(['locale' => $lang]);
                 }
                 return $lang;
             }
