@@ -25,10 +25,10 @@ class ConsumeStock extends Component
     ];
 
     protected $messages = [
-        'quantity.required' => __('La cantidad es obligatoria'),
-        'quantity.min' => __('La cantidad debe ser mayor a 0'),
-        'reason.required' => __('Debes seleccionar un motivo'),
-        'notes.required_if' => __('Debes especificar el motivo cuando seleccionas "Otro"'),
+        'quantity.required' => 'La cantidad es obligatoria',
+        'quantity.min' => 'La cantidad debe ser mayor a 0',
+        'reason.required' => 'Debes seleccionar un motivo',
+        'notes.required_if' => 'Debes especificar el motivo cuando seleccionas "Otro"',
     ];
 
     public function mount($stock)

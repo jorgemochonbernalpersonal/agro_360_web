@@ -41,11 +41,11 @@ class EditStock extends Component
     ];
 
     protected $messages = [
-        'quantity.required' => __('La cantidad es obligatoria'),
-        'quantity.min' => __('La cantidad debe ser mayor o igual a 0'),
-        'minimum_stock.min' => __('El stock mínimo debe ser mayor o igual a 0'),
-        'unit_price.min' => __('El precio debe ser mayor o igual a 0'),
-        'expiry_date.after' => __('La fecha de caducidad debe ser posterior a hoy'),
+        'quantity.required' => 'La cantidad es obligatoria',
+        'quantity.min' => 'La cantidad debe ser mayor o igual a 0',
+        'minimum_stock.min' => 'El stock mínimo debe ser mayor o igual a 0',
+        'unit_price.min' => 'El precio debe ser mayor o igual a 0',
+        'expiry_date.after' => 'La fecha de caducidad debe ser posterior a hoy',
     ];
 
     public function mount($stock)

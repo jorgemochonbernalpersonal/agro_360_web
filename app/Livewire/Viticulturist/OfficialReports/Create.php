@@ -52,12 +52,12 @@ class Create extends Component
     }
 
     protected $messages = [
-        'reportType.required' => __('Selecciona el tipo de informe.'),
-        'startDate.required_if' => __('La fecha de inicio es obligatoria.'),
-        'endDate.required_if' => __('La fecha de fin es obligatoria.'),
-        'endDate.after_or_equal' => __('La fecha fin debe ser posterior o igual a la fecha inicio.'),
-        'campaignId.required_if' => __('Selecciona una campaña.'),
-        'password.required' => __('La contraseña de firma digital es obligatoria.'),
+        'reportType.required' => 'Selecciona el tipo de informe.',
+        'startDate.required_if' => 'La fecha de inicio es obligatoria.',
+        'endDate.required_if' => 'La fecha de fin es obligatoria.',
+        'endDate.after_or_equal' => 'La fecha fin debe ser posterior o igual a la fecha inicio.',
+        'campaignId.required_if' => 'Selecciona una campaña.',
+        'password.required' => 'La contraseña de firma digital es obligatoria.',
     ];
 
     // Listeners para sincronización con otros componentes
