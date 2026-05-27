@@ -59,11 +59,12 @@ Todos los seeders solo tienen `es`. Al cambiar de idioma, los campos quedan en b
 - [x] Entrada en el menú admin con icono `language`
 - [x] Soporta todos los campos de Pest (5 campos), GrapeVariety (2), MachineryType (1), ContainerType (2)
 
-### Fase 5 — EU / GL (solo si hay demanda real)
+### Fase 5 — EU / GL ✅
 
-- [ ] Seeders con `eu` y `gl` para catálogos
-- [ ] Auditar JSON de EU y GL
-- [ ] Mantener con fallback a `es` hasta entonces
+- [x] Seeders con `eu` y `gl` para los 4 catálogos (Mahats-artziboa, Armiarma gorria, Traktore, Upela, Barrica...)
+- [x] eu.json: eliminadas 7.106 claves sin traducir — quedan 4.584 traducciones reales
+- [x] gl.json: eliminadas 8.180 claves sin traducir — quedan 3.509 traducciones reales
+- [x] Panel admin actualizado para mostrar los 5 locales (es/en/ca/eu/gl)
 
 ---
 

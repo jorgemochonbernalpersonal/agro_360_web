@@ -10,26 +10,45 @@ class ContainerTypeSeeder extends Seeder
     public function run(): void
     {
         $types = [
-            ['es' => 'Barrica',  'en' => 'Barrel',               'ca' => 'Bóta',     'desc_es' => 'Barrica de madera para crianza',   'desc_en' => 'Wooden barrel for ageing',      'desc_ca' => 'Bóta de fusta per a criança'],
-            ['es' => 'Depósito', 'en' => 'Stainless Steel Tank',  'ca' => 'Dipòsit',  'desc_es' => 'Depósito de acero inoxidable',     'desc_en' => 'Stainless steel tank',          'desc_ca' => 'Dipòsit d\'acer inoxidable'],
-            ['es' => 'Tanque',   'en' => 'Fermentation Tank',     'ca' => 'Tanc',     'desc_es' => 'Tanque de fermentación',           'desc_en' => 'Fermentation tank',             'desc_ca' => 'Tanc de fermentació'],
-            ['es' => 'Tina',     'en' => 'Concrete Vat',          'ca' => 'Tina',     'desc_es' => 'Tina de hormigón',                 'desc_en' => 'Concrete vat',                  'desc_ca' => 'Tina de formigó'],
-            ['es' => 'Ánfora',   'en' => 'Amphora',               'ca' => 'Àmfora',   'desc_es' => 'Ánfora de cerámica',               'desc_en' => 'Clay amphora',                  'desc_ca' => 'Àmfora de ceràmica'],
+            [
+                'es' => 'Barrica',  'en' => 'Barrel',               'ca' => 'Bóta',    'eu' => 'Upela',    'gl' => 'Barrica',
+                'desc' => ['es' => 'Barrica de madera para crianza',  'en' => 'Wooden barrel for ageing',     'ca' => 'Bóta de fusta per a criança',  'eu' => 'Egurrezko upela hazkuntzarako',    'gl' => 'Barrica de madeira para crianza'],
+            ],
+            [
+                'es' => 'Depósito', 'en' => 'Stainless Steel Tank',  'ca' => 'Dipòsit', 'eu' => 'Biltegia', 'gl' => 'Depósito',
+                'desc' => ['es' => 'Depósito de acero inoxidable',    'en' => 'Stainless steel tank',         'ca' => 'Dipòsit d\'acer inoxidable',    'eu' => 'Altzairu herdoilgaitzezko biltegia', 'gl' => 'Depósito de aceiro inoxidable'],
+            ],
+            [
+                'es' => 'Tanque',   'en' => 'Fermentation Tank',     'ca' => 'Tanc',    'eu' => 'Tanke',    'gl' => 'Tanque',
+                'desc' => ['es' => 'Tanque de fermentación',          'en' => 'Fermentation tank',            'ca' => 'Tanc de fermentació',           'eu' => 'Hartzidura-tanke',                  'gl' => 'Tanque de fermentación'],
+            ],
+            [
+                'es' => 'Tina',     'en' => 'Concrete Vat',          'ca' => 'Tina',    'eu' => 'Tina',     'gl' => 'Tina',
+                'desc' => ['es' => 'Tina de hormigón',                'en' => 'Concrete vat',                 'ca' => 'Tina de formigó',               'eu' => 'Hormigoi-tina',                     'gl' => 'Tina de formigón'],
+            ],
+            [
+                'es' => 'Ánfora',   'en' => 'Amphora',               'ca' => 'Àmfora',  'eu' => 'Anfora',   'gl' => 'Ánfora',
+                'desc' => ['es' => 'Ánfora de cerámica',              'en' => 'Clay amphora',                 'ca' => 'Àmfora de ceràmica',            'eu' => 'Zeramikazko anfora',                'gl' => 'Ánfora de cerámica'],
+            ],
         ];
+
+        $locales = ['es', 'en', 'ca', 'eu', 'gl'];
 
         foreach ($types as $data) {
             $existing = ContainerType::where('name->es', $data['es'])->first();
             if ($existing) {
-                $existing->setTranslation('name', 'en', $data['en'])
-                         ->setTranslation('name', 'ca', $data['ca'])
-                         ->setTranslation('description', 'en', $data['desc_en'])
-                         ->setTranslation('description', 'ca', $data['desc_ca'])
-                         ->save();
+                foreach ($locales as $locale) {
+                    $existing->setTranslation('name', $locale, $data[$locale]);
+                    $existing->setTranslation('description', $locale, $data['desc'][$locale]);
+                }
+                $existing->save();
             } else {
-                ContainerType::create([
-                    'name'        => ['es' => $data['es'],      'en' => $data['en'],      'ca' => $data['ca']],
-                    'description' => ['es' => $data['desc_es'], 'en' => $data['desc_en'], 'ca' => $data['desc_ca']],
-                ]);
+                $name = $desc = [];
+                foreach ($locales as $locale) {
+                    $name[$locale] = $data[$locale];
+                    $desc[$locale] = $data['desc'][$locale];
+                }
+                ContainerType::create(['name' => $name, 'description' => $desc]);
             }
         }
     }

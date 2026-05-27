@@ -23,7 +23,7 @@ class Index extends Component
     public array $translations = [];
 
     // Locales soportados en el panel
-    public const LOCALES = ['es', 'en', 'ca'];
+    public const LOCALES = ['es', 'en', 'ca', 'eu', 'gl'];
 
     // Definición de cada catálogo: modelo, label, campos traducibles
     private function catalogs(): array
