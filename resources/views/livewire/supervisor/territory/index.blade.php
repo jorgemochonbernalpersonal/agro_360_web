@@ -34,7 +34,7 @@
                                 <x-agro.card-item-header
                                     icon="map-pin"
                                     :title="$row->province_name ?? '—'"
-                                    subtitle="Provincia"
+                                    :subtitle="__('Provincia')"
                                     iconBg="bg-blue-100"
                                     iconColor="text-blue-600"
                                     size="md"
@@ -148,7 +148,7 @@
                                 <x-agro.card-item-header
                                     icon="building-office"
                                     :title="$row->municipality_name ?? '—'"
-                                    subtitle="Municipio"
+                                    :subtitle="__('Municipio')"
                                     iconBg="bg-amber-100"
                                     iconColor="text-amber-600"
                                     size="md"

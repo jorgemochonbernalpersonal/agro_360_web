@@ -64,7 +64,7 @@
                             <x-agro.card-item-header
                                 icon="exclamation-triangle"
                                 :title="$waste->waste_date->format('d/m/Y')"
-                                subtitle="Merma registrada"
+                                :subtitle="__('Merma registrada')"
                                 iconBg="bg-red-100"
                                 iconColor="text-red-600"
                                 size="md"

@@ -29,7 +29,7 @@
                                     <x-agro.card-item-header
                                         icon="calendar-days"
                                         :title="(string) $row->year"
-                                        subtitle="Campaña de vendimia"
+                                        :subtitle="__('Campaña de vendimia')"
                                         iconBg="bg-amber-100"
                                         iconColor="text-amber-600"
                                         size="md"
