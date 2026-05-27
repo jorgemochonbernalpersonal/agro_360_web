@@ -496,8 +496,8 @@ class Calendar extends Component
     }
 
     #[Layout('layouts.app', [
-        'title'       => __('Calendario de Actividades - Agro365'),
-        'description' => __('Visualiza todas tus actividades agrícolas en un calendario interactivo. Planifica tratamientos, riegos y labores culturales por fecha.'),
+        'title'       => 'Calendario de Actividades - Agro365',
+        'description' => 'Visualiza todas tus actividades agrícolas en un calendario interactivo. Planifica tratamientos, riegos y labores culturales por fecha.',
     ])]
     public function render()
     {

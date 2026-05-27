@@ -329,8 +329,8 @@ class Index extends Component
     // ── Render ────────────────────────────────────────────────────────────────
 
     #[Layout('layouts.app', [
-        'title'       => __('Facturas / Pedidos - Agro365'),
-        'description' => __('Gestiona tus facturas y pedidos.'),
+        'title'       => 'Facturas / Pedidos - Agro365',
+        'description' => 'Gestiona tus facturas y pedidos.',
     ])]
     public function render()
     {

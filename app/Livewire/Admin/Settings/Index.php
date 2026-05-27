@@ -192,8 +192,8 @@ class Index extends Component
     }
 
     #[Layout('layouts.app', [
-        'title'       => __('Configuración - Agro365'),
-        'description' => __('Configuración global del sistema'),
+        'title'       => 'Configuración - Agro365',
+        'description' => 'Configuración global del sistema',
     ])]
     public function render()
     {

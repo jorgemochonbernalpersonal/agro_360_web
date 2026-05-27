@@ -54,8 +54,8 @@ class DigitalNotebook extends Component
     }
 
     #[Layout('layouts.app', [
-        'title'       => __('Cuaderno de Campo - Agro365'),
-        'description' => __('Resumen de actividades agrícolas por campaña.'),
+        'title'       => 'Cuaderno de Campo - Agro365',
+        'description' => 'Resumen de actividades agrícolas por campaña.',
     ])]
     public function render()
     {

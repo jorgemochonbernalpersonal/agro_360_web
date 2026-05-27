@@ -118,8 +118,8 @@ class Index extends Component
     }
 
     #[Layout('layouts.app', [
-        'title'       => __('Notebook Access - Agro365'),
-        'description' => __('Gestiona qué bodegas y denominaciones de origen pueden ver tu cuaderno de campo digital.'),
+        'title'       => 'Notebook Access - Agro365',
+        'description' => 'Gestiona qué bodegas y denominaciones de origen pueden ver tu cuaderno de campo digital.',
     ])]
     public function render()
     {

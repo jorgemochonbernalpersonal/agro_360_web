@@ -108,8 +108,8 @@ class Index extends Component
     }
 
     #[Layout('layouts.app', [
-        'title'       => __('Campañas Agrícolas - Agro365'),
-        'description' => __('Gestiona tus campañas agrícolas por año. Organiza y controla todas las actividades de cada temporada vitivinícola.'),
+        'title'       => 'Campañas Agrícolas - Agro365',
+        'description' => 'Gestiona tus campañas agrícolas por año. Organiza y controla todas las actividades de cada temporada vitivinícola.',
     ])]
     public function render()
     {
