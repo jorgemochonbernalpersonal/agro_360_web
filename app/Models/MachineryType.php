@@ -13,6 +13,11 @@ class MachineryType extends Model
 
     public array $translatable = ['name'];
 
+    public function useFallbackLocale(): bool
+    {
+        return true;
+    }
+
     protected $table = 'machinery_types';
 
     protected $fillable = [

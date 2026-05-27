@@ -17,6 +17,7 @@ class InvoicePdfController extends Controller
     {
         $invoice = $this->loadInvoice($id);
 
+        app()->setLocale('es');
         $pdf = Pdf::loadView('reports.invoice', [
             'invoice' => $invoice,
             'user'    => $invoice->user->load('profile.province'),
@@ -40,6 +41,7 @@ class InvoicePdfController extends Controller
     {
         $invoice = $this->loadInvoice($id);
 
+        app()->setLocale('es');
         $pdf = Pdf::loadView('reports.delivery-note', [
             'invoice' => $invoice,
             'user'    => $invoice->user->load('profile.province'),

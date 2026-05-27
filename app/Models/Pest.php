@@ -14,6 +14,16 @@ class Pest extends Model
 
     public array $translatable = ['name', 'description', 'symptoms', 'lifecycle', 'prevention_methods'];
 
+    public function getTranslationLocales(): array
+    {
+        return ['es', 'en', 'ca', 'eu', 'gl'];
+    }
+
+    public function useFallbackLocale(): bool
+    {
+        return true;
+    }
+
     const CONTROL_METHOD_TYPES = ['biologico', 'cultural', 'fisico', 'quimico'];
 
     const CONTROL_METHOD_LABELS = [

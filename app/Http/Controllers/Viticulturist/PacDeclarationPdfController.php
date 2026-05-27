@@ -17,6 +17,7 @@ class PacDeclarationPdfController extends Controller
 
         $declaration->load(['viticulturist', 'items.plot.municipality']);
 
+        app()->setLocale('es');
         $pdf = Pdf::loadView('reports.pac-declaration', [
             'declaration'   => $declaration,
             'viticulturist' => $declaration->viticulturist,

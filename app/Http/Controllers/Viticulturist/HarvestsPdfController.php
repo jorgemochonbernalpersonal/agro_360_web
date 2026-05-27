@@ -106,6 +106,7 @@ class HarvestsPdfController extends Controller
             'plantings'   => $rows->count(),
         ];
 
+        app()->setLocale('es');
         $pdf = Pdf::loadView('reports.viticulturist-vendimia', [
             'rows'            => $rows,
             'totals'          => $totals,

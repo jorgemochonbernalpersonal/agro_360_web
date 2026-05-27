@@ -23,6 +23,11 @@ class GrapeVariety extends Model
 
     public array $translatable = ['name', 'description'];
 
+    public function useFallbackLocale(): bool
+    {
+        return true;
+    }
+
     protected $fillable = [
         'name',
         'code',

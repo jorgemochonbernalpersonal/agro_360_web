@@ -102,8 +102,14 @@ class ReportPdfGenerator
         string $filename
     ): string {
         try {
+            // Documentos oficiales siempre en español, independiente del locale de sesión
+            $previousLocale = app()->getLocale();
+            app()->setLocale('es');
+
             $pdf = Pdf::loadView($view, $data);
             $pdf->setPaper('A4', 'portrait');
+
+            app()->setLocale($previousLocale);
         } catch (\Exception $viewError) {
             Log::error('Error al cargar la vista del PDF', [
                 'report_id' => $report->id,

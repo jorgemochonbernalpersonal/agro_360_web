@@ -12,6 +12,11 @@ class ContainerType extends Model
 
     public array $translatable = ['name', 'description'];
 
+    public function useFallbackLocale(): bool
+    {
+        return true;
+    }
+
     protected $fillable = ['name', 'description'];
 
     public function containers(): HasMany
