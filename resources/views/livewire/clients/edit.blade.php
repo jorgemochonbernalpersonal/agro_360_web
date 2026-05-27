@@ -126,7 +126,7 @@
 
                                     @if(count($addresses) > 1)
                                         <flux:button type="button" wire:click="removeAddress({{ $index }})" variant="ghost" size="sm" icon="trash" class="text-red-500 hover:text-red-700">
-                                            Eliminar
+                                            {{ __('Eliminar') }}
                                         </flux:button>
                                     @endif
                                 </div>

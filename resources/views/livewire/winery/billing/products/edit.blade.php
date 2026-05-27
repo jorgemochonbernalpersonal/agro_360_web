@@ -7,7 +7,7 @@
     >
         <x-slot:actions>
             <flux:button href="{{ roleRoute('invoices.products.index') }}" variant="outline" icon="arrow-left" wire:navigate>
-                Volver
+                {{ __('Volver') }}
             </flux:button>
         </x-slot:actions>
     </x-agro.page-header>
@@ -369,7 +369,7 @@
                 <div class="flex justify-end gap-3 pt-2">
                     <flux:button type="button" variant="outline"
                         href="{{ roleRoute('invoices.products.index') }}" wire:navigate>
-                        Cancelar
+                        {{ __('Cancelar') }}
                     </flux:button>
                     <flux:button type="submit" variant="primary">{{ __('Guardar cambios') }}</flux:button>
                 </div>
@@ -377,7 +377,7 @@
                 <div class="flex justify-end pt-2">
                     <flux:button type="button" variant="outline"
                         href="{{ roleRoute('invoices.products.index') }}" wire:navigate icon="arrow-left">
-                        Volver al listado
+                        {{ __('Volver al listado') }}
                     </flux:button>
                 </div>
             @endif
@@ -428,7 +428,7 @@
                         variant="{{ $pendingDeliveryStatus === 'delivered' ? 'primary' : 'danger' }}"
                         icon="{{ $pendingDeliveryStatus === 'delivered' ? 'check-circle' : 'x-circle' }}"
                         wire:loading.attr="disabled" wire:target="confirmDeliveryStatus">
-                        <span wire:loading.remove wire:target="confirmDeliveryStatus">{{ $pendingDeliveryStatus === 'delivered' ? 'Confirmar entrega' : 'Confirmar cancelación' }}</span>
+                        <span wire:loading.remove wire:target="confirmDeliveryStatus">{{ $pendingDeliveryStatus === 'delivered' ? __('Confirmar entrega') : __('Confirmar cancelación') }}</span>
                         <span wire:loading wire:target="confirmDeliveryStatus">{{ __('Guardando...') }}</span>
                     </flux:button>
                 </div>

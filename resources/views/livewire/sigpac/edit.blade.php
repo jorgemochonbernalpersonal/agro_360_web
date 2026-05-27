@@ -5,7 +5,7 @@
     >
         <x-slot:actions>
             <flux:button href="{{ route('sigpac.codes') }}" variant="outline" icon="arrow-left" data-cy="back-button">
-                Volver
+                {{ __('Volver') }}
             </flux:button>
         </x-slot:actions>
     </x-agro.page-header>
@@ -252,7 +252,7 @@
             <!-- Botones de acción -->
             <div class="flex justify-end gap-4 pt-6 border-t border-zinc-200">
                 <flux:button href="{{ route('sigpac.codes') }}" variant="outline">
-                    Cancelar
+                    {{ __('Cancelar') }}
                 </flux:button>
                 <flux:button type="submit" variant="primary">{{ __('Actualizar Código SIGPAC') }}</flux:button>
             </div>

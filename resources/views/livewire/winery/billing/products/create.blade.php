@@ -170,7 +170,7 @@
                                 </div>
                                 <flux:button type="button" wire:click="removeItem({{ $index }})"
                                     variant="danger" size="sm" icon="trash">
-                                    Eliminar
+                                    {{ __('Eliminar') }}
                                 </flux:button>
                             </div>
 

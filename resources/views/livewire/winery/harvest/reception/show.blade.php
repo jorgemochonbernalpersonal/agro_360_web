@@ -10,11 +10,11 @@
     >
         <x-slot:actions>
             <flux:button href="{{ roleRoute('grape-reception.index') }}" variant="ghost" icon="arrow-left">
-                Volver
+                {{ __('Volver') }}
             </flux:button>
             @if(!$isCancelled)
                 <flux:button href="{{ roleRoute('grape-reception.edit', $harvest) }}" variant="primary" icon="pencil-square">
-                    Editar
+                    {{ __('Editar') }}
                 </flux:button>
             @endif
         </x-slot:actions>
@@ -438,7 +438,7 @@
                             class="w-full"
                             icon="document-arrow-down"
                         >
-                            Descargar PDF
+                            {{ __('Descargar PDF') }}
                         </flux:button>
                     </div>
                 </x-agro.card>

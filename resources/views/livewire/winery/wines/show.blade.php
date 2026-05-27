@@ -10,11 +10,11 @@
         <x-slot:actions>
             <flux:button variant="ghost" icon="pencil"
                 href="{{ roleRoute('wines.edit', $wine) }}" wire:navigate>
-                Editar
+                {{ __('Editar') }}
             </flux:button>
             <flux:button variant="ghost" icon="arrow-left"
                 href="{{ roleRoute('wines.index') }}" wire:navigate>
-                Volver
+                {{ __('Volver') }}
             </flux:button>
         </x-slot:actions>
     </x-agro.page-header>
@@ -1234,7 +1234,7 @@
                             a.click();
                         "
                         variant="outline" icon="arrow-down-tray" size="sm">
-                        Descargar QR
+                        {{ __('Descargar QR') }}
                     </flux:button>
                 </div>
 

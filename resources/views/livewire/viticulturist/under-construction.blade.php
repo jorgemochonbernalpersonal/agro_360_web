@@ -97,7 +97,7 @@
         {{-- Back button --}}
         <div class="pt-2">
             <flux:button href="{{ route($backRoute) }}" wire:navigate variant="ghost" icon="arrow-left" size="sm">
-                Volver al panel
+                {{ __('Volver al panel') }}
             </flux:button>
         </div>
     </div>

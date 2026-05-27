@@ -148,7 +148,7 @@
                                     @if(in_array($inspection->status, ['scheduled', 'in_progress']))
                                         <button wire:click="updateStatus({{ $inspection->id }}, 'cancelled')"
                                             class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-red-50 text-red-600 border border-red-200 rounded-md hover:bg-red-100 transition-colors">
-                                            Cancelar
+                                            {{ __('Cancelar') }}
                                         </button>
                                     @endif
                                     @if($inspection->result === \App\Models\DoInspection::RESULT_NON_COMPLIANT && $inspection->subject_type === 'winery')

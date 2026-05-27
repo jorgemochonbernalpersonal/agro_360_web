@@ -6,7 +6,7 @@
     >
         <x-slot:actions>
             <flux:button href="{{ roleRoute('viticulturist.warehouse.index', ['tab' => 'fitosanitarios']) }}" variant="ghost" icon="arrow-left">
-                Volver al Inventario
+                {{ __('Volver al Inventario') }}
             </flux:button>
         </x-slot:actions>
     </x-agro.page-header>

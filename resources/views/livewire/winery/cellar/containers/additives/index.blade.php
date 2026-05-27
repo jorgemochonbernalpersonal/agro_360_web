@@ -7,7 +7,7 @@
     <x-slot:actions>
         <flux:button variant="ghost" icon="arrow-left"
             href="{{ roleRoute('containers.index') }}" wire:navigate>
-            Volver
+            {{ __('Volver') }}
         </flux:button>
         <flux:button variant="primary" icon="plus"
             href="{{ roleRoute('containers.additives.create', $container) }}" wire:navigate>

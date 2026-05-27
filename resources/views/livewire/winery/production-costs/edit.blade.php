@@ -93,7 +93,7 @@
                 </div>
                 <flux:button type="button" variant="danger" wire:click="delete"
                              wire:confirm="{{ __('¿Eliminar este coste? Esta acción no se puede deshacer.') }}">
-                    Eliminar
+                    {{ __('Eliminar') }}
                 </flux:button>
             </div>
 

@@ -5,7 +5,7 @@
     >
         <x-slot:actions>
             <flux:button href="{{ route('admin.users.index') }}" variant="ghost" icon="arrow-left">
-                Volver
+                {{ __('Volver') }}
             </flux:button>
 
             @if(!$user->email_verified_at)
@@ -61,7 +61,7 @@
                     variant="danger"
                     icon="trash"
                 >
-                    Eliminar
+                    {{ __('Eliminar') }}
                 </flux:button>
             @endif
         </x-slot:actions>

@@ -63,7 +63,7 @@
                 <a href="{{ route('remote-sensing.report.plot', $selectedPlot) }}"
                    class="ml-auto flex items-center gap-1.5 px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold rounded-lg transition-colors">
                     <flux:icon icon="document-arrow-down" variant="micro" />
-                    Descargar PDF
+                    {{ __('Descargar PDF') }}
                 </a>
             </div>
         @endif

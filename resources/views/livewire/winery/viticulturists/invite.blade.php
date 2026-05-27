@@ -5,7 +5,7 @@
     >
         <x-slot:actions>
             <flux:button href="{{ roleRoute('viticulturists.index') }}" variant="ghost" icon="arrow-left">
-                Volver
+                {{ __('Volver') }}
             </flux:button>
         </x-slot:actions>
     </x-agro.page-header>

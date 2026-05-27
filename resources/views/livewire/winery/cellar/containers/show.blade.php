@@ -14,25 +14,25 @@
                     icon="trash"
                     class="text-red-500 hover:text-red-700"
                 >
-                    Vaciar vino
+                    {{ __('Vaciar vino') }}
                 </flux:button>
             @endif
             <flux:button href="{{ roleRoute('containers.edit', $container) }}" variant="ghost" icon="pencil">
-                Editar
+                {{ __('Editar') }}
             </flux:button>
             <flux:button href="{{ roleRoute('containers.maintenance.index', $container) }}" variant="ghost" icon="wrench-screwdriver">
-                Mantenimientos
+                {{ __('Mantenimientos') }}
             </flux:button>
             <flux:button href="{{ roleRoute('containers.additives.index', $container) }}" variant="outline" icon="beaker">
-                Aditivos
+                {{ __('Aditivos') }}
             </flux:button>
             @if($fromVisual)
                 <flux:button href="{{ roleRoute('visual') }}" variant="outline" icon="map">
-                    Volver al Mapa
+                    {{ __('Volver al Mapa') }}
                 </flux:button>
             @else
                 <flux:button href="{{ roleRoute('containers.index') }}" variant="outline" icon="arrow-left">
-                    Volver
+                    {{ __('Volver') }}
                 </flux:button>
             @endif
         </x-slot:actions>

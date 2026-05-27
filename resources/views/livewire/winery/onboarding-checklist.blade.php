@@ -101,7 +101,7 @@
             <button wire:click="resetOnboarding"
                     class="text-xs text-zinc-500 hover:text-agro-600 transition-colors flex items-center gap-1">
                 <flux:icon icon="arrow-path" class="size-3" />
-                Volver a ver el tour de bienvenida
+                {{ __('Volver a ver el tour de bienvenida') }}
             </button>
         </div>
     @endif

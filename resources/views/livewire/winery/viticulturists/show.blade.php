@@ -5,7 +5,7 @@
     >
         <x-slot:actions>
             <flux:button href="{{ roleRoute('viticulturists.index') }}" variant="ghost" icon="arrow-left">
-                Volver
+                {{ __('Volver') }}
             </flux:button>
             @if($isOwn)
                 <flux:button
@@ -13,10 +13,10 @@
                     variant="ghost"
                     icon="map"
                 >
-                    Añadir parcela
+                    {{ __('Añadir parcela') }}
                 </flux:button>
                 <flux:button href="{{ roleRoute('viticulturists.edit', $viticulturist->id) }}" variant="primary" icon="pencil-square">
-                    Editar
+                    {{ __('Editar') }}
                 </flux:button>
             @endif
         </x-slot:actions>
@@ -286,7 +286,7 @@
                         wire:click="cancelAccessRequest"
                         wire:confirm="{{ __('¿Cancelar la solicitud de acceso al cuaderno?') }}"
                     >
-                        Cancelar solicitud
+                        {{ __('Cancelar solicitud') }}
                     </flux:button>
                 @else
                     <flux:button

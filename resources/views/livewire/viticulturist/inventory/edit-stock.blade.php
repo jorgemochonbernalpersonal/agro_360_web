@@ -2,7 +2,7 @@
     <x-agro.page-header title="{{ __('Editar Stock') }}" :description="__('Modifica los datos del registro de stock')">
         <x-slot:actions>
             <flux:button href="{{ roleRoute('viticulturist.warehouse.index', ['tab' => 'fitosanitarios']) }}" variant="ghost" icon="arrow-left">
-                Cancelar
+                {{ __('Cancelar') }}
             </flux:button>
         </x-slot:actions>
     </x-agro.page-header>

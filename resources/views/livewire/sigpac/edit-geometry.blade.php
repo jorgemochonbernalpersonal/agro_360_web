@@ -54,7 +54,7 @@
                                 variant="danger"
                                 size="sm"
                             >
-                                Eliminar
+                                {{ __('Eliminar') }}
                             </flux:button>
                         @endif
                         @if($plotId)
@@ -73,7 +73,7 @@
                             variant="primary"
                             size="sm"
                         >
-                            {{ $geometryId ? 'Editar Mapa' : 'Crear Mapa' }}
+                            {{ $geometryId ? __('Editar Mapa') : __('Crear Mapa') }}
                         </flux:button>
                     </div>
                 @else
@@ -82,7 +82,7 @@
                         variant="primary"
                         size="sm"
                     >
-                        Editar Mapa
+                        {{ __('Editar Mapa') }}
                     </flux:button>
                 @endif
                 </div>

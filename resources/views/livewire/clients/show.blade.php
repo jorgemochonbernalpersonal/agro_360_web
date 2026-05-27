@@ -5,7 +5,7 @@
     >
         <x-slot:actions>
             <flux:button href="{{ roleRoute('viticulturist.clients.edit', $client->id) }}" variant="primary" icon="pencil-square">
-                Editar
+                {{ __('Editar') }}
             </flux:button>
         </x-slot:actions>
     </x-agro.page-header>

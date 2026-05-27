@@ -8,7 +8,7 @@
     >
         <x-slot:actions>
             <flux:button href="{{ roleRoute('containers.index') }}" wire:navigate variant="ghost" icon="arrow-left">
-                Contenedores
+                {{ __('Contenedores') }}
             </flux:button>
         </x-slot:actions>
     </x-agro.page-header>

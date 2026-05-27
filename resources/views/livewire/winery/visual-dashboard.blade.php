@@ -388,7 +388,7 @@
                         <a href="{{ roleRoute('plots.edit', $selectedPlot) }}" wire:navigate
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 transition-colors group">
                             <flux:icon icon="pencil-square" class="size-4 text-zinc-400 group-hover:text-zinc-600 shrink-0" />
-                            Editar
+                            {{ __('Editar') }}
                         </a>
                         <a href="{{ roleRoute('plots.plantings.create', $selectedPlot) }}" wire:navigate
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
