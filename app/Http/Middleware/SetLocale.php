@@ -15,6 +15,24 @@ class SetLocale
 
     public function handle(Request $request, Closure $next): Response
     {
+        // Cambio explícito via query param ?lang=ca → persistir y redirigir sin ?lang=
+        if ($request->has('lang')) {
+            $lang = $request->query('lang');
+            if (in_array($lang, self::SUPPORTED, true)) {
+                session(['locale' => $lang]);
+                if (auth()->check()) {
+                    auth()->user()->update(['locale' => $lang]);
+                }
+                $cleanUrl = $request->url();
+                $query = $request->except('lang');
+                if ($query) {
+                    $cleanUrl .= '?' . http_build_query($query);
+                }
+                return redirect($cleanUrl)
+                    ->cookie(self::COOKIE_NAME, $lang, 60 * 24 * self::COOKIE_DAYS, '/', null, null, false);
+            }
+        }
+
         $locale = $this->resolveLocale($request);
 
         App::setLocale($locale);
@@ -35,37 +53,25 @@ class SetLocale
 
     private function resolveLocale(Request $request): string
     {
-        // 1. Cambio explícito via query param ?lang=ca
-        if ($request->has('lang')) {
-            $lang = $request->query('lang');
-            if (in_array($lang, self::SUPPORTED, true)) {
-                session(['locale' => $lang]);
-                if (auth()->check()) {
-                    auth()->user()->update(['locale' => $lang]);
-                }
-                return $lang;
-            }
-        }
-
-        // 2. Sesión
+        // 1. Sesión
         if (session()->has('locale') && in_array(session('locale'), self::SUPPORTED, true)) {
             return session('locale');
         }
 
-        // 3. Cookie (sobrevive expiración de sesión y recargas de wire:navigate)
+        // 2. Cookie (sobrevive expiración de sesión y recargas de wire:navigate)
         $cookie = $request->cookie(self::COOKIE_NAME);
         if ($cookie && in_array($cookie, self::SUPPORTED, true)) {
             session(['locale' => $cookie]);
             return $cookie;
         }
 
-        // 4. Preferencia guardada del usuario autenticado
+        // 3. Preferencia guardada del usuario autenticado
         if (auth()->check() && auth()->user()->locale && in_array(auth()->user()->locale, self::SUPPORTED, true)) {
             session(['locale' => auth()->user()->locale]);
             return auth()->user()->locale;
         }
 
-        // 5. Fallback al español
+        // 4. Fallback al español
         return 'es';
     }
 }

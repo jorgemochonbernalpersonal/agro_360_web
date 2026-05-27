@@ -1,5 +1,4 @@
 {
-    "__('Sin actividades')": "__('Sin actividades')",
     "-- Selecciona un lote con stock disponible --": "-- Selecciona un lote con stock disponible --",
     "-- Selecciona un lote de vino --": "-- Select a wine lot --",
     "-- Selecciona una cosecha --": "-- Select a harvest --",
@@ -8977,7 +8976,7 @@
     "Puedes seguir el progreso desde la sección de Soporte.": "You can follow the progress from the Support section.",
     "Puedes tener varios activos — por ejemplo IVA 21% para servicios e IVA 10% para productos alimenticios.": "Puedes tener varios activos — por ejemplo IVA 21% para servicios e IVA 10% para productos alimenticios.",
     "Puedes verificar este informe en:": "Puedes verificar este informe en:",
-    "Pulsa \"Mostrar\" para ver el pronostico de los proximos 7 dias.": "Pulsa \"Mostrar\" para ver el pronostico de los proximos 7 dias.",
+    "Pulsa \"Mostrar\" para ver el pronostico de los proximos 7 dias.": "Press \"Show\" to view the 7-day forecast.",
     "Pulsa “Mostrar” para ver el pronóstico de los próximos 7 días.": "Press “Show” to view the 7-day forecast.",
     "Pulsa en un depósito para ver todas las opciones disponibles": "Pulsa en un depósito para ver todas las opciones disponibles",
     "Pulsa en un polígono del mapa para ver todas las opciones disponibles": "Pulsa en un polígono del mapa para ver todas las opciones disponibles",
@@ -11895,7 +11894,6 @@
     "Elige kg para depósitos de vendimia, litros para crianza y embotellado.": "Choose kg for harvest tanks, litres for ageing and bottling.",
     "Nueva Sesión": "New Session",
     "Nuevo subproducto": "New by-product",
-    "Pulsa \"Mostrar\" para ver el pronostico de los proximos 7 dias.": "Press \"Show\" to view the 7-day forecast.",
     "Solo lotes con stock disponible. Ajusta la cantidad en las líneas.": "Only lots with available stock. Adjust the quantity in the lines.",
     "¿Eliminar este registro de aditivo?": "Delete this additive record?",
     "Bodega registrada en Agro365": "Winery registered in Agro365",

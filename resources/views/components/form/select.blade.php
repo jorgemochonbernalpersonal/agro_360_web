@@ -1,4 +1,6 @@
-@props(['label', 'name', 'options' => [], 'required' => false, 'placeholder' => 'Selecciona una opción', 'selected' => ''])
+@props(['label', 'name', 'options' => [], 'required' => false, 'placeholder' => null, 'selected' => ''])
+
+@php $placeholder ??= __('Selecciona una opción'); @endphp
 
 <div {{ $attributes->merge(['class' => 'mb-4']) }}>
     @if($label)
