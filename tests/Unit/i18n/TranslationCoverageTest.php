@@ -19,7 +19,7 @@ class TranslationCoverageTest extends TestCase
 {
     // ── Baselines (updated 2026-05-28) ─────────────────────────────────────────
     // Raise these only when intentionally accepting new untranslated keys.
-    private const BASELINE_EN = 1347;
+    private const BASELINE_EN = 1285;
     private const BASELINE_CA = 7468;
     private const BASELINE_EU = 7272;
     private const BASELINE_GL = 8342;
