@@ -20,6 +20,11 @@ class WineBottling extends Model
         'otro' => 'Otro formato',
     ];
 
+    public static function bottleFormatOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::BOTTLE_FORMATS);
+    }
+
     protected $fillable = [
         'user_id',
         'wine_id',

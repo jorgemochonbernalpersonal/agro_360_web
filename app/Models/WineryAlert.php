@@ -19,11 +19,21 @@ class WineryAlert extends Model
         'custom'        => 'Personalizada',
     ];
 
+    public static function alertTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::ALERT_TYPES);
+    }
+
     const SEVERITIES = [
         'info'     => 'Informativa',
         'warning'  => 'Aviso',
         'critical' => 'Crítica',
     ];
+
+    public static function severityOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::SEVERITIES);
+    }
 
     protected $fillable = [
         'user_id',
@@ -64,12 +74,12 @@ class WineryAlert extends Model
 
     public function getTypeLabelAttribute(): string
     {
-        return self::ALERT_TYPES[$this->alert_type] ?? $this->alert_type;
+        return __(self::ALERT_TYPES[$this->alert_type] ?? $this->alert_type);
     }
 
     public function getSeverityLabelAttribute(): string
     {
-        return self::SEVERITIES[$this->severity] ?? $this->severity;
+        return __(self::SEVERITIES[$this->severity] ?? $this->severity);
     }
 
     public function isExpired(): bool

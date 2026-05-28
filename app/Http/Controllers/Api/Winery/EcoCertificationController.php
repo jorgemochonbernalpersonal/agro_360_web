@@ -34,8 +34,8 @@ class EcoCertificationController extends Controller
                 'per_page'     => $items->perPage(),
                 'current_page' => $items->currentPage(),
                 'last_page'    => $items->lastPage(),
-                'types'        => EcoCertification::CERTIFICATION_TYPES,
-                'statuses'     => EcoCertification::STATUSES,
+                'types'        => EcoCertification::certificationTypeOptions(),
+                'statuses'     => EcoCertification::statusOptions(),
             ],
         ]);
     }

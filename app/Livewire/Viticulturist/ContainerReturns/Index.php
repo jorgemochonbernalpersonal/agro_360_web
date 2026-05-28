@@ -105,8 +105,8 @@ class Index extends AbstractIndex
         return [
             'entries'           => $entries,
             'campaigns'         => Campaign::forViticulturist($userId)->orderByDesc('year')->get(),
-            'collectionSystems' => PhytosanitaryContainerReturn::COLLECTION_SYSTEMS,
-            'containerTypes'    => PhytosanitaryContainerReturn::CONTAINER_TYPES,
+            'collectionSystems' => PhytosanitaryContainerReturn::collectionSystemOptions(),
+            'containerTypes'    => PhytosanitaryContainerReturn::containerTypeOptions(),
             'stats'             => $stats,
         ];
     }

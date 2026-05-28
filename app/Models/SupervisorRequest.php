@@ -46,6 +46,11 @@ class SupervisorRequest extends Model
         'certification'       => 'Certificación ecológica / IGP',
     ];
 
+    public static function typeLabelOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::TYPE_LABELS);
+    }
+
     /** Types initiated by the supervisor */
     public const SUPERVISOR_INITIATED = ['nonconformity'];
 
@@ -71,6 +76,11 @@ class SupervisorRequest extends Model
         'rejected'  => 'Rechazada',
         'archived'  => 'Archivada',
     ];
+
+    public static function statusLabelOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::STATUS_LABELS);
+    }
 
     public const STATUS_COLORS = [
         'draft'     => 'zinc',
@@ -116,12 +126,12 @@ class SupervisorRequest extends Model
 
     public function typeLabel(): string
     {
-        return self::TYPE_LABELS[$this->type] ?? $this->type;
+        return __(self::TYPE_LABELS[$this->type] ?? $this->type);
     }
 
     public function statusLabel(): string
     {
-        return self::STATUS_LABELS[$this->status] ?? $this->status;
+        return __(self::STATUS_LABELS[$this->status] ?? $this->status);
     }
 
     public function statusColor(): string

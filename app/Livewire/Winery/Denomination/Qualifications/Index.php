@@ -63,9 +63,9 @@ class Index extends Component
             'qualifications'    => $qualifications,
             'counts'            => $counts,
             'availableVintages' => $availableVintages,
-            'resultLabels'      => DoQualification::RESULT_LABELS,
+            'resultLabels'      => DoQualification::resultLabelOptions(),
             'resultColors'      => DoQualification::RESULT_COLORS,
-            'colorLabels'       => DoQualification::COLOR_LABELS,
+            'colorLabels'       => DoQualification::colorLabelOptions(),
         ]);
     }
 }

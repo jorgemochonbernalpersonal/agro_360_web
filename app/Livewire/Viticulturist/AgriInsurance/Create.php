@@ -80,8 +80,8 @@ class Create extends Component
     public function render()
     {
         return view('livewire.viticulturist.agri-insurance.create', [
-            'coverageTypes' => AgriInsurance::COVERAGE_TYPES,
-            'statuses'      => AgriInsurance::STATUSES,
+            'coverageTypes' => AgriInsurance::coverageTypeOptions(),
+            'statuses'      => AgriInsurance::statusOptions(),
         ])->layout('layouts.app');
     }
 }

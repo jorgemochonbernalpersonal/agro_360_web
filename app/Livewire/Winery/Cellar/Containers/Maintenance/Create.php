@@ -69,7 +69,7 @@ class Create extends Component
     public function updatedMaintenanceType(): void
     {
         if (!$this->maintenance_name) {
-            $this->maintenance_name = ContainerMaintenance::TYPES[$this->maintenance_type] ?? '';
+            $this->maintenance_name = __(ContainerMaintenance::TYPES[$this->maintenance_type] ?? '');
         }
     }
 
@@ -148,8 +148,8 @@ class Create extends Component
     public function render()
     {
         return view('livewire.winery.cellar.containers.maintenance.create', [
-            'types'      => ContainerMaintenance::TYPES,
-            'statuses'   => ContainerMaintenance::STATUSES,
+            'types'      => ContainerMaintenance::typeOptions(),
+            'statuses'   => ContainerMaintenance::statusOptions(),
             'supplies'   => WinerySupply::where('user_id', Auth::id())->active()->orderBy('name')->get(),
             'units'      => UnitOfMeasurement::orderBy('name')->get(),
             'wasteTypes' => ContainerWasteType::orderBy('name')->get(),

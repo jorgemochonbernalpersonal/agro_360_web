@@ -22,6 +22,16 @@ class WineLoss extends Model
         'quality'       => 'Rechazo por calidad',
     ];
 
+    public static function lossTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::LOSS_TYPES);
+    }
+
+    public static function lossAuthorizationOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::LOSS_AUTHORIZATIONS);
+    }
+
     protected $fillable = [
         'wine_id',
         'container_id',

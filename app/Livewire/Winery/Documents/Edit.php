@@ -68,7 +68,7 @@ class Edit extends Component
     public function render()
     {
         return view('livewire.winery.documents.edit', [
-            'types' => WineryDocument::DOCUMENT_TYPES,
+            'types' => WineryDocument::documentTypeOptions(),
         ])->layout('layouts.app');
     }
 }

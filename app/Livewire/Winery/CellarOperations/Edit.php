@@ -79,8 +79,8 @@ class Edit extends Component
                 ->where('archived', false)
                 ->orderBy('name')
                 ->get(),
-            'types'    => CellarOperation::OPERATION_TYPES,
-            'statuses' => CellarOperation::STATUSES,
+            'types'    => CellarOperation::operationTypeOptions(),
+            'statuses' => CellarOperation::statusOptions(),
         ])->layout('layouts.app');
     }
 }

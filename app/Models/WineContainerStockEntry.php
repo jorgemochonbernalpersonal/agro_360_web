@@ -13,6 +13,11 @@ class WineContainerStockEntry extends Model
         'correction'    => 'Corrección',
     ];
 
+    public static function sourceOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::SOURCES);
+    }
+
     protected $fillable = [
         'wine_id',
         'container_id',

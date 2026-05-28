@@ -14,12 +14,22 @@ class SanitaryRegistration extends Model
         'other'  => 'Otro',
     ];
 
+    public static function registrationTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::REGISTRATION_TYPES);
+    }
+
     const STATUSES = [
         'active'    => 'Activo',
         'expired'   => 'Caducado',
         'suspended' => 'Suspendido',
         'cancelled' => 'Cancelado',
     ];
+
+    public static function statusOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::STATUSES);
+    }
 
     protected $fillable = [
         'user_id',
@@ -45,12 +55,12 @@ class SanitaryRegistration extends Model
 
     public function getTypeLabelAttribute(): string
     {
-        return self::REGISTRATION_TYPES[$this->registration_type] ?? $this->registration_type;
+        return __(self::REGISTRATION_TYPES[$this->registration_type] ?? $this->registration_type);
     }
 
     public function getStatusLabelAttribute(): string
     {
-        return self::STATUSES[$this->status] ?? $this->status;
+        return __(self::STATUSES[$this->status] ?? $this->status);
     }
 
     public function isExpiringSoon(): bool

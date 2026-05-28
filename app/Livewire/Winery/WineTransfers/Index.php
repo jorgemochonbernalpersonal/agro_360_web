@@ -83,7 +83,7 @@ class Index extends AbstractIndex
         return [
             'transfers' => $entries,
             'wines'     => Wine::where('user_id', $this->wineryId())->orderBy('name')->get(),
-            'types'     => WineTransfer::TRANSFER_TYPES,
+            'types'     => WineTransfer::transferTypeOptions(),
             'stats'     => $stats,
         ];
     }

@@ -36,6 +36,11 @@ class DoDocument extends Model
         'archived' => 'Archivado',
     ];
 
+    public static function statusLabelOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::STATUS_LABELS);
+    }
+
     public function supervisor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'supervisor_id');

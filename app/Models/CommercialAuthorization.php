@@ -19,6 +19,11 @@ class CommercialAuthorization extends Model
         'other'                 => 'Otro',
     ];
 
+    public static function authorizationTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::AUTHORIZATION_TYPES);
+    }
+
     protected $fillable = [
         'viticulturist_id',
         'exploitation_id',
@@ -51,7 +56,7 @@ class CommercialAuthorization extends Model
 
     public function getAuthorizationTypeLabelAttribute(): string
     {
-        return self::AUTHORIZATION_TYPES[$this->authorization_type] ?? $this->authorization_type;
+        return __(self::AUTHORIZATION_TYPES[$this->authorization_type] ?? $this->authorization_type);
     }
 
     public function isExpired(): bool

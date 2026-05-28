@@ -33,6 +33,11 @@ class Pest extends Model
         'quimico'   => 'Control químico',
     ];
 
+    public static function controlMethodLabelOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::CONTROL_METHOD_LABELS);
+    }
+
     protected $fillable = [
         'type',
         'name',
@@ -166,7 +171,7 @@ class Pest extends Model
         }
 
         return array_map(
-            fn($m) => self::CONTROL_METHOD_LABELS[$m] ?? $m,
+            fn($m) => __(self::CONTROL_METHOD_LABELS[$m] ?? $m),
             $this->control_methods
         );
     }

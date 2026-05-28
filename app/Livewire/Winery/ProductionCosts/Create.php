@@ -78,7 +78,7 @@ class Create extends Component
 
         return view('livewire.winery.production-costs.create', [
             'wines'      => $wines,
-            'categories' => WineCost::CATEGORIES,
+            'categories' => WineCost::categoryOptions(),
         ]);
     }
 }

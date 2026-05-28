@@ -24,6 +24,16 @@ class CellarOperation extends Model
         'cancelled'   => 'Cancelada',
     ];
 
+    public static function operationTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::OPERATION_TYPES);
+    }
+
+    public static function statusOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::STATUSES);
+    }
+
     protected $fillable = [
         'user_id',
         'operation_type',

@@ -99,7 +99,7 @@ class Index extends AbstractIndex
         return [
             'entries'   => $entries,
             'campaigns' => Campaign::forViticulturist($userId)->orderByDesc('year')->get(),
-            'statuses'  => FertilizationPlan::STATUSES,
+            'statuses'  => FertilizationPlan::statusOptions(),
             'stats'     => $stats,
         ];
     }

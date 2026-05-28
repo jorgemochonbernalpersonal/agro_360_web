@@ -83,9 +83,9 @@ class Index extends Component
             'grapes'   => $grapes,
             'stats'    => $stats,
             'vintages' => $vintages,
-            'types'    => ExternalGrape::TYPES,
-            'colors'   => ExternalGrape::COLORS,
-            'statuses' => ExternalGrape::STATUSES,
+            'types'    => ExternalGrape::typeOptions(),
+            'colors'   => ExternalGrape::colorOptions(),
+            'statuses' => ExternalGrape::statusOptions(),
         ])->layout('layouts.app');
     }
 }

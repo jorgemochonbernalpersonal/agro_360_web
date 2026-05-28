@@ -115,7 +115,7 @@ class Edit extends AbstractEdit
     {
         return [
             'campaigns' => Campaign::forViticulturist($this->viticulturistId())->orderByDesc('year')->get(),
-            'statuses'  => FertilizationPlan::STATUSES,
+            'statuses'  => FertilizationPlan::statusOptions(),
         ];
     }
 }

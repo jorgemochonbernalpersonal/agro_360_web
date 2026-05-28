@@ -59,7 +59,7 @@ class Create extends Component
     public function render()
     {
         return view('livewire.winery.winery-supplies.create', [
-            'types' => WinerySupply::SUPPLY_TYPES,
+            'types' => WinerySupply::supplyTypeOptions(),
             'units' => UnitOfMeasurement::orderBy('name')->get(),
         ])->layout('layouts.app');
     }

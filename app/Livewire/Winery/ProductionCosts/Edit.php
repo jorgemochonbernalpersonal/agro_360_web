@@ -93,7 +93,7 @@ class Edit extends Component
 
         return view('livewire.winery.production-costs.edit', [
             'wines'      => $wines,
-            'categories' => WineCost::CATEGORIES,
+            'categories' => WineCost::categoryOptions(),
         ]);
     }
 }

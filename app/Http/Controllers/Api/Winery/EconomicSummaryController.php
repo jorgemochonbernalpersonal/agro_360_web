@@ -60,7 +60,7 @@ class EconomicSummaryController extends Controller
             ->get()
             ->map(fn ($r) => [
                 'wine_type'  => $r->wine_type,
-                'type_label' => Wine::WINE_TYPES[$r->wine_type] ?? $r->wine_type,
+                'type_label' => __(Wine::WINE_TYPES[$r->wine_type] ?? $r->wine_type),
                 'amount'     => (float) $r->amount,
                 'quantity'   => (float) $r->quantity,
             ]);

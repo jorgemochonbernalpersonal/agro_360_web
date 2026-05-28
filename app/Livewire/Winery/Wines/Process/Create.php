@@ -98,7 +98,7 @@ class Create extends Component
             ->get();
 
         return view('livewire.winery.wines.process.create', [
-            'processTypes' => WineProcessDetail::PROCESS_TYPES,
+            'processTypes' => WineProcessDetail::processTypeOptions(),
             'containers'   => $containers,
             'units'        => UnitOfMeasurement::orderBy('name')->get(),
         ])->layout('layouts.app');

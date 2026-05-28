@@ -73,7 +73,7 @@ class Edit extends Component
     public function render()
     {
         return view('livewire.winery.winery-supplies.edit', [
-            'types' => WinerySupply::SUPPLY_TYPES,
+            'types' => WinerySupply::supplyTypeOptions(),
             'units' => UnitOfMeasurement::orderBy('name')->get(),
         ])->layout('layouts.app');
     }

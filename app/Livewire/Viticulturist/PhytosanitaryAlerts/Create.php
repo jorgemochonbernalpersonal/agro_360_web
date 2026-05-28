@@ -60,9 +60,9 @@ class Create extends AbstractCreate
     protected function viewData(): array
     {
         return [
-            'sources'    => PhytosanitaryAlert::SOURCES,
-            'alertTypes' => PhytosanitaryAlert::ALERT_TYPES,
-            'severities' => PhytosanitaryAlert::SEVERITIES,
+            'sources'    => PhytosanitaryAlert::sourceOptions(),
+            'alertTypes' => PhytosanitaryAlert::alertTypeOptions(),
+            'severities' => PhytosanitaryAlert::severityOptions(),
         ];
     }
 }

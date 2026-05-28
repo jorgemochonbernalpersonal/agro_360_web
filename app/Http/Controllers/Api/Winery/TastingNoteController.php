@@ -35,12 +35,12 @@ class TastingNoteController extends Controller
                 'current_page' => $notes->currentPage(),
                 'last_page'    => $notes->lastPage(),
                 'enums'        => [
-                    'visual_clarity'   => WineTastingNote::VISUAL_CLARITY,
-                    'visual_intensity' => WineTastingNote::VISUAL_INTENSITY,
-                    'aroma_intensity'  => WineTastingNote::AROMA_INTENSITY,
-                    'palate_level'     => WineTastingNote::PALATE_LEVEL,
-                    'palate_body'      => WineTastingNote::PALATE_BODY,
-                    'palate_finish'    => WineTastingNote::PALATE_FINISH,
+                    'visual_clarity'   => WineTastingNote::visualClarityOptions(),
+                    'visual_intensity' => WineTastingNote::visualIntensityOptions(),
+                    'aroma_intensity'  => WineTastingNote::aromaIntensityOptions(),
+                    'palate_level'     => WineTastingNote::palateLevelOptions(),
+                    'palate_body'      => WineTastingNote::palateBodyOptions(),
+                    'palate_finish'    => WineTastingNote::palateFinishOptions(),
                 ],
             ],
         ]);

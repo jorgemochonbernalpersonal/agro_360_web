@@ -197,8 +197,8 @@ class Index extends Component
             'pendingCount' => $pendingCount,
             'inReviewCount'=> $inReviewCount,
             'wineries'     => $wineries,
-            'typeLabels'   => SupervisorRequest::TYPE_LABELS,
-            'statusLabels' => SupervisorRequest::STATUS_LABELS,
+            'typeLabels'   => SupervisorRequest::typeLabelOptions(),
+            'statusLabels' => SupervisorRequest::statusLabelOptions(),
             'statusColors' => SupervisorRequest::STATUS_COLORS,
         ]);
     }

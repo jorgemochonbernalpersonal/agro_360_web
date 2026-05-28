@@ -79,8 +79,8 @@ class Index extends AbstractIndex
 
         return [
             'certifications' => $entries,
-            'types'          => EcoCertification::CERTIFICATION_TYPES,
-            'statuses'       => EcoCertification::STATUSES,
+            'types'          => EcoCertification::certificationTypeOptions(),
+            'statuses'       => EcoCertification::statusOptions(),
             'stats'          => $stats,
         ];
     }

@@ -105,7 +105,7 @@ class CreatePostHarvest extends AbstractActivityForm
     {
         return view('livewire.viticulturist.digital-notebook.create-post-harvest', $this->renderData([
             'products'         => $this->products,
-            'applicationTypes' => PostHarvestTreatment::APPLICATION_TYPES,
+            'applicationTypes' => PostHarvestTreatment::applicationTypeOptions(),
         ]))->layout('layouts.app', ['title' => __('Registrar Tratamiento Post-Vendimia - Agro365')]);
     }
 }

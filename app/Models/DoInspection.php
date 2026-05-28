@@ -41,11 +41,21 @@ class DoInspection extends Model
         'cancelled'   => 'Cancelada',
     ];
 
+    public static function statusLabelOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::STATUS_LABELS);
+    }
+
     public const RESULT_LABELS = [
         'compliant'     => 'Conforme',
         'non_compliant' => 'No conforme',
         'pending'       => 'Pendiente',
     ];
+
+    public static function resultLabelOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::RESULT_LABELS);
+    }
 
     public const RESULT_COLORS = [
         'compliant'     => 'green',

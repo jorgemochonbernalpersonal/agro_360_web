@@ -72,8 +72,8 @@ class Edit extends Component
     public function render()
     {
         return view('livewire.winery.sanitary-registrations.edit', [
-            'types'    => SanitaryRegistration::REGISTRATION_TYPES,
-            'statuses' => SanitaryRegistration::STATUSES,
+            'types'    => SanitaryRegistration::registrationTypeOptions(),
+            'statuses' => SanitaryRegistration::statusOptions(),
         ])->layout('layouts.app');
     }
 }

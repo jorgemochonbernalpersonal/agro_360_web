@@ -248,26 +248,48 @@ class Wine extends Model
         return (float) $this->losses()->sum('quantity');
     }
 
+    // ─── Opciones traducidas ──────────────────────────────────────────────────
+
+    public static function wineTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::WINE_TYPES);
+    }
+
+    public static function statusOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::STATUSES);
+    }
+
+    public static function agingTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::AGING_TYPES);
+    }
+
+    public static function categoryOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::CATEGORIES);
+    }
+
     // ─── Accessors de etiquetas ────────────────────────────────────────────────
 
     public function getTypeLabelAttribute(): string
     {
-        return self::WINE_TYPES[$this->wine_type] ?? $this->wine_type;
+        return __(self::WINE_TYPES[$this->wine_type] ?? $this->wine_type);
     }
 
     public function getStatusLabelAttribute(): string
     {
-        return self::STATUSES[$this->status] ?? $this->status;
+        return __(self::STATUSES[$this->status] ?? $this->status);
     }
 
     public function getAgingTypeLabelAttribute(): ?string
     {
-        return $this->aging_type ? (self::AGING_TYPES[$this->aging_type] ?? $this->aging_type) : null;
+        return $this->aging_type ? __(self::AGING_TYPES[$this->aging_type] ?? $this->aging_type) : null;
     }
 
     public function getCategoryLabelAttribute(): ?string
     {
-        return $this->category ? (self::CATEGORIES[$this->category] ?? $this->category) : null;
+        return $this->category ? __(self::CATEGORIES[$this->category] ?? $this->category) : null;
     }
 
     // ─── Scopes ────────────────────────────────────────────────────────────────

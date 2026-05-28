@@ -14,6 +14,11 @@ class LabelBatch extends Model
         'other'       => 'Otro',
     ];
 
+    public static function sourceOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::SOURCES);
+    }
+
     protected $fillable = [
         'user_id',
         'wine_id',
@@ -70,7 +75,7 @@ class LabelBatch extends Model
 
     public function getSourceLabelAttribute(): string
     {
-        return self::SOURCES[$this->source] ?? $this->source ?? 'Propio';
+        return __(self::SOURCES[$this->source] ?? $this->source ?? 'Propio');
     }
 
     public function isEmpty(): bool

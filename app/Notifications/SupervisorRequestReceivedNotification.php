@@ -35,7 +35,7 @@ class SupervisorRequestReceivedNotification extends Notification implements Shou
     {
         $req       = $this->supervisorRequest;
         $winery    = $req->winery;
-        $typeLabel = SupervisorRequest::TYPE_LABELS[$req->type] ?? $req->type;
+        $typeLabel = __(SupervisorRequest::TYPE_LABELS[$req->type] ?? $req->type);
         $url       = AppLink::url(route('supervisor.requests.index'), 'agro365://home');
 
         if (app()->environment('production')) {
@@ -57,7 +57,7 @@ class SupervisorRequestReceivedNotification extends Notification implements Shou
     public function toArray(object $notifiable): array
     {
         $req       = $this->supervisorRequest;
-        $typeLabel = SupervisorRequest::TYPE_LABELS[$req->type] ?? $req->type;
+        $typeLabel = __(SupervisorRequest::TYPE_LABELS[$req->type] ?? $req->type);
 
         return [
             'request_id'   => $req->id,

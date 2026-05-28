@@ -18,6 +18,11 @@ class MarketedHarvest extends Model
         'other'       => 'Otro',
     ];
 
+    public static function destinationTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::DESTINATION_TYPES);
+    }
+
     protected $fillable = [
         'harvest_id',
         'campaign_id',
@@ -66,7 +71,7 @@ class MarketedHarvest extends Model
 
     public function getDestinationTypeLabelAttribute(): string
     {
-        return self::DESTINATION_TYPES[$this->destination_type] ?? $this->destination_type;
+        return __(self::DESTINATION_TYPES[$this->destination_type] ?? $this->destination_type);
     }
 
     public function scopeActive($query)

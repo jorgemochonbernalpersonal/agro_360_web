@@ -68,7 +68,7 @@ class Index extends AbstractIndex
         return [
             'entries'       => $entries,
             'campaigns'     => Campaign::forViticulturist($this->viticulturistId())->orderByDesc('year')->get(),
-            'practiceTypes' => ResidueManagement::PRACTICE_TYPES,
+            'practiceTypes' => ResidueManagement::practiceTypeOptions(),
             'stats'         => $stats,
         ];
     }

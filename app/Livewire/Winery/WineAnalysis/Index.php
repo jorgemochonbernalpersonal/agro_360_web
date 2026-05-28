@@ -92,8 +92,8 @@ class Index extends AbstractIndex
 
         return [
             'analyses'   => $entries,
-            'types'      => WineAnalysis::ANALYSIS_TYPES,
-            'results'    => WineAnalysis::RESULTS,
+            'types'      => WineAnalysis::analysisTypeOptions(),
+            'results'    => WineAnalysis::resultOptions(),
             'containers' => Container::where('user_id', $this->wineryId())->where('archived', false)->orderBy('name')->get(),
             'stats'      => $stats,
         ];

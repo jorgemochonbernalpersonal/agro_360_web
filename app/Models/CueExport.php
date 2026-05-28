@@ -18,6 +18,11 @@ class CueExport extends Model
         'rejected'  => 'Rechazado',
     ];
 
+    public static function statusOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::STATUSES);
+    }
+
     const STATUS_COLORS = [
         'draft'     => 'zinc',
         'generated' => 'blue',

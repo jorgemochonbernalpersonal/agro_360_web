@@ -250,7 +250,7 @@ class Edit extends Component
     public function render()
     {
         return view('livewire.winery.bottling.edit', [
-            'bottleFormats'          => WineBottling::BOTTLE_FORMATS,
+            'bottleFormats'          => WineBottling::bottleFormatOptions(),
             'wines'                  => $this->wines,
             'originContainer'        => $this->originContainer,
             'oenologists'            => $this->oenologists,

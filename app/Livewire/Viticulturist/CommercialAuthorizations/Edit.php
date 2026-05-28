@@ -86,7 +86,7 @@ class Edit extends AbstractEdit
     {
         return [
             'exploitations' => Exploitation::forViticulturist($this->viticulturistId())->active()->get(),
-            'authTypes'     => CommercialAuthorization::AUTHORIZATION_TYPES,
+            'authTypes'     => CommercialAuthorization::authorizationTypeOptions(),
         ];
     }
 }

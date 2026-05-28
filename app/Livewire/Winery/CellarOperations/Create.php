@@ -57,8 +57,8 @@ class Create extends Component
             'notes'               => $this->notes ?: null,
         ]);
 
-        $typeLabel = CellarOperation::OPERATION_TYPES[$this->operation_type] ?? $this->operation_type;
-        $this->toastSuccess("Operación «{$typeLabel}» creada correctamente.");
+        $typeLabel = __(CellarOperation::OPERATION_TYPES[$this->operation_type] ?? $this->operation_type);
+        $this->toastSuccess(__("Operación «:type» creada correctamente.", ['type' => $typeLabel]));
         $this->redirect(roleRoute('cellar-operations.index'), navigate: true);
     }
 
@@ -69,8 +69,8 @@ class Create extends Component
                 ->where('archived', false)
                 ->orderBy('name')
                 ->get(),
-            'types'    => CellarOperation::OPERATION_TYPES,
-            'statuses' => CellarOperation::STATUSES,
+            'types'    => CellarOperation::operationTypeOptions(),
+            'statuses' => CellarOperation::statusOptions(),
         ])->layout('layouts.app');
     }
 }

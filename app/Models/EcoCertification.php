@@ -23,6 +23,16 @@ class EcoCertification extends Model
         'suspended' => 'Suspendido',
     ];
 
+    public static function certificationTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::CERTIFICATION_TYPES);
+    }
+
+    public static function statusOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::STATUSES);
+    }
+
     protected $fillable = [
         'user_id',
         'name',

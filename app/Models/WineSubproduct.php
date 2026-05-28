@@ -21,6 +21,16 @@ class WineSubproduct extends Model
         'other'           => 'Otro destino',
     ];
 
+    public static function typeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::TYPES);
+    }
+
+    public static function destinationOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::DESTINATIONS);
+    }
+
     protected $fillable = [
         'user_id',
         'wine_id',

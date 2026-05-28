@@ -94,6 +94,11 @@ class EstimatedYield extends Model
         4 => 'Revisión final',
     ];
 
+    public static function roundOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::ROUNDS);
+    }
+
     public const HEALTH_STATUSES = [
         'excellent'         => 'Excelente',
         'good'              => 'Bueno',
@@ -104,6 +109,11 @@ class EstimatedYield extends Model
         'mixed'             => 'Afección mixta',
         'poor'              => 'Deficiente',
     ];
+
+    public static function healthStatusOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::HEALTH_STATUSES);
+    }
 
     /**
      * Calcular diferencia porcentual y rendimiento automático desde muestreo
@@ -140,7 +150,7 @@ class EstimatedYield extends Model
      */
     public function getRoundLabelAttribute(): string
     {
-        return self::ROUNDS[$this->estimation_round] ?? "Ronda {$this->estimation_round}";
+        return __(self::ROUNDS[$this->estimation_round] ?? "Ronda {$this->estimation_round}");
     }
 
     /**

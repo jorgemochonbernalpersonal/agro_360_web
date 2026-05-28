@@ -55,6 +55,21 @@ class ExternalGrape extends Model
         'archived'  => 'Archivado',
     ];
 
+    public static function typeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::TYPES);
+    }
+
+    public static function colorOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::COLORS);
+    }
+
+    public static function statusOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::STATUSES);
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

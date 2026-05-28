@@ -84,8 +84,8 @@ class Edit extends Component
     public function render()
     {
         return view('livewire.winery.bottling-authorizations.edit', [
-            'types'    => BottlingAuthorization::AUTHORIZATION_TYPES,
-            'statuses' => BottlingAuthorization::STATUSES,
+            'types'    => BottlingAuthorization::authorizationTypeOptions(),
+            'statuses' => BottlingAuthorization::statusOptions(),
             'wines'    => Wine::where('user_id', Auth::id())->orderBy('name')->get(),
         ])->layout('layouts.app');
     }

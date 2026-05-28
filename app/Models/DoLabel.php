@@ -43,6 +43,11 @@ class DoLabel extends Model
         'cancelled' => 'Cancelada',
     ];
 
+    public static function statusLabelOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::STATUS_LABELS);
+    }
+
     public const STATUS_COLORS = [
         'pending'   => 'yellow',
         'approved'  => 'blue',

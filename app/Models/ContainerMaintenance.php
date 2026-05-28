@@ -46,6 +46,16 @@ class ContainerMaintenance extends Model
         'cancelled'  => 'Cancelado',
     ];
 
+    public static function typeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::TYPES);
+    }
+
+    public static function statusOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::STATUSES);
+    }
+
     public function container(): BelongsTo
     {
         return $this->belongsTo(Container::class);

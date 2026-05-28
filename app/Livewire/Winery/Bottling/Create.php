@@ -256,7 +256,7 @@ class Create extends Component
     public function render()
     {
         return view('livewire.winery.bottling.create', [
-            'bottleFormats'          => WineBottling::BOTTLE_FORMATS,
+            'bottleFormats'          => WineBottling::bottleFormatOptions(),
             'wines'                  => $this->wines,
             'containers'             => $this->containers,
             'oenologists'            => $this->oenologists,

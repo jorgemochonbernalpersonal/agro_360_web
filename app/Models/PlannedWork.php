@@ -45,6 +45,11 @@ class PlannedWork extends Model
         'otro'           => 'Otro',
     ];
 
+    public static function categoryOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::CATEGORIES);
+    }
+
     public const PRIORITIES = [
         'baja'    => 'Baja',
         'media'   => 'Media',
@@ -52,12 +57,22 @@ class PlannedWork extends Model
         'urgente' => 'Urgente',
     ];
 
+    public static function priorityOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::PRIORITIES);
+    }
+
     public const STATUSES = [
         'pendiente'   => 'Pendiente',
         'en_progreso' => 'En progreso',
         'completada'  => 'Completada',
         'cancelada'   => 'Cancelada',
     ];
+
+    public static function statusOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::STATUSES);
+    }
 
     public const PRIORITY_COLORS = [
         'baja'    => 'zinc',
@@ -111,17 +126,17 @@ class PlannedWork extends Model
 
     public function getCategoryLabelAttribute(): string
     {
-        return self::CATEGORIES[$this->category] ?? ucfirst($this->category);
+        return __(self::CATEGORIES[$this->category] ?? ucfirst($this->category));
     }
 
     public function getPriorityLabelAttribute(): string
     {
-        return self::PRIORITIES[$this->priority] ?? ucfirst($this->priority);
+        return __(self::PRIORITIES[$this->priority] ?? ucfirst($this->priority));
     }
 
     public function getStatusLabelAttribute(): string
     {
-        return self::STATUSES[$this->status] ?? ucfirst($this->status);
+        return __(self::STATUSES[$this->status] ?? ucfirst($this->status));
     }
 
     public function getPriorityColorAttribute(): string

@@ -22,6 +22,11 @@ class ResidueManagement extends Model
         'other'         => 'Otro',
     ];
 
+    public static function practiceTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::PRACTICE_TYPES);
+    }
+
     const MATERIAL_TYPES = [
         'pruning_wood' => 'Madera/leña de poda',
         'grape_marc'   => 'Orujo',
@@ -29,6 +34,11 @@ class ResidueManagement extends Model
         'grass'        => 'Cubierta vegetal',
         'other'        => 'Otro',
     ];
+
+    public static function materialTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::MATERIAL_TYPES);
+    }
 
     protected $fillable = [
         'campaign_id',
@@ -73,12 +83,12 @@ class ResidueManagement extends Model
 
     public function getPracticeLabelAttribute(): string
     {
-        return self::PRACTICE_TYPES[$this->practice_type] ?? $this->practice_type;
+        return __(self::PRACTICE_TYPES[$this->practice_type] ?? $this->practice_type);
     }
 
     public function getMaterialLabelAttribute(): string
     {
-        return self::MATERIAL_TYPES[$this->material_type] ?? $this->material_type;
+        return __(self::MATERIAL_TYPES[$this->material_type] ?? $this->material_type);
     }
 
     public function scopeActive($query)

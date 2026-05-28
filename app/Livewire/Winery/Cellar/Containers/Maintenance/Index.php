@@ -59,7 +59,7 @@ class Index extends Component
 
         $maintenance->update($updates);
 
-        $labels = ContainerMaintenance::STATUSES;
+        $labels = ContainerMaintenance::statusOptions();
         $this->toastSuccess(__('Estado actualizado a: :status', ['status' => $labels[$status] ?? $status]));
     }
 
@@ -91,8 +91,8 @@ class Index extends Component
         return view('livewire.winery.cellar.containers.maintenance.index', [
             'maintenances' => $maintenances,
             'stats'        => $stats,
-            'types'        => ContainerMaintenance::TYPES,
-            'statuses'     => ContainerMaintenance::STATUSES,
+            'types'        => ContainerMaintenance::typeOptions(),
+            'statuses'     => ContainerMaintenance::statusOptions(),
         ])->layout('layouts.app');
     }
 }

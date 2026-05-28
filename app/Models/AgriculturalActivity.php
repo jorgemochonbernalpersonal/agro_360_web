@@ -26,19 +26,14 @@ class AgriculturalActivity extends Model
         'post_harvest'  => 'Tratamiento post-vendimia',
     ];
 
+    public static function activityTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::ACTIVITY_TYPES);
+    }
+
     public static function activityTypes(): array
     {
-        return [
-            'phytosanitary' => 'Tratamiento fitosanitario',
-            'fertilization' => 'Fertilización',
-            'irrigation'    => 'Riego',
-            'cultural'      => 'Labor cultural',
-            'observation'   => 'Observación',
-            'harvest'       => 'Cosecha',
-            'pruning'       => 'Poda',
-            'phenology'     => 'Observación fenológica',
-            'post_harvest'  => 'Tratamiento post-vendimia',
-        ];
+        return static::activityTypeOptions();
     }
 
     protected $fillable = [

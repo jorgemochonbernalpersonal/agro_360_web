@@ -46,6 +46,11 @@ class Subcontracting extends Model
         'other'         => 'Otros servicios',
     ];
 
+    public static function serviceTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::SERVICE_TYPES);
+    }
+
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');
@@ -63,6 +68,6 @@ class Subcontracting extends Model
 
     public function getServiceTypeLabelAttribute(): string
     {
-        return self::SERVICE_TYPES[$this->service_type] ?? $this->service_type;
+        return __(self::SERVICE_TYPES[$this->service_type] ?? $this->service_type);
     }
 }

@@ -96,7 +96,7 @@ class Index extends AbstractIndex
 
         return [
             'entries'              => $entries,
-            'certificationTypes'   => Certification::CERTIFICATION_TYPES,
+            'certificationTypes'   => Certification::certificationTypeOptions(),
             'stats'                => $stats,
         ];
     }

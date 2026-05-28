@@ -14,6 +14,11 @@ class WineTransfer extends Model
         'other'    => 'Otro',
     ];
 
+    public static function transferTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::TRANSFER_TYPES);
+    }
+
     protected $fillable = [
         'wine_id',
         'source_wine_id',

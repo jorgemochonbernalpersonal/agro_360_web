@@ -36,8 +36,8 @@ class WineSubproductController extends Controller
                 'per_page'     => $subproducts->perPage(),
                 'current_page' => $subproducts->currentPage(),
                 'last_page'    => $subproducts->lastPage(),
-                'types'        => WineSubproduct::TYPES,
-                'destinations' => WineSubproduct::DESTINATIONS,
+                'types'        => WineSubproduct::typeOptions(),
+                'destinations' => WineSubproduct::destinationOptions(),
             ],
         ]);
     }

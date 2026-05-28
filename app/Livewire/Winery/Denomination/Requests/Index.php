@@ -167,14 +167,15 @@ class Index extends Component
         $requests     = $query->orderByDesc('created_at')->paginate(15);
         $pendingCount = SupervisorRequest::forWinery($wineryId)->where('status', SupervisorRequest::STATUS_PENDING)->count();
 
+        $translatedTypeLabels = SupervisorRequest::typeLabelOptions();
         $wineryInitiatedLabels = collect(SupervisorRequest::WINERY_INITIATED)
-            ->mapWithKeys(fn ($type) => [$type => SupervisorRequest::TYPE_LABELS[$type]]);
+            ->mapWithKeys(fn ($type) => [$type => $translatedTypeLabels[$type]]);
 
         return view('livewire.winery.denomination.requests.index', [
             'requests'              => $requests,
             'pendingCount'          => $pendingCount,
-            'typeLabels'            => SupervisorRequest::TYPE_LABELS,
-            'statusLabels'          => SupervisorRequest::STATUS_LABELS,
+            'typeLabels'            => $translatedTypeLabels,
+            'statusLabels'          => SupervisorRequest::statusLabelOptions(),
             'statusColors'          => SupervisorRequest::STATUS_COLORS,
             'wineryInitiatedLabels' => $wineryInitiatedLabels,
         ]);

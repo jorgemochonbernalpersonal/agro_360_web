@@ -41,6 +41,11 @@ class PacDeclaration extends Model
         'precision_fertilization' => 'Fertilización de precisión',
     ];
 
+    public static function ecoSchemeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::ECO_SCHEMES);
+    }
+
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');
@@ -66,13 +71,13 @@ class PacDeclaration extends Model
 
     public function statusLabel(): string
     {
-        return match($this->status) {
+        return __(match($this->status) {
             self::STATUS_DRAFT     => 'Borrador',
             self::STATUS_SUBMITTED => 'Presentada',
             self::STATUS_APPROVED  => 'Aprobada',
             self::STATUS_REJECTED  => 'Rechazada',
             default                => $this->status,
-        };
+        });
     }
 
     public function statusColor(): string

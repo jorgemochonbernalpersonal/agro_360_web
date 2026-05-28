@@ -29,6 +29,11 @@ class BiodiversityRecord extends Model
         'otro'             => 'Otro',
     ];
 
+    public static function recordTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::RECORD_TYPES);
+    }
+
     public const RECORD_TYPE_ICONS = [
         'cubierta_vegetal' => 'leaf',
         'margen'           => 'map',
@@ -72,7 +77,7 @@ class BiodiversityRecord extends Model
 
     public function getRecordTypeLabelAttribute(): string
     {
-        return self::RECORD_TYPES[$this->record_type] ?? ucfirst($this->record_type);
+        return __(self::RECORD_TYPES[$this->record_type] ?? ucfirst($this->record_type));
     }
 
     public function getRecordTypeIconAttribute(): string

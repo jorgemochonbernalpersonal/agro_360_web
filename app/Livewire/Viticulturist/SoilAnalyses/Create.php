@@ -84,7 +84,7 @@ class Create extends AbstractCreate
         $userId = $this->viticulturistId();
 
         return [
-            'textureClasses' => SoilAnalysis::TEXTURE_CLASSES,
+            'textureClasses' => SoilAnalysis::textureClassOptions(),
             'plots'          => Plot::where('viticulturist_id', $userId)->orderBy('name')->get(),
             'campaigns'      => Campaign::forViticulturist($userId)->orderBy('year', 'desc')->get(),
         ];

@@ -44,8 +44,8 @@ class ExternalGrapePurchaseController extends Controller
                 'per_page'     => $items->perPage(),
                 'current_page' => $items->currentPage(),
                 'last_page'    => $items->lastPage(),
-                'product_types'=> ExternalGrapePurchase::PRODUCT_TYPES,
-                'statuses'     => ExternalGrapePurchase::STATUSES,
+                'product_types'=> ExternalGrapePurchase::productTypeOptions(),
+                'statuses'     => ExternalGrapePurchase::statusOptions(),
             ],
         ]);
     }

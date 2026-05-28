@@ -35,7 +35,7 @@ class SupervisorRequestSentNotification extends Notification implements ShouldQu
     {
         $req        = $this->supervisorRequest;
         $supervisor = $req->supervisor;
-        $typeLabel  = SupervisorRequest::TYPE_LABELS[$req->type] ?? $req->type;
+        $typeLabel  = __(SupervisorRequest::TYPE_LABELS[$req->type] ?? $req->type);
         $url        = AppLink::url(route('winery.denomination.requests.index'), 'agro365://home');
 
         if (app()->environment('production')) {
@@ -63,7 +63,7 @@ class SupervisorRequestSentNotification extends Notification implements ShouldQu
     public function toArray(object $notifiable): array
     {
         $req       = $this->supervisorRequest;
-        $typeLabel = SupervisorRequest::TYPE_LABELS[$req->type] ?? $req->type;
+        $typeLabel = __(SupervisorRequest::TYPE_LABELS[$req->type] ?? $req->type);
 
         return [
             'request_id'      => $req->id,

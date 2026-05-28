@@ -18,6 +18,11 @@ class AdvisoryMembership extends Model
         'other'          => 'Otro',
     ];
 
+    public static function specialtyOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::SPECIALTIES);
+    }
+
     protected $fillable = [
         'viticulturist_id',
         'campaign_id',
@@ -46,7 +51,7 @@ class AdvisoryMembership extends Model
 
     public function getSpecialtyLabelAttribute(): string
     {
-        return self::SPECIALTIES[$this->specialty] ?? $this->specialty;
+        return __(self::SPECIALTIES[$this->specialty] ?? $this->specialty);
     }
 
     public function scopeActive($query)

@@ -19,6 +19,11 @@ class WineCost extends Model
         'other'                => 'Otros costes',
     ];
 
+    public static function categoryOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::CATEGORIES);
+    }
+
     const CATEGORY_COLORS = [
         'additives'            => 'blue',
         'bottling'             => 'violet',

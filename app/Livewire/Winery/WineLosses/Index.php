@@ -86,7 +86,7 @@ class Index extends AbstractIndex
         return [
             'losses'     => $entries,
             'wines'      => Wine::where('user_id', $this->wineryId())->orderBy('name')->get(),
-            'lossTypes'  => WineLoss::LOSS_TYPES,
+            'lossTypes'  => WineLoss::lossTypeOptions(),
             'stats'      => $stats,
         ];
     }

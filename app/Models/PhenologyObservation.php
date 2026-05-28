@@ -40,12 +40,22 @@ class PhenologyObservation extends Model
         'harvest'      => 'Vendimia',
     ];
 
+    public static function eventOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::EVENTS);
+    }
+
     public const SOURCES = [
         'manual' => 'Observación en campo',
         'sensor' => 'Sensor IoT',
         'model'  => 'Modelo predictivo',
         'auto'   => 'Detección automática',
     ];
+
+    public static function sourceOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::SOURCES);
+    }
 
     /** Códigos BBCH estándar para la vid */
     public const BBCH_CODES = [
@@ -75,12 +85,12 @@ class PhenologyObservation extends Model
 
     public function getEventLabelAttribute(): string
     {
-        return self::EVENTS[$this->event] ?? $this->event;
+        return __(self::EVENTS[$this->event] ?? $this->event);
     }
 
     public function getSourceLabelAttribute(): string
     {
-        return self::SOURCES[$this->source] ?? $this->source;
+        return __(self::SOURCES[$this->source] ?? $this->source);
     }
 
     public function scopeActive($query)

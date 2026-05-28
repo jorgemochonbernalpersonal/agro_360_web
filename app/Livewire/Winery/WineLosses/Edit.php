@@ -111,8 +111,8 @@ class Edit extends Component
             'wines'      => Wine::where('user_id', Auth::id())->orderBy('name')->get(),
             'containers' => Container::where('user_id', Auth::id())->where('archived', false)->orderBy('name')->get(),
             'units'      => UnitOfMeasurement::orderBy('name')->get(),
-            'lossTypes'  => WineLoss::LOSS_TYPES,
-            'lossAuths'  => WineLoss::LOSS_AUTHORIZATIONS,
+            'lossTypes'  => WineLoss::lossTypeOptions(),
+            'lossAuths'  => WineLoss::lossAuthorizationOptions(),
         ])->layout('layouts.app');
     }
 }

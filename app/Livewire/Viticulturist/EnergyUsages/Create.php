@@ -113,8 +113,8 @@ class Create extends AbstractCreate
         return [
             'campaigns'   => Campaign::forViticulturist($this->viticulturistId())->orderByDesc('year')->get(),
             'machinery'   => Machinery::where('viticulturist_id', $this->viticulturistId())->orderBy('name')->get(),
-            'energyTypes' => EnergyUsage::ENERGY_TYPES,
-            'units'       => EnergyUsage::UNITS,
+            'energyTypes' => EnergyUsage::energyTypeOptions(),
+            'units'       => EnergyUsage::unitOptions(),
         ];
     }
 }

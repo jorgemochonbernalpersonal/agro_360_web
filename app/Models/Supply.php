@@ -18,6 +18,11 @@ class Supply extends Model
         'other'         => 'Otro',
     ];
 
+    public static function supplyTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::SUPPLY_TYPES);
+    }
+
     protected $fillable = [
         'viticulturist_id',
         'warehouse_id',
@@ -59,7 +64,7 @@ class Supply extends Model
 
     public function getSupplyTypeLabelAttribute(): string
     {
-        return self::SUPPLY_TYPES[$this->supply_type] ?? $this->supply_type;
+        return __(self::SUPPLY_TYPES[$this->supply_type] ?? $this->supply_type);
     }
 
     public function isLowStock(): bool

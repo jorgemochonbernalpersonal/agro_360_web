@@ -65,6 +65,6 @@ class Edit extends AbstractEdit
 
     protected function viewData(): array
     {
-        return ['certificationTypes' => Certification::CERTIFICATION_TYPES];
+        return ['certificationTypes' => Certification::certificationTypeOptions()];
     }
 }

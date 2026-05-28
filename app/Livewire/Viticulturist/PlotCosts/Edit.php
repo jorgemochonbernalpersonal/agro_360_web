@@ -87,7 +87,7 @@ class Edit extends Component
         return view('livewire.viticulturist.plot-costs.edit', [
             'plots'      => Plot::where('viticulturist_id', $user->id)->orderBy('name')->get(),
             'campaigns'  => Campaign::where('viticulturist_id', $user->id)->orderByDesc('year')->get(),
-            'categories' => PlotCost::CATEGORIES,
+            'categories' => PlotCost::categoryOptions(),
         ])->layout('layouts.app');
     }
 }

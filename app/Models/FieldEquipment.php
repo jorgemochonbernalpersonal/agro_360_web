@@ -38,6 +38,11 @@ class FieldEquipment extends Model
         'other'      => 'Otro',
     ];
 
+    public static function typeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::TYPES);
+    }
+
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');
@@ -45,7 +50,7 @@ class FieldEquipment extends Model
 
     public function getTypeLabelAttribute(): string
     {
-        return self::TYPES[$this->equipment_type] ?? $this->equipment_type;
+        return __(self::TYPES[$this->equipment_type] ?? $this->equipment_type);
     }
 
     public function isInspectionDue(int $days = 30): bool

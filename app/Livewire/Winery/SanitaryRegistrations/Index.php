@@ -79,8 +79,8 @@ class Index extends AbstractIndex
 
         return [
             'registrations' => $entries,
-            'types'         => SanitaryRegistration::REGISTRATION_TYPES,
-            'statuses'      => SanitaryRegistration::STATUSES,
+            'types'         => SanitaryRegistration::registrationTypeOptions(),
+            'statuses'      => SanitaryRegistration::statusOptions(),
             'stats'         => $stats,
         ];
     }

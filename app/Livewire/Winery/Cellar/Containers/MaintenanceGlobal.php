@@ -55,7 +55,7 @@ class MaintenanceGlobal extends AbstractIndex
 
         $maintenance->update($updates);
 
-        $labels = ContainerMaintenance::STATUSES;
+        $labels = ContainerMaintenance::statusOptions();
         $this->toastSuccess(__('Estado actualizado a: :status', ['status' => $labels[$status] ?? $status]));
     }
 
@@ -118,8 +118,8 @@ class MaintenanceGlobal extends AbstractIndex
         return [
             'maintenances' => $entries,
             'containers'   => Container::where('user_id', $this->wineryId())->where('archived', false)->orderBy('name')->get(),
-            'types'        => ContainerMaintenance::TYPES,
-            'statuses'     => ContainerMaintenance::STATUSES,
+            'types'        => ContainerMaintenance::typeOptions(),
+            'statuses'     => ContainerMaintenance::statusOptions(),
             'stats'        => $stats,
         ];
     }

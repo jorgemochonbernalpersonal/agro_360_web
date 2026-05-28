@@ -85,7 +85,7 @@
                             'cancelled'   => 'zinc',
                             default       => 'zinc'
                         };
-                        $sl = \App\Models\ContainerMaintenance::STATUSES[$maint->status] ?? $maint->status;
+                        $sl = __(\App\Models\ContainerMaintenance::STATUSES[$maint->status] ?? $maint->status);
                     @endphp
                     <x-agro.card
                         class="animate-fade-in-up flex flex-col hover:-translate-y-1"
@@ -96,7 +96,7 @@
                             <x-agro.card-item-header
                                 icon="wrench-screwdriver"
                                 :title="$maint->maintenance_name"
-                                :subtitle="\App\Models\ContainerMaintenance::TYPES[$maint->maintenance_type] ?? $maint->maintenance_type"
+                                :subtitle="__(\App\Models\ContainerMaintenance::TYPES[$maint->maintenance_type] ?? $maint->maintenance_type)"
                                 iconBg="bg-orange-100"
                                 iconColor="text-orange-600"
                                 size="md"

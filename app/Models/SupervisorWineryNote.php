@@ -33,6 +33,11 @@ class SupervisorWineryNote extends Model
         'note'    => 'Nota',
     ];
 
+    public static function typeLabelOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::TYPE_LABELS);
+    }
+
     public const TYPE_ICONS = [
         'visit'   => 'building-office-2',
         'call'    => 'phone',

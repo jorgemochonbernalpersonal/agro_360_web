@@ -48,6 +48,36 @@ class WineTastingNote extends Model
         'long'   => 'Largo',
     ];
 
+    public static function visualClarityOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::VISUAL_CLARITY);
+    }
+
+    public static function visualIntensityOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::VISUAL_INTENSITY);
+    }
+
+    public static function aromaIntensityOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::AROMA_INTENSITY);
+    }
+
+    public static function palateLevelOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::PALATE_LEVEL);
+    }
+
+    public static function palateBodyOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::PALATE_BODY);
+    }
+
+    public static function palateFinishOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::PALATE_FINISH);
+    }
+
     protected $fillable = [
         'user_id',
         'wine_id',

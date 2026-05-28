@@ -293,12 +293,12 @@
                 @foreach($recentAnalyses as $a)
                 <div class="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-zinc-50 text-sm">
                     <div class="flex-1 min-w-0">
-                        <p class="font-medium text-zinc-800 truncate">{{ \App\Models\WineAnalysis::ANALYSIS_TYPES[$a->analysis_type] ?? $a->analysis_type }}</p>
+                        <p class="font-medium text-zinc-800 truncate">{{ __(\App\Models\WineAnalysis::ANALYSIS_TYPES[$a->analysis_type] ?? $a->analysis_type) }}</p>
                         <p class="text-xs text-zinc-400">{{ $a->wine?->name ?? '—' }} · {{ $a->laboratory ?? '' }}</p>
                     </div>
                     <div class="text-right shrink-0 ml-3">
                         @php $rc = match($a->result ?? '') { 'pass' => 'text-agro-600', 'fail' => 'text-red-500', default => 'text-zinc-400' }; @endphp
-                        <p class="text-xs font-semibold {{ $rc }}">{{ \App\Models\WineAnalysis::RESULTS[$a->result] ?? '—' }}</p>
+                        <p class="text-xs font-semibold {{ $rc }}">{{ __(\App\Models\WineAnalysis::RESULTS[$a->result] ?? '—') }}</p>
                         <p class="text-xs text-zinc-300">{{ $a->analysis_date instanceof \Carbon\Carbon ? $a->analysis_date->format('d/m/Y') : $a->analysis_date }}</p>
                     </div>
                 </div>

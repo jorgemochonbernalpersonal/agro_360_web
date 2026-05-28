@@ -55,7 +55,7 @@ class Create extends Component
     public function render()
     {
         return view('livewire.winery.documents.create', [
-            'types' => WineryDocument::DOCUMENT_TYPES,
+            'types' => WineryDocument::documentTypeOptions(),
         ])->layout('layouts.app');
     }
 }

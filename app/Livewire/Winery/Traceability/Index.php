@@ -56,7 +56,7 @@ class Index extends Component
         return view('livewire.winery.traceability.index', [
             'wines'    => $wines,
             'vintages' => $vintages,
-            'statuses' => Wine::STATUSES,
+            'statuses' => Wine::statusOptions(),
         ]);
     }
 }

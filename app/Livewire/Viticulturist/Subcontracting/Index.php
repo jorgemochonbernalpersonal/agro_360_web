@@ -91,7 +91,7 @@ class Index extends Component
             'stats'        => $stats,
             'campaigns'    => $campaigns,
             'plots'        => $plots,
-            'serviceTypes' => Subcontracting::SERVICE_TYPES,
+            'serviceTypes' => Subcontracting::serviceTypeOptions(),
         ])->layout('layouts.app');
     }
 }

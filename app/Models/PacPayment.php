@@ -32,6 +32,11 @@ class PacPayment extends Model
         'other'           => 'Otro',
     ];
 
+    public static function paymentTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::PAYMENT_TYPES);
+    }
+
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');
@@ -44,7 +49,7 @@ class PacPayment extends Model
 
     public function typeLabel(): string
     {
-        return self::PAYMENT_TYPES[$this->payment_type] ?? $this->payment_type;
+        return __(self::PAYMENT_TYPES[$this->payment_type] ?? $this->payment_type);
     }
 
     public function scopeForViticulturist($query, int $id)

@@ -93,7 +93,7 @@ class Index extends AbstractIndex
         return [
             'entries'     => $entries,
             'campaigns'   => Campaign::forViticulturist($userId)->orderByDesc('year')->get(),
-            'energyTypes' => EnergyUsage::ENERGY_TYPES,
+            'energyTypes' => EnergyUsage::energyTypeOptions(),
             'stats'       => $stats,
             'co2Total'    => $co2Total,
         ];

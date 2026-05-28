@@ -81,8 +81,8 @@ class Create extends Component
     {
         return view('livewire.winery.wine-analysis.create', [
             'wines'   => Wine::where('user_id', Auth::id())->orderBy('name')->get(),
-            'types'   => WineAnalysis::ANALYSIS_TYPES,
-            'results' => WineAnalysis::RESULTS,
+            'types'   => WineAnalysis::analysisTypeOptions(),
+            'results' => WineAnalysis::resultOptions(),
         ])->layout('layouts.app');
     }
 }

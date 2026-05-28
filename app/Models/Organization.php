@@ -42,6 +42,11 @@ class Organization extends Model
         self::TYPE_DENOMINATION => 'Denominación de Origen',
     ];
 
+    public static function typeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::TYPES);
+    }
+
     // ── Relationships ────────────────────────────────────────────────────────
 
     public function parent(): BelongsTo
@@ -126,6 +131,6 @@ class Organization extends Model
 
     public function getTypeLabelAttribute(): string
     {
-        return self::TYPES[$this->type] ?? $this->type;
+        return __(self::TYPES[$this->type] ?? $this->type);
     }
 }

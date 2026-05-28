@@ -67,7 +67,7 @@ class Timeline extends Component
         return view('livewire.winery.wines.timeline', [
             'grouped'      => $grouped,
             'vintages'     => $vintages,
-            'types'        => Wine::WINE_TYPES,
+            'types'        => Wine::wineTypeOptions(),
             'statusLabels' => $statusLabels,
             'statusColors' => $statusColors,
         ]);

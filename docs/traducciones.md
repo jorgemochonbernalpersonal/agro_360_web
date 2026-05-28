@@ -68,6 +68,66 @@ Todos los seeders solo tienen `es`. Al cambiar de idioma, los campos quedan en b
 
 ---
 
+---
+
+## Sprint 2 — Relleno masivo EN (2026-05-28)
+
+Objetivo: traducir las ~7.400 claves de `en.json` que tenían el valor igual a la clave española (sin traducir real). Se trabaja letra a letra con scripts Node `.cjs` y commits individuales.
+
+### Progreso por letra
+
+| Batch | Letra | Claves | Baseline tras commit |
+|-------|-------|--------|----------------------|
+| 2b    | B     | 159    | — |
+| 2c    | C pt.1 | 520  | — |
+| 2d    | C pt.2 | 175  | — |
+| 3     | D     | 387    | — |
+| 4a    | E pt.1 | 361  | — |
+| 4b    | E pt.2 | 402  | — |
+| 5     | F     | 208    | — |
+| 6     | G     | 219    | 4326 |
+| 7     | H     | 63     | 4263 |
+| 8     | I     | 180    | 4083 |
+| 9     | J     | 16     | 4067 |
+| 10    | K     | 18     | 4049 |
+| 11    | L     | 301    | 3748 |
+| 12    | M     | 234    | 3514 |
+| 13a   | N pt.1 | 231  | 3283 |
+| 13b   | N pt.2 | 224  | 3059 |
+| 14    | O     | 108    | 2951 |
+| 15a   | P pt.1 | 190  | 2761 |
+| 15b   | P pt.2 | 190  | **2571** ← aquí |
+
+### Pendientes
+
+| Letra | Claves aprox. | Plan |
+|-------|---------------|------|
+| Q     | 8             | 1 lote |
+| R     | 350           | ÷ 2 |
+| S     | 525           | ÷ 2–3 |
+| T     | 327           | ÷ 2 |
+| U + Ú | 77           | 1 lote |
+| V     | 269           | ÷ 2 |
+| W/X/Y/Z | 21        | 1 lote |
+| ¿ / • / números / símbolos | ~756 | varios lotes |
+| **Total restante** | **~2.571** | |
+
+### Workflow estándar por letra
+
+```bash
+# 1. Listar claves pendientes de la letra X
+node -e "const fs=require('fs'); const es=JSON.parse(fs.readFileSync('resources/lang/es.json','utf8')); const en=JSON.parse(fs.readFileSync('resources/lang/en.json','utf8')); const m=Object.keys(es).filter(k=>!(k in en)&&/^[Xx]/.test(k)); console.log(m.length); m.forEach(k=>console.log(JSON.stringify(k)));"
+
+# 2. Crear scripts/i18n-sprint2-batchNN.cjs con las traducciones
+# 3. node scripts/i18n-sprint2-batchNN.cjs
+# 4. php artisan test tests/Unit/i18n/TranslationCoverageTest.php --no-coverage
+# 5. Actualizar BASELINE_EN en tests/Unit/i18n/TranslationCoverageTest.php
+# 6. git add + commit con formato:
+#    "feat(i18n): sprint 2 batch NN — X traducciones EN (LETRA: keywords...) · baseline YYYY"
+```
+
+---
+
 ## Reglas para nuevas features
 
 1. **Todo string visible al usuario usa `__()`** — sin hardcodear español en blade ni PHP.

@@ -78,8 +78,8 @@ class Index extends AbstractIndex
 
         return [
             'authorizations' => $entries,
-            'types'          => BottlingAuthorization::AUTHORIZATION_TYPES,
-            'statuses'       => BottlingAuthorization::STATUSES,
+            'types'          => BottlingAuthorization::authorizationTypeOptions(),
+            'statuses'       => BottlingAuthorization::statusOptions(),
             'stats'          => $stats,
         ];
     }

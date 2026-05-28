@@ -97,8 +97,8 @@ class Index extends AbstractIndex
 
         return [
             'entries'    => $entries,
-            'alertTypes' => PhytosanitaryAlert::ALERT_TYPES,
-            'severities' => PhytosanitaryAlert::SEVERITIES,
+            'alertTypes' => PhytosanitaryAlert::alertTypeOptions(),
+            'severities' => PhytosanitaryAlert::severityOptions(),
             'stats'      => $stats,
         ];
     }

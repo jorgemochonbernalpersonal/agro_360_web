@@ -72,8 +72,8 @@ class Edit extends Component
     public function render()
     {
         return view('livewire.winery.eco-certifications.edit', [
-            'types'    => EcoCertification::CERTIFICATION_TYPES,
-            'statuses' => EcoCertification::STATUSES,
+            'types'    => EcoCertification::certificationTypeOptions(),
+            'statuses' => EcoCertification::statusOptions(),
         ])->layout('layouts.app');
     }
 }

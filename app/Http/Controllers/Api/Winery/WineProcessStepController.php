@@ -32,7 +32,7 @@ class WineProcessStepController extends Controller
             'data' => WineProcessStepResource::collection($steps),
             'meta' => [
                 'total'          => $steps->count(),
-                'process_types'  => WineProcessDetail::PROCESS_TYPES,
+                'process_types'  => WineProcessDetail::processTypeOptions(),
             ],
         ]);
     }

@@ -85,7 +85,7 @@ class Index extends AbstractIndex
         return [
             'subproducts' => $entries,
             'wines'       => $wines,
-            'types'       => WineSubproduct::TYPES,
+            'types'       => WineSubproduct::typeOptions(),
             'stats'       => $stats,
         ];
     }

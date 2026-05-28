@@ -258,12 +258,12 @@
                             <x-agro.table-cell>
                                 <div>
                                     <p class="font-medium text-zinc-800 text-sm">{{ $s->wine_name }}</p>
-                                    <p class="text-xs text-zinc-400">{{ \App\Models\Wine::WINE_TYPES[$s->wine_type] ?? $s->wine_type }}</p>
+                                    <p class="text-xs text-zinc-400">{{ __(\App\Models\Wine::WINE_TYPES[$s->wine_type] ?? $s->wine_type) }}</p>
                                 </div>
                             </x-agro.table-cell>
                             <x-agro.table-cell>
                                 <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-violet-50 text-violet-700 border border-violet-200">
-                                    {{ \App\Models\WineProcessDetail::PROCESS_TYPES[$s->process_type] ?? $s->process_type }}
+                                    {{ __(\App\Models\WineProcessDetail::PROCESS_TYPES[$s->process_type] ?? $s->process_type) }}
                                 </span>
                             </x-agro.table-cell>
                             <x-agro.table-cell>
@@ -298,12 +298,12 @@
                             </x-agro.table-cell>
                             <x-agro.table-cell>{{ $l->wine_name ?? '—' }}</x-agro.table-cell>
                             <x-agro.table-cell>
-                                {{ \App\Models\WineLoss::LOSS_TYPES[$l->loss_type] ?? $l->loss_type }}
+                                {{ __(\App\Models\WineLoss::LOSS_TYPES[$l->loss_type] ?? $l->loss_type) }}
                             </x-agro.table-cell>
                             <x-agro.table-cell>
                                 @if($l->loss_authorization)
                                     <span class="text-xs text-zinc-500">
-                                        {{ \App\Models\WineLoss::LOSS_AUTHORIZATIONS[$l->loss_authorization] ?? $l->loss_authorization }}
+                                        {{ __(\App\Models\WineLoss::LOSS_AUTHORIZATIONS[$l->loss_authorization] ?? $l->loss_authorization) }}
                                     </span>
                                 @else
                                     <span class="text-zinc-300">—</span>
@@ -357,7 +357,7 @@
                                 <span class="font-medium text-zinc-800">{{ $row['wine_name'] ?? '—' }}</span>
                             </x-agro.table-cell>
                             <x-agro.table-cell>
-                                {{ \App\Models\Wine::WINE_TYPES[$row['wine_type']] ?? ($row['wine_type'] ?? '—') }}
+                                {{ __(\App\Models\Wine::WINE_TYPES[$row['wine_type']] ?? ($row['wine_type'] ?? '—')) }}
                             </x-agro.table-cell>
                             <x-agro.table-cell>
                                 {{ $row['vintage'] ?? '—' }}
@@ -452,10 +452,10 @@
                             </x-agro.table-cell>
                             <x-agro.table-cell>{{ $s->wine_name ?? '—' }}</x-agro.table-cell>
                             <x-agro.table-cell>
-                                {{ \App\Models\WineSubproduct::TYPES[$s->type] ?? $s->type }}
+                                {{ __(\App\Models\WineSubproduct::TYPES[$s->type] ?? $s->type) }}
                             </x-agro.table-cell>
                             <x-agro.table-cell>
-                                <span class="text-xs text-zinc-500">{{ \App\Models\WineSubproduct::DESTINATIONS[$s->destination] ?? ($s->destination ?? '—') }}</span>
+                                <span class="text-xs text-zinc-500">{{ __(\App\Models\WineSubproduct::DESTINATIONS[$s->destination] ?? ($s->destination ?? '—')) }}</span>
                                 @if($s->destination_name)
                                     <br><span class="text-xs text-zinc-400">{{ $s->destination_name }}</span>
                                 @endif
@@ -484,11 +484,11 @@
                             </x-agro.table-cell>
                             <x-agro.table-cell>{{ $p->wine_name ?? '—' }}</x-agro.table-cell>
                             <x-agro.table-cell>
-                                {{ \App\Models\WineLoss::LOSS_TYPES[$p->loss_type] ?? $p->loss_type }}
+                                {{ __(\App\Models\WineLoss::LOSS_TYPES[$p->loss_type] ?? $p->loss_type) }}
                             </x-agro.table-cell>
                             <x-agro.table-cell>
                                 <span class="text-xs text-zinc-500">
-                                    {{ \App\Models\WineLoss::LOSS_AUTHORIZATIONS[$p->loss_authorization] ?? '—' }}
+                                    {{ __(\App\Models\WineLoss::LOSS_AUTHORIZATIONS[$p->loss_authorization] ?? '—') }}
                                 </span>
                             </x-agro.table-cell>
                             <x-agro.table-cell>

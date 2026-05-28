@@ -15,6 +15,11 @@ class GrapeVariety extends Model
         'other' => 'Otro cultivo',
     ];
 
+    public static function cropTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::CROP_TYPES);
+    }
+
     const CROP_TYPE_ICONS = [
         'wine'  => 'scissors',
         'olive' => 'sun',
@@ -71,7 +76,7 @@ class GrapeVariety extends Model
 
     public function getCropTypeLabelAttribute(): string
     {
-        return self::CROP_TYPES[$this->crop_type] ?? $this->crop_type;
+        return __(self::CROP_TYPES[$this->crop_type] ?? $this->crop_type);
     }
 
     public function getCropTypeIconAttribute(): string

@@ -48,6 +48,11 @@ class DoQualification extends Model
         'pending'      => 'Pendiente',
     ];
 
+    public static function resultLabelOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::RESULT_LABELS);
+    }
+
     public const RESULT_COLORS = [
         'qualified'    => 'agro',
         'disqualified' => 'red',
@@ -62,6 +67,11 @@ class DoQualification extends Model
         'dulce'    => 'Dulce',
         'otro'     => 'Otro',
     ];
+
+    public static function colorLabelOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::COLOR_LABELS);
+    }
 
     public function supervisor(): BelongsTo
     {

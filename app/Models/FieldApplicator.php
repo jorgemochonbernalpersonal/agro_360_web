@@ -34,6 +34,11 @@ class FieldApplicator extends Model
         'pilot'     => 'Piloto',
     ];
 
+    public static function categoryOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::CATEGORIES);
+    }
+
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');
@@ -58,7 +63,7 @@ class FieldApplicator extends Model
 
     public function getCategoryLabelAttribute(): string
     {
-        return self::CATEGORIES[$this->ropo_category] ?? $this->ropo_category;
+        return __(self::CATEGORIES[$this->ropo_category] ?? $this->ropo_category);
     }
 
     public function scopeActive($query)

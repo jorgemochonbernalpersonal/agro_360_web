@@ -54,7 +54,7 @@ class Index extends AbstractIndex
 
         return [
             'entries'   => $entries,
-            'authTypes' => CommercialAuthorization::AUTHORIZATION_TYPES,
+            'authTypes' => CommercialAuthorization::authorizationTypeOptions(),
             'expiring'  => $expiring,
             'stats'     => $stats,
         ];

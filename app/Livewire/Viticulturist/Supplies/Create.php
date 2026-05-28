@@ -73,7 +73,7 @@ class Create extends Component
     public function render()
     {
         return view('livewire.viticulturist.supplies.create', [
-            'supplyTypes' => Supply::SUPPLY_TYPES,
+            'supplyTypes' => Supply::supplyTypeOptions(),
             'units'       => Unit::active()->orderBy('category')->orderBy('name')->get(),
             'warehouses'  => Warehouse::select(['id', 'name'])
                 ->where('user_id', Auth::id())

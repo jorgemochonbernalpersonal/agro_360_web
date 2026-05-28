@@ -131,12 +131,12 @@ class Edit extends Component
     public function render()
     {
         return view('livewire.winery.tasting-notes.edit', [
-            'visualClarityOptions'  => WineTastingNote::VISUAL_CLARITY,
-            'visualIntensityOptions'=> WineTastingNote::VISUAL_INTENSITY,
-            'aromaIntensityOptions' => WineTastingNote::AROMA_INTENSITY,
-            'palateLevelOptions'    => WineTastingNote::PALATE_LEVEL,
-            'palateBodyOptions'     => WineTastingNote::PALATE_BODY,
-            'palateFinishOptions'   => WineTastingNote::PALATE_FINISH,
+            'visualClarityOptions'  => WineTastingNote::visualClarityOptions(),
+            'visualIntensityOptions'=> WineTastingNote::visualIntensityOptions(),
+            'aromaIntensityOptions' => WineTastingNote::aromaIntensityOptions(),
+            'palateLevelOptions'    => WineTastingNote::palateLevelOptions(),
+            'palateBodyOptions'     => WineTastingNote::palateBodyOptions(),
+            'palateFinishOptions'   => WineTastingNote::palateFinishOptions(),
             'wines'                 => $this->wines,
             'oenologists'           => $this->oenologists,
             'selectedWine'          => $this->selectedWine,

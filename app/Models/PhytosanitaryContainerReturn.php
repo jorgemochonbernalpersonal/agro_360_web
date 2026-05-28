@@ -16,11 +16,21 @@ class PhytosanitaryContainerReturn extends Model
         'other'     => 'Otro',
     ];
 
+    public static function containerTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::CONTAINER_TYPES);
+    }
+
     const COLLECTION_SYSTEMS = [
         'sigfito' => 'SIGFITO',
         'field'   => 'FIELD',
         'other'   => 'Otro sistema',
     ];
+
+    public static function collectionSystemOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::COLLECTION_SYSTEMS);
+    }
 
     protected $fillable = [
         'viticulturist_id',
@@ -65,12 +75,12 @@ class PhytosanitaryContainerReturn extends Model
 
     public function getContainerTypeLabelAttribute(): string
     {
-        return self::CONTAINER_TYPES[$this->container_type] ?? $this->container_type;
+        return __(self::CONTAINER_TYPES[$this->container_type] ?? $this->container_type);
     }
 
     public function getCollectionSystemLabelAttribute(): string
     {
-        return self::COLLECTION_SYSTEMS[$this->collection_system] ?? $this->collection_system;
+        return __(self::COLLECTION_SYSTEMS[$this->collection_system] ?? $this->collection_system);
     }
 
     public function scopeForViticulturist($query, int $id)

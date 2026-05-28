@@ -75,7 +75,7 @@ class Index extends Component
             'observations'     => $observations,
             'campaigns'        => $campaigns,
             'filteredPlanting' => $filteredPlanting,
-            'events'           => PhenologyObservation::EVENTS,
+            'events'           => PhenologyObservation::eventOptions(),
         ])->layout('layouts.app');
     }
 }

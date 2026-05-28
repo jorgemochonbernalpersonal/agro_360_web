@@ -177,8 +177,8 @@ class Edit extends Component
     public function render()
     {
         return view('livewire.winery.cellar.containers.maintenance.edit', [
-            'types'      => ContainerMaintenance::TYPES,
-            'statuses'   => ContainerMaintenance::STATUSES,
+            'types'      => ContainerMaintenance::typeOptions(),
+            'statuses'   => ContainerMaintenance::statusOptions(),
             'supplies'   => WinerySupply::where('user_id', Auth::id())->active()->orderBy('name')->get(),
             'units'      => UnitOfMeasurement::orderBy('name')->get(),
             'wasteTypes' => \App\Models\ContainerWasteType::orderBy('name')->get(),

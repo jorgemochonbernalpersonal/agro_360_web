@@ -152,7 +152,7 @@ class Index extends Component
         return view('livewire.viticulturist.campaign-documents.index', [
             'entries'       => $entries,
             'campaigns'     => $campaigns,
-            'documentTypes' => CampaignDocument::DOCUMENT_TYPES,
+            'documentTypes' => CampaignDocument::documentTypeOptions(),
             'stats'         => $stats,
         ]);
     }

@@ -788,8 +788,8 @@ class VisualDashboard extends Component
             'modalWines'               => $modalWines,
             'modalContainersAll'       => $modalContainersAll,
             'modalUnits'               => $modalUnits,
-            'wineTypes'                => Wine::WINE_TYPES,
-            'transferTypes'            => WineTransfer::TRANSFER_TYPES,
+            'wineTypes'                => Wine::wineTypeOptions(),
+            'transferTypes'            => WineTransfer::transferTypeOptions(),
         ])->layout('layouts.app', ['title' => __('Vista Visual — Agro365')]);
     }
 

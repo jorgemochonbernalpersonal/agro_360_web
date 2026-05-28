@@ -124,7 +124,7 @@ class Edit extends AbstractEdit
     {
         return [
             'campaigns' => Campaign::forViticulturist($this->viticulturistId())->orderByDesc('year')->get(),
-            'statuses'  => HarvestDeclaration::STATUSES,
+            'statuses'  => HarvestDeclaration::statusOptions(),
         ];
     }
 }

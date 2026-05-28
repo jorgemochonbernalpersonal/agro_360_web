@@ -41,6 +41,11 @@ class PlotCost extends Model
         'other'          => 'Otros',
     ];
 
+    public static function categoryOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::CATEGORIES);
+    }
+
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');
@@ -58,6 +63,6 @@ class PlotCost extends Model
 
     public function getCategoryLabelAttribute(): string
     {
-        return self::CATEGORIES[$this->category] ?? $this->category;
+        return __(self::CATEGORIES[$this->category] ?? $this->category);
     }
 }

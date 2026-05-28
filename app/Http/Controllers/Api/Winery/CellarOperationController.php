@@ -42,8 +42,8 @@ class CellarOperationController extends Controller
                 'per_page'     => $items->perPage(),
                 'current_page' => $items->currentPage(),
                 'last_page'    => $items->lastPage(),
-                'types'        => CellarOperation::OPERATION_TYPES,
-                'statuses'     => CellarOperation::STATUSES,
+                'types'        => CellarOperation::operationTypeOptions(),
+                'statuses'     => CellarOperation::statusOptions(),
             ],
         ]);
     }

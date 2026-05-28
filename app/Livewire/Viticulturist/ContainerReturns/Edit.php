@@ -98,8 +98,8 @@ class Edit extends AbstractEdit
         return [
             'campaigns'         => Campaign::forViticulturist($userId)->orderByDesc('year')->get(),
             'products'          => PhytosanitaryProduct::where('viticulturist_id', $userId)->orderBy('name')->get(),
-            'containerTypes'    => PhytosanitaryContainerReturn::CONTAINER_TYPES,
-            'collectionSystems' => PhytosanitaryContainerReturn::COLLECTION_SYSTEMS,
+            'containerTypes'    => PhytosanitaryContainerReturn::containerTypeOptions(),
+            'collectionSystems' => PhytosanitaryContainerReturn::collectionSystemOptions(),
         ];
     }
 }

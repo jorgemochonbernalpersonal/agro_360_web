@@ -62,7 +62,7 @@ class Index extends AbstractIndex
     {
         return [
             'supplies' => $entries,
-            'types'    => WinerySupply::SUPPLY_TYPES,
+            'types'    => WinerySupply::supplyTypeOptions(),
         ];
     }
 }

@@ -111,7 +111,7 @@ class Index extends Component
         return view('livewire.winery.announcements.index', [
             'announcements'  => $announcements,
             'viticulturists' => $viticulturists,
-            'typeLabels'     => WineryAnnouncement::TYPE_LABELS,
+            'typeLabels'     => WineryAnnouncement::typeLabelOptions(),
         ])->layout('layouts.app');
     }
 }

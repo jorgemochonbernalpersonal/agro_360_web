@@ -133,7 +133,7 @@
 
         {{-- Resumen por estado --}}
         <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
-            @foreach(\App\Models\CueExport::STATUSES as $key => $label)
+            @foreach(\App\Models\CueExport::statusOptions() as $key => $label)
                 <x-agro.stat-card
                     :label="$label"
                     :value="$statusCounts[$key] ?? 0"

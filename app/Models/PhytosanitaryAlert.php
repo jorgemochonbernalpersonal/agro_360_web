@@ -28,6 +28,11 @@ class PhytosanitaryAlert extends Model
         'otro'          => 'Otro',
     ];
 
+    public static function sourceOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::SOURCES);
+    }
+
     public const ALERT_TYPES = [
         'plaga'         => 'Plaga',
         'enfermedad'    => 'Enfermedad',
@@ -36,12 +41,22 @@ class PhytosanitaryAlert extends Model
         'otro'          => 'Otro',
     ];
 
+    public static function alertTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::ALERT_TYPES);
+    }
+
     public const SEVERITIES = [
         'baja'    => 'Baja',
         'media'   => 'Media',
         'alta'    => 'Alta',
         'critica' => 'Crítica',
     ];
+
+    public static function severityOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::SEVERITIES);
+    }
 
     public const SEVERITY_COLORS = [
         'baja'    => 'zinc',
@@ -69,17 +84,17 @@ class PhytosanitaryAlert extends Model
 
     public function getSourceLabelAttribute(): string
     {
-        return self::SOURCES[$this->source] ?? ucfirst($this->source);
+        return __(self::SOURCES[$this->source] ?? ucfirst($this->source));
     }
 
     public function getAlertTypeLabelAttribute(): string
     {
-        return self::ALERT_TYPES[$this->alert_type] ?? ucfirst($this->alert_type);
+        return __(self::ALERT_TYPES[$this->alert_type] ?? ucfirst($this->alert_type));
     }
 
     public function getSeverityLabelAttribute(): string
     {
-        return self::SEVERITIES[$this->severity] ?? ucfirst($this->severity);
+        return __(self::SEVERITIES[$this->severity] ?? ucfirst($this->severity));
     }
 
     public function getSeverityColorAttribute(): string

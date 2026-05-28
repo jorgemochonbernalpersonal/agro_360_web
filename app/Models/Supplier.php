@@ -16,6 +16,11 @@ class Supplier extends Model
         'other'     => 'Otro',
     ];
 
+    public static function categoryOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::CATEGORIES);
+    }
+
     protected $fillable = [
         'user_id',
         'name',
@@ -40,7 +45,7 @@ class Supplier extends Model
 
     public function getCategoryLabelAttribute(): string
     {
-        return self::CATEGORIES[$this->category] ?? $this->category;
+        return __(self::CATEGORIES[$this->category] ?? $this->category);
     }
 
     public function scopeActive($query)

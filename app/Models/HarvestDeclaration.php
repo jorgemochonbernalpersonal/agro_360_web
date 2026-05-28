@@ -21,6 +21,11 @@ class HarvestDeclaration extends Model
         'rejected'  => 'red',
     ];
 
+    public static function statusOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::STATUSES);
+    }
+
     protected $fillable = [
         'viticulturist_id',
         'campaign_id',

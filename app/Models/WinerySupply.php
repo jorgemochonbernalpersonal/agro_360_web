@@ -24,6 +24,11 @@ class WinerySupply extends Model
         'other'      => 'Otro',
     ];
 
+    public static function supplyTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::SUPPLY_TYPES);
+    }
+
     protected $fillable = [
         'user_id',
         'name',
@@ -76,7 +81,7 @@ class WinerySupply extends Model
 
     public function getTypeLabelAttribute(): string
     {
-        return self::SUPPLY_TYPES[$this->supply_type] ?? $this->supply_type;
+        return __(self::SUPPLY_TYPES[$this->supply_type] ?? $this->supply_type);
     }
 
     public function isLowStock(): bool

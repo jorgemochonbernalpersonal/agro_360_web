@@ -63,7 +63,7 @@ class Index extends AbstractIndex
     {
         return [
             'documents' => $entries,
-            'types'     => WineryDocument::DOCUMENT_TYPES,
+            'types'     => WineryDocument::documentTypeOptions(),
         ];
     }
 }

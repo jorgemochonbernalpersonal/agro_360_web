@@ -64,8 +64,8 @@ class ContainerMaintenanceController extends Controller
                 'scheduled'    => (int) $counts->scheduled,
                 'in_progress'  => (int) $counts->in_progress,
                 'completed'    => (int) $counts->completed,
-                'types'        => ContainerMaintenance::TYPES,
-                'statuses'     => ContainerMaintenance::STATUSES,
+                'types'        => ContainerMaintenance::typeOptions(),
+                'statuses'     => ContainerMaintenance::statusOptions(),
             ],
         ]);
     }

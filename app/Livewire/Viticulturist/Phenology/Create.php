@@ -118,8 +118,8 @@ class Create extends Component
         return view('livewire.viticulturist.phenology.create', [
             'campaigns' => $campaigns,
             'plantings' => $plantings,
-            'events'    => PhenologyObservation::EVENTS,
-            'sources'   => PhenologyObservation::SOURCES,
+            'events'    => PhenologyObservation::eventOptions(),
+            'sources'   => PhenologyObservation::sourceOptions(),
         ])->layout('layouts.app');
     }
 }

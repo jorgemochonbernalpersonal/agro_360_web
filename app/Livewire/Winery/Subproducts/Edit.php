@@ -112,8 +112,8 @@ class Edit extends Component
     public function render()
     {
         return view('livewire.winery.subproducts.edit', [
-            'types'        => WineSubproduct::TYPES,
-            'destinations' => WineSubproduct::DESTINATIONS,
+            'types'        => WineSubproduct::typeOptions(),
+            'destinations' => WineSubproduct::destinationOptions(),
             'wines'        => $this->wines,
             'units'        => $this->units,
         ])->layout('layouts.app');

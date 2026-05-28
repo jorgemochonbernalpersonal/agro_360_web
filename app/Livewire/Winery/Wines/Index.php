@@ -76,8 +76,8 @@ class Index extends AbstractIndex
 
         return [
             'wines'    => $entries,
-            'types'    => Wine::WINE_TYPES,
-            'statuses' => Wine::STATUSES,
+            'types'    => Wine::wineTypeOptions(),
+            'statuses' => Wine::statusOptions(),
             'vintages' => $vintages,
         ];
     }

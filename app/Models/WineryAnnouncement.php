@@ -31,6 +31,11 @@ class WineryAnnouncement extends Model
         self::TYPE_HARVEST_ALERT   => 'Alerta de vendimia',
     ];
 
+    public static function typeLabelOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::TYPE_LABELS);
+    }
+
     public const TYPE_COLORS = [
         self::TYPE_INFO            => 'blue',
         self::TYPE_ACTION_REQUIRED => 'amber',
@@ -103,7 +108,7 @@ class WineryAnnouncement extends Model
 
     public function typeLabel(): string
     {
-        return self::TYPE_LABELS[$this->type] ?? $this->type;
+        return __(self::TYPE_LABELS[$this->type] ?? $this->type);
     }
 
     public function typeColor(): string

@@ -382,7 +382,7 @@ class Show extends Component
             'allAbilities'           => $allAbilities,
             'grantedAbilityIds'      => $grantedAbilityIds,
             'wineryNotes'            => $wineryNotes,
-            'noteTypeLabels'         => SupervisorWineryNote::TYPE_LABELS,
+            'noteTypeLabels'         => SupervisorWineryNote::typeLabelOptions(),
             'noteTypeIcons'          => SupervisorWineryNote::TYPE_ICONS,
             'noteTypeColors'         => SupervisorWineryNote::TYPE_COLORS,
         ]);

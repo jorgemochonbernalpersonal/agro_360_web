@@ -162,7 +162,7 @@
                                     @php
                                         $catTotal = $items->sum('amount');
                                         $catColor = \App\Models\WineCost::CATEGORY_COLORS[$cat] ?? 'zinc';
-                                        $catLabel = \App\Models\WineCost::CATEGORIES[$cat] ?? $cat;
+                                        $catLabel = __(\App\Models\WineCost::CATEGORIES[$cat] ?? $cat);
                                     @endphp
                                     <tr class="bg-zinc-50" wire:key="wine-{{ $wine->id }}-cat-{{ $cat }}">
                                         <td class="py-1.5 px-4 pl-10">

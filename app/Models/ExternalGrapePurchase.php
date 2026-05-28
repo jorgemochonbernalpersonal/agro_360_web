@@ -21,6 +21,16 @@ class ExternalGrapePurchase extends Model
         'rejected'  => 'Rechazado',
     ];
 
+    public static function productTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::PRODUCT_TYPES);
+    }
+
+    public static function statusOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::STATUSES);
+    }
+
     protected $fillable = [
         'user_id',
         'supplier_id',

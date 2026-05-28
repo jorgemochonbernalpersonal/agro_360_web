@@ -27,6 +27,11 @@ class HarvestByproduct extends Model
         'other'  => 'Otro',
     ];
 
+    public static function byproductTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::BYPRODUCT_TYPES);
+    }
+
     const DESTINATION_TYPES = [
         'cooperative'        => 'Cooperativa vinícola',
         'winery'            => 'Bodega',
@@ -35,6 +40,11 @@ class HarvestByproduct extends Model
         'authorized_landfill' => 'Vertedero autorizado',
         'other'             => 'Otro destino',
     ];
+
+    public static function destinationTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::DESTINATION_TYPES);
+    }
 
     public function viticulturist(): BelongsTo
     {
@@ -48,11 +58,11 @@ class HarvestByproduct extends Model
 
     public function getByproductTypeLabelAttribute(): string
     {
-        return self::BYPRODUCT_TYPES[$this->byproduct_type] ?? $this->byproduct_type;
+        return __(self::BYPRODUCT_TYPES[$this->byproduct_type] ?? $this->byproduct_type);
     }
 
     public function getDestinationTypeLabelAttribute(): string
     {
-        return self::DESTINATION_TYPES[$this->destination_type] ?? $this->destination_type;
+        return __(self::DESTINATION_TYPES[$this->destination_type] ?? $this->destination_type);
     }
 }

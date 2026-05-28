@@ -86,7 +86,7 @@ class Create extends Component
             'wines'      => Wine::where('user_id', Auth::id())->orderBy('name')->get(),
             'containers' => Container::where('user_id', Auth::id())->orderBy('name')->get(),
             'units'      => UnitOfMeasurement::orderBy('name')->get(),
-            'types'      => WineTransfer::TRANSFER_TYPES,
+            'types'      => WineTransfer::transferTypeOptions(),
             'oenologists'=> Oenologist::where('user_id', Auth::id())->orderBy('name')->get(),
         ])->layout('layouts.app');
     }

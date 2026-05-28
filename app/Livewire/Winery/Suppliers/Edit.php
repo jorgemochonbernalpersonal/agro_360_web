@@ -72,7 +72,7 @@ class Edit extends Component
     public function render()
     {
         return view('livewire.winery.suppliers.edit', [
-            'categories' => Supplier::CATEGORIES,
+            'categories' => Supplier::categoryOptions(),
         ])->layout('layouts.app');
     }
 }

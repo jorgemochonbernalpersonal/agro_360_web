@@ -97,10 +97,10 @@ class Edit extends Component
         $oenologists = Oenologist::where('user_id', Auth::id())->active()->orderBy('name')->get();
 
         return view('livewire.winery.wines.edit', [
-            'types'       => Wine::WINE_TYPES,
-            'statuses'    => Wine::STATUSES,
-            'agingTypes'  => Wine::AGING_TYPES,
-            'categories'  => Wine::CATEGORIES,
+            'types'       => Wine::wineTypeOptions(),
+            'statuses'    => Wine::statusOptions(),
+            'agingTypes'  => Wine::agingTypeOptions(),
+            'categories'  => Wine::categoryOptions(),
             'oenologists' => $oenologists,
         ])->layout('layouts.app');
     }

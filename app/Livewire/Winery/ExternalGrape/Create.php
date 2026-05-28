@@ -90,8 +90,8 @@ class Create extends Component
         return view('livewire.winery.external-grape.create', [
             'varieties'  => GrapeVariety::orderBy('name')->get(['id', 'name']),
             'containers' => Container::where('user_id', Auth::id())->active()->orderBy('name')->get(['id', 'name']),
-            'types'      => ExternalGrape::TYPES,
-            'colors'     => ExternalGrape::COLORS,
+            'types'      => ExternalGrape::typeOptions(),
+            'colors'     => ExternalGrape::colorOptions(),
         ])->layout('layouts.app');
     }
 }

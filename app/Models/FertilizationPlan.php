@@ -31,6 +31,11 @@ class FertilizationPlan extends Model
         'archived' => 'Archivado',
     ];
 
+    public static function statusOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::STATUSES);
+    }
+
     const STATUS_COLORS = [
         'draft'    => 'zinc',
         'active'   => 'green',

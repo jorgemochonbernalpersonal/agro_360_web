@@ -111,7 +111,7 @@
                                 size="md"
                                 radius="xl"
                             >
-                                <x-agro.status-badge :label="$isExpired ? 'Caducado' : (\App\Models\ExternalGrape::STATUSES[$grape->status] ?? $grape->status)" :color="$isExpired ? 'red' : $statusColor" />
+                                <x-agro.status-badge :label="$isExpired ? __('Caducado') : __(\App\Models\ExternalGrape::STATUSES[$grape->status] ?? $grape->status)" :color="$isExpired ? 'red' : $statusColor" />
                             </x-agro.card-item-header>
                         </x-slot:header>
 

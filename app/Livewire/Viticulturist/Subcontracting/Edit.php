@@ -103,7 +103,7 @@ class Edit extends Component
         return view('livewire.viticulturist.subcontracting.edit', [
             'plots'        => Plot::where('viticulturist_id', $user->id)->orderBy('name')->get(),
             'campaigns'    => Campaign::where('viticulturist_id', $user->id)->orderByDesc('year')->get(),
-            'serviceTypes' => Subcontracting::SERVICE_TYPES,
+            'serviceTypes' => Subcontracting::serviceTypeOptions(),
         ])->layout('layouts.app');
     }
 }

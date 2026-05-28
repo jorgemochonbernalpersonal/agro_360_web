@@ -75,7 +75,7 @@ class Create extends AbstractCreate
     {
         return [
             'exploitations' => Exploitation::forViticulturist($this->viticulturistId())->active()->get(),
-            'authTypes'     => CommercialAuthorization::AUTHORIZATION_TYPES,
+            'authTypes'     => CommercialAuthorization::authorizationTypeOptions(),
         ];
     }
 }

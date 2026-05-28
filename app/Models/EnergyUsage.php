@@ -20,12 +20,22 @@ class EnergyUsage extends Model
         'other'       => 'Otro',
     ];
 
+    public static function energyTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::ENERGY_TYPES);
+    }
+
     const UNITS = [
         'liters' => 'Litros (L)',
         'kwh'    => 'kWh',
         'm3'     => 'm³',
         'kg'     => 'kg',
     ];
+
+    public static function unitOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::UNITS);
+    }
 
     // kg CO₂ equivalente por unidad
     const CO2_FACTORS = [
@@ -100,12 +110,12 @@ class EnergyUsage extends Model
 
     public function getEnergyTypeLabelAttribute(): string
     {
-        return self::ENERGY_TYPES[$this->energy_type] ?? $this->energy_type;
+        return __(self::ENERGY_TYPES[$this->energy_type] ?? $this->energy_type);
     }
 
     public function getUnitLabelAttribute(): string
     {
-        return self::UNITS[$this->unit] ?? $this->unit;
+        return __(self::UNITS[$this->unit] ?? $this->unit);
     }
 
     public function scopeActive($query)

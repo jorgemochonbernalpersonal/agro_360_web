@@ -105,7 +105,7 @@ class Index extends AbstractIndex
         return [
             'entries'   => $entries,
             'campaigns' => Campaign::forViticulturist($userId)->orderByDesc('year')->get(),
-            'statuses'  => HarvestDeclaration::STATUSES,
+            'statuses'  => HarvestDeclaration::statusOptions(),
             'stats'     => $stats,
         ];
     }

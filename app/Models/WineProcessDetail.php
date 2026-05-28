@@ -31,6 +31,11 @@ class WineProcessDetail extends Model
         'other'               => 'Otro',
     ];
 
+    public static function processTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::PROCESS_TYPES);
+    }
+
     protected $fillable = [
         'wine_id',
         'container_id',

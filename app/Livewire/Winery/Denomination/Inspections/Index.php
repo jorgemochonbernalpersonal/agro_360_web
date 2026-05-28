@@ -51,8 +51,8 @@ class Index extends Component
         return view('livewire.winery.denomination.inspections.index', [
             'inspections'  => $inspections,
             'counts'       => $counts,
-            'statusLabels' => DoInspection::STATUS_LABELS,
-            'resultLabels' => DoInspection::RESULT_LABELS,
+            'statusLabels' => DoInspection::statusLabelOptions(),
+            'resultLabels' => DoInspection::resultLabelOptions(),
             'resultColors' => DoInspection::RESULT_COLORS,
         ]);
     }

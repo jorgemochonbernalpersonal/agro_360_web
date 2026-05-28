@@ -65,14 +65,24 @@ class AgriInsurance extends Model
         return $this->belongsTo(User::class, 'viticulturist_id');
     }
 
+    public static function coverageTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::COVERAGE_TYPES);
+    }
+
+    public static function statusOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::STATUSES);
+    }
+
     public function getCoverageTypeLabelAttribute(): string
     {
-        return self::COVERAGE_TYPES[$this->coverage_type] ?? $this->coverage_type;
+        return __(self::COVERAGE_TYPES[$this->coverage_type] ?? $this->coverage_type);
     }
 
     public function getStatusLabelAttribute(): string
     {
-        return self::STATUSES[$this->status] ?? $this->status;
+        return __(self::STATUSES[$this->status] ?? $this->status);
     }
 
     public function getStatusColorAttribute(): string

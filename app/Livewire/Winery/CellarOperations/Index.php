@@ -69,8 +69,8 @@ class Index extends AbstractIndex
     {
         return [
             'operations' => $entries,
-            'types'      => CellarOperation::OPERATION_TYPES,
-            'statuses'   => CellarOperation::STATUSES,
+            'types'      => CellarOperation::operationTypeOptions(),
+            'statuses'   => CellarOperation::statusOptions(),
         ];
     }
 }

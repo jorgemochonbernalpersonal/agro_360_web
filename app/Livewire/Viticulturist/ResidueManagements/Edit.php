@@ -98,8 +98,8 @@ class Edit extends AbstractEdit
             'plots'         => Plot::where('viticulturist_id', $id)->active()->get(),
             'plantings'     => PlotPlanting::whereHas('plot', fn($q) => $q->where('viticulturist_id', $id))
                 ->with(['plot', 'grapeVariety'])->active()->get(),
-            'practiceTypes' => ResidueManagement::PRACTICE_TYPES,
-            'materialTypes' => ResidueManagement::MATERIAL_TYPES,
+            'practiceTypes' => ResidueManagement::practiceTypeOptions(),
+            'materialTypes' => ResidueManagement::materialTypeOptions(),
             'units'         => Unit::active()->where('category', 'weight')->orderBy('name')->get(),
         ];
     }

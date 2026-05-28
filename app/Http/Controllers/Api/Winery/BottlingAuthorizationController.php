@@ -36,8 +36,8 @@ class BottlingAuthorizationController extends Controller
                 'per_page'     => $items->perPage(),
                 'current_page' => $items->currentPage(),
                 'last_page'    => $items->lastPage(),
-                'types'        => BottlingAuthorization::AUTHORIZATION_TYPES,
-                'statuses'     => BottlingAuthorization::STATUSES,
+                'types'        => BottlingAuthorization::authorizationTypeOptions(),
+                'statuses'     => BottlingAuthorization::statusOptions(),
             ],
         ]);
     }

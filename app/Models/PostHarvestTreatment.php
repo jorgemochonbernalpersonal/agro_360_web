@@ -19,6 +19,11 @@ class PostHarvestTreatment extends Model
         'other'             => 'Otro',
     ];
 
+    public static function applicationTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::APPLICATION_TYPES);
+    }
+
     protected $fillable = [
         'activity_id',
         'product_id',
@@ -50,6 +55,6 @@ class PostHarvestTreatment extends Model
 
     public function getApplicationTypeLabelAttribute(): string
     {
-        return self::APPLICATION_TYPES[$this->application_type] ?? $this->application_type;
+        return __(self::APPLICATION_TYPES[$this->application_type] ?? $this->application_type);
     }
 }

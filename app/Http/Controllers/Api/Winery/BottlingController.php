@@ -47,7 +47,7 @@ class BottlingController extends Controller
                 'per_page'     => $bottlings->perPage(),
                 'current_page' => $bottlings->currentPage(),
                 'last_page'    => $bottlings->lastPage(),
-                'bottle_formats' => WineBottling::BOTTLE_FORMATS,
+                'bottle_formats' => WineBottling::bottleFormatOptions(),
             ],
         ]);
     }

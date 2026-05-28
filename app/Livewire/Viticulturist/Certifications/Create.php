@@ -57,7 +57,7 @@ class Create extends AbstractCreate
     protected function viewData(): array
     {
         return [
-            'certificationTypes' => Certification::CERTIFICATION_TYPES,
+            'certificationTypes' => Certification::certificationTypeOptions(),
         ];
     }
 }

@@ -36,7 +36,7 @@ class SupervisorRequestResolvedNotification extends Notification implements Shou
     {
         $req        = $this->supervisorRequest;
         $supervisor = $req->supervisor;
-        $typeLabel  = SupervisorRequest::TYPE_LABELS[$req->type] ?? $req->type;
+        $typeLabel  = __(SupervisorRequest::TYPE_LABELS[$req->type] ?? $req->type);
         $approved   = $this->resolution === SupervisorRequest::STATUS_APPROVED;
         $url        = AppLink::url(route('winery.denomination.requests.index'), 'agro365://home');
 
@@ -70,7 +70,7 @@ class SupervisorRequestResolvedNotification extends Notification implements Shou
     {
         $req       = $this->supervisorRequest;
         $approved  = $this->resolution === SupervisorRequest::STATUS_APPROVED;
-        $typeLabel = SupervisorRequest::TYPE_LABELS[$req->type] ?? $req->type;
+        $typeLabel = __(SupervisorRequest::TYPE_LABELS[$req->type] ?? $req->type);
 
         return [
             'request_id'      => $req->id,

@@ -246,8 +246,8 @@ class Index extends Component
             'tabs'             => $tabs,
             'wineries'         => $wineries,
             'availableVintages'=> $availableVintages,
-            'colorLabels'      => DoQualification::COLOR_LABELS,
-            'resultLabels'     => DoQualification::RESULT_LABELS,
+            'colorLabels'      => DoQualification::colorLabelOptions(),
+            'resultLabels'     => DoQualification::resultLabelOptions(),
             'resultColors'     => DoQualification::RESULT_COLORS,
         ]);
     }

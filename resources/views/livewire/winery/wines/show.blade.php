@@ -619,7 +619,7 @@
                 <flux:field>
                     <flux:label>{{ __('Tipo') }}</flux:label>
                     <flux:select wire:model="tr_type">
-                        @foreach(\App\Models\WineTransfer::TRANSFER_TYPES as $key => $label)
+                        @foreach(\App\Models\WineTransfer::transferTypeOptions() as $key => $label)
                             <option value="{{ $key }}">{{ $label }}</option>
                         @endforeach
                     </flux:select>
@@ -705,7 +705,7 @@
                 <flux:field>
                     <flux:label required>{{ __('Tipo de merma') }}</flux:label>
                     <flux:select wire:model="lo_type">
-                        @foreach(\App\Models\WineLoss::LOSS_TYPES as $key => $label)
+                        @foreach(\App\Models\WineLoss::lossTypeOptions() as $key => $label)
                             <option value="{{ $key }}">{{ $label }}</option>
                         @endforeach
                     </flux:select>
@@ -1108,7 +1108,7 @@
                             @foreach($costs as $cost)
                                 @php
                                     $catColor = \App\Models\WineCost::CATEGORY_COLORS[$cost->category] ?? 'zinc';
-                                    $catLabel = \App\Models\WineCost::CATEGORIES[$cost->category] ?? $cost->category;
+                                    $catLabel = __(\App\Models\WineCost::CATEGORIES[$cost->category] ?? $cost->category);
                                 @endphp
                                 <tr class="hover:bg-zinc-50 transition-colors" wire:key="cost-{{ $cost->id }}">
                                     <td class="py-2 px-3 text-zinc-500 whitespace-nowrap">{{ $cost->cost_date->format('d/m/Y') }}</td>

@@ -16,6 +16,11 @@ class WineryDocument extends Model
         'other'       => 'Otro',
     ];
 
+    public static function documentTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::DOCUMENT_TYPES);
+    }
+
     protected $fillable = [
         'user_id',
         'title',
@@ -41,7 +46,7 @@ class WineryDocument extends Model
 
     public function getTypeLabelAttribute(): string
     {
-        return self::DOCUMENT_TYPES[$this->document_type] ?? $this->document_type;
+        return __(self::DOCUMENT_TYPES[$this->document_type] ?? $this->document_type);
     }
 
     public function isExpiringSoon(): bool

@@ -99,7 +99,7 @@ class Index extends AbstractIndex
         return [
             'entries'        => $entries,
             'stats'          => $stats,
-            'textureClasses' => SoilAnalysis::TEXTURE_CLASSES,
+            'textureClasses' => SoilAnalysis::textureClassOptions(),
             'plots'          => Plot::where('viticulturist_id', $userId)->orderBy('name')->get(),
             'campaigns'      => Campaign::forViticulturist($userId)->orderBy('year', 'desc')->get(),
         ];

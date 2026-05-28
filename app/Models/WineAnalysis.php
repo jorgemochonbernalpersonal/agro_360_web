@@ -23,6 +23,16 @@ class WineAnalysis extends Model
         'failed'  => 'No conforme',
     ];
 
+    public static function analysisTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::ANALYSIS_TYPES);
+    }
+
+    public static function resultOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::RESULTS);
+    }
+
     // ─── Fillable ──────────────────────────────────────────────────────────────
 
     protected $fillable = [

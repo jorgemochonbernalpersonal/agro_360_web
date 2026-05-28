@@ -72,8 +72,8 @@ class Edit extends AbstractEdit
     protected function viewData(): array
     {
         return [
-            'categories' => PlannedWork::CATEGORIES,
-            'priorities' => PlannedWork::PRIORITIES,
+            'categories' => PlannedWork::categoryOptions(),
+            'priorities' => PlannedWork::priorityOptions(),
             'campaigns'  => Campaign::where('viticulturist_id', $this->viticulturistId())
                                 ->orderByDesc('year')->get(['id', 'name', 'year']),
             'plots'      => Plot::where('viticulturist_id', $this->viticulturistId())

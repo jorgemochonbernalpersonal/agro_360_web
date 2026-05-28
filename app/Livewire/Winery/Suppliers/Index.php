@@ -62,7 +62,7 @@ class Index extends AbstractIndex
     {
         return [
             'suppliers'  => $entries,
-            'categories' => Supplier::CATEGORIES,
+            'categories' => Supplier::categoryOptions(),
         ];
     }
 }

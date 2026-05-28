@@ -21,6 +21,16 @@ class BottlingAuthorization extends Model
         'cancelled' => 'Anulada',
     ];
 
+    public static function authorizationTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::AUTHORIZATION_TYPES);
+    }
+
+    public static function statusOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::STATUSES);
+    }
+
     protected $fillable = [
         'user_id',
         'authorization_number',

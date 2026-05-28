@@ -57,8 +57,8 @@ class Index extends Component
             'stats'         => $stats,
             'expiringSoon'  => $stats['expiring'],
             'activeCount'   => $stats['active'],
-            'coverageTypes' => AgriInsurance::COVERAGE_TYPES,
-            'statuses'      => AgriInsurance::STATUSES,
+            'coverageTypes' => AgriInsurance::coverageTypeOptions(),
+            'statuses'      => AgriInsurance::statusOptions(),
         ])->layout('layouts.app');
     }
 }

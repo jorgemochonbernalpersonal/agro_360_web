@@ -133,8 +133,8 @@ class Index extends AbstractIndex
         return [
             'entries'    => $entries,
             'stats'      => $stats,
-            'categories' => PlannedWork::CATEGORIES,
-            'priorities' => PlannedWork::PRIORITIES,
+            'categories' => PlannedWork::categoryOptions(),
+            'priorities' => PlannedWork::priorityOptions(),
             'plots'      => \App\Models\Plot::where('viticulturist_id', $userId)->orderBy('name')->get(['id', 'name']),
             'campaigns'  => \App\Models\Campaign::where('viticulturist_id', $userId)->orderByDesc('year')->get(['id', 'name', 'year']),
         ];

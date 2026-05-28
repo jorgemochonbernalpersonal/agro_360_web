@@ -73,7 +73,7 @@ class Index extends Component
             'stats'      => $stats,
             'campaigns'  => $campaigns,
             'plots'      => $plots,
-            'categories' => PlotCost::CATEGORIES,
+            'categories' => PlotCost::categoryOptions(),
         ])->layout('layouts.app');
     }
 }

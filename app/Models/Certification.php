@@ -30,6 +30,11 @@ class Certification extends Model
         'otro'                   => 'Otra certificación',
     ];
 
+    public static function certificationTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::CERTIFICATION_TYPES);
+    }
+
     const TYPE_COLORS = [
         'ecologico'              => 'green',
         'produccion_integrada'   => 'teal',
@@ -47,7 +52,7 @@ class Certification extends Model
 
     public function getCertificationTypeLabelAttribute(): string
     {
-        return self::CERTIFICATION_TYPES[$this->certification_type] ?? $this->certification_type;
+        return __(self::CERTIFICATION_TYPES[$this->certification_type] ?? $this->certification_type);
     }
 
     public function getIsExpiredAttribute(): bool

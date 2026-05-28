@@ -41,6 +41,11 @@ class SoilAnalysis extends Model
         'limoso'           => 'Limoso',
     ];
 
+    public static function textureClassOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::TEXTURE_CLASSES);
+    }
+
     public const PH_RANGES = [
         'muy_acido'      => ['label' => 'Muy ácido',      'min' => 0,    'max' => 5.5,  'color' => 'red'],
         'acido'          => ['label' => 'Ácido',          'min' => 5.5,  'max' => 6.5,  'color' => 'amber'],
@@ -48,6 +53,11 @@ class SoilAnalysis extends Model
         'basico'         => ['label' => 'Básico',         'min' => 7.5,  'max' => 8.5,  'color' => 'blue'],
         'muy_basico'     => ['label' => 'Muy básico',     'min' => 8.5,  'max' => 14,   'color' => 'violet'],
     ];
+
+    public static function phRangeOptions(): array
+    {
+        return array_map(fn ($v) => array_merge($v, ['label' => __($v['label'])]), static::PH_RANGES);
+    }
 
     // ── Relaciones ───────────────────────────────────────────────────────────
 
@@ -70,7 +80,7 @@ class SoilAnalysis extends Model
 
     public function getTextureLabelAttribute(): string
     {
-        return self::TEXTURE_CLASSES[$this->texture_class] ?? $this->texture_class ?? '—';
+        return __(self::TEXTURE_CLASSES[$this->texture_class] ?? $this->texture_class ?? '—');
     }
 
     public function getPhRangeAttribute(): ?array
@@ -91,6 +101,6 @@ class SoilAnalysis extends Model
 
     public function getPhLabelAttribute(): string
     {
-        return $this->ph_range['label'] ?? '—';
+        return __($this->ph_range['label'] ?? '—');
     }
 }

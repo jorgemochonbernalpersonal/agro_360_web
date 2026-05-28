@@ -63,7 +63,7 @@ class Index extends Component
             'labels'            => $labels,
             'counts'            => $counts,
             'availableVintages' => $availableVintages,
-            'statusLabels'      => DoLabel::STATUS_LABELS,
+            'statusLabels'      => DoLabel::statusLabelOptions(),
             'statusColors'      => DoLabel::STATUS_COLORS,
         ]);
     }

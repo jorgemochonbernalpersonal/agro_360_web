@@ -55,7 +55,7 @@ class Index extends Component
             'wines'             => $wines,
             'availableVintages' => $availableVintages,
             'totalManualCost'   => (float) $totalManualCost,
-            'statuses'          => Wine::STATUSES,
+            'statuses'          => Wine::statusOptions(),
         ]);
     }
 }

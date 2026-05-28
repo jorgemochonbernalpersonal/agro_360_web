@@ -60,7 +60,7 @@ class Create extends AbstractCreate
         $userId = $this->viticulturistId();
 
         return [
-            'recordTypes' => BiodiversityRecord::RECORD_TYPES,
+            'recordTypes' => BiodiversityRecord::recordTypeOptions(),
             'plots'       => Plot::where('viticulturist_id', $userId)->orderBy('name')->with('municipality:id,name')->get(['id', 'name', 'municipality_id']),
             'campaigns'   => Campaign::forViticulturist($userId)->orderByDesc('year')->get(['id', 'name', 'year']),
         ];
