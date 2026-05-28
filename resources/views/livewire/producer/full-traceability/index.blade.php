@@ -187,7 +187,7 @@
                         </div>
                         <div class="flex gap-2">
                             @foreach($traceData['wineStats']['types'] as $type => $count)
-                                <flux:badge size="sm" color="purple">{{ ucfirst($type) }}: {{ $count }}</flux:badge>
+                                <flux:badge size="sm" color="purple">{{ __(\App\Models\Wine::WINE_TYPES[$type] ?? ucfirst($type)) }}: {{ $count }}</flux:badge>
                             @endforeach
                         </div>
                     </div>
@@ -209,7 +209,7 @@
                                 <tr class="hover:bg-zinc-50">
                                     <td class="px-3 py-2 font-medium text-zinc-700">{{ $wine->name }}</td>
                                     <td class="px-3 py-2">
-                                        <flux:badge size="sm" color="purple">{{ ucfirst($wine->wine_type) }}</flux:badge>
+                                        <flux:badge size="sm" color="purple">{{ $wine->type_label }}</flux:badge>
                                     </td>
                                     <td class="px-3 py-2 text-zinc-600">{{ $wine->oenologist?->name ?? '—' }}</td>
                                     <td class="px-3 py-2 text-right text-zinc-600">{{ $wine->harvests_count }}</td>

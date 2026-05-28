@@ -177,7 +177,7 @@
                         <div class="flex items-center justify-between mb-1">
                             <div class="flex items-center gap-2">
                                 <div class="w-2.5 h-2.5 rounded-full {{ $barColor }}"></div>
-                                <span class="text-sm font-medium text-zinc-700">{{ $typeLabels[$wt->wine_type] ?? ucfirst($wt->wine_type) }}</span>
+                                <span class="text-sm font-medium text-zinc-700">{{ __($typeLabels[$wt->wine_type] ?? ucfirst($wt->wine_type)) }}</span>
                             </div>
                             <span class="text-sm font-bold text-zinc-900">{{ number_format($wt->revenue, 0, ',', '.') }} &euro;</span>
                         </div>
@@ -221,7 +221,7 @@
                     @endphp
                     <div class="border-l-4 border-purple-400 pl-4">
                         <div class="flex items-center justify-between mb-1">
-                            <span class="text-sm font-semibold text-zinc-900">{{ $typeLabels[$ps->wine_type] ?? ucfirst($ps->wine_type) }}</span>
+                            <span class="text-sm font-semibold text-zinc-900">{{ __($typeLabels[$ps->wine_type] ?? ucfirst($ps->wine_type)) }}</span>
                             @if($margin !== null)
                                 <flux:badge size="sm" :color="$margin >= 30 ? 'green' : ($margin >= 0 ? 'amber' : 'red')">
                                     Margen {{ number_format($margin, 0) }}%
@@ -322,7 +322,7 @@
                         </div>
                         <div class="flex-1 min-w-0">
                             <p class="text-sm font-medium text-zinc-800 truncate">{{ $tp->name }}</p>
-                            <p class="text-[10px] text-zinc-400">{{ $typeLabels[$tp->wine_type] ?? ucfirst($tp->wine_type) }} · {{ number_format($tp->units) }} uds</p>
+                            <p class="text-[10px] text-zinc-400">{{ __($typeLabels[$tp->wine_type] ?? ucfirst($tp->wine_type)) }} · {{ number_format($tp->units) }} uds</p>
                         </div>
                         <p class="text-xs font-bold text-green-600 shrink-0">{{ number_format($tp->revenue, 0, ',', '.') }} &euro;</p>
                     </div>

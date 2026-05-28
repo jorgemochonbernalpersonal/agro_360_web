@@ -82,7 +82,7 @@
                             <x-agro.card-item-header
                                 icon="beaker"
                                 :title="$lot->name"
-                                :subtitle="ucfirst($lot->wine_type) . ($lot->vintage ? ' · ' . $lot->vintage : '') . ($lot->aging_type ? ' · ' . ucfirst(str_replace('_', ' ', $lot->aging_type)) : '') . ($lot->alcohol ? ' · ' . $lot->alcohol . '°' : '')"
+                                :subtitle="__(ucfirst($lot->wine_type)) . ($lot->vintage ? ' · ' . $lot->vintage : '') . ($lot->aging_type ? ' · ' . ucfirst(str_replace('_', ' ', $lot->aging_type)) : '') . ($lot->alcohol ? ' · ' . $lot->alcohol . '°' : '')"
                                 :iconBg="$headerIconBg"
                                 :iconColor="$headerIconColor"
                                 size="md"
@@ -151,7 +151,7 @@
                             <div class="space-y-2 text-sm">
                                 <div class="flex items-center justify-between">
                                     <span class="text-zinc-400">{{ __('Unidad') }}</span>
-                                    <span class="text-zinc-700 font-medium">{{ ucfirst($lot->unit) }}</span>
+                                    <span class="text-zinc-700 font-medium">{{ __(ucfirst($lot->unit)) }}</span>
                                 </div>
                                 @if ($lot->price_per_unit > 0)
                                     <div class="flex items-center justify-between">

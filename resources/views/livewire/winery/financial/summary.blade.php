@@ -234,7 +234,7 @@
                 @endphp
                 @foreach($winesByType as $wt)
                     <div class="flex items-center gap-3">
-                        <span class="text-xs text-zinc-500 w-20 shrink-0">{{ $typeLabels[$wt->wine_type] ?? $wt->wine_type }}</span>
+                        <span class="text-xs text-zinc-500 w-20 shrink-0">{{ __($typeLabels[$wt->wine_type] ?? $wt->wine_type) }}</span>
                         <div class="flex-1 bg-zinc-100 rounded-full h-1.5">
                             <div class="h-1.5 rounded-full bg-violet-500"
                                  style="width: {{ ($wt->count / $maxWineType) * 100 }}%"></div>

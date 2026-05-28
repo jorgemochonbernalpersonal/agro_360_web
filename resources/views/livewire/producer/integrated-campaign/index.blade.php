@@ -206,7 +206,7 @@
                             <div class="flex items-center justify-between px-1">
                                 <div class="flex items-center gap-2">
                                     <span class="w-3 h-3 rounded-full {{ $typeColors[$type] ?? 'bg-zinc-300' }}"></span>
-                                    <span class="text-sm text-zinc-700">{{ ucfirst($type) }}</span>
+                                    <span class="text-sm text-zinc-700">{{ __(ucfirst($type)) }}</span>
                                 </div>
                                 <span class="text-sm font-medium text-zinc-600">{{ $count }}</span>
                             </div>
