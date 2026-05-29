@@ -72,6 +72,7 @@ class WineryCampaignController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)
+            ->where('notebook_access', true)
             ->pluck('viticulturist_id');
 
         $validated = $request->validate([
@@ -99,6 +100,7 @@ class WineryCampaignController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)
+            ->where('notebook_access', true)
             ->pluck('viticulturist_id');
 
         $campaign = Campaign::whereIn('viticulturist_id', $viticulturistIds)->findOrFail($id);
@@ -124,6 +126,7 @@ class WineryCampaignController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)
+            ->where('notebook_access', true)
             ->pluck('viticulturist_id');
 
         $campaign = Campaign::whereIn('viticulturist_id', $viticulturistIds)->findOrFail($id);

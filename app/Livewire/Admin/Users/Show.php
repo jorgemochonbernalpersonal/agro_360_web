@@ -115,6 +115,10 @@ class Show extends Component
 
     public function saveUser()
     {
+        if ($this->isReadOnly()) {
+            return;
+        }
+
         $this->validate([
             'editName'  => 'required|string|max:255',
             'editEmail' => ['required', 'email', Rule::unique('users', 'email')->ignore($this->user->id)],
@@ -155,6 +159,10 @@ class Show extends Component
 
     public function deleteUser()
     {
+        if ($this->isReadOnly()) {
+            return;
+        }
+
         if ($this->user->isAdmin()) {
             $this->toastError(__('No puedes eliminar a un administrador.'));
             return;
@@ -182,6 +190,10 @@ class Show extends Component
 
     public function sendPasswordReset()
     {
+        if ($this->isReadOnly()) {
+            return;
+        }
+
         $status = Password::sendResetLink(['email' => $this->user->email]);
 
         if ($status === Password::RESET_LINK_SENT) {
@@ -195,6 +207,10 @@ class Show extends Component
 
     public function verifyEmailManually()
     {
+        if ($this->isReadOnly()) {
+            return;
+        }
+
         if ($this->user->email_verified_at) {
             $this->toastError(__('El email ya está verificado.'));
             return;
@@ -217,6 +233,10 @@ class Show extends Component
 
     public function toggleActive()
     {
+        if ($this->isReadOnly()) {
+            return;
+        }
+
         if ($this->user->isAdmin() && $this->user->id !== Auth::id()) {
             $this->toastError(__('No puedes desactivar a otro administrador.'));
             return;
@@ -240,6 +260,10 @@ class Show extends Component
 
     public function toggleCompraUvaExterna()
     {
+        if ($this->isReadOnly()) {
+            return;
+        }
+
         if (!$this->user->isProducer()) {
             return;
         }
@@ -518,6 +542,10 @@ class Show extends Component
 
     public function addNote(): void
     {
+        if ($this->isReadOnly()) {
+            return;
+        }
+
         $this->validate(['newNote' => 'required|string|min:3|max:1000'], [
             'newNote.required' => __('La nota no puede estar vacía.'),
             'newNote.min'      => __('La nota debe tener al menos 3 caracteres.'),
@@ -539,6 +567,10 @@ class Show extends Component
 
     public function deleteNote(int $id): void
     {
+        if ($this->isReadOnly()) {
+            return;
+        }
+
         $note = AdminNote::findOrFail($id);
         if ($note->user_id !== $this->user->id) return;
         $note->delete();

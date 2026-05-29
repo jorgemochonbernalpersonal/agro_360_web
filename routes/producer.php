@@ -67,6 +67,14 @@ Route::middleware(['role:producer', 'check.beta'])
         // ── SIGPAC ────────────────────────────────────────────────────────
         Route::get('/sigpac', fn() => redirect()->route('sigpac.codes'))->name('sigpac.index');
 
+        // ══════════════════════════════════════════════════════════════════
+        // PLAN COMPLETO (require.complete) — módulos comerciales / de bodega.
+        // El producer en plan Básico gratuito queda fuera (redirige a upgrade).
+        // Cuaderno, campaña, parcelas, fenología, plagas y registros oficiales
+        // permanecen en el plan Básico.
+        // ══════════════════════════════════════════════════════════════════
+        Route::middleware('require.complete')->group(function () {
+
         // ── Gestión Territorial ───────────────────────────────────────────
         Route::get('/territory', fn() => redirect()->route('plots.territory'))->name('territory');
 
@@ -164,6 +172,8 @@ Route::middleware(['role:producer', 'check.beta'])
         Route::get('/financial-stats', \App\Livewire\Viticulturist\FinancialStats::class)->name('financial-stats.index');
         Route::get('/financial-stats-winery', \App\Livewire\Winery\Financial\Stats::class)->name('financial-stats-winery');
 
+        }); // end require.complete (módulos unificados comerciales/bodega)
+
         // ── Configuración ─────────────────────────────────────────────────
         Route::get('/settings', \App\Livewire\Producer\Settings::class)->name('settings');
 
@@ -173,6 +183,8 @@ Route::middleware(['role:producer', 'check.beta'])
         // ══════════════════════════════════════════════════════════════════
 
         // ── Denominación de Origen ────────────────────────────────────────
+        Route::middleware('require.complete')->group(function () {
+
         Route::get('/denomination', \App\Livewire\Winery\Denomination\Index::class)->name('denomination.index');
         Route::get('/denomination/requests', \App\Livewire\Winery\Denomination\Requests\Index::class)->name('denomination.requests.index');
         Route::get('/denomination/labels', \App\Livewire\Winery\Denomination\Labels\Index::class)->name('denomination.labels.index');
@@ -402,12 +414,16 @@ Route::middleware(['role:producer', 'check.beta'])
             Route::get('/announcements', \App\Livewire\Winery\Announcements\Index::class)->name('announcements.index');
         });
 
+        }); // end require.complete (módulos propios de bodega)
+
 
         // ══════════════════════════════════════════════════════════════════
         // MÓDULOS PROPIOS DE VITICULTOR
         // ══════════════════════════════════════════════════════════════════
 
         // ── Documentos de Campaña ─────────────────────────────────────────
+        // campaign-documents y campaign-sign son plan Completo (igual que en el viticultor).
+        Route::middleware('require.complete')->group(function () {
         Route::prefix('campaign-documents')->name('campaign-documents.')->group(function () {
             Route::get('/', \App\Livewire\Viticulturist\CampaignDocuments\Index::class)->name('index');
             Route::get('/{document}/download', [\App\Http\Controllers\Viticulturist\CampaignDocumentController::class, 'download'])->name('download');
@@ -415,6 +431,7 @@ Route::middleware(['role:producer', 'check.beta'])
 
         // ── Firma y Cierre de Campaña ─────────────────────────────────────
         Route::get('/campaign-sign', \App\Livewire\Viticulturist\CampaignSign\Index::class)->name('campaign-sign.index');
+        }); // end require.complete (documentos y firma de campaña)
 
         // ── Rendimientos Estimados ────────────────────────────────────────
         Route::prefix('digital-notebook/estimated-yields')->name('digital-notebook.estimated-yields.')->group(function () {
@@ -700,6 +717,8 @@ Route::middleware(['role:producer', 'check.beta'])
         Route::get('/notifications', \App\Livewire\Viticulturist\Notifications\Index::class)->name('notifications.index');
 
         // ── Dashboard visual bodega (winery) ─────────────────────────────
+        // Dashboard visual de bodega + campañas de bodega → plan Completo.
+        Route::middleware('require.complete')->group(function () {
         Route::get('/visual', \App\Livewire\Winery\VisualDashboard::class)->name('visual');
 
         // ── Campañas bodega (winery — CRUD completo) ─────────────────────
@@ -708,6 +727,7 @@ Route::middleware(['role:producer', 'check.beta'])
             Route::get('/create', \App\Livewire\Winery\Harvest\Campaigns\Create::class)->name('create');
             Route::get('/{campaign}/edit', \App\Livewire\Winery\Harvest\Campaigns\Edit::class)->name('edit');
         });
+        }); // end require.complete (dashboard visual + campañas de bodega)
 
         // ── Inventario (redirect a winery-supplies) ──────────────────────
         Route::get('/inventory', fn() => redirect()->route('producer.winery-supplies.index'))->name('inventory.index');
@@ -751,6 +771,8 @@ Route::middleware(['role:producer', 'check.beta'])
         // ══════════════════════════════════════════════════════════════
 
         // ── Panel de Finca Integral ──────────────────────────────────
+        // Vistas integradas viñedo+bodega: surfacing de datos de bodega → plan Completo.
+        Route::middleware('require.complete')->group(function () {
         Route::get('/integrated-estate', \App\Livewire\Producer\IntegratedEstate\Index::class)->name('integrated-estate');
 
         // ── Trazabilidad Cepa a Botella ──────────────────────────────
@@ -758,5 +780,6 @@ Route::middleware(['role:producer', 'check.beta'])
 
         // ── Dashboard Integrado de Campaña ───────────────────────────
         Route::get('/integrated-campaign', \App\Livewire\Producer\IntegratedCampaign\Index::class)->name('integrated-campaign');
+        }); // end require.complete (vistas unificadas de pago)
 
     });

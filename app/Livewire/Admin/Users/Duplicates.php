@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Users;
 
+use App\Livewire\Concerns\WithReadOnlyGuard;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -9,12 +10,16 @@ use Livewire\Component;
 
 class Duplicates extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithReadOnlyGuard;
 
     public string $mode = 'email'; // email | name
 
     public function merge(int $keepId, int $deleteId): void
     {
+        if ($this->isReadOnly()) {
+            return;
+        }
+
         $keep   = User::findOrFail($keepId);
         $delete = User::findOrFail($deleteId);
 

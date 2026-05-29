@@ -2,12 +2,16 @@
 
 namespace App\Livewire\Admin\Scheduler;
 
+use App\Livewire\Concerns\WithReadOnlyGuard;
+use App\Livewire\Concerns\WithToastNotifications;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
 
 class Index extends Component
 {
+    use WithReadOnlyGuard, WithToastNotifications;
+
     // Tasks defined in routes/console.php
     private const TASKS = [
         ['command' => 'queue:work',                        'schedule' => 'Cada minuto',       'desc' => 'Procesa jobs de la cola (remote-sensing + default)',        'icon' => 'queue-list',          'color' => 'blue'],
@@ -28,6 +32,20 @@ class Index extends Component
 
     public function runNow(string $command): void
     {
+        if ($this->isReadOnly()) {
+            return;
+        }
+
+        // Whitelist server-side: solo comandos definidos en TASKS pueden lanzarse
+        // bajo demanda. Sin esto, runNow ejecutaría cualquier comando Artisan
+        // recibido del cliente. queue:work se excluye porque es de larga duración
+        // y colgaría el request HTTP.
+        $allowed = array_diff(array_column(self::TASKS, 'command'), ['queue:work']);
+        if (! in_array($command, $allowed, true)) {
+            $this->toastError(__('Comando no permitido.'));
+            return;
+        }
+
         try {
             Artisan::call($command);
             Cache::put("scheduler.last_run.{$command}", now()->timestamp, now()->addDays(7));

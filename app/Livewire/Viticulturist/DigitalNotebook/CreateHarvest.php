@@ -142,7 +142,7 @@ class CreateHarvest extends Component
     public function updatedContainerId($value)
     {
         if ($value) {
-            $container = Container::find($value);
+            $container = Container::where('user_id', auth()->id())->find($value);
             if ($container && $container->hasAvailableCapacity(0)) {
                 // Actualizar el peso con la capacidad disponible del contenedor
                 $this->total_weight = $container->getAvailableCapacity();
@@ -369,7 +369,7 @@ class CreateHarvest extends Component
         $rules = [
             'plot_id' => $this->plotOwnershipRule(),
             'plot_planting_id' => $this->plotPlantingOwnershipRule(required: true),
-            'container_id' => 'nullable|exists:containers,id',
+            'container_id' => $this->ownedContainerRule(required: false),
             'campaign_id' => $this->campaignOwnershipRule(),
             'activity_date' => 'required|date',
             'harvest_start_date' => 'required|date',
@@ -452,7 +452,7 @@ class CreateHarvest extends Component
         
         // Validar contenedor si se seleccionó uno
         if ($this->container_id) {
-            $container = Container::find($this->container_id);
+            $container = Container::where('user_id', auth()->id())->find($this->container_id);
             if (!$container) {
                 $this->addError('container_id', __('El contenedor seleccionado no existe.'));
                 return;

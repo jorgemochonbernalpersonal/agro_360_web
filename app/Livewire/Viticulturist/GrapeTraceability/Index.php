@@ -47,6 +47,7 @@ class Index extends Component
             ->join('agricultural_activities as aa', 'harvests.activity_id', '=', 'aa.id')
             ->join('plots as p', 'aa.plot_id', '=', 'p.id')
             ->leftJoin('plot_plantings as pp', 'harvests.plot_planting_id', '=', 'pp.id')
+            ->leftJoin('grape_varieties as gv', 'pp.grape_variety_id', '=', 'gv.id')
             ->where('aa.viticulturist_id', $userId)
             ->where('harvests.status', '!=', 'cancelled')
             ->select(
@@ -55,7 +56,7 @@ class Index extends Component
                 'p.id as plot_id',
                 'aa.campaign_id',
                 'aa.activity_date',
-                'pp.variety_name',
+                'gv.name as variety_name',
             );
 
         if ($this->filterCampaign) {
@@ -70,7 +71,7 @@ class Index extends Component
                   ->orWhere('harvests.destination', 'like', "%{$this->search}%")
                   ->orWhere('harvests.buyer_name', 'like', "%{$this->search}%")
                   ->orWhere('harvests.transport_document_number', 'like', "%{$this->search}%")
-                  ->orWhere('pp.variety_name', 'like', "%{$this->search}%");
+                  ->orWhere('gv.name', 'like', "%{$this->search}%");
             });
         }
 

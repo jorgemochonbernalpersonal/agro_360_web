@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\Sigpac;
 
 use App\Models\SigpacCode;
+use App\Livewire\Concerns\WithReadOnlyGuard;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Services\SecurityLogger;
 use Illuminate\Support\Facades\Auth;
@@ -11,7 +12,7 @@ use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination, WithToastNotifications;
+    use WithPagination, WithToastNotifications, WithReadOnlyGuard;
 
     public $search        = '';
     public $roleFilter    = 'all';
@@ -24,6 +25,10 @@ class Index extends Component
 
     public function deleteOrphaned()
     {
+        if ($this->isReadOnly()) {
+            return;
+        }
+
         $count = SigpacCode::doesntHave('plots')->count();
 
         if ($count === 0) {
@@ -43,6 +48,10 @@ class Index extends Component
 
     public function deleteSigpac($sigpacId)
     {
+        if ($this->isReadOnly()) {
+            return;
+        }
+
         $sigpac = SigpacCode::findOrFail($sigpacId);
         $code   = $sigpac->code;
 

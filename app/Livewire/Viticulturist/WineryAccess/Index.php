@@ -97,7 +97,12 @@ class Index extends Component
             $relation = SupervisorViticulturist::where('supervisor_id', $id)
                 ->where('viticulturist_id', Auth::id())
                 ->where('notebook_access', true)
-                ->firstOrFail();
+                ->first();
+
+            if (!$relation) {
+                $this->toastError(__('No se encontró el acceso activo a esta denominación de origen.'));
+                return;
+            }
 
             $relation->revokeNotebookAccess();
 
@@ -105,14 +110,19 @@ class Index extends Component
                 ->where('viticulturist_id', Auth::id())
                 ->update(['status' => NotebookAccessRequest::STATUS_REJECTED, 'responded_at' => now()]);
 
-            $relation->supervisor->notify(
+            $relation->supervisor?->notify(
                 new NotebookAccessRespondedNotification(Auth::user(), NotebookAccessRequest::STATUS_REJECTED)
             );
         } else {
             $relation = WineryViticulturist::where('winery_id', $id)
                 ->where('viticulturist_id', Auth::id())
                 ->where('notebook_access', true)
-                ->firstOrFail();
+                ->first();
+
+            if (!$relation) {
+                $this->toastError(__('No se encontró el acceso activo a esta bodega.'));
+                return;
+            }
 
             $relation->revokeNotebookAccess();
 
@@ -120,7 +130,7 @@ class Index extends Component
                 ->where('viticulturist_id', Auth::id())
                 ->update(['status' => NotebookAccessRequest::STATUS_REJECTED, 'responded_at' => now()]);
 
-            $relation->winery->notify(
+            $relation->winery?->notify(
                 new NotebookAccessRespondedNotification(Auth::user(), NotebookAccessRequest::STATUS_REJECTED)
             );
         }

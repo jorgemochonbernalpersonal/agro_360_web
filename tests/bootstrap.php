@@ -176,4 +176,13 @@ require __DIR__ . '/../vendor/autoload.php';
 
     // ── Step 6: Tell RefreshDatabase that migrations are done.
     \Illuminate\Foundation\Testing\RefreshDatabaseState::$migrated = true;
+
+    // ── Step 7: Restore the global error/exception handlers that the kernel
+    // bootstrap above registered (via HandleExceptions). If left in place they
+    // linger on the global handler stack, so PHPUnit's per-test snapshot counts
+    // them; Laravel's per-test teardown (HandleExceptions::flushState) then
+    // removes them and PHPUnit flags EVERY test risky with
+    // "removed error handlers other than its own". Flushing here leaves the
+    // stack clean before the first per-test snapshot is taken.
+    \Illuminate\Foundation\Bootstrap\HandleExceptions::flushState();
 })();

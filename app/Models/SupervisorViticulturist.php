@@ -75,7 +75,10 @@ class SupervisorViticulturist extends Model
 
     protected static function booted(): void
     {
-        $flush = fn (self $sv) => Cache::forget("user_{$sv->viticulturist_id}_has_supervisor");
+        $flush = function (self $sv): void {
+            Cache::forget("user_{$sv->viticulturist_id}_has_supervisor");
+            Cache::forget("user_{$sv->viticulturist_id}_supervisor");
+        };
 
         static::created($flush);
         static::updated($flush);

@@ -23,7 +23,9 @@ class CheckBetaAccess
         
         // Si el usuario es beta y la beta expiró...
         if ($user->betaExpired()) {
-            // Viticultores vinculados a bodega tienen acceso básico gratis permanente
+            // Todos los viticultores (vinculados o independientes) y productores
+            // conservan el plan Básico gratis de forma permanente. Las funciones del
+            // plan Completo se bloquean aparte vía el middleware require.complete.
             if ($user->hasBasicFreeAccess()) {
                 return $next($request);
             }

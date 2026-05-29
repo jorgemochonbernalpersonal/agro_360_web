@@ -201,13 +201,19 @@ class EditHarvest extends Component
      */
     protected function loadAvailableContainers()
     {
-        $query = Container::available()->whereDoesntHave('harvests');
-        
-        // Incluir el contenedor actual si existe
+        // Solo contenedores del propio usuario (evita listar/asignar contenedores ajenos).
+        $query = Container::available()
+            ->whereDoesntHave('harvests')
+            ->where('user_id', auth()->id());
+
+        // Incluir el contenedor actual si existe (también acotado al propietario).
         if ($this->original_container_id) {
-            $query->orWhere('id', $this->original_container_id);
+            $query->orWhere(function ($q) {
+                $q->where('id', $this->original_container_id)
+                  ->where('user_id', auth()->id());
+            });
         }
-        
+
         $this->availableContainers = $query->orderBy('created_at', 'desc')->get();
     }
     
@@ -217,7 +223,7 @@ class EditHarvest extends Component
     public function updatedContainerId($value)
     {
         if ($value && $value != $this->original_container_id) {
-            $container = Container::find($value);
+            $container = Container::where('user_id', auth()->id())->find($value);
             if ($container && $container->hasAvailableCapacity($this->total_weight ?? 0)) {
                 // No actualizamos el peso automáticamente, el usuario lo define
                 // Solo validamos que el contenedor tenga capacidad disponible
@@ -448,7 +454,7 @@ class EditHarvest extends Component
         $rules = [
             'plot_id' => $this->plotOwnershipRule(),
             'plot_planting_id' => $this->plotPlantingOwnershipRule(required: true),
-            'container_id' => 'nullable|exists:containers,id',
+            'container_id' => $this->ownedContainerRule(required: false),
             'campaign_id' => $this->campaignOwnershipRule(),
             'activity_date' => 'required|date',
             'harvest_start_date' => 'required|date',
@@ -530,7 +536,7 @@ class EditHarvest extends Component
         // Validar que el contenedor existe y está disponible (o es el actual)
         $container = null;
         if ($this->container_id) {
-            $container = Container::find($this->container_id);
+            $container = Container::where('user_id', $user->id)->find($this->container_id);
             if (!$container) {
                 $this->addError('container_id', __('El contenedor seleccionado no existe.'));
                 return;
@@ -577,6 +583,7 @@ class EditHarvest extends Component
                     // Desvincular el contenedor anterior
                     if ($this->original_container_id) {
                         Container::where('id', $this->original_container_id)
+                            ->where('user_id', $user->id)
                             ->update(['harvest_id' => null]);
                     }
                     // Asignar el nuevo contenedor a esta cosecha (si se eligió uno)

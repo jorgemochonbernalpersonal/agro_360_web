@@ -95,13 +95,11 @@ trait HasHierarchy
             $cacheKey = "user_{$this->id}_supervisor";
 
             $this->_supervisor_cache = \Illuminate\Support\Facades\Cache::remember($cacheKey, 3600, function () {
-                $wineryRelation = WineryViticulturist::where('viticulturist_id', $this->id)
-                    ->where('source', WineryViticulturist::SOURCE_SUPERVISOR)
-                    ->whereNotNull('supervisor_id')
+                $relation = SupervisorViticulturist::where('viticulturist_id', $this->id)
                     ->with('supervisor')
                     ->first();
 
-                return $wineryRelation?->supervisor;
+                return $relation?->supervisor;
             });
         }
 
@@ -122,10 +120,7 @@ trait HasHierarchy
             $this->_has_supervisor_cache = \Illuminate\Support\Facades\Cache::remember(
                 "user_{$this->id}_has_supervisor",
                 300,
-                fn () => WineryViticulturist::where('viticulturist_id', $this->id)
-                    ->where('source', WineryViticulturist::SOURCE_SUPERVISOR)
-                    ->whereNotNull('supervisor_id')
-                    ->exists()
+                fn () => SupervisorViticulturist::where('viticulturist_id', $this->id)->exists()
             );
         }
 
