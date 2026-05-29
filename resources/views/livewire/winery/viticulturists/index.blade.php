@@ -79,6 +79,47 @@
 
     </div>
 
+    {{-- Solicitudes de autoregistro pendientes --}}
+    @if($joinRequests->isNotEmpty())
+        <div class="rounded-xl border border-amber-200 bg-amber-50 p-4 space-y-3">
+            <div class="flex items-center gap-2">
+                <flux:icon icon="user-plus" class="size-4 text-amber-500" />
+                <span class="text-sm font-medium text-amber-800">
+                    {{ $joinRequests->count() === 1
+                        ? __('1 viticultor ha solicitado vincularse a tu bodega')
+                        : __(':n viticultores han solicitado vincularse a tu bodega', ['n' => $joinRequests->count()]) }}
+                </span>
+            </div>
+            <div class="space-y-2">
+                @foreach($joinRequests as $req)
+                    <div class="flex items-center justify-between gap-4 bg-white rounded-lg px-3 py-2.5 border border-amber-100"
+                         wire:key="join-req-{{ $req->id }}">
+                        <div class="min-w-0">
+                            <p class="text-sm font-medium text-zinc-800 truncate">{{ $req->viticulturist?->name ?? '—' }}</p>
+                            @if($req->message)
+                                <p class="text-xs text-zinc-500 italic truncate mt-0.5">{{ $req->message }}</p>
+                            @endif
+                            <p class="text-xs text-zinc-400">{{ $req->requested_at?->diffForHumans() ?? '—' }}</p>
+                        </div>
+                        <div class="flex items-center gap-2 shrink-0">
+                            <flux:button
+                                wire:click="approveJoinRequest({{ $req->id }})"
+                                wire:confirm="{{ __('¿Aprobar la solicitud de :name y vincularle a tu bodega?', ['name' => $req->viticulturist?->name]) }}"
+                                size="xs" variant="primary" icon="check"
+                            >{{ __('Aprobar') }}</flux:button>
+                            <flux:button
+                                wire:click="rejectJoinRequest({{ $req->id }})"
+                                wire:confirm="{{ __('¿Rechazar la solicitud de :name?', ['name' => $req->viticulturist?->name]) }}"
+                                size="xs" variant="ghost" icon="x-mark"
+                                class="text-zinc-400 hover:text-red-500"
+                            >{{ __('Rechazar') }}</flux:button>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    @endif
+
     {{-- Grid de Viticultores — skeleton durante carga --}}
     <x-agro.loading-grid target="search, nextPage, previousPage, gotoPage" :count="6" />
 

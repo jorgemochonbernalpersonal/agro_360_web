@@ -57,6 +57,7 @@ Route::middleware(['role:viticulturist,producer', 'check.beta'])
         });
 
         Route::get('/winery-access', \App\Livewire\Viticulturist\WineryAccess\Index::class)->name('winery-access.index');
+        Route::get('/winery-requests', \App\Livewire\Viticulturist\WineryRequests\Index::class)->name('winery-requests.index');
         Route::get('/announcements', \App\Livewire\Viticulturist\Announcements\Index::class)->name('announcements');
         Route::get('/denomination', \App\Livewire\Viticulturist\Denomination\Index::class)->name('denomination.index')->middleware('require.supervisor');
 

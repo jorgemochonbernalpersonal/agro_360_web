@@ -9,6 +9,7 @@ use App\Models\WineryViticulturist;
 use App\Notifications\NotebookAccessRespondedNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -29,6 +30,11 @@ class Index extends Component
                 ->first();
 
             if (!$relation) {
+                Log::error('NotebookAccess approve: SupervisorViticulturist relation not found', [
+                    'request_id'       => $requestId,
+                    'supervisor_id'    => $request->supervisor_id,
+                    'viticulturist_id' => Auth::id(),
+                ]);
                 $this->toastError(__('No se encontró la relación con esta denominación de origen.'));
                 return;
             }
@@ -40,6 +46,11 @@ class Index extends Component
                 ->first();
 
             if (!$relation) {
+                Log::error('NotebookAccess approve: WineryViticulturist relation not found', [
+                    'request_id'       => $requestId,
+                    'winery_id'        => $request->winery_id,
+                    'viticulturist_id' => Auth::id(),
+                ]);
                 $this->toastError(__('No se encontró la relación con esta bodega.'));
                 return;
             }

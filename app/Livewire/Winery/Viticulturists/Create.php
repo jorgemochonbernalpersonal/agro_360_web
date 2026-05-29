@@ -5,6 +5,8 @@ namespace App\Livewire\Winery\Viticulturists;
 use App\Livewire\Winery\AbstractCreate;
 use App\Models\User;
 use App\Models\WineryViticulturist;
+use App\Notifications\ViticulturistInvitationNotification;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -65,11 +67,24 @@ class Create extends AbstractCreate
         if ($winery?->isBetaUser() && !$winery->betaExpired() && !$user->is_beta_user) {
             $user->grantBetaAccess($winery->beta_ends_at);
         }
+
+        // Auto-send invitation if a real email was provided
+        if ($this->email) {
+            $plainToken = Str::random(64);
+            $user->update([
+                'invitation_token'      => hash('sha256', $plainToken),
+                'invitation_sent_at'    => now(),
+                'invitation_expires_at' => now()->addDays(7),
+            ]);
+            $user->notify(new ViticulturistInvitationNotification(Auth::user(), $plainToken));
+        }
     }
 
     protected function successMessage(): string
     {
-        return __('Viticultor creado correctamente.');
+        return $this->email
+            ? __('Viticultor creado e invitación enviada correctamente.')
+            : __('Viticultor creado. Recuerda enviarle una invitación desde su perfil cuando tengas su email.');
     }
 
     protected function indexRoute(): string

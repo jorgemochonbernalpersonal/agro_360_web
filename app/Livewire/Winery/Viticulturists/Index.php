@@ -6,7 +6,9 @@ use App\Exports\ViticulturistExport;
 use App\Livewire\Winery\AbstractIndex;
 use App\Models\SupervisorViticulturist;
 use App\Models\SupervisorWinery;
+use App\Models\WineryJoinRequest;
 use App\Models\WineryViticulturist;
+use App\Notifications\WineryJoinRespondedNotification;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
@@ -139,6 +141,54 @@ class Index extends AbstractIndex
         $this->toastSuccess(__('Viticultor desvinculado correctamente.'));
     }
 
+    // ── Join requests ────────────────────────────────────────────────────────
+
+    public function approveJoinRequest(int $requestId): void
+    {
+        $wineryId = $this->wineryId();
+
+        $joinRequest = WineryJoinRequest::where('id', $requestId)
+            ->where('winery_id', $wineryId)
+            ->where('status', WineryJoinRequest::STATUS_PENDING)
+            ->firstOrFail();
+
+        // Idempotent: skip if already linked
+        if (!WineryViticulturist::where('winery_id', $wineryId)->where('viticulturist_id', $joinRequest->viticulturist_id)->exists()) {
+            WineryViticulturist::create([
+                'winery_id'        => $wineryId,
+                'viticulturist_id' => $joinRequest->viticulturist_id,
+                'source'           => WineryViticulturist::SOURCE_SELF,
+                'assigned_by'      => Auth::id(),
+            ]);
+        }
+
+        $joinRequest->update([
+            'status'       => WineryJoinRequest::STATUS_APPROVED,
+            'responded_at' => now(),
+        ]);
+
+        $joinRequest->viticulturist->notify(new WineryJoinRespondedNotification(Auth::user(), WineryJoinRequest::STATUS_APPROVED));
+
+        $this->toastSuccess(__('Solicitud aprobada. Viticultor vinculado correctamente.'));
+    }
+
+    public function rejectJoinRequest(int $requestId): void
+    {
+        $joinRequest = WineryJoinRequest::where('id', $requestId)
+            ->where('winery_id', $this->wineryId())
+            ->where('status', WineryJoinRequest::STATUS_PENDING)
+            ->firstOrFail();
+
+        $joinRequest->update([
+            'status'       => WineryJoinRequest::STATUS_REJECTED,
+            'responded_at' => now(),
+        ]);
+
+        $joinRequest->viticulturist->notify(new WineryJoinRespondedNotification(Auth::user(), WineryJoinRequest::STATUS_REJECTED));
+
+        $this->toastSuccess(__('Solicitud rechazada.'));
+    }
+
     // ── Export ────────────────────────────────────────────────────────────────
 
     public function export()
@@ -190,11 +240,18 @@ class Index extends AbstractIndex
             $doPool = $poolQuery->get();
         }
 
+        $joinRequests = WineryJoinRequest::with('viticulturist')
+            ->where('winery_id', $wineryId)
+            ->where('status', WineryJoinRequest::STATUS_PENDING)
+            ->orderBy('requested_at')
+            ->get();
+
         return [
             'relations'      => $entries,
             'stats'          => $stats,
             'hasSupervisors' => $supervisorIds->isNotEmpty(),
             'doPool'         => $doPool,
+            'joinRequests'   => $joinRequests,
         ];
     }
 }

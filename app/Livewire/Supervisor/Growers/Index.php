@@ -186,8 +186,24 @@ class Index extends Component
             'assigned_by'      => Auth::id(),
         ]);
 
+        // Auto-send invitation if a real email was provided
+        if ($this->createEmail) {
+            $plainToken = Str::random(64);
+            $viticulturist->update([
+                'invitation_token'      => hash('sha256', $plainToken),
+                'invitation_sent_at'    => now(),
+                'invitation_expires_at' => now()->addDays(7),
+            ]);
+            $viticulturist->notify(new ViticulturistInvitationNotification(Auth::user(), $plainToken));
+        }
+
         $this->showCreateModal = false;
-        $this->toastSuccess("Viticultor {$viticulturist->name} creado correctamente.");
+
+        $message = $this->createEmail
+            ? "Viticultor {$viticulturist->name} creado e invitación enviada correctamente."
+            : "Viticultor {$viticulturist->name} creado. Recuerda enviarle una invitación cuando tengas su email.";
+
+        $this->toastSuccess($message);
     }
 
     // ── Invitation ────────────────────────────────────────────────────────────
