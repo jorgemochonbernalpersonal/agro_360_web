@@ -485,6 +485,8 @@ Route::middleware(['role:producer', 'check.beta'])
         });
 
         // ── Vendimia campo (entregas a bodega) ────────────────────────────
+        // Entregas a bodega (gestión) → plan Completo, igual que en el viticultor.
+        Route::middleware('require.complete')->group(function () {
         Route::prefix('harvests')->name('harvests.')->group(function () {
             Route::get('/', \App\Livewire\Viticulturist\Harvests\Index::class)->name('index');
             Route::get('/export/pdf', [\App\Http\Controllers\Viticulturist\HarvestsPdfController::class, 'export'])->name('export-pdf');
@@ -493,6 +495,7 @@ Route::middleware(['role:producer', 'check.beta'])
             Route::get('/{delivery}/edit-delivery', \App\Livewire\Viticulturist\Harvests\EditDelivery::class)->name('delivery.edit');
             Route::get('/{delivery}/albaran', \App\Http\Controllers\Viticulturist\HarvestDeliveryAlbaranController::class)->name('delivery.albaran');
         });
+        }); // end require.complete (entregas a bodega)
 
         // ── Gestión de Plagas ─────────────────────────────────────────────
         Route::prefix('pest-management')->name('pest-management.')->group(function () {
@@ -500,7 +503,8 @@ Route::middleware(['role:producer', 'check.beta'])
             Route::get('/{pest}', \App\Livewire\Viticulturist\PestManagement\Show::class)->name('show');
         });
 
-        // ── Registros Oficiales ───────────────────────────────────────────
+        // ── Registros Oficiales ── plan Completo (de pago en el viticultor) ──
+        Route::middleware('require.complete')->group(function () {
         Route::get('/pac-compliance', \App\Livewire\Viticulturist\PacComplianceDashboard::class)->name('pac-compliance');
 
         Route::prefix('residue-analyses')->name('residue-analyses.')->group(function () {
@@ -575,6 +579,7 @@ Route::middleware(['role:producer', 'check.beta'])
             Route::get('/{report}/download', [\App\Http\Controllers\Viticulturist\OfficialReportController::class, 'download'])->name('download');
             Route::get('/{report}/preview', [\App\Http\Controllers\Viticulturist\OfficialReportController::class, 'preview'])->name('preview');
         });
+        }); // end require.complete (registros oficiales)
 
         // ── Parcelas y territorio ─────────────────────────────────────────
         Route::prefix('plots')->name('plots.')->group(function () {
@@ -584,6 +589,9 @@ Route::middleware(['role:producer', 'check.beta'])
             Route::get('/{plot}/edit', \App\Livewire\Plots\Edit::class)->name('edit');
         });
 
+        // Entorno de parcela, recursos (personal/maquinaria/almacén) y normativa
+        // viticultor → plan Completo (de pago en el viticultor).
+        Route::middleware('require.complete')->group(function () {
         Route::prefix('plot-environments')->name('plot-environments.')->group(function () {
             Route::get('/', \App\Livewire\Viticulturist\PlotEnvironments\Index::class)->name('index');
             Route::get('/create', \App\Livewire\Viticulturist\PlotEnvironments\Create::class)->name('create');
@@ -696,6 +704,7 @@ Route::middleware(['role:producer', 'check.beta'])
             Route::get('/create', \App\Livewire\Viticulturist\PlotCosts\Create::class)->name('create');
             Route::get('/{record}/edit', \App\Livewire\Viticulturist\PlotCosts\Edit::class)->name('edit');
         });
+        }); // end require.complete (recursos de campo + normativa viticultor)
 
         // ── Soporte ───────────────────────────────────────────────────────
         Route::prefix('support')->name('support.')->group(function () {
@@ -713,12 +722,12 @@ Route::middleware(['role:producer', 'check.beta'])
         // ── Entrada rápida de actividades (viticulturist) ────────────────
         Route::get('/quick-entry', \App\Livewire\Viticulturist\QuickEntry::class)->name('quick-entry');
 
+        // Notificaciones (completo en el viticultor) + bodega → plan Completo.
+        Route::middleware('require.complete')->group(function () {
         // ── Página completa de notificaciones (viticulturist) ────────────
         Route::get('/notifications', \App\Livewire\Viticulturist\Notifications\Index::class)->name('notifications.index');
 
         // ── Dashboard visual bodega (winery) ─────────────────────────────
-        // Dashboard visual de bodega + campañas de bodega → plan Completo.
-        Route::middleware('require.complete')->group(function () {
         Route::get('/visual', \App\Livewire\Winery\VisualDashboard::class)->name('visual');
 
         // ── Campañas bodega (winery — CRUD completo) ─────────────────────
@@ -732,6 +741,9 @@ Route::middleware(['role:producer', 'check.beta'])
         // ── Inventario (redirect a winery-supplies) ──────────────────────
         Route::get('/inventory', fn() => redirect()->route('producer.winery-supplies.index'))->name('inventory.index');
 
+        // Planes de trabajo, alertas fito, suelo, biodiversidad, comparativa y
+        // trazabilidad de uva → plan Completo (de pago en el viticultor).
+        Route::middleware('require.complete')->group(function () {
         // ── Plan de Trabajos ──────────────────────────────────────────
         Route::prefix('planned-works')->name('planned-works.')->group(function () {
             Route::get('/', \App\Livewire\Viticulturist\PlannedWorks\Index::class)->name('index');
@@ -765,6 +777,7 @@ Route::middleware(['role:producer', 'check.beta'])
 
         // ── Trazabilidad de Uva ───────────────────────────────────────
         Route::get('/grape-traceability', \App\Livewire\Viticulturist\GrapeTraceability\Index::class)->name('grape-traceability');
+        }); // end require.complete (planes/alertas/suelo/biodiversidad/comparativa/trazabilidad)
 
         // ══════════════════════════════════════════════════════════════
         // VISTAS UNIFICADAS — solo producer (cruzan viñedo + bodega)

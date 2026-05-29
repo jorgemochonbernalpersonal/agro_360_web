@@ -90,11 +90,11 @@
             'offers' => [
                 [
                     '@type' => 'Offer',
-                    'name' => 'Viticultor básico (invitado por bodega)',
+                    'name' => 'Viticultor básico',
                     'price' => '0',
                     'priceCurrency' => 'EUR',
                     'availability' => 'https://schema.org/InStock',
-                    'description' => 'Acceso básico gratuito para viticultor invitado por su bodega'
+                    'description' => 'Acceso básico gratuito para cualquier viticultor (vinculado o independiente): cuaderno de campo, parcelas, SIGPAC y fenología'
                 ],
                 [
                     '@type' => 'Offer',
@@ -135,6 +135,22 @@
                     'priceCurrency' => 'EUR',
                     'availability' => 'https://schema.org/InStock',
                     'description' => 'Plataforma completa para DO: panel de viticultores, trazabilidad y cuaderno de campo colectivo'
+                ],
+                [
+                    '@type' => 'Offer',
+                    'name' => 'Productor — básico',
+                    'price' => '0',
+                    'priceCurrency' => 'EUR',
+                    'availability' => 'https://schema.org/InStock',
+                    'description' => 'Acceso básico gratuito para el productor: cuaderno de campo, parcelas, SIGPAC y fenología'
+                ],
+                [
+                    '@type' => 'Offer',
+                    'name' => 'Productor — completo (viñedo + bodega)',
+                    'price' => '19.00',
+                    'priceCurrency' => 'EUR',
+                    'availability' => 'https://schema.org/InStock',
+                    'description' => 'Plan combinado: todo el plan Viticultor Independiente más todo el plan Bodega (19€/mes frente a 28€ por separado)'
                 ]
             ],
             'description' => 'Software de gestión agrícola para viticultores, bodegas y Denominaciones de Origen. Cuaderno de campo digital obligatorio 2027. Teledetección NDVI, Verifactu y trazabilidad completa.',
@@ -925,10 +941,11 @@
                         <span class="text-3xl">🌿🍷</span>
                         <div>
                             <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)]">{{ __('¿Cultivas y elaboras?') }}</h3>
-                            <p class="text-xs text-violet-700 font-semibold">19€/mes · <span class="line-through text-zinc-400">{{ __('28€/mes') }}</span> por separado</p>
+                            <p class="text-xs text-violet-700 font-semibold">{{ __('Básico gratis') }} · {{ __('Completo 19€/mes') }} · <span class="line-through text-zinc-400">{{ __('28€/mes') }}</span> {{ __('por separado') }}</p>
                         </div>
                     </div>
                     <ul class="space-y-2 text-sm text-zinc-600 mb-6">
+                        <li class="flex items-center gap-2"><span class="text-violet-500">✓</span> {{ __('Cuaderno de campo, parcelas y fenología gratis para siempre') }}</li>
                         <li class="flex items-center gap-2"><span class="text-violet-500">✓</span> Todo del plan Viticultor Independiente</li>
                         <li class="flex items-center gap-2"><span class="text-violet-500">✓</span> Todo del plan Bodega</li>
                         <li class="flex items-center gap-2"><span class="text-violet-500">✓</span> Trazabilidad viñedo → bodega → botella</li>

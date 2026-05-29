@@ -109,20 +109,30 @@ trait HasBetaAccess
     }
 
     /**
-     * Precio mensual según si está vinculado a bodega o es independiente
+     * Precio mensual del plan del usuario según su rol/vinculación:
+     * - Productor → plan combinado viñedo+bodega (19€).
+     * - Viticultor vinculado a bodega → 9€; independiente → 14€.
      */
     public function viticulturistMonthlyPrice(): float
     {
+        if ($this->isProducer()) {
+            return \App\Models\Subscription::PRICE_MONTHLY_PRODUCER;
+        }
+
         return $this->hasWinery()
             ? \App\Models\Subscription::PRICE_MONTHLY_WINERY
             : \App\Models\Subscription::PRICE_MONTHLY_INDEPENDENT;
     }
 
     /**
-     * Precio anual según si está vinculado a bodega o es independiente
+     * Precio anual del plan del usuario según su rol/vinculación.
      */
     public function viticulturistYearlyPrice(): float
     {
+        if ($this->isProducer()) {
+            return \App\Models\Subscription::PRICE_YEARLY_PRODUCER;
+        }
+
         return $this->hasWinery()
             ? \App\Models\Subscription::PRICE_YEARLY_WINERY
             : \App\Models\Subscription::PRICE_YEARLY_INDEPENDENT;

@@ -152,6 +152,7 @@ class Manage extends Component
             'monthlyPrice' => $user->viticulturistMonthlyPrice(),
             'yearlyPrice'  => $user->viticulturistYearlyPrice(),
             'isWineryLinked' => $user->hasWinery(),
+            'isProducer'   => $user->isProducer(),
         ]);
     }
 }

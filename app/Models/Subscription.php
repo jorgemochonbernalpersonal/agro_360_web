@@ -47,6 +47,11 @@ class Subscription extends Model
     public const PRICE_MONTHLY_INDEPENDENT = 14.00;
     public const PRICE_YEARLY_INDEPENDENT  = 130.00;
 
+    // Precios para productor (viñedo + bodega en una sola cuenta).
+    // Plan combinado: 19€/mes (vs 28€ por separado). Anual ~21% dto (~2,5 meses gratis).
+    public const PRICE_MONTHLY_PRODUCER = 19.00;
+    public const PRICE_YEARLY_PRODUCER  = 180.00;
+
     // Alias legacy (precio anterior, por compatibilidad)
     public const PRICE_MONTHLY = 12.00;
     public const PRICE_YEARLY  = 120.00;
