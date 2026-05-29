@@ -67,6 +67,16 @@ Thumbs.db
 *.sqlite
 *.sqlite-journal
 /database/*.sqlite
+*.sql
+
+# Binarios de herramientas
+*.phar
+*.phar.asc
+
+# Outputs de tests y scripts temporales
+cypress_*.txt
+cypress_*.json
+test-output-*.txt
 
 # Build
 # IMPORTANTE: /public/build NO debe estar ignorado porque Hostinger no tiene npm

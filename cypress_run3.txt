@@ -1,2 +1,0 @@
-
-STATUS=failed passed=0 failed=0

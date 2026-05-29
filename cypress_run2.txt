@@ -1,8 +1,0 @@
-`--config-file` cannot be false.
-
-Either pass a relative path to a valid Cypress config file or remove this option.
-
-----------
-
-Platform: win32-x64 (Microsoft Windows 11 Pro - 10.0.26200)
-Cypress Version: 15.12.0
