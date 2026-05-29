@@ -343,11 +343,11 @@ class WineryDemoSeeder extends Seeder
         $this->command->info('  ▶ Seeding units_of_measurement (tabla vacía)...');
         $now = now();
         DB::table('units_of_measurement')->insert([
-            ['name' => 'Litros',     'symbol' => 'L',        'category' => 'volume', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
-            ['name' => 'Mililitros', 'symbol' => 'mL',       'category' => 'volume', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
-            ['name' => 'Kilogramos', 'symbol' => 'kg',       'category' => 'weight', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
-            ['name' => 'Gramos',     'symbol' => 'g',        'category' => 'weight', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
-            ['name' => 'Unidades',   'symbol' => 'unidades', 'category' => 'count',  'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Litros',     'symbol' => 'L',        'type' => 'volume', 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Mililitros', 'symbol' => 'mL',       'type' => 'volume', 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Kilogramos', 'symbol' => 'kg',       'type' => 'weight', 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Gramos',     'symbol' => 'g',        'type' => 'weight', 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Unidades',   'symbol' => 'unidades', 'type' => 'count',  'created_at' => $now, 'updated_at' => $now],
         ]);
         $this->command->info('  ✅ units_of_measurement: 5 registros creados');
     }
