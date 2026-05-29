@@ -6,7 +6,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
 /**
- * Seeder demo completo para el rol Producer (user_id = 339).
+ * Seeder demo completo para el rol Producer (user_id = 2).
  *
  * El producer es viticultor + bodega a la vez, por lo que este seeder
  * cubre AMBOS lados.
@@ -34,14 +34,14 @@ use Illuminate\Support\Facades\DB;
  *   · Clientes, facturas mixtas (cosecha + vino), notas de cata
  *   · Compliance bodega, documentos bodega, alertas
  *
- * Usuario: demo_test_producer@agro365.es  (user_id = 339)
+ * Usuario: demo_test_producer@agro365.es  (user_id = 2)
  *
  * Uso:
  *   php artisan db:seed --class=ProducerDemoSeeder
  */
 class ProducerDemoSeeder extends Seeder
 {
-    private const PRODUCER_USER_ID = 339;
+    private const PRODUCER_USER_ID = 2;
     private const WINERY_USER_ID   = 1;    // Bodega demo — misma que usa ViticulturistDemoSeeder
     private const EMAIL            = 'demo_test_producer@agro365.es';
 
@@ -56,7 +56,7 @@ class ProducerDemoSeeder extends Seeder
 
         $this->command->info('');
         $this->command->info('🌿🍷 ══════════════════════════════════════════════════');
-        $this->command->info('🌿🍷  PRODUCER DEMO SEEDER — user_id = 339');
+        $this->command->info('🌿🍷  PRODUCER DEMO SEEDER — user_id = 2');
         $this->command->info('🌿🍷  Productor Gran Canaria · Las Palmas');
         $this->command->info('🌿🍷  (viticultor + bodega en uno)');
         $this->command->info('🌿🍷 ══════════════════════════════════════════════════');

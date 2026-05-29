@@ -6,7 +6,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
 /**
- * Seeder demo completo para el rol Viticultor (user_id = 338).
+ * Seeder demo completo para el rol Viticultor (user_id = 3).
  *
  * Crea datos coherentes y realistas para Gran Canaria (Agaete):
  *   · 460 parcelas SIGPAC + 450 plantaciones
@@ -19,14 +19,14 @@ use Illuminate\Support\Facades\DB;
  *   · 450 facturas (10 narrativas + 440 adicionales)
  *   · ~120 registros oficiales (análisis, residuos, energía, agua, etc.)
  *
- * Requiere user_id=1 (winery) y user_id=338 (viticultor).
+ * Requiere user_id=1 (winery) y user_id=3 (viticultor).
  *
  * Uso:
  *   php artisan db:seed --class=ViticulturistDemoSeeder
  */
 class ViticulturistDemoSeeder extends Seeder
 {
-    private const VIT_USER_ID    = 338;
+    private const VIT_USER_ID    = 3;
     private const WINERY_USER_ID = 1;
 
     // ── Geografía Agaete, Gran Canaria ────────────────────────────────────────
