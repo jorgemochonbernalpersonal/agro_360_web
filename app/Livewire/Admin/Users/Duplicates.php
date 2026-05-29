@@ -43,7 +43,7 @@ class Duplicates extends Component
 
         if ($this->mode === 'email') {
             // Find emails with common domain/prefix — group by normalized email
-            $users = User::excludeDemo()
+            $users = User::query()
                 ->orderBy('email')
                 ->get(['id', 'name', 'email', 'role', 'can_login', 'created_at', 'email_verified_at']);
 
@@ -58,7 +58,7 @@ class Duplicates extends Component
 
         } else {
             // Group by normalized name (lowercase, no extra spaces)
-            $users = User::excludeDemo()
+            $users = User::query()
                 ->orderBy('name')
                 ->get(['id', 'name', 'email', 'role', 'can_login', 'created_at', 'email_verified_at']);
 

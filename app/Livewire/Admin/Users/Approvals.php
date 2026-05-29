@@ -52,7 +52,7 @@ class Approvals extends Component
     public function render()
     {
         // Pending = verified email + can_login = false + not admin + not demo + created recently
-        $query = User::excludeDemo()
+        $query = User::query()
             ->where('can_login', false)
             ->whereNotNull('email_verified_at')
             ->where('role', '!=', 'admin')
@@ -64,7 +64,7 @@ class Approvals extends Component
         }
 
         $pending = $query->paginate(20);
-        $total   = User::excludeDemo()->where('can_login', false)->whereNotNull('email_verified_at')->where('role', '!=', 'admin')->count();
+        $total   = User::query()->where('can_login', false)->whereNotNull('email_verified_at')->where('role', '!=', 'admin')->count();
 
         return view('livewire.admin.users.approvals', compact('pending', 'total'))
             ->layout('layouts.app', [

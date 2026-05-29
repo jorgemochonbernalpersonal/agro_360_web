@@ -17,7 +17,7 @@ class Dashboard extends Component
 {
     public function exportCsv()
     {
-        $users    = User::excludeDemo()->orderBy('created_at', 'desc')->get();
+        $users    = User::orderBy('created_at', 'desc')->get();
         $filename = 'usuarios_' . now()->format('Y-m-d_H-i-s') . '.csv';
 
         return response()->streamDownload(function () use ($users) {
@@ -42,16 +42,6 @@ class Dashboard extends Component
 
             fclose($handle);
         }, $filename, ['Content-Type' => 'text/csv; charset=UTF-8']);
-    }
-
-    private function applyDemoExclusion($query, string $emailCol = 'email', string $nameCol = 'name'): void
-    {
-        foreach (User::INTERNAL_EMAIL_PATTERNS as $pattern) {
-            $query->where($emailCol, 'not like', "%{$pattern}%");
-        }
-        foreach (User::INTERNAL_NAME_PATTERNS as $pattern) {
-            $query->where($nameCol, 'not like', "%{$pattern}%");
-        }
     }
 
     private function cacheKey(): string
@@ -80,7 +70,6 @@ class Dashboard extends Component
             ->selectRaw("SUM(CASE WHEN can_login = 1 THEN 1 ELSE 0 END) as active")
             ->selectRaw("SUM(CASE WHEN email_verified_at IS NOT NULL THEN 1 ELSE 0 END) as verified")
             ->selectRaw("SUM(CASE WHEN MONTH(created_at) = ? AND YEAR(created_at) = ? THEN 1 ELSE 0 END) as new_this_month", [$month, $year]);
-        $this->applyDemoExclusion($userQuery);
         $userStats = $userQuery->first();
 
         $plotQuery = DB::table('plots')
@@ -88,7 +77,6 @@ class Dashboard extends Component
             ->selectRaw("COUNT(*) as total")
             ->selectRaw("COALESCE(SUM(plots.area), 0) as total_area")
             ->selectRaw("SUM(CASE WHEN MONTH(plots.created_at) = ? AND YEAR(plots.created_at) = ? THEN 1 ELSE 0 END) as new_this_month", [$month, $year]);
-        $this->applyDemoExclusion($plotQuery, 'users.email', 'users.name');
         $plotStats = $plotQuery->first();
 
         $clientQuery = DB::table('clients')
@@ -97,7 +85,6 @@ class Dashboard extends Component
             ->selectRaw("SUM(CASE WHEN clients.active = 1 THEN 1 ELSE 0 END) as active")
             ->selectRaw("SUM(CASE WHEN clients.client_type = 'individual' THEN 1 ELSE 0 END) as individual")
             ->selectRaw("SUM(CASE WHEN clients.client_type = 'company' THEN 1 ELSE 0 END) as company");
-        $this->applyDemoExclusion($clientQuery, 'users.email', 'users.name');
         $clientStats = $clientQuery->first();
 
         $invoiceQuery = DB::table('invoices')
@@ -106,7 +93,6 @@ class Dashboard extends Component
             ->selectRaw("SUM(CASE WHEN YEAR(invoices.invoice_date) = ? THEN 1 ELSE 0 END) as this_year", [$year])
             ->selectRaw("COALESCE(SUM(CASE WHEN YEAR(invoices.invoice_date) = ? THEN invoices.total_amount ELSE 0 END), 0) as this_year_amount", [$year])
             ->selectRaw("SUM(CASE WHEN invoices.payment_status = 'unpaid' AND invoices.status != 'cancelled' THEN 1 ELSE 0 END) as pending");
-        $this->applyDemoExclusion($invoiceQuery, 'users.email', 'users.name');
         $invoiceStats = $invoiceQuery->first();
 
         $activityQuery = DB::table('agricultural_activities')
@@ -114,7 +100,6 @@ class Dashboard extends Component
             ->selectRaw("COUNT(*) as total")
             ->selectRaw("SUM(CASE WHEN YEAR(agricultural_activities.activity_date) = ? THEN 1 ELSE 0 END) as this_year", [$year])
             ->selectRaw("SUM(CASE WHEN YEAR(agricultural_activities.activity_date) = ? AND MONTH(agricultural_activities.activity_date) = ? THEN 1 ELSE 0 END) as this_month", [$year, $month]);
-        $this->applyDemoExclusion($activityQuery, 'users.email', 'users.name');
         $activityStats = $activityQuery->first();
 
         $weekAgo      = now()->subWeek()->toDateTimeString();
@@ -129,7 +114,6 @@ class Dashboard extends Component
         // ── SaaS metrics ──────────────────────────────────────────────────────
         $subBase = DB::table('subscriptions')
             ->join('users', 'users.id', '=', 'subscriptions.user_id');
-        $this->applyDemoExclusion($subBase, 'users.email', 'users.name');
 
         // MRR: active subs normalized to monthly
         $mrrMonthly = (clone $subBase)
@@ -231,10 +215,6 @@ class Dashboard extends Component
                 ->selectRaw('DATE(activity_date) as date, COUNT(*) as count')
                 ->where('activity_date', '>=', now()->subWeeks(51)->startOfWeek());
 
-            foreach (User::INTERNAL_EMAIL_PATTERNS as $p) {
-                $query->where('users.email', 'not like', "%{$p}%");
-            }
-
             $raw = $query->groupBy('date')->get()->keyBy('date');
 
             // Build 52 weeks × 7 days grid
@@ -267,11 +247,6 @@ class Dashboard extends Component
                 ->join('municipalities', 'municipalities.id', '=', 'plots.municipality_id')
                 ->join('provinces', 'provinces.id', '=', 'municipalities.province_id')
                 ->select('provinces.name', DB::raw('COUNT(plots.id) as plots'), DB::raw('COALESCE(SUM(plots.area),0) as area'))
-                ->where(function ($q) {
-                    foreach (User::INTERNAL_EMAIL_PATTERNS as $p) {
-                        $q->where('users.email', 'not like', "%{$p}%");
-                    }
-                })
                 ->groupBy('provinces.name')
                 ->orderByDesc('plots')
                 ->limit(10)
@@ -288,13 +263,6 @@ class Dashboard extends Component
             $query = DB::table('users')
                 ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
                 ->where('created_at', '>=', now()->subDays(13)->startOfDay());
-
-            foreach (User::INTERNAL_EMAIL_PATTERNS as $p) {
-                $query->where('email', 'not like', "%{$p}%");
-            }
-            foreach (User::INTERNAL_NAME_PATTERNS as $p) {
-                $query->where('name', 'not like', "%{$p}%");
-            }
 
             $raw = $query->groupBy('date')->get()->keyBy('date');
 
@@ -317,12 +285,6 @@ class Dashboard extends Component
     {
         try {
             $base = DB::table('users');
-            foreach (User::INTERNAL_EMAIL_PATTERNS as $p) {
-                $base->where('email', 'not like', "%{$p}%");
-            }
-            foreach (User::INTERNAL_NAME_PATTERNS as $p) {
-                $base->where('name', 'not like', "%{$p}%");
-            }
 
             $total    = (clone $base)->count();
             $verified = (clone $base)->whereNotNull('email_verified_at')->count();

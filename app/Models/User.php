@@ -110,48 +110,6 @@ class User extends Authenticatable implements MustVerifyEmail, HasLocalePreferen
     // ROLE_DO is an alias for ROLE_SUPERVISOR — denomination_of_origin uses 'supervisor' in DB
     public const ROLE_DO                 = 'supervisor';
 
-    /** Patrones de email que identifican cuentas internas/demo/test. */
-    public const INTERNAL_EMAIL_PATTERNS = [
-        'demo', 'test', '@noemail.agro365.es',
-        'bernalmochonjorge', 'bernhshsj', 'jorgemochonb',
-    ];
-
-    /** Patrones de nombre que identifican cuentas internas/demo/test. */
-    public const INTERNAL_NAME_PATTERNS = ['demo', 'test', 'maestro'];
-
-    /**
-     * Scope: excluir usuarios demo/test/placeholder/internos.
-     */
-    public function scopeExcludeDemo($query)
-    {
-        return $query->where(function ($q) {
-            foreach (self::INTERNAL_EMAIL_PATTERNS as $pattern) {
-                $q->where('email', 'not like', "%{$pattern}%");
-            }
-            foreach (self::INTERNAL_NAME_PATTERNS as $pattern) {
-                $q->where('name', 'not like', "%{$pattern}%");
-            }
-        });
-    }
-
-    /**
-     * Indica si esta cuenta es interna (demo/test/placeholder).
-     */
-    public function isInternal(): bool
-    {
-        foreach (self::INTERNAL_EMAIL_PATTERNS as $pattern) {
-            if (str_contains(strtolower($this->email), strtolower($pattern))) {
-                return true;
-            }
-        }
-        foreach (self::INTERNAL_NAME_PATTERNS as $pattern) {
-            if (str_contains(strtolower($this->name), strtolower($pattern))) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     /**
      * Verificar si el usuario es admin
      */

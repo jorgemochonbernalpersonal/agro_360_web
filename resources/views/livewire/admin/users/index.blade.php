@@ -92,27 +92,8 @@
                     title="{{ __('Registro hasta') }}"
                     class="text-xs border border-zinc-200 rounded-md px-2 py-1.5 text-zinc-700 focus:outline-none focus:ring-2 focus:ring-agro-500 h-9"
                 />
-                <flux:button
-                    wire:click="toggleInternal"
-                    variant="ghost"
-                    size="sm"
-                    icon="bug-ant"
-                    tooltip="{{ $showInternal ? __('Ocultar usuarios internos') : __('Mostrar usuarios internos (demo/test)') }}"
-                    @class(['text-amber-500 bg-amber-50' => $showInternal])
-                >
-                    Internos
-                </flux:button>
             </x-agro.filter-bar>
         </div>
-
-        {{-- Banner: modo usuarios internos --}}
-        @if($showInternal)
-        <div class="mx-6 mb-3 flex items-center gap-2 rounded-lg bg-amber-50 border border-amber-200 px-4 py-2.5 text-sm text-amber-800">
-            <flux:icon icon="bug-ant" class="size-4 flex-shrink-0" />
-            <span>{{ __('Mostrando también cuentas internas (demo / test / maestro). Las estadísticas siempre reflejan solo usuarios reales.') }}</span>
-            <button wire:click="toggleInternal" class="ml-auto text-amber-600 hover:text-amber-800 font-medium text-xs">{{ __('Ocultar') }}</button>
-        </div>
-        @endif
 
         {{-- Fecha fin beta configurable --}}
         <div class="px-6 pb-3 flex items-center gap-2 text-xs text-zinc-500 border-t border-zinc-100 pt-3">

@@ -24,8 +24,6 @@ class Index extends Component
     public $filterBeta = '';
     public $filterDateFrom = '';
     public $filterDateTo = '';
-    public bool $showInternal = false;
-
     // Create modal
     public $showCreateModal = false;
     public $createName = '';
@@ -54,7 +52,6 @@ class Index extends Component
         'filterBeta'     => ['except' => ''],
         'filterDateFrom' => ['except' => '', 'as' => 'from'],
         'filterDateTo'   => ['except' => '', 'as' => 'to'],
-        'showInternal'   => ['except' => false, 'as' => 'internal'],
     ];
 
     public function switchTab($tab)
@@ -70,15 +67,6 @@ class Index extends Component
     public function updatingFilterBeta()     { $this->resetPage(); $this->selectedUsers = []; }
     public function updatingFilterDateFrom() { $this->resetPage(); $this->selectedUsers = []; }
     public function updatingFilterDateTo()   { $this->resetPage(); $this->selectedUsers = []; }
-    public function updatingShowInternal()   { $this->resetPage(); $this->selectedUsers = []; }
-
-    public function toggleInternal(): void
-    {
-        $this->showInternal = !$this->showInternal;
-        $this->resetPage();
-        $this->selectedUsers = [];
-    }
-
     // ─── Create ───────────────────────────────────────────────────────────────
 
     public function openCreateModal()
@@ -351,7 +339,7 @@ class Index extends Component
 
     private function buildFilteredQuery()
     {
-        $query = $this->showInternal ? User::query() : User::excludeDemo();
+        $query = User::query();
 
         if ($this->currentTab !== 'all') {
             $query->where('role', $this->currentTab);
@@ -448,8 +436,7 @@ class Index extends Component
     {
         $users = $this->buildFilteredQuery()->orderBy('created_at', 'desc')->paginate(20);
 
-        // Stats: siempre sobre usuarios reales (excluye internos), query única optimizada
-        $raw = User::excludeDemo()
+        $raw = User::query()
             ->selectRaw("COUNT(*) as total")
             ->selectRaw("SUM(CASE WHEN role = 'admin' THEN 1 ELSE 0 END) as role_admin")
             ->selectRaw("SUM(CASE WHEN role = 'supervisor' THEN 1 ELSE 0 END) as role_supervisor")

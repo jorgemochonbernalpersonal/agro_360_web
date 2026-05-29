@@ -27,27 +27,8 @@
                     <option value="winery">{{ __('Bodegas') }}</option>
                     <option value="denomination_of_origin">{{ __('Denominaciones de Origen') }}</option>
                 </x-agro.filter-select>
-                <flux:button
-                    wire:click="toggleInternal"
-                    variant="ghost"
-                    size="sm"
-                    icon="bug-ant"
-                    tooltip="{{ $showInternal ? __('Ocultar organizaciones internas') : __('Mostrar organizaciones internas (demo/test)') }}"
-                    @class(['text-amber-500 bg-amber-50' => $showInternal])
-                >
-                    {{ __('Internos') }}
-                </flux:button>
             </x-agro.filter-bar>
         </div>
-
-        {{-- Banner modo interno --}}
-        @if($showInternal)
-        <div class="mx-6 mb-3 flex items-center gap-2 rounded-lg bg-amber-50 border border-amber-200 px-4 py-2.5 text-sm text-amber-800">
-            <flux:icon icon="bug-ant" class="size-4 flex-shrink-0" />
-            <span>{{ __('Mostrando también organizaciones internas (demo / test / maestro). Las estadísticas siempre reflejan solo organizaciones reales.') }}</span>
-            <button wire:click="toggleInternal" class="ml-auto text-amber-600 hover:text-amber-800 font-medium text-xs">{{ __('Ocultar') }}</button>
-        </div>
-        @endif
 
         <x-agro.table>
             <x-slot:head>
