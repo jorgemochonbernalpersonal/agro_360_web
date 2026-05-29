@@ -187,9 +187,6 @@
                                     <div>
                                         <div class="flex items-center gap-1.5">
                                             <p class="text-sm font-semibold text-zinc-900">{{ $user->name }}</p>
-                                            @if($user->isInternal())
-                                                <flux:badge color="yellow" size="sm">{{ __('Interno') }}</flux:badge>
-                                            @endif
                                         </div>
                                         <p class="text-xs text-zinc-400">ID: {{ $user->id }}</p>
                                     </div>
