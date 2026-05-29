@@ -47,9 +47,6 @@
                         <td class="px-4 py-3 text-sm font-medium text-zinc-900 dark:text-white">
                             <div class="flex items-center gap-1.5">
                                 <span>{{ $org->name }}</span>
-                                @if($org->isInternal())
-                                    <flux:badge color="yellow" size="sm">{{ __('Interno') }}</flux:badge>
-                                @endif
                             </div>
                             @if($org->parent)
                                 <div class="text-xs text-zinc-400">↳ {{ $org->parent->name }}</div>
