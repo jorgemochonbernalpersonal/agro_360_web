@@ -146,9 +146,9 @@ class ActivityAuditHistory extends Component
         }
 
         if (is_array($value)) {
-            return json_encode($value, JSON_PRETTY_PRINT);
+            return e(json_encode($value, JSON_PRETTY_PRINT));
         }
 
-        return $value;
+        return e($value);
     }
 }

@@ -29,7 +29,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('agricultural_activities', function (Blueprint $table) {
-            $table->dropForeign(['campaign_id']);
+            // La foreign key la gestiona (y revierte) la migración
+            // 2026_05_29_120000_add_campaign_id_foreign_key_to_agricultural_activities_table.
             $table->dropIndex(['campaign_id']);
             $table->dropColumn('campaign_id');
         });

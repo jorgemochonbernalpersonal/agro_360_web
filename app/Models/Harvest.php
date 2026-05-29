@@ -74,7 +74,7 @@ class Harvest extends Model
         'brix_degree' => 'decimal:3',
         'acidity_level' => 'decimal:3',
         'ph_level' => 'decimal:3',
-        'price_per_kg' => 'decimal:3',
+        'price_per_kg' => 'decimal:4',
         'total_value' => 'decimal:3',
         'edited_at' => 'datetime',
         'potential_alcohol' => 'decimal:2',

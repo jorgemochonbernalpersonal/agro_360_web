@@ -48,7 +48,6 @@ class Plot extends Model
         'planting_pattern',
         'is_organic',
         // Vendimia
-        'maximum_yield_kg_ha',
         'degree_day_base',
         // Estado
         'active',
@@ -70,7 +69,6 @@ class Plot extends Model
         'is_locked' => 'boolean',
         'locked_at' => 'datetime',
         'alert_email_enabled' => 'boolean',
-        'maximum_yield_kg_ha' => 'decimal:3',
         'degree_day_base' => 'decimal:1',
         'cadastral_area' => 'decimal:4',
         'is_organic' => 'boolean',

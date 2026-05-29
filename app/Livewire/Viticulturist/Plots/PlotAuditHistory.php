@@ -147,23 +147,23 @@ class PlotAuditHistory extends Component
         // Formatear IDs de relaciones
         if ($field === 'province_id' && $value) {
             $province = \App\Models\Province::find($value);
-            return $province ? $province->name : $value;
+            return e($province ? $province->name : $value);
         }
 
         if ($field === 'municipality_id' && $value) {
             $municipality = \App\Models\Municipality::find($value);
-            return $municipality ? $municipality->name : $value;
+            return e($municipality ? $municipality->name : $value);
         }
 
         if ($field === 'autonomous_community_id' && $value) {
             $community = \App\Models\AutonomousCommunity::find($value);
-            return $community ? $community->name : $value;
+            return e($community ? $community->name : $value);
         }
 
         if (is_array($value)) {
-            return json_encode($value, JSON_PRETTY_PRINT);
+            return e(json_encode($value, JSON_PRETTY_PRINT));
         }
 
-        return $value;
+        return e($value);
     }
 }
