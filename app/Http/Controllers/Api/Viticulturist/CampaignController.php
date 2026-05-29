@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\Viticulturist;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Api\ActivityResource;
 use App\Http\Resources\Api\CampaignResource;
 use App\Models\AgriculturalActivity;
 use App\Models\Campaign;
@@ -58,8 +57,17 @@ class CampaignController extends Controller
             ->orderByDesc('activity_date')
             ->paginate($request->integer('per_page', 30));
 
+        // Forma plana que espera el cliente móvil (CampaignActivityDto): type/date/plot_name.
+        // No se usa ActivityResource porque ese recurso (compartido con otros endpoints)
+        // emite activity_type/activity_date/plot:{} y el móvil no los parsea.
         return response()->json([
-            'data' => ActivityResource::collection($activities->items()),
+            'data' => collect($activities->items())->map(fn ($a) => [
+                'id'        => $a->id,
+                'type'      => $a->activity_type,
+                'date'      => $a->activity_date?->toDateString(),
+                'plot_name' => $a->plot?->name,
+                'notes'     => $a->notes,
+            ]),
             'meta' => [
                 'total'        => $activities->total(),
                 'current_page' => $activities->currentPage(),
@@ -92,7 +100,7 @@ class CampaignController extends Controller
                 'start_date'       => $campaign->start_date?->toDateString(),
                 'end_date'         => $campaign->end_date?->toDateString(),
                 'total_activities' => (clone $activities)->count(),
-                'treatments'       => (clone $activities)->where('activity_type', 'treatment')->count(),
+                'treatments'       => (clone $activities)->where('activity_type', 'phytosanitary')->count(),
                 'irrigations'      => (clone $activities)->where('activity_type', 'irrigation')->count(),
                 'harvests'         => (clone $activities)->where('activity_type', 'harvest')->count(),
                 'observations'     => (clone $activities)->where('activity_type', 'observation')->count(),

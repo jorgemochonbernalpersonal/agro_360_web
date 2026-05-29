@@ -73,7 +73,10 @@ class DashboardController extends Controller
                     'active' => $activeSubscriptions,
                 ],
                 'security' => [
-                    'last_7_days' => $securitySummary,
+                    // (object) garantiza un objeto JSON ({}) incluso sin eventos; sin el
+                    // cast, una colección vacía se serializa como [] y el cliente móvil
+                    // (que espera un Map) falla al deserializar el dashboard.
+                    'last_7_days' => (object) $securitySummary->map(fn ($v) => (int) $v)->toArray(),
                     'recent'      => $recentEvents->map(fn ($e) => [
                         'id'         => $e->id,
                         'level'      => $e->level,
