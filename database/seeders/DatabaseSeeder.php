@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -34,14 +33,5 @@ class DatabaseSeeder extends Seeder
         ]);
         
         $this->command->info('✅ Seeders completados.');
-        
-        // Opcional: Crear usuario completo para tests (comentar si no se necesita)
-        // $this->call(CompleteTestUserSeeder::class);
-        
-        // Crear usuario de prueba (opcional)
-        // User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
     }
 }
