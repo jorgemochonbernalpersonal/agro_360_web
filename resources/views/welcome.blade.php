@@ -481,7 +481,7 @@
                     <div class="flex flex-wrap gap-2">
                         <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--color-agro-green-bg)] border border-[var(--color-agro-green-light)]/30">
                             <span class="w-2 h-2 rounded-full bg-[var(--color-agro-green-light)] animate-pulse"></span>
-                            <span class="text-sm font-semibold text-[var(--color-agro-green-dark)]">{{ __('Viticultor básico gratis · Completo desde 9€/mes') }}</span>
+                            <span class="text-sm font-semibold text-[var(--color-agro-green-dark)]">{{ __('Básico gratis para siempre · Completo desde 9€/mes') }}</span>
                         </div>
                         <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-50 border border-amber-300">
                             <svg class="w-3.5 h-3.5 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
@@ -528,7 +528,13 @@
                             <svg class="w-4 h-4 text-[var(--color-agro-green)]" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                             </svg>
-                            <span class="text-gray-600 text-sm font-medium">{{ __('3 meses gratis al registrarse') }}</span>
+                            <span class="text-gray-700 text-sm font-semibold">{{ __('Básico gratis para siempre') }}</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <svg class="w-4 h-4 text-[var(--color-agro-green)]" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            <span class="text-gray-600 text-sm font-medium">{{ __('3 meses de plan Completo gratis') }}</span>
                         </div>
                         <div class="flex items-center gap-1.5">
                             <svg class="w-4 h-4 text-[var(--color-agro-green)]" fill="currentColor" viewBox="0 0 20 20">
