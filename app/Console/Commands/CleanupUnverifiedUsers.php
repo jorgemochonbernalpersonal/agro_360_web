@@ -57,7 +57,9 @@ class CleanupUnverifiedUsers extends Command
             foreach ($unverifiedUsers as $user) {
                 $this->line("Eliminando usuario: {$user->email} (ID: {$user->id}, Rol: {$user->role})");
 
-                SupervisorWinery::where('supervisor_id', $user->id)->delete();
+                // Per-model so SupervisorWinery::deleting fires (restores each
+                // supervised winery to independent/full-access state).
+                SupervisorWinery::where('supervisor_id', $user->id)->get()->each->delete();
                 SupervisorViticulturist::where('supervisor_id', $user->id)->delete();
 
                 SupervisorWinery::where('winery_id', $user->id)->delete();

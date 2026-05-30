@@ -102,6 +102,12 @@ class Show extends Component
             ->where('winery_id', $this->winery->id)
             ->firstOrFail();
 
+        // A partir de la primera intervención de la DO, el set de abilities es
+        // vinculante: permite incluso restringir la bodega a cero módulos.
+        if (! $this->winery->abilities_configured) {
+            $this->winery->update(['abilities_configured' => true]);
+        }
+
         $ability = Ability::findOrFail($abilityId);
 
         $existing = UserAbility::where('user_id', $this->winery->id)

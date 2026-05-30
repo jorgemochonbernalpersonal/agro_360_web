@@ -35,6 +35,17 @@ class SupervisorWinery extends Model
                     'source'      => WineryViticulturist::SOURCE_OWN,
                     'supervisor_id' => null,
                 ]);
+
+            // Restore the winery to an independent (full-access) state, mirroring the
+            // viticulturist conversion above. A winery has at most one DO (unique
+            // constraint on supervisor_id+winery_id), so removing this relation means
+            // it is now independent → its abilities are no longer DO-governed and must
+            // not stay frozen on the departed DO's restriction set.
+            // can_login is intentionally left untouched: it is governed by the
+            // subscription/admin (premium model), not by the DO.
+            UserAbility::where('user_id', $sw->winery_id)->delete();
+            User::where('id', $sw->winery_id)->update(['abilities_configured' => false]);
+            Cache::forget("winery:{$sw->winery_id}:granted_abilities");
         });
 
         static::deleted($flush);

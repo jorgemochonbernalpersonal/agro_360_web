@@ -130,12 +130,14 @@ Route::middleware(['role:winery,producer'])
         Route::get('/external-grape/{externalGrape}/edit', \App\Livewire\Winery\ExternalGrape\Edit::class)->name('external-grape.edit');
 
         // ── Lotes de producto ─────────────────────────────────────────
-        Route::get('/product-lots', \App\Livewire\Winery\Cellar\ProductLots\Index::class)->name('product-lots.index');
-        Route::get('/product-lots/insights', \App\Livewire\Winery\Cellar\ProductLots\Insights::class)->name('product-lots.insights');
-        Route::get('/product-lots/audit', \App\Livewire\Winery\Cellar\ProductLots\Audit::class)->name('product-lots.audit');
-        Route::get('/product-lots/create', \App\Livewire\Winery\Cellar\ProductLots\Create::class)->name('product-lots.create');
-        Route::get('/product-lots/{lot}/sales', \App\Livewire\Winery\Cellar\ProductLots\Sales::class)->name('product-lots.sales');
-        Route::get('/product-lots/{lot}/edit', \App\Livewire\Winery\Cellar\ProductLots\Edit::class)->name('product-lots.edit');
+        Route::middleware('winery.ability:product_sales')->group(function () {
+            Route::get('/product-lots', \App\Livewire\Winery\Cellar\ProductLots\Index::class)->name('product-lots.index');
+            Route::get('/product-lots/insights', \App\Livewire\Winery\Cellar\ProductLots\Insights::class)->name('product-lots.insights');
+            Route::get('/product-lots/audit', \App\Livewire\Winery\Cellar\ProductLots\Audit::class)->name('product-lots.audit');
+            Route::get('/product-lots/create', \App\Livewire\Winery\Cellar\ProductLots\Create::class)->name('product-lots.create');
+            Route::get('/product-lots/{lot}/sales', \App\Livewire\Winery\Cellar\ProductLots\Sales::class)->name('product-lots.sales');
+            Route::get('/product-lots/{lot}/edit', \App\Livewire\Winery\Cellar\ProductLots\Edit::class)->name('product-lots.edit');
+        });
         // Compatibilidad URLs antiguas (wine-lots → product-lots)
         Route::redirect('/wine-lots', '/winery/product-lots')->name('wine-lots.index');
         Route::redirect('/wine-lots/create', '/winery/product-lots/create')->name('wine-lots.create');
@@ -237,9 +239,11 @@ Route::middleware(['role:winery,producer'])
         Route::get('/financial-stats', \App\Livewire\Winery\Financial\Stats::class)->name('financial-stats.index');
 
         // ── Embotellado ───────────────────────────────────────────────
-        Route::get('/bottling', \App\Livewire\Winery\Bottling\Index::class)->name('bottling.index');
-        Route::get('/bottling/create', \App\Livewire\Winery\Bottling\Create::class)->name('bottling.create');
-        Route::get('/bottling/{bottling}/edit', \App\Livewire\Winery\Bottling\Edit::class)->name('bottling.edit');
+        Route::middleware('winery.ability:product_sales')->group(function () {
+            Route::get('/bottling', \App\Livewire\Winery\Bottling\Index::class)->name('bottling.index');
+            Route::get('/bottling/create', \App\Livewire\Winery\Bottling\Create::class)->name('bottling.create');
+            Route::get('/bottling/{bottling}/edit', \App\Livewire\Winery\Bottling\Edit::class)->name('bottling.edit');
+        });
 
         // ── Lotes de etiquetas ────────────────────────────────────────
         Route::middleware('winery.ability:label_batches')->group(function () {
@@ -251,9 +255,11 @@ Route::middleware(['role:winery,producer'])
         });
 
         // ── Etiquetado ────────────────────────────────────────────────
-        Route::get('/labeling', \App\Livewire\Winery\Labeling\Index::class)->name('labeling.index');
-        Route::get('/labeling/create', \App\Livewire\Winery\Labeling\Create::class)->name('labeling.create');
-        Route::get('/labeling/{labeling}/edit', \App\Livewire\Winery\Labeling\Edit::class)->name('labeling.edit');
+        Route::middleware('winery.ability:label_batches')->group(function () {
+            Route::get('/labeling', \App\Livewire\Winery\Labeling\Index::class)->name('labeling.index');
+            Route::get('/labeling/create', \App\Livewire\Winery\Labeling\Create::class)->name('labeling.create');
+            Route::get('/labeling/{labeling}/edit', \App\Livewire\Winery\Labeling\Edit::class)->name('labeling.edit');
+        });
 
         // ── Fichas Técnicas y Catas ────────────────────────────────────
         Route::get('/product-sheets', \App\Livewire\Winery\ProductSheets\Index::class)->name('product-sheets.index');

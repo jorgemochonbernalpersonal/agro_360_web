@@ -133,7 +133,7 @@ Route::middleware('guest')->get('/activar-cuenta/{token}', \App\Livewire\Auth\Cl
 
 // Rutas protegidas: password cambiado Y email verificado
 // require.password.change debe ejecutarse ANTES de verified para usuarios creados por otro
-Route::middleware(['auth', 'password.changed', 'require.password.change', 'verified'])->group(function () {
+Route::middleware(['auth', 'check.can_login', 'password.changed', 'require.password.change', 'verified'])->group(function () {
     // Laravel Log Viewer - Solo para administradores
     Route::middleware('role:admin')
         ->get('logs', fn() => app('\Rap2hpoutre\LaravelLogViewer\LogViewerController')->index())

@@ -35,6 +35,7 @@ class User extends Authenticatable implements MustVerifyEmail, HasLocalePreferen
         'dni',
         'password_must_reset',
         'can_login',
+        'abilities_configured',
         'email_verified_at',
         'invitation_sent_at',
         'invitation_token',
@@ -73,6 +74,7 @@ class User extends Authenticatable implements MustVerifyEmail, HasLocalePreferen
             'password' => 'hashed',
             'password_must_reset' => 'boolean',
             'can_login' => 'boolean',
+            'abilities_configured' => 'boolean',
             'invitation_sent_at'   => 'datetime',
             'invitation_expires_at' => 'datetime',
             'activated_at'          => 'datetime',
@@ -181,9 +183,10 @@ class User extends Authenticatable implements MustVerifyEmail, HasLocalePreferen
     /**
      * Comprueba si la bodega tiene una ability concreta habilitada.
      *
-     * Retrocompatibilidad: si la bodega no tiene NINGUNA ability configurada
-     * (supervisor no ha establecido restricciones) devuelve TRUE para todo,
-     * de modo que el acceso existente no se rompe.
+     * Retrocompatibilidad: mientras la DO no haya configurado la bodega
+     * (abilities_configured = false) devuelve TRUE para todo. Una vez configurada,
+     * el set de abilities es vinculante: un set vacío significa "ningún módulo",
+     * no "todos".
      */
     public function hasAbility(string $code): bool
     {
@@ -191,14 +194,12 @@ class User extends Authenticatable implements MustVerifyEmail, HasLocalePreferen
             return false;
         }
 
-        $granted = $this->abilities()->pluck('code');
-
-        // Sin restricciones configuradas → acceso total (retrocompatible)
-        if ($granted->isEmpty()) {
+        // Sin configurar por la DO → acceso total (retrocompatible)
+        if (! $this->abilities_configured) {
             return true;
         }
 
-        return $granted->contains($code);
+        return $this->abilities()->pluck('code')->contains($code);
     }
 
     public function abilities()
@@ -280,6 +281,21 @@ class User extends Authenticatable implements MustVerifyEmail, HasLocalePreferen
             // Limpiar cache de sesión cuando se actualiza el usuario
             if ($user->wasChanged(['email_verified_at', 'password'])) {
                 session()->forget("user_{$user->id}_needs_password_change");
+            }
+        });
+
+        static::deleting(function ($user) {
+            // Al eliminar una cuenta de DO (supervisor), enrutamos el borrado de
+            // sus vínculos con bodegas por Eloquent para que SupervisorWinery::deleting
+            // se dispare: convierte los viticultores asignados a 'own' y devuelve cada
+            // bodega supervisada a estado independiente (acceso total). Un $user->delete()
+            // dejaría que la cascada de BD eliminara esas filas en silencio, dejando las
+            // bodegas congeladas en las restricciones de la DO ya eliminada.
+            if ($user->isSupervisor()) {
+                SupervisorWinery::where('supervisor_id', $user->id)
+                    ->get()
+                    ->each
+                    ->delete();
             }
         });
     }
