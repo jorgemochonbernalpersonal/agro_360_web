@@ -265,7 +265,9 @@ class ContainerTest extends TestCase
 
         $result = $container->decrementUsedCapacity(200.0);
 
-        $this->assertTrue($result);
+        // Se pidió descontar 200 con solo 100 disponibles: se aplica el truncamiento
+        // (suelo en 0) pero el retorno es false para señalar el descuadre.
+        $this->assertFalse($result);
         $container->refresh();
         $this->assertEquals(0.0, $container->used_capacity); // No puede ser negativo
     }
@@ -398,7 +400,13 @@ class ContainerTest extends TestCase
     public function test_get_current_harvest_returns_harvest_via_current_state(): void
     {
         $user = User::factory()->create(['role' => 'viticulturist']);
-        $container = Container::factory()->create(['user_id' => $user->id]);
+        // Capacidad explícita: el factory genera valores aleatorios y la cosecha
+        // de 500 kg podía exceder la capacidad libre, haciendo el test flaky.
+        $container = Container::factory()->create([
+            'user_id'       => $user->id,
+            'capacity'      => 1000.0,
+            'used_capacity' => 0.0,
+        ]);
 
         $harvest = Harvest::factory()->create([
             'container_id' => $container->id,

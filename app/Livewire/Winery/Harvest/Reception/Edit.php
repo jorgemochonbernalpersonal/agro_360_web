@@ -73,6 +73,12 @@ class Edit extends Component
         // Guard: solo recepciones que pertenecen a esta bodega
         abort_unless($harvest->winery_id === $wineryId, 403);
 
+        // Guard: una recepción ya facturada o anulada no puede editarse —
+        // cambiar su peso descuadraría la liquidación emitida y podría reabrir
+        // disputas ya cerradas con el viticultor.
+        abort_if($harvest->isInvoiced(), 403, __('Esta recepción está incluida en una liquidación y no puede editarse.'));
+        abort_if($harvest->status === 'cancelled', 403, __('Esta recepción está anulada y no puede editarse.'));
+
         $this->harvest = $harvest->load([
             'plotPlanting.grapeVariety',
             'plotPlanting.plot',
