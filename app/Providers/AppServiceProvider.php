@@ -51,7 +51,6 @@ use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\ServiceProvider;
@@ -84,11 +83,6 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        foreach (glob(resource_path('views/components/agro/*.blade.php')) as $file) {
-            $name = basename($file, '.blade.php');
-            Blade::component("components.agro.{$name}", "agro-{$name}");
-        }
-
         $this->registerEmailRedirect();
 
         (new \App\Macros\CollectionMacros)->register();

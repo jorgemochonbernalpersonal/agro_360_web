@@ -1,6 +1,6 @@
 /**
  * Agro365 Toast Notification System
- * Used by x-agro-toast component via Alpine.js x-data
+ * Used by x-agro.toast component via Alpine.js x-data
  */
 window.toastNotifications = function () {
     return {
