@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Plots;
 
+use App\Livewire\Concerns\WithListing;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Livewire\Concerns\WithUserPreferences;
 use App\Models\AutonomousCommunity;
@@ -14,32 +15,21 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
-use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination, WithToastNotifications, WithUserPreferences;
+    use WithListing, WithToastNotifications, WithUserPreferences;
 
-    public $currentTab = 'active';  // 'active', 'inactive'
-    public $search = '';
     public $filterAutonomousCommunity = '';
     public $filterProvince = '';
     public $filterMunicipality = '';
     public $auditPlotId = null;
 
     protected $queryString = [
-        'currentTab' => ['as' => 'tab', 'except' => 'active'],
-        'search' => ['except' => ''],
         'filterAutonomousCommunity' => ['except' => ''],
         'filterProvince' => ['except' => ''],
         'filterMunicipality' => ['except' => ''],
     ];
-
-    public function switchTab($tab)
-    {
-        $this->currentTab = $tab;
-        $this->resetPage();
-    }
 
     public function toggleActive($plotId)
     {
