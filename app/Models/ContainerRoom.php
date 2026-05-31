@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Traits\Auditable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,6 +11,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class ContainerRoom extends Model
 {
     use HasFactory;
+    use Auditable;
+
+    protected $auditExclude = ['created_at', 'updated_at'];
 
     protected $fillable = [
         'user_id',

@@ -70,8 +70,12 @@ trait Auditable
             return;
         }
 
-        $changes = $this->getDirty();
-        
+        // Respetar $auditExclude también en updates: si el modelo excluye
+        // ciertos campos (p. ej. stock transaccional ya auditado en otra tabla),
+        // no deben generar ruido aquí. Si tras excluir no queda nada, no auditamos.
+        $excluded = $this->auditExclude ?? [];
+        $changes  = array_diff_key($this->getDirty(), array_flip($excluded));
+
         if (empty($changes)) {
             return;
         }

@@ -90,6 +90,7 @@ class AuditService
             \App\Models\Plot::class,
             \App\Models\AgriculturalActivity::class,
             \App\Models\PhytosanitaryTreatment::class,
+            \App\Models\Container::class,
         ];
 
         $logs = AuditLog::query()

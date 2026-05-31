@@ -122,6 +122,10 @@ class Show extends Component
 
         $wines = Wine::where('user_id', Auth::id())->orderBy('name')->get(['id', 'name']);
 
+        // Historial de CONFIGURACIÓN (metadatos): quién cambió capacidad, tipo,
+        // sala, archivado… Distinto del historial de stock ($history).
+        $auditLogs = $container->auditLogs()->with('user')->limit(20)->get();
+
         return view('livewire.winery.cellar.containers.show', [
             'wines'               => $wines,
             'container'           => $container,
@@ -133,6 +137,7 @@ class Show extends Component
             'winePct'             => round($winePct, 1),
             'recentAnalyses'      => $recentAnalyses,
             'recentFermentations' => $recentFermentations,
+            'auditLogs'           => $auditLogs,
         ])->layout('layouts.app');
     }
 }
