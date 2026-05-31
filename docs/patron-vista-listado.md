@@ -23,10 +23,10 @@
 | 3 | Segmentación | `x-agro.tabs` | Si hay estados naturales (activas/inactivas, por fase) |
 | 4 | Toolbar | `x-agro.search-input` + `x-agro.filter-button` | search si la lista es grande/buscable; filter-button si hay filtros avanzados |
 | 5 | Filtros activos | `x-agro.filter-chip` | Si hay filtros aplicados (fila bajo el toolbar) |
-| 6 | Loading | `x-agro.loading-grid` | **Siempre** que el contenido sea un grid reactivo (wire) |
+| 6 | Loading | `x-agro.loading-grid` (preferido) **ó** `wire:loading` inline | Feedback de carga **siempre** que el contenido sea un grid reactivo (wire). `loading-grid` es el patrón de Plots; `wire:loading` inline es alternativa válida |
 | 7 | Contenido | grid de `x-agro.card` **ó** `x-agro.data-table` | **Siempre** — cards para densidad media, tabla para densidad alta |
 | 8 | Paginación | `x-agro.pagination` | **Siempre** que esté paginado |
-| 9 | Estado vacío | `x-agro.empty-state` | **Siempre** |
+| 9 | Estado vacío | `x-agro.empty-state` | **Siempre**. Nota: `x-agro.data-table` ya lo incluye internamente (props `empty-message`/`empty-description`); `@forelse/@empty` también es válido |
 | 10 | Modal filtros | `x-agro.modal name="<recurso>-filters"` | Si existe filter-button |
 
 Obligatorios mínimos en **cualquier** listado: **1, 7, 9** (header + contenido + empty-state),
@@ -123,12 +123,19 @@ y **8** si pagina. El resto se incluye *cuando aplica*, pero siempre en este ord
 □ tabs (si hay estados)
 □ toolbar: search-input + filter-button (en este orden), si aplica
 □ filter-chip para filtros activos
-□ loading-grid cubriendo los targets wire correctos
+□ feedback de carga: loading-grid (preferido) o wire:loading inline
 □ grid de card  Ó  data-table  (no ambos)
-□ empty-state SIEMPRE
+□ empty handling: empty-state / data-table / @forelse — alguno SIEMPRE
 □ x-agro.pagination  (notación punto, nunca guion)
 □ modal "<recurso>-filters" si hay filter-button
 ```
+
+> **Nota de auditoría (2026-05-31):** los listados existentes ya cubren
+> empty/loading/pagination en su mayoría, pero con patrones distintos para el
+> mismo concepto. No conviene reescribir vistas que funcionan solo para
+> homogeneizar el mecanismo (churn de alto riesgo y bajo valor). Aplica este
+> patrón **a vistas nuevas** y a las genuinamente incompletas (sin ningún
+> empty/loading), no como reescritura masiva.
 
 ## Estado de adopción (2026-05-31)
 
