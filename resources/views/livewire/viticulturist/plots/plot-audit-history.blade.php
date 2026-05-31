@@ -1,28 +1,28 @@
 <div class="space-y-6">
     {{-- Header --}}
-    <x-agro-page-header title="{{ __('Historial de Auditoría') }}" :description="'Parcela: '.$plot->name.' ('.$plot->surface_area.' ha)'" />
+    <x-agro.page-header title="{{ __('Historial de Auditoría') }}" :description="'Parcela: '.$plot->name.' ('.$plot->surface_area.' ha)'" />
 
     {{-- Filtros --}}
-    <x-agro-filter-bar>
-        <x-agro-filter-select :label="__('Usuario')" wire:model.live="filterUser" :placeholder="__('Todos')">
+    <x-agro.filter-bar>
+        <x-agro.filter-select :label="__('Usuario')" wire:model.live="filterUser" :placeholder="__('Todos')">
             @foreach($users as $user)
                 <flux:select.option value="{{ $user->id }}">{{ $user->name }}</flux:select.option>
             @endforeach
-        </x-agro-filter-select>
+        </x-agro.filter-select>
 
-        <x-agro-filter-select :label="__('Acción')" wire:model.live="filterAction" :placeholder="__('Todas')">
+        <x-agro.filter-select :label="__('Acción')" wire:model.live="filterAction" :placeholder="__('Todas')">
             @foreach($actions as $action)
                 <flux:select.option value="{{ $action }}">{{ ucfirst($action) }}</flux:select.option>
             @endforeach
-        </x-agro-filter-select>
+        </x-agro.filter-select>
 
         <div class="flex flex-col gap-1">
-            <x-agro-field-label>{{ __('Desde') }}</x-agro-field-label>
+            <x-agro.field-label>{{ __('Desde') }}</x-agro.field-label>
             <flux:input type="date" wire:model.live="filterDateFrom" />
         </div>
 
         <div class="flex flex-col gap-1">
-            <x-agro-field-label>{{ __('Hasta') }}</x-agro-field-label>
+            <x-agro.field-label>{{ __('Hasta') }}</x-agro.field-label>
             <flux:input type="date" wire:model.live="filterDateTo" />
         </div>
 
@@ -31,12 +31,12 @@
                 <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">{{ __('Limpiar filtros') }}</flux:button>
             </div>
         @endif
-    </x-agro-filter-bar>
+    </x-agro.filter-bar>
 
     {{-- Timeline de cambios --}}
     <div class="space-y-4">
         @forelse($logs as $log)
-            <x-agro-card>
+            <x-agro.card>
                 {{-- Header del log --}}
                 <div class="flex items-start justify-between">
                     <div class="flex items-center gap-3">
@@ -105,9 +105,9 @@
                         </div>
                     </div>
                 @endif
-            </x-agro-card>
+            </x-agro.card>
         @empty
-            <x-agro-empty-state icon="document-text" title="{{ __('Sin registros') }}" :description="__('No hay registros de auditoría para esta parcela')" />
+            <x-agro.empty-state icon="document-text" title="{{ __('Sin registros') }}" :description="__('No hay registros de auditoría para esta parcela')" />
         @endforelse
     </div>
 

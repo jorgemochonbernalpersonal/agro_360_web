@@ -9,7 +9,7 @@
     </div>
 
     {{-- Header --}}
-    <x-agro-card>
+    <x-agro.card>
         <div class="flex items-start gap-4">
             <span class="text-6xl leading-none">{{ $pest->icon }}</span>
             <div class="flex-1 min-w-0">
@@ -27,46 +27,46 @@
                 </div>
             </div>
         </div>
-    </x-agro-card>
+    </x-agro.card>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {{-- Columna Principal --}}
         <div class="lg:col-span-2 space-y-6">
             {{-- Descripción --}}
             @if($pest->description)
-                <x-agro-card>
+                <x-agro.card>
                     <h2 class="text-base font-semibold text-zinc-900 mb-3">📝 {{ __('Descripción') }}</h2>
                     <p class="text-zinc-700">{{ $pest->description }}</p>
-                </x-agro-card>
+                </x-agro.card>
             @endif
 
             {{-- Síntomas --}}
             @if($pest->symptoms)
-                <x-agro-card>
+                <x-agro.card>
                     <h2 class="text-base font-semibold text-zinc-900 mb-3">🔍 {{ __('Síntomas y Signos') }}</h2>
                     <p class="text-zinc-700">{{ $pest->symptoms }}</p>
-                </x-agro-card>
+                </x-agro.card>
             @endif
 
             {{-- Ciclo de Vida --}}
             @if($pest->lifecycle)
-                <x-agro-card>
+                <x-agro.card>
                     <h2 class="text-base font-semibold text-zinc-900 mb-3">🔄 {{ __('Ciclo de Vida') }}</h2>
                     <p class="text-zinc-700">{{ $pest->lifecycle }}</p>
-                </x-agro-card>
+                </x-agro.card>
             @endif
 
             {{-- Prevención --}}
             @if($pest->prevention_methods)
-                <x-agro-card data-cy="prevention-methods-section">
+                <x-agro.card data-cy="prevention-methods-section">
                     <h2 class="text-base font-semibold text-zinc-900 mb-3">🛡️ {{ __('Métodos de Prevención') }}</h2>
                     <p class="text-zinc-700">{{ $pest->prevention_methods }}</p>
-                </x-agro-card>
+                </x-agro.card>
             @endif
 
             {{-- Métodos de Control IPM (PAC) --}}
             @if($pest->control_methods && count($pest->control_methods) > 0)
-                <x-agro-card data-cy="control-methods-section">
+                <x-agro.card data-cy="control-methods-section">
                     <h2 class="text-base font-semibold text-zinc-900 mb-3">⚙️ {{ __('Métodos de Control IPM (PAC)') }}</h2>
                     <p class="text-xs text-zinc-500 mb-3">{{ __('Ordenados por prioridad según el Plan de Acción Comunitario') }}</p>
                     <div class="flex flex-wrap gap-2">
@@ -88,12 +88,12 @@
                             </span>
                         @endforeach
                     </div>
-                </x-agro-card>
+                </x-agro.card>
             @endif
 
             {{-- Productos Eficaces --}}
             @if($pest->products->count() > 0)
-                <x-agro-card>
+                <x-agro.card>
                     <h2 class="text-base font-semibold text-zinc-900 mb-4">💊 {{ __('Productos Fitosanitarios Eficaces') }}</h2>
                     <div class="space-y-3">
                         @foreach($pest->products as $product)
@@ -110,7 +110,7 @@
                             </div>
                         @endforeach
                     </div>
-                </x-agro-card>
+                </x-agro.card>
             @endif
         </div>
 
@@ -126,7 +126,7 @@
 
             {{-- Meses de Riesgo --}}
             @if($pest->risk_months && count($pest->risk_months) > 0)
-                <x-agro-card>
+                <x-agro.card>
                     <h3 class="font-semibold text-zinc-900 mb-3">📅 {{ __('Meses de Riesgo') }}</h3>
                     <div class="grid grid-cols-3 gap-2">
                         @foreach([__('Ene'), __('Feb'), __('Mar'), __('Abr'), __('May'), __('Jun'), __('Jul'), __('Ago'), __('Sep'), __('Oct'), __('Nov'), __('Dic')] as $index => $month)
@@ -135,11 +135,11 @@
                             </div>
                         @endforeach
                     </div>
-                </x-agro-card>
+                </x-agro.card>
             @endif
 
             {{-- Acciones Rápidas --}}
-            <x-agro-card>
+            <x-agro.card>
                 <h3 class="font-semibold text-zinc-900 mb-3">⚡ {{ __('Acciones Rápidas') }}</h3>
                 <div class="space-y-2">
                     <a href="{{ roleRoute('viticulturist.digital-notebook.observation.create', ['pest_id' => $pest->id]) }}"
@@ -153,11 +153,11 @@
                         {{ __('Registrar Tratamiento') }}
                     </a>
                 </div>
-            </x-agro-card>
+            </x-agro.card>
 
             {{-- Historial --}}
             @if($pest->observations->count() > 0 || $pest->treatments->count() > 0)
-                <x-agro-card>
+                <x-agro.card>
                     <h3 class="font-semibold text-zinc-900 mb-3">📊 {{ __('Historial') }}</h3>
                     <div class="space-y-2 text-sm">
                         <div class="flex justify-between">
@@ -169,7 +169,7 @@
                             <span class="font-semibold text-zinc-900">{{ $pest->treatments->count() }}</span>
                         </div>
                     </div>
-                </x-agro-card>
+                </x-agro.card>
             @endif
         </div>
     </div>
