@@ -112,5 +112,5 @@
     </div>
 
     {{-- Paginación --}}
-    <x-agro-pagination :paginator="$logs" />
+    <x-agro.pagination :paginator="$logs" />
 </div>

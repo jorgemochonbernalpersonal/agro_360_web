@@ -133,7 +133,7 @@
                     </x-agro.card>
                 @endforeach
             </div>
-            <x-agro-pagination :paginator="$entries" />
+            <x-agro.pagination :paginator="$entries" />
         @else
             <x-agro.empty-state
                 icon="shield-check"

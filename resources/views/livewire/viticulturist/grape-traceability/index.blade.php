@@ -129,6 +129,6 @@
         </div>
     </div>
 
-    <x-agro-pagination :paginator="$entries" />
+    <x-agro.pagination :paginator="$entries" />
 
 </div>

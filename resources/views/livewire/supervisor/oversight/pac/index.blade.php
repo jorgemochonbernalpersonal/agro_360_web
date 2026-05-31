@@ -208,7 +208,7 @@
             @endforeach
         </div>
 
-        <x-agro-pagination :paginator="$plots" />
+        <x-agro.pagination :paginator="$plots" />
     @else
         <x-agro.empty-state
             icon="map"

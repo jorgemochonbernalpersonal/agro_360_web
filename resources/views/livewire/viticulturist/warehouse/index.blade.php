@@ -181,7 +181,7 @@
                 @endforeach
             </div>
 
-            <x-agro-pagination :paginator="$stocks" />
+            <x-agro.pagination :paginator="$stocks" />
 
         @else
             <x-agro.empty-state
@@ -391,7 +391,7 @@
                 @endforeach
             </div>
 
-            <x-agro-pagination :paginator="$supplies" />
+            <x-agro.pagination :paginator="$supplies" />
         @endif
 
     {{-- =====================================================
@@ -504,7 +504,7 @@
                 @endforeach
             </div>
 
-            <x-agro-pagination :paginator="$warehouses" />
+            <x-agro.pagination :paginator="$warehouses" />
 
         @else
             <x-agro.empty-state

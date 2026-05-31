@@ -73,6 +73,6 @@
         @endforelse
     </x-agro.card>
 
-    <x-agro-pagination :paginator="$inspections" />
+    <x-agro.pagination :paginator="$inspections" />
 
 </div>

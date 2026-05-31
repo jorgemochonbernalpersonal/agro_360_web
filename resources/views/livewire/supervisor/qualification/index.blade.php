@@ -172,7 +172,7 @@
                         </x-agro.card>
                     @endforeach
                 </div>
-                <x-agro-pagination :paginator="$qualifications" />
+                <x-agro.pagination :paginator="$qualifications" />
             @else
                 <x-agro.empty-state icon="star" title="{{ __('Sin calificaciones') }}" :description="__('No hay registros de calificación con estos filtros.')" />
             @endif

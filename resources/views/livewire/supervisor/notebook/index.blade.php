@@ -119,7 +119,7 @@
             @endforeach
         </div>
 
-        <x-agro-pagination :paginator="$requests" />
+        <x-agro.pagination :paginator="$requests" />
     @else
         <x-agro.empty-state
             icon="book-open"

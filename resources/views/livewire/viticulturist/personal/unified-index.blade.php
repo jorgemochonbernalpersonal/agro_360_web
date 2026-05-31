@@ -264,7 +264,7 @@
                 @endforeach
             </div>
 
-            <x-agro-pagination :paginator="$viticulturists" />
+            <x-agro.pagination :paginator="$viticulturists" />
 
         @else
             <x-agro.empty-state
@@ -366,7 +366,7 @@
                 @endforeach
             </div>
 
-            <x-agro-pagination :paginator="$crewsPaginated" />
+            <x-agro.pagination :paginator="$crewsPaginated" />
 
         @else
             <x-agro.empty-state

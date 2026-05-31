@@ -87,7 +87,7 @@
             </table>
         </div>
 
-        <x-agro-pagination :paginator="$blends" />
+        <x-agro.pagination :paginator="$blends" />
     @else
         <x-agro.empty-state
             icon="funnel"

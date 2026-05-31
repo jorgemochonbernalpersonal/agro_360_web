@@ -121,7 +121,7 @@
         @endforeach
     </div>
 
-    <x-agro-pagination :paginator="$notifications" />
+    <x-agro.pagination :paginator="$notifications" />
 @else
     <x-agro.empty-state
         icon="bell"

@@ -141,7 +141,7 @@
                 @endforeach
             </div>
 
-            <x-agro-pagination :paginator="$activities" />
+            <x-agro.pagination :paginator="$activities" />
         @else
             <x-agro.empty-state
                 icon="clipboard-document-list"

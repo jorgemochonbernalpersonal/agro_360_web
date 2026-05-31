@@ -47,7 +47,7 @@
                     </div>
                 @endforeach
             </div>
-            <x-agro-pagination :paginator="$pending" />
+            <x-agro.pagination :paginator="$pending" />
         @endif
     </x-agro.card>
 </div>

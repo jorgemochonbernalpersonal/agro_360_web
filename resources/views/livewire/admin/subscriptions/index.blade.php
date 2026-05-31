@@ -321,7 +321,7 @@
             @endforeach
 
             <x-slot name="pagination">
-                <x-agro-pagination :paginator="$subscriptions" />
+                <x-agro.pagination :paginator="$subscriptions" />
             </x-slot>
         @endif
     </x-agro.data-table>

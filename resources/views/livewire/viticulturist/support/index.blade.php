@@ -94,7 +94,7 @@
                     </x-agro.card>
                 @endforeach
             </div>
-            <x-agro-pagination :paginator="$tickets" />
+            <x-agro.pagination :paginator="$tickets" />
         @else
             <x-agro.empty-state
                 icon="ticket"

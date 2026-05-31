@@ -76,7 +76,7 @@
             @endforeach
         </div>
 
-        <x-agro-pagination :paginator="$rooms" />
+        <x-agro.pagination :paginator="$rooms" />
     @endif
 
 </div>

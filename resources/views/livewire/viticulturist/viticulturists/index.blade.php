@@ -142,7 +142,7 @@
             @endforeach
         </div>
 
-        <x-agro-pagination :paginator="$viticulturists" />
+        <x-agro.pagination :paginator="$viticulturists" />
     @endif
 
 </div>

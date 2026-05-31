@@ -164,7 +164,7 @@
             @endforeach
         </div>
 
-        <x-agro-pagination :paginator="$records" />
+        <x-agro.pagination :paginator="$records" />
     @endif
 
     {{-- Modal Filtros --}}

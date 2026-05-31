@@ -93,7 +93,7 @@
             </table>
         </div>
 
-        <x-agro-pagination :paginator="$tastingNotes" />
+        <x-agro.pagination :paginator="$tastingNotes" />
     @else
         <x-agro.empty-state
             icon="beaker"

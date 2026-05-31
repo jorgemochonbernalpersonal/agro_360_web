@@ -132,7 +132,7 @@
                     @endforeach
                 </div>
 
-                <x-agro-pagination :paginator="$labels" />
+                <x-agro.pagination :paginator="$labels" />
             @else
                 <x-agro.empty-state icon="tag" title="{{ __('No hay solicitudes') }}" :description="__('No hay solicitudes de contraetiquetas.')" />
             @endif

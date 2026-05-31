@@ -147,7 +147,7 @@
                 @endforeach
             </div>
 
-            <x-agro-pagination :paginator="$authorizations" />
+            <x-agro.pagination :paginator="$authorizations" />
         @else
             <x-agro.empty-state
                 icon="identification"

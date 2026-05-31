@@ -92,6 +92,6 @@
         </div>
 
         {{-- Paginación --}}
-        <x-agro-pagination :paginator="$paginatedPlots" />
+        <x-agro.pagination :paginator="$paginatedPlots" />
     @endif
 </div>

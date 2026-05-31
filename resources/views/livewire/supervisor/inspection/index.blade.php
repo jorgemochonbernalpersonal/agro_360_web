@@ -165,7 +165,7 @@
                         </x-agro.card>
                     @endforeach
                 </div>
-                <x-agro-pagination :paginator="$inspections" />
+                <x-agro.pagination :paginator="$inspections" />
             @else
                 <x-agro.empty-state icon="clipboard-document-check" title="{{ __('Sin inspecciones') }}" :description="__('No hay inspecciones registradas con estos filtros.')" />
             @endif

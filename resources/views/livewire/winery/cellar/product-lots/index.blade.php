@@ -212,7 +212,7 @@
                 @endforeach
             </div>
 
-            <x-agro-pagination :paginator="$lots" />
+            <x-agro.pagination :paginator="$lots" />
         @elseif ($currentTab === 'active')
             <x-agro.empty-state
                 icon="beaker"

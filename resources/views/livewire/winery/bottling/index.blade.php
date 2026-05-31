@@ -144,7 +144,7 @@
                 @endforeach
             </div>
 
-            <x-agro-pagination :paginator="$bottlings" />
+            <x-agro.pagination :paginator="$bottlings" />
         @else
             <x-agro.empty-state
                 icon="archive-box-arrow-down"

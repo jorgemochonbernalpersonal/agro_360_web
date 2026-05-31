@@ -149,7 +149,7 @@
                 @endforeach
             </div>
 
-            <x-agro-pagination :paginator="$losses" />
+            <x-agro.pagination :paginator="$losses" />
         @else
             <x-agro.empty-state
                 icon="exclamation-triangle"

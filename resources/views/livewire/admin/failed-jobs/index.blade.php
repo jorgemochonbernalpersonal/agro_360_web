@@ -116,6 +116,6 @@
             </div>
         @endif
 
-        <x-agro-pagination :paginator="$jobs" />
+        <x-agro.pagination :paginator="$jobs" />
     </x-agro.card>
 </div>

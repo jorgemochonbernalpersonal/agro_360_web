@@ -131,7 +131,7 @@
                 @endforeach
             </div>
 
-            <x-agro-pagination :paginator="$growers" />
+            <x-agro.pagination :paginator="$growers" />
         @else
             <x-agro.empty-state icon="users" title="{{ __('No hay viticultores') }}" :description="__('No hay viticultores adscritos a esta denominación.')" />
         @endif

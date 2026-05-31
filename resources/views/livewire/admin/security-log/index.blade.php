@@ -136,7 +136,7 @@
                 </table>
             </div>
 
-            <x-agro-pagination :paginator="$entries" />
+            <x-agro.pagination :paginator="$entries" />
         @endif
     </x-agro.card>
 </div>
