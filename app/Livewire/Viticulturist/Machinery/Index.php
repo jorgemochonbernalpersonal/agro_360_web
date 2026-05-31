@@ -3,33 +3,22 @@
 namespace App\Livewire\Viticulturist\Machinery;
 
 use App\Models\Machinery;
+use App\Livewire\Concerns\WithListing;
 use App\Livewire\Concerns\WithToastNotifications;
 use Livewire\Component;
-use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
 
 class Index extends Component
 {
-    use WithPagination, WithToastNotifications;
+    use WithListing, WithToastNotifications;
 
-    public $currentTab = 'active'; // 'active', 'inactive'
-    public $search     = '';
     public $typeFilter = '';
 
     protected $queryString = [
-        'currentTab' => ['as' => 'tab', 'except' => 'active'],
-        'search'     => ['except' => ''],
         'typeFilter' => ['except' => ''],
     ];
 
-    public function updatingSearch()     { $this->resetPage(); }
     public function updatingTypeFilter() { $this->resetPage(); }
-
-    public function switchTab($tab)
-    {
-        $this->currentTab = $tab;
-        $this->resetPage();
-    }
 
     public function toggleActive($machineryId)
     {
