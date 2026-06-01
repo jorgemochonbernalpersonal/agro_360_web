@@ -28,7 +28,7 @@
             <flux:input wire:model="honeypot" type="text" autocomplete="off" tabindex="-1" />
         </div>
 
-        <form wire:submit="login" @submit.prevent method="post" class="space-y-4">
+        <form wire:submit="login" @submit.prevent class="space-y-4">
 
             <flux:field>
                 <flux:label>{{ __('Email') }}</flux:label>
