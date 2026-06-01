@@ -340,4 +340,77 @@ class MixedInvoiceCreateTest extends ProducerTestCase
         $foreignLot->refresh();
         $this->assertEquals(100, (int) $foreignLot->available_quantity, 'El lote ajeno no debe ser tocado');
     }
+
+    public function test_producer_cannot_invoice_another_viticulturists_harvest(): void
+    {
+        $foreignHarvest = $this->makeForeignNotebookHarvest($this->makeOtherProducer(), 500);
+
+        // El producer autenticado inyecta el harvest_id ajeno en el estado del cliente.
+        Livewire::test(Create::class)
+            ->set('client_id', (string) $this->client->id)
+            ->set('client_address_id', (string) $this->address->id)
+            ->set('invoice_date', now()->toDateString())
+            ->set('delivery_note_date', now()->toDateString())
+            ->set('items', [$this->harvestItem($foreignHarvest->id, 200)])
+            ->call('save');
+
+        // La transacción debe revertir: ni factura, ni ítem, ni reserva de stock sobre la cosecha ajena.
+        $this->assertDatabaseMissing('invoice_items', [
+            'harvest_id' => $foreignHarvest->id,
+        ]);
+        $this->assertDatabaseMissing('harvest_stocks', [
+            'harvest_id'    => $foreignHarvest->id,
+            'movement_type' => 'reserve',
+        ]);
+        $this->assertDatabaseMissing('invoices', [
+            'user_id'      => $this->producer->id,
+            'invoice_type' => 'producer_sale',
+        ]);
+    }
+
+    /**
+     * Cosecha de cuaderno perteneciente a OTRO viticultor (su propia parcela,
+     * plantación, campaña y actividad). Sirve para probar el aislamiento.
+     */
+    private function makeForeignNotebookHarvest(\App\Models\User $owner, float $weight = 500): Harvest
+    {
+        $grapeVariety = GrapeVariety::firstOrCreate(
+            ['code' => 'TEMP'],
+            ['name' => 'Tempranillo', 'color' => 'red']
+        );
+
+        $plot = Plot::create([
+            'viticulturist_id' => $owner->id,
+            'name'             => 'Parcela Ajena',
+            'reference'        => 'PA-999',
+            'area'             => 2.0,
+            'active'           => true,
+        ]);
+
+        $planting = PlotPlanting::create([
+            'plot_id'          => $plot->id,
+            'grape_variety_id' => $grapeVariety->id,
+            'area_planted'     => 2.0,
+            'planting_year'    => now()->year - 5,
+            'status'           => 'active',
+        ]);
+
+        $campaign = Campaign::getOrCreateActiveForYear($owner->id, now()->year);
+
+        $activity = AgriculturalActivity::create([
+            'plot_id'          => $plot->id,
+            'viticulturist_id' => $owner->id,
+            'campaign_id'      => $campaign->id,
+            'activity_type'    => 'harvest',
+            'activity_date'    => now()->toDateString(),
+        ]);
+
+        return Harvest::withoutEvents(fn () => Harvest::create([
+            'activity_id'        => $activity->id,
+            'plot_planting_id'   => $planting->id,
+            'harvest_start_date' => now()->toDateString(),
+            'total_weight'       => $weight,
+            'status'             => 'active',
+        ]));
+    }
 }
