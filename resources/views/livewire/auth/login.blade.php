@@ -1,4 +1,8 @@
-<div class="w-full max-w-md mx-auto" x-data="{ showPassword: false }">
+<div class="w-full max-w-md mx-auto"
+     x-data="{ showPassword: false, captchaVerified: false }"
+     @captcha-verified.window="captchaVerified = true"
+     @captcha-expired.window="captchaVerified = false"
+     @captcha-reset.window="captchaVerified = false">
 
     {{-- Logo --}}
     <div class="text-center mb-8">
@@ -80,20 +84,32 @@
                                      if (this.widgetId !== null && typeof grecaptcha !== 'undefined') {
                                          grecaptcha.reset(this.widgetId);
                                      }
+                                     window.dispatchEvent(new CustomEvent('captcha-reset'));
                                  });
                              },
                              renderCaptcha() {
                                  if (this.widgetId === null && typeof grecaptcha !== 'undefined' && grecaptcha.render) {
                                      this.widgetId = grecaptcha.render('recaptcha-container', {
                                          'sitekey': '{{ config('services.recaptcha.site_key', '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI') }}',
-                                         'callback': (token) => @this.set('recaptchaToken', token),
-                                         'expired-callback': () => @this.set('recaptchaToken', ''),
+                                         'callback': (token) => {
+                                             @this.set('recaptchaToken', token);
+                                             window.dispatchEvent(new CustomEvent('captcha-verified'));
+                                         },
+                                         'expired-callback': () => {
+                                             @this.set('recaptchaToken', '');
+                                             window.dispatchEvent(new CustomEvent('captcha-expired'));
+                                         },
                                      });
                                  }
                              }
                          }">
                         <div id="recaptcha-container"></div>
                     </div>
+                    <p x-show="captchaVerified" x-cloak
+                       class="text-center text-sm text-green-600 font-medium mt-2 flex items-center justify-center gap-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        {{ __('Verificado. Ahora pulsa Iniciar Sesión.') }}
+                    </p>
                 </flux:callout>
             @endif
 
@@ -101,7 +117,9 @@
                 <flux:checkbox wire:model="remember" :label="__('Recordarme en este dispositivo')" />
             </div>
 
-            <flux:button type="submit" variant="primary" class="w-full" wire:loading.attr="disabled">
+            <flux:button type="submit" variant="primary" class="w-full"
+                wire:loading.attr="disabled"
+                @if($showCaptcha) :disabled="!captchaVerified" @endif>
                 <span wire:loading.remove wire:target="login">{{ __('Iniciar Sesión') }}</span>
                 <span wire:loading wire:target="login" class="flex items-center gap-2">
                     <flux:icon icon="arrow-path" variant="micro" class="animate-spin" />
