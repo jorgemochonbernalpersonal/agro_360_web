@@ -75,7 +75,11 @@ class Login extends Component
                     ]);
                 }
                 
-                if (!$this->validateRecaptcha($this->recaptchaToken)) {
+                $token = $this->recaptchaToken;
+                $this->recaptchaToken = '';
+                $this->dispatch('recaptcha-reset');
+
+                if (!$this->validateRecaptcha($token)) {
                     SecurityLogger::logCaptchaValidationFailed($this->email);
                     throw ValidationException::withMessages([
                         'email' => __('La verificación CAPTCHA falló. Por favor, inténtalo de nuevo.'),
@@ -128,8 +132,10 @@ class Login extends Component
 
         $user = Auth::user();
         
-        // Loguear login exitoso si hubo intentos fallidos previos
+        // Limpiar contador de fallos al loguearse correctamente
         $previousFailedAttempts = RateLimiter::attempts($failedKey);
+        RateLimiter::clear($failedKey);
+
         if ($previousFailedAttempts > 0) {
             SecurityLogger::logSuccessfulLoginAfterFailures(
                 $user->id,

@@ -63,40 +63,54 @@
 
             {{-- reCAPTCHA tras varios intentos fallidos --}}
             @if($showCaptcha)
-                <flux:callout variant="warning" icon="shield-exclamation">
-                    <flux:callout.text>{{ __('Por seguridad, verifica que no eres un robot') }}</flux:callout.text>
-                    <div class="flex justify-center mt-3"
-                         x-data="{
-                             widgetId: null,
-                             init() {
-                                 if (typeof grecaptcha === 'undefined') {
-                                     const s = document.createElement('script');
-                                     s.src = 'https://www.google.com/recaptcha/api.js?onload=onRecaptchaLoad&render=explicit';
-                                     s.async = true; s.defer = true;
-                                     document.head.appendChild(s);
-                                 } else { this.renderCaptcha(); }
-                                 window.onRecaptchaLoad = () => this.renderCaptcha();
-                             },
-                             renderCaptcha() {
-                                 if (this.widgetId === null && typeof grecaptcha !== 'undefined' && grecaptcha.render) {
-                                     this.widgetId = grecaptcha.render('recaptcha-container', {
-                                         'sitekey': '{{ config('services.recaptcha.site_key', '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI') }}',
-                                         'callback': (token) => @this.set('recaptchaToken', token),
-                                         'expired-callback': () => @this.set('recaptchaToken', ''),
+                @if($recaptchaToken)
+                    {{-- Token recibido: mostrar confirmación, ocultar widget --}}
+                    <flux:callout variant="success" icon="check-circle">
+                        <flux:callout.text>{{ __('Verificado. Ahora pulsa Iniciar Sesión.') }}</flux:callout.text>
+                    </flux:callout>
+                @else
+                    {{-- Pendiente de verificar: mostrar widget --}}
+                    <flux:callout variant="warning" icon="shield-exclamation">
+                        <flux:callout.text>{{ __('Por seguridad, verifica que no eres un robot') }}</flux:callout.text>
+                        <div class="flex justify-center mt-3"
+                             x-data="{
+                                 widgetId: null,
+                                 init() {
+                                     if (typeof grecaptcha === 'undefined') {
+                                         const s = document.createElement('script');
+                                         s.src = 'https://www.google.com/recaptcha/api.js?onload=onRecaptchaLoad&render=explicit';
+                                         s.async = true; s.defer = true;
+                                         document.head.appendChild(s);
+                                     } else { this.renderCaptcha(); }
+                                     window.onRecaptchaLoad = () => this.renderCaptcha();
+                                     $wire.on('recaptcha-reset', () => {
+                                         if (this.widgetId !== null && typeof grecaptcha !== 'undefined') {
+                                             grecaptcha.reset(this.widgetId);
+                                         }
                                      });
+                                 },
+                                 renderCaptcha() {
+                                     if (this.widgetId === null && typeof grecaptcha !== 'undefined' && grecaptcha.render) {
+                                         this.widgetId = grecaptcha.render('recaptcha-container', {
+                                             'sitekey': '{{ config('services.recaptcha.site_key', '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI') }}',
+                                             'callback': (token) => @this.set('recaptchaToken', token),
+                                             'expired-callback': () => @this.set('recaptchaToken', ''),
+                                         });
+                                     }
                                  }
-                             }
-                         }">
-                        <div id="recaptcha-container"></div>
-                    </div>
-                </flux:callout>
+                             }">
+                            <div id="recaptcha-container"></div>
+                        </div>
+                    </flux:callout>
+                @endif
             @endif
 
             <div class="flex items-center">
                 <flux:checkbox wire:model="remember" :label="__('Recordarme en este dispositivo')" />
             </div>
 
-            <flux:button type="submit" variant="primary" class="w-full" wire:loading.attr="disabled">
+            <flux:button type="submit" variant="primary" class="w-full"
+                wire:loading.attr="disabled" wire:target="login">
                 <span wire:loading.remove wire:target="login">{{ __('Iniciar Sesión') }}</span>
                 <span wire:loading wire:target="login" class="flex items-center gap-2">
                     <flux:icon icon="arrow-path" variant="micro" class="animate-spin" />
