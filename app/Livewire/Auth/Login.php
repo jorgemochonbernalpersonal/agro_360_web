@@ -132,8 +132,10 @@ class Login extends Component
 
         $user = Auth::user();
         
-        // Loguear login exitoso si hubo intentos fallidos previos
+        // Limpiar contador de fallos al loguearse correctamente
         $previousFailedAttempts = RateLimiter::attempts($failedKey);
+        RateLimiter::clear($failedKey);
+
         if ($previousFailedAttempts > 0) {
             SecurityLogger::logSuccessfulLoginAfterFailures(
                 $user->id,
