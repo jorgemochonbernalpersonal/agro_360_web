@@ -89,9 +89,12 @@ class NotebookController extends Controller
         $activity = AgriculturalActivity::forViticulturist($user->id)
             ->findOrFail((int) $id);
 
-        $this->loadDetails($activity);
+        // El móvil consume el detalle con el mismo shape plano que el listado
+        // (MobileNotebookResource), por lo que cargamos las mismas relaciones.
+        $relations = self::MOBILE_RELATIONS[$activity->activity_type] ?? ['plot'];
+        $activity->load($relations);
 
-        return response()->json(['data' => new ActivityResource($activity)]);
+        return response()->json(['data' => new MobileNotebookResource($activity)]);
     }
 
     // ─── POST /viticulturist/notebook ─────────────────────────────────────────

@@ -202,8 +202,20 @@ class Login extends Component
             ]);
 
             $result = $response->json();
+            $success = isset($result['success']) && $result['success'] === true;
 
-            return isset($result['success']) && $result['success'] === true;
+            if (! $success) {
+                // error-codes de Google revelan el motivo exacto del rechazo:
+                // invalid-input-secret (secret mal), invalid-input-response /
+                // timeout-or-duplicate (token caducado o reusado), etc.
+                \Log::warning('reCAPTCHA rechazado por Google', [
+                    'error_codes' => $result['error-codes'] ?? [],
+                    'hostname' => $result['hostname'] ?? null,
+                    'ip' => request()->ip(),
+                ]);
+            }
+
+            return $success;
         } catch (\Exception $e) {
             \Log::warning('reCAPTCHA validation failed', [
                 'error' => $e->getMessage(),

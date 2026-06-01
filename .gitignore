@@ -5,6 +5,10 @@
 # /public/build  # SIEMPRE COMENTADO - No descomentar nunca
 /public/hot  # Solo desarrollo local (HMR de Vite)
 /public/storage
+# Assets publicados de Livewire: NO commitear. En debug Livewire pide livewire.js
+# (no minificado) y rompe el login con 405. Dejar que Livewire los sirva por su
+# ruta dinámica /livewire/livewire.js (funciona con APP_DEBUG on y off).
+/public/vendor/livewire
 /storage/*.key
 /storage/pail
 /storage/framework/views/*
