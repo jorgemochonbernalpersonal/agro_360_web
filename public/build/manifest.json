@@ -11,12 +11,12 @@
       "css/vendor-CIGW-MKW.css"
     ]
   },
-  "_vendor-axios-DBnUWTm1.js": {
-    "file": "js/vendor-axios-DBnUWTm1.js",
+  "_vendor-axios-C4NBEVWH.js": {
+    "file": "js/vendor-axios-C4NBEVWH.js",
     "name": "vendor-axios"
   },
   "resources/css/app.css": {
-    "file": "css/app-DRDydDSe.css",
+    "file": "css/app-DKTHxLIq.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -25,12 +25,12 @@
     ]
   },
   "resources/js/app.js": {
-    "file": "js/app-B7s-w-4W.js",
+    "file": "js/app-BzjRGrbC.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
-      "_vendor-axios-DBnUWTm1.js"
+      "_vendor-axios-C4NBEVWH.js"
     ],
     "dynamicImports": [
       "_vendor-Dl5p-nEC.js",
