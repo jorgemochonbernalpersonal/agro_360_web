@@ -76,6 +76,11 @@
                                      document.head.appendChild(s);
                                  } else { this.renderCaptcha(); }
                                  window.onRecaptchaLoad = () => this.renderCaptcha();
+                                 $wire.on('recaptcha-reset', () => {
+                                     if (this.widgetId !== null && typeof grecaptcha !== 'undefined') {
+                                         grecaptcha.reset(this.widgetId);
+                                     }
+                                 });
                              },
                              renderCaptcha() {
                                  if (this.widgetId === null && typeof grecaptcha !== 'undefined' && grecaptcha.render) {

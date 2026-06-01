@@ -75,7 +75,11 @@ class Login extends Component
                     ]);
                 }
                 
-                if (!$this->validateRecaptcha($this->recaptchaToken)) {
+                $token = $this->recaptchaToken;
+                $this->recaptchaToken = '';
+                $this->dispatch('recaptcha-reset');
+
+                if (!$this->validateRecaptcha($token)) {
                     SecurityLogger::logCaptchaValidationFailed($this->email);
                     throw ValidationException::withMessages([
                         'email' => __('La verificación CAPTCHA falló. Por favor, inténtalo de nuevo.'),
