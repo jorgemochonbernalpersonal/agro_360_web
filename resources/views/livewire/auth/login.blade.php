@@ -119,7 +119,7 @@
 
             <flux:button type="submit" variant="primary" class="w-full"
                 wire:loading.attr="disabled"
-                @if($showCaptcha) :disabled="!captchaVerified" @endif>
+                :disabled="{{ $showCaptcha ? '!captchaVerified' : 'false' }}">
                 <span wire:loading.remove wire:target="login">{{ __('Iniciar Sesión') }}</span>
                 <span wire:loading wire:target="login" class="flex items-center gap-2">
                     <flux:icon icon="arrow-path" variant="micro" class="animate-spin" />
