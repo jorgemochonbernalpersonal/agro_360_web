@@ -25,6 +25,12 @@ class Login extends Component
 
     public function mount(): void
     {
+        // Redirigir si llegan credenciales como query params (URLs históricas de GET)
+        if (request()->query('email') || request()->query('password')) {
+            redirect()->route('login')->send();
+            return;
+        }
+
         if (session('verified_email')) {
             $this->email = session('verified_email');
         } elseif (request()->query('reset_email')) {
