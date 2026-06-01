@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Traits\Auditable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,6 +13,19 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class Container extends Model
 {
     use HasFactory;
+    use Auditable;
+
+    /**
+     * Campos excluidos de la auditoría de configuración.
+     * El stock (uva en kg, vino en litros) se audita en container_histories
+     * vía los services de stock; aquí solo auditamos metadatos del depósito.
+     */
+    protected $auditExclude = [
+        'used_capacity',
+        'wine_volume_liters',
+        'created_at',
+        'updated_at',
+    ];
 
     protected $fillable = [
         'user_id',
@@ -213,12 +227,27 @@ class Container extends Model
      */
     public function decrementUsedCapacity(float $quantity): bool
     {
-        $actual = min($quantity, (float) $this->used_capacity);
+        $available = (float) $this->used_capacity;
+        $actual    = min($quantity, $available);
+
+        // El truncamiento evita valores negativos, pero también puede ocultar
+        // un descuadre de stock (se pidió descontar más de lo que había).
+        // Lo dejamos registrado en lugar de silenciarlo.
+        if ($quantity - $available > 0.001) {
+            \Illuminate\Support\Facades\Log::warning('[Container] decrementUsedCapacity truncado: posible descuadre de stock', [
+                'container_id' => $this->id,
+                'requested'    => $quantity,
+                'available'    => $available,
+                'applied'      => $actual,
+            ]);
+        }
+
         if ($actual > 0) {
             $this->decrement('used_capacity', $actual);
             $this->refresh();
         }
-        return true;
+
+        return ($quantity - $actual) <= 0.001;
     }
 
     /**

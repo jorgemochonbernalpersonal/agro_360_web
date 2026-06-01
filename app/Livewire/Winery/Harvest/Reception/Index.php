@@ -43,7 +43,13 @@ class Index extends AbstractIndex
         $wineryId = Auth::id();
 
         $harvest = Harvest::where('winery_id', $wineryId)->findOrFail($id);
-        $oldWeight = (float) $harvest->total_weight;
+
+        // Guard: no anular una recepción ya facturada — dejaría el InvoiceItem
+        // apuntando a una recepción cancelada y el stock vendido descuadrado.
+        if ($harvest->isInvoiced()) {
+            $this->toastError(__('No se puede anular una recepción incluida en una liquidación.'));
+            return;
+        }
 
         $harvest->update(['status' => 'cancelled']);
 

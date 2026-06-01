@@ -129,7 +129,7 @@
         </x-agro.card>
 
         {{-- Paginación --}}
-        <x-agro-pagination :paginator="$exports" />
+        <x-agro.pagination :paginator="$exports" />
 
         {{-- Resumen por estado --}}
         <div class="grid grid-cols-2 md:grid-cols-5 gap-4">

@@ -238,7 +238,7 @@
                 @endforeach
             </div>
 
-            <x-agro-pagination :paginator="$entries" />
+            <x-agro.pagination :paginator="$entries" />
         @endif
     </div>
 

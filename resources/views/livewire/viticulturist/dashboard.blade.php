@@ -90,17 +90,17 @@
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4" data-cy="dashboard-kpi-cards">
         {{-- Parcelas + Área --}}
         <div data-cy="kpi-plots">
-            <x-agro-stat-card :label="__('Parcelas')" :value="$this->totalPlots" :description="number_format($this->totalArea, 1).' ha'" icon="map" color="green" />
+            <x-agro.stat-card :label="__('Parcelas')" :value="$this->totalPlots" :description="number_format($this->totalArea, 1).' ha'" icon="map" color="green" />
         </div>
 
         {{-- Actividades --}}
         <div data-cy="kpi-activities">
-            <x-agro-stat-card :label="__('Actividades')" :value="$this->activitiesThisMonth" :description="__('este mes')" icon="document-text" color="purple" />
+            <x-agro.stat-card :label="__('Actividades')" :value="$this->activitiesThisMonth" :description="__('este mes')" icon="document-text" color="purple" />
         </div>
 
         {{-- Cosechado --}}
         <div data-cy="kpi-harvest">
-            <x-agro-stat-card :label="__('Cosechado')" :value="number_format($this->totalHarvested / 1000, 1).' t'" :description="__('toneladas').' '.now()->year" icon="star" color="amber" />
+            <x-agro.stat-card :label="__('Cosechado')" :value="number_format($this->totalHarvested / 1000, 1).' t'" :description="__('toneladas').' '.now()->year" icon="star" color="amber" />
         </div>
 
         {{-- Teledetección - condicional --}}
@@ -153,7 +153,7 @@
     </div>
 
     {{-- Consejo estacional --}}
-    <x-agro-card data-cy="seasonal-tip">
+    <x-agro.card data-cy="seasonal-tip">
         <div class="flex items-start gap-4">
             <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center text-xl flex-shrink-0">
                 {{ $this->currentTip['icon'] }}
@@ -167,7 +167,7 @@
                 {{ $this->currentTip['action'] }}
             </a>
         </div>
-    </x-agro-card>
+    </x-agro.card>
 
     {{-- PAC Compliance Section --}}
     <div x-data="{ pacOpen: true }" class="bg-white rounded-xl shadow-lg border border-green-200">
@@ -203,7 +203,7 @@
     {{-- Main Content Grid --}}
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {{-- Distribución por Variedad --}}
-        <x-agro-card data-cy="chart-variety">
+        <x-agro.card data-cy="chart-variety">
             <h3 class="text-base font-bold text-zinc-900 mb-4">{{ __('Distribución por Variedad') }}</h3>
 
             @if($this->plotsByVariety->count() > 0)
@@ -226,17 +226,17 @@
                     @endforeach
                 </div>
             @else
-                <x-agro-empty-state icon="map" :title="__('Sin plantaciones')" :description="__('Aún no tienes plantaciones registradas')">
+                <x-agro.empty-state icon="map" :title="__('Sin plantaciones')" :description="__('Aún no tienes plantaciones registradas')">
                     <a href="{{ route('plots.index') }}" wire:navigate
                        class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-lg transition-colors">
                         {{ __('Añadir plantaciones a tus parcelas') }}
                     </a>
-                </x-agro-empty-state>
+                </x-agro.empty-state>
             @endif
-        </x-agro-card>
+        </x-agro.card>
 
         {{-- Actividades Recientes --}}
-        <x-agro-card data-cy="recent-activities">
+        <x-agro.card data-cy="recent-activities">
             @php
                 $activityTypeLabels = [
                     'treatment'     => __('Tratamiento'),
@@ -282,14 +282,14 @@
                     @endforeach
                 </div>
             @else
-                <x-agro-empty-state icon="document-text" :title="__('Cuaderno vacío')" :description="__('Registra tratamientos, riegos, fertilizaciones y más')">
+                <x-agro.empty-state icon="document-text" :title="__('Cuaderno vacío')" :description="__('Registra tratamientos, riegos, fertilizaciones y más')">
                     <a href="{{ route('viticulturist.quick-entry') }}" wire:navigate
                        class="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold rounded-lg transition-colors">
                         {{ __('Primera actividad') }}
                     </a>
-                </x-agro-empty-state>
+                </x-agro.empty-state>
             @endif
-        </x-agro-card>
+        </x-agro.card>
     </div>
 
     {{-- Quick Links Row --}}
@@ -401,7 +401,7 @@
 
     {{-- Cosechas Recientes --}}
     @if($this->recentHarvests->count() > 0)
-        <x-agro-card data-cy="recent-harvests">
+        <x-agro.card data-cy="recent-harvests">
             <h3 class="text-base font-bold text-zinc-900 mb-4">{{ __('Cosechas Recientes') }}</h3>
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 @foreach($this->recentHarvests as $harvest)
@@ -413,6 +413,6 @@
                     </div>
                 @endforeach
             </div>
-        </x-agro-card>
+        </x-agro.card>
     @endif
 </div>

@@ -118,7 +118,7 @@
             @endforeach
         </div>
 
-        <x-agro-pagination :paginator="$pests" />
+        <x-agro.pagination :paginator="$pests" />
 
     @else
         <x-agro.empty-state

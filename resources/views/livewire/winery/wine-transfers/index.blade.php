@@ -151,7 +151,7 @@
                 @endforeach
             </div>
 
-            <x-agro-pagination :paginator="$transfers" />
+            <x-agro.pagination :paginator="$transfers" />
         @else
             <x-agro.empty-state
                 icon="arrows-right-left"

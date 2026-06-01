@@ -173,7 +173,7 @@
             @endforeach
         </div>
 
-        <x-agro-pagination :paginator="$campaigns" />
+        <x-agro.pagination :paginator="$campaigns" />
 
     @else
         <x-agro.empty-state

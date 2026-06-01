@@ -1,4 +1,4 @@
-@props(['padding' => true, 'color' => null])
+@props(['padding' => true, 'color' => null, 'title' => null])
 
 @php
 $headerBg = match($color) {
@@ -21,6 +21,9 @@ $headerBg = match($color) {
     @endif
 
     <div @class(['px-6 py-5' => $padding, 'p-0' => !$padding])>
+        @if($title && !isset($header))
+            <h3 class="font-semibold text-zinc-800 mb-3">{{ $title }}</h3>
+        @endif
         {{ $slot }}
     </div>
 

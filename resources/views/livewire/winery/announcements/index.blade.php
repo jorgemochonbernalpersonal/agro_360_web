@@ -48,7 +48,7 @@
                 </x-agro.card>
             @endforeach
         </div>
-        <x-agro-pagination :paginator="$announcements" />
+        <x-agro.pagination :paginator="$announcements" />
     @else
         <x-agro.empty-state
             icon="megaphone"

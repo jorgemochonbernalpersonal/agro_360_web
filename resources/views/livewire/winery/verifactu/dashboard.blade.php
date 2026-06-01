@@ -144,7 +144,7 @@
                     @endforeach
                 </div>
 
-                <x-agro-pagination :paginator="$pending" />
+                <x-agro.pagination :paginator="$pending" />
             </x-agro.card>
         @else
             <x-agro.empty-state
@@ -210,7 +210,7 @@
                     @endforeach
                 </div>
 
-                <x-agro-pagination :paginator="$sent" />
+                <x-agro.pagination :paginator="$sent" />
             </x-agro.card>
         @else
             <x-agro.empty-state
@@ -270,7 +270,7 @@
                     @endforeach
                 </div>
 
-                <x-agro-pagination :paginator="$errors" />
+                <x-agro.pagination :paginator="$errors" />
             </x-agro.card>
         @else
             <x-agro.empty-state

@@ -63,13 +63,17 @@ class Create extends Component
 
         try {
             DB::transaction(function () use ($user) {
-                // Obtener relación con bodega si es viticultor invitado
+                // Vincular a bodega solo si el viticultor tiene exactamente una.
+                // Con múltiples bodegas no hay forma de saber a cuál pertenece esta campaña
+                // sin un selector explícito, por lo que se deja sin vincular.
                 $wineryViticulturistId = null;
                 if ($user->isViticulturist()) {
-                    $wineryRelation = WineryViticulturist::where('viticulturist_id', $user->id)
+                    $wineryRelations = WineryViticulturist::where('viticulturist_id', $user->id)
                         ->whereNotNull('winery_id')
-                        ->first();
-                    $wineryViticulturistId = $wineryRelation?->id;
+                        ->get();
+                    if ($wineryRelations->count() === 1) {
+                        $wineryViticulturistId = $wineryRelations->first()->id;
+                    }
                 }
 
                 $campaign = Campaign::create([

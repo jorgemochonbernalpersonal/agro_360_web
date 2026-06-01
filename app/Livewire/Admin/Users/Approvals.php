@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Users;
 
+use App\Livewire\Concerns\WithReadOnlyGuard;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\User;
 use App\Services\SecurityLogger;
@@ -11,7 +12,7 @@ use Livewire\WithPagination;
 
 class Approvals extends Component
 {
-    use WithPagination, WithToastNotifications;
+    use WithPagination, WithToastNotifications, WithReadOnlyGuard;
 
     public string $search = '';
 
@@ -21,6 +22,10 @@ class Approvals extends Component
 
     public function approve(int $userId): void
     {
+        if ($this->isReadOnly()) {
+            return;
+        }
+
         $user = User::findOrFail($userId);
         $user->can_login = true;
         $user->save();
@@ -36,6 +41,10 @@ class Approvals extends Component
 
     public function reject(int $userId): void
     {
+        if ($this->isReadOnly()) {
+            return;
+        }
+
         $user = User::findOrFail($userId);
         $name = $user->name;
 

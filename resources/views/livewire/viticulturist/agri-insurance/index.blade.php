@@ -140,7 +140,7 @@
                 </x-agro.card>
             @endforeach
         </div>
-        <x-agro-pagination :paginator="$insurances" />
+        <x-agro.pagination :paginator="$insurances" />
     @else
         <x-agro.empty-state
             icon="shield-exclamation"

@@ -192,7 +192,7 @@
                 </table>
             </div>
 
-            <x-agro-pagination :paginator="$wines" />
+            <x-agro.pagination :paginator="$wines" />
         @endif
     </x-agro.card>
 

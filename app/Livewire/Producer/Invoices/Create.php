@@ -485,10 +485,14 @@ class Create extends Component
 
                         // Manual stock movement
                         if (!empty($item['harvest_id'])) {
-                            $harvest = Harvest::find($item['harvest_id']);
-                            if ($harvest) {
-                                $containerStockService->reserveStock($harvest, $createdItem);
+                            // Ownership guard: la cosecha debe pertenecer al viticultor autenticado
+                            // (el harvest_id viene del estado del cliente y no es de fiar).
+                            $harvest = Harvest::whereHas('activity', fn ($q) => $q->where('viticulturist_id', Auth::id()))
+                                ->find($item['harvest_id']);
+                            if (!$harvest) {
+                                throw new \RuntimeException("La cosecha #{$item['harvest_id']} no te pertenece.");
                             }
+                            $containerStockService->reserveStock($harvest, $createdItem);
                         } elseif (!empty($item['wine_lot_id'])) {
                             $lot = ProductLot::where('user_id', Auth::id())
                                 ->lockForUpdate()

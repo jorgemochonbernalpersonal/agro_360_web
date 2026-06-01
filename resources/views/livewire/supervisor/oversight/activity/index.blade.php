@@ -157,7 +157,7 @@
             @endforelse
         </div>
 
-        <x-agro-pagination :paginator="$activities" />
+        <x-agro.pagination :paginator="$activities" />
 
     @endif
 

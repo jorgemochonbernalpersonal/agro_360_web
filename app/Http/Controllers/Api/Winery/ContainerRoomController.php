@@ -54,6 +54,29 @@ class ContainerRoomController extends Controller
         ], 201);
     }
 
+    public function show(Request $request, int $id): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasWineryAccess(), 403);
+
+        $room = ContainerRoom::where('user_id', $user->id)
+            ->withCount('containers')
+            ->findOrFail($id);
+
+        return response()->json([
+            'data' => [
+                'id'               => $room->id,
+                'name'             => $room->name,
+                'description'      => $room->description,
+                'temperature'      => $room->temperature !== null ? (float) $room->temperature : null,
+                'humidity'         => $room->humidity !== null ? (float) $room->humidity : null,
+                'capacity'         => $room->capacity,
+                'containers_count' => $room->containers_count,
+                'created_at'       => $room->created_at->toIso8601String(),
+            ],
+        ]);
+    }
+
     public function update(Request $request, int $id): JsonResponse
     {
         $user = $request->user();

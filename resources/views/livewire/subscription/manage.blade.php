@@ -65,7 +65,16 @@
     @else
         {{-- Sin suscripción activa --}}
 
-        @if($isWineryLinked)
+        @if($isProducer)
+            <div class="bg-violet-50 border border-violet-200 rounded-xl p-4 flex items-start gap-3">
+                <flux:icon icon="information-circle" class="size-5 text-violet-500 flex-shrink-0 mt-0.5" />
+                <div class="text-sm text-violet-800">
+                    <strong>{{ __('Plan Productor — viñedo + bodega en una sola cuenta.') }}</strong>
+                    {{ __('El cuaderno de campo, campaña, parcelas, fenología y registros oficiales son gratis para siempre.') }}
+                    {{ __('Actualiza al plan Completo para desbloquear toda la gestión de bodega: vinos, recepción de uva, embotellado, facturación y Verifactu.') }}
+                </div>
+            </div>
+        @elseif($isWineryLinked)
             <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
                 <flux:icon icon="information-circle" class="size-5 text-blue-500 flex-shrink-0 mt-0.5" />
                 <div class="text-sm text-blue-800">

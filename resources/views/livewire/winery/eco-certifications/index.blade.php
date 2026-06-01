@@ -142,7 +142,7 @@
                 @endforeach
             </div>
 
-            <x-agro-pagination :paginator="$certifications" />
+            <x-agro.pagination :paginator="$certifications" />
         @else
             <x-agro.empty-state
                 icon="sparkles"

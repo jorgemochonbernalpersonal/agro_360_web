@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Organizations;
 
+use App\Livewire\Concerns\WithReadOnlyGuard;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Organization;
 use App\Models\Province;
@@ -14,7 +15,7 @@ use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination, WithToastNotifications;
+    use WithPagination, WithToastNotifications, WithReadOnlyGuard;
 
     // ── Filters ──────────────────────────────────────────────────────────────
 
@@ -92,6 +93,10 @@ class Index extends Component
 
     public function save(): void
     {
+        if ($this->isReadOnly()) {
+            return;
+        }
+
         $validRoles = [User::ROLE_WINERY, User::ROLE_SUPERVISOR, User::ROLE_PRODUCER];
 
         $this->validate([
@@ -204,6 +209,10 @@ class Index extends Component
 
     public function delete(int $id): void
     {
+        if ($this->isReadOnly()) {
+            return;
+        }
+
         $org = Organization::findOrFail($id);
         $orgName = $org->name;
         $memberCount = User::where('organization_id', $id)->count();

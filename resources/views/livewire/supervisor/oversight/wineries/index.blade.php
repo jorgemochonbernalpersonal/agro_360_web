@@ -134,7 +134,7 @@
             @endforeach
         </div>
 
-        <x-agro-pagination :paginator="$wineries" />
+        <x-agro.pagination :paginator="$wineries" />
     @else
         <x-agro.empty-state
             icon="building-office-2"

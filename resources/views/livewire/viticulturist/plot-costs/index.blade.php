@@ -149,7 +149,7 @@
             @endforeach
         </div>
 
-        <x-agro-pagination :paginator="$costs" />
+        <x-agro.pagination :paginator="$costs" />
     @endif
 
 </div>

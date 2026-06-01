@@ -250,7 +250,7 @@
                 @endforeach
             </div>
 
-            <x-agro-pagination :paginator="$receptions" />
+            <x-agro.pagination :paginator="$receptions" />
         @else
             <x-agro.empty-state
                 icon="scale"

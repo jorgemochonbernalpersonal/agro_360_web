@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Announcements;
 
+use App\Livewire\Concerns\WithReadOnlyGuard;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\AdminAnnouncement;
 use App\Services\SecurityLogger;
@@ -10,7 +11,7 @@ use Livewire\Component;
 
 class Index extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithReadOnlyGuard;
 
     public bool   $showModal   = false;
     public ?int   $editingId   = null;
@@ -50,6 +51,10 @@ class Index extends Component
 
     public function save(): void
     {
+        if ($this->isReadOnly()) {
+            return;
+        }
+
         $this->validate([
             'title'      => 'required|string|max:120',
             'message'    => 'required|string|max:1000',
@@ -84,6 +89,10 @@ class Index extends Component
 
     public function toggleActive(int $id): void
     {
+        if ($this->isReadOnly()) {
+            return;
+        }
+
         $ann = AdminAnnouncement::findOrFail($id);
         $ann->update(['is_active' => !$ann->is_active]);
         $this->toastSuccess($ann->is_active ? __('Anuncio activado.') : __('Anuncio desactivado.'));
@@ -91,6 +100,10 @@ class Index extends Component
 
     public function delete(int $id): void
     {
+        if ($this->isReadOnly()) {
+            return;
+        }
+
         AdminAnnouncement::findOrFail($id)->delete();
         $this->toastSuccess(__('Anuncio eliminado.'));
     }

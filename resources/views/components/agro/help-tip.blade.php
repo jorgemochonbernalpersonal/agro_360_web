@@ -22,7 +22,9 @@
         class="inline-flex items-center justify-center rounded-full bg-zinc-100 hover:bg-blue-100 text-zinc-400 hover:text-blue-600 transition-colors focus:outline-none
                {{ $size === 'xs' ? 'w-4 h-4 text-[10px]' : 'w-5 h-5 text-xs' }}"
         title="{{ __('Más información') }}"
-        aria-:label="__('Ayuda')"
+        aria-label="{{ __('Ayuda') }}"
+        aria-haspopup="dialog"
+        x-bind:aria-expanded="open"
     >
         ?
     </button>

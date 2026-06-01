@@ -74,7 +74,7 @@
                 </x-agro.table-row>
             @endforeach
             <x-slot name="pagination">
-                <x-agro-pagination :paginator="$uses" />
+                <x-agro.pagination :paginator="$uses" />
             </x-slot>
         @endif
     </x-agro.data-table>

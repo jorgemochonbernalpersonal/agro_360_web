@@ -91,7 +91,7 @@
         @endforelse
 
         <x-slot:pagination>
-            <x-agro-pagination :paginator="$movements" />
+            <x-agro.pagination :paginator="$movements" />
         </x-slot:pagination>
     </x-agro.data-table>
 </div>

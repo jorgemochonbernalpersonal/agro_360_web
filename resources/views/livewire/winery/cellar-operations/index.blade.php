@@ -98,7 +98,7 @@
                 </x-agro.card>
             @endforeach
         </div>
-        <x-agro-pagination :paginator="$operations" />
+        <x-agro.pagination :paginator="$operations" />
     @else
         <x-agro.empty-state icon="calendar-days" title="{{ __('Sin operaciones') }}"
             :description="__('Registra trasiegos, clarificaciones, filtraciones y otras operaciones de tu bodega.')" />

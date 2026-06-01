@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\FailedJobs;
 
+use App\Livewire\Concerns\WithReadOnlyGuard;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Services\SecurityLogger;
 use Illuminate\Support\Facades\Artisan;
@@ -12,7 +13,7 @@ use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination, WithToastNotifications;
+    use WithPagination, WithToastNotifications, WithReadOnlyGuard;
 
     public string $search = '';
 
@@ -24,6 +25,10 @@ class Index extends Component
 
     public function retryJob(int $id): void
     {
+        if ($this->isReadOnly()) {
+            return;
+        }
+
         $job = DB::table('failed_jobs')->where('id', $id)->first();
         if (!$job) {
             $this->toastError(__('Job no encontrado.'));
@@ -56,6 +61,10 @@ class Index extends Component
 
     public function deleteJob(int $id): void
     {
+        if ($this->isReadOnly()) {
+            return;
+        }
+
         $deleted = DB::table('failed_jobs')->where('id', $id)->delete();
         if ($deleted) {
             $this->toastSuccess(__('Job eliminado.'));
@@ -66,6 +75,10 @@ class Index extends Component
 
     public function retryAll(): void
     {
+        if ($this->isReadOnly()) {
+            return;
+        }
+
         $jobs = DB::table('failed_jobs')->get();
 
         if ($jobs->isEmpty()) {
@@ -95,6 +108,10 @@ class Index extends Component
 
     public function deleteAll(): void
     {
+        if ($this->isReadOnly()) {
+            return;
+        }
+
         $count = DB::table('failed_jobs')->count();
 
         if ($count === 0) {

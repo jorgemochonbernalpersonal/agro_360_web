@@ -16,6 +16,9 @@
         </testsuite>
         <testsuite name="Feature">
             <directory suffix="Test.php">./tests/Feature</directory>
+            <!-- Api/ vive bajo Feature/; se expone como suite propia abajo.
+                 Se excluye aquí para no añadir los mismos ficheros dos veces. -->
+            <exclude>./tests/Feature/Api</exclude>
         </testsuite>
         <testsuite name="Api">
             <directory suffix="Test.php">./tests/Feature/Api</directory>

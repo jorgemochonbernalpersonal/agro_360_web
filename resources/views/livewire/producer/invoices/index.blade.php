@@ -181,7 +181,7 @@
             </div>
         </x-agro.card>
 
-        <x-agro-pagination :paginator="$invoices" />
+        <x-agro.pagination :paginator="$invoices" />
 
     @else
         <x-agro.empty-state

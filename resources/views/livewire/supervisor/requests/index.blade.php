@@ -166,7 +166,7 @@
                     </x-agro.card>
                 @endforeach
             </div>
-            <x-agro-pagination :paginator="$requests" />
+            <x-agro.pagination :paginator="$requests" />
         @else
             <x-agro.empty-state icon="document-text" title="{{ __('Sin solicitudes') }}" :description="__('No hay solicitudes con estos filtros.')" />
         @endif

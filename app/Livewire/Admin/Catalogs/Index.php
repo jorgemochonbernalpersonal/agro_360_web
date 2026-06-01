@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Catalogs;
 
+use App\Livewire\Concerns\WithReadOnlyGuard;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\ContainerType;
 use App\Models\GrapeVariety;
@@ -11,7 +12,7 @@ use Livewire\Component;
 
 class Index extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithReadOnlyGuard;
 
     public string $activeTab = 'pest';
     public bool   $showModal = false;
@@ -88,6 +89,10 @@ class Index extends Component
 
     public function save(): void
     {
+        if ($this->isReadOnly()) {
+            return;
+        }
+
         $catalog = $this->catalogs()[$this->editingModel] ?? null;
         if (!$catalog || !$this->editingId) return;
 

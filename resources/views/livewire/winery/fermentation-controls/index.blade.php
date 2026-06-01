@@ -179,7 +179,7 @@
                 @endforeach
             </div>
 
-            <x-agro-pagination :paginator="$controls" />
+            <x-agro.pagination :paginator="$controls" />
         @else
             <x-agro.empty-state
                 icon="beaker"

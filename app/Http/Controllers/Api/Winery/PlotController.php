@@ -27,6 +27,7 @@ class PlotController extends Controller
         ]);
 
         $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)
+            ->where('notebook_access', true)
             ->pluck('viticulturist_id')
             ->all();
 
@@ -84,6 +85,7 @@ class PlotController extends Controller
         ]);
 
         $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)
+            ->where('notebook_access', true)
             ->pluck('viticulturist_id')
             ->all();
 
@@ -158,6 +160,7 @@ class PlotController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)
+            ->where('notebook_access', true)
             ->pluck('viticulturist_id')->all();
 
         $plots = Plot::whereIn('viticulturist_id', $viticulturistIds)
@@ -196,6 +199,7 @@ class PlotController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)
+            ->where('notebook_access', true)
             ->pluck('viticulturist_id');
 
         $plot = Plot::whereIn('viticulturist_id', $viticulturistIds)
@@ -217,6 +221,7 @@ class PlotController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)
+            ->where('notebook_access', true)
             ->pluck('viticulturist_id');
 
         Plot::whereIn('viticulturist_id', $viticulturistIds)->findOrFail($id);
@@ -254,6 +259,7 @@ class PlotController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)
+            ->where('notebook_access', true)
             ->pluck('viticulturist_id');
 
         $plot = Plot::whereIn('viticulturist_id', $viticulturistIds)->findOrFail($id);
@@ -374,6 +380,7 @@ class PlotController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)
+            ->where('notebook_access', true)
             ->pluck('viticulturist_id');
 
         Plot::whereIn('viticulturist_id', $viticulturistIds)->findOrFail($id);
@@ -416,6 +423,7 @@ class PlotController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)
+            ->where('notebook_access', true)
             ->pluck('viticulturist_id');
 
         Plot::whereIn('viticulturist_id', $viticulturistIds)->findOrFail($id);

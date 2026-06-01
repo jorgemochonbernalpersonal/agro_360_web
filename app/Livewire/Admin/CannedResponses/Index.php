@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\CannedResponses;
 
+use App\Livewire\Concerns\WithReadOnlyGuard;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\CannedResponse;
 use Illuminate\Support\Facades\Auth;
@@ -9,7 +10,7 @@ use Livewire\Component;
 
 class Index extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithReadOnlyGuard;
 
     public bool   $showModal  = false;
     public ?int   $editingId  = null;
@@ -44,6 +45,10 @@ class Index extends Component
 
     public function save(): void
     {
+        if ($this->isReadOnly()) {
+            return;
+        }
+
         $this->validate([
             'title'    => 'required|string|max:120',
             'body'     => 'required|string',
@@ -74,6 +79,10 @@ class Index extends Component
 
     public function delete(int $id): void
     {
+        if ($this->isReadOnly()) {
+            return;
+        }
+
         CannedResponse::findOrFail($id)->delete();
         $this->toastSuccess(__('Respuesta eliminada.'));
     }

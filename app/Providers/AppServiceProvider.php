@@ -33,25 +33,30 @@ use App\Observers\PlotObserver;
 use App\Observers\PlotPlantingObserver;
 use App\Observers\WineLossObserver;
 use App\Models\Client;
+use App\Models\Container;
 use App\Models\DoInspection;
 use App\Models\DoLabel;
 use App\Models\DoQualification;
+use App\Models\Wine;
 use App\Policies\AgriculturalActivityPolicy;
 use App\Policies\CampaignPolicy;
 use App\Policies\ClientPolicy;
+use App\Policies\ContainerPolicy;
 use App\Policies\CrewPolicy;
 use App\Policies\DoInspectionPolicy;
 use App\Policies\DoLabelPolicy;
 use App\Policies\DoQualificationPolicy;
+use App\Policies\HarvestPolicy;
+use App\Policies\InvoicePolicy;
 use App\Policies\MachineryPolicy;
 use App\Policies\PlotPlantingPolicy;
 use App\Policies\PlotPolicy;
+use App\Policies\WinePolicy;
 use App\Services\ContainerStockService;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\ServiceProvider;
@@ -72,6 +77,10 @@ class AppServiceProvider extends ServiceProvider
         Crew::class               => CrewPolicy::class,
         Machinery::class          => MachineryPolicy::class,
         Client::class             => ClientPolicy::class,
+        Harvest::class            => HarvestPolicy::class,
+        Wine::class               => WinePolicy::class,
+        Container::class          => ContainerPolicy::class,
+        Invoice::class            => InvoicePolicy::class,
         DoLabel::class            => DoLabelPolicy::class,
         DoInspection::class       => DoInspectionPolicy::class,
         DoQualification::class    => DoQualificationPolicy::class,
@@ -84,11 +93,6 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        foreach (glob(resource_path('views/components/agro/*.blade.php')) as $file) {
-            $name = basename($file, '.blade.php');
-            Blade::component("components.agro.{$name}", "agro-{$name}");
-        }
-
         $this->registerEmailRedirect();
 
         (new \App\Macros\CollectionMacros)->register();

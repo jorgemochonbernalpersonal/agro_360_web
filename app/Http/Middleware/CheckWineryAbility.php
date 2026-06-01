@@ -32,16 +32,21 @@ class CheckWineryAbility
             abort(403);
         }
 
+        // Sin configurar por la DO → acceso total (retrocompatible con bodegas
+        // independientes y con bodegas existentes antes de que el supervisor configure
+        // restricciones). Una vez configurada, el set es vinculante: vacío = ningún módulo.
+        // Alineado con User::hasAbility().
+        if (! $user->abilities_configured) {
+            return $next($request);
+        }
+
         $granted = Cache::remember(
             "winery:{$user->id}:granted_abilities",
             60,
             fn () => $user->abilities()->pluck('code')->all()
         );
 
-        // Sin abilities configuradas → acceso total (retrocompatible con bodegas independientes
-        // y con bodegas existentes antes de que el supervisor configure restricciones).
-        // Alineado con User::hasAbility().
-        if (! empty($granted) && ! in_array($ability, $granted, true)) {
+        if (! in_array($ability, $granted, true)) {
             abort(403, __('Tu denominación de origen no ha habilitado el módulo requerido para acceder a esta sección.'));
         }
 

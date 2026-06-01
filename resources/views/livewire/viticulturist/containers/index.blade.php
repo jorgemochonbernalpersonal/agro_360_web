@@ -154,7 +154,7 @@
             @endforeach
         </div>
 
-        <x-agro-pagination :paginator="$containers" />
+        <x-agro.pagination :paginator="$containers" />
 
     @else
         <x-agro.empty-state

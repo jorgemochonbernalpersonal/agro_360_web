@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\Plots;
 
 use App\Models\Plot;
 use App\Models\User;
+use App\Livewire\Concerns\WithReadOnlyGuard;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Services\SecurityLogger;
 use Illuminate\Support\Facades\Auth;
@@ -12,7 +13,7 @@ use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination, WithToastNotifications;
+    use WithPagination, WithToastNotifications, WithReadOnlyGuard;
 
     public $search        = '';
     public $activeFilter  = '';
@@ -53,6 +54,10 @@ class Index extends Component
 
     public function reassignViticulturist()
     {
+        if ($this->isReadOnly()) {
+            return;
+        }
+
         $this->validate([
             'reassignViticulturistId' => 'required|exists:users,id',
         ], [

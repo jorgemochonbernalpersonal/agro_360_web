@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\Support;
 use App\Models\CannedResponse;
 use App\Models\SupportTicket;
 use App\Models\User;
+use App\Livewire\Concerns\WithReadOnlyGuard;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Services\SecurityLogger;
 use Illuminate\Support\Facades\Auth;
@@ -13,7 +14,7 @@ use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination, WithToastNotifications;
+    use WithPagination, WithToastNotifications, WithReadOnlyGuard;
 
     public $search          = '';
     public $filterStatus    = 'all';
@@ -51,6 +52,10 @@ class Index extends Component
 
     public function assignTicket()
     {
+        if ($this->isReadOnly()) {
+            return;
+        }
+
         if (!$this->selectedTicket) {
             $this->toastError(__('No hay ticket seleccionado.'));
             return;
@@ -73,6 +78,10 @@ class Index extends Component
 
     public function changeStatus($status)
     {
+        if ($this->isReadOnly()) {
+            return;
+        }
+
         if (!$this->selectedTicket) {
             $this->toastError(__('No hay ticket seleccionado.'));
             return;
@@ -102,6 +111,10 @@ class Index extends Component
 
     public function deleteTicket($ticketId)
     {
+        if ($this->isReadOnly()) {
+            return;
+        }
+
         $ticket = SupportTicket::findOrFail($ticketId);
         $title  = $ticket->title;
 
@@ -130,6 +143,10 @@ class Index extends Component
 
     public function addComment()
     {
+        if ($this->isReadOnly()) {
+            return;
+        }
+
         $this->validate(['newComment' => 'required|string|min:3']);
 
         if (!$this->selectedTicket) {

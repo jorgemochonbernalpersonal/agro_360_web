@@ -91,13 +91,13 @@ trait WithUserFilters
             }
 
             // Si tiene supervisor, agregar viticultores del pool del supervisor
-            $supervisorId = \App\Models\WineryViticulturist::where('viticulturist_id', $user->id)
-                ->where('source', \App\Models\WineryViticulturist::SOURCE_SUPERVISOR)
-                ->whereNotNull('supervisor_id')
+            // La relación directa supervisor↔viticulturist vive en supervisor_viticulturist
+            $supervisorId = \App\Models\SupervisorViticulturist::where('viticulturist_id', $user->id)
                 ->value('supervisor_id');
 
             if ($supervisorId) {
-                $fromSupervisor = \App\Models\WineryViticulturist::where('source', \App\Models\WineryViticulturist::SOURCE_SUPERVISOR)
+                // Viticultores del pool vinculados a bodegas (via winery_viticulturist source=supervisor)
+                $fromSupervisorWinery = \App\Models\WineryViticulturist::where('source', \App\Models\WineryViticulturist::SOURCE_SUPERVISOR)
                     ->where('supervisor_id', $supervisorId)
                     ->where('viticulturist_id', '!=', $user->id)
                     ->with('viticulturist')
@@ -105,7 +105,17 @@ trait WithUserFilters
                     ->pluck('viticulturist')
                     ->filter();
 
-                $viticulturists = $viticulturists->merge($fromSupervisor);
+                // Viticultores del pool vinculados directamente al supervisor (sin bodega)
+                $fromSupervisorDirect = \App\Models\SupervisorViticulturist::where('supervisor_id', $supervisorId)
+                    ->where('viticulturist_id', '!=', $user->id)
+                    ->with('viticulturist')
+                    ->get()
+                    ->pluck('viticulturist')
+                    ->filter();
+
+                $viticulturists = $viticulturists
+                    ->merge($fromSupervisorWinery)
+                    ->merge($fromSupervisorDirect);
             }
 
             return $viticulturists->unique('id')->values();

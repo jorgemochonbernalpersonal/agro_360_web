@@ -79,7 +79,7 @@
                     @endforeach
                 </div>
 
-                <x-agro-pagination :paginator="$subscriptions" />
+                <x-agro.pagination :paginator="$subscriptions" />
             @else
                 <x-agro.empty-state
                     icon="credit-card"

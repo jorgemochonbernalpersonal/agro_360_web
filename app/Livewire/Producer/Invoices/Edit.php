@@ -823,18 +823,22 @@ class Edit extends Component
 
                         // Manual stock movement
                         if (!empty($item['harvest_id'])) {
-                            $harvest = Harvest::find($item['harvest_id']);
-                            if ($harvest) {
-                                if ($this->invoice->status === 'draft') {
-                                    $containerStockService->reserveStock($harvest, $createdItem);
-                                } else {
-                                    // status = 'sent': go straight to sold
-                                    $containerStockService->directSale(
-                                        $harvest,
-                                        $createdItem,
-                                        $this->invoice->invoice_number ?? ''
-                                    );
-                                }
+                            // Ownership guard: la cosecha debe pertenecer al viticultor autenticado
+                            // (el harvest_id viene del estado del cliente y no es de fiar).
+                            $harvest = Harvest::whereHas('activity', fn ($q) => $q->where('viticulturist_id', Auth::id()))
+                                ->find($item['harvest_id']);
+                            if (!$harvest) {
+                                throw new \RuntimeException("La cosecha #{$item['harvest_id']} no te pertenece.");
+                            }
+                            if ($this->invoice->status === 'draft') {
+                                $containerStockService->reserveStock($harvest, $createdItem);
+                            } else {
+                                // status = 'sent': go straight to sold
+                                $containerStockService->directSale(
+                                    $harvest,
+                                    $createdItem,
+                                    $this->invoice->invoice_number ?? ''
+                                );
                             }
                         } elseif (!empty($item['wine_lot_id'])) {
                             $lot = ProductLot::where('user_id', Auth::id())

@@ -356,7 +356,7 @@
         </div>
 
         {{-- Pagination --}}
-        <x-agro-pagination :paginator="$plantings" />
+        <x-agro.pagination :paginator="$plantings" />
 
     @else
         <x-agro.empty-state

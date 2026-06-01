@@ -105,7 +105,7 @@
             </x-slot:body>
         </x-agro.table>
 
-        <x-agro-pagination :paginator="$organizations" />
+        <x-agro.pagination :paginator="$organizations" />
     </x-agro.card>
 
     {{-- Create / Edit Modal --}}

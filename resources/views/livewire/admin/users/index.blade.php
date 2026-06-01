@@ -314,7 +314,7 @@
             </table>
         </div>
 
-        <x-agro-pagination :paginator="$users" />
+        <x-agro.pagination :paginator="$users" />
     </x-agro.card>
 
     {{-- Modal: Crear usuario --}}

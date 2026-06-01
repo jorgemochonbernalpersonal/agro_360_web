@@ -336,7 +336,7 @@
                 @endforeach
             </div>
 
-            <x-agro-pagination :paginator="$plots" />
+            <x-agro.pagination :paginator="$plots" />
         @else
             <x-agro.empty-state
                 :message="__('No hay parcelas') . ' ' . ($currentTab === 'active' ? __('activas') : __('inactivas'))"

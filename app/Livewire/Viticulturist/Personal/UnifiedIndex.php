@@ -264,9 +264,13 @@ class UnifiedIndex extends Component
         // Check dependent records
         $hasPlots = \App\Models\Plot::where('viticulturist_id', $viticulturistId)->exists();
         $hasCampaigns = \App\Models\Campaign::where('viticulturist_id', $viticulturistId)->exists();
+        $hasActivities = \App\Models\AgriculturalActivity::where('viticulturist_id', $viticulturistId)->exists();
+        $hasDeliveries = \App\Models\HarvestDelivery::where('viticulturist_id', $viticulturistId)->exists();
+        $hasInvoices = \App\Models\Invoice::where('user_id', $viticulturistId)->exists();
         $hasCrews = Crew::where('viticulturist_id', $viticulturistId)->exists();
         $hasSubs = \App\Models\Subscription::where('user_id', $viticulturistId)->exists();
         $hasPayments = \App\Models\Payment::where('user_id', $viticulturistId)->exists();
+        $hasSupervisorLinks = \App\Models\SupervisorViticulturist::where('viticulturist_id', $viticulturistId)->exists();
         // Exclude the creator's own link record (source=viticulturist, parent=current user)
         // to avoid permanently blocking deletion of sub-viticulturists.
         $hasWineryRelations = WineryViticulturist::where('viticulturist_id', $viticulturistId)
@@ -276,7 +280,8 @@ class UnifiedIndex extends Component
             })
             ->exists();
 
-        if ($hasPlots || $hasCampaigns || $hasCrews || $hasSubs || $hasPayments || $hasWineryRelations) {
+        if ($hasPlots || $hasCampaigns || $hasActivities || $hasDeliveries || $hasInvoices
+            || $hasCrews || $hasSubs || $hasPayments || $hasSupervisorLinks || $hasWineryRelations) {
             $this->toastError(__('No se puede eliminar el viticultor porque tiene datos relacionados.'));
             return;
         }

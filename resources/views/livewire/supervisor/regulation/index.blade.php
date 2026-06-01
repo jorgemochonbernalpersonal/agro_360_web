@@ -132,7 +132,7 @@
                         </x-agro.card>
                     @endforeach
                 </div>
-                <x-agro-pagination :paginator="$items" />
+                <x-agro.pagination :paginator="$items" />
             @else
                 <x-agro.empty-state icon="document-check" title="{{ __('Sin autorizaciones') }}" :description="__('No hay plantaciones con autorización registrada.')" />
             @endif
@@ -230,7 +230,7 @@
                         </x-agro.card>
                     @endforeach
                 </div>
-                <x-agro-pagination :paginator="$items" />
+                <x-agro.pagination :paginator="$items" />
             @else
                 <x-agro.empty-state icon="check-badge" title="{{ __('Sin certificaciones') }}" :description="__('No hay certificaciones ecológicas registradas.')" />
             @endif
@@ -308,7 +308,7 @@
                     </x-agro.card>
                 @endforeach
             </div>
-            <x-agro-pagination :paginator="$items" />
+            <x-agro.pagination :paginator="$items" />
         @endif
 
     @endif

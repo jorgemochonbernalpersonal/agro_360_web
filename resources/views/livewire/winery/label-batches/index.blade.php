@@ -123,7 +123,7 @@
             @endforeach
         </div>
 
-        <x-agro-pagination :paginator="$batches" />
+        <x-agro.pagination :paginator="$batches" />
     @else
         <x-agro.empty-state
             icon="tag"

@@ -27,14 +27,24 @@ class PlotQueryBuilder extends Builder
      */
     public function forSupervisor(User $user): self
     {
-        return $this->whereIn('viticulturist_id', function($q) use ($user) {
-            $q->select('viticulturist_id')
-              ->from('winery_viticulturist')
-              ->whereIn('winery_id', function($sq) use ($user) {
-                  $sq->select('winery_id')
-                     ->from('supervisor_winery')
-                     ->where('supervisor_id', $user->id);
-              });
+        return $this->where(function ($query) use ($user) {
+            // Via bodegas supervisadas: supervisor_winery → winery_viticulturist → plot
+            $query->whereIn('viticulturist_id', function ($q) use ($user) {
+                $q->select('viticulturist_id')
+                  ->from('winery_viticulturist')
+                  ->whereIn('winery_id', function ($sq) use ($user) {
+                      $sq->select('winery_id')
+                         ->from('supervisor_winery')
+                         ->where('supervisor_id', $user->id);
+                  });
+            });
+
+            // Via relación directa: supervisor_viticulturist → plot
+            $query->orWhereIn('viticulturist_id', function ($q) use ($user) {
+                $q->select('viticulturist_id')
+                  ->from('supervisor_viticulturist')
+                  ->where('supervisor_id', $user->id);
+            });
         });
     }
 
@@ -72,17 +82,19 @@ class PlotQueryBuilder extends Builder
                     ->where('source', 'viticulturist');
             });
             
-            // Parcelas de viticultores del supervisor
+            // Parcelas de viticultores del mismo supervisor EN LA MISMA bodega
             $q->orWhereIn('viticulturist_id', function($subQuery) use ($user) {
                 $subQuery->select('wv2.viticulturist_id')
                     ->from('winery_viticulturist as wv1')
                     ->join('winery_viticulturist as wv2', function($join) {
                         $join->on('wv2.supervisor_id', '=', 'wv1.supervisor_id')
+                             ->on('wv2.winery_id', '=', 'wv1.winery_id')
                              ->where('wv2.source', '=', 'supervisor');
                     })
                     ->where('wv1.viticulturist_id', $user->id)
                     ->where('wv1.source', 'supervisor')
-                    ->whereNotNull('wv1.supervisor_id');
+                    ->whereNotNull('wv1.supervisor_id')
+                    ->whereNotNull('wv1.winery_id');
             });
             
             // Parcelas de viticultores de sus wineries

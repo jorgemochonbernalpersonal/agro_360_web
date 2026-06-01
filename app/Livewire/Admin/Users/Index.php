@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\Users;
 
 use App\Models\AppSetting;
 use App\Models\User;
+use App\Livewire\Concerns\WithReadOnlyGuard;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Services\SecurityLogger;
 use Carbon\Carbon;
@@ -14,7 +15,7 @@ use Illuminate\Support\Facades\DB;
 
 class Index extends Component
 {
-    use WithPagination, WithToastNotifications;
+    use WithPagination, WithToastNotifications, WithReadOnlyGuard;
 
     // Filters
     public $currentTab = 'all';
@@ -86,6 +87,10 @@ class Index extends Component
 
     public function createUser()
     {
+        if ($this->isReadOnly()) {
+            return;
+        }
+
         $this->validate([
             'createName'     => 'required|string|max:255',
             'createEmail'    => 'required|email|unique:users,email',
@@ -131,6 +136,10 @@ class Index extends Component
 
     public function deleteUser($userId)
     {
+        if ($this->isReadOnly()) {
+            return;
+        }
+
         $user = User::findOrFail($userId);
 
         if ($user->isAdmin()) {
@@ -164,6 +173,7 @@ class Index extends Component
 
     public function bulkActivate()
     {
+        if ($this->isReadOnly()) return;
         if (empty($this->selectedUsers)) return;
 
         $count = User::whereIn('id', $this->selectedUsers)
@@ -176,6 +186,7 @@ class Index extends Component
 
     public function bulkDeactivate()
     {
+        if ($this->isReadOnly()) return;
         if (empty($this->selectedUsers)) return;
 
         $count = User::whereIn('id', $this->selectedUsers)
@@ -188,6 +199,7 @@ class Index extends Component
 
     public function bulkEnableBeta()
     {
+        if ($this->isReadOnly()) return;
         if (empty($this->selectedUsers)) return;
 
         $betaDate = Carbon::parse($this->betaEndsAt . ' 23:59:59');
@@ -206,6 +218,7 @@ class Index extends Component
 
     public function bulkDisableBeta()
     {
+        if ($this->isReadOnly()) return;
         if (empty($this->selectedUsers)) return;
 
         $count = User::whereIn('id', $this->selectedUsers)
@@ -265,6 +278,10 @@ class Index extends Component
 
     public function toggleActive($userId)
     {
+        if ($this->isReadOnly()) {
+            return;
+        }
+
         $user = User::findOrFail($userId);
 
         if ($user->isAdmin() && $user->id !== Auth::id()) {
@@ -287,6 +304,10 @@ class Index extends Component
 
     public function toggleBeta($userId)
     {
+        if ($this->isReadOnly()) {
+            return;
+        }
+
         $user     = User::findOrFail($userId);
         $enabling = !$user->is_beta_user;
         $betaDate = Carbon::parse($this->betaEndsAt . ' 23:59:59');

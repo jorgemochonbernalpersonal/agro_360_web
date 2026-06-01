@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Subscriptions;
 
+use App\Livewire\Concerns\WithReadOnlyGuard;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Payment;
 use App\Models\Subscription;
@@ -15,7 +16,7 @@ use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination, WithToastNotifications;
+    use WithPagination, WithToastNotifications, WithReadOnlyGuard;
 
     public string $search       = '';
     public string $filterStatus = 'all';
@@ -29,6 +30,10 @@ class Index extends Component
 
     public function cancelSubscription(int $id): void
     {
+        if ($this->isReadOnly()) {
+            return;
+        }
+
         $subscription = Subscription::with('user')->findOrFail($id);
 
         if ($subscription->status === Subscription::STATUS_CANCELLED) {

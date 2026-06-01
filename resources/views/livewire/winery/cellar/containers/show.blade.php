@@ -343,6 +343,71 @@
     </div>
     @endif
 
+    {{-- ── Historial de cambios (configuración / auditoría) ────────────────── --}}
+    <x-agro.card title="{{ __('Historial de cambios') }}">
+        <p class="text-xs text-zinc-400 mb-3">{{ __('Cambios de configuración del depósito (capacidad, tipo, sala, estado…). Independiente del historial de stock.') }}</p>
+
+        @if($auditLogs->count())
+        @php
+            $eventStyles = [
+                'created'  => ['Creado',     'text-agro-600 bg-agro-50'],
+                'updated'  => ['Modificado', 'text-blue-600 bg-blue-50'],
+                'deleted'  => ['Eliminado',  'text-red-500 bg-red-50'],
+                'restored' => ['Restaurado', 'text-amber-600 bg-amber-50'],
+            ];
+            $fieldLabels = [
+                'name'                  => 'Nombre',
+                'description'           => 'Descripción',
+                'capacity'              => 'Capacidad',
+                'unit'                  => 'Unidad',
+                'serial_number'         => 'Nº de serie',
+                'type_id'               => 'Tipo',
+                'material_id'           => 'Material',
+                'oak_type'              => 'Tipo de roble',
+                'toast_type'            => 'Tostado',
+                'container_room_id'     => 'Sala',
+                'purchase_date'         => 'Fecha de compra',
+                'next_maintenance_date' => 'Próximo mantenimiento',
+                'supplier_name'         => 'Proveedor',
+                'x_position'            => 'Posición X',
+                'y_position'            => 'Posición Y',
+                'archived'              => 'Archivado',
+            ];
+        @endphp
+        <div class="space-y-2">
+            @foreach($auditLogs as $log)
+            @php
+                [$evLabel, $evClass] = $eventStyles[$log->event] ?? [$log->event, 'text-zinc-500 bg-zinc-50'];
+                $changes = $log->getChanges();
+            @endphp
+            <div class="px-3 py-2 rounded-lg hover:bg-zinc-50 text-sm">
+                <div class="flex items-center gap-3">
+                    <span class="text-xs font-medium px-2 py-0.5 rounded-full shrink-0 {{ $evClass }}">{{ __($evLabel) }}</span>
+                    <span class="flex-1 text-zinc-600 text-xs truncate">{{ $log->user?->name ?? __('Sistema') }}</span>
+                    <span class="text-xs text-zinc-300 shrink-0">
+                        {{ $log->created_at instanceof \Carbon\Carbon ? $log->created_at->format('d/m/Y H:i') : '' }}
+                    </span>
+                </div>
+                @if($log->event === 'updated' && !empty($changes))
+                <div class="mt-1 pl-1 space-y-0.5">
+                    @foreach($changes as $field => $diff)
+                    <p class="text-xs text-zinc-500">
+                        <span class="font-medium text-zinc-600">{{ __($fieldLabels[$field] ?? $field) }}:</span>
+                        <span class="line-through text-zinc-400">{{ is_bool($diff['old'] ?? null) ? ($diff['old'] ? 'Sí' : 'No') : ($diff['old'] ?? '—') }}</span>
+                        <span class="text-zinc-300">→</span>
+                        <span class="text-zinc-700">{{ is_bool($diff['new'] ?? null) ? ($diff['new'] ? 'Sí' : 'No') : ($diff['new'] ?? '—') }}</span>
+                    </p>
+                    @endforeach
+                </div>
+                @endif
+            </div>
+            @endforeach
+        </div>
+        @else
+        <p class="text-sm text-zinc-400 text-center py-6">{{ __('Sin cambios de configuración registrados') }}</p>
+        @endif
+    </x-agro.card>
+
 </div>
 
 {{-- ── Modal ajuste manual de stock ─────────────────────────────────────── --}}

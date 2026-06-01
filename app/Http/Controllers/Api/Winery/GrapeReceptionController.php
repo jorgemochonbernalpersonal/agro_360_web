@@ -93,11 +93,12 @@ class GrapeReceptionController extends Controller
             'vehicle_plate'         => 'nullable|string|max:20',
         ]);
 
-        // Validate viticulturist is linked to this winery
+        // Validate viticulturist is linked to this winery with notebook access granted
         $isSelf = $user->isProducer() && (int) $validated['viticulturist_id'] === $user->id;
         if (!$isSelf) {
             WineryViticulturist::where('winery_id', $user->id)
                 ->where('viticulturist_id', $validated['viticulturist_id'])
+                ->where('notebook_access', true)
                 ->firstOrFail();
         }
 
