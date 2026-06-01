@@ -116,5 +116,7 @@ return [
         'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
 
+    'redirect_pattern' => env('MAIL_REDIRECT_PATTERN'),
+    'redirect_to'      => env('MAIL_REDIRECT_TO'),
 
 ];
