@@ -58,7 +58,6 @@ use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\HtmlString;
 use Illuminate\Support\ServiceProvider;
 use Symfony\Component\Mime\Address;
 
@@ -105,7 +104,6 @@ class AppServiceProvider extends ServiceProvider
         VerifyEmail::toMailUsing(function ($notifiable, string $url) {
             return (new MailMessage)
                 ->subject('Verifica tu cuenta en Agro365')
-                ->line(new HtmlString($this->logoHtml()))
                 ->greeting('Hola ' . ($notifiable->name ?: '') . ',')
                 ->line('Gracias por registrarte en Agro365, tu cuaderno de campo digital para viticultores.')
                 ->line('Para activar tu cuenta y empezar a utilizar la plataforma, por favor verifica tu dirección de correo electrónico haciendo clic en el siguiente botón:')
@@ -131,7 +129,6 @@ class AppServiceProvider extends ServiceProvider
 
             return (new MailMessage)
                 ->subject('Restablece tu contraseña en Agro365')
-                ->line(new HtmlString($this->logoHtml()))
                 ->greeting('Hola ' . ($notifiable->name ?: '') . ',')
                 ->line('Has solicitado restablecer tu contraseña en Agro365.')
                 ->line('Haz clic en el siguiente botón para crear una nueva contraseña:')
@@ -185,11 +182,4 @@ class AppServiceProvider extends ServiceProvider
         });
     }
 
-    private function logoHtml(): string
-    {
-        return '<div style="text-align:center; margin-bottom: 16px;">
-                    <img src="' . url('images/logo.png') . '" alt="Agro365"
-                         style="max-width: 160px; height: auto;">
-                </div>';
-    }
 }
