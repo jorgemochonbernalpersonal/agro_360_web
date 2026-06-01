@@ -13,15 +13,12 @@ class TemporaryPasswordNotification extends Notification
     use Queueable;
 
     protected $temporaryPassword;
-    protected $pdfPath;
+    protected $pdfContent;
 
-    /**
-     * Create a new notification instance.
-     */
-    public function __construct(string $temporaryPassword, string $pdfPath = null)
+    public function __construct(string $temporaryPassword, string $pdfContent = null)
     {
         $this->temporaryPassword = $temporaryPassword;
-        $this->pdfPath = $pdfPath;
+        $this->pdfContent = $pdfContent;
     }
 
     /**
@@ -57,10 +54,8 @@ class TemporaryPasswordNotification extends Notification
                     ->line('**Para volver a entrar después:** ve a agro365.es, haz clic en "Iniciar sesión" y usa tu email con la nueva contraseña que elijas. Si no la recuerdas, usa "¿Olvidaste tu contraseña?".')
                     ->line(__('Si no solicitaste esta cuenta, por favor contacta con quien te dio de alta.'));
         
-        // Adjuntar PDF si existe
-        if ($this->pdfPath && file_exists($this->pdfPath)) {
-            $mail->attach($this->pdfPath, [
-                'as' => 'credenciales_agro365.pdf',
+        if ($this->pdfContent) {
+            $mail->attachData($this->pdfContent, 'credenciales_agro365.pdf', [
                 'mime' => 'application/pdf',
             ]);
         }

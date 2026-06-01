@@ -82,7 +82,7 @@ class RegisterTest extends TestCase
         $this->assertGuest();
     }
 
-    public function test_public_users_can_register_as_supervisor(): void
+    public function test_public_users_cannot_register_as_supervisor(): void
     {
         $this->get('/register');
 
@@ -93,14 +93,13 @@ class RegisterTest extends TestCase
             ->set('password_confirmation', 'password123')
             ->set('role', 'supervisor')
             ->call('register')
-            ->assertRedirect(route('verification.notice'));
+            ->assertHasErrors(['role']);
 
-        $this->assertDatabaseHas('users', [
+        $this->assertDatabaseMissing('users', [
             'email' => 'do@ribera.com',
-            'role'  => 'supervisor',
         ]);
 
-        $this->assertAuthenticated();
+        $this->assertGuest();
     }
 
     public function test_registration_requires_all_fields(): void

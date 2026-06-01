@@ -112,7 +112,6 @@ class Register extends Component
             ]);
             
             // Simular éxito para confundir al bot
-            sleep(2);
             $this->toastSuccess(__('Registro completado. Revisa tu email para verificar tu cuenta.'));
             return;
         }
@@ -156,7 +155,8 @@ class Register extends Component
 
                     $this->toastSuccess(__('Cuenta activada correctamente. ¡Bienvenido a Agro365!'));
 
-                    return $this->redirect(route('viticulturist.dashboard'), navigate: true);
+                    $target = $ghostEmailMatches ? 'viticulturist.dashboard' : 'verification.notice';
+                    return $this->redirect(route($target), navigate: true);
                 }
 
                 // Cualquier otro caso: email ya usado por una cuenta activa
@@ -167,8 +167,9 @@ class Register extends Component
             // DNI merge: ghost sin email coincidente pero con DNI registrado por la bodega
             if ($normalizedDni && $this->role === 'viticulturist') {
                 $merged = $this->mergeGhostByDni($normalizedDni, $this->email);
-                if ($merged === true) {
-                    return $this->redirect(route('viticulturist.dashboard'), navigate: true);
+                if ($merged instanceof \App\Models\User) {
+                    $target = $merged->email_verified_at ? 'viticulturist.dashboard' : 'verification.notice';
+                    return $this->redirect(route($target), navigate: true);
                 }
                 if ($merged === 'email_taken') {
                     $this->addError('email', __('Este email ya está registrado.'));
@@ -278,33 +279,20 @@ class Register extends Component
 
             // Enviar email según el tipo de usuario creado
             if ($isViticulturistCreatingViticulturist) {
-                // Generar PDF con credenciales
+                // Generar PDF con credenciales en memoria (sin escritura a disco)
                 $pdf = \PDF::loadView('pdf.credentials', [
-                    'email' => $user->email,
-                    'password' => $temporaryPassword,
+                    'email'      => $user->email,
+                    'password'   => $temporaryPassword,
                     'created_at' => now()->format('d/m/Y H:i'),
                 ]);
-                
-                // Guardar PDF temporalmente
-                $pdfPath = storage_path('app/temp/credentials_' . $user->id . '_' . time() . '.pdf');
-                if (!file_exists(dirname($pdfPath))) {
-                    mkdir(dirname($pdfPath), 0755, true);
-                }
-                $pdf->save($pdfPath);
-                
-                // Enviar email con PDF adjunto
-                $user->notify(new \App\Notifications\TemporaryPasswordNotification($temporaryPassword, $pdfPath));
-                
+                $pdfContent = $pdf->output();
+
+                // Enviar email con PDF adjunto desde contenido en memoria
+                $user->notify(new \App\Notifications\TemporaryPasswordNotification($temporaryPassword, $pdfContent));
+
                 $this->toastSuccess(__('Viticultor creado correctamente. Se ha enviado un email con las credenciales de acceso.'));
-                session()->flash('pdf_download', base64_encode($pdf->output()));
+                session()->flash('pdf_download', base64_encode($pdfContent));
                 session()->flash('pdf_filename', 'credenciales_' . str_replace(['@', '.'], '_', $user->email) . '.pdf');
-                
-                // Eliminar PDF temp después de 1 minuto (dar tiempo a enviar email)
-                dispatch(function() use ($pdfPath) {
-                    if (file_exists($pdfPath)) {
-                        unlink($pdfPath);
-                    }
-                })->delay(now()->addMinute());
             } else {
                 // Enviar email de verificación tradicional
                 $user->sendEmailVerificationNotification();
@@ -325,7 +313,7 @@ class Register extends Component
         session()->regenerate();
         $this->toastSuccess(__('¡Bienvenido a Agro365! Revisa tu email para verificar tu cuenta.'));
 
-        return $this->redirect(route($this->getDashboardRoute()), navigate: true);
+        return $this->redirect(route('verification.notice'), navigate: true);
     }
 
     protected function getDashboardRoute(): string
@@ -363,7 +351,7 @@ class Register extends Component
      * Returns true on success, 'email_taken' if the supplied email belongs to
      * another active account, or null when no ghost is found.
      */
-    private function mergeGhostByDni(string $normalizedDni, string $email): true|string|null
+    private function mergeGhostByDni(string $normalizedDni, string $email): \App\Models\User|string|null
     {
         $ghost = User::where('dni', $normalizedDni)
             ->where('role', User::ROLE_VITICULTURIST)
@@ -412,7 +400,7 @@ class Register extends Component
 
         $this->toastSuccess(__('¡Cuenta vinculada! Tu bodega ya tenía tus datos registrados. Bienvenido a Agro365.'));
 
-        return true;
+        return $freshGhost;
     }
 
     public function render()
