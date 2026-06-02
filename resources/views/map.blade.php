@@ -376,10 +376,10 @@
                             </div>
                         </div>
                         <table style="width:100%; font-size:12px; border-collapse:collapse">
-                            <tr><td style="color:#888; padding:2px 0">{{ __('Polígono') }}</td><td style="font-weight:600; text-align:right">{{ __('${geometry.polygon || \'—\'}') }}</td></tr>
-                            <tr><td style="color:#888; padding:2px 0">{{ __('Recinto') }}</td><td style="font-weight:600; text-align:right">{{ __('${geometry.enclosure || \'—\'}') }}</td></tr>
-                            ${areaHa ? `<tr><td style="color:#888; padding:2px 0">{{ __('Área aprox.') }}</td><td style="font-weight:600; text-align:right">{{ __('${areaHa} ha') }}</td></tr>` : ''}
-                            <tr><td style="color:#888; padding:2px 0">{{ __('Código') }}</td><td style="font-family:monospace; font-size:11px; text-align:right">{{ __('${geometry.sigpac_code}') }}</td></tr>
+                            <tr><td style="color:#888; padding:2px 0">{!! __('Polígono') !!}</td><td style="font-weight:600; text-align:right">${geometry.polygon || '—'}</td></tr>
+                            <tr><td style="color:#888; padding:2px 0">{!! __('Recinto') !!}</td><td style="font-weight:600; text-align:right">${geometry.enclosure || '—'}</td></tr>
+                            ${areaHa ? `<tr><td style="color:#888; padding:2px 0">{!! __('Área aprox.') !!}</td><td style="font-weight:600; text-align:right">${areaHa} ha</td></tr>` : ''}
+                            <tr><td style="color:#888; padding:2px 0">{!! __('Código') !!}</td><td style="font-family:monospace; font-size:11px; text-align:right">${geometry.sigpac_code}</td></tr>
                         </table>
                     </div>
                 `, { maxWidth: 280 });
@@ -388,7 +388,7 @@
                 const polygonLabel = geometry.polygon ? ` · Pol. ${geometry.polygon}` : '';
                 const enclosureLabel = geometry.enclosure ? ` · Rec. ${geometry.enclosure}` : '';
                 polygon.bindTooltip(
-                    `<strong>{{ __('Recinto ${geometry.index}') }}</strong>${polygonLabel}${enclosureLabel}`,
+                    `<strong>{!! __('Recinto') !!} ${geometry.index}</strong>${polygonLabel}${enclosureLabel}`,
                     { sticky: true, direction: 'top' }
                 );
 

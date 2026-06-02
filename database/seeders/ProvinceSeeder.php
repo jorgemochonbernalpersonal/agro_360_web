@@ -31,7 +31,7 @@ class ProvinceSeeder extends Seeder
             ['code' => '50', 'name' => 'Zaragoza', 'community_code' => '02'],
             ['code' => '33', 'name' => 'Asturias', 'community_code' => '03'],
             ['code' => '07', 'name' => 'Balears, Illes', 'community_code' => '04'],
-            ['code' => '35', 'name' => 'Palmas, Las', 'community_code' => '05'],
+            ['code' => '35', 'name' => 'Las Palmas', 'community_code' => '05'],
             ['code' => '38', 'name' => 'Santa Cruz de Tenerife', 'community_code' => '05'],
             ['code' => '39', 'name' => 'Cantabria', 'community_code' => '06'],
             ['code' => '05', 'name' => 'Ávila', 'community_code' => '07'],
