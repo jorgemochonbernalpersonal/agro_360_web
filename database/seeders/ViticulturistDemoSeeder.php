@@ -281,7 +281,15 @@ class ViticulturistDemoSeeder extends Seeder
                 DB::table('plot_geometry')->whereIn('id', $geomIds)->delete();
             }
             if ($sigpacIds->isNotEmpty()) {
-                DB::table('sigpac_code')->whereIn('id', $sigpacIds)->delete();
+                // Solo borrar sigpac_codes que ya no tienen ninguna referencia en otros plots
+                $stillReferenced = DB::table('multipart_plot_sigpac')
+                    ->whereIn('sigpac_code_id', $sigpacIds)
+                    ->pluck('sigpac_code_id')
+                    ->unique();
+                $orphaned = $sigpacIds->diff($stillReferenced);
+                if ($orphaned->isNotEmpty()) {
+                    DB::table('sigpac_code')->whereIn('id', $orphaned)->delete();
+                }
             }
             DB::table('plot_plantings')->whereIn('plot_id', $plotIds)->delete();
             DB::table('plots')->whereIn('id', $plotIds)->delete();
