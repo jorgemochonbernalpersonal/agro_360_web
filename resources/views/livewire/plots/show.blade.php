@@ -716,64 +716,7 @@
             const mapContainer = document.getElementById('plot-map');
             if (!mapContainer) return;
 
-            function loadLeaflet(cb) {
-                if (window.L) { cb(); return; }
-                if (!document.getElementById('leaflet-css')) {
-                    const link = document.createElement('link');
-                    link.id = 'leaflet-css';
-                    link.rel = 'stylesheet';
-                    link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-                    document.head.appendChild(link);
-                }
-                const s = document.createElement('script');
-                s.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-                s.onload = cb;
-                document.head.appendChild(s);
-            }
-
-            function parseCoordinateString(coordString) {
-                if (!coordString || typeof coordString !== 'string') return [];
-                return coordString.split(",").reduce((acc, coord) => {
-                    const parts = coord.trim().split(/\s+/);
-                    if (parts.length >= 2) {
-                        const lon = parseFloat(parts[0]), lat = parseFloat(parts[1]);
-                        if (!isNaN(lat) && !isNaN(lon) && lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180) {
-                            acc.push([lat, lon]);
-                        }
-                    }
-                    return acc;
-                }, []);
-            }
-
-            function parsePolygon(wkt) {
-                const ringMatches = wkt.match(/\(([^)]+)\)/g);
-                if (!ringMatches) return [];
-                const rings = ringMatches.map(r => parseCoordinateString(r.slice(1, -1))).filter(r => r.length >= 3);
-                if (rings.length === 0) return [];
-                return rings.length === 1 ? rings[0] : { isComplex: true, outerRing: rings[0], holes: rings.slice(1) };
-            }
-
-            function parseMultiPolygon(wkt) {
-                let inner = wkt.replace(/^MULTIPOLYGON\s*\(\s*/i, '').replace(/\s*\)$/i, '');
-                return inner.split(/\)\s*,\s*\(/).map(polyStr => {
-                    let rings = polyStr.replace(/^\(\s*/, '').replace(/\s*\)$/i, '').match(/\(([^)]+)\)/g);
-                    if (!rings) return null;
-                    const parsed = rings.map(r => parseCoordinateString(r.slice(1, -1))).filter(r => r.length >= 3);
-                    if (parsed.length === 1) return parsed[0];
-                    if (parsed.length > 1) return { isComplex: true, outerRing: parsed[0], holes: parsed.slice(1) };
-                    return null;
-                }).filter(Boolean);
-            }
-
-            function parseWKT(wkt) {
-                if (!wkt || typeof wkt !== 'string') return [];
-                const t = wkt.trim();
-                if (t.startsWith("POLYGON")) return parsePolygon(t);
-                if (t.startsWith("MULTIPOLYGON")) return parseMultiPolygon(t);
-                return [];
-            }
-
-            loadLeaflet(function() {
+            window.loadLeaflet().then(function() {
                 const map = L.map('plot-map', { zoomControl: true });
                 const street = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' });
                 const satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: '&copy; Esri' });
@@ -783,26 +726,15 @@
                 const bounds = [];
 
                 plotGeometries.forEach(plot => {
-                    let geometries = parseWKT(plot.wkt);
-                    if (!geometries || geometries.length === 0) return;
+                    const polygons = window.parseWKTAll(plot.wkt);
+                    if (!polygons.length) return;
 
-                    let polygons = Array.isArray(geometries[0]) && Array.isArray(geometries[0][0]) ? geometries : [geometries];
-
-                    polygons.forEach(coords => {
-                        let polygonCoords;
-                        if (coords.isComplex) {
-                            polygonCoords = [coords.outerRing, ...coords.holes];
-                            bounds.push(...coords.outerRing);
-                        } else if (Array.isArray(coords[0])) {
-                            polygonCoords = [coords];
-                            bounds.push(...coords);
-                        } else {
-                            polygonCoords = coords;
-                            bounds.push(...coords);
-                        }
-
-                        const poly = L.polygon(polygonCoords, { color: '#10b981', fillColor: '#86efac', fillOpacity: 0.5, weight: 2 }).addTo(map);
+                    polygons.forEach(({ outerRing, holes }) => {
+                        if (!outerRing || outerRing.length < 3) return;
+                        const latlngs = holes && holes.length ? [outerRing, ...holes] : outerRing;
+                        const poly = L.polygon(latlngs, { color: '#10b981', fillColor: '#86efac', fillOpacity: 0.5, weight: 2 }).addTo(map);
                         poly.bindPopup(`<b>Parcela:</b> ${plotName}<br><b>SIGPAC:</b> ${plot.sigpac_code || '-'}`);
+                        bounds.push(...outerRing);
                     });
                 });
 

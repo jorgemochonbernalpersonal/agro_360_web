@@ -131,6 +131,69 @@ function parseCoordinates(coordString) {
 }
 
 /**
+ * Parsear WKT completo conservando multipolígonos y agujeros (holes).
+ *
+ * A diferencia de parseWKT() —que devuelve solo el anillo exterior plano del
+ * primer polígono— esta función normaliza cualquier POLYGON/MULTIPOLYGON a una
+ * lista de polígonos, cada uno con su anillo exterior y sus agujeros.
+ *
+ * @param {string} wkt - Geometría en formato WKT
+ * @returns {Array<{outerRing: Array, holes: Array}>} Lista de polígonos.
+ *   outerRing: [[lat, lng], ...]   holes: [[[lat, lng], ...], ...]
+ */
+export function parseWKTAll(wkt) {
+    if (!wkt || typeof wkt !== 'string') return [];
+    const trimmed = wkt.trim();
+
+    if (trimmed.startsWith('POLYGON')) {
+        const poly = ringsToPolygon(extractRings(trimmed.replace(/^POLYGON\s*/i, '')));
+        return poly ? [poly] : [];
+    }
+
+    if (trimmed.startsWith('MULTIPOLYGON')) {
+        // MULTIPOLYGON(((ring),(hole)), ((ring)), ...)
+        let inner = trimmed.replace(/^MULTIPOLYGON\s*\(\s*/i, '').replace(/\s*\)$/i, '');
+        return inner
+            .split(/\)\s*\)\s*,\s*\(\s*\(/)               // separa polígonos
+            .map((polyStr, i, arr) => {
+                // Re-balancear los paréntesis perdidos en el split
+                let s = polyStr;
+                if (i > 0) s = '((' + s;
+                if (i < arr.length - 1) s = s + '))';
+                return ringsToPolygon(extractRings(s));
+            })
+            .filter(Boolean);
+    }
+
+    return [];
+}
+
+/**
+ * Extrae los anillos (rings) de un cuerpo de polígono WKT: "((r1),(r2),...)".
+ * @returns {Array<Array>} lista de anillos, cada uno [[lat, lng], ...]
+ */
+function extractRings(body) {
+    let b = body.trim();
+    // body llega como "((r1),(r2),...)": quitar el paréntesis exterior envolvente
+    // para que el regex capture cada anillo limpio, sin un '(' colgando que
+    // convertiría el primer punto en NaN y lo descartaría.
+    if (b.startsWith('(') && b.endsWith(')')) b = b.slice(1, -1);
+    const ringMatches = b.match(/\(([^)]+)\)/g);
+    if (!ringMatches) return [];
+    return ringMatches
+        .map(r => parseCoordinates(r.slice(1, -1)))
+        .filter(ring => ring.length >= 3);
+}
+
+/**
+ * Convierte una lista de anillos en {outerRing, holes} o null si no hay datos.
+ */
+function ringsToPolygon(rings) {
+    if (!rings || rings.length === 0) return null;
+    return { outerRing: rings[0], holes: rings.slice(1) };
+}
+
+/**
  * Validar formato WKT
  * @param {string} wkt - Geometría en formato WKT
  * @returns {boolean} true si es válido
