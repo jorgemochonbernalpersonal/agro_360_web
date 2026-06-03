@@ -70,18 +70,12 @@ class CatastroGeometryService
      */
     public function upsertGeometry(int $plotId, string $wkt, string $source = 'catastro'): int
     {
-        $geometryId = DB::table('plot_geometry')->insertGetId([
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
         DB::statement(
-            'UPDATE plot_geometry SET
-                coordinates = ST_GeomFromText(?, 4326),
-                centroid = ST_Centroid(ST_GeomFromText(?, 4326))
-            WHERE id = ?',
-            [$wkt, $wkt, $geometryId]
+            'INSERT INTO plot_geometry (coordinates, centroid, created_at, updated_at)
+             VALUES (ST_GeomFromText(?, 4326), ST_Centroid(ST_GeomFromText(?, 4326)), ?, ?)',
+            [$wkt, $wkt, now(), now()]
         );
+        $geometryId = DB::getPdo()->lastInsertId();
 
         // Reemplazar geometrías previas del mismo origen para esta parcela.
         $previous = MultipartPlotSigpac::where('plot_id', $plotId)
