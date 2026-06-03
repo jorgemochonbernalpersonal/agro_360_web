@@ -22,7 +22,7 @@
     <meta property="og:url" content="{{ url('/software-bodegas') }}">
     <meta property="og:title" content="Software para Bodegas - Gestión Profesional · Agro365">
     <meta property="og:description" content="Trazabilidad integral, gestión de vendimia, control de depósitos y cumplimiento normativo. Bodega independiente 14€/mes. Gratis si perteneces a una DO.">
-    <meta property="og:image" content="{{ asset('images/logo.png') }}">
+    <meta property="og:image" content="{{ asset('images/dashboard-preview.png') }}">
     <meta property="og:locale" content="es_ES">
     <meta property="og:site_name" content="Agro365">
 
@@ -31,7 +31,7 @@
     <meta name="twitter:url" content="{{ url('/software-bodegas') }}">
     <meta name="twitter:title" content="Software para Bodegas - Agro365">
     <meta name="twitter:description" content="Trazabilidad integral desde la uva hasta la botella. Bodega independiente 14€/mes. Gratis si perteneces a una DO.">
-    <meta name="twitter:image" content="{{ asset('images/logo.png') }}">
+    <meta name="twitter:image" content="{{ asset('images/dashboard-preview.png') }}">
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">

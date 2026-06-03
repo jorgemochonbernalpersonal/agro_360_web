@@ -7,9 +7,9 @@
     <meta name="description" content="Análisis de rendimientos de cosecha en viñedo: kg/ha por parcela, comparativa anual, rendimiento real vs estimado. Optimiza la producción de tu viñedo.">
     <meta name="keywords" content="rendimientos viñedo, kg por hectárea viña, producción viñedo, rendimiento uva, cosecha por parcela, análisis rendimientos, comparativa producción, estimación cosecha, productividad viñedo">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="{{ url('/rendimientos-cosecha-viñedo') }}">
+    <link rel="canonical" href="{{ url('/rendimientos-cosecha-vinedo') }}">
     <meta property="og:title" content="Rendimientos de Cosecha en Viñedo - Agro365">
-    <meta property="og:image" content="{{ asset('images/logo.png') }}">
+    <meta property="og:image" content="{{ asset('images/dashboard-preview.png') }}">
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700&display=swap" rel="stylesheet" />

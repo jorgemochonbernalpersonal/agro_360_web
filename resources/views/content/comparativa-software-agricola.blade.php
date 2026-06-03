@@ -22,7 +22,7 @@
     <meta property="og:url" content="{{ url('/comparativa-software-agricola') }}">
     <meta property="og:title" content="Comparativa Software Agrícola para Viñedos 2027">
     <meta property="og:description" content="Compara Agro365 con otras soluciones de software agrícola. Cuaderno digital, SIGPAC, informes oficiales y más.">
-    <meta property="og:image" content="{{ asset('images/logo.png') }}">
+    <meta property="og:image" content="{{ asset('images/dashboard-preview.png') }}">
     <meta property="og:locale" content="es_ES">
     <meta property="og:site_name" content="Agro365">
     
@@ -31,7 +31,7 @@
     <meta name="twitter:url" content="{{ url('/comparativa-software-agricola') }}">
     <meta name="twitter:title" content="Comparativa Software Agrícola para Viñedos">
     <meta name="twitter:description" content="Compara Agro365 con otras soluciones de software agrícola para viñedos.">
-    <meta name="twitter:image" content="{{ asset('images/logo.png') }}">
+    <meta name="twitter:image" content="{{ asset('images/dashboard-preview.png') }}">
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">

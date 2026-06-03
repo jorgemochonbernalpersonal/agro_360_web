@@ -10,7 +10,7 @@
     <link rel="canonical" href="{{ url('/gestion-cuadrillas-agricolas') }}">
     <meta property="og:title" content="Gestión de Cuadrillas Agrícolas - Agro365">
     <meta property="og:description" content="Control de personal y equipos de trabajo en viñedos.">
-    <meta property="og:image" content="{{ asset('images/logo.png') }}">
+    <meta property="og:image" content="{{ asset('images/dashboard-preview.png') }}">
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700&display=swap" rel="stylesheet" />

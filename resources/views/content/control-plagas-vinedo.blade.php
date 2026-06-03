@@ -13,13 +13,13 @@
     <meta name="language" content="Spanish">
     <meta name="geo.region" content="ES">
     
-    <link rel="canonical" href="{{ url('/control-plagas-viñedo') }}">
+    <link rel="canonical" href="{{ url('/control-plagas-vinedo') }}">
     
     <meta property="og:type" content="article">
-    <meta property="og:url" content="{{ url('/control-plagas-viñedo') }}">
+    <meta property="og:url" content="{{ url('/control-plagas-vinedo') }}">
     <meta property="og:title" content="Control de Plagas en Viñedo - Guía Completa">
     <meta property="og:description" content="Identifica y controla las principales plagas y enfermedades del viñedo.">
-    <meta property="og:image" content="{{ asset('images/logo.png') }}">
+    <meta property="og:image" content="{{ asset('images/dashboard-preview.png') }}">
     <meta property="og:locale" content="es_ES">
     
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">

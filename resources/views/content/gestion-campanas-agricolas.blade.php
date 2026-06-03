@@ -7,7 +7,7 @@
     <meta name="description" content="Gestión de campañas agrícolas por año: organiza actividades, cosechas, tratamientos y facturación por campaña. Compara rendimientos entre años.">
     <meta name="keywords" content="campaña agrícola, gestión campaña viñedo, año agrícola, organización campaña, control anual viñedo, comparativa campañas, histórico campañas, planificación campaña">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="{{ url('/gestion-campañas-agricolas') }}">
+    <link rel="canonical" href="{{ url('/gestion-campanas-agricolas') }}">
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700&display=swap" rel="stylesheet" />
@@ -62,7 +62,7 @@
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                             <div class="text-3xl mb-3">📊</div>
                             <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('Comparativa Anual') }}</h3>
-                            <p class="text-gray-700">Compara <a href="{{ url('/rendimientos-cosecha-viñedo') }}" class="text-[var(--color-agro-green)] hover:underline">rendimientos</a>, costes y resultados entre campañas.</p>
+                            <p class="text-gray-700">Compara <a href="{{ url('/rendimientos-cosecha-vinedo') }}" class="text-[var(--color-agro-green)] hover:underline">rendimientos</a>, costes y resultados entre campañas.</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                             <div class="text-3xl mb-3">📋</div>

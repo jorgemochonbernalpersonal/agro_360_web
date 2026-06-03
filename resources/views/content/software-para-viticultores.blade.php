@@ -22,7 +22,7 @@
     <meta property="og:url" content="{{ url('/software-para-viticultores') }}">
     <meta property="og:title" content="Software para Viticultores - Gestión Profesional de Viñedos">
     <meta property="og:description" content="Software profesional para viticultores con cuaderno digital, SIGPAC, control de vendimia y cumplimiento normativo. Prueba gratis 3 meses.">
-    <meta property="og:image" content="{{ asset('images/logo.png') }}">
+    <meta property="og:image" content="{{ asset('images/dashboard-preview.png') }}">
     <meta property="og:locale" content="es_ES">
     <meta property="og:site_name" content="Agro365">
     
@@ -31,7 +31,7 @@
     <meta name="twitter:url" content="{{ url('/software-para-viticultores') }}">
     <meta name="twitter:title" content="Software para Viticultores - Gestión Profesional">
     <meta name="twitter:description" content="Software profesional para viticultores con cuaderno digital y SIGPAC. Prueba gratis 3 meses.">
-    <meta name="twitter:image" content="{{ asset('images/logo.png') }}">
+    <meta name="twitter:image" content="{{ asset('images/dashboard-preview.png') }}">
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">

@@ -14,7 +14,7 @@
     <link rel="canonical" href="{{ url('/software-viticultores-ribera-duero') }}">
     <meta property="og:title" content="Software para Viticultores en DOCa Ribera del Duero - Agro365">
     <meta property="og:description" content="Gestión especializada para Tinta del País en Ribera del Duero. Cuaderno digital, teledetección NDVI, Verifactu y cumplimiento Consejo Regulador.">
-    <meta property="og:image" content="{{ asset('images/logo.png') }}">
+    <meta property="og:image" content="{{ asset('images/dashboard-preview.png') }}">
     <meta property="og:url" content="{{ url('/software-viticultores-ribera-duero') }}">
     
     <!-- Favicon & Fonts -->

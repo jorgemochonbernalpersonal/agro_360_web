@@ -117,5 +117,17 @@
         "publisher": {"@@type": "Organization", "name": "Agro365", "logo": {"@@type": "ImageObject", "url": "{{ asset('images/logo.png') }}"}}
     }
     </script>
+
+    <script type="application/ld+json">
+    {
+        "@@context": "https://schema.org",
+        "@@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@@type": "ListItem", "position": 1, "name": "Inicio", "item": "{{ url('/') }}"},
+            {"@@type": "ListItem", "position": 2, "name": "Blog", "item": "{{ url('/blog') }}"},
+            {"@@type": "ListItem", "position": 3, "name": "Novedades PAC 2025", "item": "{{ url('/blog/novedades-pac-2025') }}"}
+        ]
+    }
+    </script>
 </body>
 </html>

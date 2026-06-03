@@ -22,7 +22,7 @@
     <meta property="og:url" content="{{ url('/cuaderno-campo-digital-2027') }}">
     <meta property="og:title" content="Cuaderno de Campo Digital Obligatorio 2027 - Normativa y Requisitos">
     <meta property="og:description" content="Guía completa sobre el cuaderno de campo digital obligatorio desde 2027. Normativa, requisitos y cómo cumplir con Agro365.">
-    <meta property="og:image" content="{{ asset('images/logo.png') }}">
+    <meta property="og:image" content="{{ asset('images/dashboard-preview.png') }}">
     <meta property="og:locale" content="es_ES">
     <meta property="og:site_name" content="Agro365">
     
@@ -31,7 +31,7 @@
     <meta name="twitter:url" content="{{ url('/cuaderno-campo-digital-2027') }}">
     <meta name="twitter:title" content="Cuaderno de Campo Digital Obligatorio 2027">
     <meta name="twitter:description" content="Normativa, requisitos y cómo cumplir con el cuaderno de campo digital obligatorio desde 2027.">
-    <meta name="twitter:image" content="{{ asset('images/logo.png') }}">
+    <meta name="twitter:image" content="{{ asset('images/dashboard-preview.png') }}">
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">

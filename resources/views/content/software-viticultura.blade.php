@@ -22,7 +22,7 @@
     <meta property="og:url" content="{{ url('/software-viticultura') }}">
     <meta property="og:title" content="Software de Viticultura - Gestión Profesional">
     <meta property="og:description" content="Software profesional de viticultura con cuaderno digital, SIGPAC y control de vendimia. Prueba gratis 3 meses.">
-    <meta property="og:image" content="{{ asset('images/logo.png') }}">
+    <meta property="og:image" content="{{ asset('images/dashboard-preview.png') }}">
     <meta property="og:locale" content="es_ES">
     <meta property="og:site_name" content="Agro365">
     
@@ -31,7 +31,7 @@
     <meta name="twitter:url" content="{{ url('/software-viticultura') }}">
     <meta name="twitter:title" content="Software de Viticultura - Agro365">
     <meta name="twitter:description" content="Software profesional de viticultura con cuaderno digital y SIGPAC. Prueba gratis 3 meses.">
-    <meta name="twitter:image" content="{{ asset('images/logo.png') }}">
+    <meta name="twitter:image" content="{{ asset('images/dashboard-preview.png') }}">
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">

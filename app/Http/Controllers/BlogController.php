@@ -12,6 +12,8 @@ class BlogController extends Controller
      * Mapeo de slug -> vista
      */
     protected const BLOG_POSTS = [
+        'cuaderno-campo-digital-obligatorio-2027' => 'blog.cuaderno-campo-digital-obligatorio-2027',
+        'novedades-pac-2026' => 'blog.novedades-pac-2026',
         'novedades-pac-2025' => 'blog.novedades-pac-2025',
         'errores-cuaderno-campo' => 'blog.errores-cuaderno-campo',
         'calendario-viticola-2025' => 'blog.calendario-viticola-2025',

@@ -22,7 +22,7 @@
     <meta property="og:url" content="{{ url('/app-agricultura') }}">
     <meta property="og:title" content="App Agricultura - Software de Gestión Agrícola Digital">
     <meta property="og:description" content="App de agricultura digital para gestionar explotaciones. Cuaderno digital, SIGPAC y cumplimiento normativo. Prueba gratis 3 meses.">
-    <meta property="og:image" content="{{ asset('images/logo.png') }}">
+    <meta property="og:image" content="{{ asset('images/dashboard-preview.png') }}">
     <meta property="og:locale" content="es_ES">
     <meta property="og:site_name" content="Agro365">
     
@@ -31,7 +31,7 @@
     <meta name="twitter:url" content="{{ url('/app-agricultura') }}">
     <meta name="twitter:title" content="App Agricultura - Gestión Agrícola Digital">
     <meta name="twitter:description" content="App de agricultura digital con cuaderno digital y SIGPAC. Prueba gratis 3 meses.">
-    <meta name="twitter:image" content="{{ asset('images/logo.png') }}">
+    <meta name="twitter:image" content="{{ asset('images/dashboard-preview.png') }}">
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">

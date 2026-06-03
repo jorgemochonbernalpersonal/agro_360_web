@@ -19,7 +19,7 @@
     <meta property="og:url" content="{{ url('/subvenciones-pac-2024') }}">
     <meta property="og:title" content="Subvenciones PAC 2024 - Guía de Ayudas Agrícolas">
     <meta property="og:description" content="Todo sobre las ayudas PAC para agricultores. Requisitos, plazos y cómo cumplir.">
-    <meta property="og:image" content="{{ asset('images/logo.png') }}">
+    <meta property="og:image" content="{{ asset('images/dashboard-preview.png') }}">
     <meta property="og:locale" content="es_ES">
     
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">

@@ -77,9 +77,9 @@
                         <ul class="text-gray-700 space-y-1">
                             <li>• <strong>{{ __('Floración') }}</strong> - Fase crítica para producción</li>
                             <li>• <strong>{{ __('Cuajado') }}</strong> - Formación de racimos</li>
-                            <li>• Control de <a href="{{ url('/control-plagas-viñedo') }}" class="text-[var(--color-agro-green)] hover:underline">polilla del racimo</a> (1ª generación)</li>
+                            <li>• Control de <a href="{{ url('/control-plagas-vinedo') }}" class="text-[var(--color-agro-green)] hover:underline">polilla del racimo</a> (1ª generación)</li>
                             <li>{{ __('• Espergura y desniete (poda en verde)') }}</li>
-                            <li>• Primera estimación de <a href="{{ url('/rendimientos-cosecha-viñedo') }}" class="text-[var(--color-agro-green)] hover:underline">cosecha</a></li>
+                            <li>• Primera estimación de <a href="{{ url('/rendimientos-cosecha-vinedo') }}" class="text-[var(--color-agro-green)] hover:underline">cosecha</a></li>
                         </ul>
                     </div>
 
@@ -91,7 +91,7 @@
                             <li>{{ __('• Despunte y deshojado') }}</li>
                             <li>{{ __('• Control de estrés hídrico (riegos si procede)') }}</li>
                             <li>{{ __('• Tratamientos contra botritis') }}</li>
-                            <li>• Monitorización con <a href="{{ url('/ndvi-viñedo-teledeteccion') }}" class="text-[var(--color-agro-green)] hover:underline">NDVI satelital</a></li>
+                            <li>• Monitorización con <a href="{{ url('/ndvi-vinedo-teledeteccion') }}" class="text-[var(--color-agro-green)] hover:underline">NDVI satelital</a></li>
                         </ul>
                     </div>
 
@@ -113,7 +113,7 @@
                             <li>{{ __('• Caída de hoja') }}</li>
                             <li>{{ __('• Pre-poda (opcional)') }}</li>
                             <li>{{ __('• Abonado de fondo') }}</li>
-                            <li>• Análisis de <a href="{{ url('/rendimientos-cosecha-viñedo') }}" class="text-[var(--color-agro-green)] hover:underline">rendimientos</a> de la campaña</li>
+                            <li>• Análisis de <a href="{{ url('/rendimientos-cosecha-vinedo') }}" class="text-[var(--color-agro-green)] hover:underline">rendimientos</a> de la campaña</li>
                             <li>• <a href="{{ url('/informes-oficiales-agricultura') }}" class="text-[var(--color-agro-green)] hover:underline">Informes oficiales</a> de campaña</li>
                         </ul>
                     </div>
@@ -149,6 +149,18 @@
         "dateModified": "2024-12-29",
         "author": {"@@type": "Organization", "name": "Agro365", "url": "{{ url('/') }}"},
         "publisher": {"@@type": "Organization", "name": "Agro365", "logo": {"@@type": "ImageObject", "url": "{{ asset('images/logo.png') }}"}}
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+        "@@context": "https://schema.org",
+        "@@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@@type": "ListItem", "position": 1, "name": "Inicio", "item": "{{ url('/') }}"},
+            {"@@type": "ListItem", "position": 2, "name": "Blog", "item": "{{ url('/blog') }}"},
+            {"@@type": "ListItem", "position": 3, "name": "Calendario Vitícola 2025", "item": "{{ url('/blog/calendario-viticola-2025') }}"}
+        ]
     }
     </script>
 </body>
