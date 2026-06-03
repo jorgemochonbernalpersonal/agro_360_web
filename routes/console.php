@@ -87,3 +87,8 @@ Schedule::command('supervisor-requests:due-reminders')
     ->dailyAt('09:00')
     ->withoutOverlapping();
 
+// 🗺️ Regenerar sitemap estático (cada lunes a las 4:30 AM)
+Schedule::command('sitemap:generate')
+    ->weeklyOn(1, '04:30')
+    ->withoutOverlapping();
+
