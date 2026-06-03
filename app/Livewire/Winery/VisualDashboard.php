@@ -578,10 +578,12 @@ class VisualDashboard extends Component
         if (!empty($allPlotIds)) {
             $placeholders = implode(',', array_fill(0, count($allPlotIds), '?'));
             $polyRows = DB::select(
+                // LEFT JOIN: las geometrías catastrales/manuales no tienen
+                // sigpac_code_id; sc.code sale NULL pero la parcela se pinta igual.
                 "SELECT mps.plot_id, sc.code AS sigpac_code,
                         ST_AsText(pg.coordinates) AS wkt
                  FROM   multipart_plot_sigpac mps
-                 JOIN   sigpac_code sc ON mps.sigpac_code_id  = sc.id
+                 LEFT JOIN sigpac_code sc ON mps.sigpac_code_id  = sc.id
                  JOIN   plot_geometry pg ON mps.plot_geometry_id = pg.id
                  WHERE  mps.plot_id IN ($placeholders)
                  AND    pg.coordinates IS NOT NULL",

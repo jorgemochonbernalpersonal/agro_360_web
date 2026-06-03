@@ -113,6 +113,31 @@
                         <div>
                             <label class="text-sm font-semibold text-zinc-500">{{ __('Código Catastral') }}</label>
                             <p class="text-zinc-900 font-mono text-sm">{{ $plot->code_parcel }}</p>
+                            @can('update', $plot)
+                                @php
+                                    $plotHasGeometry = \App\Models\MultipartPlotSigpac::where('plot_id', $plot->id)
+                                        ->whereNotNull('plot_geometry_id')
+                                        ->exists();
+                                @endphp
+                                @if(!$plotHasGeometry)
+                                    <flux:button
+                                        wire:click="generateMapFromCatastro"
+                                        wire:loading.attr="disabled"
+                                        wire:target="generateMapFromCatastro"
+                                        variant="outline"
+                                        size="sm"
+                                        icon="map"
+                                        class="mt-2"
+                                    >
+                                        <span wire:loading.remove wire:target="generateMapFromCatastro">
+                                            {{ __('Generar mapa desde catastro') }}
+                                        </span>
+                                        <span wire:loading wire:target="generateMapFromCatastro">
+                                            {{ __('Generando...') }}
+                                        </span>
+                                    </flux:button>
+                                @endif
+                            @endcan
                         </div>
                     @endif
 

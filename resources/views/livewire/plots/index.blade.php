@@ -309,6 +309,10 @@
                                         @can('update', $plot)
                                             <x-agro.action-button icon="cpu-chip" variant="default" wire:click="generateMap(null, {{ $plot->id }})" :title="__('Generar mapa desde SIGPAC')" />
                                         @endcan
+                                    @elseif($plot->code_parcel)
+                                        @can('update', $plot)
+                                            <x-agro.action-button icon="map" variant="default" wire:click="generateMapFromCatastro({{ $plot->id }})" :title="__('Generar mapa desde catastro')" />
+                                        @endcan
                                     @endif
                                     @can('update', $plot)
                                         <x-agro.action-button icon="scissors" variant="default" href="{{ route('plots.plantings.create', $plot) }}" :title="__('Nueva plantación')" />

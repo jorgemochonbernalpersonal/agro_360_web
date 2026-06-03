@@ -13,6 +13,7 @@ class MultipartPlotSigpac extends Model
         'plot_id',
         'sigpac_code_id',
         'plot_geometry_id',
+        'source',
     ];
     
     /**

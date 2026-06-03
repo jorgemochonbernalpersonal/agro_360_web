@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Plots;
 
+use App\Livewire\Concerns\GeneratesCatastroGeometry;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Campaign;
 use App\Models\Plot;
@@ -15,7 +16,7 @@ use Livewire\Component;
 
 class Show extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, GeneratesCatastroGeometry;
 
     public Plot $plot;
 
