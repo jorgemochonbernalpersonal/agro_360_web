@@ -6,8 +6,8 @@
     @php
         $isMunicipalityMode = $showMunicipality ?? false;
         $displayName = $isMunicipalityMode
-            ? ($municipality->name ?? $plot->municipality->name ?? __('Municipio'))
-            : ($plot->name ?? '');
+            ? ($municipality->name ?? __('Municipio'))
+            : (isset($plot) ? $plot->name : '');
     @endphp
     <title>Mapa - {{ $displayName }} - Agro365</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -77,7 +77,7 @@
                         $backUrl = match($returnUrl) {
                             'plots' => route('plots.index'),
                             'sigpac' => route('sigpac.codes'),
-                            default => route('plots.show', $plot)
+                            default => isset($plot) ? route('plots.show', $plot) : route('plots.index')
                         };
                     }
                 @endphp
@@ -552,7 +552,7 @@
         // ===========================================
         let ndviMode = false;
         let ndviData = null;
-        const plotId = {{ $plot->id }};
+        const plotId = {{ isset($plot) ? $plot->id : 'null' }};
 
         async function toggleNdviMode() {
             const toggle = document.getElementById('ndvi-toggle');
