@@ -64,9 +64,15 @@ trait GeneratesCatastroGeometry
 
             $this->toastSuccess(__('Geometría generada correctamente desde el catastro.'));
 
-            // Re-render del componente (el blade recalcula la geometría) y aviso
-            // a otros componentes (p. ej. el editor) por si escuchan el evento.
-            $this->dispatch('$refresh');
+            // Recargar relaciones de geometría para que render() calcule
+            // $hasGeometry/$geometrySource/$plotGeometries sin queries extra.
+            if (isset($this->plot)) {
+                $this->plot->load([
+                    'multiplePlotSigpacs.sigpacCode',
+                    'multiplePlotSigpacs.plotGeometry',
+                ]);
+            }
+
             $this->dispatch('geometry-saved');
         } catch (\Exception $e) {
             DB::rollBack();

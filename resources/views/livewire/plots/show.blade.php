@@ -114,12 +114,6 @@
                             <label class="text-sm font-semibold text-zinc-500">{{ __('Código Catastral') }}</label>
                             <p class="text-zinc-900 font-mono text-sm">{{ $plot->code_parcel }}</p>
                             @can('update', $plot)
-                                @php
-                                    $plotHasGeometry = \App\Models\MultipartPlotSigpac::where('plot_id', $plot->id)
-                                        ->whereNotNull('plot_geometry_id')
-                                        ->exists();
-                                @endphp
-                                @if(!$plotHasGeometry)
                                     <flux:button
                                         wire:click="generateMapFromCatastro"
                                         wire:loading.attr="disabled"
@@ -130,13 +124,12 @@
                                         class="mt-2"
                                     >
                                         <span wire:loading.remove wire:target="generateMapFromCatastro">
-                                            {{ __('Generar mapa desde catastro') }}
+                                            {{ $hasGeometry ? __('Regenerar desde catastro') : __('Generar mapa desde catastro') }}
                                         </span>
                                         <span wire:loading wire:target="generateMapFromCatastro">
                                             {{ __('Generando...') }}
                                         </span>
                                     </flux:button>
-                                @endif
                             @endcan
                         </div>
                     @endif
@@ -344,28 +337,21 @@
                                 <span class="font-semibold text-zinc-900 text-sm">{{ __('Datos SIGPAC') }}</span>
                             </div>
                         @if($plot->sigpacCodes->count() > 0)
-                            @php
-                                $hasGeometryForButton = \App\Models\MultipartPlotSigpac::where('plot_id', $plot->id)
-                                    ->whereNotNull('plot_geometry_id')
-                                    ->exists();
-                            @endphp
                             @can('update', $plot)
-                                @if(!$hasGeometryForButton)
-                                    <flux:button
-                                        wire:click="generateMap({{ $plot->id }})"
-                                        wire:loading.attr="disabled"
-                                        variant="outline"
-                                        size="sm"
-                                        icon="map"
-                                    >
-                                        <span wire:loading.remove wire:target="generateMap({{ $plot->id }})">
-                                            {{ __('Generar Mapa') }}
-                                        </span>
-                                        <span wire:loading wire:target="generateMap({{ $plot->id }})">
-                                            {{ __('Generando...') }}
-                                        </span>
-                                    </flux:button>
-                                @endif
+                                <flux:button
+                                    wire:click="generateMap({{ $plot->id }})"
+                                    wire:loading.attr="disabled"
+                                    variant="outline"
+                                    size="sm"
+                                    icon="map"
+                                >
+                                    <span wire:loading.remove wire:target="generateMap({{ $plot->id }})">
+                                        {{ $hasGeometry ? __('Regenerar Mapa SIGPAC') : __('Generar Mapa') }}
+                                    </span>
+                                    <span wire:loading wire:target="generateMap({{ $plot->id }})">
+                                        {{ __('Generando...') }}
+                                    </span>
+                                </flux:button>
                             @endcan
                         @endif
                     </div>
@@ -398,29 +384,27 @@
                                         <flux:badge color="blue" size="sm">
                                             {{ $code->formatted_code ?? $code->code }}
                                         </flux:badge>
-                                        @php
-                                            $codeHasGeometry = \App\Models\MultipartPlotSigpac::where('plot_id', $plot->id)
-                                                ->where('sigpac_code_id', $code->id)
-                                                ->whereNotNull('plot_geometry_id')
-                                                ->exists();
-                                        @endphp
                                         @can('update', $plot)
-                                            @if(!$codeHasGeometry)
-                                                <flux:button
-                                                    wire:click="generateMap({{ $plot->id }}, {{ $code->id }})"
-                                                    wire:loading.attr="disabled"
-                                                    variant="ghost"
-                                                    size="xs"
-                                                    icon="map"
-                                                >
-                                                    <span wire:loading.remove wire:target="generateMap({{ $plot->id }}, {{ $code->id }})">
-                                                        {{ __('Generar Mapa') }}
-                                                    </span>
-                                                    <span wire:loading wire:target="generateMap({{ $plot->id }}, {{ $code->id }})">
-                                                        {{ __('Generando...') }}
-                                                    </span>
-                                                </flux:button>
-                                            @endif
+                                            @php
+                                                $codeHasGeometry = $plot->multiplePlotSigpacs
+                                                    ->where('sigpac_code_id', $code->id)
+                                                    ->whereNotNull('plot_geometry_id')
+                                                    ->isNotEmpty();
+                                            @endphp
+                                            <flux:button
+                                                wire:click="generateMap({{ $plot->id }}, {{ $code->id }})"
+                                                wire:loading.attr="disabled"
+                                                variant="ghost"
+                                                size="xs"
+                                                icon="map"
+                                            >
+                                                <span wire:loading.remove wire:target="generateMap({{ $plot->id }}, {{ $code->id }})">
+                                                    {{ $codeHasGeometry ? __('Regenerar') : __('Generar Mapa') }}
+                                                </span>
+                                                <span wire:loading wire:target="generateMap({{ $plot->id }}, {{ $code->id }})">
+                                                    {{ __('Generando...') }}
+                                                </span>
+                                            </flux:button>
                                         @endcan
                                     </div>
                                 @endforeach
@@ -432,33 +416,7 @@
                 </x-agro.card>
             @endif
 
-            <!-- Mapa SIGPAC -->
-            @php
-                $hasGeometry = \App\Models\MultipartPlotSigpac::where('plot_id', $plot->id)
-                    ->whereNotNull('plot_geometry_id')
-                    ->exists();
-
-                $plotGeometries = [];
-                if ($hasGeometry) {
-                    $relations = \App\Models\MultipartPlotSigpac::with(['plotGeometry', 'sigpacCode'])
-                        ->where('plot_id', $plot->id)
-                        ->whereNotNull('plot_geometry_id')
-                        ->get();
-
-                    foreach ($relations as $relation) {
-                        if ($relation->plotGeometry) {
-                            $wkt = $relation->plotGeometry->getWktCoordinates();
-                            if ($wkt) {
-                                $plotGeometries[] = [
-                                    'wkt' => $wkt,
-                                    'sigpac_code' => $relation->sigpacCode?->code ?? null,
-                                ];
-                            }
-                        }
-                    }
-                }
-            @endphp
-
+            <!-- Mapa de parcela (SIGPAC o Catastro) -->
             @if($hasGeometry)
                 <x-agro.card>
                     <x-slot:header>
@@ -468,6 +426,13 @@
                                     <flux:icon icon="map" class="size-4 text-agro-600" />
                                 </div>
                                 <span class="font-semibold text-zinc-900 text-sm">{{ __('Mapa de la Parcela') }}</span>
+                                @if($geometrySource === 'catastro')
+                                    <flux:badge color="green" size="sm">{{ __('Catastro') }}</flux:badge>
+                                @elseif($geometrySource === 'manual')
+                                    <flux:badge color="amber" size="sm">{{ __('Manual') }}</flux:badge>
+                                @else
+                                    <flux:badge color="blue" size="sm">{{ __('SIGPAC') }}</flux:badge>
+                                @endif
                             </div>
                             <flux:button href="/map/{{ $plot->id }}" variant="primary" size="sm" icon="map">
                                 {{ __('Ver Mapa Completo') }}
@@ -482,7 +447,7 @@
                         <div class="flex-1">
                             <p class="font-semibold text-zinc-900 mb-1">{{ __('Mapa Interactivo Disponible') }}</p>
                             <p class="text-zinc-500 text-sm mb-3">
-                                {{ __('Esta parcela tiene recintos SIGPAC con geometrías generadas. Visualiza el mapa a pantalla completa con selector de recintos.') }}
+                                {{ __('Esta parcela tiene geometría generada. Visualiza el mapa a pantalla completa con selector de recintos.') }}
                             </p>
                             <ul class="text-sm text-zinc-600 space-y-1">
                                 <li class="flex items-center gap-2">
