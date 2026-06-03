@@ -16,7 +16,7 @@ class ContentController extends Controller
         'que-es-sigpac' => 'content.que-es-sigpac',
         'cuaderno-campo-digital-2027' => 'content.cuaderno-campo-digital-2027',
         'normativa-pac' => 'content.normativa-pac-2027',
-        'digitalizar-viñedo' => 'content.digitalizar-viñedo',
+        'digitalizar-vinedo' => 'content.digitalizar-vinedo',
         'comparativa-software-agricola' => 'content.comparativa-software-agricola',
         'software-para-viticultores' => 'content.software-para-viticultores',
         'app-agricultura' => 'content.app-agricultura',
@@ -42,22 +42,22 @@ class ContentController extends Controller
         'gestion-vendimia' => 'content.gestion-vendimia',
         'registro-fitosanitarios' => 'content.registro-fitosanitarios',
         'subvenciones-pac' => 'content.subvenciones-pac-2024',
-        'control-plagas-viñedo' => 'content.control-plagas-viñedo',
+        'control-plagas-vinedo' => 'content.control-plagas-vinedo',
         'facturacion-agricola' => 'content.facturacion-agricola',
 
         // Media prioridad
         'gestion-cuadrillas-agricolas' => 'content.gestion-cuadrillas-agricolas',
         'maquinaria-agricola-registro' => 'content.maquinaria-agricola-registro',
-        'plantaciones-viñedo-variedades' => 'content.plantaciones-viñedo-variedades',
-        'rendimientos-cosecha-viñedo' => 'content.rendimientos-cosecha-viñedo',
+        'plantaciones-vinedo-variedades' => 'content.plantaciones-vinedo-variedades',
+        'rendimientos-cosecha-vinedo' => 'content.rendimientos-cosecha-vinedo',
         'informes-oficiales-agricultura' => 'content.informes-oficiales-agricultura',
 
         // Contenido técnico
-        'ndvi-viñedo-teledeteccion' => 'content.ndvi-viñedo-teledeteccion',
+        'ndvi-vinedo-teledeteccion' => 'content.ndvi-vinedo-teledeteccion',
         'calendario-viticola' => 'content.calendario-viticola',
         'trazabilidad-vino-origen' => 'content.trazabilidad-vino-origen',
         'firma-digital-agricultura' => 'content.firma-digital-agricultura',
-        'gestion-campañas-agricolas' => 'content.gestion-campañas-agricolas',
+        'gestion-campanas-agricolas' => 'content.gestion-campanas-agricolas',
 
         // Páginas regionales por DO — archivos propios (legado)
         'software-viticultores-rioja'        => 'content.software-viticultores-rioja',

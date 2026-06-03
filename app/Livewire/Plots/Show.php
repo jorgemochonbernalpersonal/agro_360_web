@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Plots;
 
+use App\Livewire\Concerns\GeneratesCatastroGeometry;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Campaign;
 use App\Models\Plot;
@@ -15,7 +16,7 @@ use Livewire\Component;
 
 class Show extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, GeneratesCatastroGeometry;
 
     public Plot $plot;
 
@@ -231,7 +232,25 @@ class Show extends Component
             ? Campaign::getOrCreateActiveForYear(Auth::id())
             : null;
 
-        return view('livewire.plots.show', compact('isViticulturist', 'activeCampaign'))
+        // Computed from already-loaded relation — zero extra queries.
+        $geometryRows = $this->plot->multiplePlotSigpacs
+            ->filter(fn($mps) => $mps->plot_geometry_id !== null && $mps->plotGeometry !== null);
+
+        $hasGeometry    = $geometryRows->isNotEmpty();
+        $geometrySource = $geometryRows->first()?->source; // 'sigpac'|'catastro'|'manual'|null
+        $plotGeometries = $geometryRows
+            ->map(fn($mps) => [
+                'wkt'         => $mps->plotGeometry->getWktCoordinates(),
+                'sigpac_code' => $mps->sigpacCode?->code ?? null,
+            ])
+            ->filter(fn($g) => $g['wkt'])
+            ->values()
+            ->all();
+
+        return view('livewire.plots.show', compact(
+            'isViticulturist', 'activeCampaign',
+            'hasGeometry', 'geometrySource', 'plotGeometries'
+        ))
             ->layout('layouts.app', [
                 'title' => $this->plot->name . ' - Parcela - Agro365',
                 'description' => __('Detalles de la parcela ') . $this->plot->name . '. Información completa, códigos SIGPAC, ubicación y plantaciones asociadas.',

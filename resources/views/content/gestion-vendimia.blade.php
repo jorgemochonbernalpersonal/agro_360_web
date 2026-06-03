@@ -22,7 +22,7 @@
     <meta property="og:url" content="{{ url('/gestion-vendimia') }}">
     <meta property="og:title" content="Gestión de Vendimia Digital - Control de Cosechas y Contenedores">
     <meta property="og:description" content="Software profesional para gestión de vendimia: control de cosechas, contenedores y facturación automática.">
-    <meta property="og:image" content="{{ asset('images/logo.png') }}">
+    <meta property="og:image" content="{{ asset('images/dashboard-preview.png') }}">
     <meta property="og:locale" content="es_ES">
     <meta property="og:site_name" content="Agro365">
     
@@ -31,7 +31,7 @@
     <meta name="twitter:url" content="{{ url('/gestion-vendimia') }}">
     <meta name="twitter:title" content="Gestión de Vendimia Digital - Agro365">
     <meta name="twitter:description" content="Control de cosechas, contenedores y rendimientos para viticultores profesionales.">
-    <meta name="twitter:image" content="{{ asset('images/logo.png') }}">
+    <meta name="twitter:image" content="{{ asset('images/dashboard-preview.png') }}">
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">

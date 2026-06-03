@@ -21,7 +21,7 @@
     <meta property="og:url" content="{{ url('/registro-fitosanitarios') }}">
     <meta property="og:title" content="Registro de Productos Fitosanitarios - Cumple con la Normativa">
     <meta property="og:description" content="Registro digital obligatorio de tratamientos fitosanitarios. Software profesional para viticultores.">
-    <meta property="og:image" content="{{ asset('images/logo.png') }}">
+    <meta property="og:image" content="{{ asset('images/dashboard-preview.png') }}">
     <meta property="og:locale" content="es_ES">
     <meta property="og:site_name" content="Agro365">
     

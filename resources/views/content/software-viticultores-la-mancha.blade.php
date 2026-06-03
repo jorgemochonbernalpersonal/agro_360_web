@@ -14,7 +14,7 @@
     <link rel="canonical" href="{{ url('/software-viticultores-la-mancha') }}">
     <meta property="og:title" content="Software para Viticultores en DOCa La Mancha - Agro365">
     <meta property="og:description" content="Gestión especializada para viñedos de Airén y Cencibel en La Mancha. Cuaderno digital, teledetección NDVI, Verifactu y cumplimiento Consejo Regulador.">
-    <meta property="og:image" content="{{ asset('images/logo.png') }}">
+    <meta property="og:image" content="{{ asset('images/dashboard-preview.png') }}">
     <meta property="og:url" content="{{ url('/software-viticultores-la-mancha') }}">
     
     <!-- Favicon & Fonts -->

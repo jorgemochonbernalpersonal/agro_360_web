@@ -22,7 +22,7 @@
     <meta property="og:url" content="{{ url('/sigpac') }}">
     <meta property="og:title" content="SIGPAC - Software de Gestión">
     <meta property="og:description" content="Software de gestión SIGPAC con códigos oficiales, mapa interactivo y cumplimiento normativo. Prueba gratis 3 meses.">
-    <meta property="og:image" content="{{ asset('images/logo.png') }}">
+    <meta property="og:image" content="{{ asset('images/dashboard-preview.png') }}">
     <meta property="og:locale" content="es_ES">
     <meta property="og:site_name" content="Agro365">
     
@@ -31,7 +31,7 @@
     <meta name="twitter:url" content="{{ url('/sigpac') }}">
     <meta name="twitter:title" content="SIGPAC - Agro365">
     <meta name="twitter:description" content="Software de gestión SIGPAC con códigos oficiales. Prueba gratis 3 meses.">
-    <meta name="twitter:image" content="{{ asset('images/logo.png') }}">
+    <meta name="twitter:image" content="{{ asset('images/dashboard-preview.png') }}">
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">

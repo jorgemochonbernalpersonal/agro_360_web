@@ -19,6 +19,14 @@ Route::permanentRedirect('/quienes-somos', '/');
 Route::permanentRedirect('/tutoriales', '/blog');
 Route::permanentRedirect('/subvenciones-pac-2024', '/subvenciones-pac');
 
+// SEO: slugs antiguos con ñ → versión ASCII (evita URLs percent-encodeadas)
+Route::permanentRedirect('/digitalizar-viñedo', '/digitalizar-vinedo');
+Route::permanentRedirect('/control-plagas-viñedo', '/control-plagas-vinedo');
+Route::permanentRedirect('/plantaciones-viñedo-variedades', '/plantaciones-vinedo-variedades');
+Route::permanentRedirect('/rendimientos-cosecha-viñedo', '/rendimientos-cosecha-vinedo');
+Route::permanentRedirect('/ndvi-viñedo-teledeteccion', '/ndvi-vinedo-teledeteccion');
+Route::permanentRedirect('/gestion-campañas-agricolas', '/gestion-campanas-agricolas');
+
 // ✅ REFACTOR: Rutas de contenido SEO dinámicas
 // Todas las páginas de contenido ahora pasan por ContentController
 Route::get('/{slug}', [App\Http\Controllers\ContentController::class, 'show'])

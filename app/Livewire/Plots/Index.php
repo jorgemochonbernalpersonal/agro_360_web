@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Plots;
 
+use App\Livewire\Concerns\GeneratesCatastroGeometry;
 use App\Livewire\Concerns\WithListing;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Livewire\Concerns\WithUserPreferences;
@@ -18,7 +19,7 @@ use Livewire\Component;
 
 class Index extends Component
 {
-    use WithListing, WithToastNotifications, WithUserPreferences;
+    use WithListing, WithToastNotifications, WithUserPreferences, GeneratesCatastroGeometry;
 
     public $filterAutonomousCommunity = '';
     public $filterProvince = '';

@@ -16,7 +16,7 @@
     <meta property="og:url" content="{{ url('/' . $slug) }}">
     <meta property="og:title" content="Software para Viticultores en {{ $region['name'] }} - Agro365">
     <meta property="og:description" content="{{ $region['description'] }}">
-    <meta property="og:image" content="{{ asset('images/logo.png') }}">
+    <meta property="og:image" content="{{ asset('images/dashboard-preview.png') }}">
     <meta property="og:locale" content="es_ES">
     <meta property="og:site_name" content="Agro365">
 

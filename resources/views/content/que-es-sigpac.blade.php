@@ -22,7 +22,7 @@
     <meta property="og:url" content="{{ url('/que-es-sigpac') }}">
     <meta property="og:title" content="Qué es SIGPAC y Cómo Funciona - Guía Completa 2027">
     <meta property="og:description" content="Descubre todo sobre SIGPAC, el sistema oficial de gestión de parcelas agrícolas. Cómo funciona y cómo integrarlo con tu software agrícola.">
-    <meta property="og:image" content="{{ asset('images/logo.png') }}">
+    <meta property="og:image" content="{{ asset('images/dashboard-preview.png') }}">
     <meta property="og:locale" content="es_ES">
     <meta property="og:site_name" content="Agro365">
     
@@ -31,7 +31,7 @@
     <meta name="twitter:url" content="{{ url('/que-es-sigpac') }}">
     <meta name="twitter:title" content="Qué es SIGPAC y Cómo Funciona - Guía Completa">
     <meta name="twitter:description" content="Guía completa sobre SIGPAC para viticultores. Cómo gestionar parcelas con códigos SIGPAC.">
-    <meta name="twitter:image" content="{{ asset('images/logo.png') }}">
+    <meta name="twitter:image" content="{{ asset('images/dashboard-preview.png') }}">
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">

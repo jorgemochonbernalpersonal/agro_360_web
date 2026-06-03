@@ -9,7 +9,7 @@
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="{{ url('/calendario-viticola') }}">
     <meta property="og:title" content="Calendario Vitícola - Planificación de Trabajos">
-    <meta property="og:image" content="{{ asset('images/logo.png') }}">
+    <meta property="og:image" content="{{ asset('images/dashboard-preview.png') }}">
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700&display=swap" rel="stylesheet" />
@@ -67,7 +67,7 @@
                             <h3 class="font-bold text-[var(--color-agro-green-dark)]">{{ __('🌸 Mayo - Junio: Floración y Cuajado') }}</h3>
                             <ul class="text-gray-700 text-sm mt-2 space-y-1">
                                 <li>{{ __('• Floración y cuajado de racimos') }}</li>
-                                <li>• <a href="{{ url('/control-plagas-viñedo') }}" class="text-[var(--color-agro-green)] hover:underline">Control de polilla</a> 1ª generación</li>
+                                <li>• <a href="{{ url('/control-plagas-vinedo') }}" class="text-[var(--color-agro-green)] hover:underline">Control de polilla</a> 1ª generación</li>
                                 <li>{{ __('• Espergura y desniete') }}</li>
                                 <li>{{ __('• Estimación de cosecha') }}</li>
                             </ul>

@@ -14,7 +14,7 @@
     <link rel="canonical" href="{{ url('/software-viticultores-rioja') }}">
     <meta property="og:title" content="Software para Viticultores en DOCa Rioja - Agro365">
     <meta property="og:description" content="Gestión especializada para Tempranillo, Garnacha y Viura en DOCa Rioja. Cuaderno digital, teledetección NDVI, Verifactu y cumplimiento Consejo Regulador.">
-    <meta property="og:image" content="{{ asset('images/logo.png') }}">
+    <meta property="og:image" content="{{ asset('images/dashboard-preview.png') }}">
     <meta property="og:url" content="{{ url('/software-viticultores-rioja') }}">
     
     <!-- Favicon & Fonts -->

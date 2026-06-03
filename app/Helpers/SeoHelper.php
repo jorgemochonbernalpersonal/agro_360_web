@@ -51,7 +51,7 @@ class SeoHelper
             '/que-es-sigpac' => __('Guía completa sobre SIGPAC: qué es, cómo funciona y cómo gestionar parcelas agrícolas con códigos SIGPAC. Integración completa con Agro365 para viticultores.'),
             '/cuaderno-campo-digital-2027' => __('Cuaderno de campo digital obligatorio desde 2027. Normativa europea, requisitos legales y cómo cumplir con Agro365. Guía completa para viticultores en España.'),
             '/normativa-pac' => __('Normativa PAC 2027: cambios, requisitos y cumplimiento. Cómo Agro365 te ayuda a cumplir con todas las normativas PAC automáticamente. Software para viticultores.'),
-            '/digitalizar-viñedo' => __('Guía completa para digitalizar tu viñedo: pasos, beneficios y herramientas. Software de gestión agrícola para viticultores profesionales. Prueba gratis 6 meses.'),
+            '/digitalizar-vinedo' => __('Guía completa para digitalizar tu viñedo: pasos, beneficios y herramientas. Software de gestión agrícola para viticultores profesionales. Prueba gratis 6 meses.'),
             '/comparativa-software-agricola' => __('Comparativa de software agrícola para viñedos. Compara Agro365 con otras soluciones. Cuaderno digital, SIGPAC, informes oficiales y más. Análisis completo.'),
             '/software-para-viticultores' => __('Software profesional para viticultores en España. Gestión completa de viñedos, cuaderno digital, SIGPAC, control de vendimia y cumplimiento normativo. Prueba gratis.'),
             '/app-agricultura' => __('App de agricultura digital para gestionar explotaciones agrícolas. Cuaderno de campo digital, SIGPAC, control de parcelas y cumplimiento normativo. Prueba gratis 6 meses.'),
@@ -59,7 +59,7 @@ class SeoHelper
             '/gestion-vendimia' => __('Gestión de vendimia digital para viticultores. Control de cosechas, contenedores, rendimientos y trazabilidad completa. Software profesional para bodegas.'),
             '/registro-fitosanitarios' => __('Registro de productos fitosanitarios para viticultores. Gestión completa de tratamientos, dosis, plazos de seguridad y cumplimiento normativo.'),
             '/subvenciones-pac' => __('Subvenciones PAC: guía completa para viticultores. Requisitos, plazos y cómo cumplir con Agro365. Software de gestión agrícola profesional.'),
-            '/control-plagas-viñedo' => __('Control de plagas en viñedo: gestión digital de tratamientos fitosanitarios, calendario de aplicaciones y cumplimiento normativo. Software para viticultores.'),
+            '/control-plagas-vinedo' => __('Control de plagas en viñedo: gestión digital de tratamientos fitosanitarios, calendario de aplicaciones y cumplimiento normativo. Software para viticultores.'),
             '/facturacion-agricola' => __('Facturación agrícola integrada para viticultores. Gestión de clientes, facturas, albaranes y control de stock. Software completo de gestión agrícola.'),
             '/quienes-somos' => __('Conoce más sobre Agro365, la plataforma de gestión agrícola profesional para viticultores y bodegas en España. Software de cuaderno digital y SIGPAC.'),
             '/blog' => __('Artículos, noticias y guías sobre gestión agrícola, viticultura, SIGPAC y digitalización del campo. Blog de Agro365 para viticultores profesionales.'),
@@ -126,12 +126,12 @@ class SeoHelper
             '/que-es-sigpac' => [
                 ['url' => url('/software-para-viticultores'), 'title' => __('Software para Viticultores'), 'description' => __('Gestión completa de viñedos con SIGPAC integrado.')],
                 ['url' => url('/cuaderno-digital-viticultores'), 'title' => __('Cuaderno Digital'), 'description' => __('Registro digital de actividades agrícolas.')],
-                ['url' => url('/digitalizar-viñedo'), 'title' => __('Digitalizar Viñedo'), 'description' => __('Guía paso a paso para digitalizar tu explotación.')],
+                ['url' => url('/digitalizar-vinedo'), 'title' => __('Digitalizar Viñedo'), 'description' => __('Guía paso a paso para digitalizar tu explotación.')],
                 ['url' => url('/normativa-pac'), 'title' => __('Normativa PAC'), 'description' => __('Cumplimiento normativo con SIGPAC.')],
             ],
             '/gestion-vendimia' => [
                 ['url' => url('/software-para-viticultores'), 'title' => __('Software para Viticultores'), 'description' => __('Solución completa de gestión agrícola.')],
-                ['url' => url('/rendimientos-cosecha-viñedo'), 'title' => __('Rendimientos de Cosecha'), 'description' => __('Análisis de rendimientos y productividad.')],
+                ['url' => url('/rendimientos-cosecha-vinedo'), 'title' => __('Rendimientos de Cosecha'), 'description' => __('Análisis de rendimientos y productividad.')],
                 ['url' => url('/trazabilidad-vino-origen'), 'title' => __('Trazabilidad del Vino'), 'description' => __('Control de origen y trazabilidad completa.')],
                 ['url' => url('/cuaderno-digital-viticultores'), 'title' => __('Cuaderno Digital'), 'description' => __('Registro de actividades agrícolas.')],
             ],
@@ -141,7 +141,7 @@ class SeoHelper
                 ['url' => url('/cuaderno-digital-viticultores'), 'title' => __('Cuaderno Digital'), 'description' => __('Obligatorio desde 2027.')],
                 ['url' => url('/informes-oficiales-agricultura'), 'title' => __('Informes Oficiales'), 'description' => __('Genera informes para cumplimiento PAC.')],
             ],
-            '/digitalizar-viñedo' => [
+            '/digitalizar-vinedo' => [
                 ['url' => url('/software-para-viticultores'), 'title' => __('Software para Viticultores'), 'description' => __('Herramienta completa de digitalización.')],
                 ['url' => url('/que-es-sigpac'), 'title' => __('Gestión SIGPAC'), 'description' => __('Digitaliza tus parcelas con SIGPAC.')],
                 ['url' => url('/cuaderno-digital-viticultores'), 'title' => __('Cuaderno Digital'), 'description' => __('Registro digital de actividades.')],
@@ -149,7 +149,7 @@ class SeoHelper
             ],
             '/registro-fitosanitarios' => [
                 ['url' => url('/software-para-viticultores'), 'title' => __('Software para Viticultores'), 'description' => __('Gestión completa de fitosanitarios.')],
-                ['url' => url('/control-plagas-viñedo'), 'title' => __('Control de Plagas'), 'description' => __('Gestión de plagas y enfermedades.')],
+                ['url' => url('/control-plagas-vinedo'), 'title' => __('Control de Plagas'), 'description' => __('Gestión de plagas y enfermedades.')],
                 ['url' => url('/cuaderno-digital-viticultores'), 'title' => __('Cuaderno Digital'), 'description' => __('Registro de tratamientos fitosanitarios.')],
                 ['url' => url('/calendario-viticola'), 'title' => __('Calendario Vitícola'), 'description' => __('Planificación de tratamientos.')],
             ],

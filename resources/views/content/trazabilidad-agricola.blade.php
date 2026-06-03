@@ -22,7 +22,7 @@
     <meta property="og:url" content="{{ url('/trazabilidad-agricola') }}">
     <meta property="og:title" content="Trazabilidad Agrícola - Software Completo">
     <meta property="og:description" content="Software de trazabilidad agrícola desde la parcela hasta el producto final. Prueba gratis 3 meses.">
-    <meta property="og:image" content="{{ asset('images/logo.png') }}">
+    <meta property="og:image" content="{{ asset('images/dashboard-preview.png') }}">
     <meta property="og:locale" content="es_ES">
     <meta property="og:site_name" content="Agro365">
     
@@ -31,7 +31,7 @@
     <meta name="twitter:url" content="{{ url('/trazabilidad-agricola') }}">
     <meta name="twitter:title" content="Trazabilidad Agrícola - Agro365">
     <meta name="twitter:description" content="Software de trazabilidad agrícola completo. Prueba gratis 3 meses.">
-    <meta name="twitter:image" content="{{ asset('images/logo.png') }}">
+    <meta name="twitter:image" content="{{ asset('images/dashboard-preview.png') }}">
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">

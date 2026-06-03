@@ -22,7 +22,7 @@
     <meta property="og:url" content="{{ url('/cuaderno-digital') }}">
     <meta property="og:title" content="Cuaderno Digital - Obligatorio desde 2027">
     <meta property="og:description" content="Cuaderno de campo digital obligatorio desde 2027. Cumplimiento normativo PAC y registro de tratamientos. Prueba gratis 3 meses.">
-    <meta property="og:image" content="{{ asset('images/logo.png') }}">
+    <meta property="og:image" content="{{ asset('images/dashboard-preview.png') }}">
     <meta property="og:locale" content="es_ES">
     <meta property="og:site_name" content="Agro365">
     
@@ -31,7 +31,7 @@
     <meta name="twitter:url" content="{{ url('/cuaderno-digital') }}">
     <meta name="twitter:title" content="Cuaderno Digital - Agro365">
     <meta name="twitter:description" content="Cuaderno de campo digital obligatorio desde 2027. Prueba gratis 3 meses.">
-    <meta name="twitter:image" content="{{ asset('images/logo.png') }}">
+    <meta name="twitter:image" content="{{ asset('images/dashboard-preview.png') }}">
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
@@ -190,7 +190,7 @@
             <div class="mt-16 pt-12 border-t border-gray-200">
                 <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-6">{{ __('Funcionalidades relacionadas') }}</h2>
                 <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <a href="{{ content_route('content.ndvi-viñedo-teledeteccion') }}" class="flex items-start gap-3 p-4 rounded-xl border border-gray-200 hover:border-[var(--color-agro-green)] hover:bg-green-50 transition-all group">
+                    <a href="{{ content_route('content.ndvi-vinedo-teledeteccion') }}" class="flex items-start gap-3 p-4 rounded-xl border border-gray-200 hover:border-[var(--color-agro-green)] hover:bg-green-50 transition-all group">
                         <span class="text-2xl">{{ __('🛰️') }}</span>
                         <div>
                             <p class="font-semibold text-gray-900 group-hover:text-[var(--color-agro-green-dark)]">{{ __('Teledetección NDVI') }}</p>

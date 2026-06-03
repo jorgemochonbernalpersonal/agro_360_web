@@ -15,23 +15,23 @@
     <meta name="revisit-after" content="7 days">
     
     <!-- Canonical URL -->
-    <link rel="canonical" href="{{ url('/digitalizar-viñedo') }}">
+    <link rel="canonical" href="{{ url('/digitalizar-vinedo') }}">
     
     <!-- Open Graph -->
     <meta property="og:type" content="article">
-    <meta property="og:url" content="{{ url('/digitalizar-viñedo') }}">
+    <meta property="og:url" content="{{ url('/digitalizar-vinedo') }}">
     <meta property="og:title" content="Cómo Digitalizar tu Viñedo - Guía Completa 2027">
     <meta property="og:description" content="Guía paso a paso para digitalizar tu viñedo. Beneficios, herramientas y software de gestión agrícola profesional.">
-    <meta property="og:image" content="{{ asset('images/logo.png') }}">
+    <meta property="og:image" content="{{ asset('images/dashboard-preview.png') }}">
     <meta property="og:locale" content="es_ES">
     <meta property="og:site_name" content="Agro365">
     
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="{{ url('/digitalizar-viñedo') }}">
+    <meta name="twitter:url" content="{{ url('/digitalizar-vinedo') }}">
     <meta name="twitter:title" content="Cómo Digitalizar tu Viñedo - Guía Completa">
     <meta name="twitter:description" content="Guía paso a paso para digitalizar tu viñedo con software profesional.">
-    <meta name="twitter:image" content="{{ asset('images/logo.png') }}">
+    <meta name="twitter:image" content="{{ asset('images/dashboard-preview.png') }}">
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
@@ -279,7 +279,7 @@
     <script type="application/ld+json">
     {!! \App\Helpers\SeoHelper::breadcrumbSchema([
         ['name' => 'Inicio', 'url' => url('/')],
-        ['name' => 'Digitalizar Viñedo', 'url' => url('/digitalizar-viñedo')]
+        ['name' => 'Digitalizar Viñedo', 'url' => url('/digitalizar-vinedo')]
     ]) !!}
     </script>
 
@@ -306,7 +306,7 @@
         "dateModified": "{{ now()->toIso8601String() }}",
         "mainEntityOfPage": {
             "@@type": "WebPage",
-            "@id": "{{ url('/digitalizar-viñedo') }}"
+            "@id": "{{ url('/digitalizar-vinedo') }}"
         }
     }
     </script>

@@ -22,7 +22,7 @@
     <meta property="og:url" content="{{ url('/cuaderno-digital-viticultores') }}">
     <meta property="og:title" content="Cuaderno Digital para Viticultores - Obligatorio 2027">
     <meta property="og:description" content="Cuaderno de campo digital para viticultores obligatorio desde 2027. SIGPAC, cumplimiento normativo e informes oficiales.">
-    <meta property="og:image" content="{{ asset('images/logo.png') }}">
+    <meta property="og:image" content="{{ asset('images/dashboard-preview.png') }}">
     <meta property="og:locale" content="es_ES">
     <meta property="og:site_name" content="Agro365">
     
@@ -31,7 +31,7 @@
     <meta name="twitter:url" content="{{ url('/cuaderno-digital-viticultores') }}">
     <meta name="twitter:title" content="Cuaderno Digital para Viticultores - Obligatorio 2027">
     <meta name="twitter:description" content="Cuaderno de campo digital para viticultores con SIGPAC y cumplimiento normativo.">
-    <meta name="twitter:image" content="{{ asset('images/logo.png') }}">
+    <meta name="twitter:image" content="{{ asset('images/dashboard-preview.png') }}">
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">

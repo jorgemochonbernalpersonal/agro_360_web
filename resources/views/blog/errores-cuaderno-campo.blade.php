@@ -112,5 +112,17 @@
         "publisher": {"@@type": "Organization", "name": "Agro365", "logo": {"@@type": "ImageObject", "url": "{{ asset('images/logo.png') }}"}}
     }
     </script>
+
+    <script type="application/ld+json">
+    {
+        "@@context": "https://schema.org",
+        "@@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@@type": "ListItem", "position": 1, "name": "Inicio", "item": "{{ url('/') }}"},
+            {"@@type": "ListItem", "position": 2, "name": "Blog", "item": "{{ url('/blog') }}"},
+            {"@@type": "ListItem", "position": 3, "name": "5 Errores Comunes en el Cuaderno de Campo", "item": "{{ url('/blog/errores-cuaderno-campo') }}"}
+        ]
+    }
+    </script>
 </body>
 </html>

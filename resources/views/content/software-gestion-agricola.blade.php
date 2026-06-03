@@ -22,7 +22,7 @@
     <meta property="og:url" content="{{ url('/software-gestion-agricola') }}">
     <meta property="og:title" content="Software de Gestión Agrícola - Plataforma Completa">
     <meta property="og:description" content="Software profesional de gestión agrícola con cuaderno digital, SIGPAC y cumplimiento normativo. Prueba gratis 3 meses.">
-    <meta property="og:image" content="{{ asset('images/logo.png') }}">
+    <meta property="og:image" content="{{ asset('images/dashboard-preview.png') }}">
     <meta property="og:locale" content="es_ES">
     <meta property="og:site_name" content="Agro365">
     
@@ -31,7 +31,7 @@
     <meta name="twitter:url" content="{{ url('/software-gestion-agricola') }}">
     <meta name="twitter:title" content="Software de Gestión Agrícola - Agro365">
     <meta name="twitter:description" content="Software profesional de gestión agrícola con cuaderno digital y SIGPAC. Prueba gratis 3 meses.">
-    <meta name="twitter:image" content="{{ asset('images/logo.png') }}">
+    <meta name="twitter:image" content="{{ asset('images/dashboard-preview.png') }}">
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">

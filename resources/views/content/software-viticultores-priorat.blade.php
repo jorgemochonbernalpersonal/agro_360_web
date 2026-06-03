@@ -14,7 +14,7 @@
     <link rel="canonical" href="{{ url('/software-viticultores-priorat') }}">
     <meta property="og:title" content="Software para Viticultores en DOCa Priorat - Agro365">
     <meta property="og:description" content="Gestión especializada para viñedos de Garnacha y Cariñena en Priorat. Cuaderno digital, teledetección NDVI, Verifactu y cumplimiento DOQ.">
-    <meta property="og:image" content="{{ asset('images/logo.png') }}">
+    <meta property="og:image" content="{{ asset('images/dashboard-preview.png') }}">
     <meta property="og:url" content="{{ url('/software-viticultores-priorat') }}">
     
     <!-- Favicon & Fonts -->

@@ -1556,21 +1556,7 @@ Alpine.data('visualPlotsMap', (allPlots, allPolygons, filterOptions, initialTile
     },
 
     initMap() {
-        const loadLeaflet = (cb) => {
-            if (window.L) { cb(); return; }
-            if (!document.getElementById('leaflet-css')) {
-                const l = document.createElement('link');
-                l.id = 'leaflet-css'; l.rel = 'stylesheet';
-                l.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-                document.head.appendChild(l);
-            }
-            const s = document.createElement('script');
-            s.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-            s.onload = cb;
-            document.head.appendChild(s);
-        };
-
-        loadLeaflet(() => {
+        window.loadLeaflet().then(() => {
             if (this.map) this.map.remove();
 
             this.map = L.map('visual-plots-map', { zoomControl: false }).setView([40.0, -3.5], 6);

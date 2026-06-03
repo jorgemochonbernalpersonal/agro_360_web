@@ -578,22 +578,25 @@ class VisualDashboard extends Component
         if (!empty($allPlotIds)) {
             $placeholders = implode(',', array_fill(0, count($allPlotIds), '?'));
             $polyRows = DB::select(
+                // LEFT JOIN: las geometrías catastrales/manuales no tienen
+                // sigpac_code_id; sc.code sale NULL pero la parcela se pinta igual.
                 "SELECT mps.plot_id, sc.code AS sigpac_code,
                         ST_AsText(pg.coordinates) AS wkt
                  FROM   multipart_plot_sigpac mps
-                 JOIN   sigpac_code sc ON mps.sigpac_code_id  = sc.id
+                 LEFT JOIN sigpac_code sc ON mps.sigpac_code_id  = sc.id
                  JOIN   plot_geometry pg ON mps.plot_geometry_id = pg.id
                  WHERE  mps.plot_id IN ($placeholders)
                  AND    pg.coordinates IS NOT NULL",
                 $allPlotIds
             );
             foreach ($polyRows as $row) {
-                $coords = $this->parseWktToLatLng($row->wkt);
-                if (!empty($coords)) {
+                // Un MULTIPOLYGON produce varios anillos → una entrada por anillo,
+                // todas con el mismo plot_id (el color en el front es por variedad/plot).
+                foreach ($this->parseWktRings($row->wkt) as $ring) {
                     $mapPolygons[] = [
                         'plot_id'     => $row->plot_id,
                         'sigpac_code' => $row->sigpac_code,
-                        'coords'      => $coords,
+                        'coords'      => $ring,
                     ];
                 }
             }
@@ -793,18 +796,41 @@ class VisualDashboard extends Component
         ])->layout('layouts.app', ['title' => __('Vista Visual — Agro365')]);
     }
 
-    private function parseWktToLatLng(?string $wkt): array
+    /**
+     * Parsea un WKT (POLYGON o MULTIPOLYGON) y devuelve el anillo EXTERIOR de
+     * cada polígono como lista de puntos [lat, lng].
+     *
+     * El regex `\(\(([^()]+)\)` captura el contenido que sigue a cada `((`
+     * (inicio de un polígono), por lo que de forma natural:
+     *   - obtiene un anillo por polígono en un MULTIPOLYGON,
+     *   - ignora los agujeros (holes), precedidos por un solo `(`.
+     * Los holes no aportan en un mapa de conjunto y romperían el contrato
+     * plano que consume el front (L.polygon(coords)).
+     *
+     * @return array<int, array<int, array{0: float, 1: float}>> lista de anillos
+     */
+    private function parseWktRings(?string $wkt): array
     {
         if (!$wkt) return [];
-        if (!preg_match('/POLYGON\(\(([^)]+)\)\)/', $wkt, $m)) return [];
 
-        $points = [];
-        foreach (explode(',', $m[1]) as $coord) {
-            $parts = explode(' ', trim($coord));
-            if (count($parts) >= 2) {
-                $points[] = [(float) $parts[1], (float) $parts[0]];
+        $rings = [];
+        if (preg_match_all('/\(\(([^()]+)\)/', $wkt, $matches)) {
+            foreach ($matches[1] as $ringStr) {
+                $ring = [];
+                foreach (explode(',', $ringStr) as $coord) {
+                    $parts = preg_split('/\s+/', trim($coord));
+                    if (count($parts) >= 2) {
+                        $lng = (float) $parts[0];
+                        $lat = (float) $parts[1];
+                        if ($lat >= -90 && $lat <= 90 && $lng >= -180 && $lng <= 180) {
+                            $ring[] = [$lat, $lng];
+                        }
+                    }
+                }
+                if (count($ring) >= 3) $rings[] = $ring;
             }
         }
-        return $points;
+
+        return $rings;
     }
 }

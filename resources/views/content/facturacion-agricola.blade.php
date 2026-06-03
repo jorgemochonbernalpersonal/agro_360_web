@@ -19,7 +19,7 @@
     <meta property="og:url" content="{{ url('/facturacion-agricola') }}">
     <meta property="og:title" content="Facturación Agrícola - Software para Viticultores">
     <meta property="og:description" content="Factura cosechas, gestiona clientes y controla pagos con Agro365.">
-    <meta property="og:image" content="{{ asset('images/logo.png') }}">
+    <meta property="og:image" content="{{ asset('images/dashboard-preview.png') }}">
     <meta property="og:locale" content="es_ES">
     
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">

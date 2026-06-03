@@ -6,9 +6,10 @@ import './sidebar';      // Sidebar collapse/toggle logic
 
 // Lazy loading de Leaflet
 import { loadLeaflet, isLeafletLoaded } from './utils/leaflet-loader';
-import { parseWKT, isValidWKT } from './utils/wkt-parser';
+import { parseWKT, parseWKTAll, isValidWKT } from './utils/wkt-parser';
 
 window.loadLeaflet = loadLeaflet;
 window.isLeafletLoaded = isLeafletLoaded;
 window.parseWKT = parseWKT;
+window.parseWKTAll = parseWKTAll;
 window.isValidWKT = isValidWKT;

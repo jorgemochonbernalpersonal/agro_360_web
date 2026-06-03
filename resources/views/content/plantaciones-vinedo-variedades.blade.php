@@ -7,9 +7,9 @@
     <meta name="description" content="Gestión de plantaciones de viñedo: variedades de uva, sistemas de conducción, certificaciones y datos agronómicos. Software profesional para viticultores.">
     <meta name="keywords" content="plantaciones viñedo, variedades uva, tempranillo, garnacha, sistemas conducción vid, espaldera, vaso, gestión viñedo, datos agronómicos vid, certificación plantaciones">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="{{ url('/plantaciones-viñedo-variedades') }}">
+    <link rel="canonical" href="{{ url('/plantaciones-vinedo-variedades') }}">
     <meta property="og:title" content="Plantaciones de Viñedo - Gestión de Variedades">
-    <meta property="og:image" content="{{ asset('images/logo.png') }}">
+    <meta property="og:image" content="{{ asset('images/dashboard-preview.png') }}">
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700&display=swap" rel="stylesheet" />
@@ -121,7 +121,7 @@
                     <ul class="list-disc list-inside space-y-2 text-gray-700 mb-6 ml-4">
                         <li>Solicitudes de <a href="{{ url('/subvenciones-pac-2024') }}" class="text-[var(--color-agro-green)] hover:underline">ayudas PAC</a></li>
                         <li>{{ __('Certificación de Denominación de Origen') }}</li>
-                        <li>Cálculo de <a href="{{ url('/rendimientos-cosecha-viñedo') }}" class="text-[var(--color-agro-green)] hover:underline">rendimientos esperados</a></li>
+                        <li>Cálculo de <a href="{{ url('/rendimientos-cosecha-vinedo') }}" class="text-[var(--color-agro-green)] hover:underline">rendimientos esperados</a></li>
                         <li>Trazabilidad de <a href="{{ url('/gestion-vendimia') }}" class="text-[var(--color-agro-green)] hover:underline">vendimia</a></li>
                     </ul>
                 </section>
