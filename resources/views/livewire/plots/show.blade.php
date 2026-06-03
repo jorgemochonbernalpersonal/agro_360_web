@@ -114,6 +114,19 @@
                             <label class="text-sm font-semibold text-zinc-500">{{ __('Código Catastral') }}</label>
                             <p class="text-zinc-900 font-mono text-sm">{{ $plot->code_parcel }}</p>
                             @can('update', $plot)
+                                @if($hasSigpacGeometry)
+                                    <flux:tooltip :content="__('Ya tienes mapa generado desde SIGPAC. Elimínalo primero para usar el Catastro.')">
+                                        <flux:button
+                                            variant="outline"
+                                            size="sm"
+                                            icon="map"
+                                            class="mt-2"
+                                            disabled
+                                        >
+                                            {{ __('Generar mapa desde catastro') }}
+                                        </flux:button>
+                                    </flux:tooltip>
+                                @else
                                     <flux:button
                                         wire:click="generateMapFromCatastro"
                                         wire:loading.attr="disabled"
@@ -124,12 +137,13 @@
                                         class="mt-2"
                                     >
                                         <span wire:loading.remove wire:target="generateMapFromCatastro">
-                                            {{ $hasGeometry ? __('Regenerar desde catastro') : __('Generar mapa desde catastro') }}
+                                            {{ $hasCatastroGeometry ? __('Regenerar desde catastro') : __('Generar mapa desde catastro') }}
                                         </span>
                                         <span wire:loading wire:target="generateMapFromCatastro">
                                             {{ __('Generando...') }}
                                         </span>
                                     </flux:button>
+                                @endif
                             @endcan
                         </div>
                     @endif
@@ -338,20 +352,33 @@
                             </div>
                         @if($plot->sigpacCodes->count() > 0)
                             @can('update', $plot)
-                                <flux:button
-                                    wire:click="generateMap({{ $plot->id }})"
-                                    wire:loading.attr="disabled"
-                                    variant="outline"
-                                    size="sm"
-                                    icon="map"
-                                >
-                                    <span wire:loading.remove wire:target="generateMap({{ $plot->id }})">
-                                        {{ $hasGeometry ? __('Regenerar Mapa SIGPAC') : __('Generar Mapa') }}
-                                    </span>
-                                    <span wire:loading wire:target="generateMap({{ $plot->id }})">
-                                        {{ __('Generando...') }}
-                                    </span>
-                                </flux:button>
+                                @if($hasCatastroGeometry)
+                                    <flux:tooltip :content="__('Ya tienes mapa generado desde el Catastro. Elimínalo primero para usar SIGPAC.')">
+                                        <flux:button
+                                            variant="outline"
+                                            size="sm"
+                                            icon="map"
+                                            disabled
+                                        >
+                                            {{ __('Generar Mapa') }}
+                                        </flux:button>
+                                    </flux:tooltip>
+                                @else
+                                    <flux:button
+                                        wire:click="generateMap({{ $plot->id }})"
+                                        wire:loading.attr="disabled"
+                                        variant="outline"
+                                        size="sm"
+                                        icon="map"
+                                    >
+                                        <span wire:loading.remove wire:target="generateMap({{ $plot->id }})">
+                                            {{ $hasSigpacGeometry ? __('Regenerar Mapa SIGPAC') : __('Generar Mapa') }}
+                                        </span>
+                                        <span wire:loading wire:target="generateMap({{ $plot->id }})">
+                                            {{ __('Generando...') }}
+                                        </span>
+                                    </flux:button>
+                                @endif
                             @endcan
                         @endif
                     </div>
@@ -391,20 +418,28 @@
                                                     ->whereNotNull('plot_geometry_id')
                                                     ->isNotEmpty();
                                             @endphp
-                                            <flux:button
-                                                wire:click="generateMap({{ $plot->id }}, {{ $code->id }})"
-                                                wire:loading.attr="disabled"
-                                                variant="ghost"
-                                                size="xs"
-                                                icon="map"
-                                            >
-                                                <span wire:loading.remove wire:target="generateMap({{ $plot->id }}, {{ $code->id }})">
-                                                    {{ $codeHasGeometry ? __('Regenerar') : __('Generar Mapa') }}
-                                                </span>
-                                                <span wire:loading wire:target="generateMap({{ $plot->id }}, {{ $code->id }})">
-                                                    {{ __('Generando...') }}
-                                                </span>
-                                            </flux:button>
+                                            @if($hasCatastroGeometry)
+                                                <flux:tooltip :content="__('Ya tienes mapa del Catastro. Elimínalo primero.')">
+                                                    <flux:button variant="ghost" size="xs" icon="map" disabled>
+                                                        {{ __('Generar Mapa') }}
+                                                    </flux:button>
+                                                </flux:tooltip>
+                                            @else
+                                                <flux:button
+                                                    wire:click="generateMap({{ $plot->id }}, {{ $code->id }})"
+                                                    wire:loading.attr="disabled"
+                                                    variant="ghost"
+                                                    size="xs"
+                                                    icon="map"
+                                                >
+                                                    <span wire:loading.remove wire:target="generateMap({{ $plot->id }}, {{ $code->id }})">
+                                                        {{ $codeHasGeometry ? __('Regenerar') : __('Generar Mapa') }}
+                                                    </span>
+                                                    <span wire:loading wire:target="generateMap({{ $plot->id }}, {{ $code->id }})">
+                                                        {{ __('Generando...') }}
+                                                    </span>
+                                                </flux:button>
+                                            @endif
                                         @endcan
                                     </div>
                                 @endforeach

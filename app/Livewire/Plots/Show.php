@@ -236,8 +236,10 @@ class Show extends Component
         $geometryRows = $this->plot->multiplePlotSigpacs
             ->filter(fn($mps) => $mps->plot_geometry_id !== null && $mps->plotGeometry !== null);
 
-        $hasGeometry    = $geometryRows->isNotEmpty();
-        $geometrySource = $geometryRows->first()?->source; // 'sigpac'|'catastro'|'manual'|null
+        $hasGeometry         = $geometryRows->isNotEmpty();
+        $hasSigpacGeometry   = $geometryRows->where('source', 'sigpac')->isNotEmpty();
+        $hasCatastroGeometry = $geometryRows->where('source', 'catastro')->isNotEmpty();
+        $geometrySource      = $geometryRows->first()?->source; // 'sigpac'|'catastro'|'manual'|null
         $plotGeometries = $geometryRows
             ->map(fn($mps) => [
                 'wkt'         => $mps->plotGeometry->getWktCoordinates(),
@@ -249,7 +251,8 @@ class Show extends Component
 
         return view('livewire.plots.show', compact(
             'isViticulturist', 'activeCampaign',
-            'hasGeometry', 'geometrySource', 'plotGeometries'
+            'hasGeometry', 'hasSigpacGeometry', 'hasCatastroGeometry',
+            'geometrySource', 'plotGeometries'
         ))
             ->layout('layouts.app', [
                 'title' => $this->plot->name . ' - Parcela - Agro365',
