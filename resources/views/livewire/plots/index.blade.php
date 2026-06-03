@@ -28,7 +28,7 @@
             :description="($stats['total'] - $stats['with_sigpac']) . ' ' . __('sin código')"
             icon="rectangle-group"
             color="orange"
-            :link="$stats['with_sigpac'] > 0 ? route('plots.map') : null"
+            :link="$stats['with_geometry'] > 0 ? route('plots.map') : null"
             :linkLabel="__('Ver en mapa')"
         />
         <x-agro.stat-card
@@ -126,7 +126,7 @@
     @endif
 
     {{-- Acciones masivas para municipio --}}
-    @if ($filterAutonomousCommunity && $filterProvince && $filterMunicipality && $this->municipalityHasSigpacCodes)
+    @if ($filterAutonomousCommunity && $filterProvince && $filterMunicipality && $this->municipalityHasGeometry)
         <x-agro.card>
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">

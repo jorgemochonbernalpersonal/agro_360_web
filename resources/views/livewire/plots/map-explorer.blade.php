@@ -3,7 +3,13 @@
     <x-agro.page-header
         :title="__('Explorador de Mapas')"
         :description="__('Filtra por territorio para ver todas tus parcelas en el mapa')"
-    />
+    >
+        <x-slot:actions>
+            <flux:button href="{{ route('plots.index') }}" variant="ghost" icon="arrow-left">
+                {{ __('Parcelas') }}
+            </flux:button>
+        </x-slot:actions>
+    </x-agro.page-header>
 
     {{-- Explicación del flujo --}}
     <div class="max-w-xl rounded-xl border border-blue-200 bg-blue-50 p-4 flex gap-3">

@@ -142,19 +142,13 @@ class Index extends Component
         // Estadísticas
         $baseQuery = Plot::forUser(Auth::user());
         $stats = [
-            'total'      => (clone $baseQuery)->count(),
-            'active'     => (clone $baseQuery)->where('active', true)->count(),
-            'inactive'   => (clone $baseQuery)->where('active', false)->count(),
-            'total_area' => (clone $baseQuery)->sum('area') ?? 0,
-            'with_sigpac' => (clone $baseQuery)->whereHas('sigpacCodes')->count(),
+            'total'         => (clone $baseQuery)->count(),
+            'active'        => (clone $baseQuery)->where('active', true)->count(),
+            'inactive'      => (clone $baseQuery)->where('active', false)->count(),
+            'total_area'    => (clone $baseQuery)->sum('area') ?? 0,
+            'with_sigpac'   => (clone $baseQuery)->whereHas('sigpacCodes')->count(),
+            'with_geometry' => (clone $baseQuery)->whereHas('multiplePlotSigpacs', fn($q) => $q->whereNotNull('plot_geometry_id'))->count(),
         ];
-
-        $firstPlotForMap = $this->filterMunicipality
-            ? Plot::forUser(Auth::user())
-                ->where('municipality_id', $this->filterMunicipality)
-                ->select('id')
-                ->first()
-            : null;
 
         $auditPlot = $this->auditPlotId
             ? Plot::forUser(Auth::user())->find($this->auditPlotId)
@@ -166,7 +160,6 @@ class Index extends Component
             'autonomousCommunities' => $this->autonomousCommunities,
             'provinces'          => $this->provinces,
             'municipalities'     => $this->municipalities,
-            'firstPlotForMap'    => $firstPlotForMap,
             'auditPlot'          => $auditPlot,
         ])->layout('layouts.app', [
             'title' => __('Gestión de Parcelas - Agro365'),
@@ -243,19 +236,17 @@ class Index extends Component
     }
 
     /**
-     * Verificar si el municipio seleccionado tiene códigos SIGPAC
+     * Verificar si el municipio seleccionado tiene alguna geometría generada (SIGPAC o Catastro)
      */
-    public function getMunicipalityHasSigpacCodesProperty()
+    public function getMunicipalityHasGeometryProperty(): bool
     {
         if (!$this->filterMunicipality) {
             return false;
         }
 
-        $user = Auth::user();
-        
-        return Plot::forUser($user)
+        return Plot::forUser(Auth::user())
             ->where('municipality_id', $this->filterMunicipality)
-            ->whereHas('sigpacCodes')
+            ->whereHas('multiplePlotSigpacs', fn($q) => $q->whereNotNull('plot_geometry_id'))
             ->exists();
     }
 
