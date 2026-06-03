@@ -3,6 +3,7 @@
 use App\Livewire\Plots\Index;
 use App\Livewire\Plots\Create;
 use App\Livewire\Plots\Edit;
+use App\Livewire\Plots\MapExplorer;
 use App\Livewire\Plots\Show;
 use App\Livewire\Plots\Plantings\Index as PlantingsIndex;
 use App\Livewire\Plots\Plantings\Create as PlantingCreate;
@@ -15,6 +16,7 @@ Route::middleware(['auth', 'role:admin,supervisor,winery,viticulturist,producer'
     ->name('plots.')
     ->group(function () {
         Route::get('/', Index::class)->name('index');
+        Route::get('/map', MapExplorer::class)->name('map');
         Route::get('/territory', TerritorialManagement::class)->name('territory');
         // Índice global de plantaciones
         Route::get('/plantings', PlantingsIndex::class)->name('plantings.index');

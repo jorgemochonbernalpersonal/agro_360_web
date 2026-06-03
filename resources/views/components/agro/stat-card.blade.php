@@ -1,4 +1,4 @@
-@props(['label', 'value', 'description' => null, 'icon' => null, 'trend' => null, 'color' => 'agro'])
+@props(['label', 'value', 'description' => null, 'icon' => null, 'trend' => null, 'color' => 'agro', 'link' => null, 'linkLabel' => null])
 
 @php
 $colorMap = [
@@ -37,6 +37,12 @@ $trendClasses = $trend > 0 ? 'text-green-600' : ($trend < 0 ? 'text-red-600' : '
                 @endif
                 {{ abs($trend) }}%
             </p>
+        @endif
+        @if($link)
+            <a href="{{ $link }}" class="mt-2 inline-flex items-center gap-0.5 text-xs font-medium text-blue-600 hover:text-blue-800 transition-colors">
+                {{ $linkLabel ?? __('Ver') }}
+                <flux:icon icon="arrow-right" variant="micro" />
+            </a>
         @endif
     </div>
 </div>

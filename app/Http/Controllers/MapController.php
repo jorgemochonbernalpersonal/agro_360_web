@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Municipality;
 use App\Models\Plot;
 use App\Models\SigpacCode;
 use App\Models\MultipartPlotSigpac;
@@ -64,6 +65,41 @@ class MapController extends Controller
         abort(404, __('No se encontró el mapa solicitado.'));
     }
     
+    /**
+     * Mapa de todas las parcelas del usuario en un municipio (sin plot_id)
+     */
+    public function showMunicipality(int $municipalityId)
+    {
+        $user     = auth()->user();
+        $municipality = Municipality::with('province.autonomousCommunity')->findOrFail($municipalityId);
+
+        $plotIds = Plot::forUser($user)
+            ->where('municipality_id', $municipalityId)
+            ->pluck('id');
+
+        if ($plotIds->isEmpty()) {
+            return redirect()->route('plots.map')
+                ->with('error', __('No tienes parcelas en este municipio.'));
+        }
+
+        $plotGeometries = $this->buildMunicipalityGeometries($plotIds);
+
+        if ($plotGeometries->isEmpty()) {
+            return redirect()->route('plots.map')
+                ->with('error', __('No hay mapas generados para :municipality. Genera los mapas primero desde la lista de parcelas.', ['municipality' => $municipality->name]));
+        }
+
+        Log::info('Municipality map loaded', [
+            'municipality_id'  => $municipalityId,
+            'geometries_count' => $plotGeometries->count(),
+            'user_id'          => $user->id,
+        ]);
+
+        $showMunicipality = true;
+
+        return view('map', compact('municipality', 'plotGeometries', 'showMunicipality'));
+    }
+
     /**
      * Mostrar mapa de una parcela
      */
@@ -208,46 +244,62 @@ class MapController extends Controller
     }
 
     /**
-     * Renderizar vista de mapa con todos los recintos de un municipio
+     * Renderizar vista de mapa con todos los recintos de un municipio (ruta legacy con plot_id)
      */
     protected function renderMunicipalityMap(Plot $plot, $municipalityId)
     {
-        $user = auth()->user();
-        
-        // Obtener IDs de parcelas que el usuario puede ver en este municipio
-        $plotIds = Plot::forUser($user)
-            ->where('municipality_id', $municipalityId)
-            ->pluck('id');
+        $user    = auth()->user();
+        $plotIds = Plot::forUser($user)->where('municipality_id', $municipalityId)->pluck('id');
 
         if ($plotIds->isEmpty()) {
-            return redirect()->back()
-                ->with('error', __('No tienes parcelas en este municipio.'));
+            return redirect()->back()->with('error', __('No tienes parcelas en este municipio.'));
         }
 
-        // Cargar todas las geometrías del municipio
-        $plotGeometries = MultipartPlotSigpac::with(['plotGeometry', 'sigpacCode', 'plot'])
+        $plotGeometries = $this->buildMunicipalityGeometries($plotIds);
+
+        if ($plotGeometries->isEmpty()) {
+            return redirect()->back()->with('error', __('No hay mapas generados para este municipio.'));
+        }
+
+        Log::info('Municipality map loaded (legacy)', [
+            'municipality_id'  => $municipalityId,
+            'plot_id'          => $plot->id,
+            'geometries_count' => $plotGeometries->count(),
+        ]);
+
+        $highlightSigpacId = null;
+        $showMunicipality  = true;
+
+        return view('map', compact('plot', 'plotGeometries', 'highlightSigpacId', 'showMunicipality'));
+    }
+
+    /**
+     * Carga y formatea geometrías de un conjunto de plot_ids para vista de municipio
+     */
+    private function buildMunicipalityGeometries(\Illuminate\Support\Collection $plotIds): \Illuminate\Support\Collection
+    {
+        return MultipartPlotSigpac::with(['plotGeometry', 'sigpacCode', 'plot'])
             ->whereIn('plot_id', $plotIds)
             ->whereNotNull('plot_geometry_id')
             ->get()
             ->filter(fn($rel) => $rel->plotGeometry)
-            ->map(function($rel, $index) {
+            ->map(function ($rel, $index) {
                 $wkt = $rel->plotGeometry->getWktCoordinates();
-                
                 if (!$wkt) {
                     return null;
                 }
-                
-                // Generar color único para cada recinto
                 $hue = ($index * 137.5) % 360;
-                
                 return [
-                    'id' => $rel->id,
-                    'index' => $index + 1,
-                    'sigpac_code' => $rel->sigpacCode?->code ?? 'Sin código',
-                    'sigpac_formatted' => $rel->sigpacCode?->formatted_code ?? 'Sin código',
-                    'plot_name' => $rel->plot?->name ?? 'Sin parcela',
-                    'wkt' => $wkt,
-                    'color' => [
+                    'id'              => $rel->id,
+                    'index'           => $index + 1,
+                    'source'          => $rel->source ?? 'sigpac',
+                    'sigpac_code'     => $rel->sigpacCode?->code ?? null,
+                    'sigpac_formatted'=> $rel->sigpacCode?->formatted_code ?? null,
+                    'polygon'         => $rel->sigpacCode?->code_polygon ?? null,
+                    'enclosure'       => $rel->sigpacCode?->code_enclosure ?? null,
+                    'plot_name'       => $rel->plot?->name ?? '',
+                    'wkt'             => $wkt,
+                    'color'           => [
                         'fill' => "hsla({$hue}, 70%, 50%, 0.3)",
                         'line' => "hsl({$hue}, 70%, 40%)",
                     ],
@@ -255,22 +307,6 @@ class MapController extends Controller
             })
             ->filter()
             ->values();
-
-        Log::info('Municipality map loaded', [
-            'municipality_id' => $municipalityId,
-            'plot_id' => $plot->id,
-            'geometries_count' => $plotGeometries->count(),
-        ]);
-
-        if ($plotGeometries->isEmpty()) {
-            return redirect()->back()
-                ->with('error', __('No hay mapas generados para este municipio.'));
-        }
-
-        $highlightSigpacId = null;
-        $showMunicipality = true;
-        
-        return view('map', compact('plot', 'plotGeometries', 'highlightSigpacId', 'showMunicipality'));
     }
 
     private function getColorForIndex(int $index): array

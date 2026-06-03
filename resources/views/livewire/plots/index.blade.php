@@ -28,6 +28,8 @@
             :description="($stats['total'] - $stats['with_sigpac']) . ' ' . __('sin código')"
             icon="rectangle-group"
             color="orange"
+            :link="$stats['with_sigpac'] > 0 ? route('plots.map') : null"
+            :linkLabel="__('Ver en mapa')"
         />
         <x-agro.stat-card
             :label="__('Inactivas')"
@@ -75,6 +77,11 @@
             {{ __('Plantaciones') }}
         </flux:button>
 
+        {{-- Explorador de Mapas --}}
+        <flux:button href="{{ route('plots.map') }}" variant="outline" icon="map">
+            {{ __('Mapa') }}
+        </flux:button>
+
     </div>
 
     {{-- Chips de filtros activos --}}
@@ -108,6 +115,14 @@
                 {{ __('Limpiar todo') }}
             </button>
         </div>
+
+        {{-- Hint: si hay CA+provincia pero falta municipio, sugiere completar para ver el mapa --}}
+        @if($filterAutonomousCommunity && $filterProvince && !$filterMunicipality)
+            <p class="text-xs text-blue-600 flex items-center gap-1">
+                <flux:icon icon="map" variant="micro" class="shrink-0" />
+                {{ __('Selecciona también un municipio para poder ver todas sus parcelas en el mapa.') }}
+            </p>
+        @endif
     @endif
 
     {{-- Acciones masivas para municipio --}}
@@ -138,15 +153,13 @@
                         <span wire:loading.remove wire:target="generateAllMapsForMunicipality">{{ __('Generar Todos los Mapas') }}</span>
                         <span wire:loading wire:target="generateAllMapsForMunicipality">{{ __('Generando...') }}</span>
                     </flux:button>
-                    @if ($firstPlotForMap)
-                        <flux:button
-                            href="{{ route('map', ['id' => $firstPlotForMap->id, 'municipality' => $filterMunicipality, 'return' => 'plots']) }}"
-                            variant="primary"
-                            icon="eye"
-                        >
-                            {{ __('Ver Todos los Mapas') }}
-                        </flux:button>
-                    @endif
+                    <flux:button
+                        href="{{ route('map.municipality', $filterMunicipality) }}"
+                        variant="primary"
+                        icon="eye"
+                    >
+                        {{ __('Ver Todos los Mapas') }}
+                    </flux:button>
                 </div>
             </div>
         </x-agro.card>

@@ -72,6 +72,7 @@ class PlotMapController extends Controller
             ->where('plot_id', $plot->id)
             ->whereNotNull('plot_geometry_id')
             ->get();
+        $codeParcel = $plot->code_parcel;
 
         if ($relations->isEmpty()) {
             return collect([]);
@@ -96,7 +97,7 @@ class PlotMapController extends Controller
 
         // Mapear relaciones a formato de vista
         return $relations
-            ->map(function ($rel, $index) use ($wktMap) {
+            ->map(function ($rel, $index) use ($wktMap, $codeParcel) {
                 $wkt = $wktMap[$rel->plot_geometry_id] ?? null;
 
                 if (!$wkt) {
@@ -107,13 +108,19 @@ class PlotMapController extends Controller
                     return null;
                 }
 
+                $isCatastro = $rel->source === 'catastro';
+
                 return [
-                    'id' => $rel->id,
-                    'index' => $index + 1,
-                    'sigpac_code' => $rel->sigpacCode?->code ?? 'N/A',
-                    'sigpac_formatted' => $rel->sigpacCode?->formatted_code ?? 'Sin código',
-                    'wkt' => $wkt,
-                    'color' => $this->getColorForIndex($index),
+                    'id'              => $rel->id,
+                    'index'           => $index + 1,
+                    'source'          => $rel->source ?? 'sigpac',
+                    'sigpac_code'     => $rel->sigpacCode?->code ?? null,
+                    'sigpac_formatted'=> $rel->sigpacCode?->formatted_code ?? null,
+                    'polygon'         => $rel->sigpacCode?->code_polygon ?? null,
+                    'enclosure'       => $rel->sigpacCode?->code_enclosure ?? null,
+                    'code_parcel'     => $isCatastro ? $codeParcel : null,
+                    'wkt'             => $wkt,
+                    'color'           => $this->getColorForIndex($index),
                 ];
             })
             ->filter()

@@ -3,7 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mapa - {{ $plot->name }} - Agro365</title>
+    @php
+        $isMunicipalityMode = $showMunicipality ?? false;
+        $displayName = $isMunicipalityMode
+            ? ($municipality->name ?? $plot->municipality->name ?? __('Municipio'))
+            : ($plot->name ?? '');
+    @endphp
+    <title>Mapa - {{ $displayName }} - Agro365</title>
     <script src="https://cdn.tailwindcss.com"></script>
     @vite(['resources/js/app.js', 'resources/css/app.css'])
     <style>
@@ -61,40 +67,58 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                     </svg>
-                    {{ $plot->name }}
+                    {{ $displayName }}
                 </h1>
                 @php
-                    $returnUrl = request()->get('return');
-                    $backUrl = match($returnUrl) {
-                        'plots' => route('plots.index'),
-                        'sigpac' => route('sigpac.codes'),
-                        default => route('plots.show', $plot)
-                    };
+                    if ($isMunicipalityMode) {
+                        $backUrl = route('plots.map');
+                    } else {
+                        $returnUrl = request()->get('return');
+                        $backUrl = match($returnUrl) {
+                            'plots' => route('plots.index'),
+                            'sigpac' => route('sigpac.codes'),
+                            default => route('plots.show', $plot)
+                        };
+                    }
                 @endphp
-                <a href="{{ $backUrl }}" 
+                <a href="{{ $backUrl }}"
                    class="text-sm text-blue-600 hover:text-blue-800 font-medium transition flex items-center gap-1">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                     </svg>
-                    Volver
+                    {{ __('Volver') }}
                 </a>
             </div>
 
             <!-- Selector de Recintos -->
+            @php
+                $allCatastro = collect($plotGeometries)->every(fn($g) => ($g['source'] ?? 'sigpac') === 'catastro');
+                $selectorLabel = $allCatastro ? __('📍 Seleccionar Parcela:') : __('📍 Seleccionar Recinto:');
+                $selectorAll   = $allCatastro
+                    ? '🏛️ ' . __('Parcela catastral') . ' (' . count($plotGeometries) . ')'
+                    : '🗺️ ' . __('Todos los recintos') . ' (' . count($plotGeometries) . ')';
+            @endphp
             <div class="mb-4">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">{{ __('📍 Seleccionar Recinto:') }}</label>
-                <select id="recinto-selector" 
+                <label class="block text-sm font-semibold text-gray-700 mb-2">{{ $selectorLabel }}</label>
+                <select id="recinto-selector"
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
-                    <option value="all">🗺️ Todos los recintos ({{ count($plotGeometries) }})</option>
+                    <option value="all">{{ $selectorAll }}</option>
                     @foreach($plotGeometries as $geometry)
+                        @php
+                            $isCatastro = ($geometry['source'] ?? 'sigpac') === 'catastro';
+                            $optionLabel = $isCatastro
+                                ? ($geometry['code_parcel'] ?? __('Parcela catastral'))
+                                : ($geometry['sigpac_formatted'] ?? __('Sin código'));
+                        @endphp
                         <option value="{{ $loop->index }}" data-color="{{ $geometry['color']['line'] }}">
-                            {{ $geometry['sigpac_formatted'] }}
+                            {{ $optionLabel }}
                         </option>
                     @endforeach
                 </select>
             </div>
 
-            <!-- 🛰️ Toggle NDVI -->
+            <!-- 🛰️ Toggle NDVI (solo modo parcela individual) -->
+            @if(!$isMunicipalityMode)
             <div class="mb-4 p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
                 <div class="flex items-center justify-between mb-2">
                     <label class="text-sm font-semibold text-gray-700 flex items-center gap-2">{{ __('🛰️ Vista NDVI') }}</label>
@@ -129,17 +153,36 @@
                     Cargando datos NDVI...
                 </div>
             </div>
+            @endif
 
             <!-- Leyenda de Colores -->
             <div class="mb-4 p-3 bg-gray-50 rounded-lg">
-                <p class="text-xs font-semibold text-gray-600 mb-2">{{ __('Leyenda de Recintos:') }}</p>
+                <p class="text-xs font-semibold text-gray-600 mb-2">
+                    @if($isMunicipalityMode)
+                        {{ __('Parcelas del municipio:') }}
+                    @elseif($allCatastro)
+                        {{ __('Parcelas catastrales:') }}
+                    @else
+                        {{ __('Leyenda de Recintos:') }}
+                    @endif
+                </p>
                 <div class="space-y-1 max-h-40 overflow-y-auto">
                     @foreach($plotGeometries as $geometry)
-                        <div class="flex items-center text-xs">
-                            <span class="color-indicator" 
-                                  style="background-color: {{ $geometry['color']['fill'] }}; border-color: {{ $geometry['color']['line'] }};">
-                            </span>
-                            <span class="text-gray-700">{{ $geometry['index'] }}. {{ $geometry['sigpac_formatted'] }}</span>
+                        @php
+                            $isCatastro = ($geometry['source'] ?? 'sigpac') === 'catastro';
+                            $legendLabel = $isMunicipalityMode
+                                ? ($geometry['plot_name'] ?? ($geometry['sigpac_formatted'] ?? __('Sin nombre')))
+                                : ($isCatastro
+                                    ? ($geometry['code_parcel'] ?? __('Parcela catastral'))
+                                    : ($geometry['sigpac_formatted'] ?? __('Sin código')));
+                        @endphp
+                        <div class="flex items-center text-xs gap-1">
+                            <span class="color-indicator flex-shrink-0"
+                                  style="background-color: {{ $geometry['color']['fill'] }}; border-color: {{ $geometry['color']['line'] }};"></span>
+                            <span class="text-gray-700 truncate">{{ $geometry['index'] }}. {{ $legendLabel }}</span>
+                            @if(!$isMunicipalityMode && $isCatastro)
+                                <span class="ml-auto flex-shrink-0 text-[10px] bg-amber-100 text-amber-700 px-1 rounded font-medium">Catastro</span>
+                            @endif
                         </div>
                     @endforeach
                 </div>
@@ -148,11 +191,20 @@
             <!-- Info -->
             <div class="text-sm text-gray-600 space-y-1 border-t pt-3">
                 <p><strong>{{ __('Total recintos:') }}</strong> {{ count($plotGeometries) }}</p>
-                @if($plot->area)
-                    <p><strong>{{ __('Área total:') }}</strong> {{ number_format($plot->area, 2) }} ha</p>
-                @endif
-                @if($plot->municipality)
-                    <p><strong>{{ __('Municipio:') }}</strong> {{ $plot->municipality->name }}</p>
+                @if($isMunicipalityMode)
+                    @if(isset($municipality))
+                        <p><strong>{{ __('Municipio:') }}</strong> {{ $municipality->name }}</p>
+                        @if($municipality->province)
+                            <p><strong>{{ __('Provincia:') }}</strong> {{ $municipality->province->name }}</p>
+                        @endif
+                    @endif
+                @else
+                    @if(isset($plot) && $plot->area)
+                        <p><strong>{{ __('Área total:') }}</strong> {{ number_format($plot->area, 2) }} ha</p>
+                    @endif
+                    @if(isset($plot) && $plot->municipality)
+                        <p><strong>{{ __('Municipio:') }}</strong> {{ $plot->municipality->name }}</p>
+                    @endif
                 @endif
             </div>
         </div>
@@ -364,33 +416,55 @@
                 const areaM2 = rawLatLngs && rawLatLngs.length > 2 ? geodesicArea(rawLatLngs) : 0;
                 const areaHa = areaM2 > 0 ? (areaM2 / 10000).toFixed(2) : null;
 
-                // Popup con información
+                // Popup con información adaptado según fuente/modo
+                const isCatastro    = geometry.source === 'catastro';
+                const isMunicipality = {{ $isMunicipalityMode ? 'true' : 'false' }};
+                const popupTitle = isMunicipality
+                    ? (geometry.plot_name || `{!! __('Parcela') !!} ${geometry.index}`)
+                    : (isCatastro
+                        ? `🏛️ {!! __('Parcela catastral') !!}`
+                        : `{!! __('Recinto') !!} ${geometry.index}`);
+                const popupSubtitle = isMunicipality
+                    ? (geometry.sigpac_formatted || geometry.code_parcel || '')
+                    : (isCatastro
+                        ? (geometry.code_parcel || '')
+                        : (geometry.sigpac_formatted || ''));
+
+                const sigpacRows = isCatastro ? `` : `
+                    <tr><td style="color:#888; padding:2px 0">{!! __('Polígono') !!}</td><td style="font-weight:600; text-align:right">${geometry.polygon || '—'}</td></tr>
+                    <tr><td style="color:#888; padding:2px 0">{!! __('Recinto') !!}</td><td style="font-weight:600; text-align:right">${geometry.enclosure || '—'}</td></tr>
+                    <tr><td style="color:#888; padding:2px 0">{!! __('Código') !!}</td><td style="font-family:monospace; font-size:11px; text-align:right">${geometry.sigpac_code || '—'}</td></tr>
+                `;
+
+                const catastroLink = isCatastro && geometry.code_parcel
+                    ? `<tr><td colspan="2" style="padding-top:6px"><a href="https://www1.sedecatastro.gob.es/CYCBienInmueble/OVCBusqueda.aspx?RC=${geometry.code_parcel}" target="_blank" rel="noopener" style="color:#2563eb; font-size:11px; text-decoration:underline">{!! __('Ver ficha en Catastro') !!} ↗</a></td></tr>`
+                    : '';
+
                 polygon.bindPopup(`
                     <div style="min-width:200px">
                         <div style="border-left:4px solid ${geometry.color.line}; padding-left:10px; margin-bottom:10px">
                             <div style="font-weight:700; font-size:15px; color:${geometry.color.line}">
-                                Recinto ${geometry.index}
+                                ${popupTitle}
                             </div>
-                            <div style="font-family:monospace; font-size:12px; color:#555; margin-top:2px">
-                                ${geometry.sigpac_formatted}
-                            </div>
+                            ${popupSubtitle ? `<div style="font-family:monospace; font-size:12px; color:#555; margin-top:2px">${popupSubtitle}</div>` : ''}
                         </div>
                         <table style="width:100%; font-size:12px; border-collapse:collapse">
-                            <tr><td style="color:#888; padding:2px 0">{!! __('Polígono') !!}</td><td style="font-weight:600; text-align:right">${geometry.polygon || '—'}</td></tr>
-                            <tr><td style="color:#888; padding:2px 0">{!! __('Recinto') !!}</td><td style="font-weight:600; text-align:right">${geometry.enclosure || '—'}</td></tr>
+                            ${sigpacRows}
                             ${areaHa ? `<tr><td style="color:#888; padding:2px 0">{!! __('Área aprox.') !!}</td><td style="font-weight:600; text-align:right">${areaHa} ha</td></tr>` : ''}
-                            <tr><td style="color:#888; padding:2px 0">{!! __('Código') !!}</td><td style="font-family:monospace; font-size:11px; text-align:right">${geometry.sigpac_code}</td></tr>
+                            ${catastroLink}
                         </table>
                     </div>
                 `, { maxWidth: 280 });
 
                 // Tooltip al hover
-                const polygonLabel = geometry.polygon ? ` · Pol. ${geometry.polygon}` : '';
-                const enclosureLabel = geometry.enclosure ? ` · Rec. ${geometry.enclosure}` : '';
-                polygon.bindTooltip(
-                    `<strong>{!! __('Recinto') !!} ${geometry.index}</strong>${polygonLabel}${enclosureLabel}`,
-                    { sticky: true, direction: 'top' }
-                );
+                const tooltipText = isCatastro
+                    ? `<strong>🏛️ {!! __('Catastro') !!}</strong>${geometry.code_parcel ? ` · ${geometry.code_parcel}` : ''}`
+                    : (() => {
+                        const polygonLabel  = geometry.polygon  ? ` · Pol. ${geometry.polygon}`  : '';
+                        const enclosureLabel = geometry.enclosure ? ` · Rec. ${geometry.enclosure}` : '';
+                        return `<strong>{!! __('Recinto') !!} ${geometry.index}</strong>${polygonLabel}${enclosureLabel}`;
+                    })();
+                polygon.bindTooltip(tooltipText, { sticky: true, direction: 'top' });
 
                 // Highlight al hover
                 polygon.on('mouseover', function() {
